@@ -162,21 +162,39 @@ class ZiweiChart:
 
     @classmethod
     def from_dict(cls, data: dict) -> "ZiweiChart":
-        """从iztro JSON dict构造ZiweiChart（F-04修复：类型适配层）"""
+        """从序列化数据构造 ZiweiChart，并兼容旧版嵌套宫位结构。"""
+        palace_data = dict(data.get("palace_data", {}))
+        palaces = dict(data.get("palaces", {}))
+        if not palaces and isinstance(palace_data.get("palaces"), dict):
+            palaces = dict(palace_data["palaces"])
+        soul_branch = data.get("soul_earthly_branch", "") or palace_data.get(
+            "soul_earthly_branch", ""
+        )
+        body_branch = data.get("body_earthly_branch", "") or palace_data.get(
+            "body_earthly_branch", ""
+        )
         return cls(
             soul_palace_main_star=data.get("soul_palace_main_star", ""),
             soul_palace_main_stars=list(data.get("soul_palace_main_stars", [])),
             soul_palace_sihua=list(data.get("soul_palace_sihua", [])),
-            palace_data=dict(data.get("palace_data", {})),
+            palace_data=palace_data,
             daily_luck_palace=data.get("daily_luck_palace", ""),
             source=data.get("source", "stub"),
-            soul_earthly_branch=data.get("soul_earthly_branch", ""),
-            body_earthly_branch=data.get("body_earthly_branch", ""),
-            palaces=dict(data.get("palaces", {})),
-            fiveElementsClass=data.get("fiveElementsClass", ""),
+            soul_earthly_branch=soul_branch,
+            body_earthly_branch=body_branch,
+            palaces=palaces,
+            fiveElementsClass=data.get(
+                "fiveElementsClass", palace_data.get("five_elements_class", "")
+            ),
             birth_year=data.get("birth_year", 0),
             gender=data.get("gender", "male"),
             doujun_palace=data.get("doujun_palace", ""),
+            decadal_palace=data.get("decadal_palace", ""),
+            flow_year=data.get("flow_year", 0),
+            flow_month=data.get("flow_month", 0),
+            flow_day_gan=data.get("flow_day_gan", ""),
+            flow_day_zhi=data.get("flow_day_zhi", ""),
+            flow_day_mutagen=list(data.get("flow_day_mutagen", [])),
         )
 
     # ── 向后兼容: dict-like 访问 (F-04) ──
@@ -277,14 +295,16 @@ class ZiweiEngine:
             )
         try:
             return self._compute_via_iztro(lunar_date, hour, gender)
-        except Exception:
+        except (OSError, RuntimeError, ValueError, TypeError, json.JSONDecodeError) as exc:
+            logger.exception("ZiweiEngine: iztro computation or parsing failed")
             if os.environ.get("TONGSHU_ALLOW_ZIWEI_STUB") == "1":
                 logger.warning("ZiweiEngine: iztro failed, using stub_with_error fallback")
                 return ZiweiChart(source="stub_with_error")
             raise ZiweiEngineUnavailableError(
-                "iztro computation failed and stub fallback is disabled. "
+                "iztro computation failed and stub fallback is disabled: "
+                f"{type(exc).__name__}: {exc}. "
                 "Set TONGSHU_ALLOW_ZIWEI_STUB=1 to allow stub for development."
-            )
+            ) from exc
 
     def extract_baseline_signal(self, chart: ZiweiChart, sig_index: int = 0):
         """P1-C: Extract a BASELINE Signal from ZiweiChart.
@@ -355,11 +375,24 @@ class ZiweiEngine:
             soulBorrowed: soulBorrowed,
             soulEarthlyBranch: astrolabe.earthlyBranchOfSoulPalace,
             bodyEarthlyBranch: astrolabe.earthlyBranchOfBodyPalace,
+            fiveElementsClass: astrolabe.fiveElementsClass || '',
+            palaces: {{}},
             decadalMutagen: horoscope.decadal ? horoscope.decadal.mutagen : [],
             yearlyMutagen: horoscope.yearly ? horoscope.yearly.mutagen : [],
             monthlyMutagen: horoscope.monthly ? horoscope.monthly.mutagen : [],
             dailyMutagen: horoscope.daily ? horoscope.daily.mutagen : [],
         }};
+        astrolabe.palaces.forEach(p => {{
+            result.palaces[p.name] = {{
+                stem: p.heavenlyStem || '',
+                branch: p.earthlyBranch || '',
+                major: (p.majorStars || []).map(s => s.name),
+                minor: (p.minorStars || []).map(s => s.name),
+                decadalRange: (p.decadal && p.decadal.range) || [],
+                decadalStem: (p.decadal && p.decadal.heavenlyStem) || '',
+                decadalBranch: (p.decadal && p.decadal.earthlyBranch) || ''
+            }};
+        }});
         process.stdout.write(JSON.stringify(result));
         '''
         proc = subprocess.run(
@@ -373,8 +406,26 @@ class ZiweiEngine:
         if proc.returncode != 0:
             raise RuntimeError(f"iztro failed: {proc.stderr}")
         data = json.loads(proc.stdout)
-        main_key = CHINESE_STAR_TO_KEY.get(data.get("soulMainStar", ""), "")
-        all_main_keys = [CHINESE_STAR_TO_KEY.get(s, "") for s in data.get("soulAllMainStars", []) if s in CHINESE_STAR_TO_KEY]
+        raw_main_star = data.get("soulMainStar", "")
+        main_key = CHINESE_STAR_TO_KEY.get(raw_main_star, raw_main_star)
+        # Preserve unmapped names for diagnostics and forward compatibility;
+        # signal extraction still ignores names absent from MAIN_STAR_USO.
+        all_main_keys = [
+            CHINESE_STAR_TO_KEY.get(s, s)
+            for s in data.get("soulAllMainStars", [])
+        ]
+        raw_palaces = data.get("palaces", {})
+        palace_data = {
+            "raw_soul_main_star": data.get("soulMainStar", ""),
+            "soul_borrowed": data.get("soulBorrowed", False),
+            "soul_earthly_branch": data.get("soulEarthlyBranch", ""),
+            "body_earthly_branch": data.get("bodyEarthlyBranch", ""),
+            "decadal_mutagen": data.get("decadalMutagen", []),
+            "yearly_mutagen": data.get("yearlyMutagen", []),
+            "monthly_mutagen": data.get("monthlyMutagen", []),
+            "daily_mutagen": data.get("dailyMutagen", []),
+            "palaces": raw_palaces,
+        }
         return ZiweiChart(
             # Canonical pinyin key ("" when the soul star is not mapped in
             # spec §5.4 — e.g. 天相 — in which case extract_baseline_signal
@@ -382,17 +433,14 @@ class ZiweiEngine:
             soul_palace_main_star=main_key,
             soul_palace_main_stars=all_main_keys,
             soul_palace_sihua=[],
-            palace_data={
-                "raw_soul_main_star": data.get("soulMainStar", ""),
-                "soul_borrowed": data.get("soulBorrowed", False),
-                "soul_earthly_branch": data.get("soulEarthlyBranch", ""),
-                "body_earthly_branch": data.get("bodyEarthlyBranch", ""),
-                "decadal_mutagen": data.get("decadalMutagen", []),
-                "yearly_mutagen": data.get("yearlyMutagen", []),
-                "monthly_mutagen": data.get("monthlyMutagen", []),
-                "daily_mutagen": data.get("dailyMutagen", []),
-            },
+            palace_data=palace_data,
             source="iztro",
+            soul_earthly_branch=data.get("soulEarthlyBranch", ""),
+            body_earthly_branch=data.get("bodyEarthlyBranch", ""),
+            palaces=raw_palaces,
+            fiveElementsClass=data.get("fiveElementsClass", ""),
+            birth_year=year,
+            gender=gender,
         )
 
     def flow_years_mutagen(self, years, lunar_date, hour, gender):

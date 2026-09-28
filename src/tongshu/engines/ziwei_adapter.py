@@ -162,7 +162,8 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
     main_stars = soul_palace.get('major', [])
     main_star = main_stars[0] if main_stars else ''
     
-    # 构建 ZiweiChart
+    # 构建 ZiweiChart：顶层字段是规则层 canonical contract，
+    # palace_data 保留为旧调用方兼容结构。
     return ZiweiChart(
         soul_palace_main_star=main_star,
         soul_palace_main_stars=main_stars,
@@ -174,6 +175,12 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
             'palaces': palace_data,
         },
         source='iztro',
+        soul_earthly_branch=soul_branch,
+        body_earthly_branch=body_branch,
+        palaces=palace_data,
+        fiveElementsClass=wuxing,
+        birth_year=solar_input.year,
+        gender=solar_input.gender,
     )
 
 

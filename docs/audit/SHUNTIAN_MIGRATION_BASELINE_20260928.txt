@@ -1,0 +1,32 @@
+Shuntian blind/ziwei migration baseline
+Date: 2026-09-28
+D repository: D:\shuntian
+D HEAD before migration: 7eb39fcfe5761fd302e73db97fc88b387db7ae01
+D branch before migration: main
+D branch for this work: maintenance/blind-ziwei-migration-20260928
+Python: 3.11.15
+Node: v24.19.0
+iztro: present at node_modules/iztro
+
+Important pre-existing worktree state:
+- many deleted classic-data files under data/classics/original/
+- modified docs/bots/BOT-TIME/PHASE0_COMPLETE_REPORT.md
+- modified src/tongshu/engines/ziwei/dataset_bridge.py
+- modified src/tongshu/engines/ziwei_adapter.py
+- modified src/tongshu/engines/ziwei_engine.py
+- deleted legacy ziwei tests
+- many untracked audit, blind, engines, scripts, data, and report paths
+These pre-existing paths are outside the migration whitelist and must not be staged.
+
+Source E:\迁移合并 is not a Git repository at its root. The candidate Python project is E:\迁移合并\ziwei_engine, but the E root also contains copied top-level engines/blind/ziwei trees. No E commit provenance is available.
+
+Initial comparison findings:
+- E/D ordinary blind files under top-level blind and blind_engine/blind are byte-identical in sampled/all listed paths.
+- E/D blind evidence segments are duplicate mirror trees with differing roots, not a proven new production version.
+- E side has pycache, node_modules and tongshu.egg-info artifacts; excluded.
+- E side src/tongshu/engines/blind is a newer-generation BlindEngine tree, not API-compatible with D's current src/tongshu/engines/blind package; excluded from direct overwrite.
+- E side src/tongshu/engines/ziwei/engine.py is a facade/new pipeline, not a drop-in replacement for D's top-level ziwei_engine.py production import; excluded from direct overwrite.
+- E top-level engines/ziwei_adapter.py is older than D and loses time-index, auxiliary-star and top-level chart-field fixes; excluded from overwrite.
+- E top-level engines/blind_bazi_engine.py and blind_yingqi.py are older/different variants; excluded from overwrite.
+
+Policy: no directory-level overwrite; only proven incremental files may be migrated. No such ordinary source increment was identified in this baseline.
