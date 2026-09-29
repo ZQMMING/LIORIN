@@ -79,10 +79,14 @@ CHINESE_STAR_TO_KEY = {
 # 十干四化表（传统三合派通行本，禄权科忌）。宫干自化/宫干飞化的依据。
 #
 # 注：此表即传统三合派通行版本，戊科=右弼、庚科=太阴、壬科=左辅。
-# 中州派（王亭之）表见 ziwei_method_profile.SIHUA_TABLE_ZHONGZHOU，
-# 其差异点：戊科=太阳、庚科=天府、壬科=天府（佐辅不化科之论）。
-# 飞星派沿用此传统表（与三合同），其差异在于"宫干→四化→落宫"的飞化机制，
-# 见 rules/feixing_rule_graph.py，不在此处。
+# Z17 收敛（2026-09-14 定稿）后，生产路径只保留 SANHE / QINTIAN 两派，
+# 两派共用本表（见 ziwei_method_profile.SIHUA_TABLE_CLASSIC）；中州派
+# （王亭之）另表已随 Z17 从 method_profile 移除，其差异点为戊科=太阳、
+# 庚科=天府、壬科=天府（佐辅不化科之论）。rules/zhongzhou/ 与
+# rules/feixing/ 两个残留子包已于 2026-09-29 清理移除（Z17 收尾）。
+# 飞星沿用此传统表（与三合同），其差异在于"宫干→四化→落宫"的飞化机制，
+# 见 rules/feixing_rule_graph.py（提供 FlyingTransformFact / PalaceStemFact
+# 共享事实类型，仍被 qintian 与 ZiweiChart 消费）。
 GAN_SIHUA = {
     "甲": ("廉贞", "破军", "武曲", "太阳"),
     "乙": ("天机", "天梁", "紫微", "太阴"),

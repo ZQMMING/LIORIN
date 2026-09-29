@@ -245,6 +245,7 @@ def generate_iztro_charts(
             cwd=str(repo_root),
             capture_output=True,
             text=True,
+            encoding="utf-8",  # node 输出为 UTF-8（含中文星名）；缺省会按 GBK 解码而抛 UnicodeDecodeError
             timeout=60,
         )
         if result.returncode != 0:

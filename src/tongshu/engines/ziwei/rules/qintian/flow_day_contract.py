@@ -42,28 +42,61 @@ class FlowDayContract:
 
 
 def resolve_flow_day(chart, flow_day: tuple[int, int, int]) -> FlowDayContract:
-    """解析流日参数契约。
+    """解析流日参数契约（第二阶段：契约落地，规则仍不接入）。
+
+    数据源约定（不重复调 iztro）：
+        chart 必须由 ``ZiweiEngine.full_chart(lunar_date, hour, gender,
+        flow_day=(y, m, d))`` 构造——该路径已在 Z76 中把流日天干/地支/四化
+        写入 ZiweiChart.flow_day_gan / flow_day_zhi / flow_day_mutagen。
+        本函数只做"从 chart 读出 + 落宫反查 + 来源标注"，不引入任何
+        吉凶判断，也不允许用本命盘干支顶替（fail-closed）。
 
     参数：
-        chart: ZiweiChart（本命盘，需含 palaces 地支映射）
-        flow_day: (年, 月, 日) 阳历日
+        chart: ZiweiChart（需含 palaces 地支映射；流日字段须经
+            full_chart(flow_day=...) 填充）
+        flow_day: (年, 月, 日) 阳历日，须与构造 chart 时传入的一致
 
     返回：FlowDayContract
+
+    异常：
+        ValueError: chart 未携带流日干支（调用方未经 full_chart(flow_day=)
+            构造），拒绝凭空推断。
     """
-    from ...ziwei_engine import ZiweiEngine
-    import subprocess, json
-
     y, mo, d = flow_day
-    engine = ZiweiEngine()
 
-    # 调 iztro 拿 daily 层（含流日干支+四化）
-    # 需要出生农历日期——从 chart.birth_year 反推不了农历，
-    # 但 flow_day_mutagen 已经接受阳历日参数，直接复用。
-    # 这里多取一步：拿 daily.heavenlyStem/earthlyBranch
-    # （flow_day_mutagen 只返回 mutagen，我们要干支本身）
-    # 用 chart 里没有的 birth lunar——调用方应传入。
-    # 本阶段：先用 flow_day_mutagen 拿四化，干支由调用方提供或 iztro 直接返回。
-    raise NotImplementedError(
-        "Z76第一阶段：resolve_flow_day 需要调用方提供出生农历日期才能调 iztro daily。"
-        "本模块只钉契约设计，实际跑通留待接入 full_chart(flow_day=...) 时实现。"
+    gan = str(getattr(chart, "flow_day_gan", "") or "")
+    zhi = str(getattr(chart, "flow_day_zhi", "") or "")
+    mutagen = list(getattr(chart, "flow_day_mutagen", []) or [])
+
+    if not gan or not zhi:
+        raise ValueError(
+            "resolve_flow_day: chart 未携带流日干支。请先用 "
+            "ZiweiEngine.full_chart(..., flow_day=(年,月,日)) 构造命盘，"
+            "本契约拒绝凭空推断（Z76 铁律：只钉参数，不反套规则）。"
+        )
+
+    # 流日地支落本命盘哪一宫（与 palace_stems 的 branch 规范化口径一致）
+    palaces = getattr(chart, "palaces", {}) or {}
+    position = ""
+    for pname, pdata in palaces.items():
+        branch = str(pdata.get("branch", "")).strip("'\"")
+        if branch and branch == zhi:
+            position = pname
+            break
+
+    return FlowDayContract(
+        flow_day_date=f"{y}-{mo:02d}-{d:02d}",
+        flow_day_gan=gan,
+        flow_day_zhi=zhi,
+        flow_day_mutagen=mutagen,
+        day_position_palace=position,
+        source_of_gan="iztro horoscope daily.heavenlyStem（阳历日干支口径）",
+        source_of_zhi="iztro horoscope daily.earthlyBranch（阳历日地支口径）",
+        applicable_sect=[],  # 第一阶段铁律：不接 Rule/Evidence/Assertion
+        sihua_gan_source=(
+            "UNRESOLVED —《飞星秘仪》未检索到流日四化天干的明确原文；"
+            "iztro daily.mutagen 用流日干支，属通用口径而非钦天口径，"
+            "仅供参数钉位，禁止据此断事（等原典取证后升级为第二阶段规则接入）"
+        ),
+        notes="契约层输出，无吉凶语义；南北派均未接入流日规则。",
     )
