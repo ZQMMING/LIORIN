@@ -146,3 +146,15 @@ def match_rules(chart, blind_result, yingqi_result=None) -> List[Dict]:
             {"muku_branches": muku_branches}))
 
     return hits
+
+
+def coverage_report() -> dict:
+    """Generate coverage report for blind rule registry."""
+    from .blind_rule_registry import RULE_REGISTRY, FORBIDDEN_RULES, COUNTER_EXAMPLES
+    return {
+        'registry_total': len(RULE_REGISTRY),
+        'established': sum(1 for r in RULE_REGISTRY.values() if getattr(r, 'status', '') == 'ESTABLISHED'),
+        'forbidden': len(FORBIDDEN_RULES),
+        'counter_examples': len(COUNTER_EXAMPLES),
+        'rule_ids': sorted(RULE_REGISTRY.keys()),
+    }

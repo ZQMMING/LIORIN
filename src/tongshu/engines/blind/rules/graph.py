@@ -57,6 +57,8 @@ class RuleGraph:
                     invalidates=item.get("invalidates", []),
                     relations=item.get("relations", []),
                     judgment=judgment,
+                    classic=item.get("classic", ""),
+                    source_verified=item.get("source_verified", False),
                     evidence_refs=item.get("evidence_refs", []),
                 ))
         self.rules = rules

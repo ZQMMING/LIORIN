@@ -1,0 +1,188 @@
+[
+  {
+    "rule_id": "BL-ZG-001",
+    "requires": [
+      "stem:JIA",
+      "branch:WU"
+    ],
+    "invalidates": [],
+    "judgment": "甲日坐午火为羊刃，主性格刚烈、事业心强",
+    "classic": "盲派口诀·甲日坐午",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-ZG-002",
+    "requires": [
+      "stem:JIA",
+      "branch:WU"
+    ],
+    "invalidates": [
+      "BL-ZG-001"
+    ],
+    "judgment": "甲日坐午(反例胜出)，主刚烈需防冲克",
+    "classic": "盲派口诀·甲日坐午·反例",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-ZG-003",
+    "requires": [
+      "stem:YI",
+      "branch:YOU"
+    ],
+    "invalidates": [],
+    "judgment": "乙日坐酉金为七杀，主刚直",
+    "classic": "盲派口诀·乙日坐酉",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-CAI-001",
+    "requires": [
+      "tg:正财",
+      "branch:ZI"
+    ],
+    "invalidates": [],
+    "judgment": "正财坐子水，财入库",
+    "classic": "盲派口诀·财入库",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-CAI-002",
+    "requires": [
+      "zuo_gong:财制比劫"
+    ],
+    "invalidates": [],
+    "judgment": "财制比劫，主理财",
+    "classic": "盲派口诀·财制比劫",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-GUAN-001",
+    "requires": [
+      "zuo_gong:正官坐日"
+    ],
+    "invalidates": [],
+    "judgment": "正官坐日，主官运",
+    "classic": "盲派口诀·正官坐日",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-GUAN-002",
+    "requires": [
+      "zuo_gong:七杀贴身"
+    ],
+    "invalidates": [],
+    "judgment": "七杀贴身，主刚烈",
+    "classic": "盲派口诀·七杀贴身",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-SHISANG-001",
+    "requires": [
+      "zuo_gong:食伤生财"
+    ],
+    "invalidates": [],
+    "judgment": "食伤生财，主才华变现",
+    "classic": "盲派口诀·食伤生财",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-SHISANG-002",
+    "requires": [
+      "zuo_gong:食伤制杀"
+    ],
+    "invalidates": [],
+    "judgment": "食伤制杀，主智勇双全",
+    "classic": "盲派口诀·食伤制杀",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-YIN-001",
+    "requires": [
+      "zuo_gong:印绶护身"
+    ],
+    "invalidates": [],
+    "judgment": "印绶护身，主母缘厚",
+    "classic": "盲派口诀·印绶护身",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-YIN-002",
+    "requires": [
+      "zuo_gong:偏印夺食"
+    ],
+    "invalidates": [],
+    "judgment": "偏印夺食，主学业波折",
+    "classic": "盲派口诀·偏印夺食",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-HE-001",
+    "requires": [
+      "zuo_gong:合正财"
+    ],
+    "invalidates": [],
+    "judgment": "合正财，主财缘",
+    "classic": "盲派口诀·合正财",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-HE-002",
+    "requires": [
+      "zuo_gong:合正财"
+    ],
+    "invalidates": [],
+    "judgment": "合正财(强化)，主财缘稳固",
+    "classic": "盲派口诀·合正财·强化",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-HUA-001",
+    "requires": [
+      "zuo_gong:印化官杀"
+    ],
+    "invalidates": [],
+    "judgment": "印化官杀，主压力化解",
+    "classic": "盲派口诀·印化官杀",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-MU-001",
+    "requires": [
+      "zuo_gong:墓库收物"
+    ],
+    "invalidates": [],
+    "judgment": "墓库收物，主聚财",
+    "classic": "盲派口诀·墓库收物",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-ZHI-001",
+    "requires": [
+      "zuo_gong:比劫制财"
+    ],
+    "invalidates": [],
+    "judgment": "比劫制财(一层功量)，主竞争求财",
+    "classic": "盲派口诀·比劫制财",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-ZHI-002",
+    "requires": [
+      "zuo_gong:比劫制财"
+    ],
+    "invalidates": [],
+    "judgment": "比劫制财(两层功量)，主竞争加剧",
+    "classic": "盲派口诀·比劫制财·强化",
+    "source_verified": false
+  },
+  {
+    "rule_id": "BL-MU-002",
+    "requires": [
+      "branch:CHEN"
+    ],
+    "invalidates": [],
+    "judgment": "辰子墓库定位，主水墓",
+    "classic": "盲派口诀·墓库定位",
+    "source_verified": false
+  }
+]

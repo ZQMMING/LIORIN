@@ -63,6 +63,8 @@ class RuleMatcher:
             conditions.add(f"ti_in:{b}")
         for b in ctx.yong_branches:
             conditions.add(f"yong_in:{b}")
+        for method in ctx.zuo_gong_methods:
+            conditions.add(f"zuo_gong:{method}")
         for b1, b2 in self._branch_pairs(ctx.branches):
             rel = self._branch_relation(b1, b2)
             if rel:
