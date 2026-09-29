@@ -1,0 +1,41 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual environments
+.venv/
+venv/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Secrets
+.env
+*.key
+
+# Node
+node_modules/
+
+# Large data / audit snapshots
+*.bsp
+docs/audit/*_STATUS_*.txt
+docs/audit/*_DIFF_STAT_*.txt
+docs/audit/*_WORKTREE_*.patch
+docs/audit/*_PREEXISTING_*.patch
+
+# Backups
+*.bak
+*.bak_*

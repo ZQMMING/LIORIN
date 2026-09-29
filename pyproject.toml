@@ -1,0 +1,24 @@
+[project]
+name = "shuntian-bazi"
+version = "1.0.0"
+description = "Shuntian (LIORIN) Bazi 八字排盘引擎 standalone slice — minimal engine + facts + tests"
+requires-python = ">=3.11"
+dependencies = [
+    "sxtwl>=1.0.0",
+    "lunar_python>=1.4.8",
+    # time 子包全球经纬度入口
+    "timezonefinder>=6.0",
+    "tzdata>=2024.1; platform_system == 'Windows'",
+    # 测试
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
