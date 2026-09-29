@@ -1,0 +1,20 @@
+[project]
+name = "shuntian-huangli"
+version = "1.0.0"
+description = "Shuntian (LIORIN) Huangli 黄历引擎 standalone slice — 独立可运行黄历排盘 + 测试"
+requires-python = ">=3.11"
+dependencies = [
+    "lunar_python>=1.4.8",
+    # 测试
+    "pytest>=8.0",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

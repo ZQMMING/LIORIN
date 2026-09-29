@@ -1,0 +1,59 @@
+{
+  "schema_version": "1.0.0",
+  "spec_refs": ["V4.0.1 §7.4"],
+  "note": "黄历不是静态文案库。每个字段绑定来源;逐条经典引证由 Knowledge Admin 复核后补录,未核验一律标「待核对」,不伪造。",
+  "sources": [
+    {
+      "source_id": "lunar_python",
+      "label": "lunar-python (6tail 黄历)",
+      "version": "1.4.8",
+      "license": "MIT",
+      "provider": "https://github.com/6tail/lunar-python",
+      "fields": [
+        "year_ganzhi", "month_ganzhi", "day_ganzhi",
+        "lunar_month", "lunar_day", "jie_qi", "prev_jie_qi", "next_jie_qi",
+        "jianchu", "zhishen", "zhishen_type", "zhishen_luck",
+        "xiushu", "xiushu_luck",
+        "chong", "chong_shengxiao", "sha",
+        "sheng_xiao", "nian_na_yin", "month_na_yin", "day_na_yin",
+        "peng_zu_gan", "peng_zu_zhi",
+        "position_xi", "position_fu", "position_cai",
+        "yi", "ji", "ji_xiang", "xiong_sha"
+      ],
+      "classical_basis": "建除十二神/黄道黑道值神/二十八宿/宜忌/冲煞 源自传统择日体系(玉匣记 等通行版本);lunar-python 未逐条标注经典出处",
+      "verification_status": {
+        "independent": "建除/值神(黄道黑道)/冲/煞/纳音 已按通行口诀独立核对(2026-08-18, Claude);二十八宿/宜忌/吉神凶煞 待独立核对",
+        "note": "逐条经典引证(《玉匣记》等具体条文)待 Knowledge Admin 复核后补录"
+      },
+      "imported_by": "Claude 2026-08-18",
+      "status": "registered"
+    },
+    {
+      "source_id": "day_stem_branch_anchor",
+      "label": "日柱干支锚定(1900-01-01 甲戌)",
+      "version": "legacy v1 (unchanged)",
+      "fields": ["day_stem", "day_branch"],
+      "classical_basis": "六十甲子日柱循环",
+      "note": "与 pipeline/bazi 共用锚点,保持 golden 语义稳定;与 lunar_python 日干支做硬一致校验(漂移即失败,不静默输出冲突数据)",
+      "imported_by": "Claude 2026-08-18",
+      "status": "registered"
+    },
+    {
+      "source_id": "ganzhi_daily_hexagram",
+      "label": "六十甲子配卦（黄历值日卦）",
+      "version": "1.0.0",
+      "license": "internal",
+      "fields": [
+        "daily_hexagram", "daily_hexagram_upper", "daily_hexagram_lower",
+        "daily_hexagram_moving", "daily_hexagram_changed"
+      ],
+      "classical_basis": "六十甲子配卦口诀：甲子甲午坤乾见，乙丑乙未嗑井连…癸酉癸卯渐妹添…此是玄空真秘诀。日柱干支直接映射固定卦象，与年月日无关，是多数黄历网站的标准当日卦体系。",
+      "verification_status": {
+        "independent": "癸酉→风山渐 已由 2026-06-28 和 2026-08-27 两个癸酉日在星座百科/抖音黄历号/乾元日历/汉程测试等多源交叉验证(2026-08-27)；完整60映射表源自易先生配卦表与口诀互证",
+        "note": "区别于梅花易数时间起卦(用于占卜问事)和河洛理数流日卦(个性化)；六十甲子配卦为黄历值日卦，无动爻变卦"
+      },
+      "imported_by": "MainAgent 2026-08-27",
+      "status": "registered"
+    }
+  ]
+}
