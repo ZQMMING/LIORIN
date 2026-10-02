@@ -125,7 +125,20 @@ def build_tian_he(pillars: Dict[str, Any], facts: Dict[str, Any], extra_pillars=
             rival_pos = competitors[0]['he_subject_pos']
             pos_order = {'year': 0, 'month': 1, 'day': 2, 'hour': 3}
             sp, rp = pos_order.get(subject_pos, 0), pos_order.get(rival_pos, 0)
-            is_remote = abs(sp - rp) >= 2  # 隔两位以上=遥隔
+            # PATCH-HE-REMOTE-1 (2026-10): 日主参与合时, 不按「两争者相隔」判遥隔。
+            #   原判只看两个【争合干】的距离, 漏掉 target 位置, 导致:
+            #   PZ-0023 丙戌壬辰丁未壬寅 两壬(月/时)合一日主丁(日),
+            #     两壬位差 |1-3|=2 被判「隔位不争妒」, 与原断
+            #     「两壬夹丁, 为争合妒合」(PZZQ徐注 L541-543)正相反。
+            #   日主既在合中, 两争者夹日主即「夹」, 非「隔」:
+            #     隔位说的是【日主被隔开】, 夹是【日主居中】, 二者相反。
+            #   依据: PZZQ L536「两乙合庚, 甲日隔之, 仍作合煞留官, 无减福也」
+            #         —— 该句主语是【日主被隔】, 故日主参与合时应优先判争。
+            #   影响面见 tools/verify_he_remote.py(独立进程实测)。
+            if pair.get('is_daymaster_self_he'):
+                is_remote = False   # 日主在合中 -> 两争者夹日主 = 争, 不作隔位
+            else:
+                is_remote = abs(sp - rp) >= 2  # 隔两位以上=遥隔
             pair['is_competition'] = not is_remote  # 隔位不作争妒
             pair['competition_type'] = '争合' if not is_remote else '隔位不争妒'
         else:

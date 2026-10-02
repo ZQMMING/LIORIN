@@ -29,13 +29,13 @@ from typing import Any, Dict, List, Optional
 
 from shared_types.fail_closed import FailClosedReason, FailClosedError
 
-# 人元司令藏干表（通行定式；L0 hidden_stems 若提供则优先）
-BRANCH_HIDDEN = {
-    "子": ["癸"], "丑": ["己", "癸", "辛"], "寅": ["甲", "丙", "戊"],
-    "卯": ["乙"], "辰": ["戊", "乙", "癸"], "巳": ["丙", "庚", "戊"],
-    "午": ["丁", "己"], "未": ["己", "丁", "乙"], "申": ["庚", "壬", "戊"],
-    "酉": ["辛"], "戌": ["戊", "辛", "丁"], "亥": ["壬", "甲"],
-}
+# 人元司令藏干表（L0 hidden_stems 若提供则优先）
+# 2026-09-30: 改为读 LIORIN vendor，消除第二数据源。
+#   原硬编码的 巳=["丙","庚","戊"] 中/余气颠倒（应 丙(本) 戊(中) 庚(余)），
+#   会在 L0 未传 hidden 时静默给出错误本气。此处不再独立维护副本。
+from engines.l0_paipan import branch_hidden_stems as _branch_hidden_stems
+
+BRANCH_HIDDEN = _branch_hidden_stems()
 
 STEM_ELEMENT = {
     "甲": "木", "乙": "木", "丙": "火", "丁": "火", "戊": "土",

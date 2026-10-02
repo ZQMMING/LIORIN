@@ -58,7 +58,7 @@ def build_wangshuai_structure(
     只输出多维结构事实, 不输出综合裁决.
     """
     from engines.common.wangshuai_multidim import (
-        WUXING, SUPPORT_TG, DRAIN_TG, CONTROL_TG,
+        WUXING, SUPPORT_TG, DRAIN_TG, CONTROL_TG, _WO_KE,
         _sheng_wo, _wo_sheng,
     )
 
@@ -146,12 +146,20 @@ def build_wangshuai_structure(
                 benqi = stems[0]
                 benqi_wx = WUXING.get(benqi, '')
                 if benqi_wx == dm_wx:
+                    # 同我 = 比劫 = 同党
                     support_count += 1
                 elif benqi_wx == _sheng_wo(dm_wx):
+                    # 生我 = 印 = 同党
                     support_count += 1
                 elif benqi_wx == _wo_sheng(dm_wx):
+                    # 我生 = 食伤 = 泄
+                    drain_count += 1
+                elif benqi_wx == _WO_KE.get(dm_wx):
+                    # 我克 = 财 = 泄耗 (原落 else 被误计为克我, bug 修复)
+                    # 依据: PZZQ L241「财为我克」; 五行生克「我克者为财」
                     drain_count += 1
                 else:
+                    # 克我 = 官杀 = 敌党
                     control_count += 1
 
         total_support = support_count

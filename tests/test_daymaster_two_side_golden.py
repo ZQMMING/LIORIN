@@ -43,9 +43,9 @@ check('官杀 present(申藏庚)', op_members['GUANSHA']['present'] is True)
 # 3. root block
 root = ts['sides'][DAYMASTER_SIDE]['root']
 check('根 present(寅禄辰余气)', root['present'] is True)
-check('根柱位含月日', set(root['root_pillars']) == {'month', 'day'})
+check('根柱位含月日时(甲子特例TONG_GEN.001: 子亦为印根轻根)', set(root['root_pillars']) == {'month', 'day', 'hour'})
 check('struck 根(寅被申冲)', root['struck_root_pillars'] == ['month'])
-check('combined 根(辰入三合)', root['combined_root_pillars'] == ['day'])
+check('combined 根(辰入三合; 甲子特例下子亦入申子辰三合/半合)', root['combined_root_pillars'] == ['day', 'hour'])
 
 # 4. 边界: 无众寡/成势/胜负/去取/计数/STRONG/WEAK
 blob = json.dumps(ts, ensure_ascii=False)
