@@ -46,7 +46,7 @@ def _ling_state(month_wx: str, wx: str) -> str:
         return '相'
     if WX_SHENG[wx] == month_wx:
         return '休'
-    if WX_KE[month_wx] == wx:
+    if WX_KE[wx] == month_wx:
         return '囚'
     return '死'  # 令所克者死
 

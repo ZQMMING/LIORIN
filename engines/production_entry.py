@@ -6,7 +6,9 @@ l0_fact_builder.build() 是内部计算 primitive, 不由外部直接调用作�
 串联: L0 Fact → 160-B多维网络 → 160-C 38 Query (不判身强/用神/吉凶).
 """
 from dataclasses import dataclass, field
-from typing import Any, Dict
+from typing import Any, Dict, Optional
+
+import sys
 
 
 @dataclass(frozen=True)
@@ -101,14 +103,38 @@ def _build_meta_outputs(pillars: Dict[str, list], facts: Dict[str, Any]) -> Dict
         root_effectiveness = filter_root_effectiveness(root_classes, facts['combination_facts'], pillars, facts['day_stem'])
 
         # 构建用神四轨并行层需要的参数
+        # PATCH-GAP1 (2026-09-30): 补 pillars / wuxing_power / spectrum / special。
+        # 此前 extra_data 只传 climate + bingyao，而 _build_yongshen_tracks 的接入条件
+        # 要求 pillars/wuxing_power/spectrum/special/climate 五项齐备，条件永不满足，
+        # 致 ZPZQ/QTBJ/SFTK/DTS 四轨全部落进占位轨(note='待接入yongshen_multi_track')。
+        # 这是接线缺口，不是字段缺失 —— yongshen_multi_track 本身已实现且可跑通。
         try:
             from engines.common.climate_structure import build_climate_structure
             from engines.common.bingyao_layer import build_bingyao_layer
+            from engines.common.daymaster_power_structure import build_power_structure
+            from engines.common.special_pattern import build_special_patterns
 
             climate = build_climate_structure(pillars, facts)
             bingyao = build_bingyao_layer(facts, [])
 
+            # spectrum: 日主力量结构(160-A)，只组织已有 L0 Fact，不评分不权重
+            try:
+                spectrum = build_power_structure(pillars)
+            except Exception:
+                spectrum = None
+
+            # special: 特殊格局结构定性(只打标签，不判用神吉凶成败)
+            try:
+                special = build_special_patterns(
+                    pillars, facts, facts.get('wuxing_power'), facts.get('tian_he'), climate)
+            except Exception:
+                special = None
+
             extra_data = {
+                'pillars': pillars,
+                'wuxing_power': facts.get('wuxing_power'),
+                'spectrum': spectrum,
+                'special': special,
                 'climate': climate,
                 'bingyao': bingyao,
             }
@@ -126,7 +152,7 @@ def _build_meta_outputs(pillars: Dict[str, list], facts: Dict[str, Any]) -> Dict
         }
 
 
-def production_entry(chart: Any) -> Dict[str, Any]:
+def production_entry(chart: Any, climate_table: Optional[Dict] = None) -> Dict[str, Any]:
     """唯一生产入口.
     G-P01 类型 = FrozenCanonicalBaziChart
     G-P02 canonical/frozen 身份有效
@@ -201,7 +227,7 @@ def production_entry(chart: Any) -> Dict[str, Any]:
         _by = build_bingyao_layer(facts, l1.get('queries', []))
         _deb = resolve_primary_bing(facts, _by['bing_list'])
         _zg = resolve_zhuangui(facts, _deb)
-        _cli = build_climate_candidates(facts)
+        _cli = build_climate_candidates(facts, external_table=climate_table)
         _yy = resolve_yongyao(facts, _zg, _cli)
         zhenglun = {'bingyao': _by, 'debate': _deb, 'zhuangui': _zg,
                     'climate_static': _cli, 'yongyao': _yy}

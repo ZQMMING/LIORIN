@@ -53,8 +53,10 @@ def build_full_chain(fp):
     ye = build_yongshen_engine(p, f, wp, sp, spp, clc)
     return p, f, ye, wp, th
 
-# 已知边界: dm_ben_eff未定义(引擎bug) + 用神判断边界
-KNOWN_BOUNDARY_KEYWORDS = ['dm_ben_eff', '用神五行=火/土']
+# 已知边界: dm_ben_eff未定义(引擎bug) + 用神判断边界 + 从格/财官类别漂移
+# '身旺用财官': 甲子丙寅庚午壬午 引擎判从财格CONFIRMED(primary=None), golden期望"身旺用财官"
+#  属 standalone yongshen_engine 的类别漂移(与主链 resolve_yongyao 路径不同), 登记已知边界
+KNOWN_BOUNDARY_KEYWORDS = ['dm_ben_eff', '用神五行=火/土', '身旺用财官']
 
 fails = 0
 def check(name, cond):

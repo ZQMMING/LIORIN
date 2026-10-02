@@ -101,10 +101,16 @@ BING_TYPES = {
         'desc': '比劫数量达到3个或以上, 日主同类成势, 无论是否有财',
     },
     'YIN_DUO_MAI_ZI': {
-        'name': '印多埋子(母多灭子)',
-        'classic': 'DTS 母多灭子 / 土多金埋水多木浮',
+        'name': '印多埋子',
+        'classic': 'DTS 反局章 君赖臣生(行445) 土重金埋/金旺则水浊 同族',
         'desc': '印星成党且力量远大于日主, 印多反埋日主, 需财星疏印',
-    },
+        # 归属订正(2026-10):
+        #   DTS 行449「木母也, 火子也, 太旺谓之慈母, 反使火炽百焚灭, 是谓灭子」属反局章
+        #   【第三组 母慈灭子】, 其「母」= 生我之五行(木母火子), 与印星无关。
+        #   本条讲【印星成党埋日主】, 归【第一组 君赖臣生】(行445):
+        #   「土重金埋」「金旺则水浊」等, 病方为生君者太过, 药为克病方者。
+        #   -> 病名不再用「母多灭子」, 避免与 DTS 第三组同形异指。
+        },
     'ZHI_SHA_TAI_GUO': {
         'name': '制杀太过',
         'classic': 'PZZQ4106 制煞过重同样成病',
@@ -305,15 +311,33 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
                 hit.append('日主根轻')
         return (bool(hit), hit)
 
-    # 1. 财多身弱 (统一收紧触发)
+    # 1. 财多身弱 (统一收紧触发: 财当令/成党 + 财相对压过日主 + 日主无根/根轻)
     cai_wx = KE.get(daymaster_element, '')
     ok, matched = _kexie_trigger(cai_wx, 'CAIDUO-SHENRUAN', True)
+    _cai_combo = 0
+    if not ok:
+        # 根轻但财当令/本气根: 原典"财星当令或成党, 日主失令无根/根轻" — 根轻(LIGHT/NONE)亦报病
+        _caiT, _caiB = _tou_ben(cai_wx)
+        _cai_combo = _caiT + _caiB + _ju_piao(cai_wx)
+        _mm_q = facts.get('month_qi_element', '')
+        _cai_dangling = (_mm_q == cai_wx)
+        _cai_benshi = (_caiB >= 1)
+        _no_heavy = not has_heavy_root
+        if _no_heavy and (_cai_dangling or _cai_benshi):
+            ok = True
+            matched = ['财当令/本气根(他干%d+本根%d+局票%d=%d, 当令=%s), 日主无HEAVY根(root_class=%s)'
+                       % (_caiT, _caiB, _ju_piao(cai_wx), _cai_combo, _cai_dangling,
+                          '/'.join(sorted({v['class'] for v in (facts.get('root_weight_class_facts') or {}).values()})))]
+    else:
+        # _kexie_trigger 已触发, 算 combo 供 overwang_exempt 用
+        _cai_combo = _tou_ben(cai_wx)[0] + _tou_ben(cai_wx)[1] + _ju_piao(cai_wx)
     if ok:
         b = BING_TYPES['CAI_DUO_SHEN_RUO']
         bing_list.append({
             'bing_id': 'CAI_DUO_SHEN_RUO',
             'name': b['name'], 'desc': b['desc'], 'classic': b['classic'],
             'evidence': [b['classic']], 'matched_facts': matched,
+            'overwang_exempt': (_cai_combo >= DANG_COMBO),  # 财成党病: 喜神过滤过旺例外(combo>=4保留)
         })
 
     # 2. 杀重身轻 (统一收紧触发)
@@ -498,7 +522,23 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             'evidence': [b['classic']], 'matched_facts': yin_matched,
         })
 
+    # STEP-1 (2026-10) L4→P1 接口解耦:
+    #   依《架构层规范》§2.7 铁律1「病分五域, 跨域不冲突」——
+    #   格局域的 xi_wx/ti_wx 只能否决格局域的病, 不得否决旺衰域的病。
+    #   原实现用 L4 的 xi_wx/ti_wx 跨域过滤全部病类, 使 L4 一旦判错 xi_wx,
+    #   其错误会顺带删掉其他域已成立的病机(如: 财格 xi_wx=['水'] 删掉 YIN_DUO_MAI_ZI
+    #   印多埋子 —— 而该盘水已泛滥, 正是 DTS FAN_JU.001 行445「水泛木浮」之病)。
+    #   本 step【不删判定, 只解耦】: 过滤仍按域生效, 但仅限格局域病类;
+    #   旺衰域病不受 L4 过滤。Step 2 落病域字段后, 改为按 病域 字段判定, 不再硬编码。
+    #   boundary: 本 step 不引入新判据, 不改任何触发门槛, 只改过滤的作用域。
+    _WS_DOMAIN = {
+        'CAI_DUO_SHEN_RUO', 'SHA_ZHONG_SHEN_QING', 'XIE_QI_TAI_ZHONG',
+        'BIJIE_CHENG_DANG', 'YIN_DUO_MAI_ZI',
+    }
+
     # 格体过滤: 伤官带煞格的格体五行(伤官+煞)全病类过滤; 过旺例外(combo>=6)保留
+    # 财格: 财是格体, 但财成党(combo>=DANG_COMBO)时反为"财多身弱"病须保留
+    # 其他格体五行 combo>=6 保留
     _gc = facts.get('ge_cheng') or {}
     _ti_wx = _gc.get('ti_wx') or []
     if _ti_wx:
@@ -508,16 +548,27 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
                 'SHANGGUAN_JIAN_GUAN': sha_wx}
         _kept = []
         for _b in bing_list:
+            if _b.get('bing_id') in _WS_DOMAIN:   # STEP-1: 旺衰域不受 L4 过滤
+                _kept.append(_b)
+                continue
             _bw = _bwx.get(_b['bing_id'], '')
             if _bw and _bw in _ti_wx:
                 _bt, _bb = _tou_ben(_bw)
-                if (_bt + _bb + _ju_piao(_bw)) < 6:
+                _combo = _bt + _bb + _ju_piao(_bw)
+                # 财多身弱: 财当令/本气根+日主无HEAVY根 即保留(原典"财星当令或成党,日主失令无根/根轻")
+                _mm_q = facts.get('month_qi_element', '')
+                _cai_caibi = (_bw == cai_wx) and (_combo >= 2 or _mm_q == cai_wx)
+                _no_heavy = not has_heavy_root
+                if _b.get('overwang_exempt') or (_cai_caibi and _no_heavy):
+                    pass  # 财成党/当令病: 保留
+                elif _combo < 6:
                     continue
-            _kept.append(_b)
+                _kept.append(_b)
         bing_list = _kept
 
     # 喜神过滤(与ti_wx并列): xi_wx=成格路径喜神五行; 病五行∈xi_wx 且非过旺例外(combo<6) -> 不报
     # 破格时格局层同时清空ti_wx/xi_wx(同失效); 过旺例外(combo>=6)保留, 独立生效
+    # 财成党病(财多身弱/财格喜神过旺): overwang_exempt=True 时按过旺例外(combo>=DANG_COMBO保留), 不被喜神过滤清掉
     _xi_wx = _gc.get('xi_wx') or []
     if _xi_wx:
         _xwx = {'CAI_DUO_SHEN_RUO': cai_wx, 'SHA_ZHONG_SHEN_QING': sha_wx,
@@ -526,12 +577,20 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
                 'SHANGGUAN_JIAN_GUAN': sha_wx, 'XIAO_DUO_SHI': yin_wx}
         _kept = []
         for _b in bing_list:
+            if _b.get('bing_id') in _WS_DOMAIN:   # STEP-1: 旺衰域不受 L4 喜神过滤
+                _kept.append(_b)
+                continue
             _bw = _xwx.get(_b['bing_id'], '')
             if _bw and _bw in _xi_wx:
                 _bt, _bb = _tou_ben(_bw)
-                if (_bt + _bb + _ju_piao(_bw)) < 6:
+                _combo = _bt + _bb + _ju_piao(_bw)
+                if _b.get('overwang_exempt') and _combo >= DANG_COMBO:
+                    pass  # 财成党病: 保留
+                elif _combo < 6:
                     continue
-            _kept.append(_b)
+                _kept.append(_b)
+            else:
+                _kept.append(_b)
         bing_list = _kept
 
     # 制化过滤: zhi_wx(制神)克候选病五行→降级; hua_wx(化神)被候选病五行生→降级

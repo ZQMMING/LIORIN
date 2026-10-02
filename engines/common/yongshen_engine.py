@@ -10,6 +10,7 @@ cs 成势=当令旺/本气>=2/成局/透干>=2且有气; 专旺食伤顺泄须�
 吉凶前端拦截, 本层只给真实取用结构; 不接 production_entry。
 """
 import re
+from engines.common.root_grade_boundary import to_root_grade
 WUXING='木火土金水'
 SHENG={'木':'火','火':'土','土':'金','金':'水','水':'木'}
 KE={'木':'土','土':'水','水':'火','火':'金','金':'木'}

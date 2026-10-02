@@ -120,8 +120,18 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     dm_ben_eff = max(0, dm_ben - len(_ben_branches(pw, dm_wx) & struck))
     yin_ben_eff = max(0, yin_ben - len(_ben_branches(pw, yin_wx) & struck))
     root_struck = bool(struck)
-    # 合局化去身根/印根: 仍为有效本气根(BEN)的支入完整三合/三会、化神为财或官杀(克泄方), 该根从化神(T32)
+    # 合局化去身根/印根: 入完整三合/三会、化神为财或官杀(克泄方)的支, 该根从化神
+    #   覆盖本气(BEN)/中气(ZHONG)/余气(YU)三级 —— 依据:
+    #     DT-0348(癸亥乙卯己未丁卯, DTS准神)「未土又会木局, 不得不从杀矣」
+    #       印火在未为中气根, 未入亥卯未木局 -> 印根被化 -> 从杀
+    #     PZ-0232(癸卯丁巳庚寅庚辰) 印土辰为本气根, 辰/寅入寅卯辰木局 -> 从杀
+    #     PZ-0137(戊辰甲寅壬戌丙午) 印金戌为中气根, 戌入寅午戌火局(火克金) -> 从财
+    #   反证(不入局则不算被化):
+    #     PZ-0002(丁卯丙午庚午己卯) 印土午中气根, 无三合三会 -> 不从(沈孝瞻L187原案)
+    #     PZ-0001(癸酉辛酉乙丑辛巳) 印水丑中气根, 丑入巳酉丑金局, 金为官杀亦化 ->
+    #       该盘判据另有争点(见 rootless 注释), 但化根机制本身按本条统一处理。
     _hh_dm, _hh_yin = set(), set()
+    _ROOT_TAGS = ('BEN', 'ZHONG', 'YU')   # 本气/中气/余气 三级均会被合局化去
     _cf0 = facts.get('combination_facts', {}) or {}
     for _items in (_cf0.get('sanhe', []), _cf0.get('sanhui', [])):
         for _it in _items:
@@ -130,19 +140,50 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             _g = _mm.groups(); _jwx = _g[3]
             if _jwx not in (cai_wx, gs_wx): continue
             for _br in _g[:3]:
-                if BRANCH_WX.get(_br) == dm_wx and str(dm.get('root_detail', {}).get(_br, '')).startswith('BEN'):
+                _tag = str((dm.get('root_detail', {}) or {}).get(_br, ''))
+                if BRANCH_WX.get(_br) == dm_wx and _tag in _ROOT_TAGS:
                     _hh_dm.add(_br)
-                elif BRANCH_WX.get(_br) == yin_wx and str(yin.get('root_detail', {}).get(_br, '')).startswith('BEN'):
+                _ytag = str((yin.get('root_detail', {}) or {}).get(_br, ''))
+                if BRANCH_WX.get(_br) == yin_wx and _ytag in _ROOT_TAGS:
                     _hh_yin.add(_br)
+    # 化根后重算各级根数(中气/余气同样被扣)
+    _hh_cnt_yin = len(_hh_yin)
+    _yin_zhong_eff = max(0, int(yin.get('zhong_n', 0)) - sum(
+        1 for _b in _hh_yin if str((yin.get('root_detail', {}) or {}).get(_b, '')) == 'ZHONG'))
+    _yin_yu_eff = max(0, int(yin.get('yu_n', 0)) - sum(
+        1 for _b in _hh_yin if str((yin.get('root_detail', {}) or {}).get(_b, '')) == 'YU'))
     if _hh_dm or _hh_yin:
-        dm_ben_eff = max(0, dm_ben_eff - len(_hh_dm))
-        yin_ben_eff = max(0, yin_ben_eff - len(_hh_yin))
+        dm_ben_eff = max(0, dm_ben_eff - sum(
+            1 for _b in _hh_dm if str((dm.get('root_detail', {}) or {}).get(_b, '')) in _ROOT_TAGS))
+        yin_ben_eff = max(0, yin_ben_eff - _hh_cnt_yin)
         root_struck = root_struck or bool(_hh_dm or _hh_yin)
     # V7.17: 增加yin_stem==0——印星透干即使根被冲仍有用(原典L1430癸生卯月酉被卯冲, 辛金透干以印为夫, 不应从财)
     # V7.17(b): rootless门槛保守——印透即不走从格(正格优先: 印是正格常见用神, 财格用印/阳刃制刃/财旺生官等)
     #          PZZQ4941"印须通根才不从"是从格成立后内部的破格判定(ge_jie_layer印不从fallthrough), 非rootless门槛
     #          V7.19曾放宽(印虚透无根->进从格), 引入4条正格被抢误报(PZ-0260财格用印/QT-0486阳刃制刃/QT-bare-022财旺生官), 已回退
-    rootless = (dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0)
+    #
+    # [2026-10-01 PATCH-3b] 按 Human 裁决(原典统一标准: 印星通根则不从, 仅透干无根则假从仍从) 放宽:
+    #   沈孝瞻《论杂格》「若透印则身赖印生而不从」的完整含义是「印星有根能生身则不从」,
+    #   而非「印星在天干出现即不从」。PZZQ4941「从财格而有印, 须看印是否通根」是补充判据。
+    #   ge_jie_layer 从格分支已按 `_yin_tou and _yin_bn >= 1 -> _not_cong` 实现同一标准(ben_n>=1 本气根),
+    #   两层规则原不一致, 此处对齐。
+    #   印(土)带本气根(ben_n>=1)或被合去根(_hh_yin)仍走 yin_ben_eff; 纯虚透(ben_n=0)放行进从格段。
+    # 印透干 + 有根(化根后仍存) -> 不进从格段(真从格定义 SHUAI.003/DTS 从象章)
+    #   依据 PZZQ L187(沈孝瞻原案 丁卯丙午庚午己卯)「庚金虽弱, 透印有根, 即不能从」
+    #        PZZQ L4936《论杂格》「若透印则身赖印生而不从」
+    #        DTS  DT-0235「嫌其甲木透干, 不能弃命从杀, 只得杀重用印」
+    #        SFTK SF-0032「身主有气, 又不能从杀也」
+    #        QTBJ QT-0508「庚金阳干, 不易言从」
+    #   关键: 「有根」按【化根后】的三级(本气/中气/余气)余量计, 不只看本气。
+    #     中气根同样算有根 —— 但若该支被三合/三会化掉则不算(见 L123-156 化根机制)。
+    #     正面: PZ-0002(印午中气, 无局) 不从; DT-0348(印未中气, 入亥卯未木局) 从;
+    #            PZ-0232(印辰本气, 入寅卯辰木局) 从; PZ-0137(印戌中气, 入寅午戌火局) 从;
+    #            PZ-0001(印丑中气, 入巳酉丑金局, 金为官杀亦化) -> 从(与沈孝瞻原断有争, 见下)
+    #     反面: 印透干但完全无根 -> 仍从(PZ-0260 丁酉己酉戊子壬子 / QT-bare-022, 印 root={})
+    #   与 V7.17 旧版区别: 旧版「印透即不从」漏「有根」半, 会误伤无根印盘; 本版要求透干 AND 有余根。
+    _yin_block = (yin_stem >= 1
+                  and (yin_ben_eff >= 1 or _yin_zhong_eff >= 1 or _yin_yu_eff >= 1))
+    rootless = (dm_ben_eff == 0 and yin_ben_eff == 0 and not _yin_block)
     # 从格判据(综合版): 印比虚浮无根不算扶抑(子平真诠'印无根不得相从'、滴天髓'绝无一毫生扶之意')
     # 透干且有本气根才算support; 透干无根=虚浮(如DT-0032辛金透干x4地支无根)
     virtual_support = (dm_stem >= 1 and dm_ben >= 1) or (yin_stem >= 1 and yin_ben >= 1)
@@ -179,10 +220,87 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     # V7.14: 得令日主不从(原典: 得时俱为旺论, 月令本气根是日主根, V7.10排除月令根不应影响从格识别)
     rootless_entry = (not dm_ling) and (rootless or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha)
 
-    # REMOVED: 化气非独立格局，《渊海·论运化气》为专旺之干合侧要件
-    # P0-b: 化气格独立桶已删除，并入专旺五格的复合判定式
-    # 原第158-215行化气格判定块已移除
-    hua_name = None  # 保留变量名以兼容下游代码，但永远为None
+    # ---------- 化气格(日干与紧邻月/时干合, 化神得令成势; 先判, 与从格互斥)----------
+    # [2026-10-01 PATCH-3e] 恢复化气格独立判定(原第158-215行, 自 87a8022c 取回)。
+    #   依据: 沈孝瞻《子平真诠·论杂格》「有从化取格者, 要化出之物, 得时乘令, 四支局全。
+    #          如丁壬化木, 地支全亥卯未、寅卯辰, 而又生于春月, 方为大贵。」(canonical L4896-4898)
+    #   原案 PZ-0317 甲戌丁卯壬寅甲辰(pollution=沈孝瞻原案) 四条件全中, 引擎此前误判伤官格。
+    #   四条件: ①日干与紧邻(月/时)干五合 ②化神得月令 ③化神成势 ④四支局全。
+    #
+    #   化气格地位: 沈孝瞻原文「有从化取格者」列为独立格局;
+    #     徐乐吾注(canonical L4883)「故统归之专旺一类」为旁证, 引擎采沈孝瞻原文独立判定。
+    #   四支局全口径: 木有明文(亥卯未 / 寅卯辰), 已实装;
+    #     TODO(待原典逐案): 火(寅午戌)/金(申子辰三合)/水(无局)/土(辰戌丑未杂气)
+    #     的「局全」定义原典未给, 暂沿用旧判据不设门, 待专案裁决。
+    hua_name = None; hua_state = None
+    if tian_he and dm_ben_eff <= 8 and yin_ben_eff <= 6:
+        for hp in tian_he.get('he_pairs', []):
+            pls = hp.get('pillars', [])
+            if 'day' not in pls:
+                continue
+            if not any(q in pls for q in ('month', 'hour')):
+                continue   # 年干与日干隔月干=遥合, 不化
+            stems_hp = hp.get('stems', [])
+            if day_stem not in stems_hp:
+                continue
+            other = [s for s in stems_hp if s != day_stem]
+            if not other:
+                continue
+            hs = WUHE_HUASHEN.get((day_stem, other[0]))
+            if not hs or hs not in pw:
+                continue
+            # PATCH-3e: 四支局全门(沈孝瞻《论杂格》「有从化取格者…四支局全」)。
+            #   木有原文明文列举(亥卯未 / 寅卯辰), 已实装。
+            #   该门同时排除 ①临淮侯乙亥己卯丁酉壬寅(有酉金破木, 沈孝瞻段2 明文归印格·带伤食)
+            #   ②孙岳戊寅乙卯丁未壬寅(徐注旁证, 局不全) —— 防止化气判掉印格段2 三条原典案例。
+            # PATCH-3f: 非木化神一律 continue —— 沈孝瞻未给火/金/水/土的「局全」口径,
+            #   无原典依据不设门即等于放行 10 条全为徐注旁证的化气盘(土8/火2/金1)。
+            #   木化气有原案(PZ-0307/0317, pollution=沈孝瞻原案)验证, 方准判定。
+            if hs != '木':
+                continue
+            _allz = frozenset(z for z in (pillars[k][1] for k in ('year','month','day','hour')) if z)
+            _JU_MU = (frozenset(('亥', '卯', '未')), frozenset(('寅', '卯', '辰')))
+            if not any(_j <= _allz for _j in _JU_MU):
+                continue
+            # V4.7: 化神被克制时只能是CANDIDATE(假化)，不能是CONFIRMED(真化)
+            _KE_HUA = {'木': '金', '火': '水', '土': '木', '金': '火', '水': '土'}
+            _ke_hs = _KE_HUA.get(hs)
+            _all_branches = [pillars[k][1] for k in ('year','month','day','hour')]
+            _hs_suppressed = bool(_ke_hs) and any(BRANCH_WX.get(b) == _ke_hs for b in _all_branches)
+            hd = pw[hs]
+            on_qi = bool(hp.get('huashen_on_month_qi')) or (wp.get('month_element') == hs)
+            hb, hju, hs_t = int(hd.get('ben_n', 0)), int(hd.get('ju_n', 0)), int(hd.get('stem_n', 0))
+            chengshi = (on_qi or hju >= 1 or hb >= 2
+                        or (hs_t >= 1 and hb >= 1 and dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0))
+            if not chengshi:
+                # 返象化气格: 日干与紧邻干五合、化神不得令不成势、日主无根、印不重、官杀极弱
+                if (dm_ben_eff == 0 and yin_ben_eff <= 1 and not _shi(dm) and not _shi(yin)
+                        and gs_ben == 0 and gs_stem <= 1):
+                    hua_name = '化%s气格' % hs
+                    hua_state = 'CANDIDATE'
+                    out['patterns'].append(_pat('ZP-SPECIAL-HUAQI', hua_name, hua_state, hs,
+                        '日干与紧邻(月/时)干五合但化神不得令不成势=返象/合而不化(CANDIDATE); 真化须化神得令成势且日主无根无印; 成败取用交化气专审, 不判吉凶',
+                        ['tian_he', 'wuxing_power']))
+                    out['hua_qi'] = hua_name
+                    out['hua_qi_state'] = hua_state
+                    break
+                continue                                # 合而不化(冬令戊癸不化)
+            _GWX_H = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+            _gs_he = 1 if (other and _GWX_H.get(other[0]) == gs_wx) else 0
+            if (gs_stem - _gs_he) >= 1 and gs_ben >= 1:
+                continue   # 合神外官杀有根透干方为牵挂, 不真化
+            hua_name = '化%s气格' % hs
+            # V4.7: 化神被克制时不能是CONFIRMED，只能是CANDIDATE(假化)
+            if on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0 and (hb >= 1 or hju >= 1 or hs_t >= 1) and not _hs_suppressed:
+                hua_state = 'CONFIRMED'
+            else:
+                hua_state = 'CANDIDATE'                 # 微根/微印/化神被克制=假化
+            out['patterns'].append(_pat('ZP-SPECIAL-HUAQI', hua_name, hua_state, hs,
+                '日干与紧邻(月/时)干五合、化神得令或成势；真化须日主无根无印，微根/微印为假化(CANDIDATE)；隔位合、化神不当令不成势为合而不化；化神=木另须四支局全(亥卯未/寅卯辰, 沈孝瞻原文明举)；成败取用交化气专审, 不判吉凶',
+                ['tian_he', 'wuxing_power']))
+            out['hua_qi'] = hua_name
+            out['hua_qi_state'] = hua_state
+            break
 
     # 官杀成势(含财本气生透干杀)
     gs_pow = _shi(gs) or (gs_stem >= 1 and cai_ben >= 1)
@@ -202,10 +320,16 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             if ss_ling and ss_pow and gs_stem >= 1 and gs_ben >= 1 and ss_ben > gs_ben and cai_stem >= 1:
                 # 食伤当令成势、制去有根透干之孤官杀(制杀太过/去杀存财)、财透承接 -> 从财
                 cong, side = '从财格', cai_wx
-            elif gs_pow and gs_stem >= 1 and cai_ben >= 1 and not ss_ling and ss_stem == 0 and ss_ju == 0:
+            elif gs_pow and (gs_ben >= 1 or gs_stem >= 2) and gs_stem >= 1 and cai_ben >= 1 and not ss_ling and ss_stem == 0 and ss_ju == 0:
                 # 财(有本气)生透干之杀、食伤不当令不逆局, 气归于杀 -> 从杀用财
+                # [2026-10-01 PATCH-3b] 官杀成势门槛: 本气根(gs_ben>=1) 或 双透(gs_stem>=2)。
+                #   依 PZZQ《论杂格》「四柱皆煞,而日主无根,舍而从之」——「皆」字要求官杀成势,
+                #   中气/余气根(gs_zhong>0)是「有根」非「成势」, 单透+中气不成势, 不得气归于杀。
+                #   PZ-0136(甲寅丙寅庚寅戊寅): 丙一透+寅中气, 财四寅本气极旺 -> 落 order 兜底 -> 从财。
+                #   golden 丁卯丙寅辛亥庚寅: 丙丁双透成势, 财寅卯亥 -> 仍从杀。
                 cong, side = '从杀格', gs_wx
             elif gs_ling and gs_pow:
+                # 官杀当令成势(不论食伤) -> 从杀用财
                 cong, side = '从杀格', gs_wx
             elif ss_ling and ss_pow and not gs_pow:
                 if gs_stem >= 1 and gs_ben >= 1 and ss_ben > gs_ben and cai_stem >= 1:
@@ -228,8 +352,9 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 cong, side = '从儿格', ss_wx
             elif cai_ling and _shi(cai):
                 cong, side = '从财格', cai_wx
-            elif gs_pow and gs_stem >= 1 and cai_ben >= 1 and not ss_ling and ss_stem == 0 and ss_ju == 0:
+            elif gs_pow and (gs_ben >= 1 or gs_stem >= 2) and gs_stem >= 1 and cai_ben >= 1 and not ss_ling and ss_stem == 0 and ss_ju == 0:
                 # 丁丑壬寅: 壬杀透干、申金财生杀、丑辰湿土通关(食伤不当令不逆局), 气归于杀 -> 从杀用财
+                # [2026-10-01 PATCH-3b] 同一成势门槛(gs_ben>=1 or gs_stem>=2), 理由见 L214 注释。
                 cong, side = '从杀格', gs_wx
             else:
                 order = sorted(shi_sides.items(),

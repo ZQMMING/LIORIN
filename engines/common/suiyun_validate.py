@@ -236,7 +236,10 @@ def verdict_step(pillars, base, step, extra, base_tier):
             SHENG.get(x) == sp_wx for x in transit_wx):
         bad.append('引动另一病机(%s·岁运生助)' % sp_id)
 
-    # --- 毒药·格局破格: 原局成格 + 岁运触发 po_ge 任一组合路径 ---
+    # --- 毒药·格局破格: 原局成格 + 岁运触发 po_ge 路径 ---
+    # match 语义(ge_jie_layer 落盘): ANY=required 任一神即破格(该神本身是忌);
+    #                               ALL=required 全部神齐备才破格(组合条件, 单神非忌, 不可作忌神用);
+    #                               缺失类(forbidden)=缺失才破格, 不参与十神触发.
     gc = step['facts'].get('ge_cheng') or {}
     po_paths = gc.get('po_ge') or []
     _ge_name = gc.get('ge','') or ''
@@ -244,21 +247,49 @@ def verdict_step(pillars, base, step, extra, base_tier):
     if po_paths and isinstance(po_paths, list) and '破格' not in _ge_name:
         dm0 = pillars['day'][0]
         cur_god = ten_god(dm0, cur_g)
+        # 原局四柱已备之十神(不含日干), 供 ALL 组合判"其余条件是否已在原局齐备"
+        _natal_gods = set()
+        for _pos in ('year', 'month', 'hour'):
+            try:
+                _g = pillars[_pos][0]
+            except (KeyError, IndexError, TypeError):
+                continue
+            if _g:
+                _tg = ten_god(dm0, _g)
+                if _tg:
+                    _natal_gods.add(_tg)
         for pp in po_paths:
-            if isinstance(pp, dict) and pp.get('type') == '组合' and cur_god in (pp.get('required') or []):
+            if not isinstance(pp, dict) or pp.get('type') != '组合':
+                continue
+            req = pp.get('required') or []
+            if not req:
+                continue
+            if pp.get('match') == 'ALL':
+                # 组合条件: 全部 required 须齐备(原局 + 本步岁运)才算破格
+                avail = _natal_gods | ({cur_god} if cur_god else set())
+                if req and all(g in avail for g in req):
+                    bad.append('格局破格(%s·岁运%s(%s)触发组合%s)' % (
+                        gc.get('ge',''), cur_g, cur_god, '＋'.join(req)))
+                    break
+                continue
+            if cur_god in req:
                 bad.append('格局破格(%s·岁运%s(%s)触发)' % (gc.get('ge',''), cur_g, cur_god))
                 break
-            # 地支形态: 岁运支冲格体支(地支本气五行=ti_wx) -> 破格
-            if isinstance(pp, dict) and pp.get('type') == '地支':
-                ti_wx_list = gc.get('ti_wx') or []
-                ZHI_WX_LOCAL = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}
-                chong_map_local = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅','卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
-                ge_branches = [z for z in [pillars['year'][1],pillars['month'][1],pillars['day'][1],pillars['hour'][1]] if ZHI_WX_LOCAL.get(z,'') in ti_wx_list]
-                for gb in ge_branches:
-                    if chong_map_local.get(cur_z) == gb:
-                        bad.append('格局破格(%s·岁运%s冲格体%s)' % (gc.get('ge',''), cur_z, gb))
-                        break
-                break
+        # 地支形态: 岁运支冲格体支(地支本气五行=ti_wx) -> 破格
+        for pp in po_paths:
+            if not isinstance(pp, dict) or pp.get('type') != '地支':
+                continue
+            ti_wx_list = gc.get('ti_wx') or []
+            ZHI_WX_LOCAL = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}
+            chong_map_local = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅','卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
+            ge_branches = [z for z in [pillars['year'][1],pillars['month'][1],pillars['day'][1],pillars['hour'][1]] if ZHI_WX_LOCAL.get(z,'') in ti_wx_list]
+            for gb in ge_branches:
+                if chong_map_local.get(cur_z) == gb:
+                    bad.append('格局破格(%s·岁运%s冲格体%s)' % (gc.get('ge',''), cur_z, gb))
+                    break
+            else:
+                continue
+            break
 
     # 裁决
     hard_good = any(('制主病' in x or '化泄' in x or '暖化' in x) for x in good)

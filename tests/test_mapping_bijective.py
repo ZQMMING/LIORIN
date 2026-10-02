@@ -1,5 +1,6 @@
 # tests/test_mapping_bijective.py
 import json, sys
+sys.stdout.reconfigure(encoding='utf-8')
 from pathlib import Path
 from collections import defaultdict
 

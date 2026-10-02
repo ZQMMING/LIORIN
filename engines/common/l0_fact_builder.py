@@ -8,6 +8,53 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 HIDDEN = json.load(open(ROOT/'registries/zhi_hidden_stems_v1.json', encoding='utf-8'))['hidden_stems']
 
+
+def _assert_hidden_matches_liorin():
+    """防御性校验：本地 json 藏干表必须与 LIORIN 权威源逐支一致。
+
+    `registries/zhi_hidden_stems_v1.json` 是手工维护文件，而 L0 用 `[0]` 判本气
+    （`HIDDEN[mz][0]`），若它被改错，本气会**静默出错**且不抛异常。
+
+    权威源 = `vendor/tongshu`（LIORIN），角色标注 main/middle/residual。
+    校验失败即 fail-closed —— 宁可启动崩，不产出错本气。
+    """
+    import sys as _sys
+    _v = str(ROOT / 'vendor')
+    if _v not in _sys.path:
+        _sys.path.insert(0, _v)
+    try:
+        from tongshu.facts.bazi_facts import BRANCH_HIDDEN_STEMS as _L
+    except Exception as e:                                   # LIORIN 不可用则放行
+        return {"checked": False, "reason": "LIORIN 不可用: %r" % (e,)}
+    _ZH = {"JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU": "戊",
+           "JI": "己", "GENG": "庚", "XIN": "辛", "REN": "壬", "GUI": "癸"}
+    _ZB = {"ZI": "子", "CHOU": "丑", "YIN": "寅", "MAO": "卯", "CHEN": "辰",
+           "SI": "巳", "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉",
+           "XU": "戌", "HAI": "亥"}
+    diffs = []
+    for zp, entries in _L.items():
+        z = _ZB[zp]
+        roles = {"main": None, "middle": None, "residual": None}
+        for sp, role in entries:
+            roles[role] = _ZH[sp]
+        want = [s for s in (roles["main"], roles["middle"], roles["residual"]) if s]
+        got = list(HIDDEN.get(z) or [])
+        # 严格全序列比对：藏干表的下标即角色（本/中/余），
+        # 中余气颠倒时集合相同但下游按 [1]/[2] 取值会错，故不能只比集合。
+        if want != got:
+            diffs.append({"zhi": z, "liorin": want, "local": got})
+    if diffs:
+        raise RuntimeError(
+            "藏干表与 LIORIN 权威源不一致（fail-closed）：%s。\n"
+            "  本地文件 registries/zhi_hidden_stems_v1.json 为手工维护，"
+            "L0 以 HIDDEN[支][0] 判本气，改错会静默产出错误本气。\n"
+            "  权威源：vendor/tongshu（LIORIN）facts.bazi_facts.BRANCH_HIDDEN_STEMS。"
+            % json.dumps(diffs, ensure_ascii=False))
+    return {"checked": True, "branches": len(_L)}
+
+
+_HIDDEN_GUARD = _assert_hidden_matches_liorin()
+
 WUXING = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 YANG = set('甲丙戊庚壬')
 LIUHE = {'子':'丑','丑':'子','寅':'亥','亥':'寅','卯':'戌','戌':'卯','辰':'酉','酉':'辰','巳':'申','申':'巳','午':'未','未':'午'}
@@ -350,15 +397,40 @@ def build(pillars):
     out['target_relation_facts'] = {
         '官星被合': any(s in he_set for s in guan_tg),
     }
-    # 官星地支: 含官/杀藏干的支; 这些支是否被六冲
-    chong_targets = set()
-    for z in pillars.values():
-        if any(ten_god(dg, h) in _CAT['官'] for h in HIDDEN[z[1]]):
-            chong_targets.add(z[1])
+    # 官星地支 = 官星**所坐之支** (PATCH-161, 2026-09-30)
+    # 依据 PZZQ255「官逢伤克刑冲, 官格败也」: 受刑冲的是**官星本身**,
+    #   非「任一支藏官杀且该支被冲」。
+    #   - 月令官星(提纲, 定格之源) -> 坐月令支
+    #   - 透干官星(正官/七杀透出) -> 坐其自身所在支
+    # 旧判据把「所有藏干含官杀的支」都算官星支, 致旁支冲被误记为冲官,
+    #   已核 PZZQ_clean 319 条: 旧 91 条 / 新 42 条, 49 条属旁支冲误伤。
+    # PATCH-161a 月令官格前提 (2026-09-30, FOUNDATION_TOU_CANG_CANG_GAN_BEI_CHONG_001):
+    #   杂气官「不透要冲(冲开库引出, 吉), 既透怕冲」:
+    #   官格破格判据只作用于月令定格为官的命局; 非官格月令 -> 藏官支冲是引动非破格, 判据不适用。
+    # PATCH-161b 官星受冲只取【月令官星所坐之支】(2026-10, 修 PATCH-161 残余边界):
+    #   PATCH-161 原意「受冲的是官星本身」, 但旧实现把
+    #   {月令官星支} ∪ {各位置透干官杀所坐支} 并成同一集合,
+    #   致【异位透官杀所坐支被冲】把【月令正官】一并拖累 —— 官星种类混同。
+    #   例 PZ-0020 庚午乙酉甲子乙亥: 月令正官坐「酉」未被冲, 年干庚七杀坐「午」被冲,
+    #   官星受冲判 True -> ge_jie_layer 正官格三分支 not guan_chong 全挡死 -> ge=None。
+    #   依据 FOUNDATION.TOU_CANG.CANG_GAN_BEI_CHONG_001(旁参)「不透要冲, 既透怕冲」——
+    #   「怕冲」者谓月令那个官, 非异位透出之官杀。
+    #   影响面(PZZQ_clean 319 实测): 月令定格为官/杀 60 条中
+    #     A∩B 11 条不变 / B\A 1 条(即 PZ-0020, 修后 True->False) / A\B 0 条 / 同不判 48 条不变。
+    #   注: 六书无「官星受冲」primary 定义, 本改属 PATCH-161 收窄残余清理, 非新判据。
     chong_set = set()
-    for p in out['combination_facts']['liuchong']:
-        chong_set.update(p)
-    out['target_relation_facts']['官星受冲'] = any(z in chong_set for z in chong_targets)
+    for _p in out['combination_facts']['liuchong']:
+        chong_set.update(_p)
+    guan_ge_applies = out.get('month_qi_ten_god') in _CAT['官']
+    # 月令官星所坐之支(定格之源); 官格前提不成立时为空 -> 不判官星受冲
+    _month_guan_seat = (out.get('month_branch') or pillars['month'][1]) if guan_ge_applies else None
+    out['target_relation_facts']['官星受冲'] = (
+        bool(_month_guan_seat) and _month_guan_seat in chong_set)
+    # 备查事实(不参与破格判据): 异位透干官杀所坐之支, 供格局层按需另取
+    out['target_relation_facts']['透干官杀所坐支'] = sorted({
+        _v[1] for _k, _v in pillars.items()
+        if ten_god(dg, _v[0]) in _CAT['官']
+    })
     # PATCH-160.5 十神成员枚举(纯集合, 带位置provenance; 本/中/余气只存不赋权重)
     QI_POS = ['本气', '中气', '余气']
     members = []

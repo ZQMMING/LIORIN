@@ -16,6 +16,20 @@ def check_mumie(branches, stems, day_master):
     dm_rootless = dm_data.get("ben_qi_root", 0) == 0
     if not (yin_strong and dm_rootless):
         return {"status": "", "taishi": "", "state": ""}
+    # 官杀/食伤"透干+通根"制化通道: 有通道则母灭不成立(反例守卫)
+    # 精确判据: 官杀或食伤须【透干>=1 AND 本气根>=1 或 中气根>=1】才算真制化
+    _KE_ME = {"木": "火", "火": "水", "土": "金", "金": "土", "水": "木"}
+    _SHENG_ME = {"木": "水", "火": "木", "土": "火", "金": "土", "水": "金"}
+    guan_sha_wx = _KE_ME.get(dm_wx, "")
+    shi_shang_wx = _SHENG_ME.get(dm_wx, "")
+    for _esc_wx in (guan_sha_wx, shi_shang_wx):
+        if not _esc_wx:
+            continue
+        _ed = dz.get(_esc_wx, {})
+        _tou = _ed.get("stem_count", 0) >= 1
+        _rooted = _ed.get("ben_qi_root", 0) >= 1 or _ed.get("zhong_qi_root", 0) >= 1
+        if _tou and _rooted:
+            return {"status": "", "taishi": "", "state": ""}
     state = "CONFIRMED" if yin_data.get("has_sanhui", False) else "CANDIDATE"
     return {"status": "母灭", "taishi": yin_wx + "多" + dm_wx + "熄", "state": state}
 

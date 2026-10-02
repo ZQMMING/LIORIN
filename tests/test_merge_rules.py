@@ -5,6 +5,7 @@
 b3事件的制度化回应：断言floor/promote/demote不越界
 """
 import sys
+sys.stdout.reconfigure(encoding='utf-8')
 sys.path.insert(0, '.')
 
 from spec.merge_rules import MERGE_SPEC, CONFIRMED, MID, REJECT

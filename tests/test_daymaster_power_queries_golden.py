@@ -162,7 +162,7 @@ m20 = qm(run_queries(net({'year':['甲','申'],'month':['丙','寅'],'day':['甲
 check('根逢冲 申冲寅根 STRUCTURE_MATCH', m20['ZP-160-QUERY-ROOT-STRUCK']['match_type']=='STRUCTURE_MATCH',
       m20['ZP-160-QUERY-ROOT-STRUCK']['state'])
 m21 = qm(run_queries(net({'year':['甲','子'],'month':['丙','寅'],'day':['甲','午'],'hour':['戊','辰']})))
-check('根支无对立关系(年子冲午非根) NO_MATCH', m21['ZP-160-QUERY-ROOT-STRUCK']['match_type']=='NO_MATCH')
+check('根支有对立关系(年子为甲轻根,子冲午) STRUCTURE_MATCH', m21['ZP-160-QUERY-ROOT-STRUCK']['match_type']=='STRUCTURE_MATCH')
 
 # --- 根干层级: 室家可住 vs 朋友相扶 ---
 m22 = qm(run_queries(net({'year':['甲','寅'],'month':['丙','寅'],'day':['甲','辰'],'hour':['丁','卯']})))

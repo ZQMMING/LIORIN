@@ -15,10 +15,21 @@ from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_power_structure import build_power_structure
 from engines.common.daymaster_power_queries import run_queries
 from engines.common.bingyao_layer import build_bingyao_layer
+from engines.common.wuxing_power import build_wuxing_power
+from engines.common.ge_jie_layer import build_ge_cheng
 
 
 def build_full(pillars):
     facts = build(pillars)
+    facts['pillars'] = pillars
+    try:
+        facts['wuxing_power'] = build_wuxing_power(pillars, facts)
+    except Exception:
+        facts['wuxing_power'] = {}
+    try:
+        build_ge_cheng(facts)
+    except Exception:
+        facts['ge_cheng'] = None
     hst = {pillars[k][1]: facts['hidden_stems'][k] for k in ('year','month','day','hour')}
     pa = build_power_structure(pillars)
     rc = build_root_classes(pillars, hst)
@@ -30,6 +41,14 @@ def build_full(pillars):
     th = build_tian_he(pillars, facts)
     network = build_power_network(pa, rc, tc, wx, rr, ts, branch_tier=bt, tian_he=th, facts=facts)
     queries = run_queries(network)
+    # B1修复: 富化facts供病药层识别"财多身弱"(原harness未富化, 导致财多身弱假报为无病)
+    facts['root_weight_class_facts'] = {
+        pos: {'branch': pillars[pos][1],
+              'class': 'HEAVY' if rc['per_pillar'][pos]['root_class'].startswith('HEAVY')
+              else ('LIGHT' if rc['per_pillar'][pos]['root_class'].startswith('LIGHT') else 'NONE')}
+        for pos in ('year', 'month', 'day', 'hour')
+    }
+    facts['tian_he'] = th
     return facts, queries
 
 

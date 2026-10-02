@@ -7,7 +7,12 @@
 """
 import sys, json
 sys.path.insert(0, '.')
-from engines.common.unified_overview import build_unified_overview
+# P0 已删除：unified_overview/zhonghe_structure 模块已移除, 本 golden 冻结不再跑 (2026-09-29 接手核对)
+try:
+    from engines.common.unified_overview import build_unified_overview
+except ModuleNotFoundError:
+    print('SKIP test_ancient_case_golden: engines.common.unified_overview 已被 P0 删除, 本 golden 冻结')
+    sys.exit(0)
 
 fails = 0
 
