@@ -38,8 +38,33 @@ WX_SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'
 WX_KE = {'木': '土', '土': '水', '水': '火', '火': '金', '金': '木'}      # 我克
 
 
+# ★ STEP-DBG-14 (2026-10-03) 六维联动①: 月令受冲 -> chong_adjust 序数修正
+#   刘基 DTS §八地支 L100「支神只以冲为重, 刑与穿兮动不动。」
+#           L102 原注「冲者必是相克, 及四库兄弟之冲, 所以必动」
+#           L106 原注「暗冲暗会尤为喜…子来冲午, 寅与戌会午是也」—— 冲分「谁冲谁」
+#           L108「旺者冲衰衰者拔, 衰神冲旺旺神发。」
+#           L110 原注「子旺午衰, 冲则午拔不能立; 子衰午旺, 冲则午发而为福。」
+#
+#   ★★ 原文的结构是【两方对比】, 不是【单方降级】:
+#      判「拔」还是「发」, 取决于【被冲方(午)自身强弱】与【冲方(子)强弱】的关系:
+#        冲方旺 + 被冲方衰 -> 被冲方「拔」(根被拔, 不能立)
+#        冲方衰 + 被冲方旺 -> 被冲方「发」(反发为福)
+#      所以【不能】简单做成「月令被冲 -> 旺降囚」的单方降级。
+#
+#   落法(方案 C, 2026-10-03 裁定): ling_state 【保枚举不动】, 加序数字段
+#     chong_adjust : -1 / 0 / +1  (DTS L108「拔」= -1 / 不变 = 0 / 「发」= +1)
+#     chong_role   : 'CHONG_ME'(彼冲我, 我被冲) | 'CHONG_YOU'(我冲彼) | None
+#     chong_note   : 原文依据摘录
+#   · ling_state 是「月令对某五行的静态旺衰位」, chong_adjust 是「该位受冲后的序数修正」,
+#     两者【语义不同, 不合并】—— 合并就是把「两方对比」压成「单方降级」, 违背L108。
+#   · 序数范式(架构 §1.2), 整数, 无浮点。
+#   · 判定用 month_ling(旺相休囚死) 而非 mass: DTS 只给「旺/衰」二分方向的
+#     定性, 未给幅度; 用序数位(旺1相2休3囚4死5)判「强侧/弱侧」是最小的整数化。
+LING_ORDER = {'旺': 1, '相': 2, '休': 3, '囚': 4, '死': 5}
+
+
 def _ling_state(month_wx: str, wx: str) -> str:
-    """月令旺相休囚死纯规则查表。"""
+    """月令旺相休囚死纯规则查表(静态位, 不含冲激; 冲激见 chong_adjust)。"""
     if wx == month_wx:
         return '旺'
     if WX_SHENG[month_wx] == wx:
@@ -49,6 +74,31 @@ def _ling_state(month_wx: str, wx: str) -> str:
     if WX_KE[wx] == month_wx:
         return '囚'
     return '死'  # 令所克者死
+
+
+def _compare_both(month_wx: str, beichong_wx: str, chong_wx: str) -> int:
+    """被冲方的序数修正 —— DTS L108/L110「两方对比」结构 (2026-10-03 裁定)。
+
+      冲方∈囚死 且 被冲∈旺相 → +1   衰神冲旺, 旺者发   「冲则午发而为福」
+      冲方∈旺相 且 被冲∈囚死 → -1   旺者冲衰, 衰者拔   「冲则午拔不能立」
+      其余(同侧 / 含休)        →  0   原文未明;
+                                          休为过渡态, L108 只给旺/衰两分, 不归边。
+
+    ★ 被冲方(beichong_wx)与冲方(chong_wx) 各自取「在月令下的 ling_state」,
+      两者都过 _ling_state(month_wx, X), 不是拿某方对自己的位。
+    ★ 月令作为被冲方时: beichong_wx == month_wx -> ling 恒「旺」;
+      而冲方必克月令(能克方为冲方, DTS L106) -> 冲方恒「囚」;
+      故恒走第一行 +1 —— 这是【必然】, 不是简化, 两方对比结构完整保留。
+    """
+    ls_b = _ling_state(month_wx, beichong_wx) if beichong_wx else ''
+    ls_c = _ling_state(month_wx, chong_wx) if chong_wx else ''
+    strong = ('旺', '相')
+    weak = ('囚', '死')
+    if ls_c in weak and ls_b in strong:
+        return +1
+    if ls_c in strong and ls_b in weak:
+        return -1
+    return 0
 
 
 def _build_pure_power(pillars: Dict[str, list], facts: Dict[str, Any],
@@ -97,6 +147,101 @@ def _build_pure_power(pillars: Dict[str, list], facts: Dict[str, Any],
             if wx in banhe_count:
                 banhe_count[wx] += 1
 
+    # ★ STEP-DBG-14 六维联动①: 任意支受六冲 -> branch_chong(柱位维度)
+    #   DTS L106 原注「如我寅彼申, 申能克寅, 是彼冲我; 我子彼午, 子能克午, 是我冲彼」
+    #     ->【冲方 = 能克被冲方的那一方】, 由五行相克方向定, 非位置定。
+    #   DTS L102 原注「冲者必是相克, 及四库兄弟之冲, 所以必动」
+    #     -> 丑未/辰戌 不互克, 属「四库兄弟之冲」, 无冲方。
+    #   DTS L96/L98「生方怕动库宜开…辰戌丑未四库也, 宜冲开」
+    #     -> 兄弟冲另记 library_open=True(布尔), 【不塞进 chong_adjust 的 ±1】:
+    #        L108 管「旺衰发拔」(序数 -1/0/+1), L96 管「库开不开」(布尔), 语义不同, 混则污染。
+    #   role 四态: CHONG_ACTIVE(冲方, 不受冲影响, adj=0) / CHONG_PASSIVE(被冲方)
+    #            / BROTHER_CHONG(四库兄弟冲, adj=0 + library_open) / NO_CHONG(未参与)
+    ZHI_WX = BRANCH_WX
+    branch_chong = {
+        'year': {'adj': 0, 'role': 'NO_CHONG', 'chong_by': None, 'library_open': False},
+        'month': {'adj': 0, 'role': 'NO_CHONG', 'chong_by': None, 'library_open': False},
+        'day': {'adj': 0, 'role': 'NO_CHONG', 'chong_by': None, 'library_open': False},
+        'hour': {'adj': 0, 'role': 'NO_CHONG', 'chong_by': None, 'library_open': False},
+    }
+    # ★ PATCH-REL-03 (阶段2b/2c) 切源到 relations, 消除 _by_pos 单值映射
+    #   旧: _by_pos = {支名: 柱位}(单值), 重复支取首见 -> 第二处位置丢失
+    #       DT-0039 甲寅戊辰丙寅丙申: day 寅 参与申寅冲, 但 _by_pos['寅'] 已被 year 占 -> day 落空
+    #   新: 读 L0 唯一源 relations 的 CHONG relation, 按 positions 逐实例展开
+    #       positions[k] = [[pos_i],[pos_j]] (契约 v1.1 §1.7 硬约束①), 需脱一层取 [0][0]
+    #       positions[k][0] 必对应 branches[0], [1] 必对应 branches[1] —— 由 L0 生成端保证
+    #   冲方判定复用现有 WX_KE(L38, 五行对五行), 不新增表;
+    #   BROTHER(丑未/辰戌, 两支同五行不互克) 走 else 分支, 语义不变。
+    #
+    # ★★ 本步【不修】坑③: branch_chong[pos] 是单值, 一柱参与多个冲实例时后写覆盖先写。
+    #    影响 DT-0030 子午戌午 这类「单支多冲」盘。
+    #    归属: 下一步单独处理(与 N_cover=165 同批)。
+    #    【本步修的是 _by_pos 丢实例, 不是 branch_chong 单值覆盖 —— 两者是不同的缺陷。】
+    _POSK = ('year', 'month', 'day', 'hour')
+    _by_pos = {}                       # 仅供【岁运追加冲对】首见配对(relations 已给柱位)
+    for _k in _POSK:
+        _bz = (pillars.get(_k) or [None, None])[1]
+        if _bz and _bz not in _by_pos:
+            _by_pos[_bz] = _k
+    # ★ relations 只覆盖【原局】(L0 唯一源); cfc['liuchong'] 含岁运追加(L300-308)。
+    #   故: 原局冲对走 relations(有柱位), 岁运新引发的冲对仍走名对(无柱位, 按首见配)。
+    #   两部分互不重叠 —— L300-305 用 seen 集合已排除原局已有的冲对。
+    _chong_instances = []   # (a, b, pa|None, pb|None)
+    for _rel in (facts.get('relations') or []):
+        if _rel.get('type') != 'CHONG':
+            continue
+        try:
+            a, b = _rel['branches'][0], _rel['branches'][1]
+        except Exception:
+            continue
+        for _pair in _rel['positions']:
+            try:
+                _chong_instances.append((a, b, _pair[0][0], _pair[1][0]))
+            except Exception:
+                continue
+    # 岁运追加的冲对(无柱位信息, 沿用旧的 _by_pos 首见配对口径)
+    _l0_chong_keys = {frozenset((a, b)) for a, b, _, _ in _chong_instances}
+    for _pair in (cfc.get('liuchong') or []):
+        try:
+            a, b = _pair[0], _pair[1]
+        except Exception:
+            continue
+        if frozenset((a, b)) in _l0_chong_keys:
+            continue                      # 原局已有的走 relations
+        _chong_instances.append((a, b, _by_pos.get(a), _by_pos.get(b)))
+    for a, b, pa, pb in _chong_instances:
+        if True:
+            wa, wb = ZHI_WX.get(a, ''), ZHI_WX.get(b, '')
+            if WX_KE.get(wa) == wb:          # a 冲 b  (DTS L106 能克方为冲方)
+                ka, kb = 'ACTIVE', 'PASSIVE'
+            elif WX_KE.get(wb) == wa:        # b 冲 a
+                ka, kb = 'PASSIVE', 'ACTIVE'
+            else:                            # 四库兄弟冲: 两支同五行不互克, 无冲方
+                ka, kb = 'BROTHER', 'BROTHER'
+            if pa is None or pb is None or pa not in branch_chong or pb not in branch_chong:
+                continue
+            if ka == 'BROTHER':
+                # 兄弟冲: 两支【都】记 BROTHER_CHONG + library_open(非月柱独占)
+                # DTS L96/L98「四库也, 宜冲开」—— 布尔, 不塞进 adj 的 ±1
+                branch_chong[pa]['role'] = 'BROTHER_CHONG'
+                branch_chong[pa]['chong_by'] = b
+                branch_chong[pa]['library_open'] = True
+                branch_chong[pb]['role'] = 'BROTHER_CHONG'
+                branch_chong[pb]['chong_by'] = a
+                branch_chong[pb]['library_open'] = True
+                continue
+            if ka == 'ACTIVE':
+                cf_p, bc_p, cf_z, bc_z = pa, pb, a, b
+            else:
+                cf_p, bc_p, cf_z, bc_z = pb, pa, b, a
+            # 冲方: 主动发动, 不受冲影响 -> adj=0
+            branch_chong[cf_p]['role'] = 'CHONG_ACTIVE'
+            branch_chong[cf_p]['chong_by'] = bc_z
+            # 被冲方: 受作用, 按两方对比判 adj (DTS L108/L110)
+            branch_chong[bc_p]['role'] = 'CHONG_PASSIVE'
+            branch_chong[bc_p]['chong_by'] = cf_z
+            branch_chong[bc_p]['adj'] = _compare_both(month_wx, ZHI_WX.get(bc_z, ''), ZHI_WX.get(cf_z, ''))
+
     # 逐五行计数
     wuxing_power = {}
     for wx in ('木', '火', '土', '金', '水'):
@@ -110,7 +255,7 @@ def _build_pure_power(pillars: Dict[str, list], facts: Dict[str, Any],
             if cg[2] and STEM_WUXING.get(cg[2]) == wx:
                 yu_n += 1
         stem_n = sum(1 for s in all_stems if STEM_WUXING.get(s) == wx)
-        wuxing_power[wx] = {
+        row = {
             'ling_state': _ling_state(month_wx, wx),
             'ben_n': ben_n,
             'zhong_n': zhong_n,
@@ -119,8 +264,28 @@ def _build_pure_power(pillars: Dict[str, list], facts: Dict[str, Any],
             'banhe_n': banhe_count.get(wx, 0),
             'stem_n': stem_n,
         }
+        # ★ 只有【月令五行本身】投影柱位维度的冲激结果(月令 = 月柱)。
+        #   其余五行的旺衰位是「五行对月令」的静态位, 不随某支被冲而变。
+        if wx == month_wx:
+            _mc = branch_chong['month']
+            row['chong_adjust'] = _mc['adj']
+            row['chong_role'] = _mc['role']
+            row['chong_by'] = _mc['chong_by']
+            row['library_open'] = _mc['library_open']
+            row['chong_note'] = (
+                'DTS L108「旺者冲衰衰者拔, 衰神冲旺旺神发」L110「子旺午衰, 冲则午拔不能立; '
+                '子衰午旺, 冲则午发而为福」两方对比; L96/L98「四库宜冲开」另记 library_open(布尔)')
+            _adj = _mc['adj']
+            if _adj:
+                row['ling_state_eff'] = 'CHONG_%s' % ('BA' if _adj < 0 else 'FA')
+            elif _mc['role'] == 'BROTHER_CHONG' and _mc['library_open']:
+                row['ling_state_eff'] = 'KU_KAI'
+            else:
+                row['ling_state_eff'] = row['ling_state']
+        wuxing_power[wx] = row
 
-    return {'wuxing_power': wuxing_power, 'month_element': month_wx}
+    return {'wuxing_power': wuxing_power, 'month_element': month_wx,
+            'month_branch': month_branch, 'branch_chong': branch_chong}
 
 
 def _norm_extra(extra):

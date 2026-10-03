@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 """地支关系事实层 (D1/D2).
 原典依据:
   D1 六合: 子丑/寅亥/卯戌/辰酉/巳申/午未 (子平真诠/三命通会)
@@ -69,78 +69,51 @@ def build_branch_relations(pillars: Dict[str, Any], facts: Dict[str, Any]) -> Di
         ],
       }
     """
-    relations = []
-    
-    # 提取四支
-    branches = {k: pillars[k][1] for k in ('year', 'month', 'day', 'hour')}
-    keys = list(branches.keys())
-    
-    # 遍历所有地支对
-    for i in range(len(keys)):
-        for j in range(i + 1, len(keys)):
-            a, b = branches[keys[i]], branches[keys[j]]
-            pair = frozenset((a, b))
-            
-            # D1 六合检测
-            if pair in LIUHE_PAIRS:
-                huashen = LIUHE_PAIRS[pair]
-                # D2 位置距离
-                pos_key = frozenset((keys[i], keys[j]))
-                distance = POSITION_DISTANCE.get(pos_key, 'unknown')
-                # D2-B 中间支检测
-                pi, pj = POS_ORDER.get(keys[i], -1), POS_ORDER.get(keys[j], -1)
-                intervening = []
-                if pi >= 0 and pj >= 0:
-                    for k in range(min(pi, pj) + 1, max(pi, pj)):
-                        pos_name = {0: 'year', 1: 'month', 2: 'day', 3: 'hour'}[k]
-                        intervening.append(branches[pos_name])
-                # D2-B 阻隔检测: 中间支为化神克星或冲神
-                # 化神克星: 克化神五行的地支
-                WUXING_KE_ME = {'木': '金', '火': '水', '土': '木', '金': '火', '水': '土'}
-                KE_ME_TO_WUXING = {'金': '木', '水': '火', '木': '土', '火': '金', '土': '水'}
-                ke_wx = WUXING_KE_ME.get(huashen, '')
-                # 冲神: 六冲
-                LIUCHONG = {'子': '午', '丑': '未', '寅': '申', '卯': '酉', '辰': '戌', '巳': '亥',
-                           '午': '子', '未': '丑', '申': '寅', '酉': '卯', '戌': '辰', '亥': '巳'}
-                blocking = []
-                for ib in intervening:
-                    # 中间支是化神克星的本气支
-                    BENQI_WUXING = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', 
-                                   '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金', 
-                                   '戌': '土', '亥': '水'}
-                    if BENQI_WUXING.get(ib) == ke_wx:
-                        blocking.append(ib)
-                    # 中间支是冲神
-                    if LIUCHONG.get(ib) in (a, b):
-                        if ib not in blocking:
-                            blocking.append(ib)
-                
-                relations.append({
-                    'branches': [a, b],
-                    'type': 'liuhe',
-                    'huashen': huashen,
-                    'position': distance,
-                    'positions': [keys[i], keys[j]],
-                    'intervening_branches': intervening,
-                    'blocking_branches': blocking,
-                    'has_blocking': len(blocking) > 0,
-                })
-            
-            # D1 暗会检测
-            if pair in ANHUI_PAIRS:
-                # 暗会成败条件: ①两支贴近(adjacent) ②不混杂(无刑冲)
-                pos_key = frozenset((keys[i], keys[j]))
-                distance = POSITION_DISTANCE.get(pos_key, 'unknown')
-                # 暗会只在adjacent时成立
-                if distance == 'adjacent':
-                    relations.append({
-                        'branches': [a, b],
+    # ★ PATCH-REL-06 (阶段3c) branch_relations 降级为 relations 派生视图
+    #   本函数【不再自行生成】六合/暗会 —— 改由 engines.common.relations_builder 产出,
+    #   relations 是 L0 唯一源(架构 §2.2)。本函数只做【格式投影】, 输出格式与旧版逐字一致。
+    #
+    #   ⚠ 视图不是「一次降级永久安全」: 每次改 relations 的 schema, 本投影必须同步。
+    #      已写入 p0_v2/combination_facts_contract.md §5 回归路径。
+    #
+    #   relations 的实例元素分两型(契约 §1.7-②):
+    #     PAIR 型: {a_pos, b_pos, distance, intervening_branches, blocking_branches, has_blocking}
+    #     SELF 型: {positions: [...]}   ← 不成对, 本投影不消费
+    try:
+        from engines.common.relations_builder import build_relations
+        _z = [pillars[k][1] for k in ('year', 'month', 'day', 'hour')]
+        _R = build_relations(_z)
+        _view = []
+        for _r in _R:
+            _t = _r['type']
+            for _iv in _r['instances']:
+                if 'a_pos' not in _iv:
+                    continue                      # SELF 型不成对, 不属本投影范围
+                if _t == 'HE':
+                    _view.append({
+                        'branches': _r['branches'],
+                        'type': 'liuhe',
+                        'huashen': _r.get('wx'),
+                        'position': _iv.get('distance'),
+                        'positions': [_iv['a_pos'], _iv['b_pos']],
+                        'intervening_branches': _iv.get('intervening_branches') or [],
+                        'blocking_branches': _iv.get('blocking_branches') or [],
+                        'has_blocking': _iv.get('has_blocking', False),
+                    })
+                elif _t == 'ANHUI':
+                    _view.append({
+                        'branches': _r['branches'],
                         'type': 'anhui',
-                        'anhui_shen': ANHUI_PAIRS[pair],
-                        'position': distance,
-                        'positions': [keys[i], keys[j]],
-                        'evidence_grade': 'WEAK',  # 滴天髓秘传体系
+                        'anhui_shen': _r.get('wx'),
+                        'position': _iv.get('distance'),
+                        'positions': [_iv['a_pos'], _iv['b_pos']],
+                        'evidence_grade': 'WEAK',
                         'note': '暗会: 表面虚而实增强, 喜增吉忌添凶',
                     })
-    
+        return {'zhi_relations': _view}
+    except Exception:
+        # 投影失败不静默: relations 不可用时抛, 不回落到旧自行生成逻辑
+        # (回落会造成「两个源」, 违反 L0 唯一源)
+        raise
+
     return {'zhi_relations': relations}

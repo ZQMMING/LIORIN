@@ -386,6 +386,18 @@ def build(pillars):
         for z, pos in _pos_by_z.items()
         if z in SELF_PUNISH_ZHI and len(pos) >= 2
     ]
+    # ★ PATCH-REL-01 relations 统一关系表 (契约 v1.1 §1.1)
+    #   唯一源。结构2(按实例枚举) + instance_count 聚合 + 四条硬约束。
+    #   阶段1: 旧九键与 branch_relations 保持原样生成, 双写并存(relations 为新增唯一源)。
+    #   阶段2: 旧九键改由 relations 派生(derive_all), 本处不改。
+    from engines.common.relations_builder import build_relations, derive_all
+    out['relations'] = build_relations(zhis)
+    # ★ PATCH-REL-02 (阶段2a) 旧九键降级为 relations 派生视图
+    #   契约 v1.1 §3 阶段2 / §2 派生规则。
+    #   下方 L428(chong_set) / L582(sanhe_cancel) 等内部消费者读的就是派生值,
+    #   与旧生成值逐条等价(实测 2106×9 diff=0), 故内部判据不受影响。
+    #   derive_pair_key 内含【硬约束③ 全局按 (pos_i,pos_j) 排序展开】, 不能改成按 relation 序展开。
+    out['combination_facts'].update(derive_all(out['relations']))
     # V7.25 D1/D2 地支关系事实层 (P0: 六合距离衰减+阻隔 + 暗会)
     from engines.common.daymaster_branch_relations import build_branch_relations
     out['branch_relations'] = build_branch_relations(pillars, out)['zhi_relations']
