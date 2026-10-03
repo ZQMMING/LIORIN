@@ -1,3 +1,13 @@
 # python
 __pycache__/
 *.pyc
+
+# 输入数据 / 历史备份（不进 git）
+p0_v2/case_audit/
+p0_v2/六部经典MD文库/
+p0_v2/output/
+p0_v2/_archive_*/
+_archive_*/
+archive/
+vendor/
+tools/
