@@ -1,6 +1,6 @@
 # L3 判据契约（判据中心 · 非「六维框架」）
 
-> 版本 **v1.6**　　日期 2026-10-03　　状态 **契约与实现对齐 + P2优先级契约化 + 第4刀作废**（v1.5 旺/衰判定核验 + 判层归宿 → v1.6 字段清单唯一出处〔裁48〕/ 冲激字段取值修正〔裁49〕/ compare_key 契约化〔裁45〕/ L215 条件互斥〔裁44〕/ 第4刀作废〔裁42〕）
+> 版本 **v1.7**　　日期 2026-10-03　　状态 **判层措辞修正 + 双源登记 + strength_rules登记 + 方法级立规**（v1.5 旺/衰判定核验 + 判层归宿 → v1.6 字段清单唯一出处〔裁48〕/ 冲激字段取值修正〔裁49〕/ compare_key 契约化〔裁45〕/ L215 条件互斥〔裁44〕/ 第4刀作废〔裁42〕）
 > 依据：刘基《滴天髓》京图撰刘基原注本（准神，行号引 `registries/source/raw/DTS_滴天髓_京图撰刘基原注.md`）
 > 定位：**事实声明**，不是愿望清单。字段是「现在能读到什么」，不是「应该有什么」。
 
@@ -437,7 +437,34 @@ DTS L235 明文: 「旺中有衰者存，不可损也；衰中有旺者存，不
   理由: ENGINE_DEFINED 的判据没有 DTS 依据, 落它等于拍
   NOT_AUTHORIZED 就是「无 DTS 判据来源」的如实声明（同 condition_2_pending）
 
-→ 判层归属: 【暂不存在】
+→ 判层归属: 【接口存在, 但被禁止出值】（v1.7 修正措辞, 见下）
+
+★ v1.7 措辞修正(裁五十五甲 + 专核实测):
+  原措辞「判层【暂不存在】」不准确 —— 判层【接口是存在的】:
+    engines/common/strength_producer.py :: produce_strength()   接口在
+    strength_state 在 engines/ 生产层 100 处 / 23 个文件出现, 20+ 文件在读
+    唯一生产者恒返回 value='UNDETERMINED'
+      注: strength_producer.py L52「综合生产条件未授权组合
+           （无单一经典直产 strength_state）→ FAIL_CLOSED 正确」
+
+  「不存在」与「被禁止」对 L4 是两件事:
+    不存在 = 无接口, L4 拿不到东西, 要新建接口
+    被禁止 = 接口在, L4 能调, 但拿到的值恒为 FAIL_CLOSED, 不用建接口
+
+  对 L4 的影响: 接口在 → L4 不必另建接口
+                值恒 UNDETERMINED → L4 仍拿不到判定
+
+★ 与 strength_verdict=NOT_AUTHORIZED 的关系【不合并】(裁六十一乙):
+  两者【框架不同】, 表层相似但语义不同, 强行合并会把强断言降成待办:
+    strength_verdict = NOT_AUTHORIZED
+      含义: DTS 层面无绝对判定法(依据 L245 + §2.6.1 三核)
+      强度: 强断言 —— 依据源本身不提供
+    strength_state  = UNDETERMINED
+      含义: 规则未准入(rule_admission 状态机 DRAFT→CANDIDATE→ADMITTED 未达)
+      强度: 弱断言 —— 工程流程状态
+  ★ authorized 指【规则准入状态机的 ADMITTED】, 不指「DTS 有无明文」
+    (实证: rule_admission.py L3 状态机定义 / L52「无授权综合, FAIL_CLOSED」)
+  → 不登记为「同一结论的两个实现」, 也不要求两者同步修改
   待办: 由案例反标定产生判据, 且反标定样本量达标后, 再裁甲或乙
   触发条件: 基准集扩到可反标定规模（现 7 盘仅 sanity check, 见 §2.5）
 ```
@@ -503,11 +530,10 @@ engines/common/bing_debate.py
 
 | 项 | 含义 | evidence | 依据 |
 |---|---|---|---|
-| `mo` | month_order（旺相休囚死序数）, 键第 1 位 | **`ENGINE_DEFINED`** | 核2：与 L245 冲突; 取值档 DTS L223-225, 顺序无明文 |
-| `dang` | 成党级别（combo>=4→DANG / >=SHI_MIN→SHI） | **`ENGINE_DEFINED`** | combo>=4 为工程猜值（EA_DANG_COMBO, engineering_assumptions）, DTS 无阈值 |
-| `tou` | 透干数（排除日干） | **`DTS_CITED`** | bing_debate L17 注释「透干数【排除日干】——日主不能为自己之党羽」 |
-| `ben` | 本气根数 | **`DTS_CITED`** | 同上 L17 注释 + DTS L119「不论有根无根」（有根） |
-
+| `mo` | `month_order()` 病五行相对月令的位序 1旺2相3休4囚5死9 | **`ENGINE_DEFINED_CONFLICT`** | ①五档无出处见 §4.15.2-a ②mo-first 与 L245 冲突见 §4.15.2-b（冲突实证见 §2.7.2 核2） |
+| `dang` | `_dang_level(combo)` 成党0/成势1/不成2 | `ENGINE_DEFINED` | 阈值 `DANG_COMBO=4`/`SHI_COMBO_MIN=1` 在 `engineering_assumptions.py` L100/L103 已标 `ENGINEERING_UNVERIFIED` |
+| `-tou` | 透干数（**排除日干**） | `DTS_CITED` | 「日主不能为自己之党羽」bing_debate.py L17 注释 |
+| `-ben` | 本气根数 | `DTS_CITED` | 同上 |
 ★ 四级字典序【顺序本身】标「无明文」：哪项居首是 ENGINE_DEFINED 顺序, DTS 无此键之原文。
   与 §2.6.2「相对比较不是独立判据」同款处理：如实标注, 不伪装。
 
@@ -1050,6 +1076,59 @@ DTS L96/L98「生方怕动 / 败地逢冲」
 
 ---
 
+### 4.14.3 ★ 5 冲激字段三态 + 待接入方候选（v1.7 新增，裁五十二甲）
+
+#### 4.14.3.1 三态定性
+
+```
+状态: 【已产出 + 验收层验证 + 生产层零消费】
+
+已产出   : 裁四十九甲修值行后, 4 字段 2106/2106 有值
+           (chong_by None=1665 属合法值: 未被冲时本就 None, chong_role='NO_CHONG')
+验收层   : scripts/ 下 7 个脚本显式 .get() 读取
+生产层   : 零消费 —— ★ 由【变量来源追踪】得出(裁五十三甲), 非按键名 grep:
+           生产层唯一相关处是 transit_power.py L271-L284 的【定义端】
+           (往 wuxing_power[月令行] 里写这 5 个键), 不是读 l3_contract
+
+★ 不是死字段(有 DTS 明文 L108/L96 + 已通过验收), 也不是预留接口(无既定接入方)
+  → 是第三种: 【值已产出、被验收、但没有任何判定读它】
+```
+
+#### 4.14.3.2 回归 0 的理由（裁五十六 —— 换掉旧理由）
+
+```
+旧理由「零生产消费者」依赖【按键名 grep】—— 该方法已证不可靠(见 §4.18), 作废
+
+新理由:
+  生产层读 l3_contract 的这 5 个键 = 0 处        (变量来源追踪实测)
+  生产层读 wuxing_power 的这 5 个键 = 5 处      (transit_power 定义端, 值本就有)
+  bazi_gate 的修正是「让 l3_contract 的副本与 wuxing_power 对齐」
+  → 两处读的值本来就相同 → post28→post29 判定变化 0 是真的
+
+★ 新理由不依赖任何有争议的方法。
+```
+
+#### 4.14.3.3 待接入方【候选】清单（列候选, 不列承诺）
+
+```
+chong_adjust   → strength 判层的合成输入（判层建立后）?
+                 或 L3 弱冲突合成规则（若裁「合成」式）?
+ling_state_eff → 月令受冲的最终位, 应进 L3 判定
+                 但当前 L3 无判定层 → 待判层建立
+library_open   → P1 结构病域（库开/库闭影响病机）?
+chong_role     → 供 branch_chong 归属判断, 但与 branch_chong 同源?
+chong_by       → 同 chong_role
+
+★ 列候选不列承诺:
+  不列候选 → L4 建时重新发明字段
+  列承诺   → L4 没用它们就是违约
+  两者都是错。
+
+触发条件: mo 口径定案(§4.15.2-b) + L4/P2 若需要月令受冲量, 从这 5 字段读
+```
+
+---
+
 ### 4.15 ★ P2 `bing_debate.compare_key` 契约化（v1.6 新增，裁四十五乙）
 
 #### 4.15.1 四级字典序（已在生产运行，契约首次记录）
@@ -1177,6 +1256,124 @@ L245 §十九 相对比较 → 用于【源流源头判定】(取最多最旺者
 
 ★ 反向不是异常态, 是常态 → 这是【合成】问题(量之间怎么合), 不是【消解】问题
   B 项触发条件: 与 §2.6.5 判层归宿同一批 —— 反标定样本量达标后定合成口径
+```
+
+---
+
+
+### 4.18 ★ 同名字段双源登记（v1.7 新增，裁五十三甲/丙）
+
+#### 4.18.1 双源键清单（专核实测）
+
+```
+l3_contract 与 wuxing_power[五行]行 同名的 6 个键:
+  ling_state / chong_adjust / chong_role / chong_by / library_open / ling_state_eff
+
+来源:
+  l3_contract            bazi_gate.py L294-L305 (从 _dmp / _dmp_month 直取)
+  wuxing_power[五行]行    transit_power.py L258-L284 (五行行, 冲激字段仅月令行)
+```
+
+#### 4.18.2 ★ 两份真实消费者清单（按变量来源追踪, 非键名 grep）
+
+```
+l3_contract 真实消费者: 生产层 0 处, 全部在 scripts/ 验收层
+  dm_ben_eff 9 / root_grade 7 / support_state 6 / de_di 3 / ling_state 3
+  de_ling 1 / dang_duo 1 / root_grade_raw 1 / strength_verdict 1 / fan_ju 1
+
+wuxing_power 真实消费者(同名键): 生产层有
+  transit_power.py L271/272/273/274/280/284  ← 【定义端】往五行行写
+  transit_power.py L510 / yongshen_engine.py L167  ← 读五行行
+```
+
+#### 4.18.3 ★★ 方法级立规（裁五十七）
+
+```
+规: 统计「某字段的消费者」时, 必须同时确认【数据源】。
+    若该键名在多个结构中存在(如 l3_contract vs wuxing_power[五行]),
+    【按键名 grep 统计的结果一律无效】, 改用变量来源追踪:
+      facts['l3_contract'][X] / lc.get(X)        → l3_contract 消费
+      wp.get(X) / _dmp.get(X) / _dmp_month.get(X) → wuxing_power 消费
+      → 读键那行的接收者变量, 回溯该变量在同文件内的赋值链
+
+★ 与「双路径 import 假差异」「持久 kernel 污染」同级, 进工作规范。
+
+作废范围(裁五十三甲 —— 逐项重核):
+  relations 迁移期     「93 处消费者」       ← 待重核
+  six_dims 删除期      「零引擎消费者」     ← 待重核
+  5 冲激字段期         「零生产消费者」     ← 已重核, 结论成立但旧理由无效
+  l3_contract 加字段期 「零回归」          ← 已重核, 新理由见 §4.14.3.2
+  branch_relations 期   「147 行零浮点」     ← 非消费者核, 不受影响
+```
+
+---
+
+### 4.19 ★ `strength_rules*.py` 登记（v1.7 新增，裁六十甲）
+
+#### 4.19.1 存在
+
+```
+6 档判定规则草案:
+  VERY_STRONG / STRONG / SLIGHTLY_STRONG / NEUTRAL / SLIGHTLY_WEAK / WEAK / VERY_WEAK
+  文件: engines/common/strength_rules.py      :: rule_034_01_strength()
+        engines/common/strength_rules_full.py :: rule_034_02_strength_full()
+        engines/common/strength_pipeline.py  :: produce_states() / rule_match()
+```
+
+#### 4.19.2 三事实
+
+```
+零 import      : 三文件被 import 各 0 处(全仓静态扫描)
+未接入        : 不在 paipan() 链上
+git 有 3 次提交: cf9268f9 PATCH-022B / 7cfbf112 PATCH-034 / 247eed22 PATCH-055
+              → 不是历史残留, 是主动落的规则层
+```
+
+#### 4.19.3 ★ 三条使其【不可作反标定锚点】的原因（缺一条会被误读）
+
+```
+① 主源是 YHZP-138-001(6/7 档), 不是 DTS
+   实测 evidence 分布: YHZP 6/7 · DTS 3/7 · SFTK 2/7
+   且 evidence 是【切片 ID】不是原文引句
+
+② 输入值来自 strength_pipeline.produce_states 硬编码 demo, 不是真实排盘
+   → 6 档的判据组合(wang_state/root_state/support_state ...)输入不真实
+
+③ 切片 ID 引文未核
+   与 P1 六本 2106 盘 slice_id/bing_domain 结构性全缺 同类
+```
+
+#### 4.19.4 价值 + 防重走
+
+```
+价值: 曾有人做过一版 6 档 —— 此路走过、走不通(输入不真实), 防止将来重走一遍。
+
+★ 触发条件: 若判层建立, 必须从「真实排盘输入 + DTS 来源」重做,
+  【不沿用】本草案的 6 档与证据。
+```
+
+---
+
+### 4.20 ★ `xiji_adjudicate` 文案登记（v1.7 新增，裁六十一乙）
+
+```
+位置: engines/common/liunian_state.py L143 :: xiji_adjudicate() 的 else 分支
+
+else 分支文案: 「中和/未定不裁喜忌」
+
+实际语义(两个不同态落同一分支):
+  NEUTRAL       DTS 中和（§十八 L240 有据）
+  UNDETERMINED  规则未准入（rule_admission ADMITTED 未达）
+
+判定行为: weak_dir/strong_dir 都不 True → 循环不进 → xi=ji=[]
+          两者都【不裁喜忌】—— 行为正确
+文案问题: 把「有据的中和」与「无据的未定」并成一句
+
+★ 隐性判定核查(裁五十五新增核): 无「未判定→默认 STRONG」的默认档
+  UNDETERMINED 正确闭锁在「不裁喜忌」, 不是隐性判定
+
+不在本轮修的理由: 改生产代码 + 跑回归, 为一句文案不值
+触发条件: 若判层建立后引入第三个「未定」档, 必须把三者分开
 ```
 
 ---
