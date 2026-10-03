@@ -289,6 +289,20 @@ def paipan(bazi: str) -> Dict[str, Any]:
         #   else:                                        → ling_state 原值
         # ★ chong_adjust 值域严格 {-1,0,+1}; 越界 = 契约违反, 下游应断言不得静默
         "ling_state_eff": _dmp.get("ling_state_eff"),
+        # ★ PATCH-L3-02 (2026-10-03) 第1刀 布尔补齐
+        #   契约: p0_v2/l3_contract_spec.md v1.1 §1 字段 11~13
+        #   三个布尔, 值域严格 {True, False}, 由已有判据投影, 不新增判据。
+        #   de_ling  : (ling_state == '旺')          DTS L225「气象得令者吉」
+        #   de_di    : (dm_ben_eff >= 1)              DTS L119「有根无根」+ L9「根拔」
+        #   dang_duo : (support_state == 同党成势)    DTS L280/L604「党多/党少」
+        #   ★ de_di 与 root_grade 的关系(见契约 §1.5):
+        #     root_grade == '无'  当且仅当  dm_ben_eff == 0
+        #     root_grade 是 dm_ben_eff 的【门控派生】(L240: "无" if dm_ben_eff0<=0 else raw)
+        #     故 de_di 是 dm_ben_eff 的布尔投影, 【不是】root_grade 的。
+        #     实测 2106 盘: de_di_raw(de_di) 与 de_di_eff 完全恒等, 零差异 -> 落一个不落两个。
+        "de_ling": _dmp.get("ling_state") == "旺",
+        "de_di": int(special.get("dm_ben_eff", 0) or 0) >= 1,
+        "dang_duo": _support_state == "SHENG_FU_CHENG_SHI",
         "fan_ju": {
             "types": _fan_ju.get("types", []),
             "count": _fan_ju.get("count", 0),

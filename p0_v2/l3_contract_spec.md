@@ -1,6 +1,6 @@
 # L3 判据契约（判据中心 · 非「六维框架」）
 
-> 版本 v1.0　　日期 2026-10-03　　状态 **待审**
+> 版本 **v1.1**　　日期 2026-10-03　　状态 **第1刀已落码**（v1.0 冻结 10 字段 → v1.1 增第1刀三布尔）
 > 依据：刘基《滴天髓》京图撰刘基原注本（准神，行号引 `registries/source/raw/DTS_滴天髓_京图撰刘基原注.md`）
 > 定位：**事实声明**，不是愿望清单。字段是「现在能读到什么」，不是「应该有什么」。
 
@@ -44,6 +44,47 @@
 | 8 | `chong_by` | str \| None | 冲方支名 | L106「能克方为冲方」 | 直取 `_dmp` | 主 | ACTIVE |
 | 9 | `library_open` | bool | `True / False` | L96「生方怕动库宜开」/ L98「辰戌丑未四库也，宜冲开」 | 直取 `_dmp` | 主 | ACTIVE |
 | 10 | `ling_state_eff` | str 枚举 | **8 值互斥**（见 §1.1） | 合成字段，由 2/6/7/9 合成 | **合成** `f(2,6,7,9)` | **COMPOSITE** | ACTIVE |
+
+### 1.0-b 第 1 刀 · 布尔补齐（v1.1 新增，字段 11~13）
+
+**三个布尔，值域严格 `{True, False}`，由已有判据投影，不新增判据。**
+
+| # | 字段 | 类型 | 值域 | DTS 行号 | 来源（投影式） |
+|---|---|---|---|---|---|
+| 11 | `de_ling` | bool | `{True, False}` | L225「气象得令者吉」 | `(ling_state == '旺')` |
+| 12 | `de_di` | bool | `{True, False}` | L119「有根无根」+ L9「根拔」 | `(dm_ben_eff >= 1)` |
+| 13 | `dang_duo` | bool | `{True, False}` | L280「党多」/ L604「子之党多」 | `(support_state == 'SHENG_FU_CHENG_SHI')` |
+
+### 1.5 ★ `de_di` / `root_grade` / `dm_ben_eff` 三层关系（v1.1）
+
+```
+root_grade      枚举 3 值  {无, 余/中, 本}     ← 分类视图
+dm_ben_eff      序数 int  {0, 1, 2, ...}      ← 本气根计数（经孤根被冲拔/合局化根修正）
+de_di           布尔       = (dm_ben_eff >= 1) ← 判据视图
+```
+
+**恒等关系（实测 2106 盘，零例外）：**
+```
+root_grade == '无'   当且仅当   dm_ben_eff == 0
+de_di == (root_grade != '无')  == (dm_ben_eff >= 1)
+```
+
+**根因**：`bazi_gate.py:240` —— `_root_grade = "无" if _dm_ben_eff0 <= 0 else _root_grade_raw`
+**`root_grade` 是 `dm_ben_eff` 的门控派生，不是独立判据。**
+
+**故 `de_di` 是 `dm_ben_eff` 的布尔投影，不是 `root_grade` 的。**
+**实测：原先拟落的 `de_di_raw` 与 `de_di_eff` 在 2106 盘完全恒等（交叉表仅两格，零条 raw=True/eff=False）→ 落一个，不落两个。** 落两个即造两个恒等源。
+
+### 1.6 演进方向（记入契约，本轮不做）
+
+```
+触发条件: 若将来 DTS L119「原始根」与 L9「有效根」要拆为两个独立判据
+动作:
+    1. de_di 拆 de_di_raw / de_di_eff 两个布尔
+    2. root_grade 去掉 dm_ben_eff 门控, 改为独立计算(_grade_of(_classes) 直接用)
+验收: 2106 盘交叉表出现 raw=True/eff=False 格(根被拔但原始有根)
+       当前该格样本数 = 0, 即引擎尚无「原始有根但有效无根」的盘
+```
 
 **★ 来源列按【代码事实】填，不按架构文档填。**
 已发现文档与实现脱节一处：**架构 §2.5 记「`dm_ben_eff` 来源 L0」，实际是 `special.get(...)`（special_pattern 层输出）。**
