@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 四柱临时接口 + 切片/案例入口 —— 顺天子平线唯一正式工作入口
 ================================================================
@@ -196,7 +196,19 @@ def paipan(bazi: str) -> Dict[str, Any]:
     _dmp = _wpd.get(_dmwx, {}) or {}
     _yinwx = {"木": "水", "火": "木", "土": "火", "金": "土", "水": "金"}.get(_dmwx, "")
     _yinp = _wpd.get(_yinwx, {}) or {}
-
+    # ★ 裁四十九甲 (2026-10-03) 冲激字段取值行修正 —— 契约与实现口径对齐
+    #   错位根因: transit_power.py L269 `if wx == month_wx:` 只在【月令五行】行赋 5 冲激字段,
+    #             而此处原用 _dmp(=_wpd[日主五行]) 读它们 -> 日主五行 != 月令五行的盘,
+    #             5 字段恒 None(DT-0008 日主金/月令土 实测 5 字段全 None)。
+    #   语义依据: 5 冲激字段判的是【月令受冲】(见 transit_power L267-L284),
+    #             与日主五行无关 -> 必须从月令行取。
+    #   保留 _dmp 供 ling_state 等日主相关字段使用, 两者分行不混用。
+    _monthwx = f.get("month_qi_element", "") or (f.get("wuxing_power") or {}).get("month_element", "")
+    _dmp_month = _wpd.get(_monthwx, {}) or {}
+    # 只在月令行确实带冲激字段时才用; 月令行缺键 -> 显式 None, 不静默回落日主行。
+    _CHONG_KEYS = ("chong_adjust", "chong_role", "chong_by",
+    "library_open", "ling_state_eff")
+    
     def _grade_of(cls_set):
         if not cls_set:
             return "无"
@@ -274,21 +286,23 @@ def paipan(bazi: str) -> Dict[str, Any]:
         "strength_verdict": "NOT_AUTHORIZED",
         # ★ PATCH-L3-01 (2026-10-03) L3 契约补 5 冲激字段
         #   契约: p0_v2/l3_contract_spec.md v1.0 §1 字段 6~10
-        #   值【直取 _dmp】(wuxing_power[日主五行]) —— 不是从 six_dims 复制。
-        #   零复制: six_dims 与 l3_contract 同读 _dmp, 是两个出口同源, 不是两份数据。
-        #   ★ §1.3 硬约束: 此 5 字段【仅月令五行行有值】, 其余四行无此键
-        #     (根因 transit_power.py:269 `if wx == month_wx:` 条件块内赋值)
-        #     .get() 取值会得 None —— 下游若遍历五行全表, 非月令行读到的是「无定义」不是「未受冲」。
-        "chong_adjust": _dmp.get("chong_adjust"),
-        "chong_role": _dmp.get("chong_role"),
-        "chong_by": _dmp.get("chong_by"),
-        "library_open": _dmp.get("library_open"),
+        #   值【直取 _dmp_month】(wuxing_power[月令五行]) —— 不是从 six_dims 复制。
+        #   零复制: six_dims 与 l3_contract 同读 wuxing_power, 是两个出口同源, 不是两份数据。
+        #   ★ §1.3 硬约束: 此 5 字段【仅月令五行行有值】(transit_power.py:269
+        #     `if wx == month_wx:` 条件块内赋值)。
+        #     裁四十九甲(2026-10-03) 修正: 改从【月令行】_dmp_month 取 ——
+        #     原从 _dmp(日主行)取, 致日主五行!=月令五行的盘 5 字段恒 None(DT-0008 实测)。
+        #   ★ 裁四十九甲: 5 字段统一改从【月令行】取(语义是「月令受冲」, 与日主五行无关)。
+        "chong_adjust": _dmp_month.get("chong_adjust"),
+        "chong_role": _dmp_month.get("chong_role"),
+        "chong_by": _dmp_month.get("chong_by"),
+        "library_open": _dmp_month.get("library_open"),
         # 合成字段 role=COMPOSITE, 合成式见契约 §1.2:
         #   if _adj:                                   → CHONG_BA / CHONG_FA
         #   elif role=='BROTHER_CHONG' and library_open: → KU_KAI
         #   else:                                        → ling_state 原值
         # ★ chong_adjust 值域严格 {-1,0,+1}; 越界 = 契约违反, 下游应断言不得静默
-        "ling_state_eff": _dmp.get("ling_state_eff"),
+        "ling_state_eff": _dmp_month.get("ling_state_eff"),
         # ★ PATCH-L3-02 (2026-10-03) 第1刀 布尔补齐
         #   契约: p0_v2/l3_contract_spec.md v1.1 §1 字段 11~13
         #   三个布尔, 值域严格 {True, False}, 由已有判据投影, 不新增判据。
