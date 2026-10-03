@@ -397,11 +397,14 @@ def paipan(bazi: str) -> Dict[str, Any]:
                     "rejected_climate": yy.get("rejected_climate"),
                     "rule": yy.get("rule"),
                     "evidence_refs": yy.get("evidence_refs")},
-        # STEP-DBG-12b (2026-10-03) 旺衰六维矩阵投影
-        #   wuxing_power 内层字段(ling_state/ben_n/zhong_n/yu_n/ju_n/stem_n/
-        #   banhe_n/root_detail)此前【完全没投影到顶层】—— 旺衰层是核心,
-        #   六维必须可被下游(bazi_gate 调用方/大运/P1/P2)直接读到。
-        #   只加投影, 不改 wuxing_power 任何计算。
+        # ★ PATCH-L3-03 (2026-10-03) 旺衰矩阵投影 (six_dims 已废弃)
+        #   L1 数据出口: dm_row(日主整行) / yin_row(印行) / by_element(五行全表)
+        #   L3 判定出口: l3_contract (13 字段, 契约见 p0_v2/l3_contract_spec.md v1.1)
+        #   ★ 原 six_dims 块与「旺衰六维矩阵」note 已删:
+        #     - 8 个 L1 字段经核与 by_element[日主] 完全恒等(2106x8=16848 次 diff=0), 是纯副本
+        #     - 5 个冲激字段已迁入 l3_contract(PATCH-L3-01), 值直取 _dmp 非复制
+        #     - note 的「六维」定义经原典核验不作准(DTS 不按维度组织文本, 见契约 §〇),
+        #       且已无消费者(wangshuai_matrix.note 零引用)
         "wangshuai_matrix": {
             "daymaster_element": _dmwx,
             "month_element": (f.get("wuxing_power") or {}).get("month_element", ""),
@@ -410,22 +413,6 @@ def paipan(bazi: str) -> Dict[str, Any]:
             "dm_row": _dmp,
             "yin_row": _yinp,
             "by_element": _wpd,
-            "six_dims": {
-                "ling_state": _dmp.get("ling_state"),
-                # ★ STEP-DBG-14 chong_adjust: 月令受六冲的序数修正(-1拔/+1发/0不变)
-                "chong_adjust": _dmp.get("chong_adjust"),
-                "chong_role": _dmp.get("chong_role"),
-                "chong_by": _dmp.get("chong_by"),
-                "library_open": _dmp.get("library_open"),
-                "ling_state_eff": _dmp.get("ling_state_eff"),
-                "root_detail": _dmp.get("root_detail"),
-                "ben_n": _dmp.get("ben_n"),
-                "zhong_n": _dmp.get("zhong_n"),
-                "yu_n": _dmp.get("yu_n"),
-                "ju_n": _dmp.get("ju_n"),
-                "banhe_n": _dmp.get("banhe_n"),
-                "stem_n": _dmp.get("stem_n"),
-            },
             # 月令冲激全貌(含未被日主五行覆盖的部分)
             # ★ STEP-DBG-14 branch_chong: 四支各自的受冲处境(柱位维度)
             "branch_chong": (f.get("wuxing_power") or {}).get("branch_chong"),
@@ -433,10 +420,6 @@ def paipan(bazi: str) -> Dict[str, Any]:
                 "month_branch": (f.get("wuxing_power") or {}).get("month_branch"),
                 "month_pos": ((f.get("wuxing_power") or {}).get("branch_chong") or {}).get("month"),
             },
-            "note": ("旺衰六维矩阵: 1月令ling_state 2得地root_detail/ben_n/zhong_n/yu_n "
-                     "3得势support_state(见l3_contract) 4通根ben_n "
-                     "5合冲combination_facts 6透干stem_n; "
-                     "dm_ben_eff/root_grade/support_state 见 l3_contract"),
         },
         "raw_facts": f,
     }
