@@ -68,6 +68,11 @@ from engines.common.fan_ju import resolve_fan_ju
 from engines.common.special_pattern import build_special_patterns
 from engines.common.ge_jie_layer import (build_ge_cheng, apply_he_po_ge,
                                               normalize_ti_wx)  # STEP-2.4b / STEP-DBG-4
+# ★ 裁七十一乙 (2026-10-04) 拓扑派生层接入 (原孤立模块, 见契约 §4.0 v1.9)
+#   只调 4 个已落函数 + 通关映射表; 不调 loose 对照版(不供判定)。
+from engines.common.topology_paths import (
+    build_yuan_liu_skeleton, find_tong_guan, check_fang_ju_ming_same_wx,
+    check_guan_topology, TONG_GUAN_MAP)
 
 # 十神/藏干来自 l0_fact_builder(引擎自己的), 供外部引用
 TEN_GOD = ten_god
@@ -357,6 +362,41 @@ def paipan(bazi: str) -> Dict[str, Any]:
     #   注: daymaster_root_class.build_root_classes 也输出同名字段,
     #   但其签名只有 (pillars, hidden_stems_table), 无 facts 入参, 属接口自包含,
     #   非重复实现, 本 step 不动(潜在不一致源, 归 §7 缺口 1)。
+
+    # ★ 裁七十一乙 (2026-10-04) 拓扑派生层装配函数
+    #   核验(2026-10-04): 4 块全部不依赖 L4 —— xi_wx 只出现在注释与 endpoint_pending
+    #   标记里, 不是真依赖; 入参 relations(L0)/pan_zhi(四柱)/mass(L1)/pos_of(四柱) 全部现成。
+    def _build_topology(facts, pillars):
+        rels = facts.get("relations") or []
+        zhis = [pillars[k][1] for k in _POS]          # 四柱地支, 标准柱序
+        # mass 用引擎口径四项(ben+zhong+yu+stem) —— 与 L1 wuxing_power 同源, 不重算
+        _mass = {"木": 0, "火": 0, "土": 0, "金": 0, "水": 0}
+        _wpd_t = (facts.get("wuxing_power") or {}).get("wuxing_power", {}) or {}
+        for _wx, _row in _wpd_t.items():
+            _mass[_wx] = (int(_row.get("ben_n", 0) or 0)
+                          + int(_row.get("zhong_n", 0) or 0)
+                          + int(_row.get("yu_n", 0) or 0)
+                          + int(_row.get("stem_n", 0) or 0))
+        # pos_of: 支名 -> 柱位列表(重复支盘一视同仁)
+        _pos_of = {}
+        for _pos, _v in pillars.items():
+            _pos_of.setdefault(_v[1], []).append(_pos)
+        return {
+            "yuan_liu": build_yuan_liu_skeleton(_mass),
+            "fang_ju": check_fang_ju_ming_same_wx(rels, zhis),
+            "tong_guan": {
+                "rules": [{"guan": m["guan"], "tong": m["tong"],
+                           "trigger": m["trigger"], "inert": bool(m.get("inert")),
+                           "evidence": m["evidence"], "line": m["line"]}
+                          for m in TONG_GUAN_MAP],
+                "note": "前三组相克成关可触发; 第四组金水不相克 inert(见契约 §4.4)",
+            },
+            "guan_topo": check_guan_topology(rels, zhis[0], zhis[2], _pos_of),
+            "boundary_note": ("派生层(L0+L1 的确定性派生), 不塞 L0~L4 任何一层。"
+                              "源流读 mass(L1), 方局/通关/关拓扑读 relations(L0)。"
+                              "★ 不放 raw_facts —— 会让 L0 输出依赖 L1 输出, 层次倒挂。"),
+        }
+
     dm_wx = f.get("daymaster_element", "") or (f["wuxing_power"].get("daymaster_element", ""))
     dmd = (f["wuxing_power"].get("wuxing_power", {}) or {}).get(dm_wx, {}) or {}
 
@@ -379,6 +419,9 @@ def paipan(bazi: str) -> Dict[str, Any]:
                              "ju_n", "banhe_n", "stem_n", "root_detail")},
         "root_weight_class": f.get("root_weight_class_facts", {}),
         "l3_contract": f.get("l3_contract", {}),
+        # ★ 裁七十一乙 (2026-10-04) 拓扑派生层 —— 与 l3_contract 平级, 不塞 L0~L4
+        #   语义: L0(relations) + L1(wuxing_power) 的确定性派生, 无判定无阈值。
+        "topology": _build_topology(f, p),
         "combination_facts": f.get("combination_facts", {}),
         "stem_combination_facts": f.get("stem_combination_facts", {}),
         "tian_he": th,

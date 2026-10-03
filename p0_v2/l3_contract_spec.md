@@ -1,6 +1,6 @@
 # L3 判据契约（判据中心 · 非「六维框架」）
 
-> 版本 **v1.8**　　日期 2026-10-04　　状态 **文档单一出处 + 提交前一致性检查**（v1.7 判层措辞/双源登记/strength_rules登记 → v1.8 §二去重 + §八 文档规范）（v1.5 旺/衰判定核验 + 判层归宿 → v1.6 字段清单唯一出处〔裁48〕/ 冲激字段取值修正〔裁49〕/ compare_key 契约化〔裁45〕/ L215 条件互斥〔裁44〕/ 第4刀作废〔裁42〕）
+> 版本 **v1.9**　　日期 2026-10-04　　状态 **拓扑派生层已接入 paipan 顶层**（v1.8 §二去重 + §八 文档规范 → v1.9 §4.0 接入记录〔裁71乙〕）（v1.7 判层措辞/双源登记/strength_rules登记 → v1.8 §二去重 + §八 文档规范）（v1.5 旺/衰判定核验 + 判层归宿 → v1.6 字段清单唯一出处〔裁48〕/ 冲激字段取值修正〔裁49〕/ compare_key 契约化〔裁45〕/ L215 条件互斥〔裁44〕/ 第4刀作废〔裁42〕）
 > 依据：刘基《滴天髓》京图撰刘基原注本（准神，行号引 `registries/source/raw/DTS_滴天髓_京图撰刘基原注.md`）
 > 定位：**事实声明**，不是愿望清单。字段是「现在能读到什么」，不是「应该有什么」。
 
@@ -572,25 +572,73 @@ L4    读「判」  —— 不读「量」
 **文件**：`engines/common/topology_paths.py`
 **验收脚本**：`scripts/verify_knife3_topology.py`
 
-### 4.0 ★ 状态：孤立模块，未接入 L3/L4
+### 4.0 ★ 状态：已接入 paipan() 顶层（v1.9 改，裁七十一乙）
+
+> **v1.3 原文记「孤立模块，未接入」—— v1.9 已接入，见下方 v1.9 修正块。**
+
+#### 4.0.1 v1.9 接入记录（裁七十一乙）
 
 ```
-实测(2026-10-03): grep topology_paths 全仓
-    engines/    0 处引用
-    p0_v2/       0 处引用
-    tests/       0 处引用
-    scripts/     1 处(仅验收脚本 verify_knife3_topology.py)
-→ 纯孤立新文件, post24→post25 全量判定变化 0 盘 / 2106
+接入位置: paipan() 顶层新键 `topology`, 与 l3_contract 平级
+          ★ 不塞 L0~L4 任何一层, 语义标 derived(派生层)
 
-理由: 源流步骤3-6 待 L4 xi_wx / 通关第四条件待「劫占」核清
+★ 为何不放 raw_facts:
+  源流读 mass, mass 来自 wuxing_power = L1
+  若 topology 进 raw_facts(L0 输出) → L0 输出依赖 L1 输出 → 层次倒挂
+  L0 不能依赖 L1, 这是分层底线
 
-接入触发条件(两条全满足):
-    1. L4 xi_wx 就绪(源流步骤3「所喜之神即在此住了」)
-    2. 「劫占」定义核清(通关第四条件「能胜劫占之神」)
+★ 为何不进 l3_contract:
+  四块都是【确定性派生】, 无判定、无阈值 —— 不是判据
+  find_yuan_tou 排的是「五行的量」不是「日主的旺衰」
 
-未触发前: 下游 import 视为【超前接入】。
-★ 状态显式化, 不靠读者推断 —— 与 EXTREME_STRONG「已否决候选」、
-  劫占「INFERRED 不进 relations.type」同款处理。
+四块依赖核验(2026-10-04, 前置核):
+  源流    读 mass(L1)              → 不依赖 L4
+  方局    读 relations + pan_zhi(L0) → 不依赖 L4
+  通关    读 relations + relations(L0) → 不依赖 L4
+  关拓扑  读 relations + pos_of(L0)  → 不依赖 L4
+  ★ xi_wx 只出现在注释与 endpoint_pending='L4_XI_WX' 标记里, 不是真依赖
+    (v1.3 把「未实现标记」误当「真依赖」, 是本轮纠正的错误)
+
+接的 4 个函数:
+  build_yuan_liu_skeleton / check_fang_ju_ming_same_wx /
+  check_guan_topology / TONG_GUAN_MAP
+  ★ 不接 check_fang_ju_ming_loose —— 对照版不供判定(契约 §4.9.1)
+  ★ 不接 find_tong_guan —— 通关按盘无成关实例时无调用方, 映射表已投影
+
+装配函数: bazi_gate.py :: _build_topology(facts, pillars)
+  mass     = wuxing_power 各行的 ben+zhong+yu+stem (引擎口径四项, 不重算)
+  pos_of   = {支名: [柱位]} 重复支盘一视同仁
+
+实测(独立进程 2106 盘, 崩溃 0):
+  topology 存在          2106 (100.0%)
+  四个子键齐全           2106 (100.0%)
+  浮点                   0 盘 (架构 §1.2 禁浮点)
+
+  源流: 有源头 2106 / status=SKELETON_ONLY 2106 / endpoint=None 2106
+        并列(tied_with 非空) 659 (31.3%) —— 并列处理在工作, 不是恒取首个
+  方局: jun_za_ming=True 54 (2.6%)  ★ 与 §4.9 实测的 54 一致
+        degree=None 2106 / variant=JIA_SAME_WUXING 2106
+  通关: 规则数 4 / inert 数 1 (第四组金水)  —— 2106/2106 一致
+  关拓扑: verdict=INCOMPLETE 2106 (jie_zhan=None, 劫占未核)
+          distance SPAN_ONE 824 (39.1%) / REMOTE 37 (1.8%) / None 1245 (59.1%)
+          blocked True 196 (9.3%) / False 1910 (90.7%)
+          ★ distance/blocked 均非恒值 —— pos_of + relations 实例链在工作
+
+★ 回归 post31 → post32 判定变化 0 —— 但这是【空的】:
+  scripts/_l4_baseline.py 只快照 12 个顶层键, 不含 topology 也不含 l3_contract
+  → 拓扑层的真验收是 scripts/verify_topology_wired.py(新建)
+  ★ 与 §4.14.3.2 同款: 回归 0 不等于该层被验过, 必须看它是否进了快照
+```
+
+#### 4.0.2 接入后仍未落的部分（不是「未接入」，是「已接入但内容待补」）
+
+```
+源流步骤 3-6（终点/是否气泄为乱/遇阻节/流住之地）→ 待 L4 xi_wx
+  ★ 但骨架(步骤1-2)已出结果, 不是空壳
+通关第四条件「能胜劫占之神」            → 待「劫占」核清(§4.5)
+  ★ 但前三组已可触发, 第四组标 inert 如实登记
+关拓扑 jie_zhan                        → 待劫占核清
+  ★ 但 distance/blocked 已落, verdict 如实返 INCOMPLETE 而非 FAIL
 ```
 
 ### 4.1 落法铁律：路径禁止显式图
