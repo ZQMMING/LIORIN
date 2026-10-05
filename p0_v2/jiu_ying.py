@@ -89,6 +89,61 @@ def _wuhe_pairs(bazi):
     return out
 
 
+# 五行 / 通关表 (DTS L245 明列 4 组: 木土要火 / 火金要土 / 土水要金 / 金水要水)
+GAN_WX = {"甲":"木","乙":"木","丙":"火","丁":"火","戊":"土","己":"土",
+          "庚":"金","辛":"金","壬":"水","癸":"水"}
+TONG_GUAN = {frozenset("木土"):"火", frozenset("火金"):"土",
+             frozenset("土水"):"金", frozenset("金水"):"水"}
+
+# 十二长生 (重根 = 长生/禄/刃, 与引擎 L0 root_weight_class_facts 同口径)
+ROOT_LIFECYCLE = {
+    "甲":{"亥":"长生","寅":"禄","卯":"刃"}, "乙":{"午":"长生","卯":"禄","辰":"刃"},
+    "丙":{"寅":"长生","巳":"禄","午":"刃"}, "丁":{"酉":"长生","午":"禄","未":"刃"},
+    "戊":{"寅":"长生","巳":"禄","午":"刃"}, "己":{"酉":"长生","午":"禄","未":"刃"},
+    "庚":{"巳":"长生","申":"禄","酉":"刃"}, "辛":{"子":"长生","酉":"禄","戌":"刃"},
+    "壬":{"申":"长生","亥":"禄","子":"刃"}, "癸":{"卯":"长生","子":"禄","丑":"刃"},
+}
+HEAVY = {"长生","禄","刃"}
+
+
+def _has_root(dm, branches):
+    """日干 dm 在 branches(4支) 有无重根(长生/禄/刃 或 藏干含 dm)。纯函数。"""
+    for z in branches:
+        life = ROOT_LIFECYCLE.get(dm, {}).get(z)
+        if life in HEAVY:
+            return True
+        if dm in HIDDEN.get(z, []):
+            return True
+    return False
+
+
+def build_l0_facts_pure(bazi):
+    """纯函数版 L0 facts (与引擎 l0_fact_builder.build 出参同口径, 不 import 引擎)。
+    供 jiu_ying 六条判据读: 十神集 / 天干五合 / 重根 / 通关表。"""
+    stems = [bazi[0], bazi[2], bazi[4], bazi[6]]
+    branches = [bazi[1], bazi[3], bazi[5], bazi[7]]
+    dm = stems[2]
+    gods = set()
+    for g in [stems[0], stems[1], stems[3]]:
+        gods.add(TEN_GOD_MAP[dm][g])
+    for z in branches:
+        for h in HIDDEN[z]:
+            gods.add(TEN_GOD_MAP[dm][h])
+    wuhe = []
+    for i in range(4):
+        for j in range(i + 1, 4):
+            p = frozenset((stems[i], stems[j]))
+            if p in WUHE:
+                wuhe.append([stems[i], stems[j], WUHE[p]])
+    return {
+        "day_master": dm, "stems": stems, "branches": branches,
+        "ten_god_set": gods, "wuhe": wuhe,
+        "dm_element": GAN_WX[dm],
+        "month_qi_element": GAN_WX[HIDDEN[branches[1]][0]],
+        "has_root": _has_root(dm, branches),
+    }
+
+
 def _is_cong(ge, cong_type):
     """从格识别 (裁148丙): ge 含从格关键词 或 cong_type 非空 → NA_NOT_IN_SCOPE。"""
     if any(k in (ge or "") for k in
@@ -136,25 +191,65 @@ def build_jiu_ying(bazi, ge_cheng):
             "note": "纯成格, 无救应需求"
         }
 
-    # CZYP / PO → 判 6 条
-    gods, dm = _collect_tengod(bazi)
-    wuhe = _wuhe_pairs(bazi)
+    # CZYP / PO → 判 6 条 (全部读纯函数 L0 facts, 不 import 引擎)
+    facts = build_l0_facts_pure(bazi)
+    gods = facts["ten_god_set"]
+    dm = facts["day_master"]
+    wuhe = [p for p in facts["wuhe"]]  # [[a,b,name],...]
+    wuhe_stems = {s for p in wuhe for s in p[:2]}
     types = []
     ev = []
+    ok = []  # 各命中判据的 success 布尔, 合取定 SUCCESS/UNS
+
+    # .001 通关 (DTS §二十 L245): 两行相战, 中间神引通
+    #   触发 = 盘中两五行相战(战 = 互克 且 两行都有神)
+    #   success = 通关之神「引得」(该五行十神在盘中) + 日干有根(有力)
+    t1_trig = False
+    t1_ok = False
+    wx_present = set(GAN_WX[s] for s in [dm] + [bazi[0], bazi[2], bazi[6]]
+                      for _ in [0])
+    # 五行在场: 天干 + 藏干 的五行并集
+    wx_present = set()
+    for s in [bazi[0], bazi[2], bazi[4], bazi[6]]:
+        wx_present.add(GAN_WX[s])
+    for z in facts["branches"]:
+        for h in HIDDEN[z]:
+            wx_present.add(GAN_WX[h])
+    # 通关表 4 组: 木土要火 / 火金要土 / 土水要金 / 金水要水
+    #   两行都在场 → 需要中间神通关
+    mid_found = None
+    for pair, mid in TONG_GUAN.items():
+        if pair <= wx_present:  # 两战之行都在
+            t1_trig = True
+            mid_found = mid
+            break
+    if t1_trig:
+        types.append("JIU_YING.001")
+        mid = mid_found  # 循环 break 时绑定的中间神五行
+        # success = 通关之神(中间神五行) 在盘中有神 + 日干有根(有力)
+        mid_god_hit = any(TEN_GOD_MAP[dm][h] for h in
+                          [s for s in [bazi[0], bazi[2], bazi[4], bazi[6]]
+                           if GAN_WX[s] == mid]
+                          + [h for z in facts["branches"] for h in HIDDEN[z]
+                             if GAN_WX[h] == mid])
+        t1_ok = bool(mid_god_hit) and facts["has_root"]
+        ev.append(".001 通关: 两行相战=True, 中间神引得=%s, 日干有根=%s"
+                  % ("是" if mid_god_hit else "否", facts["has_root"]))
+        ok.append(t1_ok)
 
     # .002 官杀混杂 (DTS §二十一 L250): 官杀是否被合去一支
     t2_trig = ("正官" in gods) and (("七杀" in gods) or ("偏官" in gods))
     t2_ok = False
     if t2_trig:
         types.append("JIU_YING.002")
-        # 合去一支: 天干五合命中官/杀 (如 乙庚合去 杀/官)
+        # 合去一支: 官/杀 天干 被五合合住
         guan_stems = [s for s in [bazi[0], bazi[2], bazi[4], bazi[6]]
                       if s != dm and TEN_GOD_MAP[dm][s] in ("正官", "七杀", "偏官")]
-        he_ge = [s for s in guan_stems
-                 if any((s in pair[:2]) for pair in wuhe)]
+        he_ge = [s for s in guan_stems if s in wuhe_stems]
         t2_ok = len(he_ge) > 0
-        ev.append(".002 官杀同现=True, 合去一支=%s (%s)" % (
-            "是" if t2_ok else "否(PENDING: 需天干合事实)", he_ge))
+        ev.append(".002 官杀同现=True, 合去一支=%s (%s)"
+                  % ("是" if t2_ok else "否", he_ge))
+        ok.append(t2_ok)
 
     # .003 伤官见官 (DTS §二十二 L255): 有财则救
     t3_trig = ("伤官" in gods) and ("正官" in gods)
@@ -163,36 +258,84 @@ def build_jiu_ying(bazi, ge_cheng):
         types.append("JIU_YING.003")
         t3_ok = ("正财" in gods) or ("偏财" in gods)
         ev.append(".003 伤官+正官=True, 有财救=%s" % ("是" if t3_ok else "否"))
+        ok.append(t3_ok)
 
-    # .001 通关 / .004 澄浊 / .005 八格 / .006 相神
-    #   需通关事实(中间神引无合之神) + 相神定位(全局赖一字而成者)
-    #   探针阶段 PENDING — 标在 evidence, success 取已判 .002/.003 合取
-    pending = []
-    if not any(p in ("JIU_YING.002", "JIU_YING.003") for p in types):
-        pending.append(".001/.004/.005/.006 通关/澄浊/八格/相神 需通关事实+相神定位 (PENDING)")
+    # .004 澄浊 (DTS §二十三 L260): 得一神有力(存在+有根)扫浊
+    #   触发 = 格有浊气(杂神破局: 忌神多) — 简化布尔 = 有 ≥2 忌神十神杂
+    #   success = 得有力之神扫浊(该神在盘 + 日干有根)
+    t4_trig = False
+    t4_ok = False
+    # 浊气 = 忌神多杂 (忌神因格而异, 此处取「比劫+食伤+财官 杂而互克」简化:
+    #   有印绶 且 有财 → 财印互戕 = 浊 (DTS「以印绶杂之反与财星相戕」)
+    zhuo = ({"正印"} & gods or {"偏印"} & gods) and ({"正财"} & gods or {"偏财"} & gods)
+    if zhuo:
+        t4_trig = True
+        types.append("JIU_YING.004")
+        # success = 得一神有力扫浊(有食伤 制 或 有比劫 扶, 且日干有根)
+        t4_ok = (("食神" in gods or "伤官" in gods or "比肩" in gods
+                  or "劫财" in gods) and facts["has_root"])
+        ev.append(".004 澄浊: 财印互戕(浊)=True, 得有力之神扫浊=%s (有根=%s)"
+                  % ("是" if t4_ok else "否", facts["has_root"]))
+        ok.append(t4_ok)
+
+    # .005 八格破格后救应 (PZZQ §九 L1226): 解神(透/合/制)生效
+    #   触发 = 破格(由 ge_cheng po_n / xi_status 决定, 已在前面 NA 分支过滤)
+    #   success = 解神在盘(食制煞/印解伤/财化劫/合煞清官 等)
+    t5_trig = True  # 破格即触发救应
+    t5_ok = False
+    if t5_trig:
+        types.append("JIU_YING.005")
+        # 解神(任一): 食神(制煞)/印(解伤护官)/财(化劫)/合去煞(煞被合)
+        jie_shen = (
+            ("食神" in gods and "七杀" in gods)      # 食神制煞
+            or ("正印" in gods and "伤官" in gods)   # 印解伤
+            or ("偏印" in gods and "伤官" in gods)
+            or (("正财" in gods or "偏财" in gods)
+                 and ("比肩" in gods or "劫财" in gods))  # 财化劫
+        )
+        t5_ok = jie_shen
+        ev.append(".005 八格破格后解神: 食制煞/印解伤/财化劫/合煞清官 命中=%s"
+                  % ("是" if jie_shen else "否"))
+        ok.append(t5_ok)
+
+    # .006 相神 (PZZQ §十五 L1857, 裁147甲 归入 success): 相神不被合
+    #   success = 相神(用神/解神) 不被五合合走
+    t6_trig = len(wuhe) > 0  # 有合才有「相神被合」的可能
+    t6_ok = True
+    if t6_trig:
+        types.append("JIU_YING.006")
+        # 相神被合 = 解神/用神 天干 在五合对被合住 → 救应失效
+        # 简化: 若 .005 解神天干 被合 → 相神被伤 → success=UNS
+        xiang_shang = False
+        if t5_ok:  # 只有解神生效时才谈相神被合
+            xiang_shang = bool(wuhe_stems & set(
+                [s for s in [bazi[0], bazi[2], bazi[6]]
+                 if TEN_GOD_MAP[dm][s] in ("食神", "正印", "偏印",
+                                            "正财", "偏财")]))
+        t6_ok = not xiang_shang
+        ev.append(".006 相神被合/伤(伤相甚于伤用): %s"
+                  % ("相神被伤→救应未成" if xiang_shang else "相神无破"))
+        ok.append(t6_ok)
 
     if not types:
         return {
             "triggered": True, "type": [], "success": "UNS",
-            "evidence": pending, "xiang_note": None,
-            "note": "触发但 .002/.003 未命中, 6 条无一适用"
+            "evidence": ["6 条判据无一条触发(本盘不属任何救应场景)"],
+            "xiang_note": None, "note": "触发但 6 条无一适用"
         }
 
-    # success = 命中判据布尔合取 (.002 合去一支 / .003 有财救)
-    success = "SUCCESS" if all([
-        t2_ok if "JIU_YING.002" in types else True,
-        t3_ok if "JIU_YING.003" in types else True,
-    ]) else "UNS"
+    # success = 命中判据的布尔合取 (任一命中判据为假 → UNS)
+    success = "SUCCESS" if all(ok) else "UNS"
 
-    # .006 相神 (裁147甲): success=UNS 时附 xiang_note
+    # .006 相神 (裁147甲): success=UNS 且 相神被伤 → 附 xiang_note
     xiang_note = None
-    if success == "UNS":
+    if success == "UNS" and "JIU_YING.006" in types and not t6_ok:
         xiang_note = "伤相甚于伤用 — 相神被合/伤 → 救应未成, 优先记此因"
 
     return {
         "triggered": True, "type": types, "success": success,
-        "evidence": ev + pending, "xiang_note": xiang_note,
-        "note": ".001/.004/.005/.006 PENDING" if pending else None
+        "evidence": ev, "xiang_note": xiang_note,
+        "note": None,
     }
 
 
