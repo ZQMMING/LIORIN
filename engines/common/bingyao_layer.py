@@ -359,8 +359,9 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         check_overpower=True(财/杀/食伤): X 有力(当令/成党/query)且相对压过日主才为病;
           日主不弱(能任)→X 是泄秀/财官之喜, 不报.
         check_overpower=False(印·生扶): X 有力且日主无重根(母多灭子)才为病.
-        xiang_ling=True(仅杀): 相令有根=乘权成党 (滴天髓「旺相休囚, 年日时中
-          亦有损益之权」; 杀为凶神, 相令乘权即有力——DT-0029 戌月金相+申根).
+        xiang_ling=True(仅杀): 相令有根=乘权成党 (PZZQ沈孝瞻原文「虽日干
+          各有专令, 而其实专令之中亦有并存者」「党众为强, 助寡为弱」——
+          相令次旺并存有气, 杀为凶神, 相令乘权即有力; DT-0029 戌月金相+申根).
           不泛化到食伤/财(泄秀财官为喜, 相令不构成病).
         无根/根轻仅在触发后补充, 不单独触发."""
         tou, ben = _tou_ben(wx)
@@ -984,7 +985,7 @@ def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
         if bs_wx and isinstance(wp_data, dict):
             _bs_ling = (wp_data.get(bs_wx, {}) or {}).get('ling_state', '休')
         # 病重 = 当令 或 成党(combo>=2) 或 相令乘权(月令所生+有根)——
-        #   滴天髓衰旺「旺相休囚, 年日时中亦有损益之权」: 相令次旺, 有根即有力
+        #   PZZQ沈孝瞻原文「专令之中亦有并存者」「党众为强」: 相令次旺, 有根即有力
         bing_zhong = bing_dang or bing_combo >= 2 \
             or (bs_wx and _bs_ling == '相' and bing_combo >= 1)
         # ② 根判据: 病重 且 药无本气根(虚透) -> 药少, 待运 (SFTK 病重而药少宜行运)
