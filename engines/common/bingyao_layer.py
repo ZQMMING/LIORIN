@@ -354,16 +354,23 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             return False
         return (m == _DM_LU.get(dm)) or (m == _DM_WANG.get(dm))
 
-    def _kexie_trigger(wx, query_suffix, check_overpower=False):
+    def _kexie_trigger(wx, query_suffix, check_overpower=False, xiang_ling=False):
         """克泄类病统一触发.
         check_overpower=True(财/杀/食伤): X 有力(当令/成党/query)且相对压过日主才为病;
           日主不弱(能任)→X 是泄秀/财官之喜, 不报.
         check_overpower=False(印·生扶): X 有力且日主无重根(母多灭子)才为病.
+        xiang_ling=True(仅杀): 相令有根=乘权成党 (滴天髓「旺相休囚, 年日时中
+          亦有损益之权」; 杀为凶神, 相令乘权即有力——DT-0029 戌月金相+申根).
+          不泛化到食伤/财(泄秀财官为喜, 相令不构成病).
         无根/根轻仅在触发后补充, 不单独触发."""
         tou, ben = _tou_ben(wx)
         qsup = _get_query_state(queries, query_suffix) == 'SUPPORTED'
         dangling = (month_qi_element == wx)
         cheng = (tou + ben + _ju_piao(wx)) >= DANG_COMBO
+        if xiang_ling and not cheng:
+            _e_q = wp_data.get(wx, {}) or {}
+            if _e_q.get('ling_state', '休') == '相' and ben >= 1:
+                cheng = True
 
         strong = []
         if qsup:
@@ -439,7 +446,7 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     # 2. 杀重身轻 (统一收紧触发)
     #    前提闸门: dm_tier<=1(身轻) 才问——原文「杀重身轻」「杀重身轻终有败」
     sha_wx = KE_WO.get(daymaster_element, '')
-    ok, matched = _kexie_trigger(sha_wx, 'SHAZHONG-SHENQING', True)
+    ok, matched = _kexie_trigger(sha_wx, 'SHAZHONG-SHENQING', True, xiang_ling=True)
     if ok and not _shen_ruo:
         ok = False
         matched = ['日主不弱(%s), 杀为喜, 不触发' % _shen_ruo_note]
@@ -448,13 +455,15 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         _gc = facts.get('ge_cheng') or {}
         if sha_wx in (_gc.get('ti_wx') or []):
             ok = False
-    # 制化闸门: 杀有食制(食神透)或印化(印透)则不报杀重病(UNVERIFIED: 食神无根/印克食神待校)
+    # 制化闸门: 杀有食制(食神透/有根)或印化(印透/有根)则不报杀重病
+    #   (印绶化杀: 印藏根亦化——DT-0327 卯寅印根化杀; 食制杀同理)
+    #   UNVERIFIED: 食神无根/印克食神待校
     if ok:
         shi_wx = SHENG.get(daymaster_element, '')
         yin_wx = SHENG_WO.get(daymaster_element, '')
         _st, _sb = _tou_ben(shi_wx)
         _yt, _yb = _tou_ben(yin_wx)
-        if _st > 0 or _yt > 0:
+        if _st > 0 or _sb > 0 or _yt > 0 or _yb > 0:
             ok = False
     # 用神不在局中: 伤官带煞格成 + 印(生我)透根皆无 -> 带病等岁运补
     _gc = facts.get('ge_cheng') or {}
@@ -913,11 +922,23 @@ def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
     WUHE = {'甲': '己', '己': '甲', '乙': '庚', '庚': '乙', '丙': '辛', '辛': '丙',
             '丁': '壬', '壬': '丁', '戊': '癸', '癸': '戊'}
 
-    def _tou_ben(wx):
+    def _tou_ben(wx, strip_chong=False):
         tou = sum(1 for pos in ('year', 'month', 'hour')
                   if GAN_WX.get(pillars[pos][0]) == wx)
+        _zhis = [pillars[pos][1] for pos in ('year', 'month', 'day', 'hour')]
+        # strip_chong(仅SHA杀重): 药本气根剔除被冲拔的根——失时(休/囚/死)方被
+        #   六冲冲去=根拔(滴天髓「天衰怕冲, 支逢冲则根拔」「旺者冲衰衰者拔」),
+        #   干多不如根重——杀重印比虚透无力, 药判虚(INVALID_ROOT)不消杀重.
+        #   (DT-0029 甲×4虚透, 寅禄被申冲拔, 药木无根, 杀重不消;
+        #    财/食伤药不剥——泄秀财官为喜, 原局吉者药有效)
+        _LC = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅',
+               '卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
+        _e_wx = (wp_data.get(wx, {}) or {}) if isinstance(wp_data, dict) else {}
+        _shi = _e_wx.get('ling_state', '休') in ('休', '囚', '死')
         ben = sum(1 for pos in ('year', 'month', 'day', 'hour')
-                  if ZHI_BEN_WX.get(pillars[pos][1]) == wx)
+                  if ZHI_BEN_WX.get(pillars[pos][1]) == wx
+                  and (not strip_chong or not _shi
+                       or _LC.get(pillars[pos][1]) not in _zhis))
         return (tou, ben)
 
     def _combo(wx):
@@ -936,9 +957,10 @@ def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
         if not yao_wx:
             kept.append(bing)
             continue
-        # 药在局(任一药五行透干或本气根)
+        # 药在局(任一药五行透干或本气根; SHA杀重: 药根剥冲拔后判)
+        _is_sha = (bid == 'SHA_ZHONG_SHEN_QING')
         yao_in = any(t >= 1 or b >= 1 for wx in yao_wx
-                     for t, b in [_tou_ben(wx)])
+                     for t, b in [_tou_ben(wx, _is_sha)])
         if not yao_in:
             kept.append(bing)
             continue
@@ -958,9 +980,15 @@ def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
         bing_combo = _combo(bs_wx) if bs_wx else 0
         mm = facts.get('month_qi_element', '')
         bing_dang = (bs_wx == mm)  # 病神当令
-        bing_zhong = bing_dang or bing_combo >= 2  # 病重 = 当令 或 成党(combo>=2)
+        _bs_ling = ''
+        if bs_wx and isinstance(wp_data, dict):
+            _bs_ling = (wp_data.get(bs_wx, {}) or {}).get('ling_state', '休')
+        # 病重 = 当令 或 成党(combo>=2) 或 相令乘权(月令所生+有根)——
+        #   滴天髓衰旺「旺相休囚, 年日时中亦有损益之权」: 相令次旺, 有根即有力
+        bing_zhong = bing_dang or bing_combo >= 2 \
+            or (bs_wx and _bs_ling == '相' and bing_combo >= 1)
         # ② 根判据: 病重 且 药无本气根(虚透) -> 药少, 待运 (SFTK 病重而药少宜行运)
-        yao_you_root = any(b >= 1 for wx in yao_wx for _, b in [_tou_ben(wx)])
+        yao_you_root = any(b >= 1 for wx in yao_wx for _, b in [_tou_ben(wx, _is_sha)])
         if bing_zhong and not yao_you_root:
             bing['yao_yuanju'] = 'INVALID_ROOT'  # 药虚透, 病重药少
             bing['yao_note'] = ('病重(病神%s当令=%s combo=%d) 而 药(%s)无本气根 '

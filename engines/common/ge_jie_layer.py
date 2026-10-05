@@ -28,6 +28,10 @@ def dm_tier(wp, dg, month_zhi, pillars=None):
     """日主视角旺衰tier: 剥借根后再判element_power_tier.
     同阴阳判据(PZZQ"刃乃劫我正财之神, 不善之神须逆势驾驭"): 异阴阳本气支(刃/劫财禄)
     是比劫非日主根 -> 剥; 仅同阴阳本气支(禄)计日主根. 中余气维度待依赖.
+    剥冲拔(2026-10-06 三刀第2刀): 失时(休/囚/死)且日主禄/旺支被六冲 -> 根拔剥除,
+      滴天髓 03「天衰怕冲, 支逢冲则根拔」「旺者冲衰衰者拔」——失时方被冲拔;
+      得时(旺/相)被冲 -> 发, 不剥. (DT-0029 甲木戌月囚, 寅禄被申冲拔,
+      「四甲一寅似乎强旺, 第秋木休囚冲去禄神其根已拔, 不作旺论」)
     临时补丁一/二的切换点: 修复后财格过滤改用此函数."""
     import copy
     from engines.common.transit_power import element_power_tier
@@ -36,8 +40,16 @@ def dm_tier(wp, dg, month_zhi, pillars=None):
     wp2 = copy.deepcopy(wp)
     dm_e = wp2['wuxing_power'].get(wx, {})
     if pillars:
-        _ben_self = sum(1 for _pos in ('year','month','day','hour')
-                        if ZHI_BEN_GAN.get(pillars[_pos][1]) == dg)
+        _zhis = [pillars[_pos][1] for _pos in ('year','month','day','hour')]
+        _ben_self = sum(1 for _z in _zhis if ZHI_BEN_GAN.get(_z) == dg)
+        _ling = (wp2['wuxing_power'].get(wx, {}) or {}).get('ling_state', '休')
+        if _ling in ('休', '囚', '死') and _ben_self >= 1:
+            _lu = DM_LU.get(dg)
+            _wang = DM_WANG.get(dg)
+            _LC = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅',
+                   '卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
+            if any(_z in (_lu, _wang) and _LC.get(_z) in _zhis for _z in _zhis):
+                _ben_self = max(0, _ben_self - 1)
         dm_e['ben_n'] = _ben_self
     elif (dg, month_zhi) in _YIN_YANG_JIEGEN:
         dm_e['ben_n'] = max(0, dm_e.get('ben_n',0) - 1)
