@@ -113,16 +113,33 @@ def resolve_primary_bing(facts: Dict[str, Any], bing_list: List[Dict[str, Any]])
         combo = c['tou'] + c['ben'] + _ju
         dang = _dang_level(combo)
         mo = month_order(wx, m) if m else 9
-        key = (mo, dang, -c['tou'], -c['ben'])  # 月令为提纲, 当令优先; 个数(成党)其次
+        # STEP-L6-1 (2026-10): 主病键升级 —— severity(病机程度序数0-4) 居首, 原键次之。
+        #   severity 是病五行结构序数(当令/成党/透干/本根分层派生, 见 severity.py),
+        #   比原(月令,成党,...)键更直接表达「病势重轻」; 原键保留作同 severity 内次序。
+        #   无 severity 的病机(未映射五行)兜底 0, 不臆断。
+        _sev = b.get('severity')
+        if not isinstance(_sev, int):
+            _sev = 0
+        key = (-_sev, mo, dang, -c['tou'], -c['ben'])
         ranked.append({
             'bing_id': bid, 'name': b.get('name'), 'bing_wx': wx,
             'tou': c['tou'], 'ben': c['ben'], 'dang_level': dang,
             'month_order': mo, 'power_score': combo, 'key': list(key),
+            'severity': _sev, 'bing_domain': b.get('bing_domain'),
+            'slice_id': b.get('slice_id'),
         })
 
     ranked.sort(key=lambda r: tuple(r['key']))
     primary = ranked[0] if ranked else None
     secondary = ranked[1:] if len(ranked) > 1 else []
+
+    # STEP-L6-2 (2026-10): 域分组 —— 按 bing_domain 分域, 每域出域主病。
+    #   五域(GEJU/WANGSH/QIHOU/JIEGOU/SUIYUN)并行, 域内 severity 最高者为主病;
+    #   跨域矛盾共存不裁(与 xiji_namespace 五域契约同口径)。
+    domain_primaries = {}
+    for _r in ranked:
+        _d = _r.get('bing_domain') or 'OTHER'
+        domain_primaries.setdefault(_d, _r)
 
     return {
         'layer': 'BING_DEBATE',
@@ -130,8 +147,9 @@ def resolve_primary_bing(facts: Dict[str, Any], bing_list: List[Dict[str, Any]])
         'primary_bing': primary,
         'secondary_bing': secondary,
         'ranked': ranked,
-        'compare_key': '(月令序数, 成党级别, -透干数, -本气根数)',
-        'rule': 'DTS源流章 取最多最旺为源头; 月令以旺相休囚序数入键; SFTK 从重者论; 透干排除日干',
-        'boundary_note': '全整数分层偏序, 无浮点; 只定主病不判吉凶; 成党阈值(combo>=4)为工程离散值',
-        'evidence_refs': ['DTS ZHU_CI_BING.001', 'SFTK ZHU_CI_BING.004'],
+        'domain_primaries': domain_primaries,
+        'compare_key': '(-severity, 月令序数, 成党级别, -透干数, -本气根数)',
+        'rule': 'DTS源流章 取最多最旺为源头; severity=病势结构序数(当令/成党/透干/本根分层); SFTK 从重者论; 透干排除日干',
+        'boundary_note': '全整数分层偏序, 无浮点; severity 由病五行结构派生, 非吉凶评分; 只定主病不判吉凶; 成党阈值(combo>=4)为工程离散值',
+        'evidence_refs': ['DTS ZHU_CI_BING.001', 'SFTK ZHU_CI_BING.004', 'SEVERITY.ENGINE_DEFINED'],
     }
