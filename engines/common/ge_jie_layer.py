@@ -25,16 +25,17 @@ ZHI_BEN_GAN = {'子':'癸','丑':'己','寅':'甲','卯':'乙','辰':'戊','巳'
                '午':'丁','未':'己','申':'庚','酉':'辛','戌':'戊','亥':'壬'}
 
 def dm_tier(wp, dg, month_zhi, pillars=None):
-    """日主视角旺衰tier: 剥借根后再判element_power_tier.
+    """日主视角旺衰tier: 剥借根+冲拔拓扑后再判element_power_tier.
     同阴阳判据(PZZQ"刃乃劫我正财之神, 不善之神须逆势驾驭"): 异阴阳本气支(刃/劫财禄)
     是比劫非日主根 -> 剥; 仅同阴阳本气支(禄)计日主根. 中余气维度待依赖.
-    剥冲拔(2026-10-06 三刀第2刀): 失时(休/囚/死)且日主禄/旺支被六冲 -> 根拔剥除,
-      滴天髓 03「天衰怕冲, 支逢冲则根拔」「旺者冲衰衰者拔」——失时方被冲拔;
-      得时(旺/相)被冲 -> 发, 不剥. (DT-0029 甲木戌月囚, 寅禄被申冲拔,
-      「四甲一寅似乎强旺, 第秋木休囚冲去禄神其根已拔, 不作旺论」)
+    冲拔(得地层·五层拓扑算子, engines/common/root_clash.py): 冲对/根位/
+      冲-根匹配/冲力/解冲——根方失时(休囚死)被紧贴冲且无合解 -> 拔;
+      得时被冲 -> 发不拔; 隔柱/遥冲/合解不扣. 滴天髓「旺者冲衰衰者拔,
+      衰神冲旺旺神发」+ 禄神逢冲为破禄. (DT-0029 甲木戌月囚, 寅禄被申冲拔)
     临时补丁一/二的切换点: 修复后财格过滤改用此函数."""
     import copy
     from engines.common.transit_power import element_power_tier
+    from engines.common.root_clash import build_root_clash_events, effective_ben
     wx = GAN_WX.get(dg, '')
     if not wx: return {'tier':0,'name':'衰'}
     wp2 = copy.deepcopy(wp)
@@ -42,15 +43,16 @@ def dm_tier(wp, dg, month_zhi, pillars=None):
     if pillars:
         _zhis = [pillars[_pos][1] for _pos in ('year','month','day','hour')]
         _ben_self = sum(1 for _z in _zhis if ZHI_BEN_GAN.get(_z) == dg)
+        # 得地层·冲拔拓扑算子 (五层: 冲对/根位/冲-根匹配/冲力/解冲)
+        #   滴天髓「旺者冲衰衰者拔, 衰神冲旺旺神发」——根方失时(休囚死)被
+        #   强冲且无合解 -> 拔; 根方得时被冲 -> 发, 不拔; 隔柱旺冲衰亦拔;
+        #   遥冲/合解 -> 不扣. 禄神逢冲为破禄. (DT-0029 甲木戌月囚,
+        #   申金相乘权冲寅禄, 年日隔位亦「冲去禄神其根已拔」)
         _ling = (wp2['wuxing_power'].get(wx, {}) or {}).get('ling_state', '休')
-        if _ling in ('休', '囚', '死') and _ben_self >= 1:
-            _lu = DM_LU.get(dg)
-            _wang = DM_WANG.get(dg)
-            _LC = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅',
-                   '卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
-            if any(_z in (_lu, _wang) and _LC.get(_z) in _zhis for _z in _zhis):
-                _ben_self = max(0, _ben_self - 1)
-        dm_e['ben_n'] = _ben_self
+        dm_e['ben_n'] = effective_ben(
+            _ben_self,
+            build_root_clash_events(pillars, dg, _ling, wp2['wuxing_power']),
+            _ling)
     elif (dg, month_zhi) in _YIN_YANG_JIEGEN:
         dm_e['ben_n'] = max(0, dm_e.get('ben_n',0) - 1)
     return element_power_tier(wp2, wx)
