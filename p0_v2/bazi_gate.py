@@ -485,6 +485,10 @@ def paipan(bazi: str) -> Dict[str, Any]:
                      #     加了徒增顶层键数与回归面（裁九十八甲）。
                      "patterns")},
         "bing_list": by.get("bing_list", []),
+        # 药消病(甲路)投影: yao_removed_yuanju 只在 bingyao dict 内, 顶层无键 -> 有输出不投影
+        "bingyao_summary": {k: by.get(k) for k in
+                            ("bing_count", "yao_count", "yao_removed_yuanju",
+                             "bing_yao_pairs")},
         "bing_yao": {"bing_count": by.get("bing_count"),
                      "yao_count": by.get("yao_count"),
                      "boundary_note": by.get("boundary_note")},

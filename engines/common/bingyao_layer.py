@@ -29,6 +29,30 @@ TENGOD_CN = {
 
 KE_WO = {'木': '金', '火': '水', '土': '木', '金': '火', '水': '土'}
 SHENG_WO = {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}
+KE = {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}
+SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+
+# 病类→药神五行 (单一数据源: check_qubing_level 岁运去病 + apply_yuanju_yao 原局药消病共用)
+#   依据: PZZQ L957「除其病神, 即谓之药」(以抑为喜则去其抑者为病); SFTK L424 病药说
+#   「用财见比肩为病喜官杀为药, 用食神伤官以印为病喜财为药」; DTS L240「格中如去病,财禄两相宜」。
+BING_YAO_MAP = {
+    'CAI_DUO_SHEN_RUO': ['木', '水'],  # 财多身弱, 药=印比(帮身任财)
+    'SHA_ZHONG_SHEN_QING': ['火', '木', '水'],  # 煞重身轻, 药=食伤制煞/印化煞
+    'XIE_QI_TAI_ZHONG': ['木', '水'],  # 泄气太重, 药=印比
+    'SHANGGUAN_JIAN_GUAN': ['水', '土'],  # 伤官见官, 药=印财
+    'XIAO_DUO_SHI': ['土'],  # 枭神夺食, 药=财(制枭)
+    'BIJIE_DUO_CAI': ['金'],  # 比劫夺财, 药=官杀(制劫护财, SFTK「用财见比肩为病喜官杀为药」)
+    'BIJIE_CHENG_DANG': ['金'],  # 比劫成党, 药=官杀
+    'ZHI_SHA_TAI_GUO': [],  # 制杀太过: 按日主动态取(印=SHENG_WO, 财=KE), 见 _bing_yao_map()
+}
+
+def _bing_yao_map(daymaster_element: str) -> dict:
+    """药表动态取: ZHI_SHA_TAI_GUO 按日主 印(制食护杀)/财(泄食生杀) 两路。"""
+    m = dict(BING_YAO_MAP)
+    if daymaster_element:
+        m['ZHI_SHA_TAI_GUO'] = [SHENG_WO.get(daymaster_element, ''),
+                                KE.get(daymaster_element, '')]
+    return m
 
 # 阴干在阳干当权月: 月令本气为同五行阳干(劫财), 非日主自身令(劫财当权,日主反弱).
 # 证据分级(原著优先): 仅(乙,寅)有 SFTK 案例(第7812行"阳木得令阴木反弱")->CASE_LEVEL启用;
@@ -803,12 +827,72 @@ def identify_yao(facts: Dict[str, Any], queries: List[Dict],
     return yao_list
 
 
-def build_bingyao_layer(facts: Dict[str, Any], queries: List[Dict]) -> Dict[str, Any]:
+def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
+    """原局药消病 (甲路: 明文给「消」, 2026-10-05 药消病机制首落)。
+
+    依据(原著优先, 三书同向):
+      - PZZQ L957 病药:「以扶为喜, 则以伤其扶者为病; 以抑为喜, 则以去其抑者为病。
+        除其病神, 即谓之药。」
+      - SFTK L424 病药说:「病原八字中原有所害之神也…原有所害之字而得一字以去之之谓也」
+        「病重而得药大富大贵, 病轻而得药略富略贵」(富贵层级 = 乙路降级, 登记待 severity 层)
+      - DTS L240 中和:「格中如去病, 财禄两相宜」。
+    判据(布尔): 药五行在原局【他干透干 或 本气根】→ 药在局 → 病消(标记 REMOVED)。
+    边界:
+      ① 不重复杀重身轻制化闸门(源头 ok=False 已拦, 此处只见已报病, 无双消);
+      ② 过旺例外(combo>=4 财成党)不跳过——药消病=病可治性, 与格体豁免(属性)是
+         两独立机制; PZ-0011 财局佩印(印透药在)即此口径;
+      ③ 「病重而药少…宜行运以取其中和」(SFTK) 的药须有根门槛 → 登记待岁运层(乙路)。
+    """
+    if not bing_list or not facts:
+        return bing_list, []
+    pillars = facts.get('pillars') or {}
+    if not pillars:
+        return bing_list, []
+    dm_wx = GAN_WX.get(facts.get('day_stem', ''), '')
+    yao_map = _bing_yao_map(dm_wx)
+
+    def _tou_ben(wx):
+        tou = sum(1 for pos in ('year', 'month', 'hour')
+                  if GAN_WX.get(pillars[pos][0]) == wx)
+        ben = sum(1 for pos in ('year', 'month', 'day', 'hour')
+                  if ZHI_BEN_WX.get(pillars[pos][1]) == wx)
+        return (tou, ben)
+
+    kept, removed = [], []
+    for bing in bing_list:
+        bid = bing.get('bing_id', '')
+        yao_wx = yao_map.get(bid, []) or []
+        yao_in = any(t >= 1 or b >= 1 for wx in yao_wx
+                     for t, b in [_tou_ben(wx)])
+        if yao_in:
+            bing['yao_yuanju'] = 'REMOVED'
+            bing['yao_note'] = ('原局药在(透干/本气根), 甲路消病'
+                                '(PZZQ L957 除其病神即谓之药; SFTK L424 得一字以去之; '
+                                'DTS L240 格中如去病财禄两相宜)')
+            removed.append(bing)
+        else:
+            kept.append(bing)
+    return kept, removed
+
+
+def build_bingyao_layer(facts: Dict[str, Any], queries: List[Dict],
+                        apply_yuanju_yao_enabled: bool = False) -> Dict[str, Any]:
     """构建病药/作用子层.
     输入: L0 facts + L1 queries
     输出: 病药结构 (只识别存在, 不判吉凶/成败/轻重)
+
+    原局药消病(甲路): apply_yuanju_yao_enabled 默认 False —— 2026-10-05 dry run 结论:
+      判据「药透干或本气根即消」过宽, 577 盘消病中含 139 条 bad 真病被消光(误伤),
+      净 +287 但质量不合格(434 good 修好 - 147 bad 误伤)。「药在局 ≠ 药有效」:
+      DT-0007 官透被合无效 / DT-0021 财当令药少 —— SFTK L424「病重而药少…宜行运以取中和」
+      只给定性无机器公式。药有效性判据(药被合/药无力/病重药少)登记待核原文,
+      函数与三书证据链(PZZQ L957/SFTK L424/DTS L240)保留, 判据补全后再开。
     """
     bing_list = identify_bing(facts, queries)
+    yao_removed = []
+    if apply_yuanju_yao_enabled:
+        # 原局药消病 (甲路): 药在局(透干/本气根) -> 病消。PZ-0011 财局佩印类缺口
+        bing_list, yao_removed = apply_yuanju_yao(bing_list, facts)
     bing_ids = [b['bing_id'] for b in bing_list]
     yao_list = identify_yao(facts, queries, bing_ids)
 
@@ -835,13 +919,17 @@ def build_bingyao_layer(facts: Dict[str, Any], queries: List[Dict]) -> Dict[str,
         'bing_list': bing_list,
         'yao_list': yao_list,
         'bing_yao_pairs': bing_yao_pairs,
+        'yao_removed_yuanju': len(yao_removed),
+        'yao_removed_note': ('原局药消病(甲路): 判据「药透干/本气根即消」dry run 误伤 139 bad, '
+                             '默认关闭; 药有效性(被合/无力/病重药少)待核 SFTK L424/PZZQ L957 原文; '
+                             'BING_YAO_PAIRS.yao_present 保留「药在局」结构事实'),
         'boundary_note': '只识别病药结构存在, 不判吉凶/成败/轻重/有效性; 多病多药并列保留, 矛盾共存不裁',
     }
 
 
 
 def check_qubing_level(original_bing_list: List[Dict], dayun_stems: List[str] = None,
-                        liunian_stem: str = None) -> Dict[str, Any]:
+                        liunian_stem: str = None, daymaster_element: str = '') -> Dict[str, Any]:
     """去病程度结构化检查 (BINGYAO-DUIYING-002).
 
     只做: 检查大运/流年对原局病的去除程度
@@ -878,19 +966,8 @@ def check_qubing_level(original_bing_list: List[Dict], dayun_stems: List[str] = 
         bing_name = bing.get('name', '')
         matched_facts = bing.get('matched_facts', [])
 
-        # 简化: 根据病的类型判断对应的药神五行
-        bing_yao_map = {
-            'CAI_DUO_SHEN_RUO': ['木', '水'],  # 财多身弱, 药=印比(水木)
-            'SHA_ZHONG_SHEN_QING': ['火', '木', '水'],  # 煞重身轻, 药=食伤印(火木水)
-            'XIE_QI_TAI_ZHONG': ['木', '水'],  # 泄气太重, 药=印比(水木)
-            'SHANGGUAN_JIAN_GUAN': ['水', '土'],  # 伤官见官, 药=印财(水土)
-            'XIAO_DUO_SHI': ['土'],  # 枭神夺食, 药=财(土)
-            'BIJIE_DUO_CAI': ['金'],  # 比劫夺财, 药=官杀(金)
-            'BIJIE_CHENG_DANG': ['金'],  # 比劫成党, 药=官杀(金)
-            # 制杀太过: 药=印(制食护杀,身弱宜印)/财(泄食生杀,身旺宜财), 按日主动态取
-            'ZHI_SHA_TAI_GUO': [SHENG_WO.get(daymaster_element, ''),
-                                KE.get(daymaster_element, '')],
-        }
+        # 简化: 根据病的类型判断对应的药神五行 (单一数据源: 模块级 BING_YAO_MAP/_bing_yao_map)
+        bing_yao_map = _bing_yao_map(daymaster_element)
 
         yao_wuxing = bing_yao_map.get(bing_id, [])
 
