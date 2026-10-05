@@ -48,6 +48,7 @@ def main():
     chong_ok = 0
     anhe_ok = 0
     cancel_ok = 0
+    sc_state = collections.Counter()
     n_total = 0
     n_bing = 0
     n_ge = 0
@@ -124,8 +125,8 @@ def main():
             if re_:
                 root_eff_ok += 1
 
-            # --- L0 结构裁决: 顶层 resolved 块 / 五行级冲合痕迹 ---
-            res = r.get('resolved')
+            # --- L0 结构裁决: 顶层 resolved 块(2026-10 起独立投影) / 嵌 combination_facts.resolved ---
+            res = r.get('resolved') or (r.get('combination_facts') or {}).get('resolved') or {}
             if res:
                 resolved_ok += 1
                 if res.get('chong_actions'):
@@ -134,6 +135,11 @@ def main():
                     anhe_ok += 1
                 if res.get('chong_canceled') or res.get('he_canceled') or res.get('xinghe'):
                     cancel_ok += 1
+
+            # --- L2 切片条件三态(2026-10 起生产接线) ---
+            for b in bl:
+                sc = b.get('slice_condition') or {}
+                sc_state[sc.get('state')] += 1
 
     print('=' * 78)
     print('底层激活审计  样本=%d 盘' % n_total)
@@ -160,10 +166,12 @@ def main():
     print('\n[L0 结构裁决]  resolved 输出=%d  冲动作=%d  暗合=%d  解冲/解合/刑合=%d'
           % (resolved_ok, chong_ok, anhe_ok, cancel_ok))
 
+    print('\n[L2 切片条件三态]  %s  (生产接线: 并行校验不改判定)' % dict(sc_state))
+
     print('\n[生产链 0 激活项]')
     print('  L1 slice_loader        : 0 引用(病机 slice_id 为硬编码标注, 运行不查切片)')
-    print('  L2 condition_evaluator : 0 引用(三态求值未参与生产判定)')
-    print('  L0 condition_spec      : 仅被 L2 引用, 生产链 0 激活')
+    print('  L2 condition_evaluator : 已接线(STEP-L2-1, 并行校验挂 bing_list.slice_condition)')
+    print('  L0 condition_spec      : 经 L2 激活(生产链随 L2 走通)')
     print('  pzzq_resolver_v2       : 仅被 tests 引用, 生产链 0 激活')
 
 

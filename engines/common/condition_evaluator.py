@@ -17,16 +17,28 @@
 """
 from typing import Any, Dict, List, Tuple
 
-from condition_spec import (
-    EXIST_OPS,
-    FORBIDDEN_VALUE_KEYWORDS,
-    ORDER_OPS,
-    SET_OPS,
-    is_empty_value,
-    norm_condition,
-    resolve_dotted,
-    validate_condition_group,
-)
+try:
+    from engines.common.condition_spec import (
+        EXIST_OPS,
+        FORBIDDEN_VALUE_KEYWORDS,
+        ORDER_OPS,
+        SET_OPS,
+        is_empty_value,
+        norm_condition,
+        resolve_dotted,
+        validate_condition_group,
+    )
+except ImportError:  # 兼容裸路径运行(tests 直接跑 engines/common 下)
+    from condition_spec import (
+        EXIST_OPS,
+        FORBIDDEN_VALUE_KEYWORDS,
+        ORDER_OPS,
+        SET_OPS,
+        is_empty_value,
+        norm_condition,
+        resolve_dotted,
+        validate_condition_group,
+    )
 
 # 越权字段集(沿用 assertion_matcher.FORBIDDEN, 求值器自身不产出)
 FORBIDDEN = ('climate_state', 'strength_state', 'use_god', 'destiny',
