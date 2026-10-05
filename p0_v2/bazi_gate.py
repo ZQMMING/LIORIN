@@ -318,7 +318,21 @@ def paipan(bazi: str) -> Dict[str, Any]:
             _classes.add(_cls)
     _root_grade_raw = _grade_of(_classes)
     _dm_ben_eff0 = int(special.get("dm_ben_eff", 0) or 0)
-    _root_grade = "无" if _dm_ben_eff0 <= 0 else _root_grade_raw
+    # 得地独立口径(刘注 L139「皆长生日主」): HEAVY 含本气比劫/长生/禄/刃, 长生支本气虽为印
+    #   仍是日主重根; 扣除被冲拔/合化支(special.root_removed_branches)。
+    #   de_di/root_grade 走此口径; dm_ben_eff(从格/专旺用)保持本气严口径不变。
+    _removed_br = set(special.get("root_removed_branches") or [])
+    def _dm_root_br(_want):
+        _s = set()
+        for _pos, _v in _rwc.items():
+            _bz = (_v or {}).get("branch"); _cls = (_v or {}).get("class")
+            if _cls == _want and any(_GAN_WX.get(_g) == _dmwx for _g in _CANG.get(_bz, ())):
+                _s.add(_bz)
+        return _s - _removed_br
+    _heavy_eff = _dm_root_br("HEAVY")
+    _light_eff = _dm_root_br("LIGHT")
+    _de_di_indep = bool(_heavy_eff)
+    _root_grade = "本" if _heavy_eff else ("余" if _light_eff else "无")
 
     # 同党 = 日主五行 + 生我(印); 异党 = 克泄耗三向
     _sheng_back = {"木": "水", "火": "木", "土": "火", "金": "土", "水": "金"}
@@ -403,7 +417,7 @@ def paipan(bazi: str) -> Dict[str, Any]:
         #     故 de_di 是 dm_ben_eff 的布尔投影, 【不是】root_grade 的。
         #     实测 2106 盘: de_di_raw(de_di) 与 de_di_eff 完全恒等, 零差异 -> 落一个不落两个。
         "de_ling": _dmp.get("ling_state") == "旺",
-        "de_di": int(special.get("dm_ben_eff", 0) or 0) >= 1,
+        "de_di": _de_di_indep,
         "dang_duo": _support_state == "SHENG_FU_CHENG_SHI",
         "fan_ju": {
             "types": _fan_ju.get("types", []),
