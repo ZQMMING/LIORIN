@@ -13,6 +13,7 @@
 """
 from typing import Any, Dict, List, Optional
 from spec.yinyang_system import SHENG, KE, SHENG_ME, KE_ME
+from engines.common.severity import derive_severity  # L3 severity 序数(病机程度 0-4)
 
 
 # 十神中文名称映射
@@ -59,50 +60,83 @@ from engines.common.bing_debate import (
 
 
 # 病类型定义 (原典依据)
+# 字段:
+#   slice_id      主切片ID(MD文库 canonical, 已用 slice_loader 验证存在)
+#   slice_support 旁参切片ID列表
+#   domain        病域(五域: GEJU格局/WANGSH旺衰气势/QIHOU调候/JIEGOU结构/SUIYUN岁运)
+#                 —— 与喜忌五域契约(xiji_namespace)同口径
+#   slice_id=None 表示 MD 文库暂未定位对口切片, 登记 UNVERIFIED(宁缺勿错, 不脑补)
 BING_TYPES = {
     'CAI_DUO_SHEN_RUO': {
         'name': '财多身弱',
         'classic': 'SFTK-008-001',
+        'slice_id': 'PATHOLOGY.QIANG_RUO.004',   # DTS 准(财多身弱)
+        'slice_support': ['PATHOLOGY.QIANG_RUO.009', 'PATHOLOGY.QIANG_RUO.010'],
+        'domain': 'WANGSH',
         'desc': '财星当令或成党, 日主失令无根/根轻',
     },
     'SHA_ZHONG_SHEN_QING': {
         'name': '杀重身轻',
         'classic': 'SFTK-008-001',
+        'slice_id': 'PATHOLOGY.QIANG_RUO.005',   # DTS 准(杀重身轻)
+        'slice_support': ['PATHOLOGY.QIANG_RUO.009', 'PATHOLOGY.QIANG_RUO.010'],
+        'domain': 'WANGSH',
         'desc': '官杀当令或成党, 日主无根/根轻',
     },
     'XIE_QI_TAI_ZHONG': {
         'name': '泄气太重',
         'classic': 'PZZQ 食神本属泄气',
+        'slice_id': 'PATHOLOGY.QIANG_RUO.020',   # SFTK 雕枯旺弱四病(旁参)
+        'slice_support': ['STRUCTURE.GE_JU.SHI_SHEN.001'],  # PZZQ 食神本属泄气
+        'domain': 'WANGSH',
         'desc': '食伤当令或成党, 日主泄气太过',
     },
     'SHANGGUAN_JIAN_GUAN': {
         'name': '伤官见官',
         'classic': 'YHZP 伤官见官为祸百端',
+        'slice_id': 'STRUCTURE.GE_JU.JIU_YING.003',  # DTS 准(伤官格见官)
+        'slice_support': ['STRUCTURE.GE_JU.SHANG_GUAN.001'],
+        'domain': 'GEJU',
         'desc': '伤官与官杀同时透干/出现',
     },
     'XIAO_DUO_SHI': {
         'name': '枭神夺食',
         'classic': 'YHZP 枭神夺食',
+        'slice_id': 'PATHOLOGY.JIE_GOU.018',   # SFTK 枭神夺食补曰(旁参)
+        'slice_support': ['PATHOLOGY.JIE_GOU.016', 'PATHOLOGY.JIE_GOU.017'],
+        'domain': 'JIEGOU',
         'desc': '偏印(枭)与食神同时出现, 枭克食',
     },
     'YONG_SHEN_BU_ZAI_JU': {
         'name': '用神不在局中',
         'classic': 'PZZQ241/255',
+        'slice_id': None,                        # UNVERIFIED: MD文库未定位对口切片
+        'slice_support': [],
+        'domain': 'GEJU',
         'desc': '格局成格但所需用神(印)不在原局, 带病等岁运补',
     },
     'BIJIE_DUO_CAI': {
         'name': '比劫夺财',
         'classic': 'SFTK-008-001 用财见比肩为病',
+        'slice_id': None,                        # UNVERIFIED: MD文库未定位对口切片
+        'slice_support': [],
+        'domain': 'GEJU',
         'desc': '比劫透干成党, 财星被夺',
     },
     'BIJIE_CHENG_DANG': {
         'name': '比劫成党',
         'classic': 'DTS 水多以水为病 / SFTK 比劫成党',
+        'slice_id': 'PATHOLOGY.QIANG_RUO.001',   # DTS 三十二、众寡(强众) 准
+        'slice_support': ['PATHOLOGY.QIANG_RUO.020'],
+        'domain': 'WANGSH',
         'desc': '比劫数量达到3个或以上, 日主同类成势, 无论是否有财',
     },
     'YIN_DUO_MAI_ZI': {
         'name': '印多埋子',
         'classic': 'DTS 反局章 君赖臣生(行445) 土重金埋/金旺则水浊 同族',
+        'slice_id': 'STATE.WANG_SHUAI.FAN_JU.001',  # DTS 反局总纲 准
+        'slice_support': ['PATHOLOGY.ZHI_FA.010'],
+        'domain': 'JIEGOU',
         'desc': '印星成党且力量远大于日主, 印多反埋日主, 需财星疏印',
         # 归属订正(2026-10):
         #   DTS 行449「木母也, 火子也, 太旺谓之慈母, 反使火炽百焚灭, 是谓灭子」属反局章
@@ -114,6 +148,9 @@ BING_TYPES = {
     'ZHI_SHA_TAI_GUO': {
         'name': '制杀太过',
         'classic': 'PZZQ4106 制煞过重同样成病',
+        'slice_id': 'SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.009',  # SFTK 制伏太过(旁参)
+        'slice_support': [],
+        'domain': 'GEJU',
         'desc': '食伤当令成党制杀, 七杀无根/根被冲(制尽)为病; 药=印(身弱制食护杀)/财(身旺泄食生杀)',
     },
 }
@@ -614,6 +651,33 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
                     continue
             _kept.append(_b)
         bing_list = _kept
+
+    # STEP-L4-1 (2026-10): 病机挂 canonical 切片/域/五行/severity 四字段。
+    #   slice_id/slice_support/bing_domain 取自 BING_TYPES(MD文库已验证存在);
+    #   bing_wx  病机五行(与 ti_wx/xi_wx 过滤同一映射);
+    #   severity 病机程度 0-4(severity.derive_severity, 分层判定不加权);
+    #   bing_wx=None 的病机(未映射) 不派 severity(不臆断)。
+    _BID_WX = {
+        'CAI_DUO_SHEN_RUO': cai_wx, 'SHA_ZHONG_SHEN_QING': sha_wx,
+        'XIE_QI_TAI_ZHONG': xie_wx, 'SHANGGUAN_JIAN_GUAN': sha_wx,
+        'XIAO_DUO_SHI': pianyin_wx, 'YIN_DUO_MAI_ZI': yin_wx,
+        'BIJIE_CHENG_DANG': dm_wx, 'BIJIE_DUO_CAI': dm_wx,
+        'ZHI_SHA_TAI_GUO': xie_wx,
+    }
+    for _b in bing_list:
+        _t = BING_TYPES.get(_b.get('bing_id'), {})
+        _b['slice_id'] = _t.get('slice_id')
+        _b['slice_support'] = list(_t.get('slice_support') or [])
+        _b['bing_domain'] = _t.get('domain')
+        _bw = _BID_WX.get(_b.get('bing_id'))
+        _b['bing_wx'] = _bw
+        if _bw:
+            _sev = derive_severity(_bw, facts)
+            _b['severity'] = _sev['level']
+            _b['severity_basis'] = _sev['basis']
+        else:
+            _b['severity'] = None
+            _b['severity_basis'] = None
 
     return bing_list
 

@@ -505,11 +505,19 @@ _CLIMATE_TABLE: Dict = {
     },
 }
 
-def build_climate_candidates(facts: Dict[str, Any]) -> Dict[str, Any]:
-    """只读查表: 日干×月令 -> 调候候选干+次序。不判透出/富贵/从化/岁运。"""
+def build_climate_candidates(facts: Dict[str, Any],
+                             external_table: Optional[Dict[str, Any]] = None
+                             ) -> Dict[str, Any]:
+    """只读查表: 日干×月令 -> 调候候选干+次序。不判透出/富贵/从化/岁运。
+
+    external_table: 可选外部调候表, 须与内置 _CLIMATE_TABLE 同构
+        (key=(日干,月令), value 含 candidates/evidence_refs);
+        给了则用外部表, None 时用内置表(默认行为不变)。
+    """
     dm = facts['day_stem']
     mb = facts['month_branch']
-    row = _CLIMATE_TABLE.get((dm, mb))
+    table = external_table or _CLIMATE_TABLE
+    row = table.get((dm, mb))
 
     out = {
         'module': 'QTBJ_CLIMATE_VIEW',

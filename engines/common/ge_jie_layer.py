@@ -950,3 +950,61 @@ def is_xix_shen(facts: Dict[str, Any], wx: str, combo: int) -> bool:
     if combo >= thr:
         return False
     return True
+
+
+# ==========================================================================
+# ti_wx 归位层  (L4 顺序: build_ge_cheng -> apply_he_po_ge -> normalize_ti_wx)
+# 规则钉死, 同源 scripts/ti_wx_impact.rule_ti_wx (DTS L210 准神 + PZZQ L4652)
+# ==========================================================================
+_GE_BODY_SHEN = {
+    '正官格': {'正官'},
+    '七煞格': {'七杀'}, '七煞格(逢制)': {'七杀'},
+    '财格': {'正财', '偏财'},
+    '印格': {'正印', '偏印'}, '印格(官印双全)': {'正印', '偏印'},
+    '印格(印轻逢煞)': {'正印', '偏印'}, '印格(印多逢财)': {'正印', '偏印'},
+    '印格(印轻逢财)': {'正印', '偏印'},
+    '食神格': {'食神'}, '食神格(带煞无财)': {'食神'},
+    '伤官格': {'伤官'}, '伤官格(佩印)': {'伤官'}, '伤官格(带煞无财)': {'伤官'},
+}
+_TRANSPARENT_GE = {'建禄月劫格', '阳刃格'}
+_TOUGAN_SHEN = {'正官', '七杀', '正财', '偏财', '食神', '伤官'}
+
+
+def normalize_ti_wx(facts: Dict[str, Any]) -> Dict[str, Any]:
+    """ti_wx 归位 (必须接在 apply_he_po_ge 之后; 顺序反了会给破格执行器喂新输入).
+
+    ① 六格: 月令本气十神属格体 -> ti_wx=[月令五行]; 不属 -> 不动(保持 build_ge_cheng).
+    ② 建禄月劫/阳刃: ti_wx=月令透干(年/日/时)之 官/财/食伤/煞 五行; 无透干 -> [].
+       依据 DTS L210「建禄月劫羊刃, 当看月令中人元透于天干者取格」+ PZZQ L4652 同向.
+    ③ 从格/化气/专旺/食神制杀: 本层不动(现状已赋所从之神/格体).
+    破格盘(ge 含 '(破格)')一律跳过, 不重赋格体.
+    """
+    gc = facts.get('ge_cheng')
+    if not isinstance(gc, dict):
+        return facts
+    ge = gc.get('ge') or ''
+    if '(破格)' in ge:
+        return facts
+    pillars = facts.get('pillars') or {}
+    dg = facts.get('day_stem') or ''
+    if not dg or not all(k in pillars for k in ('year', 'month', 'day', 'hour')):
+        return facts
+
+    if ge in _TRANSPARENT_GE:
+        gods = []
+        for k in ('year', 'day', 'hour'):       # 月干=月令本气已含, 不取
+            g = pillars[k][0]
+            if g == dg:
+                continue
+            if ten_god(dg, g) in _TOUGAN_SHEN:
+                gods.append(GAN_WX[g])
+        gc['ti_wx'] = sorted(set(gods))
+        return facts
+
+    body = _GE_BODY_SHEN.get(ge)
+    if body is None:
+        return facts                            # 从/化/专旺/食神制杀等, 不动
+    mben = ZHI_BEN_GAN.get(pillars['month'][1])
+    if mben and ten_god(dg, mben) in body:
+        gc['ti_wx'] = [GAN_WX[mben]]
+    return facts

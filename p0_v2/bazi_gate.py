@@ -151,6 +151,7 @@ def paipan(bazi: str) -> Dict[str, Any]:
     tc = build_tou_cang(f)
     wx = build_wang_xiang(f, f["day_stem"])
     rr = build_root_relations(rc, f["combination_facts"])
+    f["root_relations"] = rr   # STEP-L5-1 (2026-10): 根气关系(含合解冲裁决)挂回 facts 供下游消费
     ts = build_two_side(rc, tc, rr)
     bt = build_branch_tiers(p, f)
     net = build_power_network(pa, rc, tc, wx, rr, ts,
@@ -160,6 +161,7 @@ def paipan(bazi: str) -> Dict[str, Any]:
     # L3 旺衰结构层(党众/助寡 = DE_SHI.001「强众而敌寡/强寡而敌众」的计数基础)
     # 只输出多维结构事实, 不输出综合裁决(DTS SHUAI.001「旺中有衰/衰中有旺」)。
     root_eff = filter_root_effectiveness(rc, f["combination_facts"], p, f["day_stem"])
+    f["root_effectiveness"] = root_eff   # STEP-L5-2 (2026-10): 根效力事实挂回 facts
     structure = build_wangshuai_structure(f, root_eff, rc)
 
     # L4 格局层
@@ -442,6 +444,8 @@ def paipan(bazi: str) -> Dict[str, Any]:
         #   语义: L0(relations) + L1(wuxing_power) 的确定性派生, 无判定无阈值。
         "topology": _build_topology(f, p),
         "combination_facts": f.get("combination_facts", {}),
+        "root_relations": f.get("root_relations"),          # STEP-L5-3 投影(算而未投影实锤修复)
+        "root_effectiveness": f.get("root_effectiveness"),  # STEP-L5-3 投影
         "stem_combination_facts": f.get("stem_combination_facts", {}),
         "tian_he": th,
         "power_queries": queries,
@@ -465,6 +469,10 @@ def paipan(bazi: str) -> Dict[str, Any]:
                      "boundary_note": by.get("boundary_note")},
         "bing_debate": {"state": debate.get("state"),
                         "primary": (debate.get("primary_bing") or {}).get("bing_id"),
+                        "primary_detail": debate.get("primary_bing"),
+                        "secondary": debate.get("secondary_bing"),
+                        "domain_primaries": debate.get("domain_primaries"),
+                        "ranked": debate.get("ranked"),
                         "compare_key": debate.get("compare_key")},
         "zhuangui": zg,
         "climate": cli,
