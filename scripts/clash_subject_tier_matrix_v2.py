@@ -37,19 +37,31 @@ def gen_kind(br, dm_rd, tg):
     return "无"
 
 
+LING_RANK = {"旺": 4, "相": 3, "休": 2, "囚": 1, "死": 0}
+# 冲对四路分类
+KU_CHONG = [("辰", "戌"), ("丑", "未")]                 # ③ 四库冲: 开库不拔
+KE_CHONG = [("子", "午"), ("卯", "酉")]                 # ① 纯相克
+MIX_CHONG = [("寅", "申"), ("巳", "亥")]               # ② 混合
+
+
+def chong_route(a, b):
+    if (a, b) in KU_CHONG or (b, a) in KU_CHONG:
+        return "KU"
+    if (a, b) in KE_CHONG or (b, a) in KE_CHONG:
+        return "KE"
+    return "MIX"
+
+
 def compose(ling, eff_heavy, dang, caiya):
     opp = dang == "异党成势" or caiya == "财重压身"
     if eff_heavy == 0:
         return "衰"                      # 重根全被冲拔 L139
     if ling in ("囚", "死") and eff_heavy <= 1 and opp:
         return "衰"
-    if ling in ("旺", "相"):
-        if eff_heavy <= 1 and opp:
-            return "衰"                  # 校准点2 阈值(全格核)
-        if eff_heavy >= 2 and caiya == "无压":
-            return "旺"
-        if eff_heavy >= 1:
-            return "旺"
+    if ling in ("旺", "相") and eff_heavy >= 1:
+        return "旺"
+    if eff_heavy >= 2 and not opp:
+        return "旺"
     return "中"
 
 
@@ -74,19 +86,40 @@ for book in ["DTS", "PZZQ", "QTBJ", "SFTK", "SMTH", "YHZP"]:
         dm = wp.get(dm_wx, {}) or {}
         ling = dm.get("ling_state", "休")
         dm_rd = dm.get("root_detail", {}) or {}
-        # === 校准点1: 逐根分别判冲拔/合, 聚合有效重根数 ===
+        # === 冲拔四路: 逐根按冲对类型判胜负(库冲开库不拔) ===
+        BRANCH_WX = {'子': '水', '亥': '水', '寅': '木', '卯': '木', '巳': '火',
+                     '午': '火', '申': '金', '酉': '金', '辰': '土', '戌': '土',
+                     '丑': '土', '未': '土'}
+        sm_wx = {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}[dm_wx]
+        yinv = wp.get(sm_wx, {}) or {}
+        yben = int(yinv.get("ben_n", 0))
+        yz = int(yinv.get("zhong_n", 0)) + int(yinv.get("yu_n", 0))
+        ystem = int(yinv.get("stem_n", 0)); yling = yinv.get("ling_state", "")
+        sheng_support = (yben >= 1 or (yling in ("相", "旺") and yz >= 1)
+                         or (ystem >= 1 and yz >= 1))
+
+        def root_struck(p, b):
+            o = CLASH_OTHER.get(b)
+            if not o or o not in br.values():
+                return False
+            po = [q for q, x in br.items() if x == o][0]
+            if abs(POS_L.index(p) - POS_L.index(po)) != 1:
+                return False                       # 仅紧贴, 隔位/遥不裁决
+            route = chong_route(b, o)
+            if route == "KU":
+                return False                       # 四库冲: 开库, 不拔根
+            wa = LING_RANK[(wp.get(BRANCH_WX[b], {}) or {}).get("ling_state", "休")]
+            wb = LING_RANK[(wp.get(BRANCH_WX[o], {}) or {}).get("ling_state", "休")]
+            if route == "KE":
+                return wa < wb                     # 纯相克: 衰方拔, 旺方存活
+            return (not sheng_support) and wa < wb  # 混合: 相生有力不拔, 否则衰方拔
+
         eff_heavy = 0; cb_state = "无"; best_survive = "无"
         for p, b in br.items():
             g = gen_kind(b, dm_rd, tg.get(p))
             if g == "无":
                 continue
-            struck = False
-            o = CLASH_OTHER.get(b)
-            if o and o in br.values():
-                po = [q for q, x in br.items() if x == o][0]
-                if abs(POS_L.index(p) - POS_L.index(po)) == 1:
-                    struck = True
-            if struck:
+            if root_struck(p, b):
                 cb_state = "被冲拔"
                 continue
             if g in HEAVY:
