@@ -515,9 +515,13 @@ def element_power_tier(wp: Dict[str, Any], wx: str) -> Dict[str, Any]:
     stem = int(e.get('stem_n', 0))
     if ju >= 1 or (ling == '旺' and ben >= 1) or ben >= EA_STRONG_BEN:
         tier, name = 3, '强'
-    elif ben >= EA_WANG_BEN or (ling == '旺' and (stem >= 1 or banhe >= 1)) or (ling in ('旺', '相') and ben >= 1):
+    elif (ben >= EA_WANG_BEN or (ling == '旺' and (stem >= 1 or banhe >= 1))
+          or (ling in ('旺', '相') and ben >= 1)
+          or (stem >= 2 and ben >= 1)):   # 2026-10-06: 得党(双透+有根=比劫/印帮身), 非旺相令也算
         tier, name = 2, '旺'
-    elif ben >= 1 or zy >= 1 or banhe >= 1 or (ling == '相' and stem >= 1):
+    elif (ben >= 1 or zy >= 1 or banhe >= 1
+          or (ling == '相' and stem >= 1)
+          or stem >= 2):                   # 2026-10-06: 双透帮身(透干成党), 无根亦算
         tier, name = 1, '平'
     else:
         tier, name = 0, '衰'

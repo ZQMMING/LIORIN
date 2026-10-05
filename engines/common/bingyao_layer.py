@@ -280,6 +280,29 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     # 统一计数(收紧门槛): 他干透干(排除日干) + 本气根(不含中气余气)
     pillars = facts.get('pillars')
 
+    # ── 统一日主旺衰前提闸门 (2026-10-06, 核1甲路/核2丙/核3四档) ──────────
+    # 核1甲路: 三病原文均字面含「身弱/身轻」前提——CAI_DUO(PZZQ L2319「若财多身弱」/
+    #   YHZP L2915「日主身弱之人最忌财星过多」)、SHA_ZHONG(DTS L334「杀重身轻」/
+    #   YHZP L4923「杀重身轻终有败」)、XIE_QI(PZZQ L3930「身轻泄气太重」/
+    #   L768「泄气太重虽秉令而不强也」)——闸门是原文要求, 非后加。
+    # 核2丙: dm_tier 是 strength_verdict(顶层恒 NOT_AUTHORIZED, 不判身强/身弱吉凶)
+    #   的内部中间量——只给病触发前提用, 不出顶层。
+    # 核3四档: element_power_tier(transit_power.py:500) 纯布尔 强3/旺2/平1/衰0;
+    #   统一用 ge_jie_layer.dm_tier(剥借根版, 同阴阳判据)。
+    # 闸门: tier<=1(平/衰) = 身弱/身轻前提; tier>=2(旺/强) = 泄秀/财官为喜, 不触发。
+    _dmt = {'tier': 1, 'name': '平'}
+    try:
+        from engines.common.ge_jie_layer import dm_tier as _dm_tier_calc
+        _dg = facts.get('day_stem', '') or ''
+        _mz = (pillars or {}).get('month', [None, None])[1] if pillars else ''
+        if _dg:
+            _dmt = _dm_tier_calc(facts.get('wuxing_power', {}), _dg, _mz, pillars)
+    except Exception:
+        _dmt = {'tier': 1, 'name': '平'}
+    _shen_ruo = _dmt['tier'] <= 1   # 平/衰=身弱前提成立; 旺/强=不触发
+    _shen_ruo_note = 'dm_tier=%s(%d)%s' % (_dmt.get('name', ''), _dmt.get('tier', 1),
+                                            '' if _shen_ruo else ' -> 身强, 泄秀/财官为喜不触发')
+
     def _tou_ben(wx):
         if not pillars:
             return (0, 0)
@@ -373,8 +396,12 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         return (bool(hit), hit)
 
     # 1. 财多身弱 (统一收紧触发: 财当令/成党 + 财相对压过日主 + 日主无根/根轻)
+    #    前提闸门: dm_tier<=1(身弱) 才问——原文「财多身弱」「日主身弱之人最忌财星过多」
     cai_wx = KE.get(daymaster_element, '')
     ok, matched = _kexie_trigger(cai_wx, 'CAIDUO-SHENRUAN', True)
+    if ok and not _shen_ruo:
+        ok = False
+        matched = ['日主不弱(%s), 财为喜, 不触发' % _shen_ruo_note]
     _cai_combo = 0
     if not ok:
         # 根轻但财当令/本气根: 原典"财星当令或成党, 日主失令无根/根轻" — 根轻(LIGHT/NONE)亦报病
@@ -390,11 +417,11 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         #   - 财当令(旺) + 日主无重根  -> 财旺身弱, 报
         #   - 财有本气根(非当令) + 日主无重根 -> 须财相对压过日主(_x_overpowers)才算旺, 否则不报
         if _no_heavy and _cai_dangling:
-            ok = True
-            matched = ['财当令(旺)+日主无HEAVY根']
+            ok = _shen_ruo  # 前提闸门: 财当令+身弱才报财多身弱
+            matched = ['财当令(旺)+日主无HEAVY根' + ('' if _shen_ruo else ' -> 身强, 不触发(%s)' % _shen_ruo_note)]
         elif _no_heavy and _cai_benshi and _x_overpowers(cai_wx):
-            ok = True
-            matched = ['财有本气根且压过日主(旺), 日主无HEAVY根']
+            ok = _shen_ruo  # 前提闸门
+            matched = ['财有本气根且压过日主(旺), 日主无HEAVY根' + ('' if _shen_ruo else ' -> 身强, 不触发(%s)' % _shen_ruo_note)]
         if ok:
             matched = matched + ['财(他干%d+本根%d+局票%d=%d, 当令=%s)' % (_caiT, _caiB, _ju_piao(cai_wx), _cai_combo, _cai_dangling)]
     else:
@@ -410,8 +437,12 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         })
 
     # 2. 杀重身轻 (统一收紧触发)
+    #    前提闸门: dm_tier<=1(身轻) 才问——原文「杀重身轻」「杀重身轻终有败」
     sha_wx = KE_WO.get(daymaster_element, '')
     ok, matched = _kexie_trigger(sha_wx, 'SHAZHONG-SHENQING', True)
+    if ok and not _shen_ruo:
+        ok = False
+        matched = ['日主不弱(%s), 杀为喜, 不触发' % _shen_ruo_note]
     # 格体过滤: 杀是伤官带煞格体, 不报杀重病(双层属性: 格体非破格)
     if ok:
         _gc = facts.get('ge_cheng') or {}
@@ -445,8 +476,12 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         })
 
     # 3. 泄气太重 (统一收紧触发)
+    #    前提闸门: dm_tier<=1(身弱) 才问——原文「身轻泄气太重」「木泄气太重虽秉令而不强也」
     xie_wx = SHENG.get(daymaster_element, '')
     ok, matched = _kexie_trigger(xie_wx, 'XIEQI-TAIZHONG', True)
+    if ok and not _shen_ruo:
+        ok = False
+        matched = ['日主不弱(%s), 泄秀为喜, 不触发' % _shen_ruo_note]
     # 成格喜神过滤: 食神生财格成, 食神为成格喜神, 泄气病不报; 过旺(combo>=阈值)例外仍报
     if ok:
         from engines.common.ge_jie_layer import is_xix_shen
