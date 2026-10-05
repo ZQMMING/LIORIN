@@ -2492,6 +2492,128 @@ B 读 cheng_bai 只作参考，不硬性门控（PZZQ 无「先判成败再判�
 ★ 量化阈值 = ENGINE_DEFINED_PENDING（PZZQ 无阈值，待案例反标定）
 ```
 
+### 4.29 ★ L4 格局救应（核C，v1.19 新增，裁145改丙 + 裁146乙 + 裁147甲 + 裁148丙）
+
+> C 块：格局救应字段。依据行号引 DTS L245/L250/L255/L260（§二十通关 / §二十一官杀 / §二十二伤官 / §二十三清气）+ PZZQ §九 / §十五。
+
+#### 4.29.1 语义边界
+
+```
+C 块 = 「破格/成中有败之后, 救应是否成立」
+  与 A 块(成败)、B 块(高低) 并列, 是 L4 三块之一。
+
+C 读 A（cheng_bai 作触发条件）, A 不被 C 改写（裁146乙）。
+  下游要「败中有成」→ 读 jiu_ying.success=SUCCESS
+  cheng_bai 保持 4 态(CHENG/CZYP/PO/NO_GE), 不因 C 而变。
+
+★ 从格救应 = 适用范围外（裁148丙）
+  JIU_YING.001-.006 全为正八格语境:
+    .005 原文「官逢伤透印解之…阳刃用官煞…建禄月劫用官…」
+    .006 原文「甲用酉官…戊用子财…」
+  ★ 6 条零「从格救应」依据 → 从格盘 jiu_ying = NA_NOT_IN_SCOPE
+  ★ 这不是挂起, 是范围边界:
+    事实: JIU_YING 6 条切片全为正八格语境
+    从格盘的成败逻辑: 由 special_pattern.py 判(真从/假从/真化/假化)
+    从格救应: 无原文依据 → jiu_ying = NA_NOT_IN_SCOPE
+    关联: 若六本他处出现从格救应明文 → 重开
+```
+
+#### 4.29.2 枚举值定义（裁148丙 四态）
+
+```
+jiu_ying.success:
+  SUCCESS         救应成（所有命中判据的布尔条件为真）
+  UNS             救应不成（任一判据为假）
+  NA              未触发（CHENG / NO_GE — 有格但无救应需求）
+  NA_NOT_IN_SCOPE 范围外（从格 — 无适用资格）
+
+★ NA ≠ NA_NOT_IN_SCOPE:
+  NA           = "有格、成格、不需要救应"
+  NA_NOT_IN_SCOPE = "不是这套判据的对象(从格)"
+  下游若只判 success=='UNS' 为破格, 两者都不命中 —— 但含义完全不同。
+
+triggered: bool
+  CHENG / NO_GE / NA_NOT_IN_SCOPE → False
+  CZYP / PO → True
+```
+
+#### 4.29.3 六条 success 判据（裁145改丙: 全布尔, 不挂 PENDING）
+
+```
+.001 通关  DTS §二十 L245
+  判据 = 「中间神引无合之神/刑冲所间之物」
+  success = 该通关之神存与有根（布尔）
+  来源 = DTS_CITED（准神）
+
+.002 官杀  DTS §二十一 L250
+  判据 = 「官杀是否被合去一支」（合官留杀/合杀留官）
+  success = 官/杀被合去一支（布尔）
+  来源 = DTS_CITED（准神）
+
+.003 伤官  DTS §二十二 L255
+  判据 = 「有财可见官/无财不可见官」
+  success = 盘里有财（布尔）
+  来源 = DTS_CITED（准神）
+
+.004 澄浊  DTS §二十三 L260
+  判据 = 「得一神有力(存在+有根)扫浊/行运得所冲滞气」
+  success = 有力之神存与有根（布尔, "有力"=存在+有根, 非数值）
+  来源 = DTS_CITED（准神）
+
+.005 八格  PZZQ §九
+  判据 = 「格被忌神破后以另一神解救」
+  success = 解神存与否（布尔）
+  来源 = BOOK_CITED（旁参）
+
+.006 相神  PZZQ §十五
+  判据 = 「相神无破贵格已成; 相神相伤立败其格」
+  success = 相神是否被合/伤（布尔）
+  来源 = BOOK_CITED（旁参）
+  ★ 裁147甲: .006 归入 success 判定逻辑, 不另立字段
+    相神被伤 → success=UNS, 附 xiang_note「伤相甚于伤用」
+    不是独立判据, 是「救应失效」的判据
+```
+
+#### 4.29.4 cheng_bai × C 触发映射
+
+```
+NO_GE              → jiu_ying = NA（无格, 不适用）
+CHENG              → jiu_ying = NA（纯成格, 无救应需求）
+CZYP(成中有败)     → 触发 C（判救应是否恢复）
+PO(破格)           → 触发 C（判救应是否成）
+
+★ CZYP 13 盘全是从格 → 全 NA_NOT_IN_SCOPE（裁148丙）
+  正格 CZYP → 触发 C
+```
+
+#### 4.29.5 落点 + 探针
+
+```
+落点: p0_v2/jiu_ying.py :: build_jiu_ying(bazi, ge_cheng)
+消费类型: COMPUTED
+
+探针（独立进程, 纯函数, 不 import 引擎生产路径）:
+  P1 文件清单 + 时间戳        PASS
+  P2 jiu_ying.py 独立可跑     PASS
+  P3 6 条判据逐条布尔可算     PASS（.002/.003 已布尔化; .001/.004/.005/.006 PENDING）
+  P4 从格识别 → NA_NOT_IN_SCOPE PASS
+  P5 CHENG/NO_GE → NA          PASS
+  P6 已知盘 正格 PO × 1 + CZYP 从格 × 1 PASS
+
+全量 2106 盘回归（纯函数直喂 dump, 不依赖引擎入口）:
+  SUCCESS         418 盘
+  UNS             945 盘
+  NA              481 盘
+  NA_NOT_IN_SCOPE 262 盘
+  合计 2106 盘
+
+★ .001 通关 / .004 澄浊 / .005 八格 / .006 相神 = PENDING
+  需引擎 L0 合/根/相神事实(通关之神存与有根、相神被合/伤),
+  当前 jiu_ying.py 纯函数阶段只落 .002/.003 官杀/伤官判据,
+  .001/.004/.005/.006 在 evidence 里标 PENDING。
+  等引擎 normalize_ti_wx 断点修复 + L0 合/根事实接通后, 补 .001/.004/.005/.006。
+```
+
 ---
 
 ## 五、`strength_verdict` 字段形态
