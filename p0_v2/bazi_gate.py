@@ -73,6 +73,13 @@ from engines.common.ge_jie_layer import (build_ge_cheng, apply_he_po_ge,
 from engines.common.topology_paths import (
     build_yuan_liu_skeleton, find_tong_guan, check_fang_ju_ming_same_wx,
     check_guan_topology, TONG_GUAN_MAP)
+# 空亡接排盘引擎(LIORIN calc_kong_wang 同源, 2026-10-06):
+#   l0_paipan._chart_from_pillars 从四柱直算(无需公历); kong_wang 输出拼音
+#   支名, 经 _BP 转中文. 引擎契约 P0-1.3: 空亡=关系有效性修正(冲有效性
+#   修正), 非力量折减 —— 供 root_clash L5 解冲消费.
+from engines.l0_paipan import _chart_from_pillars as _l0chart_from_pillars  # noqa: E402
+from engines.l0_paipan import _BP as _BP_CN  # noqa: E402
+from engines.l0_paipan import _PY as _G_CN  # noqa: E402
 
 # 十神/藏干来自 l0_fact_builder(引擎自己的), 供外部引用
 TEN_GOD = ten_god
@@ -99,6 +106,36 @@ def paipan(bazi: str) -> Dict[str, Any]:
     f["wuxing_power"] = build_wuxing_power(p, f)
     th = build_tian_he(p, f)
     hst = {p[k][1]: f["hidden_stems"][k] for k in _POS}
+
+    # 排盘引擎完整输出接进 facts (2026-10-06): 四柱输入 -> l0_paipan
+    #   _chart_from_pillars 全套(LIORIN calc_* 同源): 十二长生/藏干/藏干十神/
+    #   干支极性/六冲/六合/三合/三会/三刑/六害/六破/天干五合/天干冲/空亡/
+    #   纳音/神煞. 全部转中文后挂 f["l0_chart"] + 顶层投影 —— 案例调试
+    #   不再因接口缺字段空跑. 空亡另落标准化 xunkong 供 root_clash L5 解冲.
+    try:
+        _l0c = _l0chart_from_pillars(p)
+        _PY2CN = {}
+        _PY2CN.update(_BP_CN)   # 支: 拼音 -> 中文
+        _PY2CN.update(_G_CN)    # 干: 拼音 -> 中文
+        def _cn(v):
+            if isinstance(v, dict):
+                return {str(k): _cn(x) for k, x in v.items()}
+            if isinstance(v, (list, tuple)):
+                return [_cn(x) for x in v]
+            return _PY2CN.get(str(v), str(v))
+        f["l0_chart"] = {k: _cn(v) for k, v in _l0c.items()}
+        _kw = tuple(_l0c.get("kong_wang") or ())
+        _kw_cn = [_BP_CN.get(x, x) for x in _kw]
+        # 空亡两支反查旬名(六旬唯一映射, 免 JIAZI_INDEX 拼音键歧义):
+        #   (戌亥)=甲子旬 (申酉)=甲戌旬 (午未)=甲申旬 (辰巳)=甲午旬
+        #   (寅卯)=甲辰旬 (子丑)=甲寅旬
+        _KW2XUN = {("XU", "HAI"): "甲子旬", ("SHEN", "YOU"): "甲戌旬",
+                   ("WU", "WEI"): "甲申旬", ("CHEN", "SI"): "甲午旬",
+                   ("YIN", "MAO"): "甲辰旬", ("ZI", "CHOU"): "甲寅旬"}
+        f["xunkong"] = {"xun": _KW2XUN.get(_kw, ""), "kong_wang": list(_kw_cn)}
+    except Exception:
+        f["l0_chart"] = {}
+        f["xunkong"] = {"xun": "", "kong_wang": []}
 
     # 根分类单一数据源(补 production_entry.py L200-213 覆盖, 2026-10):
     #   l0_fact_builder L118-141 的 rt 只认「日干同字」藏干(dg in HIDDEN[z]),
@@ -453,6 +490,8 @@ def paipan(bazi: str) -> Dict[str, Any]:
                             ("ling_state", "ben_n", "zhong_n", "yu_n",
                              "ju_n", "banhe_n", "stem_n", "root_detail")},
         "root_weight_class": f.get("root_weight_class_facts", {}),
+        "xunkong": f.get("xunkong", {}),   # 排盘引擎空亡(日柱旬), L5 解冲消费
+        "l0_chart": f.get("l0_chart", {}), # 排盘引擎完整输出(四柱->全套事实)
         "l3_contract": f.get("l3_contract", {}),
         # ★ 裁七十一乙 (2026-10-04) 拓扑派生层 —— 与 l3_contract 平级, 不塞 L0~L4
         #   语义: L0(relations) + L1(wuxing_power) 的确定性派生, 无判定无阈值。

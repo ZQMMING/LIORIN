@@ -99,15 +99,19 @@ def _is_resolved(root_branch: str, clash_branch: str, zhis: List[str]) -> bool:
 
 def build_root_clash_events(pillars: Dict, dg: str,
                             ling: str = '休',
-                            wp_data: Dict = None) -> List[Dict]:
+                            wp_data: Dict = None,
+                            kong_wang: List[str] = None) -> List[Dict]:
     """L1-L4: 生成日主根位冲拔事件.
     L2 根位: 禄(同阴阳本气支) / 刃(旺支异阴阳) / 本气根(地支本气=日干).
       库根/余气根: 本算子不计入(与 ben 口径同源), 待依赖.
     L4 冲力 + 旺衰(滴天髓「旺者冲衰衰者拔, 衰神冲旺旺神发」):
       同柱/紧贴 -> strong; 隔柱(gap1) -> 旺神冲衰神仍拔(strong), 余 weak;
       遥冲 -> weak. 根方得时(旺相) -> 发不拔(在 effective_ben 聚合作最终裁决).
+    L5 空亡(排盘引擎 xunkong, LIORIN P0-1.3 空亡=关系有效性修正, 非力量
+      折减): 空亡根不受冲(已落空), 空亡冲方冲无力 -> 均降级为 none/weak.
     """
     events = []
+    kw = set(kong_wang or ())
     lu = DM_LU.get(dg, '')
     ren = DM_WANG.get(dg, '')
     zhis = [pillars[pos][1] for pos in ('year', 'month', 'day', 'hour')]
@@ -134,6 +138,12 @@ def build_root_clash_events(pillars: Dict, dg: str,
         resolved = _is_resolved(z, clash, zhis)
         if resolved:
             strength = 'none'
+        elif z in kw:
+            # 空亡根: 已落空, 不受冲(根的有效性被空亡修正)
+            strength = 'none'
+        elif clash in kw:
+            # 空亡冲方: 冲无力, 不拔根
+            strength = 'weak'
         elif dist in ('same_pillar', 'adjacent'):
             strength = 'strong'
         elif dist == 'gap1':

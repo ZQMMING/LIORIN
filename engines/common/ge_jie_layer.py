@@ -24,14 +24,15 @@ _YIN_YANG_JIEGEN = {('乙','寅'): True}
 ZHI_BEN_GAN = {'子':'癸','丑':'己','寅':'甲','卯':'乙','辰':'戊','巳':'丙',
                '午':'丁','未':'己','申':'庚','酉':'辛','戌':'戊','亥':'壬'}
 
-def dm_tier(wp, dg, month_zhi, pillars=None):
+def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None):
     """日主视角旺衰tier: 剥借根+冲拔拓扑后再判element_power_tier.
     同阴阳判据(PZZQ"刃乃劫我正财之神, 不善之神须逆势驾驭"): 异阴阳本气支(刃/劫财禄)
     是比劫非日主根 -> 剥; 仅同阴阳本气支(禄)计日主根. 中余气维度待依赖.
     冲拔(得地层·五层拓扑算子, engines/common/root_clash.py): 冲对/根位/
       冲-根匹配/冲力/解冲——根方失时(休囚死)被紧贴冲且无合解 -> 拔;
-      得时被冲 -> 发不拔; 隔柱/遥冲/合解不扣. 滴天髓「旺者冲衰衰者拔,
-      衰神冲旺旺神发」+ 禄神逢冲为破禄. (DT-0029 甲木戌月囚, 寅禄被申冲拔)
+      得时被冲 -> 发不拔; 隔柱旺冲衰亦拔; 遥冲/合解/空亡不扣.
+      滴天髓「旺者冲衰衰者拔, 衰神冲旺旺神发」+ 禄神逢冲为破禄.
+      (DT-0029 甲木戌月囚, 寅禄被申冲拔)
     临时补丁一/二的切换点: 修复后财格过滤改用此函数."""
     import copy
     from engines.common.transit_power import element_power_tier
@@ -51,7 +52,8 @@ def dm_tier(wp, dg, month_zhi, pillars=None):
         _ling = (wp2['wuxing_power'].get(wx, {}) or {}).get('ling_state', '休')
         dm_e['ben_n'] = effective_ben(
             _ben_self,
-            build_root_clash_events(pillars, dg, _ling, wp2['wuxing_power']),
+            build_root_clash_events(pillars, dg, _ling, wp2['wuxing_power'],
+                                    kong_wang),
             _ling)
     elif (dg, month_zhi) in _YIN_YANG_JIEGEN:
         dm_e['ben_n'] = max(0, dm_e.get('ben_n',0) - 1)
