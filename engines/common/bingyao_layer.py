@@ -360,11 +360,19 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         _cai_dangling = (_mm_q == cai_wx)
         _cai_benshi = (_caiB >= 1)
         _no_heavy = not has_heavy_root
-        if _no_heavy and (_cai_dangling or _cai_benshi):
+        # STEP-L7-1 (2026-10, 切片校准): 兜底分支对齐 PATHOLOGY.QIANG_RUO.004
+        #   原文「财旺身弱」= 财神【太旺】+ 日主衰弱。仅"财有本气根"≠"财旺"
+        #   (如亥月辰戌土, 囚死之地有根而无力)。故:
+        #   - 财当令(旺) + 日主无重根  -> 财旺身弱, 报
+        #   - 财有本气根(非当令) + 日主无重根 -> 须财相对压过日主(_x_overpowers)才算旺, 否则不报
+        if _no_heavy and _cai_dangling:
             ok = True
-            matched = ['财当令/本气根(他干%d+本根%d+局票%d=%d, 当令=%s), 日主无HEAVY根(root_class=%s)'
-                       % (_caiT, _caiB, _ju_piao(cai_wx), _cai_combo, _cai_dangling,
-                          '/'.join(sorted({v['class'] for v in (facts.get('root_weight_class_facts') or {}).values()})))]
+            matched = ['财当令(旺)+日主无HEAVY根']
+        elif _no_heavy and _cai_benshi and _x_overpowers(cai_wx):
+            ok = True
+            matched = ['财有本气根且压过日主(旺), 日主无HEAVY根']
+        if ok:
+            matched = matched + ['财(他干%d+本根%d+局票%d=%d, 当令=%s)' % (_caiT, _caiB, _ju_piao(cai_wx), _cai_combo, _cai_dangling)]
     else:
         # _kexie_trigger 已触发, 算 combo 供 overwang_exempt 用
         _cai_combo = _tou_ben(cai_wx)[0] + _tou_ben(cai_wx)[1] + _ju_piao(cai_wx)
