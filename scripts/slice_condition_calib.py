@@ -73,14 +73,51 @@ def _x_pressure_dm(r, wx):
 
 
 # ---------------------------------------------------------------- 谓词表达式
+# 口径对齐(防搞偏): dang_ling 与引擎 bingyao._kexie_trigger 的 dangling 完全一致
+#   = (month_qi_element == wx), 即「月令本气即该五行」; 不含 '相'(月令所生,
+#   引擎不当令, 若算入会把杀重/财多的"仅谓词"虚高成漏报信号)。
 PRED = {
     'combo_ge4':    lambda r, wx: _combo(r, wx) >= DANG_COMBO,
-    'dang_ling':    lambda r, wx: _ling(r, wx) in ('旺', '相'),
+    'dang_ling':    lambda r, wx: (r.get('month_qi_element') or '') == wx,
     'tou_ge1':      lambda r, wx: _counts_tou(r, wx) >= 1,
     'ben_ge1':      lambda r, wx: _counts_ben(r, wx) >= 1,
     'dm_no_heavy':  lambda r, wx: _dm_no_heavy(r),
     'x_pressure':   lambda r, wx: _x_pressure_dm(r, wx),
 }
+
+
+def _gate_reason(r, wx):
+    """引擎对病五行 wx 的附加闸门(对齐 bingyao_layer 过滤逻辑):
+    返回 None=无闸门(谓词命中却未触发 → 真漏报信号); 否则为闸门名列表."""
+    gc = r.get('ge_cheng') or {}
+    ti = gc.get('ti_wx') or []
+    xi = gc.get('xi_wx') or []
+    zhi = gc.get('zhi_wx') or []
+    hua = gc.get('hua_wx') or []
+    KE = {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}
+    WO_SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+    reasons = []
+    if wx in ti:
+        reasons.append('ti_wx格体豁免')
+    if wx in xi:
+        reasons.append('xi_wx喜神豁免')
+    if any(KE.get(z) == wx for z in zhi):
+        reasons.append('zhi_wx制化过滤')
+    if any(WO_SHENG.get(wx) == h for h in hua):
+        reasons.append('hua_wx化泄过滤')
+    # 引擎内部闸门(病药层 _kexie_trigger/制化闸门, 非格局层输出):
+    #   ① 杀重身轻: 食神透(tou>=1)或印透 → 有制化不报
+    #   ② 泄气太重: 印透制食伤 → 不报
+    dm = _dm(r)
+    from engines.common.bing_debate import _counts
+    pl = r.get('pillars') or {}
+    shi_wx = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}.get(dm, '')
+    yin_wx = {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}.get(dm, '')
+    if _counts(pl, shi_wx, r.get('transit_extra'))['tou'] >= 1:
+        reasons.append('引擎食神透制(内部闸门)')
+    if _counts(pl, yin_wx, r.get('transit_extra'))['tou'] >= 1:
+        reasons.append('引擎印透化(内部闸门)')
+    return reasons or None
 
 
 def _counts_tou(r, wx):
@@ -130,7 +167,7 @@ def _eval_expr(r, wx, groups):
 # ---------------------------------------------------------------- 批量求值
 def run(books=None, limit=None):
     fps = sorted(glob.glob('p0_v2/case_audit/*_clean.jsonl'))
-    stat = {}   # bing_id -> {trig: 引擎触发数, pred_hit: 谓词命中数, 交集, 只谓词(漏), 只触发(过宽)}
+    stat = {}   # bing_id -> {trig/pred/both/pred_only/trig_only/none + gated/ungated 样本}
     for fp in fps:
         book = fp.replace('\\', '/').split('/')[-1].replace('_clean.jsonl', '')
         if books and book not in books:
@@ -147,9 +184,9 @@ def run(books=None, limit=None):
                 continue
             trig_ids = {b.get('bing_id') for b in (r.get('bing_list') or [])}
             for bid, sid, stype, groups, status in SLICE_MAP:
-                s = stat.setdefault(bid, {'trig': 0, 'pred': 0, 'both': 0, 'pred_only': 0, 'trig_only': 0, 'none': 0})
-                wx = {'CAI_DUO_SHEN_RUO': _dm(r) and None}[bid] if False else None
-                # 病机五行: 复用 bingyao 的角色映射
+                s = stat.setdefault(bid, {'trig': 0, 'pred': 0, 'both': 0, 'pred_only': 0,
+                                          'trig_only': 0, 'none': 0, 'gated': 0, 'ungated': 0,
+                                          'samples': []})
                 role_wx = {
                     'CAI_DUO_SHEN_RUO': '财', 'SHA_ZHONG_SHEN_QING': '官杀',
                     'XIE_QI_TAI_ZHONG': '食伤', 'BIJIE_CHENG_DANG': '比劫',
@@ -157,15 +194,30 @@ def run(books=None, limit=None):
                     'YIN_DUO_MAI_ZI': '印枭', 'ZHI_SHA_TAI_GUO': '食伤',
                 }
                 from engines.common.bing_debate import role_to_wx
-                wx = role_to_wx(role_wx.get(bid, ''), _dm(r))
+                # 病机五行: 优先取引擎已挂的 bing_wx(同源防偏), 未触发时用角色推算
+                _ewx = next((b.get('bing_wx') for b in (r.get('bing_list') or [])
+                             if b.get('bing_id') == bid and b.get('bing_wx')), None)
+                wx = _ewx or role_to_wx(role_wx.get(bid, ''), _dm(r))
                 ph = _eval_expr(r, wx, groups)
                 trig = bid in trig_ids
                 if trig and ph:
                     s['both'] += 1
                 elif trig:
                     s['trig_only'] += 1
+                    if len(s['samples']) < 5:
+                        s['samples'].append(('T', d.get('case_id'), d.get('bazi'),
+                                             (d.get('analysis') or '')[:50], wx))
                 elif ph:
                     s['pred_only'] += 1
+                    # 闸门标注: 谓词命中但引擎未触发 —— 是闸门所致还是真漏报
+                    gr = _gate_reason(r, wx)
+                    if gr:
+                        s['gated'] += 1
+                    else:
+                        s['ungated'] += 1
+                        if len(s['samples']) < 5:
+                            s['samples'].append(('U', d.get('case_id'), d.get('bazi'),
+                                                 (d.get('analysis') or '')[:50], wx))
                 else:
                     s['none'] += 1
                 s['trig'] += int(trig)
@@ -174,10 +226,44 @@ def run(books=None, limit=None):
     print('%-20s %5s %5s %5s %7s %7s %8s  %s' % ('病机', '触发', '谓词', '双中', '仅触发', '仅谓词', '双否', '切片'))
     for bid, sid, stype, groups, status in SLICE_MAP:
         s = stat.get(bid, {})
-        print('%-20s %5d %5d %5d %7d %7d %8d  %s[%s] %s'
+        gate_note = ''
+        if s.get('pred_only'):
+            gate_note = '  [仅谓词: 闸门%d 无闸门%d]' % (s.get('gated', 0), s.get('ungated', 0))
+        print('%-20s %5d %5d %5d %7d %7d %8d  %s[%s] %s%s'
               % (bid, s.get('trig', 0), s.get('pred', 0), s.get('both', 0),
                  s.get('trig_only', 0), s.get('pred_only', 0), s.get('none', 0),
-                 stype, sid.split('.')[-1], status))
+                 stype, sid.split('.')[-1], status, gate_note))
+    print()
+    print('== 无闸门仅谓词(真漏报信号) 与 仅触发(过宽信号) 抽样 ==')
+    for bid, sid, stype, groups, status in SLICE_MAP:
+        s = stat.get(bid, {})
+        for tag, cid, bz, txt, wx in s.get('samples', []):
+            print('  [%s] %-18s %-8s %s  %s' % (tag, bid, cid, bz, txt))
+
+
+def selfcheck(bazi):
+    """人工核对: 打印单盘全部病机谓词明细, 与引擎触发/闸门对照."""
+    importlib.invalidate_caches()
+    r = paipan(bazi)
+    trig_ids = {b.get('bing_id') for b in (r.get('bing_list') or [])}
+    gc = r.get('ge_cheng') or {}
+    print('盘: %s  月令本气=%s 日主=%s' % (bazi, r.get('month_qi_element'), _dm(r)))
+    print('格: %s  ti_wx=%s xi_wx=%s zhi_wx=%s hua_wx=%s' % (gc.get('ge'), gc.get('ti_wx'),
+          gc.get('xi_wx'), gc.get('zhi_wx'), gc.get('hua_wx')))
+    print('引擎病机: %s' % [(b.get('bing_id'), b.get('bing_wx'), b.get('severity'))
+                          for b in (r.get('bing_list') or [])])
+    for bid, sid, stype, groups, status in SLICE_MAP:
+        role_wx = {'CAI_DUO_SHEN_RUO': '财', 'SHA_ZHONG_SHEN_QING': '官杀',
+                   'XIE_QI_TAI_ZHONG': '食伤', 'BIJIE_CHENG_DANG': '比劫',
+                   'SHANGGUAN_JIAN_GUAN': '官杀', 'XIAO_DUO_SHI': '印枭',
+                   'YIN_DUO_MAI_ZI': '印枭', 'ZHI_SHA_TAI_GUO': '食伤'}
+        from engines.common.bing_debate import role_to_wx
+        wx = role_to_wx(role_wx.get(bid, ''), _dm(r))
+        ph = _eval_expr(r, wx, groups)
+        trig = bid in trig_ids
+        gr = _gate_reason(r, wx)
+        print('  %-20s wx=%-2s 谓词=%-5s 引擎=%-5s 闸门=%s'
+              % (bid, wx, 'T' if ph else 'F', 'T' if trig else 'F', gr or '-'))
 
 
 if __name__ == '__main__':
@@ -185,5 +271,9 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser()
     ap.add_argument('--books', nargs='*', default=None)
     ap.add_argument('--limit', type=int, default=None)
+    ap.add_argument('--selfcheck', type=str, default=None, help='单盘人工核对(四柱)')
     a = ap.parse_args()
-    run(books=a.books, limit=a.limit)
+    if a.selfcheck:
+        selfcheck(a.selfcheck)
+    else:
+        run(books=a.books, limit=a.limit)
