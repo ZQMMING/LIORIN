@@ -80,18 +80,22 @@ def _distance(pos1: str, pos2: str) -> str:
     return 'remote'
 
 
-def _is_resolved(root_branch: str, clash_branch: str, zhis: List[str]) -> bool:
+def _is_resolved(root_branch: str, clash_branch: str, zhis: List[str],
+                 he_tbl=None, sanhe_sets=None, sanhui_sets=None) -> bool:
     """L5 解冲: 冲支被六合/三合/三会拉走 或 根支被六合绊住(合解冲,
-    例: 寅申冲见亥, 亥合寅, 冲解) -> 冲不生效."""
-    if LIUHE.get(clash_branch) in zhis:
+    例: 寅申冲见亥, 亥合寅, 冲解) -> 冲不生效.
+    2026-10-06: 合关系以排盘引擎 l0_chart 为准(缺时兜底本地表)."""
+    if he_tbl is None:
+        he_tbl, sanhe_sets, sanhui_sets = LIUHE, {frozenset(k) for k in SANHE}, {frozenset(k) for k in SANHUI}
+    if he_tbl.get(clash_branch) in zhis:
         return True
-    if LIUHE.get(root_branch) in zhis:
+    if he_tbl.get(root_branch) in zhis:
         return True
-    if clash_branch in zhis:
-        for trio in SANHE:
+    if sanhe_sets is not None:
+        for trio in sanhe_sets:
             if clash_branch in trio and all(b in zhis for b in trio):
                 return True
-        for trio in SANHUI:
+        for trio in sanhui_sets:
             if clash_branch in trio and all(b in zhis for b in trio):
                 return True
     return False
@@ -100,7 +104,8 @@ def _is_resolved(root_branch: str, clash_branch: str, zhis: List[str]) -> bool:
 def build_root_clash_events(pillars: Dict, dg: str,
                             ling: str = '休',
                             wp_data: Dict = None,
-                            kong_wang: List[str] = None) -> List[Dict]:
+                            kong_wang: List[str] = None,
+                            l0_chart: Dict = None) -> List[Dict]:
     """L1-L4: 生成日主根位冲拔事件.
     L2 根位: 禄(同阴阳本气支) / 刃(旺支异阴阳) / 本气根(地支本气=日干).
       库根/余气根: 本算子不计入(与 ben 口径同源), 待依赖.
@@ -109,7 +114,45 @@ def build_root_clash_events(pillars: Dict, dg: str,
       遥冲 -> weak. 根方得时(旺相) -> 发不拔(在 effective_ben 聚合作最终裁决).
     L5 空亡(排盘引擎 xunkong, LIORIN P0-1.3 空亡=关系有效性修正, 非力量
       折减): 空亡根不受冲(已落空), 空亡冲方冲无力 -> 均降级为 none/weak.
+
+    2026-10-06 权威源收敛: 六冲/六合/三合/三会存在性 + 支本气干以排盘引擎
+      l0_chart 为唯一权威源(缺时兜底本地表, 表备份于 _legacy_relation_tables);
+      禄刃支(DM_LU/DM_WANG)与支五行(ZHI_WX)为子平经典固定定义, 排盘十二长生
+      表 NOT_CANONICAL(己土 UNRESOLVED), 不引入, 保留本地并备份归档.
     """
+    _lc_tbl, _he_tbl = {}, {}
+    _sanhe_sets, _sanhui_sets = set(), set()
+    _zhi_ben_gan = {}
+    if l0_chart:
+        _ZB8 = {'ZI': '子', 'CHOU': '丑', 'YIN': '寅', 'MAO': '卯', 'CHEN': '辰',
+                'SI': '巳', 'WU': '午', 'WEI': '未', 'SHEN': '申', 'YOU': '酉',
+                'XU': '戌', 'HAI': '亥'}
+        def _two(m):
+            for k in (m or {}):
+                ps = [x for x in str(k).split('-') if x]
+                if len(ps) == 2:
+                    a, b = _ZB8.get(ps[0], ps[0]), _ZB8.get(ps[1], ps[1])
+                    yield a, b
+        for a, b in _two(l0_chart.get('branch_clash_map')):
+            _lc_tbl[a], _lc_tbl[b] = b, a
+        for a, b in _two(l0_chart.get('branch_he_map')):
+            _he_tbl[a], _he_tbl[b] = b, a
+        for k in (l0_chart.get('branch_sanhe_map') or {}):
+            ps = [x for x in str(k).split('-') if x]
+            if len(ps) == 3:
+                _sanhe_sets.add(frozenset(_ZB8.get(x, x) for x in ps))
+        for k in (l0_chart.get('branch_sanhui_map') or {}):
+            ps = [x for x in str(k).split('-') if x]
+            if len(ps) == 3:
+                _sanhui_sets.add(frozenset(_ZB8.get(x, x) for x in ps))
+        for _posv, _hd in (l0_chart.get('hidden_stems') or {}).items():
+            if isinstance(_hd, dict) and _hd.get('main'):
+                _zhi_ben_gan[_ZB8.get(_posv, _posv)] = _hd['main']
+    else:
+        _lc_tbl, _he_tbl = LIU_CHONG, LIUHE
+        _sanhe_sets = {frozenset(k) for k in SANHE}
+        _sanhui_sets = {frozenset(k) for k in SANHUI}
+        _zhi_ben_gan = ZHI_BEN_GAN
     events = []
     kw = set(kong_wang or ())
     lu = DM_LU.get(dg, '')
@@ -127,15 +170,15 @@ def build_root_clash_events(pillars: Dict, dg: str,
             roots[z] = ('lu', pos)
         elif z == ren:
             roots[z] = ('ren', pos)
-        elif ZHI_BEN_GAN.get(z) == dg:
+        elif _zhi_ben_gan.get(z) == dg:
             roots[z] = ('benqi', pos)
     for z, (rt, pos) in roots.items():
-        clash = LIU_CHONG.get(z)
+        clash = _lc_tbl.get(z)
         if not clash or clash not in pos_of:
             continue
         cpos = pos_of[clash]
         dist = _distance(pos, cpos)
-        resolved = _is_resolved(z, clash, zhis)
+        resolved = _is_resolved(z, clash, zhis, _he_tbl, _sanhe_sets, _sanhui_sets)
         if resolved:
             strength = 'none'
         elif z in kw:

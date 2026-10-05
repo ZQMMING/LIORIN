@@ -72,6 +72,8 @@ _DM_WANG = {'甲':'卯','丙':'午','戊':'午','庚':'酉','壬':'子',
 # 干支→五行 (统一计数)
 GAN_WX = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
           '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+# ★ ARCHIVED_FALLBACK (2026-10-06): 支本气五行已改消费排盘 facts['hidden_stems'],
+# 本表仅兜底(非 gate 调用方). 备份: _legacy_relation_tables.
 ZHI_BEN_WX = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土',
               '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金',
               '戌': '土', '亥': '水'}
@@ -575,10 +577,20 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         _ss_cheng = (_zss_t + _zss_b + _ju_piao(xie_wx)) >= DANG_COMBO
         if _ss_dang or _ss_cheng:
             _all_zhis_5b = [pillars[pos][1] for pos in ('year', 'month', 'day', 'hour')]
-            _zsha_zhis = [z for z in _all_zhis_5b if ZHI_BEN_WX.get(z) == sha_wx]
-            _LIUCHONG_5b = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅',
-                            '卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
-            _zsha_chong = any(_LIUCHONG_5b.get(z) in _all_zhis_5b for z in _zsha_zhis)
+            # 2026-10-06: 杀根五行(支本气) 与 六冲 以排盘权威 facts 为准
+            _hd5 = facts.get('hidden_stems') or {}
+            _zhi_ben_wx5 = {}
+            for _pos in ('year', 'month', 'day', 'hour'):
+                _z5 = pillars.get(_pos, ['', ''])[1]
+                if _z5 and _hd5.get(_pos):
+                    _zhi_ben_wx5[_z5] = GAN_WX.get(_hd5[_pos][0], '')
+            if not _zhi_ben_wx5:
+                _zhi_ben_wx5 = ZHI_BEN_WX
+            _zsha_zhis = [z for z in _all_zhis_5b if _zhi_ben_wx5.get(z) == sha_wx]
+            _ch_pairs_5b = [frozenset(_p)
+                            for _p in (facts.get('combination_facts', {}).get('liuchong') or [])
+                            if len(_p) == 2]
+            _zsha_chong = any(any(z in _k for _k in _ch_pairs_5b) for z in _zsha_zhis)
             # 仅"杀根被冲(制尽)"论制杀太过; "杀无根"仍论格成(层次/岁运问题)
             if _zsha_chong:
                 # 印药季节旺相表(三合月: 寅卯辰春木旺火相...): 印旺/相=制食护杀有力

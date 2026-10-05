@@ -7,6 +7,8 @@
 from typing import Dict, List, Any
 
 # 六冲映射
+# ★ ARCHIVED_FALLBACK (2026-10-06): 六冲/三合/三会存在性已改消费 combination_facts
+#   (排盘引擎权威源), 本表仅作兜底, 不再主链计算. 备份: _legacy_relation_tables.
 LIUCHONG = {
     '子': '午', '午': '子',
     '丑': '未', '未': '丑',
@@ -73,9 +75,16 @@ def filter_root_effectiveness(
         branch_count[z] = branch_count.get(z, 0) + 1
 
     # 2. 检查冲: 多冲一 + 一对一冲旺衰比较
+    #    2026-10-06: 冲关系以 combination_facts(排盘引擎权威) 为准, 不用本地表
+    _ch_pairs = [frozenset(_p) for _p in combination_facts.get('liuchong', []) if len(_p) == 2]
+    def _chong_of(z):
+        for _k in _ch_pairs:
+            if z in _k:
+                return next((x for x in _k if x != z), '')
+        return ''
     chong_map = {}  # root_branch -> [chong_branches]
     for pillar, z in branches.items():
-        chong_z = LIUCHONG.get(z, '')
+        chong_z = _chong_of(z)
         if chong_z and chong_z in branch_count:
             chong_count = branch_count.get(chong_z, 0)
             root_count = branch_count.get(z, 0)
@@ -93,19 +102,30 @@ def filter_root_effectiveness(
                     chong_map[z] = f'一对一冲两停({z}与{chong_z}支持度均为{z_support})'
 
     # 3. 检查三合局/三会局/半合局: 根支参与合局且合神非日主同类
+    #    2026-10-06: 合局以 combination_facts(排盘权威) 为准
     heju_map = {}  # root_branch -> reason
     all_branches = list(branches.values())
+    _sanhe_jus = []
+    for _n in combination_facts.get('sanhe', []):
+        _m = _n.split('合')
+        if len(_m) == 2 and len(_m[0]) == 3:
+            _sanhe_jus.append((tuple(_m[0]), _m[1]))
+    _sanhui_jus = []
+    for _n in combination_facts.get('sanhui', []):
+        _m = _n.split('三会')
+        if len(_m) == 2 and len(_m[0]) == 3:
+            _sanhui_jus.append((tuple(_m[0]), _m[1]))
+    _banhe_pairs = [(tuple(_b.get('pair', [])), _b.get('wx', ''))
+                    for _b in combination_facts.get('banhe', [])]
     # 三合局(全)
-    for ju, he_wx in SANHE.items():
-        ju_branches = list(ju)
+    for ju_branches, he_wx in _sanhe_jus:
         if all(b in all_branches for b in ju_branches):
             if he_wx != dm_wx:
                 for b in ju_branches:
                     if b in [z for z in branches.values()]:
-                        heju_map[b] = f'三合局{ju}化{he_wx}(非日主{dm_wx}), 根气被合'
+                        heju_map[b] = f'三合局{ju_branches}化{he_wx}(非日主{dm_wx}), 根气被合'
     # 半合局(缺一支, 但有两支)
-    for ju, he_wx in SANHE.items():
-        ju_branches = list(ju)
+    for ju_branches, he_wx in _banhe_pairs:
         present = [b for b in ju_branches if b in all_branches]
         if len(present) == 2 and he_wx != dm_wx:
             # 半合局, 合神非日主同类, 参与半合的根支根气被合走(力量较弱但仍合)
@@ -113,13 +133,12 @@ def filter_root_effectiveness(
                 if b not in heju_map:  # 不覆盖三合局的判断
                     heju_map[b] = f'半合局{present[0]}{present[1]}化{he_wx}(非日主{dm_wx}), 根气被合'
     # 三会方
-    for hui, he_wx in SANHUI.items():
-        hui_branches = list(hui)
+    for hui_branches, he_wx in _sanhui_jus:
         if all(b in all_branches for b in hui_branches):
             if he_wx != dm_wx:
                 for b in hui_branches:
                     if b in [z for z in branches.values()]:
-                        heju_map[b] = f'三会方{hui}化{he_wx}(非日主{dm_wx}), 根气被合'
+                        heju_map[b] = f'三会方{hui_branches}化{he_wx}(非日主{dm_wx}), 根气被合'
 
     # 4. 过滤无效根
     per_pillar = {}

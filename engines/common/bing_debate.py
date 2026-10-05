@@ -24,6 +24,8 @@ from engines.common.engineering_assumptions import (
 
 GAN_WX = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
           '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+# ★ ARCHIVED_FALLBACK (2026-10-06): 支本气五行已改消费排盘 facts['hidden_stems'],
+# 本表仅兜底(非 gate 调用方). 备份: _legacy_relation_tables.
 ZHI_BEN_WX = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土',
               '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金',
               '戌': '土', '亥': '水'}
@@ -71,16 +73,19 @@ def month_order(d: str, m: str) -> int:
     return 9
 
 
-def _counts(pillars: Dict[str, list], wx: str, extra=None) -> Dict[str, int]:
-    """数某五行: 他干透干数(排除日干) + 本气根数."""
+def _counts(pillars: Dict[str, list], wx: str, extra=None,
+            zhi_ben_wx=None) -> Dict[str, int]:
+    """数某五行: 他干透干数(排除日干) + 本气根数.
+    2026-10-06: 支本气五行以排盘权威 facts['hidden_stems'] 为准(缺时兜底本地表)."""
+    _zbw = zhi_ben_wx or ZHI_BEN_WX
     tou = sum(1 for pos in ('year', 'month', 'hour')
               if GAN_WX.get(pillars[pos][0]) == wx)
     ben = sum(1 for pos in ('year', 'month', 'day', 'hour')
-              if ZHI_BEN_WX.get(pillars[pos][1]) == wx)
+              if _zbw.get(pillars[pos][1]) == wx)
     for _eg, _ez in (extra or []):
         if GAN_WX.get(_eg) == wx:
             tou += 1
-        if ZHI_BEN_WX.get(_ez) == wx:
+        if _zbw.get(_ez) == wx:
             ben += 1
     return {'tou': tou, 'ben': ben}
 
@@ -102,7 +107,15 @@ def resolve_primary_bing(facts: Dict[str, Any], bing_list: List[Dict[str, Any]])
     for b in bing_list:
         bid = b.get('bing_id', '')
         wx = role_to_wx(BING_ROLE.get(bid, ''), dm)
-        c = _counts(pillars, wx, facts.get('transit_extra')) if pillars else {'tou': 0, 'ben': 0}
+        _hd_ = facts.get('hidden_stems') or {}
+        _zhi_ben_wx_ = {}
+        if _hd_:
+            for _pos in ('year', 'month', 'day', 'hour'):
+                _z_ = (pillars or {}).get(_pos, ['', ''])[1]
+                if _z_ and _hd_.get(_pos):
+                    _zhi_ben_wx_[_z_] = GAN_WX.get(_hd_[_pos][0], '')
+        c = _counts(pillars, wx, facts.get('transit_extra'),
+                    _zhi_ben_wx_ or None) if pillars else {'tou': 0, 'ben': 0}
         _wp = facts.get('wuxing_power', {})
         _wpd = _wp.get('wuxing_power', _wp) if isinstance(_wp, dict) else {}
         _we = _wpd.get(wx, {}) if isinstance(_wpd, dict) else {}

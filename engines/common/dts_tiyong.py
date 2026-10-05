@@ -16,6 +16,8 @@ GAN_WX = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
 YINYANG = {'甲': 1, '丙': 1, '戊': 1, '庚': 1, '壬': 1,
            '乙': 0, '丁': 0, '己': 0, '辛': 0, '癸': 0}
 # 地支本气干
+# ★ ARCHIVED_FALLBACK (2026-10-06): 支本气干已改消费排盘 facts['hidden_stems'],
+# 本表仅兜底(非 gate 调用方). 备份: _legacy_relation_tables.
 ZHI_BEN_GAN = {'子': '癸', '丑': '己', '寅': '甲', '卯': '乙', '辰': '戊',
                '巳': '丙', '午': '丁', '未': '己', '申': '庚', '酉': '辛',
                '戌': '戊', '亥': '壬'}
@@ -27,13 +29,24 @@ GEN_QING = 1     # 日主根轻: 同阴阳本气根 <=1
 
 
 def _dm_tongyy_ben(facts: Dict[str, Any], dm: str) -> int:
-    """日主【同阴阳】本气根支数(本气干与日主同五行同阴阳)."""
+    """日主【同阴阳】本气根支数(本气干与日主同五行同阴阳).
+    2026-10-06: 支本气干以排盘权威 facts['hidden_stems'] 为准(缺时兜底本地表)."""
     pl = facts.get('pillars') or {}
+    _hd_ = facts.get('hidden_stems') or {}
+    _zbg = {}
+    if _hd_:
+        for _pos in ('year', 'month', 'day', 'hour'):
+            _z_ = pl.get(_pos)
+            _z_ = _z_[1] if isinstance(_z_, (list, tuple)) else None
+            if _z_ and _hd_.get(_pos):
+                _zbg[_z_] = _hd_[_pos][0]
+    if not _zbg:
+        _zbg = ZHI_BEN_GAN
     n = 0
     for pos in ('year', 'month', 'day', 'hour'):
         v = pl.get(pos)
         z = v[1] if isinstance(v, (list, tuple)) else None
-        bg = ZHI_BEN_GAN.get(z)
+        bg = _zbg.get(z)
         if bg and GAN_WX.get(bg) == GAN_WX.get(dm) and YINYANG.get(bg) == YINYANG.get(dm):
             n += 1
     return n

@@ -62,3 +62,44 @@ BANHE_PAIRS_LEGACY = {
 
 # 自刑支(子平特有结构 Fact, 排盘并入 sanxing_map —— 保留主链自算)
 SELF_PUNISH_ZHI_LEGACY = {'辰', '午', '酉', '亥'}
+
+# ★ 第二轮剥离补充 (2026-10-06) —— 各层本气/化神表备份
+#   主链均已改消费排盘 l0_chart(stem_ten_gods / he_hua / hidden_stems), 以下仅兜底。
+
+# 支本气干(ge_jie_layer / dts_tiyong 兜底; 排盘权威=hidden_stems[main])
+ZHI_BEN_GAN_LEGACY = {'子': '癸', '丑': '己', '寅': '甲', '卯': '乙', '辰': '戊',
+                      '巳': '丙', '午': '丁', '未': '己', '申': '庚', '酉': '辛',
+                      '戌': '戊', '亥': '壬'}
+
+# 支本气五行(bingyao_layer / bing_debate / dts_yuanliu 兜底; 排盘权威=本气干五行)
+ZHI_BEN_WX_LEGACY = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土',
+                     '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金',
+                     '戌': '土', '亥': '水'}
+
+# 六合化神(daymaster_power_queries 兜底; 排盘权威=l0_chart.he_hua)
+LIUHE_HUASHEN_LEGACY = {
+    frozenset(['子', '丑']): '土', frozenset(['寅', '亥']): '木',
+    frozenset(['卯', '戌']): '火', frozenset(['辰', '酉']): '金',
+    frozenset(['巳', '申']): '水', frozenset(['午', '未']): '土'}
+
+# 六合/暗会对(daymaster_branch_relations 视图已不消费, 备份)
+LIUHE_PAIRS_LEGACY = {
+    frozenset(('子', '丑')): '土', frozenset(('寅', '亥')): '木',
+    frozenset(('卯', '戌')): '火', frozenset(('辰', '酉')): '金',
+    frozenset(('巳', '申')): '水', frozenset(('午', '未')): '土'}
+ANHUI_PAIRS_LEGACY = {
+    frozenset(('子', '巳')): '庚', frozenset(('午', '亥')): '甲',
+    frozenset(('卯', '申')): '乙', frozenset(('酉', '寅')): '丙',
+    frozenset(('辰', '巳')): '丑', frozenset(('未', '申')): '辰'}
+
+# 禄刃/支五行(子平经典固定定义; 排盘十二长生表 NOT_CANONICAL(己土 UNRESOLVED),
+#   明确核过不引入 —— 主链保留本地定义, 此处备份留档)
+DM_LU_LEGACY = {'甲': '寅', '乙': '卯', '丙': '巳', '丁': '午',
+                '戊': '巳', '己': '午', '庚': '申', '辛': '酉',
+                '壬': '亥', '癸': '子'}
+DM_WANG_LEGACY = {'甲': '卯', '乙': '寅', '丙': '午', '丁': '巳',
+                  '戊': '午', '己': '巳', '庚': '酉', '辛': '申',
+                  '壬': '子', '癸': '亥'}
+ZHI_WX_LEGACY = {'子': '水', '丑': '土', '寅': '木', '卯': '木',
+                 '辰': '土', '巳': '火', '午': '火', '未': '土',
+                 '申': '金', '酉': '金', '戌': '土', '亥': '水'}
