@@ -345,8 +345,19 @@ def facts_from_bazi(bazi: str) -> Dict[str, Any]:
 
     含：四柱、日主、五行、藏干（本/中/余）、十神（天干+藏干）、长生。
     不含：大运、起运（需公历）。
+
+    2026-10-06 补 l0_chart：四柱入口缺空亡/纳音/神煞/冲合刑害破等全套
+    输出（此前只在公历路径 facts_from_birth 有）——四柱输入的调试/案例
+    流程必须能拿到排盘引擎全部输出, 否则各层(如 root_clash L5 解冲
+    空亡)无处消费。
     """
-    return _base_facts_from_pillars(parse_bazi(bazi))
+    p = parse_bazi(bazi)
+    base = _base_facts_from_pillars(p)
+    try:
+        base["l0_chart"] = _chart_from_pillars(p)   # 排盘引擎完整输出
+    except Exception:
+        base["l0_chart"] = {}
+    return base
 
 
 def facts_from_birth(
