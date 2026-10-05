@@ -99,65 +99,90 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         out['judgment_status'] = 'PURE_RULE'
         return out
 
-    # ---- 孤根被冲拔(T30): 身/印本气仅一支、被六冲、对立成势而日主不当令 ----
-    chong = (facts.get('combination_facts', {}) or {}).get('liuchong', [])
-    chong_map = {}
-    for pair in chong:
-        if len(pair) == 2:
-            chong_map[pair[0]] = pair[1]; chong_map[pair[1]] = pair[0]
-    self_br = _ben_branches(pw, dm_wx) | _ben_branches(pw, yin_wx)
-    struck = set()
-    opp_ben = cai_ben + gs_ben + ss_ben
+    # ---- 冲拔结构事件 (契约_冲拔层: KU开库不拔 / KE pair_state胜负 / MIX相生门控) ----
+    # 仅输出结构事实, 不判吉凶; target角色映射在验证层。
+    LING_RANK = {'旺': 4, '相': 3, '休': 2, '囚': 1, '死': 0}
+    KU_CHONG = (('辰', '戌'), ('戌', '辰'), ('丑', '未'), ('未', '丑'))
+    KE_CHONG = (('子', '午'), ('午', '子'), ('卯', '酉'), ('酉', '卯'))
 
-    # 每支藏干五行集(由 root_detail 反推; BEN/ZHONG/YU = 支藏此干)
-    _cang_wx = {}
-    for _wx in pw:
-        for _br, _tag in ((pw[_wx] or {}).get('root_detail', {}) or {}).items():
-            if _tag in ('BEN', 'ZHONG', 'YU'):
-                _cang_wx.setdefault(_br, set()).add(_wx)
+    def _chong_route(a, b):
+        if (a, b) in KU_CHONG:
+            return 'KU'
+        if (a, b) in KE_CHONG:
+            return 'KE'
+        return 'MIX'  # 寅申/巳亥
 
-    def _clash_kind(r, r2):
-        """五行精纪·卷廿六「凡冲处要相生…同类及相克者最凶」(BOOK_CITED)。
-        返回 SHENG(纯相生)/KE(纯相克·同类本气)/MIX(生克并存)。"""
-        if BRANCH_WX.get(r) == BRANCH_WX.get(r2):
-            return 'KE'  # 同类冲(辰戌丑未)最凶
-        A, B = _cang_wx.get(r, set()), _cang_wx.get(r2, set())
-        sheng = any(SHENG.get(a) == b or SHENG.get(b) == a for a in A for b in B)
-        ke = any(KE.get(a) == b or KE.get(b) == a for a in A for b in B)
-        if sheng and ke:
-            return 'MIX'
-        return 'SHENG' if sheng else 'KE'
-
-    def _sheng_support(r, r2):
-        """混合冲中相生神(生日主根之印=yin_wx)是否有力 (ENGINE_DEFINED 门控)。
-        强=印有本气根; 中=印月令相旺且有中余气根; 弱=印透干且有中余气根。
-        仅透干无根 / 月令死囚无根 -> 无力。"""
-        if yin_wx not in _cang_wx.get(r2, set()):
-            return False  # 冲支不含生日主之印, 冲处相生不成立
+    def _sheng_support(r2):
+        """MIX 门控: 生日主之印(yin_wx)在冲支中且有力 (ENGINE_DEFINED)。
+        强=印本气根; 中=印月令相旺有中余根; 弱=印透干有中余根; 仅虚透无根不算。"""
         yben = int(yin.get('ben_n', 0)); yz = int(yin.get('zhong_n', 0)) + int(yin.get('yu_n', 0))
         ystem = int(yin.get('stem_n', 0)); yling = yin.get('ling_state', '')
-        strong = yben >= 1
-        mid = yling in ('相', '旺') and yz >= 1
-        weak = ystem >= 1 and yz >= 1
-        return strong or mid or weak
+        return yben >= 1 or (yling in ('相', '旺') and yz >= 1) or (ystem >= 1 and yz >= 1)
 
-    if len(self_br) <= 1:
-        for r in self_br:
-            if r in chong_map:
-                r2 = chong_map[r]
-                r2_wx = BRANCH_WX.get(r2)
-                opp_dom = gs_ling or gs_ju >= 1 or cai_ju >= 1 or opp_ben >= 2 \
-                    or int(pw.get(r2_wx, {}).get('ben_n', 0)) >= 1
-                self_dom = dm_ling or dm_ju >= 1
-                if opp_dom and not self_dom:
-                    # 身本气根被冲: 按相生/相克二分裁决(印本气根冲拔仍照旧)
-                    if r in _ben_branches(pw, dm_wx):
-                        _k = _clash_kind(r, r2)
-                        if _k == 'SHENG':
-                            continue
-                        if _k == 'MIX' and _sheng_support(r, r2):
-                            continue
-                    struck.add(r)
+    _resolved = facts.get('resolved', {}) or {}
+    _lc = facts.get('l0_chart', {}) or {}
+    _actions = _resolved.get('chong_actions', []) or []
+    struck_root_events = []
+    struck = set()
+
+    for _act in _actions:
+        _pair = _act.get('pair') or []
+        _pos = _act.get('positions') or []
+        if len(_pair) != 2 or len(_pos) != 2:
+            continue
+        a, b = _pair[0], _pair[1]
+        ia, ib = _pos[0], _pos[1]
+        route = _chong_route(a, b)
+        d = abs(ia - ib)
+        if d == 1:
+            dist = '坐支' if (ia == 2 or ib == 2) else '紧贴'
+        elif d == 2:
+            dist = '隔一'
+        else:
+            dist = '遥隔'
+        state = _act.get('resolved', '')
+        effective = (d == 1 and state not in ('canceled', 'inactive'))
+
+        # 解冲来源
+        res_by = '无'
+        if state == 'canceled':
+            if _lc.get('branch_he_map'):
+                res_by = '六合'
+            elif _lc.get('branch_sanhe_map'):
+                res_by = '三合'
+            elif _lc.get('branch_sanhui_map'):
+                res_by = '三会'
+            else:
+                res_by = '六合'  # 明合解冲(PZZQ), 类型缺省归六合
+
+        # 逐支 uprooted / opened
+        def _up(root, other):
+            if not effective:
+                return False
+            if route == 'KU':
+                return False  # 库冲不拔
+            ra = LING_RANK[(pw.get(BRANCH_WX.get(root), {}) or {}).get('ling_state', '休')]
+            ro = LING_RANK[(pw.get(BRANCH_WX.get(other), {}) or {}).get('ling_state', '休')]
+            if route == 'KE':
+                return ra < ro
+            # MIX: 相生门控通过不拔, 否则回落 KE 胜负
+            if _sheng_support(other):
+                return False
+            return ra < ro
+
+        for root, other in ((a, b), (b, a)):
+            upr = _up(root, other)
+            opened = bool(effective and route == 'KU')
+            basis = 'DTS_CITED' if route in ('KU', 'KE') else (
+                'BOOK_CITED' if (not effective or _sheng_support(other)) else 'ENGINE_DEFINED')
+            ev = {'root_branch': root, 'clash_branch': other, 'route': route,
+                  'distance': dist, 'uprooted': upr, 'library_opened': opened,
+                  'resolved_by': res_by, 'basis': basis}
+            struck_root_events.append(ev)
+            if upr:
+                struck.add(root)
+
+    out['struck_root_events'] = struck_root_events
     dm_ben_eff = max(0, dm_ben - len(_ben_branches(pw, dm_wx) & struck))
     yin_ben_eff = max(0, yin_ben - len(_ben_branches(pw, yin_wx) & struck))
     root_struck = bool(struck)
