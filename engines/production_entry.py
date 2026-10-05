@@ -196,6 +196,23 @@ def production_entry(chart: Any, climate_table: Optional[Dict] = None) -> Dict[s
     except Exception:
         facts['ge_cheng'] = None
 
+    # C 块 · 格局救应字段 (jiu_ying): 附加信息, 不回填 cheng_bai (裁146乙)
+    #   149甲/150甲/151甲 精确化接线: .001通关/.004澄浊/.005八格 10子型
+    #   纯函数入参映射: po_ge(破格条件列表) -> po_n(有破格需求); xi_wx_status -> xi_status
+    try:
+        from p0_v2.jiu_ying import build_jiu_ying
+        _gz0 = facts.get('ge_cheng') or {}
+        _bazi_s = ' '.join(facts['pillars'][p][0] + facts['pillars'][p][1]
+                           for p in ('year', 'month', 'day', 'hour'))
+        facts['jiu_ying'] = build_jiu_ying(_bazi_s, {
+            'ge': _gz0.get('ge'),
+            'po_n': 1 if _gz0.get('po_ge') else 0,
+            'xi_status': _gz0.get('xi_wx_status'),
+            'cong_type': _gz0.get('cong_type'),
+        })
+    except Exception:
+        facts['jiu_ying'] = None
+
     # L1: 160-B网络 + 160-C 38 Query
     l1 = _build_l1_queries(chart.pillars, facts)
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-"""C 块 · 格局救应字段 (裁145改丙 + 146乙 + 147甲 + 148丙)
+import re
+"""C 块 · 格局救应字段 (裁145改丙 + 146乙 + 147甲 + 148丙 + 149甲 + 150甲 + 151甲)
 
 契约 §4.29:
   jiu_ying = {triggered, type, success, evidence, xiang_note}
@@ -95,6 +96,10 @@ GAN_WX = {"甲":"木","乙":"木","丙":"火","丁":"火","戊":"土","己":"土
 TONG_GUAN = {frozenset("木土"):"火", frozenset("火金"):"土",
              frozenset("土水"):"金", frozenset("金水"):"水"}
 
+# 地支六冲 (裁149甲: .005-c "刑冲而会合以解之" 需刑冲在场事实)
+LIU_CHONG = {frozenset("子午"), frozenset("丑未"), frozenset("寅申"),
+             frozenset("卯酉"), frozenset("辰戌"), frozenset("巳亥")}
+
 # 十二长生 (重根 = 长生/禄/刃, 与引擎 L0 root_weight_class_facts 同口径)
 ROOT_LIFECYCLE = {
     "甲":{"亥":"长生","寅":"禄","卯":"刃"}, "乙":{"午":"长生","卯":"禄","辰":"刃"},
@@ -141,7 +146,27 @@ def build_l0_facts_pure(bazi):
         "dm_element": GAN_WX[dm],
         "month_qi_element": GAN_WX[HIDDEN[branches[1]][0]],
         "has_root": _has_root(dm, branches),
+        "has_chong": any(frozenset((branches[i], branches[j])) in LIU_CHONG
+                         for i in range(4) for j in range(i + 1, 4)),
     }
+
+
+# 格神映射 (从 ge 名推, 用于 .004 澄浊「杂神」= 非格神非日主)
+#   正官格→官 / 财格→财 / 印格→印 / 食神格→食神 / 伤官格→伤官
+#   七煞格/偏官→杀 / 阳刃格→刃(比劫) / 建禄月劫格→比肩
+# 格神映射 (从 ge 名推, 用于 .004 澄浊「杂神」= 非格神非日主, 裁151甲)
+#   正官格→官 / 财格→财 / 印格→印 / 食神格→食神 / 伤官格→伤官
+#   七煞格/偏官→杀 / 阳刃格→刃(比劫) / 建禄月劫格→比肩
+# 杂神计数 = ten_god_set 里 非格神 的十神种类数 (ENGINE_DEFINED 代理)
+GE_SHEN = {
+    "正官格": ("正官",), "财格": ("正财", "偏财"),
+    "印格": ("正印", "偏印"), "食神格": ("食神",),
+    "伤官格": ("伤官",), "七煞格": ("七杀", "偏官"),
+    "阳刃格": ("比肩", "劫财"), "建禄月劫格": ("比肩", "劫财"),
+}
+# 七煞格 原文常作「七煞」「偏官」
+GE_SHEN["七煞格(逢制)"] = GE_SHEN["七煞格"]
+GE_SHEN["七煞格(破格)"] = GE_SHEN["七煞格"]
 
 
 def _is_cong(ge, cong_type):
@@ -201,40 +226,36 @@ def build_jiu_ying(bazi, ge_cheng):
     ev = []
     ok = []  # 各命中判据的 success 布尔, 合取定 SUCCESS/UNS
 
-    # .001 通关 (DTS §二十 L245): 两行相战, 中间神引通
-    #   触发 = 盘中两五行相战(战 = 互克 且 两行都有神)
-    #   success = 通关之神「引得」(该五行十神在盘中) + 日干有根(有力)
-    t1_trig = False
-    t1_ok = False
-    wx_present = set(GAN_WX[s] for s in [dm] + [bazi[0], bazi[2], bazi[6]]
-                      for _ in [0])
-    # 五行在场: 天干 + 藏干 的五行并集
+    # .001 通关 (DTS §二十 L245, 裁150甲: 缺中间神才需引通)
+    #   "有神"(裁150甲) = 该组五行 十神 在盘里(干或藏干任一)
+    #   触发 = 通关表 4 组中 某一组【两行都有神】且【中间神缺】(无本气根)
+    #   success = 中间神缺但日干有根(有力, 能引通)
     wx_present = set()
     for s in [bazi[0], bazi[2], bazi[4], bazi[6]]:
         wx_present.add(GAN_WX[s])
     for z in facts["branches"]:
         for h in HIDDEN[z]:
             wx_present.add(GAN_WX[h])
-    # 通关表 4 组: 木土要火 / 火金要土 / 土水要金 / 金水要水
-    #   两行都在场 → 需要中间神通关
     mid_found = None
+    t1_trig = False
     for pair, mid in TONG_GUAN.items():
-        if pair <= wx_present:  # 两战之行都在
-            t1_trig = True
-            mid_found = mid
-            break
+        if pair <= wx_present:  # 两战之行都有神
+            # 中间神缺 = mid 五行 无本气根(藏干首非 mid 五行)
+            mid_missing = True
+            for z in facts["branches"]:
+                if GAN_WX[HIDDEN[z][0]] == mid:
+                    mid_missing = False
+                    break
+            if mid_missing:
+                t1_trig = True
+                mid_found = mid
+                break
     if t1_trig:
         types.append("JIU_YING.001")
-        mid = mid_found  # 循环 break 时绑定的中间神五行
-        # success = 通关之神(中间神五行) 在盘中有神 + 日干有根(有力)
-        mid_god_hit = any(TEN_GOD_MAP[dm][h] for h in
-                          [s for s in [bazi[0], bazi[2], bazi[4], bazi[6]]
-                           if GAN_WX[s] == mid]
-                          + [h for z in facts["branches"] for h in HIDDEN[z]
-                             if GAN_WX[h] == mid])
-        t1_ok = bool(mid_god_hit) and facts["has_root"]
-        ev.append(".001 通关: 两行相战=True, 中间神引得=%s, 日干有根=%s"
-                  % ("是" if mid_god_hit else "否", facts["has_root"]))
+        # success = 中间神缺(需引通) 但日干有根(有力, 能引通)
+        t1_ok = facts["has_root"]
+        ev.append(".001 通关: %s 缺中间神需引通, 日干有根=%s"
+                  % (mid_found, t1_ok))
         ok.append(t1_ok)
 
     # .002 官杀混杂 (DTS §二十一 L250): 官杀是否被合去一支
@@ -260,42 +281,97 @@ def build_jiu_ying(bazi, ge_cheng):
         ev.append(".003 伤官+正官=True, 有财救=%s" % ("是" if t3_ok else "否"))
         ok.append(t3_ok)
 
-    # .004 澄浊 (DTS §二十三 L260): 得一神有力(存在+有根)扫浊
-    #   触发 = 格有浊气(杂神破局: 忌神多) — 简化布尔 = 有 ≥2 忌神十神杂
-    #   success = 得有力之神扫浊(该神在盘 + 日干有根)
+    # .004 澄浊 (DTS §二十三 L260, 裁151甲: 触发=po_n>0 AND 杂神计数≥2, 标 ENGINE_DEFINED)
+    #   浊气代理: DTS L260「浊=杂神多且与格星不和」
+    #     "多" 用杂神计数代理(杂神 = 非格神非日主的十神种类)
+    #     "不和/破局" 用 po_n>0 代理
+    #   格神从 ge 名推 (GE_SHEN, 去括号)
+    #   success = 得一神有力扫浊(食伤 制 / 比劫 扶, 且日干有根)
     t4_trig = False
     t4_ok = False
-    # 浊气 = 忌神多杂 (忌神因格而异, 此处取「比劫+食伤+财官 杂而互克」简化:
-    #   有印绶 且 有财 → 财印互戕 = 浊 (DTS「以印绶杂之反与财星相戕」)
-    zhuo = ({"正印"} & gods or {"偏印"} & gods) and ({"正财"} & gods or {"偏财"} & gods)
-    if zhuo:
-        t4_trig = True
+    ge_base = re.sub(r"\(.*?\)", "", (ge or ""))
+    ge_shen = GE_SHEN.get(ge_base, ())
+    zashen = {g for g in gods if g not in ge_shen and g != "比肩"}
+    t4_trig = (ge_cheng.get("po_n", 0) > 0) and (len(zashen) >= 2)
+    if t4_trig:
         types.append("JIU_YING.004")
-        # success = 得一神有力扫浊(有食伤 制 或 有比劫 扶, 且日干有根)
-        t4_ok = (("食神" in gods or "伤官" in gods or "比肩" in gods
-                  or "劫财" in gods) and facts["has_root"])
-        ev.append(".004 澄浊: 财印互戕(浊)=True, 得有力之神扫浊=%s (有根=%s)"
-                  % ("是" if t4_ok else "否", facts["has_root"]))
+        # success = 得有力之神扫浊(食伤 制 / 比劫 扶, 日干有根)
+        t4_ok = ((("食神" in gods) or ("伤官" in gods) or ("比肩" in gods)
+                  or ("劫财" in gods)) and facts["has_root"])
+        ev.append(".004 澄浊(ENGINE_DEFINED 代理): po_n=%d>0, 杂神%d种≥2(格神=%s), "
+                  "扫浊神=%s (有根=%s)"
+                  % (ge_cheng.get("po_n", 0), len(zashen),
+                     "、".join(ge_shen) or "未定",
+                     "是" if t4_ok else "否", facts["has_root"]))
         ok.append(t4_ok)
 
-    # .005 八格破格后救应 (PZZQ §九 L1226): 解神(透/合/制)生效
-    #   触发 = 破格(由 ge_cheng po_n / xi_status 决定, 已在前面 NA 分支过滤)
-    #   success = 解神在盘(食制煞/印解伤/财化劫/合煞清官 等)
-    t5_trig = True  # 破格即触发救应
+    # .005 八格破格后救应 (PZZQ §九 L1226, 裁149甲: 原文 8 子型逐条布尔)
+    #   触发 = po_n>0(破格) AND 命中原文 10 子型任一 (官伤/合煞/会合解冲/
+    #   劫财/印财/枭食/煞食/伤官煞合/刃印/禄劫)
+    #   type 带子型号 (JIU_YING.005-官伤透印 等), 不只记 "005"
+    #   10 子型逐条(每型独立判据, 不合成一个 t5_trig):
+    #     a 官逢伤透印解之 / b 杂煞合煞清之 / c 刑冲会合解之
+    #     d 财逢劫透食化之 / e 印逢财劫解之(或合财存印)
+    #     f 食逢枭就煞成格(或生财护食) / g 煞逢食制印护煞(逢财去印存食)
+    #     h 伤官生财透煞逢合 / i 阳刃重印护之 / j 建禄月劫遇伤煞被合
+    t5_trig = ge_cheng.get("po_n", 0) > 0
     t5_ok = False
+    t5_subs = []
     if t5_trig:
+        g = gods
+        has_guan = "正官" in g
+        has_sha = ("七杀" in g) or ("偏官" in g)
+        has_shang = "伤官" in g
+        has_yin = ("正印" in g) or ("偏印" in g)
+        has_cai = ("正财" in g) or ("偏财" in g)
+        has_shi = "食神" in g
+        has_bij = ("比肩" in g) or ("劫财" in g)
+        wuhe_g = {s for p in wuhe for s in p[:2]}
+        # 透干判定 (原文"透印/透食/透煞" = 天干透, 非藏干)
+        stems3 = [bazi[0], bazi[2], bazi[6]]  # 年/月/时干 (日干除外)
+        yin_stems = [s for s in stems3 if TEN_GOD_MAP[dm][s] in ("正印", "偏印")]
+        shi_stems = [s for s in stems3 if TEN_GOD_MAP[dm][s] == "食神"]
+        sha_stems = [s for s in stems3 if TEN_GOD_MAP[dm][s] in ("七杀", "偏官")]
+        # a 官逢伤透印解之: 有伤官 + 印透干(解伤护官)
+        if has_shang and yin_stems:
+            t5_subs.append("a 官伤透印")
+        # b 杂煞合煞清之: 七杀 被 天干五合合去
+        if any(s in wuhe_g for s in sha_stems):
+            t5_subs.append("b 合煞清")
+        # c 刑冲会合解之: 有刑冲在场 + 有合(会合解刑冲)
+        if facts["has_chong"] and len(wuhe) > 0:
+            t5_subs.append("c 会合解冲")
+        # d 财逢劫透食化之: 财+比劫, 且有食透(化劫生财) 或 官在(官制劫)
+        if has_bij and has_cai and (shi_stems or has_guan):
+            t5_subs.append("d 劫财化食/官制")
+        # e 印逢财劫解之(或合财存印): 印 + 财 + 比劫(劫财解财护印)
+        if has_yin and has_cai and has_bij:
+            t5_subs.append("e 劫财解财")
+        # f 食逢枭就煞成格(或生财护食): 食神 + 枭(偏印) + 七杀(就煞)
+        if has_shi and "偏印" in g and has_sha:
+            t5_subs.append("f 食枭就煞")
+        # g 煞逢食制,印来护煞: 七杀 + 食神(制) + 正印(护)
+        if has_sha and has_shi and "正印" in g:
+            t5_subs.append("g 食制印护")
+        # h 伤官生财透煞而煞逢合: 伤官 + 财 + 七杀被合
+        if has_shang and has_cai and any(s in wuhe_g for s in sha_stems):
+            t5_subs.append("h 伤生财煞合")
+        # i 阳刃用官煞带伤食而重印护之: 比劫(刃) + 正印重
+        if ("比肩" in g or "劫财" in g) and "正印" in g:
+            t5_subs.append("i 刃禄重印")
+        # j 建禄月劫用官遇伤伤被合 / 用财带煞煞被合 (裁149甲: 原文末句补入)
+        if has_bij and ((has_guan and has_shang and any(s in wuhe_g for s in stems3))
+                        or (has_cai and has_sha and any(s in wuhe_g for s in sha_stems))):
+            t5_subs.append("j 禄劫伤煞被合")
         types.append("JIU_YING.005")
-        # 解神(任一): 食神(制煞)/印(解伤护官)/财(化劫)/合去煞(煞被合)
-        jie_shen = (
-            ("食神" in gods and "七杀" in gods)      # 食神制煞
-            or ("正印" in gods and "伤官" in gods)   # 印解伤
-            or ("偏印" in gods and "伤官" in gods)
-            or (("正财" in gods or "偏财" in gods)
-                 and ("比肩" in gods or "劫财" in gods))  # 财化劫
-        )
-        t5_ok = jie_shen
-        ev.append(".005 八格破格后解神: 食制煞/印解伤/财化劫/合煞清官 命中=%s"
-                  % ("是" if jie_shen else "否"))
+        t5_ok = len(t5_subs) > 0
+        # type 带子型号: 把 "JIU_YING.005" 替换成 带命中子型的标记
+        if t5_subs:
+            types[-1] = "JIU_YING.005-" + "+".join(
+                s.split()[0] for s in t5_subs)  # 子型 a/b/c...
+        ev.append(".005 八格破格后救应: po_n=%d>0, 命中原文子型=%s"
+                  % (ge_cheng.get("po_n", 0),
+                     "、".join(t5_subs) if t5_subs else "无"))
         ok.append(t5_ok)
 
     # .006 相神 (PZZQ §十五 L1857, 裁147甲 归入 success): 相神不被合

@@ -186,6 +186,20 @@ def paipan(bazi: str) -> Dict[str, Any]:
     normalize_ti_wx(f)
     ge_cheng = f.get("ge_cheng") or {}
 
+    # C 块 · 格局救应字段 (jiu_ying): 附加信息, 不回填 cheng_bai (裁146乙)
+    #   149甲/150甲/151甲 精确化接线: .001通关/.004澄浊/.005八格10子型
+    #   纯函数入参映射: po_ge(破格条件列表) -> po_n(有破格需求); xi_wx_status -> xi_status
+    try:
+        from p0_v2.jiu_ying import build_jiu_ying
+        f["jiu_ying"] = build_jiu_ying(bz, {
+            "ge": ge_cheng.get("ge"),
+            "po_n": 1 if ge_cheng.get("po_ge") else 0,
+            "xi_status": ge_cheng.get("xi_wx_status"),
+            "cong_type": ge_cheng.get("cong_type"),
+        })
+    except Exception:
+        f["jiu_ying"] = None
+
     # ---- STEP-2.2 (2026-10) L3 契约字段(《架构层规范》§2.5 五字段) ----
     #   纯新增输出, 不改任何既有值; comprehensive_verdict 保持 NOT_AUTHORIZED 不动。
     #   五个字段此前或从未产出, 或只在 special_pattern 内部私产, 从未进 facts 输出 ——
@@ -457,6 +471,7 @@ def paipan(bazi: str) -> Dict[str, Any]:
         "power_queries": queries,
         "structure": structure,
         "ge_cheng": ge_cheng,
+        "jiu_ying": f.get("jiu_ying"),   # C 块格局救应(149/150/151, 附加不回填)
         "special": {k: special.get(k) for k in
                     ("cong_type", "cong_state", "zhuanwang", "zhuanwang_state",
                      "hua_qi", "hua_qi_state", "liangqi", "mu_mie",
