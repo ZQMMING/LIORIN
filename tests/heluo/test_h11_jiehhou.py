@@ -6,8 +6,11 @@
 from __future__ import annotations
 
 import unittest
+import inspect
 import sys
+import types
 from pathlib import Path
+from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
@@ -121,6 +124,68 @@ class TestCurrentJieqiInfo(unittest.TestCase):
         if info is not None:
             self.assertIn(info.jq_name, SOLAR_TERMS)
             self.assertIsInstance(info, SeasonalHexagram)
+
+
+class TestCurrentJieqiInfoErrorSemantics(unittest.TestCase):
+    """2026-10-06 回归：get_current_jieqi_info 只把「缺依赖」降级为 None。
+
+    旧实现带 `except Exception: return None`，函数内任何真实计算错误都被吞成
+    None，调用方无法区分「没装 sxtwl」与「算错了」。现只捕 ImportError。
+    """
+
+    def test_missing_sxtwl_returns_none(self):
+        """sxtwl 不可用 → None（降级路径保留，且不依赖本机是否装了 sxtwl）"""
+        with mock.patch.dict(sys.modules, {"sxtwl": None}):
+            self.assertIsNone(get_current_jieqi_info(2026, 9, 4))
+
+    def test_real_error_propagates(self):
+        """sxtwl 已装但计算出错 → 异常原样上抛，不得吞成 None"""
+        boom = RuntimeError("sxtwl boom")
+        fake = types.ModuleType("sxtwl")
+
+        def _fromSolar(*_a, **_kw):
+            raise boom
+
+        fake.fromSolar = _fromSolar
+        with mock.patch.dict(sys.modules, {"sxtwl": fake}):
+            with self.assertRaises(RuntimeError) as ctx:
+                get_current_jieqi_info(2026, 9, 4)
+        self.assertIs(ctx.exception, boom, "应原样上抛，不被降级吞掉")
+
+    def test_no_bare_exception_fallback(self):
+        """源码级护栏：函数体内不得再出现 except Exception 降级"""
+        src = inspect.getsource(get_current_jieqi_info)
+        self.assertNotIn(
+            "except Exception", src,
+            "get_current_jieqi_info 不应再用 except Exception 吞真实计算错误",
+        )
+
+    def test_jq_index_out_of_range_returns_none(self):
+        """非错误情形：jq_idx 越界仍返回 None，不上抛"""
+        fake = types.ModuleType("sxtwl")
+
+        class _Day:
+            def getJieQi(self):
+                return -1
+
+        fake.fromSolar = lambda *a, **kw: _Day()
+        with mock.patch.dict(sys.modules, {"sxtwl": fake}):
+            self.assertIsNone(get_current_jieqi_info(2026, 9, 4))
+
+    def test_valid_path_returns_hexagram(self):
+        """正常路径：合法 jq_idx 应返回 SeasonalHexagram"""
+        fake = types.ModuleType("sxtwl")
+
+        class _Day:
+            def getJieQi(self):
+                return 16  # 处暑
+
+        fake.fromSolar = lambda *a, **kw: _Day()
+        with mock.patch.dict(sys.modules, {"sxtwl": fake}):
+            info = get_current_jieqi_info(2026, 9, 4)
+        self.assertIsInstance(info, SeasonalHexagram)
+        self.assertEqual(info.jq_name, "处暑")
+        self.assertEqual(info.jq_index, 16)
 
 
 class TestJiehhouDataIntegrity(unittest.TestCase):
