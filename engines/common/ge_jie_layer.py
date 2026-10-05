@@ -27,9 +27,14 @@ ZHI_BEN_GAN = {'子':'癸','丑':'己','寅':'甲','卯':'乙','辰':'戊','巳'
                '午':'丁','未':'己','申':'庚','酉':'辛','戌':'戊','亥':'壬'}
 
 def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None, facts=None):
-    """日主视角旺衰tier: 剥借根+冲拔拓扑后再判element_power_tier.
-    同阴阳判据(PZZQ"刃乃劫我正财之神, 不善之神须逆势驾驭"): 异阴阳本气支(刃/劫财禄)
-    是比劫非日主根 -> 剥; 仅同阴阳本气支(禄)计日主根. 中余气维度待依赖.
+    """日主视角旺衰tier: 冲拔拓扑后再判element_power_tier.
+    根气判据(PZZQ L800「长生、禄、帝旺为重根, 墓库余气为轻根」;
+      L1075「煞格逢刃, 日时逢刃, 取刃帮身以敌煞」; L1331「乙生寅月,
+      月劫秉令」): 支本气五行同日主即比劫根——同阴阳为禄/比肩,
+      异阴阳为帝旺/刃/劫财——**皆计日主根(帮身)**, 不按天干同字剥刃根.
+      (旧判据"异阴阳本气支是比劫非日主根->剥"与 PZZQ「帝旺为重根、
+       日时逢刃帮身」冲突, 2026-10-06 撤销. 刃虽不善、须官杀制, 但先帮身;
+       "刃无官杀制/比劫争财"的凶归格局/病药层判, 不靠剥刃根误压身弱.)
     冲拔(得地层·五层拓扑算子, engines/common/root_clash.py): 冲对/根位/
       冲-根匹配/冲力/解冲——根方失时(休囚死)被紧贴冲且无合解 -> 拔;
       得时被冲 -> 发不拔; 隔柱旺冲衰亦拔; 遥冲/合解/空亡不扣.
@@ -55,7 +60,10 @@ def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None, facts=None):
                     _zhi_ben_gan[_z_] = (_hd_.get(_pos) or [''])[0]
         if not _zhi_ben_gan:
             _zhi_ben_gan = ZHI_BEN_GAN
-        _ben_self = sum(1 for _z in _zhis if _zhi_ben_gan.get(_z) == dg)
+        _ben_self = sum(1 for _z in _zhis if GAN_WX.get(_zhi_ben_gan.get(_z)) == wx)
+        # 根气判据: PZZQ L800「长生禄帝旺为重根」+ L1075「日时逢刃帮身敌煞」
+        #   + L1331「乙生寅月, 月劫秉令」——本气五行同日主即比劫根(禄/刃/
+        #   比肩/劫财)皆计日主根, 不按天干同字剥刃根.
         # 得地层·冲拔拓扑算子 (五层: 冲对/根位/冲-根匹配/冲力/解冲)
         #   滴天髓「旺者冲衰衰者拔, 衰神冲旺旺神发」——根方失时(休囚死)被
         #   强冲且无合解 -> 拔; 根方得时被冲 -> 发, 不拔; 隔柱旺冲衰亦拔;
@@ -67,8 +75,8 @@ def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None, facts=None):
             build_root_clash_events(pillars, dg, _ling, wp2['wuxing_power'],
                                     kong_wang, (facts or {}).get('l0_chart') or None),
             _ling)
-    elif (dg, month_zhi) in _YIN_YANG_JIEGEN:
-        dm_e['ben_n'] = max(0, dm_e.get('ben_n',0) - 1)
+    # 同阴阳借根剥(乙寅)已撤销: PZZQ 刃/劫财为帮身重根, 不剥.
+    # (旧 _YIN_YANG_JIEGEN 把乙在寅的帝旺根剥掉, 与 L800/L1075 冲突)
     return element_power_tier(wp2, wx)
 
 def ten_god(dg, stem):
