@@ -827,29 +827,56 @@ def identify_yao(facts: Dict[str, Any], queries: List[Dict],
     return yao_list
 
 
-def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
-    """原局药消病 (甲路: 明文给「消」, 2026-10-05 药消病机制首落)。
+# 病类→病神五行 (动态按日主; 供药有效性「病重/病轻」判据)
+#   依据: SFTK L424「四柱纯土水日干则为杀重身轻…土为诸格之病」+「用财见比肩为病喜官杀为药」
+def _bing_shen_wx(bing_id: str, dm_wx: str) -> str:
+    m = {
+        'CAI_DUO_SHEN_RUO': KE.get(dm_wx, ''),        # 财
+        'SHA_ZHONG_SHEN_QING': KE_WO.get(dm_wx, ''),  # 杀
+        'XIE_QI_TAI_ZHONG': SHENG.get(dm_wx, ''),     # 食伤(泄)
+        'YIN_DUO_MAI_ZI': SHENG_WO.get(dm_wx, ''),    # 印
+        'BIJIE_CHENG_DANG': dm_wx,                    # 比劫
+        'BIJIE_DUO_CAI': dm_wx,                       # 比劫
+        'XIAO_DUO_SHI': SHENG_WO.get(dm_wx, ''),      # 枭印
+        'SHANGGUAN_JIAN_GUAN': KE_WO.get(dm_wx, ''),  # 官杀
+        'ZHI_SHA_TAI_GUO': KE_WO.get(dm_wx, ''),      # 杀(被制太过)
+    }
+    return m.get(bing_id, '')
 
-    依据(原著优先, 三书同向):
-      - PZZQ L957 病药:「以扶为喜, 则以伤其扶者为病; 以抑为喜, 则以去其抑者为病。
-        除其病神, 即谓之药。」
-      - SFTK L424 病药说:「病原八字中原有所害之神也…原有所害之字而得一字以去之之谓也」
-        「病重而得药大富大贵, 病轻而得药略富略贵」(富贵层级 = 乙路降级, 登记待 severity 层)
-      - DTS L240 中和:「格中如去病, 财禄两相宜」。
-    判据(布尔): 药五行在原局【他干透干 或 本气根】→ 药在局 → 病消(标记 REMOVED)。
-    边界:
-      ① 不重复杀重身轻制化闸门(源头 ok=False 已拦, 此处只见已报病, 无双消);
-      ② 过旺例外(combo>=4 财成党)不跳过——药消病=病可治性, 与格体豁免(属性)是
-         两独立机制; PZ-0011 财局佩印(印透药在)即此口径;
-      ③ 「病重而药少…宜行运以取其中和」(SFTK) 的药须有根门槛 → 登记待岁运层(乙路)。
+
+def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
+    """原局药消病 (甲路 + 药有效性三判据, 2026-10-06 定稿)。
+
+    依据(原著优先, 各判据带原文):
+      - 消的明文: PZZQ L957「除其病神, 即谓之药」; SFTK L424「原有所害之字而
+        得一字以去之」; DTS L240「格中如去病, 财禄两相宜」。
+      - 药有效性三判据:
+        1. 合判据 (DTS L250 通关「必得引用无合之神及刑冲所间之物」):
+           药天干被天干五合合住 → 不能援引 → 药无效。
+           实证: DT-0007 甲日主比劫病, 药=庚金官杀, 庚被乙妹合去
+           (原断「甲以乙妹妻庚, 凶为吉兆, 含合忘冲」) → 官不能制劫 → 病不消。
+        2. 根判据 (SFTK L424「或本身病重而药少…又宜行运以取其中和」):
+           病重(病神当令或成党) 且 药无本气根(虚透) → 药少, 原局不消, 待运。
+        3. 势判据 (PZZQ L3977「透己土财以解之, 惜病重药轻」/ QTBJ L774
+           「己土不能制壬, 病重药轻」): 病神 combo > 药 combo → 病重药轻, 不消。
+    判据(布尔): 药在局(透干或本气根) 且 未触三判据任一 → 病消(REMOVED)。
+    边界: ① 不重复杀重身轻制化闸门(源头 ok=False 已拦); ② 过旺例外(combo>=4
+          财成党)不跳过——药消病=病可治性, 与格体豁免(属性)是两独立机制;
+          ③ PZ-0011 财格佩印(印透药在但无根)类 = 源头闸门(格成佩印不报 CAI_DUO),
+          登记另立, 不在本函数。
     """
     if not bing_list or not facts:
         return bing_list, []
     pillars = facts.get('pillars') or {}
     if not pillars:
         return bing_list, []
-    dm_wx = GAN_WX.get(facts.get('day_stem', ''), '')
+    dm = facts.get('day_stem', '') or ''
+    dm_wx = GAN_WX.get(dm, '')
     yao_map = _bing_yao_map(dm_wx)
+    wp = facts.get('wuxing_power', {}) or {}
+    wp_data = wp.get('wuxing_power', wp) if isinstance(wp, dict) else {}
+    WUHE = {'甲': '己', '己': '甲', '乙': '庚', '庚': '乙', '丙': '辛', '辛': '丙',
+            '丁': '壬', '壬': '丁', '戊': '癸', '癸': '戊'}
 
     def _tou_ben(wx):
         tou = sum(1 for pos in ('year', 'month', 'hour')
@@ -858,40 +885,85 @@ def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
                   if ZHI_BEN_WX.get(pillars[pos][1]) == wx)
         return (tou, ben)
 
+    def _combo(wx):
+        t, b = _tou_ben(wx)
+        e = wp_data.get(wx, {}) if isinstance(wp_data, dict) else {}
+        try:
+            ju = int(e.get('ju_n', 0) or 0) * 2 + int(e.get('banhe_n', 0) or 0) * 1
+        except Exception:
+            ju = 0
+        return t + b + ju
+
     kept, removed = [], []
     for bing in bing_list:
         bid = bing.get('bing_id', '')
-        yao_wx = yao_map.get(bid, []) or []
+        yao_wx = [w for w in (yao_map.get(bid, []) or []) if w]
+        if not yao_wx:
+            kept.append(bing)
+            continue
+        # 药在局(任一药五行透干或本气根)
         yao_in = any(t >= 1 or b >= 1 for wx in yao_wx
                      for t, b in [_tou_ben(wx)])
-        if yao_in:
-            bing['yao_yuanju'] = 'REMOVED'
-            bing['yao_note'] = ('原局药在(透干/本气根), 甲路消病'
-                                '(PZZQ L957 除其病神即谓之药; SFTK L424 得一字以去之; '
-                                'DTS L240 格中如去病财禄两相宜)')
-            removed.append(bing)
-        else:
+        if not yao_in:
             kept.append(bing)
+            continue
+        # ① 合判据: 药透干字被天干五合合住 -> 无效 (DTS L250 无合之神)
+        yao_stems = [pillars[pos][0] for pos in ('year', 'month', 'hour')
+                     if GAN_WX.get(pillars[pos][0]) in yao_wx]
+        he_jia = any(WUHE.get(s) in {pillars[p][0] for p in ('year', 'month', 'hour')}
+                     for s in yao_stems)
+        if he_jia:
+            bing['yao_yuanju'] = 'INVALID_HE'  # 药被合, 不能援引
+            bing['yao_note'] = ('药(%s)被天干五合合住 -> 不能援引, 病不消 '
+                                '(DTS L250 通关必得引用无合之神)' % '、'.join(yao_wx))
+            kept.append(bing)
+            continue
+        # 病神五行 + 病重/病轻
+        bs_wx = _bing_shen_wx(bid, dm_wx)
+        bing_combo = _combo(bs_wx) if bs_wx else 0
+        mm = facts.get('month_qi_element', '')
+        bing_dang = (bs_wx == mm)  # 病神当令
+        bing_zhong = bing_dang or bing_combo >= 2  # 病重 = 当令 或 成党(combo>=2)
+        # ② 根判据: 病重 且 药无本气根(虚透) -> 药少, 待运 (SFTK 病重而药少宜行运)
+        yao_you_root = any(b >= 1 for wx in yao_wx for _, b in [_tou_ben(wx)])
+        if bing_zhong and not yao_you_root:
+            bing['yao_yuanju'] = 'INVALID_ROOT'  # 药虚透, 病重药少
+            bing['yao_note'] = ('病重(病神%s当令=%s combo=%d) 而 药(%s)无本气根 '
+                                '-> 病重药少, 原局不消待运 (SFTK 病重而药少宜行运)'
+                                % (bs_wx, bing_dang, bing_combo, '、'.join(yao_wx)))
+            kept.append(bing)
+            continue
+        # ③ 势判据: 病 combo > 药 combo -> 病重药轻 (PZZQ L3977 惜病重药轻)
+        yao_combo = max((_combo(wx) for wx in yao_wx), default=0)
+        if bs_wx and bing_combo > yao_combo:
+            bing['yao_yuanju'] = 'INVALID_POTENTIAL'  # 药力不足
+            bing['yao_note'] = ('病神%s combo=%d > 药 combo=%d -> 病重药轻, 不消 '
+                                '(PZZQ L3977 惜病重药轻)' % (bs_wx, bing_combo, yao_combo))
+            kept.append(bing)
+            continue
+        # 药有效 -> 消
+        bing['yao_yuanju'] = 'REMOVED'
+        bing['yao_note'] = ('原局药在(透干/本气根) 且未触合/根/势三判据, 病消 '
+                            '(PZZQ L957 除其病神即谓之药; SFTK L424 得一字以去之; '
+                            'DTS L240 格中如去病财禄两相宜)')
+        removed.append(bing)
     return kept, removed
 
 
 def build_bingyao_layer(facts: Dict[str, Any], queries: List[Dict],
-                        apply_yuanju_yao_enabled: bool = False) -> Dict[str, Any]:
+                        apply_yuanju_yao_enabled: bool = True) -> Dict[str, Any]:
     """构建病药/作用子层.
     输入: L0 facts + L1 queries
     输出: 病药结构 (只识别存在, 不判吉凶/成败/轻重)
 
-    原局药消病(甲路): apply_yuanju_yao_enabled 默认 False —— 2026-10-05 dry run 结论:
-      判据「药透干或本气根即消」过宽, 577 盘消病中含 139 条 bad 真病被消光(误伤),
-      净 +287 但质量不合格(434 good 修好 - 147 bad 误伤)。「药在局 ≠ 药有效」:
-      DT-0007 官透被合无效 / DT-0021 财当令药少 —— SFTK L424「病重而药少…宜行运以取中和」
-      只给定性无机器公式。药有效性判据(药被合/药无力/病重药少)登记待核原文,
-      函数与三书证据链(PZZQ L957/SFTK L424/DTS L240)保留, 判据补全后再开。
+    原局药消病(甲路+药有效性三判据): apply_yuanju_yao_enabled 默认 True。
+      2026-10-06: 三判据(合/根/势)各有原文(DTS L250 无合之神 / SFTK L424 病重而药少 /
+      PZZQ L3977+QTBJ L774 病重药轻), 已落; 干run见 apply_yuanju_yao 注释。
     """
     bing_list = identify_bing(facts, queries)
     yao_removed = []
     if apply_yuanju_yao_enabled:
-        # 原局药消病 (甲路): 药在局(透干/本气根) -> 病消。PZ-0011 财局佩印类缺口
+        # 原局药消病 (甲路): 药在局且有效(未触合/根/势) -> 病消。PZ-0011 财局佩印类缺口
         bing_list, yao_removed = apply_yuanju_yao(bing_list, facts)
     bing_ids = [b['bing_id'] for b in bing_list]
     yao_list = identify_yao(facts, queries, bing_ids)
