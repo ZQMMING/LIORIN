@@ -46,9 +46,19 @@ def derive_severity(bing_wx: str, facts: Dict[str, Any]) -> Dict[str, Any]:
     wp = ((facts.get("wuxing_power") or {}).get("wuxing_power") or {})
     p = wp.get(bing_wx) or {}
     ling = p.get("ling_state") or ""
-    combo = p.get("combo") or 0
     stem_n = p.get("stem_n") or 0
     ben_n = p.get("ben_n") or 0
+    # combo 口径(与验证器/域裁决同源, 修 S4/S0 未产出):
+    #   优先 wuxing_power 自带 combo(如有); 否则他干透干+本气根+局票(ju*2+banhe*1)。
+    combo = p.get("combo") or 0
+    if not combo:
+        try:
+            from engines.common.bing_debate import _counts
+            _c = _counts(facts.get("pillars") or {}, bing_wx, facts.get("transit_extra"))
+            combo = _c["tou"] + _c["ben"]
+        except Exception:
+            combo = 0
+        combo += int(p.get("ju_n", 0) or 0) * 2 + int(p.get("banhe_n", 0) or 0) * 1
 
     dang_ling = ling in _LING_STRONG
     d = {"dang_ling": dang_ling, "combo": combo, "stem_n": stem_n, "ben_n": ben_n}

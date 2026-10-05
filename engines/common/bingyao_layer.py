@@ -686,6 +686,25 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         else:
             _b['severity'] = None
             _b['severity_basis'] = None
+        # STEP-L2-1 (2026-10): 切片条件三态求值挂载(并行校验, 不改硬编码判定)。
+        #   L1/L2 生产链 0 引用实锤修复 —— 病机触发的同时用 MD 切片条件求值,
+        #   输出 MATCHED/NOT_MATCHED/ABSTAIN + 逐组依据, 供逐书矫正抽核,
+        #   不替代现有触发(无回归); 错位/缺切片病机恒 ABSTAIN(UNVERIFIED)。
+        try:
+            from engines.common.slice_conditions import eval_slice_conditions
+            _sc = eval_slice_conditions(_b.get('bing_id'), _bw, facts)
+            _b['slice_condition'] = {
+                'state': _sc['state'],
+                'slice_id': _sc['slice_id'],
+                'status': _sc['status'],
+                'reasons': _sc['reasons'],
+                'hooks': _sc['hooks'],
+                'mode': '并行校验不改判定',
+            }
+        except Exception as _sce:
+            _b['slice_condition'] = {'state': 'ABSTAIN', 'slice_id': _b.get('slice_id'),
+                                     'status': 'L2求值异常', 'reasons': [str(_sce)],
+                                     'hooks': {}, 'mode': '并行校验不改判定'}
 
     return bing_list
 

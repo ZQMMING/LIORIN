@@ -444,6 +444,12 @@ def paipan(bazi: str) -> Dict[str, Any]:
         #   语义: L0(relations) + L1(wuxing_power) 的确定性派生, 无判定无阈值。
         "topology": _build_topology(f, p),
         "combination_facts": f.get("combination_facts", {}),
+        # STEP-L0-1 (2026-10): L0 冲合互动裁决块独立顶层投影。
+        #   原本嵌在 combination_facts.resolved(已算: chong_actions 733/2106,
+        #   chong_active/canceled/survive/liuhe_canceled/xinghe 等), 顶层无独立键,
+        #   下游(格局/病药/域裁决)无处消费 → 「有输出不投影」实锤修复。
+        #   只补投影, 不改 combination_facts 任何计算。
+        "resolved": (f.get("combination_facts") or {}).get("resolved"),
         "root_relations": f.get("root_relations"),          # STEP-L5-3 投影(算而未投影实锤修复)
         "root_effectiveness": f.get("root_effectiveness"),  # STEP-L5-3 投影
         "stem_combination_facts": f.get("stem_combination_facts", {}),
