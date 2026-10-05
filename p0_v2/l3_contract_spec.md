@@ -2312,6 +2312,80 @@ DTS  L230「子时生人，前三刻，三分壬水用事；后四刻，七分�
 
 ---
 
+### 4.27 ★ `cheng_bai` 判定字段（v1.18 新增，裁141甲 + 裁142否丙）
+
+#### 4.27.1 `po_n` 语义核验（裁142否丙 —— 立即核，不挂）
+
+```
+24 处 po_ge 赋值行逐处读「rule」字段，语义全部一致：
+
+  L223 食神格  rule「破格：枭夺食/生财露煞」
+  L440 财格    rule「破格：财透七煞」
+  L514 印格    rule「破格：财破印」
+  L675 阳刃格  rule「破格：无官煞（缺失型）」
+  L845/912     po_ge=[]（兜底无破格）
+  L938 apply_he_po_ge 追加「冲月令破格」
+
+★ 24/24 处语义 = A「此盘此格已破，破格条件为 X」
+★ po_n > 0 = 破格（po_ge 非空即有破格条件）
+★ po_n = 0 = 成格（无破格条件）
+★ 例外 L555（_yin_po，印多重）：po_ge 非空但注释写「财不作破格忌，喜财」
+  → 该路径 xi_wx_status=DEFINED（喜神仍定义）→ CHENG_ZHONG_YOU_PO
+
+★ 不读 ge 字符串（"(破格)" 后缀只有 43/1408 盘有，非可靠判据）
+★ 只读 po_n + xi_wx_status，两个字段同源 ge_cheng
+```
+
+#### 4.27.2 值域 + 判定逻辑
+
+```
+CHENG               po_n == 0
+CHENG_ZHONG_YOU_PO  po_n > 0 且 xi_wx_status == "DEFINED"
+                    （破格条件写入，但喜神仍定义 = 成中有败）
+PO                  po_n > 0 且 xi_wx_status != "DEFINED"
+
+★ PO_ZHONG_YOU_CHENG（败中有成）= 依赖 C 块（救应），不落
+  写「依赖 C 块」，不写 PENDING（有路径，按顺序，不算挂起）
+
+★ CHENG_ZHONG_YOU_PO 的判据 = po_n>0 且 xi_wx_status=DEFINED
+  全量实测 13 盘（从财格/从儿格，xi_status=DEFINED 且 po_n>0）
+  语义 = 破格条件写入但喜神未清空，对应 PZZQ .009「成中有败」
+```
+
+#### 4.27.3 全量 2106 盘分布（dump 实测，po_n + xi_status 读法）
+
+```
+CHENG                  353 盘
+CHENG_ZHONG_YOU_PO      13 盘
+PO                    1395 盘
+NO_GE（无格/ge=None）   345 盘
+合计                  2106 盘
+```
+
+#### 4.27.4 字段形态（挂 `ge_cheng`）
+
+```
+落点: p0_v2/cheng_bai.py :: build_cheng_bai(ge_cheng)
+消费类型: COMPUTED
+
+形态:
+  ge_cheng.cheng_bai = {
+    "value":  "CHENG" / "CHENG_ZHONG_YOU_PO" / "PO" / None,
+    "status": "DEFINED" / "NO_GE",
+    "basis":  {
+      "po_n": int,
+      "xi_wx_status": str|None,
+      "slice_ids": "STRUCTURE.GE_JU.CHENG_BAI.001..012",
+    },
+    "po_zhong_you_cheng": "依赖 C 块（救应），不落",
+  }
+
+探针（独立进程，不 import 引擎生产路径）:
+  CHENG / PO / CHENG_ZHONG_YOU_PO / ge=None  4/4 PASS
+```
+
+---
+
 ## 五、`strength_verdict` 字段形态
 ```
 值形态为 dict（v1.11 改, 见 §2.6.7）: {value, status, predictive, basis}
