@@ -254,12 +254,63 @@ class TestCanpingJintu:
     """金/土部诗断语料（448_008 五部全本，v1 转录）"""
 
     def test_corpus_counts(self):
-        """五行齐全：金部 74 + 土部 82 = 156 编号"""
+        """五部齐一：金部 78 + 土部 78 = 156 编号（2026-10-05 校正：p74 四条由土部归金部）"""
         items = cp.load_raw_shici_jintu()
         assert len(items) == 156
         jin = [i for i in items if i["part"] == "jin"]
         tu = [i for i in items if i["part"] == "tu"]
-        assert len(jin) == 74 and len(tu) == 82
+        assert len(jin) == 78 and len(tu) == 78
+
+    def test_corpus_no_unique_4digit(self):
+        """2026-10-05 校正：策数丢位/误识 26 处恢复后，两部各 78 码部内唯一且均为四位数字。
+
+        v1 遗留的「唯一跨页重出 no=273（p76/p86）」系 2763/2773 同被读成三位所致，
+        恢复后重出消解；此断言锁死该不变量，防止再次丢位。
+        """
+        items = cp.load_raw_shici_jintu()
+        for part in ("jin", "tu"):
+            nos = [i["no"] for i in items if i["part"] == part]
+            assert len(nos) == 78
+            assert len(set(nos)) == 78, "%s 部存在重号" % part
+            assert all(len(n) == 4 and n.isdigit() for n in nos), \
+                "%s 部存在非四位数字编号：%s" % (part, [n for n in nos if not (len(n) == 4 and n.isdigit())])
+
+    def test_part_p74_is_jin(self):
+        """2026-10-05 校正 A：448 p74 四条承接 p73「殘燈伴空月」，属金部正文非土部"""
+        items = [i for i in cp.load_raw_shici_jintu() if i["page"] == 74]
+        assert len(items) == 4
+        assert all(i["part"] == "jin" for i in items)
+        assert {i["lines"][2] for i in items} == {"孤猿枝上啼", "仙壇與佛塔",
+                                                  "古稱朱陳村", "畫堂春正濃"}
+
+    def test_header_example_marked(self):
+        """2026-10-05 校正 C：448 p75 土部表头 worked example 加 is_header_example 标记"""
+        items = [i for i in cp.load_raw_shici_jintu() if i["page"] == 75]
+        assert len(items) == 2
+        assert all(i.get("is_header_example") is True for i in items)
+        assert cp.search_raw_poem_448(no="3357", include_header_example=False) == []
+        assert cp.search_raw_poem_448(no="3357", include_header_example=True)
+
+    def test_layer_filter_and_helper(self):
+        """2026-10-05 新增 layer 过滤：女命层 = lines[2:4]，岁运层 = lines[4:6]"""
+        hits = cp.search_raw_poem_448(no="3306", layer="女命")
+        assert len(hits) == 2 and all(h[4] in ("花開花上花", "風起風中絮") for h in hits)
+        assert cp.layer_lines_448(cp.load_raw_shici_jintu()[0], "女命") == ["花開花上花", "風起風中絮"]
+        assert cp.layer_lines_448(cp.load_raw_shici_jintu()[0], "岁运") == ["鴻鵠丈夫志", "豈能知歲雀"]
+        assert cp.layer_lines_448(cp.load_raw_shici_jintu()[0], "不存在") == []
+        assert cp.CANPING_LAYERS == ("男上", "男下", "女上", "女下", "运上", "运下")
+
+    def test_nvp_rulings_accessible(self):
+        """2026-10-05 新增：女命层校订裁决层可读，且已覆盖全部异文条目"""
+        blk = cp.load_448_rulings().get("jintu_nvp_rulings")
+        assert blk and blk["total"] == 156 and blk["unmatched"] == []
+        assert blk["identical"] + blk["diff_count"] == 156
+        assert blk["diff_count"] > 0
+        r2409 = cp.get_nvp_rulings_448(part="金", no="2409")
+        assert len(r2409) == 1 and r2409[0]["ruling"].startswith("定案")
+        assert r2409[0]["diff"].startswith("上聯第1字 木[拄本]≠水[448]")
+        assert cp.get_nvp_rulings_448(part="土", no="2262")[0]["ruling"].startswith("定案")
+        assert cp.get_nvp_rulings_448(part="金", no="不存在的码") == []
 
     def test_search_jin_no(self):
         """金部编号检索：3306 → p59 鹤在白雲棲（表头页）"""
@@ -273,26 +324,27 @@ class TestCanpingJintu:
         assert hits and hits[0][0] == "tu" and hits[0][1] == 75
         assert "蜘蛛結網羅" in hits[0][4]
 
-    def test_search_dup_no_returns_all(self):
-        """448 编号非唯一键：跨页异文应全部返回。
-        2026-09-16 人工校原书编号带（448 p87-89 高倍）：原缩略读把四位编号读成三位，
-        博浪 331->3371、隨山 372->2272、上陽 373->2373、馬陵 375->2575、象取 373->3373、
-        用岳 374->2374、東山 375->3375、鴻鵠 371->2271、天涯 377->2377、雷聲 377->3377、乘桴 378->2278。
-        改后唯一跨页重出 no = 273（p76 廣寒宮／p86 松筠）。"""
+    def test_search_no_locates_by_part_page_no(self):
+        """2026-09-16 人工校原书编号带（448 p87-89 高倍）恢复的编号仍可定位；
+        2026-10-05 策数校正：2771（原 3771）、2763/2773（原同为 273）。"""
         hits = cp.search_raw_poem_448(no="2272", part="tu")
         assert {h[1] for h in hits} == {88}
-        hits2 = cp.search_raw_poem_448(no="273", part="tu")
-        assert {h[1] for h in hits2} == {76, 86}
-        hits2b = cp.search_raw_poem_448(no="3771", part="tu")
-        assert {h[1] for h in hits2b} == {85}
-        hits2c = cp.search_raw_poem_448(no="2268", part="tu")
-        assert {h[1] for h in hits2c} == {85}
-        hits3 = cp.search_raw_poem_448(no="2575", part="tu")
-        assert {h[1] for h in hits3} == {89}
-        hits4 = cp.search_raw_poem_448(no="2271", part="tu")
-        assert {h[1] for h in hits4} == {90}
-        hits5 = cp.search_raw_poem_448(no="2278", part="tu")
-        assert {h[1] for h in hits5} == {90}
+        hits = cp.search_raw_poem_448(no="2763", part="tu")
+        assert {h[1] for h in hits} == {76}
+        hits = cp.search_raw_poem_448(no="2773", part="tu")
+        assert {h[1] for h in hits} == {86}
+        hits = cp.search_raw_poem_448(no="2771", part="tu")
+        assert {h[1] for h in hits} == {85}
+        hits = cp.search_raw_poem_448(no="2268", part="tu")
+        assert {h[1] for h in hits} == {85}
+        hits = cp.search_raw_poem_448(no="2575", part="tu")
+        assert {h[1] for h in hits} == {89}
+        hits = cp.search_raw_poem_448(no="2271", part="tu")
+        assert {h[1] for h in hits} == {90}
+        hits = cp.search_raw_poem_448(no="2278", part="tu")
+        assert {h[1] for h in hits} == {90}
+        hits = cp.search_raw_poem_448(no="2621", part="jin")
+        assert {h[1] for h in hits} == {70}
 
     def test_search_keyword_in_lines(self):
         """关键字检索句文：土部 内覈 条 三三七九 含 八尺長燈檠"""

@@ -174,17 +174,30 @@ def _canping_dir() -> str:
 #   3347 例（未未列）        → "道是無形光/鴻毛草上風/陰陽互寒暑" 于 p53 未未列（火部）
 # 异文清单见 算法原文对照核证表 第十三节；448 编号对照见 448_duizhao.json。
 
-# ── 金/土部诗断语料（v1，2026-09-12 逐页转录） ────────────────────────
+# ── 金/土部诗断语料（v1，2026-09-12 逐页转录；v2，2026-10-05 校正） ────────
 # 语料：data/heluo/canping/raw_shici_jintu_448.json
-#   = K3-448_008.pdf 金部 p59-73（74 编号）+ 土部 p74-91（82 编号），五部参评全本（448 册）。
+#   = K3-448_008.pdf 金部 p59-74（78 编号）+ 土部 p75-91（78 编号），五部参评全本（448 册）。
 #   447_009 卷十残本仅水火木三部，金土部以 448_008 为唯一全本来源。
 # 结构：每编号 6 句 = 男命2 + 女命2 + 岁运2（与 447/448 水部同构）；特殊页照录并注明。
-# 编号体系：448 编号非唯一键（同编号不同页可为异文，如金部三一七/三一八/三三二二、
-#   土部三七二/三七三/三七五/三七七 均多次出现且文不同），检索必须带 (part,page,no)。
-# 特殊编号：金部 p70「天二一」、p66「三三」旁注辰卯從革八、土部 p91「三三七九」内覈天六九。
+# 2026-10-05 校正（详见语料 corrections 块与 data/heluo/canping/448金土部女命层校正_20261005.md）：
+#   A 分部误标：448 p74 四条（孤猿枝上啼／仙壇與佛塔／古稱朱陳村／畫堂春正濃）承接 p73
+#     「殘燈伴空月」及策数 2326/3326/2227/3328，确属金部正文，v1 误归土部 → 已改 jin。
+#     金部因此由 74 → 78 码，土部由 82 → 78 码，与五部齐一（每部 78 码）。
+#   B 策数校正：PDF 文字层丢位/形近误识 26 处（如 261→2561、天二一→2621、3159→3359、
+#     239→2359、3771→2771、2624→2664），据同册策数递增律并抛本影印回图复核恢复。
+#   C 表头示例页：448 p75 两条（土部表头 worked example）加 is_header_example 标记，
+#     非查检条目；其女命层层位归属见 448_duizhao.json jintu_nvp_rulings。
+# 校正后金／土两部各 78 个编号，部内唯一且均为四位数字。
+#   接口仍以 (part,page,no) 定位，以容未来跨页异文重出。
+# 女命层（中层）校订结论接入 ruling 层，不回写本语料正文（正文保真原则）：
+#   见 448_duizhao.json → jintu_nvp_rulings、data/heluo/定案字总表.md 附节。
+# 特殊编号旁注：金部 p66「三三」旁注辰卯從革八；土部 p91「三三七九」内覈天六九。
 # 缺句待证：金部 p66 三三(5句)/p68 二四一七(4句)；土部 p78 二四六二/p79 三〇六八/
 #   p83 二八七〇/p85 三七三(各4句)、p89 三七二(7句)、p91 三三七九(10句，含内覈)。
-# 异文待证：土部 p74 二三二六「形盡(畫?)棋猶閣/毫端争一莖(著?)」（两读均录注）。
+# 异文待证：金部 2326「形畫棋麟閣/毫端爭一莖」（兩讀均錄注）。
+
+#: 448 每编号 6 句的层位顺序（索引 → 层名）
+CANPING_LAYERS = ("男上", "男下", "女上", "女下", "运上", "运下")
 
 def search_raw_poem(keyword: str) -> list:
     """在卷十诗断 OCR 原始语料中检索关键字。
@@ -210,7 +223,8 @@ def search_raw_poem(keyword: str) -> list:
 def load_raw_shici_jintu() -> list:
     """载入金/土部诗断语料（raw_shici_jintu_448.json）。
 
-    返回 items 列表（每条 {part,page,no,note,lines}）；文件缺失返回 []。
+    返回 items 列表（每条 {part,page,no,note,lines}，表头示例页另带
+    ``is_header_example=True``）；文件缺失返回 []。
     """
     import json as _json
     p = os.path.join(_canping_dir(), "raw_shici_jintu_448.json")
@@ -222,16 +236,35 @@ def load_raw_shici_jintu() -> list:
     return data.get("items", [])
 
 
+def layer_lines_448(item: dict, layer: str) -> list:
+    """取 448 条目某一层的句。
+
+    layer ∈ {"男命", "女命", "岁运"}，返回该层 2 句；层名非法或句数不足返回 []。
+    """
+    try:
+        start = {"男命": 0, "女命": 2, "岁运": 4}[layer]
+    except KeyError:
+        return []
+    lines = item.get("lines") or []
+    return lines[start:start + 2] if len(lines) >= start + 2 else []
+
+
 def search_raw_poem_448(
     keyword: str = "",
     part: str = "",
     no: str = "",
+    layer: str = "",
+    include_header_example: bool = True,
 ) -> list:
     """在金/土部诗断语料（448_008 编号制）中检索。
 
-    keyword 匹配句文；part ∈ {jin, tu}；no 匹配编号（原样，如 "2510"/"天二一"）。
-    返回 [(part, page, no, note, line), ...]。448 编号非唯一键，同编号跨页异文全部返回，
-    调用方须以 (part,page,no) 定位。
+    keyword 匹配句文；part ∈ {jin, tu}；no 匹配编号（如 "2510"）。
+    layer ∈ {"男命", "女命", "岁运"} 时只检索该层两句，默认检索全部 6 句。
+    include_header_example=False 时跳过 448 p75 土部表头 worked example（is_header_example）。
+    返回 [(part, page, no, note, line), ...]。
+
+    2026-10-05 校正后金／土两部各 78 码、部内编号唯一；接口仍以 (part,page,no)
+    定位，以容未来跨页异文重出。
     """
     out = []
     for it in load_raw_shici_jintu():
@@ -239,7 +272,13 @@ def search_raw_poem_448(
             continue
         if no and it.get("no") != no:
             continue
-        for ln in it.get("lines", []):
+        if not include_header_example and it.get("is_header_example"):
+            continue
+        if layer:
+            lines = layer_lines_448(it, layer)
+        else:
+            lines = it.get("lines", [])
+        for ln in lines:
             if keyword and keyword not in ln:
                 continue
             out.append((it.get("part"), it.get("page"), it.get("no"),
@@ -247,10 +286,38 @@ def search_raw_poem_448(
     return out
 
 
+def load_448_rulings() -> dict:
+    """载入 448 编号对照与裁决层（448_duizhao.json）；文件缺失返回 {}。"""
+    import json as _json
+    p = os.path.join(_canping_dir(), "448_duizhao.json")
+    try:
+        with open(p, encoding="utf-8") as f:
+            return _json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+def get_nvp_rulings_448(part: str = "", no: str = "") -> list:
+    """金／土部女命（中层）校订裁决条目。
+
+    part ∈ {"金", "土"}（中文部名，见 448_duizhao.json jintu_nvp_rulings）。
+    返回 ruling 列表；语料或裁决层缺失返回 []。
+    """
+    blk = load_448_rulings().get("jintu_nvp_rulings") or {}
+    items = blk.get("items", [])
+    if part:
+        items = [x for x in items if x.get("part") == part]
+    if no:
+        items = [x for x in items if x.get("no") == no]
+    return items
+
+
 __all__ = [
     "get_nayin_element", "qishu", "qishu_dayun", "qishu_liunian",
     "set_canping_dir", "search_raw_poem", "search_raw_poem_448",
-    "load_raw_shici_jintu", "NAYIN_ADD", "NAYIN_PEI", "NAYIN_PART",
+    "load_raw_shici_jintu", "layer_lines_448", "CANPING_LAYERS",
+    "load_448_rulings", "get_nvp_rulings_448",
+    "NAYIN_ADD", "NAYIN_PEI", "NAYIN_PART",
 ]
 
 # 模块级导出（供外部只读访问）
