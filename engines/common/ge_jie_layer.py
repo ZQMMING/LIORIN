@@ -122,6 +122,29 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         from engines.common.special_pattern import build_special_patterns
         _wp0 = facts.get('wuxing_power', {}) or {}
         _sp0 = _purge(_special_of(facts.get('special')))
+        # [2026-10-05 PATCH-4c] 化气格定格(在从格分支前, 与 special_pattern 化气先判互斥一致)。
+        #   依据原案:
+        #     PZZQ L565(本案 PZ-0027)「丁壬相合, 生于卯月, 木旺秉令, 时逢辰, 木之原神透出,
+        #           为丁壬化木格」—— 化气格独立成格, 化神(木)为格体。
+        #     PZZQ L1034(孙岳造)「丁壬相合, 月时卯寅, 化气格真, 化神喜行旺地, 旺之极者, 亦喜其泄」
+        #           —— 喜神=化神(行旺地); 化神极旺则喜泄(食伤)。
+        #   ti_wx=化神五行(格体豁免); xi_wx=化神(主喜), 化神极旺喜泄(食伤)登记待专案。
+        #   hua_state=CONFIRMED 才覆盖正格; CANDIDATE(假化/返象)只记结构不覆盖。
+        if _sp0.get('hua_qi') and _sp0.get('hua_qi_state') == 'CONFIRMED':
+            _hwx = _sp0['hua_qi'][1] if len(_sp0['hua_qi']) > 1 and _sp0['hua_qi'][0] == '化' else None
+            if _hwx:
+                facts['ge_cheng'] = {
+                    'ge': _sp0['hua_qi'],
+                    'ti_wx': [_hwx],
+                    'xi_wx': [_hwx],
+                    'xi_wx_status': 'DEFINED',
+                    'overpower_combo': 6,
+                    'zhi_wx': [], 'hua_wx': [],
+                    'po_ge': [],
+                    'rule': ('PZZQ L565: 日干与紧邻干五合+化神得月令+原神透出->化气格; '
+                             '化神是格体; 喜神=化神(L1034化神喜行旺地); 化神极旺喜泄(食伤)登记待专案'),
+                }
+                return facts
         if _sp0.get('cong_type') and _sp0.get('cong_state') == 'CONFIRMED':
             _cwx_map = {'从杀格': None, '从官格': None, '从财格': None, '从儿格': None}
             _gs_wx = (facts.get('wuxing_power', {}) or {}).get('wuxing_power', {})
