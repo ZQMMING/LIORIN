@@ -57,8 +57,10 @@ _HIDDEN_GUARD = _assert_hidden_matches_liorin()
 
 WUXING = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 YANG = set('甲丙戊庚壬')
-LIUHE = {'子':'丑','丑':'子','寅':'亥','亥':'寅','卯':'戌','戌':'卯','辰':'酉','酉':'辰','巳':'申','申':'巳','午':'未','未':'午'}
-LIUCHONG = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅','卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
+# ★ 2026-10-06 归档: 六合/六冲本地表已移入
+#   engines/common/_legacy_relation_tables/legacy_relation_tables.py
+#   (LIUHE_LEGACY/LIUCHONG_LEGACY)。主链关系事实以排盘引擎 l0_chart
+#   为唯一权威源, 不再本地重复自算。
 
 
 def ten_god(day_stem, other_stem):
@@ -82,9 +84,15 @@ def ten_god(day_stem, other_stem):
     return '?'
 
 
-def build(pillars):
+def build(pillars, l0_chart=None):
     """pillars: {year:[g,z],month:[g,z],day:[g,z],hour:[g,z]}
-    只出事实. 不判格局."""
+    只出事实. 不判格局.
+
+    2026-10-06 收敛: 关系事实(六冲/六合/三合/三会/六害/六破/三刑/天干五合)
+    以排盘引擎 l0_chart(LIORIN calc_* 同源) 为唯一权威源——不再本地重复自算
+    (全量2106盘核: 与本地表值一致; sanxing 三刑局子平 relations 派生漏,
+    排盘有, 收敛顺带修复)。l0_chart 缺时兜底用 _legacy_relation_tables
+    (ARCHIVED_FALLBACK, 见 engines/common/_legacy_relation_tables/)。"""
     dg = pillars['day'][0]
     out = {'day_stem': dg,
            'month_branch': pillars['month'][1],
@@ -172,13 +180,31 @@ def build(pillars):
     all_stems = [v[0] for v in pillars.values()]
     out['month_hidden_stems'] = HIDDEN[mz]
     out['month_transparent'] = [s for s in HIDDEN[mz] if s in all_stems]
-    # 合冲事实
+    # 合冲事实 —— 权威源=排盘引擎 l0_chart; 缺时兜底归档表(ARCHIVED)
     zhis = [v[1] for v in pillars.values()]
+    _liuhe_tbl, _liuchong_tbl = {}, {}
+    if l0_chart:
+        _ZB = {'ZI': '子', 'CHOU': '丑', 'YIN': '寅', 'MAO': '卯', 'CHEN': '辰',
+               'SI': '巳', 'WU': '午', 'WEI': '未', 'SHEN': '申', 'YOU': '酉',
+               'XU': '戌', 'HAI': '亥'}
+        for _k in (l0_chart.get('branch_he_map') or {}):
+            _ps = str(_k).split('-')
+            if len(_ps) == 2:
+                _liuhe_tbl[_ZB.get(_ps[0], _ps[0])] = _ZB.get(_ps[1], _ps[1])
+                _liuhe_tbl[_ZB.get(_ps[1], _ps[1])] = _ZB.get(_ps[0], _ps[0])
+        for _k in (l0_chart.get('branch_clash_map') or {}):
+            _ps = str(_k).split('-')
+            if len(_ps) == 2:
+                _liuchong_tbl[_ZB.get(_ps[0], _ps[0])] = _ZB.get(_ps[1], _ps[1])
+                _liuchong_tbl[_ZB.get(_ps[1], _ps[1])] = _ZB.get(_ps[0], _ps[0])
+    else:
+        from engines.common._legacy_relation_tables.legacy_relation_tables import (
+            LIUHE_LEGACY as _liuhe_tbl, LIUCHONG_LEGACY as _liuchong_tbl)
     for i in range(len(zhis)):
         for j in range(i+1, len(zhis)):
             a, b = zhis[i], zhis[j]
-            if LIUHE.get(a) == b: out['combination_facts']['liuhe'].append([a, b])
-            if LIUCHONG.get(a) == b: out['combination_facts']['liuchong'].append([a, b])
+            if _liuhe_tbl.get(a) == b: out['combination_facts']['liuhe'].append([a, b])
+            if _liuchong_tbl.get(a) == b: out['combination_facts']['liuchong'].append([a, b])
     # PATCH-141H-IMPLEMENT-A 月令生扶日主事实 (纯五行关系, 非得令/身强)
     sheng = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
     mqi = HIDDEN[mz][0]            # 本气=注册表首藏干
@@ -329,25 +355,78 @@ def build(pillars):
             frozenset(['戊','癸']): '戊癸合'}
     stems_all = [v[0] for v in pillars.values()]
     wuhe_pairs = []
-    for i in range(len(stems_all)):
-        for j in range(i+1, len(stems_all)):
-            key = frozenset([stems_all[i], stems_all[j]])
-            if key in WUHE:
-                wuhe_pairs.append([stems_all[i], stems_all[j]])
+    if l0_chart:
+        # 权威源=排盘引擎 stem_he_pairs (LIORIN 天干五合)
+        _ZH2 = {'JIA': '甲', 'YI': '乙', 'BING': '丙', 'DING': '丁', 'WU': '戊',
+                'JI': '己', 'GENG': '庚', 'XIN': '辛', 'REN': '壬', 'GUI': '癸'}
+        _seen_w = set()
+        for _pr in (l0_chart.get('stem_he_pairs') or []):
+            _p = tuple(sorted([_ZH2.get(str(x), str(x)) for x in _pr]))
+            if _p in _seen_w:
+                continue
+            _seen_w.add(_p)
+            wuhe_pairs.append(list(_p))
+    else:
+        for i in range(len(stems_all)):
+            for j in range(i+1, len(stems_all)):
+                key = frozenset([stems_all[i], stems_all[j]])
+                if key in WUHE:
+                    wuhe_pairs.append([stems_all[i], stems_all[j]])
     out['stem_combination_facts'] = {'wuhe': wuhe_pairs}
     # PATCH-154 三合/三会 Relation Fact (仅结构存在, 不判化/五行化/吉凶)
-    SANHE = [{'pair': ['申','子','辰'], 'name': '申子辰合水'},
-             {'pair': ['亥','卯','未'], 'name': '亥卯未合木'},
-             {'pair': ['寅','午','戌'], 'name': '寅午戌合火'},
-             {'pair': ['巳','酉','丑'], 'name': '巳酉丑合金'}]
-    SANHUI = [{'pair': ['寅','卯','辰'], 'name': '寅卯辰三会木'},
-              {'pair': ['巳','午','未'], 'name': '巳午未三会火'},
-              {'pair': ['申','酉','戌'], 'name': '申酉戌三会金'},
-              {'pair': ['亥','子','丑'], 'name': '亥子丑三会水'}]
+    #   2026-10-06: 权威源=排盘引擎 l0_chart; 缺时兜底归档表(ARCHIVED)
+    _ZB = {'ZI': '子', 'CHOU': '丑', 'YIN': '寅', 'MAO': '卯', 'CHEN': '辰',
+           'SI': '巳', 'WU': '午', 'WEI': '未', 'SHEN': '申', 'YOU': '酉',
+           'XU': '戌', 'HAI': '亥'}
+    _ZH = {'JIA': '甲', 'YI': '乙', 'BING': '丙', 'DING': '丁', 'WU': '戊',
+           'JI': '己', 'GENG': '庚', 'XIN': '辛', 'REN': '壬', 'GUI': '癸'}
+    _SANHE_NAMES = {'申子辰': '申子辰合水', '亥卯未': '亥卯未合木',
+                    '寅午戌': '寅午戌合火', '巳酉丑': '巳酉丑合金'}
+    _SANHUI_NAMES = {'寅卯辰': '寅卯辰三会木', '巳午未': '巳午未三会火',
+                     '申酉戌': '申酉戌三会金', '亥子丑': '亥子丑三会水'}
+    _LIUHAI_NAMES = {'子未': '子未相害', '丑午': '丑午相害', '寅巳': '寅巳相害',
+                     '卯辰': '卯辰相害', '申亥': '申亥相害', '酉戌': '酉戌相害'}
+    _LIUPO_NAMES = {'子酉': '子酉相破', '丑辰': '丑辰相破', '寅亥': '寅亥相破',
+                    '卯午': '卯午相破', '巳申': '巳申相破', '未戌': '未戌相破'}
+    _SANXING_NAMES = {'寅巳申': '寅巳申三刑', '丑戌未': '丑戌未三刑',
+                      '子卯': '子卯相刑'}
     zset = set(zhis)
-    out['combination_facts']['sanhe'] = [s['name'] for s in SANHE if set(s['pair']).issubset(zset)]
-    out['combination_facts']['sanhui'] = [s['name'] for s in SANHUI if set(s['pair']).issubset(zset)]
+    if l0_chart:
+        def _keys_of(m):
+            return [tuple(sorted(_ZB.get(x, x) for x in str(k).split('-')))
+                    for k in (m or {})]
+        _sanhe_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_sanhe_map'))}
+        _sanhui_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_sanhui_map'))}
+        _liuhai_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_harm_map'))}
+        _liupo_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_po_pairs'))}
+        _sanxing_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_sanxing_map'))}
+        out['combination_facts']['sanhe'] = [
+            _SANHE_NAMES[''.join(sorted(s))] for s in _sanhe_sets
+            if ''.join(sorted(s)) in _SANHE_NAMES]
+        out['combination_facts']['sanhui'] = [
+            _SANHUI_NAMES[''.join(sorted(s))] for s in _sanhui_sets
+            if ''.join(sorted(s)) in _SANHUI_NAMES]
+        out['combination_facts']['liuhai'] = [
+            _LIUHAI_NAMES[''.join(sorted(s))] for s in _liuhai_sets
+            if ''.join(sorted(s)) in _LIUHAI_NAMES]
+        out['combination_facts']['liupo'] = [
+            _LIUPO_NAMES[''.join(sorted(s))] for s in _liupo_sets
+            if ''.join(sorted(s)) in _LIUPO_NAMES]
+        out['combination_facts']['sanxing'] = [
+            _SANXING_NAMES[''.join(sorted(s))] for s in _sanxing_sets
+            if ''.join(sorted(s)) in _SANXING_NAMES]
+    else:
+        from engines.common._legacy_relation_tables.legacy_relation_tables import (
+            SANHE_LEGACY as _SANHE, SANHUI_LEGACY as _SANHUI,
+            LIUHAI_LEGACY as _LIUHAI, LIUPO_LEGACY as _LIUPO,
+            SANXING_LEGACY as _SANXING)
+        out['combination_facts']['sanhe'] = [s['name'] for s in _SANHE if set(s['pair']).issubset(zset)]
+        out['combination_facts']['sanhui'] = [s['name'] for s in _SANHUI if set(s['pair']).issubset(zset)]
+        out['combination_facts']['liuhai'] = [h['name'] for h in _LIUHAI if set(h['pair']).issubset(zset)]
+        out['combination_facts']['liupo'] = [p['name'] for p in _LIUPO if set(p['pair']).issubset(zset)]
+        out['combination_facts']['sanxing'] = [s['name'] for s in _SANXING if set(s['pair']).issubset(zset)]
     # PATCH-GE-01 原局半合(两支): 生地/墓地半合, 仅结构存在, 不判化/吉凶/力量
+    #   ★ 排盘引擎无半合域 —— 子平特有派生, 保留本地(备份于 _legacy_relation_tables)
     BANHE_PAIRS = {
         frozenset(('申','子')): '水', frozenset(('亥','卯')): '木',
         frozenset(('寅','午')): '火', frozenset(('巳','酉')): '金',
@@ -362,19 +441,6 @@ def build(pillars):
                 banhe.append({'pair': [zhis[i], zhis[j]], 'wx': BANHE_PAIRS[_k]})
                 _seen.add(_k)
     out['combination_facts']['banhe'] = banhe
-    # PATCH-163 刑/破/害 Relation Fact (仅结构存在, 不判吉凶/身强弱)
-    LIUHAI = [{'pair': ['子','未'], 'name': '子未相害'}, {'pair': ['丑','午'], 'name': '丑午相害'},
-              {'pair': ['寅','巳'], 'name': '寅巳相害'}, {'pair': ['卯','辰'], 'name': '卯辰相害'},
-              {'pair': ['申','亥'], 'name': '申亥相害'}, {'pair': ['酉','戌'], 'name': '酉戌相害'}]
-    LIUPO = [{'pair': ['子','酉'], 'name': '子酉相破'}, {'pair': ['丑','辰'], 'name': '丑辰相破'},
-             {'pair': ['寅','亥'], 'name': '寅亥相破'}, {'pair': ['卯','午'], 'name': '卯午相破'},
-             {'pair': ['巳','申'], 'name': '巳申相破'}, {'pair': ['未','戌'], 'name': '未戌相破'}]
-    SANXING = [{'pair': ['寅','巳','申'], 'name': '寅巳申三刑'},
-               {'pair': ['丑','戌','未'], 'name': '丑戌未三刑'},
-               {'pair': ['子','卯'], 'name': '子卯相刑'}]
-    out['combination_facts']['liuhai'] = [h['name'] for h in LIUHAI if set(h['pair']).issubset(zset)]
-    out['combination_facts']['liupo'] = [p['name'] for p in LIUPO if set(p['pair']).issubset(zset)]
-    out['combination_facts']['sanxing'] = [s['name'] for s in SANXING if set(s['pair']).issubset(zset)]
     # PATCH-216 自刑(YHZP-010-001 A级名目授权): 辰午酉亥同支重复 -> SELF_PUNISHMENT 结构Fact
     # 仅记支名+位置provenance, 不判成立细则/吉凶/太过/强弱; 一支够不够/透干/岁运 HOLD
     SELF_PUNISH_ZHI = {'辰', '午', '酉', '亥'}
@@ -398,6 +464,57 @@ def build(pillars):
     #   与旧生成值逐条等价(实测 2106×9 diff=0), 故内部判据不受影响。
     #   derive_pair_key 内含【硬约束③ 全局按 (pos_i,pos_j) 排序展开】, 不能改成按 relation 序展开。
     out['combination_facts'].update(derive_all(out['relations']))
+    # ★ 2026-10-06 权威覆盖: derive_all 派生视图只含两两刑对, 丢三刑局
+    #   (寅巳申/丑戌未 3支组); 关系事实以排盘引擎 l0_chart 为唯一权威源,
+    #   在此再覆盖 8 域, 顺带修复三刑局漏识别(全量核 56盘)。
+    if l0_chart:
+        _ZB3 = {'ZI': '子', 'CHOU': '丑', 'YIN': '寅', 'MAO': '卯', 'CHEN': '辰',
+                'SI': '巳', 'WU': '午', 'WEI': '未', 'SHEN': '申', 'YOU': '酉',
+                'XU': '戌', 'HAI': '亥'}
+        def _k3(m):
+            return [tuple(sorted(_ZB3.get(x, x) for x in str(k).split('-')))
+                    for k in (m or {})]
+        def _n3(pairs, names):
+            return [names[''.join(sorted(s))] for s in pairs
+                    if ''.join(sorted(s)) in names]
+        _SHN = {'申子辰': '申子辰合水', '亥卯未': '亥卯未合木',
+                '寅午戌': '寅午戌合火', '巳酉丑': '巳酉丑合金'}
+        _SHHN = {'寅卯辰': '寅卯辰三会木', '巳午未': '巳午未三会火',
+                 '申酉戌': '申酉戌三会金', '亥子丑': '亥子丑三会水'}
+        _HHN = {'子未': '子未相害', '丑午': '丑午相害', '寅巳': '寅巳相害',
+                '卯辰': '卯辰相害', '申亥': '申亥相害', '酉戌': '酉戌相害'}
+        _PPN = {'子酉': '子酉相破', '丑辰': '丑辰相破', '寅亥': '寅亥相破',
+                '卯午': '卯午相破', '巳申': '巳申相破', '未戌': '未戌相破'}
+        _XXN = {'寅巳申': '寅巳申三刑', '丑戌未': '丑戌未三刑',
+                '子卯': '子卯相刑'}
+        _HE_T = {}
+        _CH_T = {}
+        for _k in (l0_chart.get('branch_he_map') or {}):
+            _ps = str(_k).split('-')
+            if len(_ps) == 2:
+                _HE_T[_ZB3.get(_ps[0], _ps[0])] = _ZB3.get(_ps[1], _ps[1])
+                _HE_T[_ZB3.get(_ps[1], _ps[1])] = _ZB3.get(_ps[0], _ps[0])
+        for _k in (l0_chart.get('branch_clash_map') or {}):
+            _ps = str(_k).split('-')
+            if len(_ps) == 2:
+                _CH_T[_ZB3.get(_ps[0], _ps[0])] = _ZB3.get(_ps[1], _ps[1])
+                _CH_T[_ZB3.get(_ps[1], _ps[1])] = _ZB3.get(_ps[0], _ps[0])
+        _lu = []
+        _lc = []
+        for i in range(len(zhis)):
+            for j in range(i + 1, len(zhis)):
+                a, b = zhis[i], zhis[j]
+                if _HE_T.get(a) == b:
+                    _lu.append([a, b])
+                if _CH_T.get(a) == b:
+                    _lc.append([a, b])
+        out['combination_facts']['liuhe'] = _lu
+        out['combination_facts']['liuchong'] = _lc
+        out['combination_facts']['sanhe'] = _n3(_k3(l0_chart.get('branch_sanhe_map')), _SHN)
+        out['combination_facts']['sanhui'] = _n3(_k3(l0_chart.get('branch_sanhui_map')), _SHHN)
+        out['combination_facts']['liuhai'] = _n3(_k3(l0_chart.get('branch_harm_map')), _HHN)
+        out['combination_facts']['liupo'] = _n3(_k3(l0_chart.get('branch_po_pairs')), _PPN)
+        out['combination_facts']['sanxing'] = _n3(_k3(l0_chart.get('branch_sanxing_map')), _XXN)
     # V7.25 D1/D2 地支关系事实层 (P0: 六合距离衰减+阻隔 + 暗会)
     from engines.common.daymaster_branch_relations import build_branch_relations
     out['branch_relations'] = build_branch_relations(pillars, out)['zhi_relations']
@@ -474,6 +591,25 @@ def build(pillars):
         '_note': '仅十神同现前提, 非配合成立/非成格; 位置隔位作用关系后续Rule层',
     }
     # === PZZQ 冲合互动裁决 (原典: PZZQ 900/1354/3228 卯申乙庚暗合; PZ-0034 冲解会; PZ-0046 暗合解冲; PZ-0047 刑合) ===
+    # 权威源(2026-10-06): 六冲/六合存在性以排盘引擎 l0_chart 为准; 缺时兜底归档表
+    _CH_T, _HE_T = {}, {}
+    if l0_chart:
+        _ZB4 = {'ZI': '子', 'CHOU': '丑', 'YIN': '寅', 'MAO': '卯', 'CHEN': '辰',
+                'SI': '巳', 'WU': '午', 'WEI': '未', 'SHEN': '申', 'YOU': '酉',
+                'XU': '戌', 'HAI': '亥'}
+        for _k in (l0_chart.get('branch_clash_map') or {}):
+            _ps = str(_k).split('-')
+            if len(_ps) == 2:
+                _CH_T[_ZB4.get(_ps[0], _ps[0])] = _ZB4.get(_ps[1], _ps[1])
+                _CH_T[_ZB4.get(_ps[1], _ps[1])] = _ZB4.get(_ps[0], _ps[0])
+        for _k in (l0_chart.get('branch_he_map') or {}):
+            _ps = str(_k).split('-')
+            if len(_ps) == 2:
+                _HE_T[_ZB4.get(_ps[0], _ps[0])] = _ZB4.get(_ps[1], _ps[1])
+                _HE_T[_ZB4.get(_ps[1], _ps[1])] = _ZB4.get(_ps[0], _ps[0])
+    else:
+        from engines.common._legacy_relation_tables.legacy_relation_tables import (
+            LIUHE_LEGACY as _HE_T, LIUCHONG_LEGACY as _CH_T)
     # 1) 暗合 anhe: PZZQ 只认卯申(卯藏乙/申藏庚本气=乙庚合); 仅相邻成立; 记位置
     anhe_idx = []
     for i in range(4):
@@ -489,7 +625,7 @@ def build(pillars):
     chong_indexed = []
     for i in range(4):
         for j in range(i + 1, 4):
-            if LIUCHONG.get(zhis[i]) == zhis[j]:
+            if _CH_T.get(zhis[i]) == zhis[j]:
                 chong_indexed.append((zhis[i], zhis[j], i, j))
     chong_active = [[a, b] for a, b, i, j in chong_indexed if j - i == 1]
     chong_inactive = [[a, b] for a, b, i, j in chong_indexed if j - i >= 2]
@@ -529,7 +665,7 @@ def build(pillars):
         else:
             z, zpos = b, j
         oth = [zhis[k] for k in range(4) if k not in (i, j)]
-        tg = LIUHE.get(z)
+        tg = _HE_T.get(z)
         if tg and tg in oth:
             return 'canceled', f'明合六合({z}{tg})'
         o = _ju_others(z, SANHE_JU)
@@ -576,7 +712,7 @@ def build(pillars):
     for a, b, i, j in chong_survive_idx:
         chong_pos.update((i, j))
     liuhe_idx = [(i, j) for i in range(4) for j in range(i + 1, 4)
-                 if LIUHE.get(zhis[i]) == zhis[j]]
+                 if _HE_T.get(zhis[i]) == zhis[j]]
     liuhe_cancel = [[zhis[i], zhis[j]] for i, j in liuhe_idx
                     if i in chong_pos or j in chong_pos]
     banhe_idx = [(i, j) for i in range(4) for j in range(i + 1, 4)

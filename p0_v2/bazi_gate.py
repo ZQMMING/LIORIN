@@ -101,19 +101,17 @@ def paipan(bazi: str) -> Dict[str, Any]:
         raise ValueError("四柱须 8 字(4干4支), 收到 %r" % bazi)
 
     p = _pillars(bz)
-    f = _l0build(p)
-    f["pillars"] = p
-    f["wuxing_power"] = build_wuxing_power(p, f)
-    th = build_tian_he(p, f)
-    hst = {p[k][1]: f["hidden_stems"][k] for k in _POS}
 
-    # 排盘引擎完整输出接进 facts (2026-10-06): 四柱输入 -> l0_paipan
-    #   _chart_from_pillars 全套(LIORIN calc_* 同源): 十二长生/藏干/藏干十神/
-    #   干支极性/六冲/六合/三合/三会/三刑/六害/六破/天干五合/天干冲/空亡/
-    #   纳音/神煞. 全部转中文后挂 f["l0_chart"] + 顶层投影 —— 案例调试
-    #   不再因接口缺字段空跑. 空亡另落标准化 xunkong 供 root_clash L5 解冲.
+    # 排盘引擎完整输出(2026-10-06): 四柱输入 -> l0_paipan._chart_from_pillars
+    #   全套(LIORIN calc_* 同源): 十二长生/藏干/藏干十神/干支极性/六冲/六合/
+    #   三合/三会/三刑/六害/六破/天干五合/天干冲/空亡/纳音/神煞.
+    #   ★ l0_fact_builder 关系事实以本输出为唯一权威源(不再本地重复自算,
+    #     本地表已归档 _legacy_relation_tables); 空亡落标准化 xunkong 供
+    #     root_clash L5 解冲; 全部转中文挂 f["l0_chart"] + 顶层投影.
+    _l0c_raw = None
+    _l0c_cn = None
     try:
-        _l0c = _l0chart_from_pillars(p)
+        _l0c_raw = _l0chart_from_pillars(p)
         _PY2CN = {}
         _PY2CN.update(_BP_CN)   # 支: 拼音 -> 中文
         _PY2CN.update(_G_CN)    # 干: 拼音 -> 中文
@@ -123,8 +121,20 @@ def paipan(bazi: str) -> Dict[str, Any]:
             if isinstance(v, (list, tuple)):
                 return [_cn(x) for x in v]
             return _PY2CN.get(str(v), str(v))
-        f["l0_chart"] = {k: _cn(v) for k, v in _l0c.items()}
-        _kw = tuple(_l0c.get("kong_wang") or ())
+        _l0c_cn = {k: _cn(v) for k, v in _l0c_raw.items()}
+    except Exception:
+        _l0c_raw = None
+        _l0c_cn = None
+
+    f = _l0build(p, _l0c_raw)
+    f["pillars"] = p
+    f["wuxing_power"] = build_wuxing_power(p, f)
+    th = build_tian_he(p, f)
+    hst = {p[k][1]: f["hidden_stems"][k] for k in _POS}
+
+    if _l0c_raw is not None:
+        f["l0_chart"] = _l0c_cn or {}
+        _kw = tuple(_l0c_raw.get("kong_wang") or ())
         _kw_cn = [_BP_CN.get(x, x) for x in _kw]
         # 空亡两支反查旬名(六旬唯一映射, 免 JIAZI_INDEX 拼音键歧义):
         #   (戌亥)=甲子旬 (申酉)=甲戌旬 (午未)=甲申旬 (辰巳)=甲午旬
@@ -133,7 +143,7 @@ def paipan(bazi: str) -> Dict[str, Any]:
                    ("WU", "WEI"): "甲申旬", ("CHEN", "SI"): "甲午旬",
                    ("YIN", "MAO"): "甲辰旬", ("ZI", "CHOU"): "甲寅旬"}
         f["xunkong"] = {"xun": _KW2XUN.get(_kw, ""), "kong_wang": list(_kw_cn)}
-    except Exception:
+    else:
         f["l0_chart"] = {}
         f["xunkong"] = {"xun": "", "kong_wang": []}
 
