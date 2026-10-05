@@ -917,7 +917,11 @@
  {
   "cid": "DT-0097",
   "bz": "癸酉甲子丙寅戊戌",
-  "entail": {},
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
   "events": [],
   "eng_events": [],
   "conflicts": []
@@ -1435,7 +1439,11 @@
  {
   "cid": "DT-0152",
   "bz": "壬辰壬子丙寅癸巳",
-  "entail": {},
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
   "events": [],
   "eng_events": [],
   "conflicts": []
@@ -1467,6 +1475,9 @@
   "entail": {
    "de_ling": [
     false
+   ],
+   "de_di": [
+    true
    ]
   },
   "events": [],
@@ -1531,7 +1542,11 @@
  {
   "cid": "DT-0161",
   "bz": "己丑辛未丙寅己丑",
-  "entail": {},
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
   "events": [],
   "eng_events": [
    "chong"
@@ -1793,7 +1808,11 @@
  {
   "cid": "DT-0189",
   "bz": "癸酉甲子丙寅乙未",
-  "entail": {},
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
   "events": [],
   "eng_events": [],
   "conflicts": []
@@ -2166,7 +2185,11 @@
  {
   "cid": "DT-0228",
   "bz": "丙子丙申丙子丙申",
-  "entail": {},
+  "entail": {
+   "de_di": [
+    false
+   ]
+  },
   "events": [],
   "eng_events": [],
   "conflicts": []
@@ -3511,7 +3534,11 @@
  {
   "cid": "DT-0363",
   "bz": "壬辰壬子甲寅戊辰",
-  "entail": {},
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
   "events": [],
   "eng_events": [],
   "conflicts": []
@@ -4653,6 +4680,9 @@
   "entail": {
    "de_ling": [
     false
+   ],
+   "de_di": [
+    true
    ]
   },
   "events": [],
