@@ -94,16 +94,33 @@ def build(pillars, l0_chart=None):
     排盘有, 收敛顺带修复)。l0_chart 缺时兜底用 _legacy_relation_tables
     (ARCHIVED_FALLBACK, 见 engines/common/_legacy_relation_tables/)。"""
     dg = pillars['day'][0]
+    # 2026-10-06 权威源=排盘引擎 l0_chart: 藏干 hidden_stems(LIORIN 主/中/余气)
+    #   → 子平格式 {pos: 中文干列表} (all 顺序=主/中/余, 保持 [0]=本气 用法)
+    if l0_chart and l0_chart.get('hidden_stems'):
+        _CNH = {'JIA': '甲', 'YI': '乙', 'BING': '丙', 'DING': '丁', 'WU': '戊',
+                'JI': '己', 'GENG': '庚', 'XIN': '辛', 'REN': '壬', 'GUI': '癸'}
+        _hids = {}
+        for _k, _v in l0_chart['hidden_stems'].items():
+            if isinstance(_v, dict):
+                # LIORIN calc_hidden_stems: {main, middle, residual}
+                _seq = [_v.get('main'), _v.get('middle'), _v.get('residual')]
+                _hids[_k] = [_CNH.get(x, x) for x in _seq if x]
+            else:
+                _hids[_k] = [_CNH.get(x, x) for x in (_v or []) if x]
+        hidden_stems_f = _hids
+    else:
+        hidden_stems_f = {k: HIDDEN[v[1]] for k, v in pillars.items()}
     out = {'day_stem': dg,
            'month_branch': pillars['month'][1],
-           'hidden_stems': {k: HIDDEN[v[1]] for k, v in pillars.items()},
+           'hidden_stems': hidden_stems_f,
            'stem_relations': {},
            'root_facts': {},
            'combination_facts': {'liuhe': [], 'liuchong': [], 'anhe': []}}
-    # 十神事实: 每个天干 vs 日干
+    # 十神事实: 每个天干 vs 日干 (2026-10-06 权威源=排盘 l0_chart stem_ten_gods)
+    _stg = (l0_chart or {}).get('stem_ten_gods') or {}
     for k, (g, z) in pillars.items():
         if k == 'day': continue
-        out['stem_relations'][k] = {'stem': g, 'ten_god': ten_god(dg, g)}
+        out['stem_relations'][k] = {'stem': g, 'ten_god': _stg.get(k) or ten_god(dg, g)}
     # 根事实: 日干在各支藏干中
     for k, (g, z) in pillars.items():
         out['root_facts'][k] = dg in HIDDEN[z]
@@ -457,7 +474,7 @@ def build(pillars, l0_chart=None):
     #   阶段1: 旧九键与 branch_relations 保持原样生成, 双写并存(relations 为新增唯一源)。
     #   阶段2: 旧九键改由 relations 派生(derive_all), 本处不改。
     from engines.common.relations_builder import build_relations, derive_all
-    out['relations'] = build_relations(zhis)
+    out['relations'] = build_relations(zhis, l0_chart)
     # ★ PATCH-REL-02 (阶段2a) 旧九键降级为 relations 派生视图
     #   契约 v1.1 §3 阶段2 / §2 派生规则。
     #   下方 L428(chong_set) / L582(sanhe_cancel) 等内部消费者读的就是派生值,
@@ -517,7 +534,7 @@ def build(pillars, l0_chart=None):
         out['combination_facts']['sanxing'] = _n3(_k3(l0_chart.get('branch_sanxing_map')), _XXN)
     # V7.25 D1/D2 地支关系事实层 (P0: 六合距离衰减+阻隔 + 暗会)
     from engines.common.daymaster_branch_relations import build_branch_relations
-    out['branch_relations'] = build_branch_relations(pillars, out)['zhi_relations']
+    out['branch_relations'] = build_branch_relations(pillars, out, l0_chart)['zhi_relations']
     # PATCH-155 官星受冲/被合: 关系必须作用到官星本身, 非"有合/有冲"
     guan_tg = [s for s in osg if ten_god(dg, s) in _CAT['官']]  # 天干官星
     he_set = set()

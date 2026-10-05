@@ -115,6 +115,7 @@ def paipan(bazi: str) -> Dict[str, Any]:
         _PY2CN = {}
         _PY2CN.update(_BP_CN)   # 支: 拼音 -> 中文
         _PY2CN.update(_G_CN)    # 干: 拼音 -> 中文
+        _PY2CN.update({"WOOD": "木", "FIRE": "火", "EARTH": "土", "METAL": "金", "WATER": "水"})  # 化气五行
         def _cn(v):
             if isinstance(v, dict):
                 return {str(k): _cn(x) for k, x in v.items()}

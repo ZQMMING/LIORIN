@@ -11,6 +11,8 @@ from typing import Dict, Any, List
 
 GAN_WX = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
           '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+# ★ ARCHIVED_FALLBACK (2026-10-06): 支本气五行已改消费排盘 facts['hidden_stems'],
+# 本表仅兜底(非 gate 调用方). 备份: _legacy_relation_tables.
 ZHI_BEN_WX = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土',
               '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金',
               '戌': '土', '亥': '水'}
@@ -21,17 +23,27 @@ YOU_QI = 1
 
 
 def _wx_combo(facts: Dict[str, Any], wx: str) -> int:
-    """某五行全局 combo: 他干透干(排除日干) + 本气根 + 局票(ju_n*2+banhe_n)."""
+    """某五行全局 combo: 他干透干(排除日干) + 本气根 + 局票(ju_n*2+banhe_n).
+    2026-10-06: 支本气五行以排盘权威 facts['hidden_stems'] 为准(缺时兜底本地表)."""
     pl = facts.get('pillars') or {}
+    _hd_ = facts.get('hidden_stems') or {}
+    _zbw = {}
+    if _hd_:
+        for _pos in ('year', 'month', 'day', 'hour'):
+            _z_ = _z(pl, _pos)
+            if _z_ and _hd_.get(_pos):
+                _zbw[_z_] = GAN_WX.get(_hd_[_pos][0], '')
+    if not _zbw:
+        _zbw = ZHI_BEN_WX
     tou = sum(1 for pos in ('year', 'month', 'hour')
               if GAN_WX.get(_g(pl, pos)) == wx)
     ben = sum(1 for pos in ('year', 'month', 'day', 'hour')
-              if ZHI_BEN_WX.get(_z(pl, pos)) == wx)
+              if _zbw.get(_z(pl, pos)) == wx)
     extra = facts.get('transit_extra') or []
     for eg, ez in extra:
         if GAN_WX.get(eg) == wx:
             tou += 1
-        if ZHI_BEN_WX.get(ez) == wx:
+        if _zbw.get(ez) == wx:
             ben += 1
     wp = facts.get('wuxing_power', {})
     wpd = wp.get('wuxing_power', wp) if isinstance(wp, dict) else {}

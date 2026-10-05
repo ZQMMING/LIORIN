@@ -21,10 +21,12 @@ ZHI_WX = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火
 # SFTK: 乙日寅月, 阳木得令阴木反弱. 寅是甲禄不是乙根.
 _YIN_YANG_JIEGEN = {('乙','寅'): True}
 # 地支本气干(禄=同阴阳日主根; 刃支本气=劫财, 异阴阳非日主根)
+# ★ ARCHIVED_FALLBACK (2026-10-06): 支本气干已改消费排盘 facts['hidden_stems'],
+# 本表仅兜底(非 gate 调用方). 备份: _legacy_relation_tables.
 ZHI_BEN_GAN = {'子':'癸','丑':'己','寅':'甲','卯':'乙','辰':'戊','巳':'丙',
                '午':'丁','未':'己','申':'庚','酉':'辛','戌':'戊','亥':'壬'}
 
-def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None):
+def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None, facts=None):
     """日主视角旺衰tier: 剥借根+冲拔拓扑后再判element_power_tier.
     同阴阳判据(PZZQ"刃乃劫我正财之神, 不善之神须逆势驾驭"): 异阴阳本气支(刃/劫财禄)
     是比劫非日主根 -> 剥; 仅同阴阳本气支(禄)计日主根. 中余气维度待依赖.
@@ -43,7 +45,17 @@ def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None):
     dm_e = wp2['wuxing_power'].get(wx, {})
     if pillars:
         _zhis = [pillars[_pos][1] for _pos in ('year','month','day','hour')]
-        _ben_self = sum(1 for _z in _zhis if ZHI_BEN_GAN.get(_z) == dg)
+        # 2026-10-06: 支本气干以排盘权威 facts['hidden_stems'] 为准(缺时兜底本地表)
+        _hd_ = (facts or {}).get('hidden_stems') or {}
+        _zhi_ben_gan = {}
+        if _hd_:
+            for _pos in ('year', 'month', 'day', 'hour'):
+                _z_ = pillars.get(_pos, ['', ''])[1]
+                if _z_:
+                    _zhi_ben_gan[_z_] = (_hd_.get(_pos) or [''])[0]
+        if not _zhi_ben_gan:
+            _zhi_ben_gan = ZHI_BEN_GAN
+        _ben_self = sum(1 for _z in _zhis if _zhi_ben_gan.get(_z) == dg)
         # 得地层·冲拔拓扑算子 (五层: 冲对/根位/冲-根匹配/冲力/解冲)
         #   滴天髓「旺者冲衰衰者拔, 衰神冲旺旺神发」——根方失时(休囚死)被
         #   强冲且无合解 -> 拔; 根方得时被冲 -> 发, 不拔; 隔柱旺冲衰亦拔;
@@ -53,7 +65,7 @@ def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None):
         dm_e['ben_n'] = effective_ben(
             _ben_self,
             build_root_clash_events(pillars, dg, _ling, wp2['wuxing_power'],
-                                    kong_wang),
+                                    kong_wang, (facts or {}).get('l0_chart') or None),
             _ling)
     elif (dg, month_zhi) in _YIN_YANG_JIEGEN:
         dm_e['ben_n'] = max(0, dm_e.get('ben_n',0) - 1)
@@ -87,6 +99,17 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
     dg = facts.get('day_stem', '') or ''
     gans = _gans(pillars)
     zhis = _zhis(pillars)
+    # 2026-10-06 权威源=排盘引擎: 支本气干从 facts['hidden_stems'][pos][0]
+    #   (l0_fact_builder 已消费排盘 hidden_stems); 缺时兜底本地表(归档备份)
+    _hd = facts.get('hidden_stems') or {}
+    _zhi_ben_gan = {}
+    if _hd:
+        for _pos in ('year', 'month', 'day', 'hour'):
+            _z = pillars.get(_pos, ['', ''])[1]
+            if _z:
+                _zhi_ben_gan[_z] = (_hd.get(_pos) or [''])[0]
+    if not _zhi_ben_gan:
+        _zhi_ben_gan = ZHI_BEN_GAN
 
     # PATCH-GAP11c (2026-10): 从格入口统一净化 —— special_pattern.py L572「从杀格」CANDIDATE
     #   不入正式格层。L572 条件含「日主无根或根极弱」, 「根极弱」是工程自造词, 全库无切片;
@@ -267,7 +290,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         sha_gans = [g for g in gans if ten_god(dg, g) == '七杀']
         yin_gans = [g for g in gans if ten_god(dg, g) in ('正印', '偏印')]
         # "弃食"判据: 食神须虚透无根(四支本气无同干)才算弃食; 食神有本气根正在制杀=未弃, 不走此路径
-        _shi_qishi = not any(ZHI_BEN_GAN.get(z) in shishen_gans for z in zhis)
+        _shi_qishi = not any(_zhi_ben_gan.get(z) in shishen_gans for z in zhis)
         if shishen_gans and sha_gans and not cai_gans and yin_gans and _shi_qishi:
             facts['ge_cheng'] = {
                 'ge': '食神格(带煞无财)',
@@ -658,7 +681,9 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             # 成格: 身强+制
             if has_zhi:
                 _mz = pillars.get('month', ['',''])[1] if 'month' in pillars else ''
-                _dt = dm_tier(facts.get('wuxing_power',{}), dg, _mz, pillars)
+                _dt = dm_tier(facts.get('wuxing_power',{}), dg, _mz, pillars,
+                              kong_wang=(facts.get('xunkong') or {}).get('kong_wang'),
+                              facts=facts)
                 if _dt['tier'] >= 2:
                     sha_wx = GAN_WX[sha_gans[0]]
                     # 成格时按成格路径收窄喜神(原典PI_GUAN_001/002逐案):
@@ -763,14 +788,21 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         ss_wx_def = facts.get('month_qi_element', '') or ''
         # 制杀太过检查(PZZQ4106"制煞过重同样成病"): 杀透 + 食伤当令(前提) + 杀无本气根/根被六冲 -> 格不成
         # 格不成则ti/xi清空, 由bingyao层判"制杀太过"(有印药则降级); 杀有根能任 -> 正常成格
-        _LIUCHONG_PAIR = {'子':'午','午':'子','丑':'未','未':'丑','寅':'申','申':'寅',
-                          '卯':'酉','酉':'卯','辰':'戌','戌':'辰','巳':'亥','亥':'巳'}
+        # 2026-10-06: 六冲/本气干以排盘权威 facts 为准(combination_facts.liuchong /
+        #   hidden_stems[0]), 不再本地查表
         _qs_def = _god_gans('七杀')
         _zhi_list = list(zhis)
         if _qs_def:
+            _hd = facts.get('hidden_stems') or {}
+            _zhi_ben = {pillars[_pos][1]: (_hd.get(_pos) or [''])[0]
+                        for _pos in ('year', 'month', 'day', 'hour')}
             _sha_ben_zhis = [z for z in _zhi_list
-                             if ten_god(dg, ZHI_BEN_GAN.get(z, '')) == '七杀']
-            _sha_root_chong = any(_LIUCHONG_PAIR.get(z) in _zhi_list for z in _sha_ben_zhis)
+                             if ten_god(dg, _zhi_ben.get(z, '')) == '七杀']
+            _ch_pairs = [frozenset(_p)
+                         for _p in (facts.get('combination_facts', {}).get('liuchong') or [])
+                         if len(_p) == 2]
+            _sha_root_chong = any(any(z in _k for _k in _ch_pairs)
+                                  for z in _sha_ben_zhis)
             # 仅"杀根被六冲(制尽)"判格不成; "杀无根"仍论格成(虚杀/中余气, 层次问题非原局病)
             if _sha_root_chong:
                 facts['ge_cheng'] = None
@@ -1043,7 +1075,11 @@ def normalize_ti_wx(facts: Dict[str, Any]) -> Dict[str, Any]:
     body = _GE_BODY_SHEN.get(ge)
     if body is None:
         return facts                            # 从/化/专旺/食神制杀等, 不动
-    mben = ZHI_BEN_GAN.get(pillars['month'][1])
+    # 2026-10-06: 月支本气干以排盘权威 facts['hidden_stems'] 为准(缺时兜底本地表)
+    _hd = facts.get('hidden_stems') or {}
+    _mzh = pillars['month'][1]
+    _mhd = _hd.get('month') or []
+    mben = _mhd[0] if _mhd else ZHI_BEN_GAN.get(_mzh, '')
     if mben and ten_god(dg, mben) in body:
         gc['ti_wx'] = [GAN_WX[mben]]
     return facts

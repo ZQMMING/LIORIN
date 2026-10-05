@@ -113,7 +113,7 @@ def _blocking_of(interv_zhi, a, b, huashen):
     return out
 
 
-def build_relations(zlis: List[str]) -> List[Dict[str, Any]]:
+def build_relations(zlis: List[str], l0_chart=None) -> List[Dict[str, Any]]:
     """按统一 schema 构建 relations。
 
     输入: 四支地支名, 盘序 [year, month, day, hour]
@@ -123,12 +123,47 @@ def build_relations(zlis: List[str]) -> List[Dict[str, Any]]:
     硬约束②: 一般关系每组实例 pos_i < pos_j
     硬约束④: 不同 type 不合并(聚合键含 type)
 
+    ★ 2026-10-06 权威源收敛: 关系【存在性】以排盘引擎 l0_chart 为唯一权威源
+      (CHONG/HE/SANHE/HUI/HAI/PO/XING); BANHE/ANHUI/SELF 排盘引擎无此域,
+      保留本地判定(表备份于 _legacy_relation_tables)。l0_chart 缺时兜底本地表。
+
     ★ PATCH-REL-04 (阶段3a) instances 升为主字段
       instances: [{a_pos, b_pos, ...可选 distance/blocking}]   ← 真源
       positions: [[a_pos],[b_pos]]                              ← 派生视图
       理由: distance/blocking 是【实例级】语义(聚合后 N 实例各不同),
             relation 级单值会丢 N-1 份。
     """
+    # ── 2026-10-06 排盘权威: 关系对/局集合 (拼音键→中文) ──
+    _ZB9 = {'ZI': '子', 'CHOU': '丑', 'YIN': '寅', 'MAO': '卯', 'CHEN': '辰',
+            'SI': '巳', 'WU': '午', 'WEI': '未', 'SHEN': '申', 'YOU': '酉',
+            'XU': '戌', 'HAI': '亥'}
+    def _pairs_of(m):
+        """{拼音键: 值} → 中文对集合 frozenset"""
+        s = set()
+        for k in (m or {}):
+            ps = [x for x in str(k).split('-') if x]
+            if len(ps) == 2:
+                s.add(frozenset((_ZB9.get(ps[0], ps[0]), _ZB9.get(ps[1], ps[1]))))
+        return s
+    def _sets_of(m):
+        s = set()
+        for k in (m or {}):
+            ps = [x for x in str(k).split('-') if x]
+            if len(ps) >= 2:
+                s.add(frozenset(_ZB9.get(x, x) for x in ps))
+        return s
+    if l0_chart:
+        _HE_PAIRS = _pairs_of(l0_chart.get('branch_he_map'))
+        _CH_PAIRS = _pairs_of(l0_chart.get('branch_clash_map'))
+        _SANHE_SETS = _sets_of(l0_chart.get('branch_sanhe_map'))
+        _SANHUI_SETS = _sets_of(l0_chart.get('branch_sanhui_map'))
+        _HAI_SETS = _pairs_of(l0_chart.get('branch_harm_map'))
+        _PO_SETS = _pairs_of(l0_chart.get('branch_po_pairs'))
+        _XING_SETS = _sets_of(l0_chart.get('branch_sanxing_map'))
+        _HE_PAIRS_ACT, _CH_PAIRS_ACT = True, True
+    else:
+        _HE_PAIRS = _CH_PAIRS = _SANHE_SETS = _SANHUI_SETS = _HAI_SETS = _PO_SETS = _XING_SETS = None
+        _HE_PAIRS_ACT = _CH_PAIRS_ACT = False
     R: List[Dict[str, Any]] = []
     _agg: Dict[tuple, Dict[str, Any]] = {}
 
@@ -189,12 +224,18 @@ def build_relations(zlis: List[str]) -> List[Dict[str, Any]]:
     for i in range(4):
         for j in range(i + 1, 4):
             a, b = zlis[i], zlis[j]
-            if LIUHE.get(a) == b:
+            if _HE_PAIRS_ACT:
+                _is_he = frozenset((a, b)) in _HE_PAIRS
+                _is_ch = frozenset((a, b)) in _CH_PAIRS
+            else:
+                _is_he = LIUHE.get(a) == b
+                _is_ch = LIUCHONG.get(a) == b
+            if _is_he:
                 hs = _HE_WX.get(frozenset((a, b)))
                 _, ik = _geom(POSK[i], POSK[j])       # ik 为柱位名列表
                 blk = _blocking_of([zlis[POSI[k]] for k in ik], a, b, hs) if hs else []
                 put('HE', [a, b], [[POSK[i]], [POSK[j]]], wx=hs, blocking=blk)
-            if LIUCHONG.get(a) == b:
+            if _is_ch:
                 put('CHONG', [a, b], [[POSK[i]], [POSK[j]]])
     # ★ ANHUI 暗会: 支对∈ANHUI_PAIRS 且 distance=='adjacent' 才成立
     #   条件②「不混杂(无刑冲)」—— daymaster_branch_relations L131 注释有, 代码未实现。
@@ -223,14 +264,24 @@ def build_relations(zlis: List[str]) -> List[Dict[str, Any]]:
         return [p for p in POSK if zlis[POSI[p]] == z]
 
     # ② 三合 / 三会: 集合包含, 三支齐全才报 (契约§1.5)
-    for s in SANHE:
-        if set(s['pair']).issubset(zset):
-            put('SANHE', list(s['pair']), [posof(z) for z in s['pair']],
-                wx=s['name'][-1], meta={'name': s['name']})
-    for s in SANHUI:
-        if set(s['pair']).issubset(zset):
-            put('HUI', list(s['pair']), [posof(z) for z in s['pair']],
-                wx=s['name'][-1], meta={'name': s['name']})
+    if _SANHE_SETS is not None:
+        for s in SANHE:
+            if set(s['pair']) in _SANHE_SETS and set(s['pair']).issubset(zset):
+                put('SANHE', list(s['pair']), [posof(z) for z in s['pair']],
+                    wx=s['name'][-1], meta={'name': s['name']})
+        for s in SANHUI:
+            if set(s['pair']) in _SANHUI_SETS and set(s['pair']).issubset(zset):
+                put('HUI', list(s['pair']), [posof(z) for z in s['pair']],
+                    wx=s['name'][-1], meta={'name': s['name']})
+    else:
+        for s in SANHE:
+            if set(s['pair']).issubset(zset):
+                put('SANHE', list(s['pair']), [posof(z) for z in s['pair']],
+                    wx=s['name'][-1], meta={'name': s['name']})
+        for s in SANHUI:
+            if set(s['pair']).issubset(zset):
+                put('HUI', list(s['pair']), [posof(z) for z in s['pair']],
+                    wx=s['name'][-1], meta={'name': s['name']})
 
     # ③ 半合: i<j + _seen 去重 (契约§1.4 去重口径)
     seen = set()
@@ -243,11 +294,25 @@ def build_relations(zlis: List[str]) -> List[Dict[str, Any]]:
                 seen.add(k)
 
     # ④ 害 / 破 / 刑: 集合包含
-    for t, S in (('HAI', LIUHAI), ('PO', LIUPO), ('XING', SANXING)):
-        for s in S:
-            if set(s['pair']).issubset(zset):
-                put(t, list(s['pair']), [posof(z) for z in s['pair']],
+    if _HAI_SETS is not None:
+        for s in LIUHAI:
+            if set(s['pair']) in _HAI_SETS and set(s['pair']).issubset(zset):
+                put('HAI', list(s['pair']), [posof(z) for z in s['pair']],
                     meta={'name': s['name']})
+        for s in LIUPO:
+            if set(s['pair']) in _PO_SETS and set(s['pair']).issubset(zset):
+                put('PO', list(s['pair']), [posof(z) for z in s['pair']],
+                    meta={'name': s['name']})
+        for s in SANXING:
+            if set(s['pair']) in _XING_SETS and set(s['pair']).issubset(zset):
+                put('XING', list(s['pair']), [posof(z) for z in s['pair']],
+                    meta={'name': s['name']})
+    else:
+        for t, S in (('HAI', LIUHAI), ('PO', LIUPO), ('XING', SANXING)):
+            for s in S:
+                if set(s['pair']).issubset(zset):
+                    put(t, list(s['pair']), [posof(z) for z in s['pair']],
+                        meta={'name': s['name']})
 
     # ⑤ 自刑: 单支不成对 —— 【硬约束① 的例外, 不额外包列表】
     pb: Dict[str, List[str]] = {}

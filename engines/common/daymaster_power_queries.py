@@ -234,7 +234,8 @@ def query_sha_zhong_shen_qing(network: Dict[str, Any]) -> Dict:
     )
 
 
-# 地支六合化神表
+# 地支六合化神表 (★ ARCHIVED_FALLBACK 2026-10-06: 已改消费排盘 l0_chart.he_hua,
+# 本表仅兜底. 备份: _legacy_relation_tables)
 LIUHE_HUASHEN = {
     frozenset(['子','丑']): '土',
     frozenset(['寅','亥']): '木',
@@ -260,6 +261,13 @@ def _root_combined_away(network: Dict[str, Any]) -> bool:
     month_branch = facts.get('month_branch', '')
     month_wx = BRANCH_WX.get(month_branch, '')
     day_stem = facts.get('day_stem', '')
+    # 2026-10-06 权威源=排盘引擎: 六合化神从 l0_chart.he_hua 取(缺时兜底本地表)
+    _he_hua_cfg = (facts.get('l0_chart') or {}).get('he_hua') or {}
+    _he_hua_map = {}
+    for _k, _v in _he_hua_cfg.items():
+        _brs = _v.get('branches') or []
+        if len(_brs) == 2:
+            _he_hua_map[frozenset(_brs)] = _v.get('hua_qi', '')
     # 日主五行
     STEM_WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
     dm_wx = STEM_WX.get(day_stem, '')
@@ -271,7 +279,7 @@ def _root_combined_away(network: Dict[str, Any]) -> bool:
                 others = rel.get('with_branches', [])
                 if others:
                     pair = frozenset([info.get('branch',''), others[0]])
-                    huashen = LIUHE_HUASHEN.get(pair, '')
+                    huashen = _he_hua_map.get(pair, '') or LIUHE_HUASHEN.get(pair, '')
                     if huashen and month_wx == huashen and huashen != dm_wx:
                         return True
     return False

@@ -11,6 +11,9 @@
 """
 from typing import Any, Dict, List
 
+# ★ ARCHIVED_FALLBACK (2026-10-06): 本文件已是 relations 派生视图,
+#   六合/暗会实例由 relations_builder(L0 唯一源) 生成, 本表不再主链使用.
+#   备份: _legacy_relation_tables.
 # D1 六合六组
 LIUHE_PAIRS = {
     frozenset(('子', '丑')): '土',
@@ -46,7 +49,8 @@ POSITION_DISTANCE = {
 POS_ORDER = {'year': 0, 'month': 1, 'day': 2, 'hour': 3}
 
 
-def build_branch_relations(pillars: Dict[str, Any], facts: Dict[str, Any]) -> Dict[str, Any]:
+def build_branch_relations(pillars: Dict[str, Any], facts: Dict[str, Any],
+                           l0_chart=None) -> Dict[str, Any]:
     """构建地支关系事实层.
     
     输入:
@@ -82,7 +86,7 @@ def build_branch_relations(pillars: Dict[str, Any], facts: Dict[str, Any]) -> Di
     try:
         from engines.common.relations_builder import build_relations
         _z = [pillars[k][1] for k in ('year', 'month', 'day', 'hour')]
-        _R = build_relations(_z)
+        _R = build_relations(_z, l0_chart)
         _view = []
         for _r in _R:
             _t = _r['type']
