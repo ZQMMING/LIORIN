@@ -1,6 +1,6 @@
 # L3 判据契约（判据中心 · 非「六维框架」）
 
-> 版本 **v1.10**　　日期 2026-10-04　　状态 **拓扑派生层已接入 paipan 顶层 + 字段消费类型声明制**（v1.9 §4.0 接入记录〔裁71乙〕 → v1.10 §4.21 全仓虚引用核〔裁77甲/80丙/83甲〕+ §4.22 字段消费类型声明制〔裁87甲〕）（v1.7 判层措辞/双源登记/strength_rules登记 → v1.8 §二去重 + §八 文档规范）（v1.5 旺/衰判定核验 + 判层归宿 → v1.6 字段清单唯一出处〔裁48〕/ 冲激字段取值修正〔裁49〕/ compare_key 契约化〔裁45〕/ L215 条件互斥〔裁44〕/ 第4刀作废〔裁42〕）
+> 版本 **v1.11**　　日期 2026-10-04　　状态 **拓扑派生层已接入 paipan 顶层 + 字段消费类型声明制**（v1.10 §4.21 虚引用核 + §4.22 字段消费类型声明制 → v1.11 §2.6.7 strength_verdict 落码形态 + §2.6.8 producer 管线关系核〔裁丙〕）（v1.7 判层措辞/双源登记/strength_rules登记 → v1.8 §二去重 + §八 文档规范）（v1.5 旺/衰判定核验 + 判层归宿 → v1.6 字段清单唯一出处〔裁48〕/ 冲激字段取值修正〔裁49〕/ compare_key 契约化〔裁45〕/ L215 条件互斥〔裁44〕/ 第4刀作废〔裁42〕）
 > 依据：刘基《滴天髓》京图撰刘基原注本（准神，行号引 `registries/source/raw/DTS_滴天髓_京图撰刘基原注.md`）
 > 定位：**事实声明**，不是愿望清单。字段是「现在能读到什么」，不是「应该有什么」。
 
@@ -38,7 +38,7 @@
 | 2 | `ling_state` | str 枚举 | `旺/相/休/囚/死`（5 值互斥） | L225「气象得令者吉」 | 直取 `_dmp` | 主 | ACTIVE |
 | 3 | `root_grade` | str 枚举 | `无/余/本` | L119「不论有根无根」 | **L3 计算**：`_grade_of(_classes)`，再经 `dm_ben_eff==0 → 无` | 主 | ACTIVE |
 | 4 | `support_state` | str 枚举 | `SHENG_FU_CHENG_SHI/KE_XIE_CHENG_SHI/PINGHENG` | L280「党多」/ L604「子之党多」 | **L3 计算**：同党/异党离散计数对比 | 主 | ACTIVE |
-| 5 | `strength_verdict` | str | `'NOT_AUTHORIZED'`（**键存在，值为字符串**） | — | 常量字符串 | 主 | **NOT_AUTHORIZED** |
+| 5 | `strength_verdict` | dict | `{value,status,predictive,basis}`（**v1.11 起为 dict**，见 §2.6.7） | — | 规则输出结构 | 主 | **ENGINE_DEFINED / predictive=False** |
 | 6 | `chong_adjust` | int 序数 | `-1 / 0 / +1`（严格三值，越界=违反） | L108「旺者冲衰衰者拔，衰神冲旺旺神发」/ L110 两方对比 | 直取 `_dmp` | 主 | ACTIVE |
 | 7 | `chong_role` | str 枚举 | `CHONG_ACTIVE/CHONG_PASSIVE/BROTHER_CHONG/NO_CHONG` | L106「申能克寅，是彼冲我」/ L102「四库兄弟之冲」 | 直取 `_dmp` | 主 | ACTIVE |
 | 8 | `chong_by` | str \| None | 冲方支名 | L106「能克方为冲方」 | 直取 `_dmp` | 主 | ACTIVE |
@@ -254,7 +254,7 @@ if _dmp is None:
 | `EXTREME_WEAK` | DTS L235「**衰之极者不可益**」 | `DTS_CITED` | True |
 
 **三值，非对称（原典本如此）。**
-**`strength_verdict` 字段当前值恒为 `'NOT_AUTHORIZED'` —— 值域已定义，无判据不出值。**
+**`strength_verdict` 当前为 dict 形态（§2.6.7）: value 恒 None, predictive 恒 False —— 值域已定义, 三档映射未落。**
 
 ### 2.4 ★ 已否决候选：`EXTREME_STRONG`
 
@@ -433,102 +433,178 @@ DTS L235 明文: 「旺中有衰者存，不可损也；衰中有旺者存，不
     乙  判层【永不存在】 —— L4 直接读「量」, 自己合
 
 ★ 没有第三条路。不裁 = 判层悬空。
-  「判层独立」方向对了但不落地点，等于没定。
+「判层独立」方向对了但不落地点，等于没定。
 
-本轮裁【乙】: 维持 strength_verdict = NOT_AUTHORIZED
-  理由: ENGINE_DEFINED 的判据没有 DTS 依据, 落它等于拍
-  NOT_AUTHORIZED 就是「无 DTS 判据来源」的如实声明（同 condition_2_pending）
+本轮裁【乙】: 维持 strength_verdict 不出判值（v1.11 起形态为 dict, 见 §2.6.7）
+理由: ENGINE_DEFINED 的判据没有 DTS 依据, 落它等于拍
+不出判值就是「无 DTS 判据来源」的如实声明（同 condition_2_pending）
 
 → 判层归属: 【接口存在, 但被禁止出值】（v1.7 修正措辞, 见下）
 
 ★ v1.7 措辞修正(裁五十五甲 + 专核实测):
-  原措辞「判层【暂不存在】」不准确 —— 判层【接口是存在的】:
+原措辞「判层【暂不存在】」不准确 —— 判层【接口是存在的】:
     engines/common/strength_producer.py :: produce_strength()   接口在
     strength_state 在 engines/ 生产层 100 处 / 23 个文件出现, 20+ 文件在读
     唯一生产者恒返回 value='UNDETERMINED'
       注: strength_producer.py L52「综合生产条件未授权组合
            （无单一经典直产 strength_state）→ FAIL_CLOSED 正确」
 
-  「不存在」与「被禁止」对 L4 是两件事:
+「不存在」与「被禁止」对 L4 是两件事:
     不存在 = 无接口, L4 拿不到东西, 要新建接口
     被禁止 = 接口在, L4 能调, 但拿到的值恒为 FAIL_CLOSED, 不用建接口
 
-  对 L4 的影响: 接口在 → L4 不必另建接口
+对 L4 的影响: 接口在 → L4 不必另建接口
                 值恒 UNDETERMINED → L4 仍拿不到判定
 
-★ 与 strength_verdict=NOT_AUTHORIZED 的关系【不合并】(裁六十一乙):
-  两者【框架不同】, 表层相似但语义不同, 强行合并会把强断言降成待办:
-    strength_verdict = NOT_AUTHORIZED
+★ 与 strength_state=UNDETERMINED 的关系【不合并】(裁六十一乙):
+两者【框架不同】, 表层相似但语义不同, 强行合并会把强断言降成待办:
+    strength_verdict.value = None, predictive=False (v1.11 dict 形态, 见 §2.6.7)
       含义: DTS 层面无绝对判定法(依据 L245 + §2.6.1 三核)
       强度: 强断言 —— 依据源本身不提供
     strength_state  = UNDETERMINED
       含义: 规则未准入(rule_admission 状态机 DRAFT→CANDIDATE→ADMITTED 未达)
       强度: 弱断言 —— 工程流程状态
-  ★ authorized 指【规则准入状态机的 ADMITTED】, 不指「DTS 有无明文」
+★ authorized 指【规则准入状态机的 ADMITTED】, 不指「DTS 有无明文」
     (实证: rule_admission.py L3 状态机定义 / L52「无授权综合, FAIL_CLOSED」)
-  → 不登记为「同一结论的两个实现」, 也不要求两者同步修改
-    待办: 由案例反标定产生判据, 且反标定样本量达标后, 再裁甲或乙
-      触发条件: 基准集扩到可反标定规模（现 7 盘仅 sanity check, 见 §2.5）
-  ```
+→ 不登记为「同一结论的两个实现」, 也不要求两者同步修改（v1.11 实测管线独立, 见 §2.6.8）
+  待办: 由案例反标定产生判据, 且反标定样本量达标后, 再裁甲或乙
+    触发条件: 基准集扩到可反标定规模（现 7 盘仅 sanity check, 见 §2.5）
+```
 
-  #### 2.6.6 ★ 反标定路径当前不成立：两轴并存登记（v1.10 新增，裁七十九丙）
+#### 2.6.6 ★ 反标定路径当前不成立：两轴并存登记（v1.10 新增，裁七十九丙）
 
-  **实测（裁七十六丙 + 裁八十一甲，独立进程 301 盘三类口径）**
+**实测（裁七十六丙 + 裁八十一甲，独立进程 301 盘三类口径）**
 
-  ```
-  日主向样本池 = 301 盘
-    WANG 220 / SHUAI 79 / NEUTRAL 2（样本不足，不参与区分度计算）
-    宽口径 303 与三类 301 差 2 = 中和盘
+```
+日主向样本池 = 301 盘
+  WANG 220 / SHUAI 79 / NEUTRAL 2（样本不足，不参与区分度计算）
+  宽口径 303 与三类 301 差 2 = 中和盘
 
-  8 候选字段逐一造「字段值 × 断语」交叉表, 指标 = |P(WANG|v) − P(SHUAI|v)|
-  （样本量加权: 只看样本数 ≥20 的值; 未加权时 2~3 盘的稀疏值会刷到 1.000）
+8 候选字段逐一造「字段值 × 断语」交叉表, 指标 = |P(WANG|v) − P(SHUAI|v)|
+（样本量加权: 只看样本数 ≥20 的值; 未加权时 2~3 盘的稀疏值会刷到 1.000）
 
-  ★ 8 字段的二元切分准确率【全部】= 73.6%
-    基线（无脑全判多数类 WANG 220/299）= 73.6%
-    ★ 提升 0.0 个百分点 —— 无一字段能区分身旺/身弱
-  ```
+★ 8 字段的二元切分准确率【全部】= 73.6%
+  基线（无脑全判多数类 WANG 220/299）= 73.6%
+  ★ 提升 0.0 个百分点 —— 无一字段能区分身旺/身弱
+```
 
-  **两轴的精确定义（不空写「不同轴」，否则下次还会再试反标定）**
+**两轴的精确定义（不空写「不同轴」，否则下次还会再试反标定）**
 
-  ```
-  轴A 案例作者断语轴
-      身旺/身弱/太旺/中和 —— 任注/徐注/他本作者的口径
-      可能含: 命局整体气象、格局成败、日主坐支、某段运势
-      ※ 它是某个【合成结果】, 不是任一散字段的单调函数
+```
+轴A 案例作者断语轴
+    身旺/身弱/太旺/中和 —— 任注/徐注/他本作者的口径
+    可能含: 命局整体气象、格局成败、日主坐支、某段运势
+    ※ 它是某个【合成结果】, 不是任一散字段的单调函数
 
-  轴B 引擎字段轴（DTS 明文的【散字段】, 未合成）
-      ling_state / root_grade / dm_ben_eff / yin_ben_eff
-      de_ling / de_di / dang_duo / support_state
+轴B 引擎字段轴（DTS 明文的【散字段】, 未合成）
+    ling_state / root_grade / dm_ben_eff / yin_ben_eff
+    de_ling / de_di / dang_duo / support_state
 
-  实测: 轴B 8 个字段对轴A 预测力 = 0
-  ```
+实测: 轴B 8 个字段对轴A 预测力 = 0
+```
 
-  **★ 结论：反标定的对象不是「这 8 个字段」，而是「这 8 个字段合成后的一个更高层判定」**
+**★ 结论：反标定的对象不是「这 8 个字段」，而是「这 8 个字段合成后的一个更高层判定」**
 
-  ```
-  → 但合成规则本身 = ENGINE_DEFINED 且未定
-  → 所以「先反标定再定合成规则」是循环依赖
+```
+→ 但合成规则本身 = ENGINE_DEFINED 且未定
+→ 所以「先反标定再定合成规则」是循环依赖
 
-  ★ 这不是「引擎错」也不是「案例错」, 是【反标定的方法前提不满足】。
+★ 这不是「引擎错」也不是「案例错」, 是【反标定的方法前提不满足】。
 
-  枚举判据三条路的现状:
-    DTS 明文路   断（L245 否定以令定旺衰, §2.6.1 三核）
-    反标定路     断（本节实测零区分力）
-    前人已做路   断（strength_rules 输入是硬编码 demo + 虚引用证据, §4.19）
-  ```
+枚举判据三条路的现状:
+  DTS 明文路   断（L245 否定以令定旺衰, §2.6.1 三核）
+  反标定路     断（本节实测零区分力）
+  前人已做路   断（strength_rules 输入是硬编码 demo + 虚引用证据, §4.19）
+```
 
-  **★ 下一步（裁七十九甲）：枚举判据走「DTS 散句组合」路径**
+**★ 下一步（裁七十九甲）：枚举判据走「DTS 散句组合」路径**
 
-  ```
-  从 L110（相对比较）+ L235（旺则宜泄宜伤, 衰则喜帮喜助）+ L245（取最多最旺）
-  直接构造 f, 不反标定, 显式承认 ENGINE_DEFINED。
+```
+从 L110（相对比较）+ L235（旺则宜泄宜伤, 衰则喜帮喜助）+ L245（取最多最旺）
+直接构造 f, 不反标定, 显式承认 ENGINE_DEFINED。
 
-  ★ 与 EXTREME_STRONG 的处理同款: 显式声明「这是工程规则」, 不假装有 DTS 依据。
-  ★ 另一条备选（乙）: 永久 NOT_AUTHORIZED —— L3 只出量。两者择一, 不得并列。
+★ 与 EXTREME_STRONG 的处理同款: 显式声明「这是工程规则」, 不假装有 DTS 依据。
+★ 另一条备选（乙）: 永久 NOT_AUTHORIZED —— L3 只出量。两者择一, 不得并列。
 
-  触发条件: 落码前须先核「散句组合」是否引入 DTS 未给的量纲（如某种计数）;
-    若引入, 该量纲必须标 ENGINE_DEFINED 并单列, 不混入 DTS_CITED。
-  ```
+触发条件: 落码前须先核「散句组合」是否引入 DTS 未给的量纲（如某种计数）;
+  若引入, 该量纲必须标 ENGINE_DEFINED 并单列, 不混入 DTS_CITED。
+```
+
+#### 2.6.7 ★ `strength_verdict` 落码形态：dict 结构版（v1.11 新增，裁丙）
+
+**为什么不是裸字符串（三条裁的取舍）**
+
+```
+甲  落 f(support_state, de_ling, de_di) → ACTIVE      ← 已否决
+    理由(实测): 这 3 个字段正是 §2.6.6 零区分力的 8 字段中的 3 个。
+    落码后重测仍是 73.6% 基线 —— 输入不含信息。
+    ★ ACTIVE 但零预测力, 比 NOT_AUTHORIZED 更危险:
+      下游看到 "STRONG" 会当判用, 而 NOT_AUTHORIZED 至少告知无判据。
+
+乙  换输入轴                                    ← 未取(轴A 无引擎侧定义可读)
+
+丙  落码但显式声明「非预测性」                    ← 本节采用
+```
+
+**落码形态（`p0_v2/bazi_gate.py` PATCH-L3-02）**
+
+```python
+"strength_verdict": {
+    "value": None,              # 三态见下
+    "status": "ENGINE_DEFINED",
+    "predictive": False,
+    "basis": "L110 相对比较 + L235 方向 + L245 取最多最旺; 阈值 ENGINE_DEFINED",
+}
+```
+
+**★ 为什么用 dict 而不是裸字符串 —— 运行时防误用，不靠读文档**
+
+```
+下游写  if sv == 'STRONG'   → dict 与 str 恒不等 → 条件恒 False
+                            → 静默不命中, 而非按错误的判定继续跑
+下游写  sv.get('value')    → 显式取到 None, 看到 predictive=False
+```
+与 `check_guan_topology` 的 `verdict='INCOMPLETE'`、`usable_as_criteria=False` 同款：
+**让「不可直接当判用」成为运行时可感知的, 而不是靠读者记得文档。**
+
+**`value` 三态**
+
+```
+None                          三档映射未落（当前状态）
+"STRONG"/"WEAK"/"EXTREME_WEAK" 映射已落, 但 predictive 恒 False
+★ 恒不出 "EXTREME_STRONG" —— §2.4 已否决, 三源语义冲突
+```
+
+**`predictive=False` 是实测属性，不是免责声明**
+
+```
+它是【规则输出】, 不是【事实度量】。
+L4 要判定仍须自己合 —— 本字段只固定「判定发生在 L3 这一处」, 不提供判据。
+```
+
+#### 2.6.8 ★ 与 `strength_producer.strength_state` 的管线关系（v1.11 新增，落前核）
+
+**实测结论：两条管线完全独立，落 f 影响面 = 0**
+
+```
+核A  produce_strength() 零参数(L33), 结构上不可能读 L3。
+     4 个返回值全硬编码: wang=UNKNOWN / shuai=SHUAI / qiang=UNKNOWN / strength=UNDETERMINED
+     ★ 与盘无关 —— 同一盘/不同盘返回值完全相同。
+     全仓真实调用点 = 0（8 处命中全在本审计脚本自身）
+
+核B  strength_state 写入点 7 处, 无一处在生产链:
+     strength_pipeline.py    3 处  硬编码 demo（produce_states）
+     strength_rules_full.py  1 处  print(...)  ← 值只进 stdout
+     boolean_enum_test.py    1 处  测试
+     rule_admission.py       1 处  状态机字典
+     strength_producer.py    1 处  那个硬编码返回值
+
+核C  值域零交集:
+     l3_contract.strength_verdict : 三档 + dict 结构
+     strength_state               : UNDETERMINED（且恒定）
+```
+
+**★ 裁定意义：改 L3 的 `strength_verdict` 不动 producer、不动那 20+ 消费者。**
 
 ### 2.7 ★ 裁四十二/四十三/四十四 落定（v1.6）+ mo 核证结论
 
@@ -1587,12 +1663,12 @@ else 分支文案: 「中和/未定不裁喜忌」
 ## 五、`strength_verdict` 字段形态
 
 ```
-值恒为 NOT_AUTHORIZED。
-【写进契约】并标 status=NOT_AUTHORIZED —— 它是架构 §2.5 明文定的 L3 契约字段，
-缺实现 ≠ 不该在契约里。契约的 status 字段把「未实现」显式化，
+值形态为 dict（v1.11 改, 见 §2.6.7）: {value, status, predictive, basis}
+value 恒为 None（三档映射未落）; predictive 恒 False —— 它是【规则输出】不是【事实度量】。
+【写进契约】并显式化未实现状态 —— 它是架构 §2.5 明文定的 L3 契约字段，
+缺实现 ≠ 不该在契约里。predictive=False 把「无判据」显式化，
 与 relations 的 ANHUI `condition_2_pending` 同款处理。
 ```
-
 ---
 
 ## 六、视图联动检查项

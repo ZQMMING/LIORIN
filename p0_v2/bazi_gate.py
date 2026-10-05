@@ -288,7 +288,26 @@ def paipan(bazi: str) -> Dict[str, Any]:
         "root_grade": _root_grade,
         "root_grade_raw": _root_grade_raw,
         "support_state": _support_state,
-        "strength_verdict": "NOT_AUTHORIZED",
+        # ★ PATCH-L3-02 (2026-10-05) 枚举判据落码 —— 裁丙(dict 结构版)
+        #   契约: p0_v2/l3_contract_spec.md v1.11 §2.6.6
+        #   ★ 为什么是 dict 不是裸字符串:
+        #     §2.6.6 实测(301盘): 用 support_state/de_ling/de_di 任何组合
+        #     做输入, 对案例断语(身旺/身弱)的二元切分准确率 = 73.6%
+        #     = 多数类基线, 提升 0.0 个百分点 —— 输入不含信息。
+        #     裸字符串 "STRONG" 会让下游写 == 'STRONG' 时以为它是预测性判定。
+        #     dict 结构使裸比较恒 False → 运行时防误用, 不靠读文档。
+        #   ★ predictive=False 是本字段的实测属性, 不是免责声明:
+        #     它是【规则输出】, 不是【事实度量】。L4 要判定仍须自己合。
+        #   ★ value 三态(裁丙):
+        #     None       三档映射未落 —— 键在, 值不出
+        #     "STRONG"/"WEAK"/"EXTREME_WEAK"  映射已落但仍 predictive=False
+        #     恒不出 "EXTREME_STRONG"(§2.4 已否决, 三源语义冲突)
+        "strength_verdict": {
+            "value": None,
+            "status": "ENGINE_DEFINED",
+            "predictive": False,
+            "basis": "L110 相对比较 + L235 方向 + L245 取最多最旺; 阈值 ENGINE_DEFINED",
+        },
         # ★ PATCH-L3-01 (2026-10-03) L3 契约补 5 冲激字段
         #   契约: p0_v2/l3_contract_spec.md v1.0 §1 字段 6~10
         #   值【直取 _dmp_month】(wuxing_power[月令五行]) —— 不是从 six_dims 复制。
