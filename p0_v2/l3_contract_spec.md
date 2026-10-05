@@ -1824,6 +1824,77 @@ special_pattern.py 内的他本引用点 = 2 处:
         ★ 该处未标分级, 待补; 依据《渊海》非 DTS → 应为 BOOK_CITED
 ```
 
+#### 4.23.6 ★ PATCH-L4-01：L450 白名单丢弃 `patterns`（v1.14，裁九十八甲）
+
+**缺陷（探针发现，AST 定位）**
+
+```
+ge_jie_layer._special_of(spv):
+  L110  if spv.get('patterns') is not None: return spv    ← 复用已算 special
+  L112  return build_special_patterns(...)                ← 兜底重算
+
+但 bazi_gate L450 白名单只 8 键, 【无 patterns】
+→ spv 里根本没这个键 → spv.get('patterns') 恒 None → L110 恒 False
+★ 三重后果:
+  ① build_special_patterns 每盘被跑两遍（PATCH-GAP11d「单一数据源免重算」完全失效）
+  ② L902 的 _cong_pat 从格证据链恒为 None —— 格局判定的出处是空的
+  ③ patterns 是唯一带 note + facts 的证据链载体, 丢弃即证据链虚化
+     （与 §4.21 的 211 条虚引用同病: 引用虚化 vs 出口虚化）
+```
+
+**修复范围（最小）**
+
+```
+L450 白名单 + patterns  一个键
+不加 judgment_status / mu_mie_state —— 生产消费者 0, 加了徒增回归面
+```
+
+**验收（探针 + 回归，裁九十八甲：回归即验证，不做同构重算）**
+
+```
+探针  P1 白名单含 patterns        PASS
+     P2 2106 盘 0 崩溃            PASS
+     P3 patterns 真出口           PASS（special 8键 → 9键）
+     P4 facts['special'] AST = 2   PASS
+回归  post33 -> post34  判定字段总变化 = 0（2106 盘）
+★ 预期 A 成立: 修复是【纯性能】, 两条路径同结果
+  → build_special_patterns 是确定性的, 无副作用
+  → 同构重算（加 facts 导出入口改生产代码）不需要, 已撤回该方案
+```
+
+**★ 撤回记录：本轮曾误报「两路 special 分叉 427/2106」**
+
+```
+错因: 重算时把 paipan 顶层投影当作内部 facts 传入
+     顶层有 hidden, 无 hidden_stems（L434 显示顶层 hidden 是 f["hidden_stems"] 的派生）
+     → 从杀/从官的藏干细分失效 → 大量误判 None
+★ 该数字已撤回, 未进契约。教训: 回归可以当验证器, 不要为「提前验证」改生产代码。
+```
+
+#### 4.23.7 单立 issue：`judgment_status` 全仓 8 源同名不同义
+
+```
+实测（AST, 无窄过滤）: judgment_status 读取 12 处, 【全部是 tests/ 断言】
+★ 但它们读的不是 special 的 judgment_status, 而是各自模块的同名字段:
+  test_climate_structure_golden      → CLIMATE_STRUCTURE_ONLY
+  test_daymaster_power_structure      → NOT_AUTHORIZED
+  test_namespace_alignment_golden     → GEJU_CANDIDATE_ONLY / CLIMATE_CANDIDATE_ONLY
+  test_qtbj_climate_golden / presence → CLIMATE_CANDIDATE_ONLY
+  test_transit_power_golden           → TRANSIT_POWER_*
+  test_unified_overview_golden        → PARALLEL_VIEW_NO_TOTALIZER
+  test_xiang_shen_golden              → XIANG_ROLE_CANDIDATE_ONLY
+  test_yongshen_geju_golden            → GEJU_CANDIDATE_ONLY
+  test_zhonghe_structure_golden       → ZHONGHE_STRUCTURE_ONLY
+  + special.judgment_status（0 消费者）
+
+★ 本仓 judgment_status 是【跨模块通用字段名】, 8 处含义各不相同。
+  与 support_state / ling_state 的同名双源同款, 但更严重 —— 那两个是两个引擎数据源,
+  这个是 8 个不同模块的同名不同枚举值。
+★ 后果: 按 judgment_status 统计「消费者」必然出错（本轮已连续出错两次）。
+  与 §4.18 同名双源登记同款处置 —— 但本轮只登记, 不治理。
+触发条件: 若将来要按 judgment_status 做跨模块查询/汇总, 必须先加命名空间前缀。
+```
+
 ---
 
 ## 五、`strength_verdict` 字段形态
