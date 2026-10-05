@@ -449,7 +449,16 @@ def paipan(bazi: str) -> Dict[str, Any]:
         "ge_cheng": ge_cheng,
         "special": {k: special.get(k) for k in
                     ("cong_type", "cong_state", "zhuanwang", "zhuanwang_state",
-                     "hua_qi", "hua_qi_state", "liangqi", "mu_mie")},
+                     "hua_qi", "hua_qi_state", "liangqi", "mu_mie",
+                     # ★ PATCH-L4-01 (2026-10-05, 裁九十八甲) patterns 必须出口。
+                     #   ge_jie_layer._special_of L110 的判据是 spv.get('patterns') is not None;
+                     #   白名单缺 patterns → 该判据恒 False → 复用分支永不命中,
+                     #   每盘 build_special_patterns 被重算两遍, PATCH-GAP11d 完全失效,
+                     #   且 L902 从格证据链 _cong_pat 恒为 None（判定无出处）。
+                     #   patterns 是唯一带 note + facts 的证据链载体 → COMPUTED。
+                     #   ★ 只加 patterns: judgment_status / mu_mie_state 生产消费者 0,
+                     #     加了徒增顶层键数与回归面（裁九十八甲）。
+                     "patterns")},
         "bing_list": by.get("bing_list", []),
         "bing_yao": {"bing_count": by.get("bing_count"),
                      "yao_count": by.get("yao_count"),
