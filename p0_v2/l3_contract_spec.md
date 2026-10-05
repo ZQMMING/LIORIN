@@ -2386,6 +2386,114 @@ NO_GE（无格/ge=None）   345 盘
 
 ---
 
+### 4.28 ★ L4 格局高低（核B，v1.18 新增，裁143丙 + 裁144丙 + 边界）
+
+> B 块：格局高低判据库 + 两层字段（判据层 / 结果层）。
+> 依据行号引 PZZQ L1474/L1496/L1526/L1534/L1535/L1543（沈孝瞻原文）+ DTS L347/L351/L355/L359（§五 何知章）。
+
+#### 4.28.1 语义边界（裁143丙 —— DTS 何知章 vs PZZQ 十二章不是同一话题）
+
+```
+DTS §五 何知章（GAO_DI.001-.005）
+  L347「何知其人富？财气通门户」
+  L351「何知其人贵？官星有理会」
+  L355「何知其人贫？财神反不真」
+  L359「何知其人贱？官星还不见」
+  → 结果标签：富贵贫贱（断语式，给结果）
+
+PZZQ 十二章（GAO_DI.006-.008）
+  L1474「其理之大纲，亦在有情无情、有力无力之间而已」
+  L1526「壬水根深，是有情而兼有力者也」
+  L1534「癸克不如壬合，有情而非情之至」
+  L1535「丁旺而煞不昂…有力而非力之全」
+  L1543「偏之又偏，以其无情也」「身无根…以其无力也」
+  → 判据内核：有情/有力（条件式，给判据）
+
+★ 不是同一话题：DTS 给「结果标签」，PZZQ 给「判据内核」
+  → 不塞一个字段，分两层（判据层 + 结果层）
+★ L1526「兼」字 → 有情/有力是两个独立正交维度（与清浊正交同款）
+```
+
+#### 4.28.2 两层字段
+
+**层1 `gaodi_qingli`（判据层，PZZQ 十二章）**
+
+```
+值域二维: qing ∈ {ZHI, FEI_ZHI, WU}
+        li   ∈ {QUAN, FEI_QUAN, WU}
+
+依据: PZZQ L1474/L1526/L1534/L1535/L1543（沈孝瞻原文，非徐注）
+分级: BOOK_CITED（定性判据）+ ENGINE_DEFINED_PENDING（量化阈值）
+
+★ 量化阈值（什么算"根深"/"通根"/"旺"）PZZQ 无阈值，标 ENGINE_DEFINED_PENDING
+  初版只落结构 + 二维值域声明，不含量化判定逻辑。
+  量化判定待案例反标定后补。
+```
+
+**层2 `gaodi_label`（结果层，DTS §五 何知章）**
+
+```
+值域: FU_GUI / ZHONG / PIN_JIAN / BUDING / NOT_APPLICABLE
+
+依据: DTS L347/L351/L355/L359（§五 何知章）
+分级: DTS_CITED
+
+★ 切片 GAO_DI.001-.005 来源标「DTS 二十五章真神」有误：
+  DTS 原注「何知章」在 §五（L346），不在 §二十五
+  「真神」概念在 L275（§八「令星」附近），与何知章不同
+  → 切片章节标注需修正（issue，不阻塞 B 落码）
+```
+
+#### 4.28.3 映射（判据层 → 结果层，ENGINE_DEFINED）
+
+```
+PZZQ 未给「有情有力 → 富贵贫贱」的显式映射，标 ENGINE_DEFINED：
+
+  qing=ZHI + li=QUAN        → FU_GUI（最高：PZZQ L1526「有情而兼有力…格之最高」）
+  qing=FEI_ZHI（li=QUAN）   → ZHONG（次高：PZZQ L1534「非情之至」）
+  li=FEI_QUAN（qing=ZHI）   → ZHONG（次高：PZZQ L1535「非力之全」）
+  qing=WU 或 li=WU          → PIN_JIAN（PZZQ L1543「以其无情/无力」）
+  qing=WU 且 li=WU          → BUDING（PZZQ L1543「偏之又偏，以其无情也」）
+
+★ 两个中间档（FEI_ZHI / FEI_QUAN）在 PZZQ 原文里是分列的（L1534 情不至 / L1535 力不全）
+  本模块合并为 ZHONG（PZZQ 未说二者层次不同）
+  → 若核出二者层次不同，拆为 ZHONG_QING / ZHONG_LI（与清浊正交同款处理）
+```
+
+#### 4.28.4 cheng_bai 参考（裁144丙 + 边界）
+
+```
+B 读 cheng_bai 只作参考，不硬性门控（PZZQ 无「先判成败再判高低」明文）：
+
+  NO_GE（345盘）  → gaodi_qingli = NOT_APPLICABLE（无格可谈高低）
+  CHENG（353盘）  → gaodi 独立判有情/有力
+  CHENG_ZHONG_YOU_PO（13盘）→ gaodi 判 + note='成中有败，层次受损'
+  PO（1395盘）    → gaodi 仍可判（破中之高/低）+ note='破格盘'
+
+★ 「参考不门控」的精确形态：cheng_bai 只作 note 附注，不作值判定的一部分
+```
+
+#### 4.28.5 落点 + 探针
+
+```
+落点: p0_v2/gaodi.py :: compute_gaodi_qingli(qing, li, cheng_bai)
+消费类型: COMPUTED
+
+探针（独立进程，不 import 引擎生产路径）:
+  7/7 PASS
+  qing=ZHI+li=QUAN+CHENG            → FU_GUI  PASS
+  qing=FEI_ZHI+li=QUAN+CHENG        → ZHONG   PASS
+  qing=ZHI+li=FEI_QUAN+CHENG        → ZHONG   PASS
+  qing=WU+li=WU+CHENG               → BUDING  PASS
+  qing=ZHI+li=QUAN+CZYP             → FU_GUI  note='成中有败，层次受损' PASS
+  qing=ZHI+li=QUAN+PO               → FU_GUI  note='破格盘，破中之高/低' PASS
+  cheng_bai=None（NO_GE 边界）       → NOT_APPLICABLE PASS
+
+★ 量化阈值 = ENGINE_DEFINED_PENDING（PZZQ 无阈值，待案例反标定）
+```
+
+---
+
 ## 五、`strength_verdict` 字段形态
 ```
 值形态为 dict（v1.11 改, 见 §2.6.7）: {value, status, predictive, basis}
