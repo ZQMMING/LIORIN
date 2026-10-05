@@ -677,11 +677,8 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     out['dm_ben_eff'] = dm_ben_eff
     out['yin_ben_eff'] = yin_ben_eff
     out['yin_stem'] = yin_stem
-
-    # V7.26: 输出根气有效字段供下游yongshen_engine使用
-    out['dm_ben_eff'] = dm_ben_eff
-    out['yin_ben_eff'] = yin_ben_eff
-    out['yin_stem'] = yin_stem
+    # 被拔/被合化的身根支集合(含本气根冲拔 struck + 合局化根 _hh_dm), 供 de_di 独立投影
+    out['root_removed_branches'] = sorted(struck | _hh_dm)
 
     return out
 
