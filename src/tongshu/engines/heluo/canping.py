@@ -196,8 +196,20 @@ def _canping_dir() -> str:
 #   p83 二八七〇/p85 三七三(各4句)、p89 三七二(7句)、p91 三三七九(10句，含内覈)。
 # 异文待证：金部 2326「形畫棋麟閣/毫端爭一莖」（兩讀均錄注）。
 
-#: 448 每编号 6 句的层位顺序（索引 → 层名）
+#: 448 每编号 6 句的层位顺序（索引 → 层名），**单句**粒度。
 CANPING_LAYERS = ("男上", "男下", "女上", "女下", "运上", "运下")
+
+#: 层位检索词 → (lines 起始索引, 句数)。
+#: 两种粒度同源，不再各自维护映射，避免再脱节：
+#:   层名 {"男命","女命","岁运"} 取整层 2 句；
+#:   单句标签 CANPING_LAYERS 各取 1 句。
+#: 「岁运」层即「运上/运下」层（同起于索引 4），两者是同一层的两种叫法。
+CANPING_LAYER_SPANS: dict[str, tuple[int, int]] = {
+    "男命": (0, 2), "女命": (2, 2), "岁运": (4, 2),
+    "男上": (0, 1), "男下": (1, 1),
+    "女上": (2, 1), "女下": (3, 1),
+    "运上": (4, 1), "运下": (5, 1),
+}
 
 def search_raw_poem(keyword: str) -> list:
     """在卷十诗断 OCR 原始语料中检索关键字。
@@ -237,16 +249,19 @@ def load_raw_shici_jintu() -> list:
 
 
 def layer_lines_448(item: dict, layer: str) -> list:
-    """取 448 条目某一层的句。
+    """取 448 条目某一层（或其中一句）的句。
 
-    layer ∈ {"男命", "女命", "岁运"}，返回该层 2 句；层名非法或句数不足返回 []。
+    layer 可取**层名** {"男命", "女命", "岁运"}（各返回 2 句），
+    亦可取 **CANPING_LAYERS 单句标签** {"男上"…"运下"}（各返回 1 句）。
+    两种粒度统一由 CANPING_LAYER_SPANS 解释。
+    层名非法或句数不足返回 []。
     """
-    try:
-        start = {"男命": 0, "女命": 2, "岁运": 4}[layer]
-    except KeyError:
+    span = CANPING_LAYER_SPANS.get(layer)
+    if span is None:
         return []
+    start, count = span
     lines = item.get("lines") or []
-    return lines[start:start + 2] if len(lines) >= start + 2 else []
+    return lines[start:start + count] if len(lines) >= start + count else []
 
 
 def search_raw_poem_448(
@@ -259,7 +274,8 @@ def search_raw_poem_448(
     """在金/土部诗断语料（448_008 编号制）中检索。
 
     keyword 匹配句文；part ∈ {jin, tu}；no 匹配编号（如 "2510"）。
-    layer ∈ {"男命", "女命", "岁运"} 时只检索该层两句，默认检索全部 6 句。
+    layer 非空时按 CANPING_LAYER_SPANS 取层或单句：层名 {"男命","女命","岁运"}
+    取该层 2 句，单句标签 {"男上"…"运下"} 取该句 1 句；layer 为空默认检索全部 6 句。
     include_header_example=False 时跳过 448 p75 土部表头 worked example（is_header_example）。
     返回 [(part, page, no, note, line), ...]。
 
@@ -287,7 +303,23 @@ def search_raw_poem_448(
 
 
 def load_448_rulings() -> dict:
-    """载入 448 编号对照与裁决层（448_duizhao.json）；文件缺失返回 {}。"""
+    """载入 448 编号对照与裁决层原始文件（448_duizhao.json）；文件缺失返回 {}。
+
+    ⚠ 返回的是**整个文件**，其顶层两套 schema 互不相同，勿当作裁决列表直接用：
+
+      ``meta``              : dict —— 来源与总则说明；
+      ``items``             : list[35] —— **447/448 跨源字词对照**（K3 定谳），
+                              键 {no, text448, p447, diff, ruling}，无 part 字段；
+      ``jintu_nvp_rulings`` : dict —— **金/土部女命层逐字校订裁决**，
+                              键 {date, scope, basis, method, ordering_ruling,
+                              total, identical, diff_count, unmatched, items}，
+                              其 items[].part 为 "金"/"土"。
+
+    取用请走具名访问器，别手工 ``.get()`` 猜键：
+    :func:`get_448_base_items`（跨源对照表）、
+    :func:`get_448_nvp_ruling_block`（女命层裁决块，含统计元数据）、
+    :func:`get_nvp_rulings_448`（女命层裁决条目列表）。
+    """
     import json as _json
     p = os.path.join(_canping_dir(), "448_duizhao.json")
     try:
@@ -297,14 +329,32 @@ def load_448_rulings() -> dict:
         return {}
 
 
+def get_448_base_items() -> list:
+    """447/448 跨源字词对照条目（448_duizhao.json 顶层 items，35 条）。
+
+    每条 {no, text448, p447, diff, ruling}；无 part 字段（该表为跨部对照）。
+    与 :func:`get_nvp_rulings_448` 是两套不同 schema，勿混用。
+    """
+    return load_448_rulings().get("items") or []
+
+
+def get_448_nvp_ruling_block() -> dict:
+    """金/土部女命层逐字校订裁决**块**（含 total/identical/diff_count/unmatched 等元数据）。
+
+    块缺失返回 {}。只要条目列表请用 :func:`get_nvp_rulings_448`。
+    """
+    return load_448_rulings().get("jintu_nvp_rulings") or {}
+
+
 def get_nvp_rulings_448(part: str = "", no: str = "") -> list:
     """金／土部女命（中层）校订裁决条目。
 
     part ∈ {"金", "土"}（中文部名，见 448_duizhao.json jintu_nvp_rulings）。
     返回 ruling 列表；语料或裁决层缺失返回 []。
+    块级元数据（total/identical/diff_count/unmatched）用
+    :func:`get_448_nvp_ruling_block` 取。
     """
-    blk = load_448_rulings().get("jintu_nvp_rulings") or {}
-    items = blk.get("items", [])
+    items = get_448_nvp_ruling_block().get("items", [])
     if part:
         items = [x for x in items if x.get("part") == part]
     if no:
@@ -315,8 +365,10 @@ def get_nvp_rulings_448(part: str = "", no: str = "") -> list:
 __all__ = [
     "get_nayin_element", "qishu", "qishu_dayun", "qishu_liunian",
     "set_canping_dir", "search_raw_poem", "search_raw_poem_448",
-    "load_raw_shici_jintu", "layer_lines_448", "CANPING_LAYERS",
-    "load_448_rulings", "get_nvp_rulings_448",
+    "load_raw_shici_jintu", "layer_lines_448",
+    "CANPING_LAYERS", "CANPING_LAYER_SPANS",
+    "load_448_rulings", "get_448_base_items",
+    "get_448_nvp_ruling_block", "get_nvp_rulings_448",
     "NAYIN_ADD", "NAYIN_PEI", "NAYIN_PART",
 ]
 

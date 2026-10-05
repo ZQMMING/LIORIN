@@ -734,3 +734,109 @@ class TestPolarityMapping:
               "kuozhan": {}, "nayin_yuanqi": [], "jiehua_gong": [], "summary": []}
         st = g.to_structured(gj)
         assert st["warnings"][0]["polarity"] == "警示"
+
+
+# ── 2026-10-06 接口一致性修复回归 ──────────────────────────────────
+
+class TestCanpingLayerVocabulary:
+    """CANPING_LAYERS（单句粒度）与层名（男命/女命/岁运）曾是两套脱节的映射：
+    传 '女上' 静默返回 0 条。现统一由 CANPING_LAYER_SPANS 解释，两种粒度皆可检索。
+    """
+
+    def test_layer_spans_cover_both_granularities(self):
+        spans = cp.CANPING_LAYER_SPANS
+        assert set(cp.CANPING_LAYERS) <= set(spans), "6 个单句标签必须都能检索"
+        assert {"男命", "女命", "岁运"} <= set(spans), "3 个层名必须保留"
+
+    def test_layer_names_take_2_lines_single_labels_take_1(self):
+        item = cp.load_raw_shici_jintu()[0]
+        assert cp.layer_lines_448(item, "女命") == item["lines"][2:4]
+        assert cp.layer_lines_448(item, "岁运") == item["lines"][4:6]
+        for i, lab in enumerate(cp.CANPING_LAYERS):
+            assert cp.layer_lines_448(item, lab) == [item["lines"][i]], lab
+
+    def test_single_labels_agree_with_layer_names(self):
+        """单句标签拼回整层，应与层名取法完全一致"""
+        item = cp.load_raw_shici_jintu()[0]
+        for layer, (up, dn) in (("男命", ("男上", "男下")), ("女命", ("女上", "女下")),
+                                ("岁运", ("运上", "运下"))):
+            joined = cp.layer_lines_448(item, up) + cp.layer_lines_448(item, dn)
+            assert joined == cp.layer_lines_448(item, layer), layer
+
+    def test_search_accepts_single_line_labels(self):
+        """回归：此前 layer='女上' 静默返回 0 条"""
+        n_items = len(cp.load_raw_shici_jintu())
+        assert len(cp.search_raw_poem_448(layer="女上")) == n_items
+        assert len(cp.search_raw_poem_448(layer="女下")) == n_items
+        assert len(cp.search_raw_poem_448(layer="男上")) == n_items
+        assert len(cp.search_raw_poem_448(layer="女命")) == n_items * 2
+
+    def test_short_lian_entries_yield_empty_not_wrong_slice(self):
+        """原刻短联不足 6 句时，取空而非错位切片。
+
+        金 2213 五句：运上(索引4)有句、运下(索引5)取空；
+        金 2417／土 2771 四句：运上、运下皆取空。
+        """
+        all_items = cp.load_raw_shici_jintu()
+
+        def pick(part, no):
+            hit = [i for i in all_items if i["part"] == part and i["no"] == no]
+            assert len(hit) == 1, (part, no, len(hit))
+            return hit[0]
+
+        it5 = pick("jin", "2213")
+        assert len(it5["lines"]) == 5
+        assert cp.layer_lines_448(it5, "运上") == [it5["lines"][4]]
+        assert cp.layer_lines_448(it5, "运下") == []
+
+        for part, no in (("jin", "2417"), ("tu", "2771")):
+            it = pick(part, no)
+            assert len(it["lines"]) == 4, (part, no)
+            assert cp.layer_lines_448(it, "运上") == [], (part, no)
+            assert cp.layer_lines_448(it, "运下") == [], (part, no)
+
+        n = len(all_items)
+        assert len(cp.search_raw_poem_448(layer="运下")) == n - 3  # 3 条不足 6 句
+        assert len(cp.search_raw_poem_448(layer="运上")) == n - 2  # 2 条仅 4 句
+
+    def test_illegal_layer_still_empty(self):
+        assert cp.layer_lines_448(cp.load_raw_shici_jintu()[0], "不存在") == []
+        assert cp.layer_lines_448(cp.load_raw_shici_jintu()[0], "") == []
+
+
+class Test448RulingsAccessors:
+    """load_448_rulings 返回整份 JSON，顶层两套 schema 极易取错。
+    现有具名访问器：get_448_base_items / get_448_nvp_ruling_block / get_nvp_rulings_448。
+    """
+
+    def test_load_returns_whole_file(self):
+        d = cp.load_448_rulings()
+        assert {"meta", "items", "jintu_nvp_rulings"} <= set(d)
+
+    def test_base_items_is_cross_source_table(self):
+        """顶层 items = 447/448 跨源对照表（35 条，无 part 字段）"""
+        items = cp.get_448_base_items()
+        assert len(items) == 35
+        assert all("p447" in x and "text448" in x and "diff" in x for x in items)
+        assert all("part" not in x for x in items)
+
+    def test_nvp_block_exposes_metadata(self):
+        """块级元数据（total/identical/diff_count/unmatched）应由 block 访问器取"""
+        blk = cp.get_448_nvp_ruling_block()
+        assert blk["total"] == 156
+        assert blk["identical"] + blk["diff_count"] == blk["total"]
+        assert blk["unmatched"] == []
+
+    def test_two_schemas_are_not_interchangeable(self):
+        """两套 schema 字段不同，混用会静默取到错数据"""
+        base = cp.get_448_base_items()
+        nvp = cp.get_nvp_rulings_448()
+        assert len(base) != len(nvp)
+        assert all("p447" in x for x in base), "跨源对照表以 p447 定位"
+        assert all("part" in x for x in nvp), "女命层裁决以金/土部名定位"
+        assert not any("p447" in x for x in nvp)
+
+    def test_get_nvp_rulings_448_still_works(self):
+        assert len(cp.get_nvp_rulings_448()) == 74
+        assert len(cp.get_nvp_rulings_448(part="金", no="2613")) == 1
+        assert cp.get_nvp_rulings_448(part="金", no="不存在的码") == []

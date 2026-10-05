@@ -217,20 +217,26 @@ def get_current_jieqi_info(year: int, month: int, day: int) -> Optional[Seasonal
         day: 公历日
 
     Returns:
-        SeasonalHexagram 或 None（若 sxtwl 不可用）
+        SeasonalHexagram；
+        None 仅两种情形：sxtwl 未安装，或该日不在任何节气日（jq_idx 越界）。
+
+    Raises:
+        Exception: sxtwl 已安装但计算过程出错时，异常原样上抛。
+            「缺依赖」与「算错了」是两种不同故障，不应一并吞成 None ——
+            否则真实计算错误会被静默伪装成「该日无节气」，无从发现。
+            需要降级的调用方应自行捕获（见 canonical.HeluoCanonical
+            ._compute_seasonal_hexagram，其 except 属该层自身的降级策略）。
     """
     try:
         import sxtwl
-        from datetime import date as date_type
-        d = sxtwl.fromSolar(year, month, day)
-        jq_idx = d.getJieQi()
-        if jq_idx < 0 or jq_idx > 23:
-            return None
-        return get_seasonal_hexagram(jq_idx)
     except ImportError:
         return None
-    except Exception:
+    # 以下为真实计算，异常一律上抛，不在此处降级。
+    d = sxtwl.fromSolar(year, month, day)
+    jq_idx = d.getJieQi()
+    if jq_idx < 0 or jq_idx > 23:
         return None
+    return get_seasonal_hexagram(jq_idx)
 
 
 __all__ = [
