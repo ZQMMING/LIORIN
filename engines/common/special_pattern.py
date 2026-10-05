@@ -108,14 +108,55 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     self_br = _ben_branches(pw, dm_wx) | _ben_branches(pw, yin_wx)
     struck = set()
     opp_ben = cai_ben + gs_ben + ss_ben
+
+    # 每支藏干五行集(由 root_detail 反推; BEN/ZHONG/YU = 支藏此干)
+    _cang_wx = {}
+    for _wx in pw:
+        for _br, _tag in ((pw[_wx] or {}).get('root_detail', {}) or {}).items():
+            if _tag in ('BEN', 'ZHONG', 'YU'):
+                _cang_wx.setdefault(_br, set()).add(_wx)
+
+    def _clash_kind(r, r2):
+        """五行精纪·卷廿六「凡冲处要相生…同类及相克者最凶」(BOOK_CITED)。
+        返回 SHENG(纯相生)/KE(纯相克·同类本气)/MIX(生克并存)。"""
+        if BRANCH_WX.get(r) == BRANCH_WX.get(r2):
+            return 'KE'  # 同类冲(辰戌丑未)最凶
+        A, B = _cang_wx.get(r, set()), _cang_wx.get(r2, set())
+        sheng = any(SHENG.get(a) == b or SHENG.get(b) == a for a in A for b in B)
+        ke = any(KE.get(a) == b or KE.get(b) == a for a in A for b in B)
+        if sheng and ke:
+            return 'MIX'
+        return 'SHENG' if sheng else 'KE'
+
+    def _sheng_support(r, r2):
+        """混合冲中相生神(生日主根之印=yin_wx)是否有力 (ENGINE_DEFINED 门控)。
+        强=印有本气根; 中=印月令相旺且有中余气根; 弱=印透干且有中余气根。
+        仅透干无根 / 月令死囚无根 -> 无力。"""
+        if yin_wx not in _cang_wx.get(r2, set()):
+            return False  # 冲支不含生日主之印, 冲处相生不成立
+        yben = int(yin.get('ben_n', 0)); yz = int(yin.get('zhong_n', 0)) + int(yin.get('yu_n', 0))
+        ystem = int(yin.get('stem_n', 0)); yling = yin.get('ling_state', '')
+        strong = yben >= 1
+        mid = yling in ('相', '旺') and yz >= 1
+        weak = ystem >= 1 and yz >= 1
+        return strong or mid or weak
+
     if len(self_br) <= 1:
         for r in self_br:
             if r in chong_map:
-                r2_wx = BRANCH_WX.get(chong_map[r])
+                r2 = chong_map[r]
+                r2_wx = BRANCH_WX.get(r2)
                 opp_dom = gs_ling or gs_ju >= 1 or cai_ju >= 1 or opp_ben >= 2 \
                     or int(pw.get(r2_wx, {}).get('ben_n', 0)) >= 1
                 self_dom = dm_ling or dm_ju >= 1
                 if opp_dom and not self_dom:
+                    # 身本气根被冲: 按相生/相克二分裁决(印本气根冲拔仍照旧)
+                    if r in _ben_branches(pw, dm_wx):
+                        _k = _clash_kind(r, r2)
+                        if _k == 'SHENG':
+                            continue
+                        if _k == 'MIX' and _sheng_support(r, r2):
+                            continue
                     struck.add(r)
     dm_ben_eff = max(0, dm_ben - len(_ben_branches(pw, dm_wx) & struck))
     yin_ben_eff = max(0, yin_ben - len(_ben_branches(pw, yin_wx) & struck))
