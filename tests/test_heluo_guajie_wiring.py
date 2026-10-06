@@ -57,6 +57,8 @@ _GUAJIE_KEYS = {
     "shu_xiong", "yuan_qi_hit", "hua_gong_hit", "zhengdui_fandui",
     "twelve_xiong", "si_duan", "nayin_yuanqi", "jiehua_gong",
     "benming", "kuozhan", "summary", "evidence",
+    # 2026-10-06 接入：参评诗断（K3-447卷十·金锁银匙歌）
+    "canping",
 }
 
 

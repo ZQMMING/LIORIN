@@ -248,6 +248,84 @@ def load_raw_shici_jintu() -> list:
     return data.get("items", [])
 
 
+#: 语料 ``part`` 内部键 → 五行部中文名（供展示与证据行）
+_PART_CN = {"shui": "水部", "huo": "火部", "mu": "木部", "jin": "金部", "tu": "土部"}
+
+
+def lookup_by_number(number: int, part: str | None = None) -> Optional[dict]:
+    """按金锁银匙歌算出的总数检索五行部诗断条目。
+
+    2026-10-06 接通：此前 canping 只到「能起数、能按层取句」，
+    **没有把起数结果接回诗断表**——生产链路拿不到任何一条参评断语。
+    本函数把两端接上：``qishu(...).total`` 即语料条目的 ``no``（四位数，
+    如「二千五百四十二」→ 2542），``part`` 即五行部。
+
+    Args:
+        number: 金锁银匙歌起出的总数（int）。
+        part: 五行部名（金部/土部/水部/火部/木部）。None = 不限部。
+
+    Returns:
+        命中的条目 dict（``{part,page,no,lines,...}``）；未收录返回 None。
+    """
+    key = str(number)
+    for item in load_raw_shici_jintu():
+        if str(item.get("no")) != key:
+            continue
+        if part and item.get("part") != part:
+            continue
+        return item
+    return None
+
+
+def judge_canping(
+    day_zhi: str,
+    hour_zhi: str,
+    year_gan: str,
+    year_zhi: str,
+    gender: str = "male",
+    *,
+    direction: str = "顺",
+) -> dict:
+    """起参评 + 取本命层诗断（《河洛叅评》卷十，金锁银匙歌）。
+
+    数据流：金锁银匙歌起数 → 总数查五行部诗断表 → 按性别取本命层两句。
+
+    层位口径（参评例：「每数分三层：上层=男命、中层=女命、下层=男女相共
+    大运流年」）经 CANPING_LAYER_SPANS 统一解释：
+      male → 男命（男上/男下 2 句）；female → 女命（女上/女下 2 句）。
+      大运/流年层（运上/运下）见 qishu_dayun / qishu_liunian。
+
+    Returns:
+        {ok, total, part, no, layer, lines, steps, found}
+        ``found=False`` 表示起数成功但该数尚未逐页转录入语料——
+        这**不是错误**，全表 5 部×数十号仍在逐页录入中（见模块头说明）。
+    """
+    nayin = get_nayin_element(year_gan, year_zhi)
+    if not nayin:
+        return {"ok": False, "found": False, "lines": [],
+                "note": f"年柱{year_gan}{year_zhi}纳音未识别"}
+    q = qishu(day_zhi, hour_zhi, nayin, direction)
+    total = q["total"]
+    item = lookup_by_number(total)
+    layer = "男命" if gender == "male" else "女命"
+    lines = layer_lines_448(item, layer) if item else []
+    part = (item or {}).get("part", "")
+    return {
+        "ok": True,
+        "found": bool(lines),
+        "total": total,
+        "no": str(total),
+        "part": part,
+        "part_cn": _PART_CN.get(part, part),
+        "layer": layer,
+        "lines": lines,
+        "direction": direction,
+        "steps": q["steps"],
+        "page": (item or {}).get("page"),
+        "note": "" if lines else f"数{total}（{part}）尚未转录入语料",
+    }
+
+
 def layer_lines_448(item: dict, layer: str) -> list:
     """取 448 条目某一层（或其中一句）的句。
 

@@ -346,6 +346,7 @@ class GuaJieResult:
     jiehua_gong: list[str] = field(default_factory=list)  # 生时值节卦化工（起例卷之下·节候卦爻）
     benming: Optional[dict] = None  # 命卦判词（先天卦辞+卦象断语+精义/释义，2026-09-15 接入）
     kuozhan: dict = field(default_factory=dict)  # 扩展断法（K3-447卷一：四体八体/福力/五命得卦/余数断/四时五行/数极）
+    canping: Optional[dict] = None  # 参评诗断（K3-447卷十·金锁银匙歌，2026-10-06 接入）
     summary: list[str] = field(default_factory=list)  # 综合判词（人话）
     evidence: list[str] = field(default_factory=list)
 
@@ -404,6 +405,7 @@ class GuaJieResult:
             "jiehua_gong": self.jiehua_gong,
             "benming": self.benming,
             "kuozhan": self.kuozhan,
+            "canping": self.canping,
             "summary": self.summary,
             "evidence": self.evidence,
         }
@@ -1133,6 +1135,32 @@ def build_guajie_from_result(
                     gj.evidence.extend(f"  {_k}：{e}" for e in _v)
         except Exception as _e:  # 扩展断法不阻塞主链
             gj.evidence.append(f"  扩展断法：计算跳过（{_e}）")
+
+        # ── 参评诗断（K3-447卷十·金锁银匙歌起参评例）────────────────
+        # 2026-10-06 接入。canping.py 此前有完整的起数算法与逐页转录语料，
+        # 但两者从未接起来：起数结果没有回查诗断表，生产链路拿不到任何一条
+        # 参评断语。本处把「起数 → 查表 → 按性别取本命层两句」串起来。
+        # 起数口径（金锁银匙歌）已在 canping 模块头用原典三例复算校验。
+        try:
+            from .canping import judge_canping
+            if bazi and len(bazi) >= 4:
+                yg, yz = bazi[0][0], bazi[0][1]
+                dz, hz = bazi[2][1], bazi[3][1]
+                _g = str(getattr(getattr(result, "input", None), "gender", "male"))
+                cp = judge_canping(dz, hz, yg, yz, "female" if _g == "female" else "male")
+                gj.canping = cp
+                if cp.get("ok"):
+                    gj.evidence.append(
+                        f"  参评诗断：金锁银匙歌起数得 {cp['total']}"
+                        f"（{cp.get('part_cn') or '—'}，第 {cp.get('page')} 页），"
+                        f"{cp['layer']}层："
+                        + "／".join(cp.get("lines") or []))
+                    for _ln in (cp.get("lines") or []):
+                        gj.summary.append(f"参评·{cp['layer']}：{_ln}")
+                else:
+                    gj.evidence.append(f"  参评诗断：{cp.get('note', '起数失败')}")
+        except Exception as _e:  # 参评不阻塞主链
+            gj.evidence.append(f"  参评诗断：计算跳过（{_e}）")
 
         return gj.to_dict()
     except Exception as e:  # 解卦层不阻塞主链（防御性兜底）
