@@ -88,3 +88,29 @@ P1 只读成品事件映 6 病种，不跨层重判成败。
 **落码动作**：① evaluate_po_ge 组合命中加三条件门控、出成品事件；
 ② P1 读成品事件映 6 病种（缺失/冲月令直接接）入 bing_list；
 ③ 按口径甲（1403）重算，同轮报门控各条件拦截盘数＋断语反查（不碰 label）。
+
+## 八、接线 dry run（2026-10-06）——label 口径负证据 + 方法自纠
+
+直接把 po_ge_hits 映 6 病，按 label 交叉（盘数 bad/good）：
+
+| 病种 | bad | good（label） |
+|---|---|---|
+| CAI_PO_YIN | 41 | **112** |
+| CAI_DANG_SHA | 22 | **111** |
+| PO_YUELING | 28 | **75** |
+| YIN_DUO_SHI | 7 | 27 |
+| YONG_WU_ZHUO | 8 | 20 |
+| GUAN_BEI_SHANG | 5 | 11 |
+
+**每病 label-good 都 2-5 倍于 bad；另有"不报/bad 232"。**
+
+**方法自纠（关键）**：这个 good:bad≈3:1 **不能证明 po_ge_hits 错**——
+label 是含岁运的**终身吉凶**，而原局"带忌/成中有败"本就可在 good 盘出现（行运补救/忌神有制）；
+用 label 验原局破格，重复违反"原局不判吉凶、比事件不碰 label"。
+它只证明：**label 切不开原局破格事件，po_ge_hits 不可用 label 验收。**
+
+**唯一合规验收口径**：断语原句 → 抽"原局破格事件"明文（"逢财破印""枭夺食""合去官星"，带 PZZQ 行号）
+→ 与 po_ge_hits 做事件级 precision/recall（同语义蕴含法，目标＝格局/结构事件）。
+未映射 hit（比肩/劫财/食神 detail）标 ENGINE_DEFINED_PENDING，不静默丢。
+
+**结论**：不接 label、不直接接 bing；先建"断语破格事件抽取＋回放"，据此判门控（无制化/真伤用）怎么补。
