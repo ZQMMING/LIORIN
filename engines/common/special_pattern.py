@@ -205,12 +205,20 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             if not _mm: continue
             _g = _mm.groups(); _jwx = _g[3]
             if _jwx not in (cai_wx, gs_wx): continue
+            # [2026-10-07 PATCH-4f] 化根判据修正: root_detail 表本身即"该五行在哪些支有根",
+            #   原 `BRANCH_WX==wx` 检查只放行"支本气=该五行"的根, 漏中气/余气印根与日主根:
+            #     PZ-0137(戊辰甲寅壬戌丙午) 戌中辛中气印根, 戌入寅午戌火局(火克金) ->
+            #     印根被化 -> 从财成立, PZZQ L2923 原文「支逢寅午戌三合会局, 以丙火从财为用」。
+            #   且须化神克该五行才化: 化神火生印土不化印根
+            #     QT-0483(癸卯甲寅庚午丙戌) 庚日主印土(午中己/戌本气戊)入火局, 火生土印根保留
+            #     -> 印绶有根则不从, PZZQ L180。
+            _KEI = {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}  # 某五行所克
             for _br in _g[:3]:
                 _tag = str((dm.get('root_detail', {}) or {}).get(_br, ''))
-                if BRANCH_WX.get(_br) == dm_wx and _tag in _ROOT_TAGS:
+                if _tag in _ROOT_TAGS and _KEI.get(_jwx) == dm_wx:
                     _hh_dm.add(_br)
                 _ytag = str((yin.get('root_detail', {}) or {}).get(_br, ''))
-                if BRANCH_WX.get(_br) == yin_wx and _ytag in _ROOT_TAGS:
+                if _ytag in _ROOT_TAGS and _KEI.get(_jwx) == yin_wx:
                     _hh_yin.add(_br)
     # 化根后重算各级根数(中气/余气同样被扣)
     _hh_cnt_yin = len(_hh_yin)
@@ -363,7 +371,22 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             #   移除后 PZ-0027 判 化木气格 CONFIRMED(与沈孝瞻原案一致), 不再落从财格+误报财多。
             hua_name = '化%s气格' % hs
             # V4.7: 化神被克制时不能是CONFIRMED，只能是CANDIDATE(假化)
-            if on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0 and (hb >= 1 or hju >= 1 or hs_t >= 1) and not _hs_suppressed:
+            # [2026-10-07 PATCH-4c] 化神库支日主根不阻真化 + 化神当令印根豁免
+            #   依据: PZZQ L1034 孙岳造(戊寅乙卯丁未壬寅)「丁壬相合, 月时卯寅, 化气格真」——
+            #   日主丁坐未(未藏丁本气)仍判真化; L643「六月节 丁壬化木(未为木库故可化也)」未=木库,
+            #   化木格中助化神; 化气格以化神为体, 日主本气根落化神库支不阻真化。
+            #   原条件 yin_ben_eff==0/yin_stem==0 对化神当令盘恒假: 化神当令时印=化神同气
+            #   (如卯月化木, 卯木即印即化神), 印根即化神势力, 不得以印根阻真化;
+            #   L568「日带根苗劫印者皆为假化」仅指日主/比劫根, 不指化神同气之印。
+            #   on_qi 路径: 豁免 yin 检查, 只查日主根(库支豁免) + 化神成势 + 不被克;
+            #   非 on_qi 路径: 保持原条件(化神成势非当令, 印根仍阻)。
+            _hs_ku = {'木': '未', '火': '戌', '土': '辰', '金': '丑', '水': '辰'}
+            _dm_root_in_hs_ku = any(
+                str((dm.get('root_detail') or {}).get(_br, '')).startswith('BEN') and _br == _hs_ku.get(hs)
+                for _br in (dm.get('root_detail') or {}))
+            if (on_qi and (dm_ben_eff == 0 or _dm_root_in_hs_ku)
+                    or (not on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0)) \
+                    and (hb >= 1 or hju >= 1 or hs_t >= 1) and not _hs_suppressed:
                 hua_state = 'CONFIRMED'
             else:
                 hua_state = 'CANDIDATE'                 # 微根/微印/化神被克制=假化
@@ -402,7 +425,14 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 cong, side = '从杀格', gs_wx
             elif gs_ling and gs_pow:
                 # 官杀当令成势(不论食伤) -> 从杀用财
-                cong, side = '从杀格', gs_wx
+                # [2026-10-07 PATCH-4e-2] L4939「若有伤食则煞受制而不从」: 伤食有根透干制煞 -> 不从
+                if ss_stem >= 1 and ss_ben >= 1:
+                    out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', '从杀无伤食制煞(PZZQ L4939)', 'SPECIAL_FAIL', None,
+                        '官杀当令成势但伤食有根透干制煞则不从(L4939); SPECIAL_FAIL 态待实现, 盘回正格路径',
+                        ['daymaster_root', 'wuxing_power']))
+                    cong, side = None, None
+                else:
+                    cong, side = '从杀格', gs_wx
             elif ss_ling and ss_pow and not gs_pow:
                 if gs_stem >= 1 and gs_ben >= 1 and ss_ben > gs_ben and cai_stem >= 1:
                     # 食伤当令制去孤官杀、财透承接(去杀存财), 日主无根 -> 从财
@@ -457,6 +487,39 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                                   reverse=True)
                     if keys[0][0] == keys[1][0] and keys[0][1] == keys[1][1] and not (gs_ling or cai_ling or ss_ling):
                         cong, side = '从势格', None
+            # [2026-10-07 PATCH-4d] 从格通判据收紧: 印绶有根则不从 + 阳干从严
+            #   依据: PZZQ L180「然或印绶有根则又不嫌身弱」/L187「透印有根即不能从」/
+            #        L4936「若透印则身赖印生而不从」/L4939「有印则印以化煞而不从」(四处明文)
+            #        L179 阳干「略有根或印有根即不能从」(五阳从气不从势, DTS L47)
+            #   QT-0483 根因: 戌中辛中气印根漏检 -> 补印根(本气/中气/余气)检测。
+            #   ★ 印根数须用"化根后"口径(_hh_yin 已扣): PZ-0137(戊辰甲寅壬戌丙午)印金戌中气根
+            #     入寅午戌火局被化去 -> 印根=0 -> 从财成立(L193 已注); 用原始 zhong_n/yu_n 会误拦。
+            _yin_root_any = yin_ben_eff + _yin_zhong_eff + _yin_yu_eff
+            _dm_yang = day_stem in ('甲', '丙', '戊', '庚', '壬')
+            _cong_ban = (_yin_root_any > 0) or (_dm_yang and dm_ben_eff >= 1)
+            if cong and _cong_ban:
+                _ban_reason = ('印绶有根则不从(PZZQ L180/L187/L4936/L4939)' if _yin_root_any > 0
+                               else '阳干微根不能从(PZZQ L179, 五阳从气不从势)')
+                out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', _ban_reason, 'SPECIAL_FAIL', None,
+                    '从格通判据拦下: ' + _ban_reason + '; SPECIAL_FAIL 态待实现, 盘回正格路径',
+                    ['daymaster_root', 'wuxing_power']))
+                cong = None; side = None; cstate = None
+            # [2026-10-07 PATCH-4e-1] 从财无官煞(L4937「有官煞则亦无从财兼从煞之理, 其格不成」)
+            #   从财格见官煞有本气/透干即不成; 制去型(食伤当令制去孤官杀、财透承接)除外——官杀已被制去。
+            if cong == '从财格':
+                _cai_sha_ke_off = (ss_ling and ss_pow and gs_stem >= 1 and gs_ben >= 1
+                                    and ss_ben > gs_ben and cai_stem >= 1)
+                # [2026-10-07 PATCH-4e-1b] 官杀被天干五合绊住则不算"有官煞"(L4936 指独立官煞):
+                #   DT-0121(癸卯戊午壬寅丙午) 戊癸合化火, 戊土官杀被合去 -> 从财成立
+                #   (原文「戊癸从化, 枯干壬水, 从其火旺」); 合官忘贵/合煞忘贱同义(被合官杀不作用)。
+                _GS_STEMS = {'木': '甲乙', '火': '丙丁', '土': '戊己', '金': '庚辛', '水': '壬癸'}[gs_wx]
+                _gs_he_ban = any(any(_s in _wh for _s in _GS_STEMS)
+                                 for _wh in (facts.get('stem_combination_facts') or {}).get('wuhe', []))
+                if not _cai_sha_ke_off and not _gs_he_ban and (gs_ben >= 1 or gs_stem >= 1):
+                    out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', '从财无官煞(PZZQ L4937)', 'SPECIAL_FAIL', None,
+                        '从财格见官煞则格不成(L4937, 制去型除外); SPECIAL_FAIL 态待实现, 盘回正格路径',
+                        ['daymaster_root', 'wuxing_power']))
+                    cong = None; side = None; cstate = None
             cstate = 'CANDIDATE' if (virtual_support or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha) else 'CONFIRMED'
 
     # ---------- 从儿不论身强弱(日主非比劫当令、可带一禄根; 官杀无、食伤成势、无印逆局)----------
@@ -630,16 +693,22 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     # ---------- 从格并列候选(从旺/从杀, 仅当主从格不是该类型时添加, 供经典多解参考)----------
     _existing_cong = set(p['name'] for p in out['patterns'] if p.get('pattern_id') == 'ZP-SPECIAL-CONG')
     # 从旺格: 日主旺极+有印+官杀极弱+财不透干(不要求地支成方局, 区别于专旺格)
+    # [2026-10-07 PATCH-4e-3] L2412「日与月同, 则从强从旺」: 从旺须日干五行与月支五行相同
+    _RYT = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土',
+            '庚': '金', '辛': '金', '壬': '水', '癸': '水'}[day_stem] == BRANCH_WX.get(pillars['month'][1])
     if '从旺格' not in _existing_cong and not out['zhuanwang']:
         if (_shi(dm) and (yin.get('ben_n',0) >= 1 or yin.get('stem_n',0) >= 1)
-                and gs_ben_zw == 0 and gs_stem_zw <= 1 and cai_stem_zw == 0 and not ss_ling):  # P0-b.7: 使用zw版本
+                and gs_ben_zw == 0 and gs_stem_zw <= 1 and cai_stem_zw == 0 and not ss_ling
+                and _RYT):  # P0-b.7: 使用zw版本; PATCH-4e-3: 日与月同(L2412)
             out['patterns'].append(_pat('ZP-SPECIAL-CONG', '从旺格', 'CANDIDATE', dm_wx,
-                '日主旺极、印比成势、官杀财极弱=从旺/从强格候选(CANDIDATE); 区别于专旺格(不要求地支成方局); 只记结构定性, 不判用神成败吉凶',
+                '日主旺极、印比成势、官杀财极弱=从旺/从强格候选(CANDIDATE), 且日与月同(L2412「日与月同, 则从强从旺」); 区别于专旺格(不要求地支成方局); 只记结构定性, 不判用神成败吉凶',
                 ['daymaster_root', 'wuxing_power']))
     # 从杀格并列: 官杀透干+财生官杀+食伤不当令+日主无根或根极弱(允许与化气格共存, 经典多解)
+    # [2026-10-07 PATCH-4e-4] L4939「四柱皆煞而日主无根舍而从之, 若有伤食则煞受制而不从」:
+    #   收紧 ss_stem<=2 -> ss_stem==0 and ss_ben==0(无伤食, 四柱皆煞)
     if '从杀格' not in _existing_cong:
         if (gs_stem_zw >= 1 and cai_ben_zw >= 1 and not ss_ling  # P0-b.7: 使用zw版本
-                and ss_stem <= 2 and dm_ben_eff <= 1 and yin_ben_eff <= 1):
+                and ss_stem == 0 and ss_ben == 0 and dm_ben_eff <= 1 and yin_ben_eff <= 1):
             out['patterns'].append(_pat('ZP-SPECIAL-CONG', '从杀格', 'CANDIDATE', gs_wx,
                 '官杀透干、财生官杀、食伤不当令不逆局、日主无根或根极弱=从杀格候选(CANDIDATE); 只记结构定性, 不判用神成败吉凶',
                 ['daymaster_root', 'wuxing_power']))
