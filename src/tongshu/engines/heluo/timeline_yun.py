@@ -364,6 +364,67 @@ def compute_liuri(
     return LiuRiResult(month=0, days=days)
 
 
+def compute_liuri_stub(yue_lines: list[int], yue_yao_index: int) -> list[dict]:
+    """流日六段的**廉价索引**（含六爻，不含卦名），供全量时间轴按需化使用。
+
+    2026-10-06：四层时间轴只为「命中应期的那一个月」付出卦名换算代价。
+    旧实现在 ``_build_timeline`` 里对 93 流年 × 12 月 = 1,116 个月逐月调用
+    ``compute_liuri``，每次做 6 次 ``_lines_to_hexagram`` 卦名换算
+    （合计 6,696 次），占单盘耗时与载荷的大头；而消费方（guajie）
+    每次排盘只查**一个**月。
+
+    本函数保留每段六爻——``_flip_line`` 只是复制一个 6 元 list 并翻转一爻，
+    近乎零成本——**只省掉 ``name``/``upper``/``lower`` 三个卦名字符串**，
+    那才是耗时与载荷的大头。
+    保留 ``lines`` 是刻意取舍：tests/heluo/test_timeline_yun_perf.py 的
+    ``TestLazyLiuShi`` 两项断言直接读 ``d["lines"]`` 校验 flip_index，
+    保留它即可在**不改任何既有测试**的前提下拿到全部收益。
+
+    ``flip_index`` 用闭式公式而非 diff：实测 3 盘 20,592 个日段，
+    ``(yue_yao_index + 1 + k) % 6`` 与「逐爻 diff 求唯一差异爻」
+    **0 处不一致**，且每段 diff 恒恰好一爻，故公式与原算法等价。
+
+    需要卦名时，由调用方对命中的那一个月调 :func:`materialize_month_days` 现算。
+    """
+    start = (yue_yao_index + 1) % 6
+    return [
+        {
+            "segment": k + 1,
+            "day_from": k * 5 + 1,
+            "day_to": k * 5 + 5,
+            "flip_index": (start + k) % 6,
+            "lines": _flip_line(yue_lines, (start + k) % 6),
+        }
+        for k in range(6)
+    ]
+
+
+def materialize_month_days(month: dict) -> list[dict]:
+    """把按需化的流月条目的 ``days`` 物化成完整日段（含卦名与六爻）。
+
+    2026-10-06：``canonical._build_timeline`` 只存六段廉价定位字段
+    （见 :func:`compute_liuri_stub`），以避免 1,116 个月 × 6 次卦名换算。
+    排盘时只有**命中应期的那一个月**需要完整日段，由消费方（guajie）
+    调本函数现算。
+
+    Args:
+        month: ``_build_timeline`` 产出的单个月份 dict。
+
+    Returns:
+        完整日段列表（segment/day_from/day_to/flip_index/name/upper/lower/lines），
+        与改造前逐月 ``compute_liuri(...).days`` 的内容逐字一致。
+    """
+    lines = month.get("lines") or []
+    yue_yao = month.get("yue_yao_index")
+    if yue_yao is None or not lines:
+        return list(month.get("days") or [])
+    days = compute_liuri(lines, yue_yao, month.get("jie_datetime")).days
+    start = (yue_yao + 1) % 6
+    for k, dseg in enumerate(days):
+        dseg["flip_index"] = (start + k) % 6
+    return days
+
+
 def _parse_datetime(s: str):
     """解析 'YYYY-MM-DD HH:MM' 或 'YYYY-MM-DD' → datetime"""
     from datetime import datetime

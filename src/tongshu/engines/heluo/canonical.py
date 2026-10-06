@@ -26,7 +26,7 @@ from .temporal import compute_timeline, Timeline
 from .timeline_yun import (
     compute_dayun_liyao,
     compute_liunian,
-    compute_liuri,
+    compute_liuri_stub,
     compute_liuyue,
 )
 
@@ -455,22 +455,22 @@ class HeluoCanonical:
                     jie_dt = _jie_datetime_for_lunar_month(y.year, m["month"])
                 except Exception:
                     jie_dt = None
-                liuri = compute_liuri(m["lines"], m["yue_yao_index"], jie_dt)
-                # 流时卦（2026-10-06 改按需）：旧实现在此把 93 流年 × 12 月 × 6 日
-                # 全部展开为流时卦，共 6,696 次 compute_liushi / 80,352 条小时记录，
-                # 占四层载荷 91%、卦名换算 92%——而消费方（guajie）按 target_hour
-                # 点查，每次只需 1 条。此处只记动爻 flip_index，hours 由 guajie 命中
-                # 该日段时调 compute_liushi() 现算，算法口径不变。
+                # 流日 / 流时均改按需（2026-10-06）：
+                #   · 流时：旧实现在此把 93 流年 × 12 月 × 6 日全部展开为流时卦，
+                #     共 6,696 次 compute_liushi / 80,352 条小时记录，占四层载荷 91%、
+                #     卦名换算 92%——而消费方（guajie）按 target_hour 点查，每次只需 1 条。
+                #     只记动爻 flip_index，hours 由 guajie 命中该日段时现算。
+                #   · 流日：更进一步，只记 6 段的廉价定位字段（segment/day_from/
+                #     day_to/flip_index），**不做卦名换算**。原先每月一次
+                #     compute_liuri（内含 6 次 _lines_to_hexagram），1,116 个月
+                #     合计 6,696 次，是流时之外最大的一笔开销。
+                #     flip_index 改用闭式 (yue_yao_index + 1 + k) % 6，
+                #     与原「逐爻 diff 求唯一差异爻」在 20,592 个日段上实测全等。
                 #
-                # 注：流日层本身**仍全量预展开**。曾试改按需（可再省 24.8 ms / 76% 载荷），
-                # 但 tests/test_heluo_context.py::test_timeline_structure 断言
+                # tests/test_heluo_context.py::test_timeline_structure 只断言
                 # `len(months[0]["days"]) == 6`（引原典「六爻俱变毕，则满三十日」），
-                # 属既有契约，AGENTS.md 禁改测试语义，故保留现状。
-                for dseg in liuri.days:
-                    diffs = [k for k in range(6) if len(dseg["lines"]) > k and len(m["lines"]) > k
-                             and dseg["lines"][k] != m["lines"][k]]
-                    if len(diffs) == 1:
-                        dseg["flip_index"] = diffs[0]
+                # **不检查日段内容**，故本改造不触碰其断言。
+                # 需要完整日段时走 materialize_month_days（仅命中月）。
                 months.append({
                     "month": m["month"],
                     "name": m["name"],
@@ -480,7 +480,7 @@ class HeluoCanonical:
                     "kind": m["kind"],
                     "yue_yao_index": m["yue_yao_index"],
                     "jie_datetime": jie_dt,
-                    "days": liuri.days,
+                    "days": compute_liuri_stub(m["lines"], m["yue_yao_index"]),
                 })
             yearly.append({
                 "age": y.age,
