@@ -158,5 +158,67 @@ class TestLiuWeiGuiJian(unittest.TestCase):
         self.assertTrue(any("侯牧" in e for e in r.evidence))
 
 
+class TestSiDuanStrippedFromProduction(unittest.TestCase):
+    """死断层剥离契约（2026-10-06）
+
+    剥离原因：断语是「必死」「定死无疑」「便可以死断之」这类不可逆硬断，
+    且**不是少数盘才触发**——180 盘实测 120 盘命中（66.7%），属高频输出，
+    在前端展示管控就绪前不进生产输出。
+
+    与上面 TestSiDuan 的关系：TestSiDuan 锁的是 judge_si_duan 判据本体
+    （能力保留，恢复即可用）；本类锁的是「生产输出恒空 + 明确留痕」。
+    两者并存才完整：既不能把能力删掉，也不能让硬断偷偷回到生产链路。
+    """
+
+    _HARD = ("必死", "定死", "死断", "寿必不久", "十死八九", "坎壈")
+
+    @classmethod
+    def setUpClass(cls):
+        import os
+        from datetime import date
+        from tongshu.pipeline import TONGSHUPipeline
+        os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
+        cls._root = Path(__file__).resolve().parents[2]
+        pipe = TONGSHUPipeline.for_demo(cls._root)
+        cls.gj = pipe.run(
+            analysis_date=date(2026, 10, 6),
+            birth_date=(1983, 11, 3, 7),
+            gender="male", theme="WORK", compute_only=True,
+            heluo_target_date=date(2026, 8, 17),
+        ).heluo_result.guajie
+
+    def test_key_contract_keeps_si_duan(self):
+        """契约键不得删——删了会让下游误以为该层不存在。"""
+        self.assertIn("si_duan", self.gj)
+
+    def test_si_duan_is_empty(self):
+        self.assertEqual(self.gj["si_duan"], [])
+
+    def test_summary_carries_no_hard_death_sentence(self):
+        """硬断不得出现在 summary（这是用户真正看到的那一层）。"""
+        hit = [s for s in self.gj["summary"] if any(k in s for k in self._HARD)]
+        self.assertEqual(hit, [], f"summary 仍含硬断：{hit}")
+
+    def test_evidence_records_the_strip(self):
+        """不做静默忽略：evidence 必须留痕说明该层已剥离。"""
+        trace = [e for e in self.gj["evidence"] if "死断" in e and "已剥离" in e]
+        self.assertTrue(trace, "缺少死断剥离留痕")
+
+    def test_kuozhan_shu_ji_stays_empty(self):
+        """数极京城山林随死断触发；死断恒空 → 该判据在生产恒不触发。"""
+        self.assertFalse(self.gj.get("kuozhan", {}).get("shu_ji"))
+
+    def test_capability_retained(self):
+        """剥离不得删能力：判据本体仍可独立求值（恢复路径完好）。"""
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
+        self.assertTrue(any("君爻" in x for x in w), w)
+
+    def test_other_layers_unaffected(self):
+        """只摘死断一层：流年/流月/流日不受影响。"""
+        self.assertTrue(self.gj["liunian_hexagram"])
+        self.assertTrue(self.gj["liuyue_hexagram"])
+        self.assertTrue(self.gj["liuri_hexagram"])
+
+
 if __name__ == "__main__":
     unittest.main()
