@@ -32,7 +32,7 @@ from pathlib import Path
 from typing import Optional
 
 from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
-from .timeline_yun import compute_liushi, materialize_month_days
+from .timeline_yun import materialize_month_days
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _GUAJIE_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_data.json"
@@ -334,8 +334,8 @@ class GuaJieResult:
     liuyue_yao: Optional[YaoDuan] = None    # 流月动爻判词（应期定位）
     liuri_hexagram: str = ""              # 流日卦名
     liuri_yao: Optional[YaoDuan] = None     # 流日动爻判词（应期定位）
-    liushi_hexagram: str = ""             # 流时卦名
-    liushi_yao: Optional[YaoDuan] = None    # 流时动爻判词（应期定位）
+    liushi_hexagram: str = ""             # 流时卦名（2026-10-06 起该层已剥离，恒为 ""）
+    liushi_yao: Optional[YaoDuan] = None    # 流时动爻判词（同上，恒为 None）
     shu_xiong: Optional[ShuXiongResult] = None
     yuan_qi_hit: bool = False               # 流年遇元气
     hua_gong_hit: bool = False              # 流年遇化工
@@ -997,8 +997,6 @@ def build_guajie_from_result(
         liuyue_yao_name = liuyue_yao
         liuri_hex_name = ""
         liuri_yao_name = ""
-        liushi_hex_name = ""
-        liushi_yao_name = ""
         if target_year is not None and result.timeline is not None:
             entries = result.timeline.yearly_hexagrams or []
             for i, e in enumerate(entries):
@@ -1043,19 +1041,12 @@ def build_guajie_from_result(
                                             if day_yao is not None and len(dl) > day_yao:
                                                 liuri_yao_name = _yao_name(day_yao, dl[day_yao])
                                             # 流时应期：值日卦 hours（起时卦例：前六时进/后六时退）
-                                            # 2026-10-06：_build_timeline 不再预展开流时卦
-                                            # （6,696 段 / 80,352 条，占四层载荷 91%），
-                                            # 只存 flip_index；此处按 target_hour 现算，
-                                            # 命中即止，算法口径与预展开完全一致。
-                                            if target_hour and day_yao is not None:
-                                                for hs in compute_liushi(dseg.get("lines") or [], day_yao).hours:
-                                                    if hs.get("hour") == target_hour:
-                                                        liushi_hex_name = _short(hs.get("name", ""))
-                                                        si = hs.get("shi_yao_index")
-                                                        sl = hs.get("lines") or []
-                                                        if si is not None and len(sl) > si:
-                                                            liushi_yao_name = _yao_name(si, sl[si])
-                                                        break
+                                            # ── 流时层 2026-10-06 剥离 ──
+                                            # 原典起时卦例（值日卦前六时进数/后六时退数）
+                                            # 的推演已整体摘除：当前引擎吃不消该层，
+                                            # 且其唯一消费点就是下面这两行。
+                                            # compute_liushi 本体**保留在 timeline_yun**，
+                                            # 未来恢复只需接回此处，算法口径不变。
                                             break
                                 break
                     break
@@ -1075,12 +1066,13 @@ def build_guajie_from_result(
             gj.liuri_yao = query_yao_duan(liuri_hex_name, liuri_yao_name)
             gj.evidence.append(
                 f"流日定位：{liuri_hex_name}{liuri_yao_name}（原典起日卦例·每爻管5日，第{target_day}日）")
-        # 流时判词（起时卦例：值日卦前六时进数/后六时退数）
-        if liushi_hex_name and liushi_yao_name:
-            gj.liushi_hexagram = liushi_hex_name
-            gj.liushi_yao = query_yao_duan(liushi_hex_name, liushi_yao_name)
+        # 流时层已剥离（2026-10-06）：起时卦例的推演整段摘除。
+        # 若调用方仍传 target_hour，**明确留痕**而不是静默忽略——
+        # 静默忽略会让调用方以为该层已生效，正是本轮反复清理的那类缺陷。
+        if target_hour is not None:
             gj.evidence.append(
-                f"流时定位：{liushi_hex_name}{liushi_yao_name}（原典起时卦例·{['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'][(target_hour or 1)-1]}时）")
+                f"  流时：已剥离，不产出（传入 target_hour={target_hour} 被忽略；"
+                f"原典起时卦例层待引擎能力就绪后恢复）")
 
         # ── 生时化工（四正节卦，起例卷之下·节候卦爻） ────────────────
         try:

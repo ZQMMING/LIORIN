@@ -69,25 +69,30 @@ class TestLazyLiuShi(unittest.TestCase):
                     if len(diffs) == 1:
                         self.assertEqual(d["flip_index"], diffs[0])
 
-    def test_guajie_on_demand_hours_matches(self):
-        """guajie 按 target_hour 现算，12 时辰全部可定位"""
+    def test_guajie_hours_layer_stripped_others_intact(self):
+        """2026-10-06 流时层剥离：流时恒空，但流年/流月/流日仍须正确定位。"""
         out = gj.build_guajie_from_result(
             self.res, bazi=BAZI, target_year=2026, target_month=6,
             target_day=15, target_hour=7,
         )
-        self.assertEqual(out["liushi_hexagram"], "井")
-        self.assertEqual(out["liuri_hexagram"], "升")
-        self.assertEqual(out["liuyue_hexagram"], "蛊")
+        self.assertEqual(out["liushi_hexagram"], "", "流时层应已剥离")
+        self.assertIsNone(out["liushi_yao"])
+        # 剥离流时不得牵连其余三层
         self.assertEqual(out["liunian_hexagram"], "困")
+        self.assertEqual(out["liuyue_hexagram"], "蛊")
+        self.assertEqual(out["liuri_hexagram"], "升")
 
-    def test_guajie_all_twelve_hours_resolve(self):
+    def test_guajie_all_twelve_hours_uniformly_stripped(self):
+        """12 个时辰一律不产流时，且都在 evidence 留痕。"""
         for h in range(1, 13):
             out = gj.build_guajie_from_result(
                 self.res, bazi=BAZI, target_year=2026, target_month=6,
                 target_day=15, target_hour=h,
             )
-            self.assertTrue(out["liushi_hexagram"], f"{h} 时未定位")
-            self.assertTrue(out["liushi_yao"], f"{h} 时无动爻判词")
+            self.assertEqual(out["liushi_hexagram"], "", f"{h} 时仍产流时")
+            self.assertIsNone(out["liushi_yao"], f"{h} 时仍产流时爻辞")
+            self.assertTrue(any("流时：已剥离" in e for e in out["evidence"]),
+                            f"{h} 时未留痕")
 
     def test_omitting_target_hour_yields_no_liushi(self):
         out = gj.build_guajie_from_result(
@@ -95,6 +100,8 @@ class TestLazyLiuShi(unittest.TestCase):
         )
         self.assertFalse(out["liushi_hexagram"])
         self.assertTrue(out["liuri_hexagram"], "不传时辰时流日仍应定位")
+        self.assertFalse(any("流时：已剥离" in e for e in out["evidence"]),
+                         "未传 target_hour 时无需留剥离痕迹")
 
 
 class TestGuajieToDictHexagrams(unittest.TestCase):
@@ -108,17 +115,24 @@ class TestGuajieToDictHexagrams(unittest.TestCase):
             target_day=15, target_hour=7,
         )
 
-    def test_all_four_hexagram_keys_present(self):
-        for k in ("liunian_hexagram", "liuyue_hexagram",
-                  "liuri_hexagram", "liushi_hexagram"):
+    def test_three_live_hexagram_keys_present_and_filled(self):
+        """流年/流月/流日三个应期卦名必须发出且非空。"""
+        for k in ("liunian_hexagram", "liuyue_hexagram", "liuri_hexagram"):
             self.assertIn(k, self.out, f"{k} 未被 to_dict 发出")
             self.assertTrue(self.out[k], f"{k} 为空")
 
+    def test_liushi_key_still_present_but_empty(self):
+        """流时键保留在契约中（前端可稳定读取），但值恒空。"""
+        self.assertIn("liushi_hexagram", self.out)
+        self.assertEqual(self.out["liushi_hexagram"], "")
+
     def test_yao_keys_still_present(self):
         """既有键不得受影响"""
-        for k in ("liunian_yao", "liuyue_yao", "liuri_yao", "liushi_yao"):
+        for k in ("liunian_yao", "liuyue_yao", "liuri_yao"):
             self.assertIn(k, self.out)
             self.assertIsInstance(self.out[k], dict)
+        self.assertIn("liushi_yao", self.out)
+        self.assertIsNone(self.out["liushi_yao"])
 
 
 class TestInterpretShallowCopy(unittest.TestCase):

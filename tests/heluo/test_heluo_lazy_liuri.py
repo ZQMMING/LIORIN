@@ -112,17 +112,51 @@ class TestMaterializeEquivalence(unittest.TestCase):
 
 
 class TestGuajieStillResolvesDayAndHour(unittest.TestCase):
-    """按需化后 guajie 仍须正确解出流日/流时——否则就是省错了地方。"""
+    """流日须正确解出；流时已于 2026-10-06 剥离，只断言剥离行为本身。"""
 
-    def test_day_and_hour_still_resolve(self):
+    def test_day_still_resolves(self):
         from tongshu.engines.heluo import guajie as gj
         out = gj.build_guajie_from_result(
             _calc(), bazi=_BAZI, target_year=1724, target_month=6,
             target_day=15, target_hour=7,
         )
         self.assertTrue(out["liuri_hexagram"], "流日卦未解出")
-        self.assertTrue(out["liushi_hexagram"], "流时卦未解出（需物化日段六爻）")
-        self.assertEqual(out["liunian_year"], 1724)
+        self.assertIsNotNone(out["liuri_yao"], "流日动爻判词未解出")
+
+    def test_hour_layer_is_stripped(self):
+        """流时层已剥离：不产卦名、不产爻辞。"""
+        from tongshu.engines.heluo import guajie as gj
+        out = gj.build_guajie_from_result(
+            _calc(), bazi=_BAZI, target_year=1724, target_month=6,
+            target_day=15, target_hour=7,
+        )
+        self.assertEqual(out["liushi_hexagram"], "")
+        self.assertIsNone(out["liushi_yao"])
+
+    def test_passing_hour_leaves_visible_trace(self):
+        """传了 target_hour 必须留痕——不得静默忽略。"""
+        from tongshu.engines.heluo import guajie as gj
+        out = gj.build_guajie_from_result(
+            _calc(), bazi=_BAZI, target_year=1724, target_month=6,
+            target_day=15, target_hour=7,
+        )
+        self.assertTrue(any("流时：已剥离" in e for e in out["evidence"]),
+                        "传入 target_hour 必须在 evidence 留痕")
+
+    def test_hour_layer_stripped_even_without_hour_arg(self):
+        from tongshu.engines.heluo import guajie as gj
+        out = gj.build_guajie_from_result(
+            _calc(), bazi=_BAZI, target_year=1724, target_month=6, target_day=15)
+        self.assertEqual(out["liushi_hexagram"], "")
+        self.assertFalse(any("流时：已剥离" in e for e in out["evidence"]),
+                         "未传 target_hour 时无需留痕")
+
+    def test_compute_liushi_capability_preserved(self):
+        """compute_liushi 本体保留在 timeline_yun，未来恢复不必重写。"""
+        from tongshu.engines.heluo.timeline_yun import compute_liushi
+        r = compute_liushi([1, -1, 1, -1, 1, 1], 3)
+        self.assertEqual(len(r.hours), 12)
+        self.assertEqual([h["hour"] for h in r.hours], list(range(1, 13)))
 
 
 if __name__ == "__main__":

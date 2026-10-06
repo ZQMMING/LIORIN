@@ -100,7 +100,7 @@ class TestGuajieWiredEndToEnd(unittest.TestCase):
         self.assertTrue(g["liuri_hexagram"], "流日卦")
 
     def test_liushi_empty_without_hour(self):
-        """不传时辰 → 不解流时（留空），不得瞎猜时辰。"""
+        """不传时辰 → 流时层本就剥离（恒空）。"""
         self.assertEqual(self.result.heluo_result.guajie["liushi_hexagram"], "")
 
     def test_interpretation_layers_nonempty(self):
@@ -141,21 +141,22 @@ class TestTargetPassthrough(unittest.TestCase):
         for name in ("heluo_target_date", "heluo_target_hour"):
             self.assertIn(name, params, f"ComputeStage.run() 未暴露 {name}")
 
-    def test_hour_reaches_liushi(self):
-        """经 pipeline 入口传时辰 → 流时卦落地。"""
+    def test_hour_layer_is_stripped(self):
+        """2026-10-06 起流时层剥离：不产卦名，且传参必留痕。"""
         r = _run(self.pipeline, heluo_target_date=_TARGET, heluo_target_hour=6)
-        self.assertTrue(r.heluo_result.guajie["liushi_hexagram"], "流时卦未落地")
-        self.assertIsNotNone(r.heluo_result.guajie["liushi_yao"])
+        gj = r.heluo_result.guajie
+        self.assertEqual(gj["liushi_hexagram"], "", "流时层应已剥离")
+        self.assertIsNone(gj["liushi_yao"])
+        self.assertTrue(any("流时：已剥离" in e for e in gj["evidence"]),
+                        "传入时辰必须留痕，不得静默忽略")
 
-    def test_distinct_hours_give_distinct_liushi(self):
-        """时辰必须真的参与推演，不是被忽略的参数。"""
-        a = _run(self.pipeline, heluo_target_date=_TARGET,
-                 heluo_target_hour=1).heluo_result.guajie["liushi_hexagram"]
+    def test_day_layer_unaffected_by_hour_stripping(self):
+        """剥离流时不得牵连流日。"""
+        a = _run(self.pipeline, heluo_target_date=_TARGET).heluo_result.guajie
         b = _run(self.pipeline, heluo_target_date=_TARGET,
-                 heluo_target_hour=6).heluo_result.guajie["liushi_hexagram"]
-        self.assertTrue(a)
-        self.assertTrue(b)
-        self.assertNotEqual(a, b, f"子时与巳时同得「{a}」，时辰未参与推演")
+                 heluo_target_hour=6).heluo_result.guajie
+        self.assertEqual(a["liuri_hexagram"], b["liuri_hexagram"])
+        self.assertEqual(a["liuyue_hexagram"], b["liuyue_hexagram"])
 
     def test_distinct_target_dates_give_distinct_month_day(self):
         """应期日必须真的参与推演——四个农历月日各异，流月/流日卦应随之变化。
