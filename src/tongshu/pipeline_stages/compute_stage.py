@@ -124,6 +124,8 @@ class ComputeStage:
         calc_context: CalculationContext | None = None,
         judgment_claims: list[dict] | None = None,  # BZ-FNDR-15.16 INT-06: Composer 产 claims
         judgment_composer=None,  # BZ-FNDR-15.16 INT-06: Composer 实例 (内部编排)
+        heluo_target_date: date | None = None,  # 河洛解卦应期日（公历），默认 analysis_date
+        heluo_target_hour: int | None = None,   # 时辰序号 1-12（子=1），None=不解流时应期
     ) -> ComputeResult:
         """执行阶段 1-6 全流程：bazi+ziwei+huangli → signals → cross → claims → SIR → schema。"""
 
@@ -166,7 +168,9 @@ class ComputeStage:
         # 河洛计算 → YiAdapter 适配为 YiStructure → YiInterpretationEngine 解释。
         # 任何一步失败都降级为 None，不影响既有 bazi/ziwei/huangli 主链路。
         heluo_result, yi_structure, yi_interpretation = self._compute_heluo_yi(
-            bazi_chart, gender, year=year, month=month, day=day
+            bazi_chart, gender, year=year, month=month, day=day,
+            target_date=heluo_target_date or analysis_date,
+            target_hour=heluo_target_hour,
         )
 
         # 1c. 梅花易数引擎（E7 接入）
@@ -284,6 +288,22 @@ class ComputeStage:
             canonical_bazi_chart=canonical_bazi_chart,
         )
 
+    @staticmethod
+    def _heluo_lunar_target(target_date: date) -> tuple[int, int, int]:
+        """公历应期日 → 河洛解卦口径 (流年公历年, 农历月, 农历日)。
+
+        河洛流月/流日以**农历**月日与月令"节"对齐（见 canonical._LUNAR_MONTH_JIE
+        与 compute_liuri 的 jie_datetime），直接传公历月日会错位一整个月，故此处统一
+        换算。换算失败时回退按公历月日处理，不抛。
+        """
+        try:
+            from lunar_python import Solar as _Solar
+            lun = _Solar.fromYmd(target_date.year, target_date.month,
+                                 target_date.day).getLunar()
+            return target_date.year, int(lun.getMonth()), int(lun.getDay())
+        except Exception:  # noqa: BLE001 — 换算失败不阻断，回退公历口径
+            return target_date.year, target_date.month, target_date.day
+
     def _compute_heluo_yi(
         self,
         bazi_chart,
@@ -291,6 +311,8 @@ class ComputeStage:
         year: int | None = None,
         month: int | None = None,
         day: int | None = None,
+        target_date: date | None = None,
+        target_hour: int | None = None,
     ) -> tuple:
         """河洛理数计算 + 易经解释（BUG-P0-03）。
 
@@ -311,6 +333,11 @@ class ComputeStage:
           - solar_phase: 因无 birth_date 而跳过 _solar_phase_for_date →
             纯卦元堂半年相分支拿不到冬至/夏至判定。
         现由 run() 把真实出生年月日透传下来（calc_context 与直调两条路径都已覆盖）。
+
+        2026-10-06 接入 H8 解卦层：target_date 给出时（run() 默认传 analysis_date），
+        额外产出 HeluoResult.guajie。target_date 为公历，内部换算成农历月日——
+        河洛流月/流日按农历月与月令"节"对齐，传公历月日会整体错位一个月。
+        target_hour 为时辰序号 1-12（子=1），None 时不解流时应期。
         """
         heluo_result = None
         yi_structure = None
@@ -341,6 +368,38 @@ class ComputeStage:
             )
             yi_structure = YiAdapter.adapt(yi_input)
             yi_interpretation = self.yi_engine.interpret(yi_structure)
+
+            # ── H8 卦象解析层（2026-10-06 接入）──────────────────────────
+            # 此前排盘只到「算卦」为止：guajie.build_guajie_from_result 全仓唯一
+            # 生产调用点在 heluo_adapter，而 compute_stage 走的是 heluo_canonical
+            # 直调、绕过 adapter，导致 HeluoResult.guajie 恒为 None——2,310 行解卦
+            # 判词 + guidance/metrics_v2/diagnosis 等 4,000+ 行解析层在排盘里从不执行。
+            #
+            # 接法：填 HeluoResult.guajie。api._yi_block 用 dataclasses.asdict 序列化
+            # 整个 HeluoResult，故 API 层自动带上，无需改 ComputeResult/PipelineResult。
+            #
+            # 按需单点：build_guajie_from_result 是 target_* 单目标设计，实测约 1 ms。
+            # 绝不对 93 个流年全量跑（按 1 ms/次外推即 +93 ms，会吃掉算卦的全部优化）。
+            #
+            # 独立 try：日志能区分「H8 解卦降级」与「河洛/Yi 整体降级」，
+            # 且不依赖「外层 except 恰好不重置已赋值局部变量」这一实现细节——
+            # 现状下即使合入外层 try，结果其实同样保住（实测验证过），故此处是
+            # 可观测性收益，不是正确性依赖。
+            if target_date is not None:
+                try:
+                    from dataclasses import replace as _replace
+                    from ..engines.heluo.guajie import build_guajie_from_result
+                    t_year, t_month, t_day = self._heluo_lunar_target(target_date)
+                    heluo_result = _replace(
+                        heluo_result,
+                        guajie=build_guajie_from_result(
+                            heluo_result, bazi=bazi_cn,
+                            target_year=t_year, target_month=t_month,
+                            target_day=t_day, target_hour=target_hour,
+                        ),
+                    )
+                except Exception as exc:  # noqa: BLE001 — 解卦降级，算卦结果保留
+                    log.warning("Heluo H8 解卦降级 (guajie=None, 河洛计算结果保留): %s", exc)
         except Exception as exc:  # noqa: BLE001 — 河洛/易经降级，不中断主管道
             log.warning("Heluo/Yi integration failed (degraded, 不影响主链路): %s", exc)
         return heluo_result, yi_structure, yi_interpretation
