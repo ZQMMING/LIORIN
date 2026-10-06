@@ -1,87 +1,68 @@
 # -*- coding: utf-8 -*-
-"""L4 格局成败判定字段（核A · 裁141甲 / 裁142否丙）
+"""L4 格局成败判定（六态）
 
-消费类型: COMPUTED —— 挂 ge_cheng.cheng_bai，下游一次读。
-值域: CHENG / PO / CHENG_ZHONG_YOU_PO（三态，初版）
-      PO_ZHONG_YOU_CHENG 依赖 C 块（救应），不落，标「依赖 C 块」。
+消费类型: COMPUTED —— 由 ge_cheng（含 po_ge_hits）一次推。
+值域:
+  None(NO_GE)        ge 无 / 无格
+  SPECIAL_PASS       特殊格（从/专旺/化）真成立, H=0
+  SPECIAL_FAIL       特殊格假/破（H>0 或 ge 带破格）
+  CHENG              普通格 H=0
+  CHENG_ZHONG_YOU_PO 普通格 H>0 且 xi_wx 非空（成中有败, 喜神在）
+  PO                 普通格 H>0 且 xi_wx 空（破, 喜神清空）
 
-依据:
-  cheng_bai_criteria（§4.26.4，纯结构出口）
-  ge_cheng.po_ge  24 处赋值语义全为 A「此盘此格已破」（§4.26.1 核验）
-  ge_cheng.xi_wx_status  区分「破格后喜神被清空」vs「成中有败」
-
-判定逻辑（纯结构，零新判据）:
-  CHENG             po_n == 0
-  CHENG_ZHONG_YOU_PO po_n > 0 且 xi_wx_status == "DEFINED"
-                      （破格条件写入，但喜神仍定义 = 成中有败）
-  PO                po_n > 0 且 xi_wx_status != "DEFINED"
-
-★ 不读 ge 字符串（"(破格)" 后缀只有 43/1408 盘有，非可靠判据）。
-★ 只读 po_n + xi_wx_status，两个字段同源 ge_cheng。
+★ H = len(po_ge_hits)（求值器实际命中），不是 po_ge 模板条数。旧 len(po_ge) 逻辑作废。
+★ H>0 权威判据读 xi_wx 列表空否（status 键缺失 ≠ 喜神空）。
+设计: p0_v2/po_ge求值器三层设计.md。
 """
 from typing import Any, Dict, Optional
 
+_SPECIAL_KW = ("从", "化", "曲直", "炎上", "稼穑", "从革", "润下")
+
 
 def compute_cheng_bai(ge_cheng: Optional[Dict[str, Any]]) -> Optional[str]:
-    """从 ge_cheng 推 cheng_bai 判定。
-
-    Args:
-        ge_cheng: build_ge_cheng 产出的 dict，含 po_ge / xi_wx_status 键。
-
-    Returns:
-        "CHENG" / "CHENG_ZHONG_YOU_PO" / "PO" / None（无格）
-    """
     if not ge_cheng or ge_cheng.get("ge") in (None, "无格", ""):
         return None
-
-    po_ge = ge_cheng.get("po_ge") or []
-    po_n = len(po_ge)
-    xi_status = ge_cheng.get("xi_wx_status")
-
-    if po_n == 0:
+    ge = ge_cheng.get("ge") or ""
+    hits = ge_cheng.get("po_ge_hits")
+    H = len(hits) if hits is not None else 0
+    xi = ge_cheng.get("xi_wx") or []
+    is_special = any(k in ge for k in _SPECIAL_KW)
+    po_mark = "(破格)" in ge
+    if is_special:
+        return "SPECIAL_FAIL" if (H > 0 or po_mark) else "SPECIAL_PASS"
+    if H == 0:
         return "CHENG"
-    elif xi_status == "DEFINED":
-        return "CHENG_ZHONG_YOU_PO"
-    else:
-        return "PO"
+    return "CHENG_ZHONG_YOU_PO" if xi else "PO"
 
 
 def build_cheng_bai(ge_cheng: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-    """落进 ge_cheng 的 dict 形态（含 basis 供人工核）。"""
     result = compute_cheng_bai(ge_cheng)
-    po_n = len((ge_cheng or {}).get("po_ge") or [])
-    xi_status = (ge_cheng or {}).get("xi_wx_status")
+    hits = (ge_cheng or {}).get("po_ge_hits")
     return {
         "value": result,
         "status": "DEFINED" if result else "NO_GE",
         "basis": {
-            "po_n": po_n,
-            "xi_wx_status": xi_status,
+            "H": len(hits) if hits is not None else 0,
+            "xi_wx_empty": len((ge_cheng or {}).get("xi_wx") or []) == 0,
             "slice_ids": "STRUCTURE.GE_JU.CHENG_BAI.001..012",
         },
-        "po_zhong_you_cheng": "依赖 C 块（救应），不落",
     }
 
 
 if __name__ == "__main__":
-    # 探针（独立进程，不 import 引擎生产路径）
-    print("=== cheng_bai 判定探针 ===")
-    # 构造 4 个已知盘
+    print("=== cheng_bai 六态探针 ===")
     tests = [
-        ("CHENG",               {"ge":"食神格","po_ge":[],"xi_wx_status":"DEFINED"}),
-        ("PO",                  {"ge":"财格","po_ge":[{"type":"组合","match":"ANY","required":["七杀"]}] ,"xi_wx_status":None}),
-        ("PO",                  {"ge":"从财格(破格)","po_ge":[{"type":"组合","match":"ANY","required":["比肩"]}],"xi_wx_status":"UNVERIFIED"}),
-        ("CHENG_ZHONG_YOU_PO",  {"ge":"从财格","po_ge":[{"type":"组合","match":"ANY","required":["比肩"]}],"xi_wx_status":"DEFINED"}),
+        ("CHENG", {"ge": "食神格", "po_ge_hits": [], "xi_wx": ["火"]}),
+        ("PO", {"ge": "财格", "po_ge_hits": [{"hit_type": "组合"}], "xi_wx": []}),
+        ("CHENG_ZHONG_YOU_PO", {"ge": "财格", "po_ge_hits": [{"hit_type": "组合"}], "xi_wx": ["水"]}),
+        ("SPECIAL_PASS", {"ge": "曲直格", "po_ge_hits": [], "xi_wx": []}),
+        ("SPECIAL_FAIL", {"ge": "从财格(破格)", "po_ge_hits": [{"hit_type": "组合"}], "xi_wx": []}),
     ]
     all_pass = True
     for expect, gc in tests:
         r = build_cheng_bai(gc)
         ok = r["value"] == expect
         all_pass &= ok
-        print("  预期=%-20s 实测=%-20s %s  basis=%s" % (
-            expect, r["value"], "PASS" if ok else "FAIL", r["basis"]))
-    r_none = build_cheng_bai(None)
-    print("  ge=None -> value=None status=%s  %s" % (
-        r_none["status"], "PASS" if r_none["status"]=="NO_GE" else "FAIL"))
+        print("  预期=%-20s 实测=%-20s %s" % (expect, r["value"], "PASS" if ok else "FAIL"))
+    print("  ge=None ->", build_cheng_bai(None)["status"])
     print("★ 探针:", "PASS" if all_pass else "FAIL")
-    print("★ po_zhong_you_cheng:", build_cheng_bai(tests[0][1])["po_zhong_you_cheng"])

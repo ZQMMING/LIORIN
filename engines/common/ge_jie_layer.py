@@ -1091,3 +1091,93 @@ def normalize_ti_wx(facts: Dict[str, Any]) -> Dict[str, Any]:
     if mben and ten_god(dg, mben) in body:
         gc['ti_wx'] = [GAN_WX[mben]]
     return facts
+
+
+# ==========================================================================
+# po_ge 破格条件求值器 (L4): 把 build_ge_cheng 的待求值模板在当前盘逐条判命中,
+# apply_he_po_ge 的「冲月令破格」为已判事件直接计。产出 ge_cheng.po_ge_hits。
+# 设计见 p0_v2/po_ge求值器三层设计.md。
+# ==========================================================================
+def _po_ge_domain(ge: str, t: str, hit_gods) -> str:
+    g = ge or ''
+    if t in ('缺失', '冲月令破格', '地支'):
+        return 'GEJU'
+    hs = set(hit_gods)
+    if '印' in g and hs & {'正财', '偏财'}:
+        return 'JIEGOU'      # 财破印
+    if '食神' in g and '偏印' in hs:
+        return 'JIEGOU'      # 枭神夺食
+    if '官' in g and '伤官' in hs:
+        return 'JIEGOU'      # 伤官见官
+    if hs & {'正财', '偏财'} and hs & {'七杀'}:
+        return 'JIEGOU'      # 财党煞
+    if '财' in g:
+        return 'JIEGOU'      # 财格党煞/比劫
+    return 'GEJU'
+
+
+def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
+    """求值 po_ge 模板 → ge_cheng.po_ge_hits（命中事件列表）。"""
+    gc = facts.get('ge_cheng')
+    if not isinstance(gc, dict):
+        return facts
+    po = gc.get('po_ge') or []
+    dg = facts.get('day_stem', '')
+    pillars = facts.get('pillars') or {}
+    hidden = facts.get('hidden_stems') or {}
+    if not dg or not all(k in pillars for k in ('year', 'month', 'day', 'hour')):
+        gc['po_ge_hits'] = []
+        return facts
+
+    # 在局十神集合 = 天干透出 + 地支本气（中余不计，ENGINE_DEFINED）
+    present = set()
+    for pos in ('year', 'month', 'hour'):
+        present.add(ten_god(dg, pillars[pos][0]))
+    for pos in ('year', 'month', 'day', 'hour'):
+        hd = hidden.get(pos) or []
+        bgan = hd[0] if hd else ZHI_BEN_GAN.get(pillars[pos][1], '')
+        if bgan:
+            present.add(ten_god(dg, bgan))
+
+    # 相邻存活六冲（地支刑冲判据）
+    rs = (facts.get('combination_facts') or {}).get('resolved') or {}
+    chong_survive = rs.get('chong_survive') or []
+
+    hits = []
+    for tpl in po:
+        t = tpl.get('type', '')
+        match = tpl.get('match', 'ANY')
+        hit_gods = []
+        ok = False
+        if t == '组合':
+            req = tpl.get('required') or []
+            hit_gods = [r for r in req if r in present]
+            if match == 'ALL':
+                ok = all(r in present for r in req) and len(req) > 0
+            else:
+                ok = len(hit_gods) > 0
+        elif t == '地支':
+            cond = tpl.get('branch_cond', '')
+            if '冲' in cond and chong_survive:
+                ok = True
+            if '刑' in cond and (rs.get('sanxing_survive') or rs.get('sanxing')):
+                ok = True
+        elif t == '缺失':
+            forb = tpl.get('forbidden') or []
+            ok = len(forb) > 0 and all(x not in present for x in forb)
+            hit_gods = [x for x in forb]
+        elif t == '冲月令破格':
+            ok = True
+            hit_gods = tpl.get('required') or []
+        if ok:
+            hits.append({
+                'hit_type': t,
+                'match': match,
+                'hit_detail': tpl.get('branch_cond') or ('、'.join(hit_gods)),
+                'sources': hit_gods,
+                'domain': _po_ge_domain(gc.get('ge', ''), t, hit_gods),
+                'basis': 'ENGINE_DEFINED' if t in ('组合', '缺失') else
+                         ('DTS_CITED' if t == '冲月令破格' else 'BOOK_CITED'),
+            })
+    gc['po_ge_hits'] = hits
+    return facts
