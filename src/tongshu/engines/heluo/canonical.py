@@ -516,13 +516,18 @@ class HeluoCanonical:
 
         return Timeline(
             yearly_hexagrams=yearly,
+            # ── 2026-10-06 修正三处名实不符的占位字段 ────────────────
+            # 原先 daily_hexagram 存的是**先天卦**，而字段注释写「今日卦」，
+            # 其 date 还塞了 str(birth_year)（如 "1990"）——既不是日期，也不是
+            # 流日卦。monthly_hexagrams 恒 []、hourly_hexagram 恒 None。
+            # 三者全仓零消费方（测试里的同名 daily_hexagram 均为黄历字段）。
+            #
+            # 真实流月/流日/流时卦在四层时间轴内：yearly[].months[] 及
+            # months[].days[]（日段按需物化，见 compute_liuri_stub /
+            # materialize_month_days），消费方 guajie 按时应期定位。
+            # 这里不再重复一份**名不副实**的副本，一律置空并在此说明。
             monthly_hexagrams=[],
-            daily_hexagram={
-                "date": str(birth_year),
-                "hexagram": prenatal.hexagram_name,
-                "upper": prenatal.upper_gua,
-                "lower": prenatal.lower_gua,
-            },
+            daily_hexagram={},
             hourly_hexagram=None,
             seasonal_hexagram=None,
             qi_phase={

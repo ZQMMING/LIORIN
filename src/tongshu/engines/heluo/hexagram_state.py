@@ -112,10 +112,18 @@ def calculate_hexagram_state(
 def get_base_factors(hexagram: str, state_type: str) -> Tuple[float, float]:
     """
     获取基础机会/风险因子。
-    
-    TODO: 从 hexagram_state_definitions 表读取
+
+    2026-10-06 更正：本函数原注释为「TODO: 从 hexagram_state_definitions
+    表读取」，但**该表在本仓不存在**（已全盘检索 backend/data 与 data，
+    无任何 hexagram_state* / *state_definition* 文件）。该表述会让后来者
+    去寻找一张并不存在的表。
+
+    下列取值为**暂定基准因子**，非查表所得，也非原典规定。
+    `hexagram` 参数当前未被使用（同 `compute_dayun_liyao._walk` 的
+    gua_name 未使用一样），即不同卦返回同一组因子——这是**已知未完成处**。
+    本模块目前无生产调用方，暂不影响线上输出；接线前必须先落实真实定义表。
     """
-    # 简化版规则
+    # 暂定基准（非查表所得）
     if state_type == "静":
         return 0.5, 0.3
     elif state_type == "动":
