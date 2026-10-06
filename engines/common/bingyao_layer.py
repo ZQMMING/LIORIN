@@ -675,8 +675,14 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
                 'BIJIE_CHENG_DANG': dm_wx, 'BIJIE_DUO_CAI': dm_wx,
                 'SHANGGUAN_JIAN_GUAN': sha_wx}
         _kept = []
+        # 格体与病·印/非印二分 (ENGINE_DEFINED, PZZQ 框架蕴含无直书; 印例外见SFTK/DTS):
+        #   非印(财/官杀/食伤/比劫=克泄耗)当令为格体, 格成则"太过"是格体发挥 -> 不病, 豁免
+        #   印(生我)生太过则母强子弱/土厚埋金 -> YIN_DUO_MAI_ZI 保留, 不过滤
+        _NONYIN_WS = _WS_DOMAIN - {'YIN_DUO_MAI_ZI'}
         for _b in bing_list:
-            if _b.get('bing_id') in _WS_DOMAIN:   # STEP-1: 旺衰域不受 L4 过滤
+            if _b.get('bing_id') in _WS_DOMAIN:   # STEP-1: 旺衰域原则不受 L4 过滤
+                if _b.get('bing_id') in _NONYIN_WS and _bwx.get(_b['bing_id'], '') in _ti_wx:
+                    continue  # 非印格体当令, 格体行为非病 -> 豁免
                 _kept.append(_b)
                 continue
             _bw = _bwx.get(_b['bing_id'], '')
