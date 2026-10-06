@@ -342,6 +342,10 @@ class GuaJieResult:
     zhengdui_fandui: list[str] = field(default_factory=list)  # 正对反对警示
     twelve_xiong: bool = False              # 命卦属十二凶卦
     si_duan: list[str] = field(default_factory=list)  # 死断诸法（起例卷之下·后天详说）
+    #   2026-10-06 起该层已剥离：断语含「必死」「定死」「死断之」等硬断，
+    #   实测 66.7% 的盘会触发（180 盘中 120 盘），不宜在无展示管控时直出。
+    #   判据本体保留在本文件 judge_si_duan，恢复只需接回 build 段。
+    #   恒为 []。
     nayin_yuanqi: list[str] = field(default_factory=list)  # 纳音五行元气（起例卷之上）
     jiehua_gong: list[str] = field(default_factory=list)  # 生时值节卦化工（起例卷之下·节候卦爻）
     benming: Optional[dict] = None  # 命卦判词（先天卦辞+卦象断语+精义/释义，2026-09-15 接入）
@@ -1096,21 +1100,16 @@ def build_guajie_from_result(
         except Exception as _e:
             gj.evidence.append(f"  互体纳音：跳过（{_e}）")
 
-        # ── 死断诸法（起例卷之下·后天详说） ─────────────────────────
-        try:
-            si = _collect_si_duan(
-                result=result, prenatal=prenatal, postnatal=postnatal,
-                bazi=bazi, target_year=target_year,
-                shu_xiong=gj.shu_xiong.shu_xiong if gj.shu_xiong else False,
-                year_ganzhi=year_ganzhi,
-            )
-            gj.si_duan = si
-            gj.evidence.extend(f"  死断：{w}" for w in si)
-            for w in si:
-                if "死断" in w or "必死" in w or "定死" in w:
-                    gj.summary.append(w)
-        except Exception as _e:  # 死断不阻塞主链
-            gj.evidence.append(f"  死断：计算跳过（{_e}）")
+        # ── 死断诸法（起例卷之下·后天详说） ──────────────────────
+        # 2026-10-06 剥离：断语是「必死」「定死无疑」「便可以死断之」这类
+        # 不可逆硬断，且实测 66.7% 的盘会触发（180 盘实测 120 盘命中），
+        # 在前端展示管控就绪前不进生产输出。
+        # 判据本体 judge_si_duan / _collect_si_duan 一字未改地留在本文件，
+        # 恢复只需把下方调用接回。
+        gj.si_duan = []
+        gj.evidence.append(
+            "  死断：已剥离，不产出（原典起例卷之下·后天详说五法保留在本层 "
+            "judge_si_duan，待展示管控就绪后恢复）")
 
         # ── 扩展断法（K3-447卷一：四体八体/福力/五命得卦/余数断/四时五行/数极） ──
         try:
@@ -1352,6 +1351,9 @@ def judge_shu_ji(si_duan: list[str]) -> list[str]:
 
     原文："数极有京城有山林，京城者福，山林者苦，京城减寿，山林崇高"
     京城/山林判据原典未明载 → 标注级，随死断触发提示，不作硬断。
+
+    2026-10-06：死断层剥离后，生产侧 si_duan 恒为 []，故本判据在生产输出
+    中恒不触发（能力仍在，恢复死断即自动复活）。
     """
     data = _load_kuozhan()["shuji"]
     if not any(("君爻" in w or "上极" in w or "数足" in w) for w in si_duan):
@@ -2215,6 +2217,7 @@ def to_structured(gj: dict) -> dict:
         }
     out["timing"] = timing
     warns: list[str] = []
+    # 死断已剥离（2026-10-06）：si_duan 恒空，故此处不再产出硬断警语。
     for w in (gj.get("si_duan") or []):
         warns.append(w)
     for w in (gj.get("zhengdui_fandui") or []):
