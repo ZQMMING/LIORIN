@@ -317,6 +317,7 @@ def compute_liuri(
     yue_lines: list[int],
     yue_yao_index: int,
     jie_datetime: str | None = None,
+    align_dates: bool = False,
 ) -> LiuRiResult:
     """
     流日卦（《河洛真数·起例卷之上·起日卦例》万历二十年李学诗刻本）。
@@ -334,11 +335,14 @@ def compute_liuri(
       （不含居位爻），按"最早书籍为准"原则不采用，保留为异文。
 
     节气对齐（《河洛真数》："日卦行起必须按月卦节气方不误"）：
-      若提供 jie_datetime（当月"节"的精确时刻，如 2024-08-07 08:09），
-      则第1段从"节"当日开始管起，各段标注真实起止日期；
-      否则退化为相对分段（第1-5天、第6-10天...），兼容旧调用。
+      若提供 jie_datetime（当月"节"的精确时刻，如 2024-08-07 08:09）且
+      ``align_dates=True``，各段标注真实起止日期 date_from/date_to。
+      2026-10-06 起 align_dates 默认 **False**：全仓无人消费 date_from/date_to，
+      而每段多算 2 个日期串 + 一次 strptime，实测占单盘载荷的大头。
+      仍可由调用方显式开启，不丢能力。
     """
     start = (yue_yao_index + 1) % 6
+    base = _parse_datetime(jie_datetime) if (jie_datetime and align_dates) else None
     days = []
     for k in range(6):
         flip_idx = (start + k) % 6
@@ -348,17 +352,14 @@ def compute_liuri(
             "segment": k + 1, "day_from": k * 5 + 1, "day_to": k * 5 + 5,
             "name": name, "upper": u, "lower": lo, "lines": seg_lines,
         }
-        if jie_datetime:
+        if base is not None:
             # 节气对齐：段k覆盖节起第(k*5+1)~第(k*5+5)天
             try:
-                base = _parse_datetime(jie_datetime)
                 from datetime import timedelta
-                day_from_dt = base + timedelta(days=k * 5)
-                day_to_dt = base + timedelta(days=k * 5 + 4)
-                entry["date_from"] = day_from_dt.strftime("%Y-%m-%d")
-                entry["date_to"] = day_to_dt.strftime("%Y-%m-%d")
+                entry["date_from"] = (base + timedelta(days=k * 5)).strftime("%Y-%m-%d")
+                entry["date_to"] = (base + timedelta(days=k * 5 + 4)).strftime("%Y-%m-%d")
             except Exception:
-                pass  # 解析失败则保持相对分段
+                pass  # 解析/格式化失败则保持相对分段
         days.append(entry)
     return LiuRiResult(month=0, days=days)
 
