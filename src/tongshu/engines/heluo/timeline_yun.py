@@ -101,13 +101,16 @@ def compute_dayun_liyao(
 
     def _walk(gua_name: str, lines: list[int], yuantang: int, age_start: int) -> int:
         age = age_start
+        # 爻位值运：卦不变、只走爻，故本段 6 步共用同一卦名。
+        # 2026-10-06：原先在循环内逐次调用 _lines_to_hexagram(lines)，6 次结果恒同，
+        # 提到循环外算一次（两段共省 10 次无谓换算）。
+        upper, lower, name = _lines_to_hexagram(lines)
         # 从元堂起自下而上共 6 爻
         for step in range(6):
             idx = (yuantang + step) % 6
             nature = "阳" if lines[idx] == 1 else "阴"
             span = 9 if lines[idx] == 1 else 6
             age_end = age + span - 1
-            upper, lower, name = _lines_to_hexagram(lines)
             seq.append(DayunLiyaoEntry(
                 age_start=age, age_end=age_end,
                 hexagram_name=name, upper=upper, lower=lower,
@@ -180,6 +183,7 @@ def compute_liunian(
     cur_seg_id: Optional[int] = None
     prev1: Optional[list[int]] = None  # 段内上一卦
     n = 0  # 段内第N年
+    seg: Optional[DayunLiyaoEntry] = None  # 当前大运段
 
     for age in range(age_from, age_to + 1):
         year = birth_year + age - 1
@@ -187,12 +191,14 @@ def compute_liunian(
         yang = _is_yang_year(year)
         rule = ""
 
-        # 找所属大运段
-        seg = None
-        for s in seq:
-            if s.age_start <= age <= s.age_end:
-                seg = s
-                break
+        # 找所属大运段。2026-10-06：原为每年对 seq 线性扫（O(年龄×段数)）。
+        # 大运段按 age 单调不重叠排列且 age 递增，故用游标顺推即可，O(1)。
+        if seg is None or age > seg.age_end:
+            seg = None
+            for s in seq:
+                if s.age_start <= age <= s.age_end:
+                    seg = s
+                    break
         if seg is None:
             continue
 
