@@ -766,7 +766,10 @@ def judge_si_duan(
         cur_yao.get("ci", ""), cur_yao.get("buye", ""), cur_yao.get("suiyun", ""))
 
     # ── ① 君爻（五爻）：数足，原典死断以「无阴骘」为前提 ────────────
-    if dayun_line_index is not None and dayun_line_index >= 4:
+    # 2026-10-06 修：原判 `>= 4` 把上爻（li=5）也并入君爻条。
+    # 原文「纵到君爻，亦不许行至上极一爻」——君爻=五爻、上极=上爻，两级分明；
+    # li=5 只走上极条（④），不报君爻。
+    if dayun_line_index == 4:
         warns.append(_sd(
             quote="「如后天之气数行至君爻之位，此数为足，到此必死。"
                   "无阴骘者，生日之前便死。有阴骘者，到君爻阳爻延九年，"
@@ -777,8 +780,10 @@ def judge_si_duan(
             alt=_SD_ALT,
         ))
 
-        # ② 「若过了第四爻，遇凶，十死八九」——原典指已过四爻入五爻（li>=4）
-        if cur_buji:
+        # ② 「若过了第四爻，遇凶，十死八九」——原典指已过四爻入五爻（li>=4）。
+        # 2026-10-06 修：此条自君爻块拆出独立判。原典「若过了第四爻」是独立一句，
+        # 语义为「已过四爻入五爻及以上」；若留在君爻块（现==4）则 li=5 时漏断。
+        if cur_buji and dayun_line_index is not None and dayun_line_index >= 4:
             warns.append(_sd(
                 quote="「若过了第四爻，遇凶，十死八九。」",
                 trigger="运程已过第四爻、进入五爻及以上 + 当前流年爻辞凶",
@@ -816,10 +821,13 @@ def judge_si_duan(
         ))
 
     # ── ⑤ 「连三爻不吉」：原典指大运所历之爻，非流年 ─────────────────
+    # 2026-10-06 修：原文「若**行后天**，连三爻不吉，必多坎壈」——主语是行后天段。
+    # 先天段（本盘渐卦先天六爻段）不得触发坎壈。门控：最近连续三大运爻须全属后天段。
     if recent_dayun_yao and len(recent_dayun_yao) >= 3:
         last3 = recent_dayun_yao[-3:]
-        if all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", ""))
-               for y in last3):
+        if all(y.get("phase") == "后天" for y in last3) and all(
+                _yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", ""))
+                for y in last3):
             seq = "、".join(f"{y.get('hexagram', '')}{y.get('yao', '')}" for y in last3)
             warns.append(_sd(
                 quote="「若行后天，连三爻不吉，必多坎壈。」",
@@ -1340,6 +1348,7 @@ def _collect_si_duan(
             dayun_yao.append({
                 "hexagram": hx, "yao": yao_name, "line_index": li,
                 "age_start": ls, "age_end": le,
+                "phase": de.get("phase", ""),
                 "ci": (d.ci if d else ""), "buye": (d.buye if d else ""),
                 "suiyun": (d.suiyun if d else ""),
             })

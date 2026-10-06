@@ -510,6 +510,7 @@ class HeluoCanonical:
                 "hexagram": e.hexagram_name,
                 "line_index": e.line_index,
                 "line_nature": e.line_nature,
+                "phase": e.phase,
             }
             for e in dayun.sequence
         ]

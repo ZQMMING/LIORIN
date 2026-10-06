@@ -72,6 +72,7 @@ class DayunLiyaoEntry:
     line_index: int           # 爻位 0-5
     line_nature: str          # 阳/阴
     lines: list[int]          # 该步卦象六爻
+    phase: str = "先天"        # 先天/后天（死断「行后天」限定用）
 
 
 @dataclass
@@ -115,6 +116,7 @@ def compute_dayun_liyao(
                 age_start=age, age_end=age_end,
                 hexagram_name=name, upper=upper, lower=lower,
                 line_index=idx, line_nature=nature, lines=list(lines),
+                phase=gua_name,
             ))
             age = age_end + 1
         return age
