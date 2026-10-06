@@ -409,29 +409,45 @@ def build(pillars, l0_chart=None):
                       '子卯': '子卯相刑'}
     zset = set(zhis)
     if l0_chart:
+        # ★ 2026-10-06 PATCH-L0-STR 结构层修复: 排盘引擎 branch_*_map 键为拼音、值为中文,
+        #   且支"午"被 bazi_gate 中文转换误作干"戊"(WU 同音覆盖)。
+        #   原 _keys_of/_n3 用 sorted 中文序拼串查固定序表键(申子辰/亥卯未…)→ 序不符漏;
+        #   值中伪支"戊"直通 → 表外漏。改为集合匹配 + 伪支纠正(值域为支, WU 只能是午)。
+        _STR_CN = {'ZI': '子', 'CHOU': '丑', 'YIN': '寅', 'MAO': '卯', 'CHEN': '辰',
+                   'SI': '巳', 'WU': '午', 'WEI': '未', 'SHEN': '申', 'YOU': '酉',
+                   'XU': '戌', 'HAI': '亥'}
+        def _clean(z):
+            z = _STR_CN.get(z, z)
+            return '午' if z == '戊' else z          # 伪支纠正: 支域值中的"戊"=午
         def _keys_of(m):
-            return [tuple(sorted(_ZB.get(x, x) for x in str(k).split('-')))
+            if isinstance(m, list):                  # branch_po_pairs 等为 list[list] 结构
+                return [frozenset(_clean(x) for x in pair)
+                        for pair in m if isinstance(pair, (list, tuple)) and len(pair) >= 2]
+            return [frozenset(_clean(x) for x in str(k).split('-'))
                     for k in (m or {})]
-        _sanhe_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_sanhe_map'))}
-        _sanhui_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_sanhui_map'))}
-        _liuhai_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_harm_map'))}
-        _liupo_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_po_pairs'))}
-        _sanxing_sets = {frozenset(k) for k in _keys_of(l0_chart.get('branch_sanxing_map'))}
-        out['combination_facts']['sanhe'] = [
-            _SANHE_NAMES[''.join(sorted(s))] for s in _sanhe_sets
-            if ''.join(sorted(s)) in _SANHE_NAMES]
-        out['combination_facts']['sanhui'] = [
-            _SANHUI_NAMES[''.join(sorted(s))] for s in _sanhui_sets
-            if ''.join(sorted(s)) in _SANHUI_NAMES]
-        out['combination_facts']['liuhai'] = [
-            _LIUHAI_NAMES[''.join(sorted(s))] for s in _liuhai_sets
-            if ''.join(sorted(s)) in _LIUHAI_NAMES]
-        out['combination_facts']['liupo'] = [
-            _LIUPO_NAMES[''.join(sorted(s))] for s in _liupo_sets
-            if ''.join(sorted(s)) in _LIUPO_NAMES]
-        out['combination_facts']['sanxing'] = [
-            _SANXING_NAMES[''.join(sorted(s))] for s in _sanxing_sets
-            if ''.join(sorted(s)) in _SANXING_NAMES]
+        _NAMES_SETS = {
+            'sanhe': {frozenset('申子辰'): '申子辰合水', frozenset('亥卯未'): '亥卯未合木',
+                      frozenset('寅午戌'): '寅午戌合火', frozenset('巳酉丑'): '巳酉丑合金'},
+            'sanhui': {frozenset('寅卯辰'): '寅卯辰三会木', frozenset('巳午未'): '巳午未三会火',
+                       frozenset('申酉戌'): '申酉戌三会金', frozenset('亥子丑'): '亥子丑三会水'},
+            'liuhai': {frozenset('子未'): '子未相害', frozenset('丑午'): '丑午相害',
+                       frozenset('寅巳'): '寅巳相害', frozenset('卯辰'): '卯辰相害',
+                       frozenset('申亥'): '申亥相害', frozenset('酉戌'): '酉戌相害'},
+            'liupo': {frozenset('子酉'): '子酉相破', frozenset('丑辰'): '丑辰相破',
+                      frozenset('寅亥'): '寅亥相破', frozenset('卯午'): '卯午相破',
+                      frozenset('巳申'): '巳申相破', frozenset('未戌'): '未戌相破'},
+            'sanxing': {frozenset('寅巳申'): '寅巳申三刑', frozenset('丑戌未'): '丑戌未三刑',
+                        frozenset('子卯'): '子卯相刑'},
+        }
+        for _k, _ksets in (
+                ('sanhe', _keys_of(l0_chart.get('branch_sanhe_map'))),
+                ('sanhui', _keys_of(l0_chart.get('branch_sanhui_map'))),
+                ('liuhai', _keys_of(l0_chart.get('branch_harm_map'))),
+                ('liupo', _keys_of(l0_chart.get('branch_po_pairs'))),
+                ('sanxing', _keys_of(l0_chart.get('branch_sanxing_map')))):
+            _tbl = _NAMES_SETS[_k]
+            out['combination_facts'][_k] = [
+                _tbl[s] for s in _ksets if s in _tbl]
     else:
         from engines.common._legacy_relation_tables.legacy_relation_tables import (
             SANHE_LEGACY as _SANHE, SANHUI_LEGACY as _SANHUI,
@@ -488,12 +504,16 @@ def build(pillars, l0_chart=None):
         _ZB3 = {'ZI': '子', 'CHOU': '丑', 'YIN': '寅', 'MAO': '卯', 'CHEN': '辰',
                 'SI': '巳', 'WU': '午', 'WEI': '未', 'SHEN': '申', 'YOU': '酉',
                 'XU': '戌', 'HAI': '亥'}
+        _STR_CN2 = _ZB3
         def _k3(m):
-            return [tuple(sorted(_ZB3.get(x, x) for x in str(k).split('-')))
+            if isinstance(m, list):
+                return [frozenset(_STR_CN2.get(x, x) for x in pair)
+                        for pair in m if isinstance(pair, (list, tuple)) and len(pair) >= 2]
+            return [frozenset(_STR_CN2.get(x, x) for x in str(k).split('-'))
                     for k in (m or {})]
-        def _n3(pairs, names):
-            return [names[''.join(sorted(s))] for s in pairs
-                    if ''.join(sorted(s)) in names]
+        def _n3(sets, names):
+            _tbl = {frozenset(k): v for k, v in names.items()}
+            return [_tbl[s] for s in sets if s in _tbl]
         _SHN = {'申子辰': '申子辰合水', '亥卯未': '亥卯未合木',
                 '寅午戌': '寅午戌合火', '巳酉丑': '巳酉丑合金'}
         _SHHN = {'寅卯辰': '寅卯辰三会木', '巳午未': '巳午未三会火',
