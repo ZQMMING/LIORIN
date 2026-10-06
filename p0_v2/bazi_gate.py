@@ -67,7 +67,8 @@ from engines.common.yongyao_resolve import resolve_yongyao
 from engines.common.fan_ju import resolve_fan_ju
 from engines.common.special_pattern import build_special_patterns
 from engines.common.ge_jie_layer import (build_ge_cheng, apply_he_po_ge,
-                                              normalize_ti_wx)  # STEP-2.4b / STEP-DBG-4
+                                              normalize_ti_wx,
+                                              evaluate_po_ge)  # STEP-2.4b / STEP-DBG-4
 # ★ 裁七十一乙 (2026-10-04) 拓扑派生层接入 (原孤立模块, 见契约 §4.0 v1.9)
 #   只调 4 个已落函数 + 通关映射表; 不调 loose 对照版(不供判定)。
 from engines.common.topology_paths import (
@@ -232,6 +233,8 @@ def paipan(bazi: str) -> Dict[str, Any]:
     #   顺序: build_ge_cheng -> apply_he_po_ge(破格清空) -> normalize_ti_wx(归位)。
     #   规则见 ge_jie_layer.normalize_ti_wx 上方注释(DTS L210 准神 + PZZQ L4652 同向)。
     normalize_ti_wx(f)
+    # po_ge 模板求值（必须在 normalize 后：分域用归一化 ti_wx）→ ge_cheng.po_ge_hits
+    evaluate_po_ge(f)
     ge_cheng = f.get("ge_cheng") or {}
 
     # C 块 · 格局救应字段 (jiu_ying): 附加信息, 不回填 cheng_bai (裁146乙)
@@ -241,7 +244,7 @@ def paipan(bazi: str) -> Dict[str, Any]:
         from p0_v2.jiu_ying import build_jiu_ying
         f["jiu_ying"] = build_jiu_ying(bz, {
             "ge": ge_cheng.get("ge"),
-            "po_n": 1 if ge_cheng.get("po_ge") else 0,
+            "po_n": len(ge_cheng.get("po_ge_hits") or []),
             "xi_status": ge_cheng.get("xi_wx_status"),
             "cong_type": ge_cheng.get("cong_type"),
         })
