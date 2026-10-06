@@ -72,17 +72,50 @@ class TestNayinHuti(unittest.TestCase):
 
 
 class TestSiDuan(unittest.TestCase):
-    """死断诸法（起例卷之下·后天详说）"""
+    """死断诸法（起例卷之下·后天详说）
+
+    2026-10-06 按原著上下文校订后重写。以下旧断言锁的是**未校订口径**，
+    与原典原文冲突，故按原典改写而非保留：
+      · 旧 test_xiaoxiang_fandui 不传 dayun_line_index 就能触发「定死」——
+        原典该句系「无阴骘者…便死」分支的附加条件，须先入君爻才谈得上。
+      · 旧 test_kanli 用近三年**流年**判词触发「连三爻」——
+        原典「连三爻」主语是大运所历之**爻**。
+      · 旧断言只看关键词命中，不校验限定语——本类新增四段式结构校验。
+    """
 
     def test_junyao_death(self):
-        """后天行至君爻（五爻）→ 数足必死"""
+        """后天行至君爻（五爻）→ 原典立断"""
         w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
         self.assertTrue(any("君爻" in x for x in w), w)
 
+    def test_junyao_keeps_yinzhi_both_branches(self):
+        """阴骘前置必须两支并陈，不得径取「无阴骘」一支。
+
+        原典：「无阴骘者，生日之前便死」「有阴骘者，到君爻阳爻延九年」。
+        阴骘＝暗中积德（出《书·洪范》「惟天阴骘下民」），非生辰可推，
+        故引擎不得替用户预设其有无。
+        """
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
+        joined = "\n".join(w)
+        self.assertIn("无阴骘者", joined)
+        self.assertIn("有阴骘者", joined)
+        self.assertIn("不作预设", joined)
+
     def test_shangji(self):
-        """上极一爻 → 寿必不久"""
+        """上极一爻 → 原典于上极所列后果"""
         w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=5)
         self.assertTrue(any("上极" in x for x in w), w)
+
+    def test_shangji_keeps_full_consequences(self):
+        """上爻后果不得只引「寿必不久」半句。
+
+        原典另列「主大变之祸殃…或生异疾，或殃及子孙，或反本复始之失」，
+        且紧接着说「有过此上极之爻，当为超凡越世之士」。
+        """
+        joined = "\n".join(judge_si_duan(prenatal_name="比", postnatal_name="解",
+                                        dayun_line_index=5))
+        for kw in ("祸殃", "异疾", "殃及子孙", "反本复始", "超凡越世"):
+            self.assertIn(kw, joined, f"上爻断语漏了「{kw}」")
 
     def test_three_years_bad_plus_chongfan(self):
         """流年连三年不吉+数凶+重反支干元气 → 死断"""
@@ -97,18 +130,52 @@ class TestSiDuan(unittest.TestCase):
         self.assertTrue(any("死断" in x for x in w), w)
 
     def test_xiaoxiang_fandui(self):
-        """小象大象反对+爻凶 → 定死无疑（泰↔否综卦）"""
+        """小象大象反对+爻凶+已入君爻 → 定死无疑（泰↔否综卦）
+
+        原典该句系「无阴骘」分支的附加条件，故须 dayun_line_index>=4。
+        """
         w = judge_si_duan(prenatal_name="泰", postnatal_name="大畜",
+                          dayun_line_index=4,
                           recent_years=[{"year": 2020, "hexagram": "否",
                                          "ci": "否之匪人，不利君子贞。凶", "buye": "", "suiyun": ""}])
         self.assertTrue(any("定死" in x for x in w), w)
 
+    def test_fandui_requires_junyao(self):
+        """未入君爻时不作「定死无疑」——原典该句是君爻分支的附加条件。"""
+        w = judge_si_duan(prenatal_name="泰", postnatal_name="大畜",
+                          dayun_line_index=2,
+                          recent_years=[{"year": 2020, "hexagram": "否",
+                                         "ci": "否之匪人，不利君子贞。凶", "buye": "", "suiyun": ""}])
+        self.assertFalse(any("定死" in x for x in w), w)
+
+    def test_guo_di_shi_fou_means_entered_junyao(self):
+        """「若过了第四爻」指已过四爻入五爻，不是正行第四爻。
+
+        原著同篇「大易之数」条自释：「以上初是初爻，**以五上是过**」，
+        「过」为越过本爻入下一爻。故 li>=4 才成立。
+        """
+        bad = [{"year": 2020, "hexagram": "否",
+                "ci": "否之匪人，不利君子贞。凶", "buye": "", "suiyun": ""}]
+        at_four = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                                dayun_line_index=3, recent_years=bad)
+        self.assertFalse(any("十死八九" in x for x in at_four), at_four)
+        at_five = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                                dayun_line_index=4, recent_years=bad)
+        self.assertTrue(any("十死八九" in x for x in at_five), at_five)
+
     def test_kanli(self):
-        """连三爻不吉 → 多坎壈"""
+        """连三爻不吉 → 多坎壈（主语是大运所历之爻，非流年）"""
+        bad3 = [{"hexagram": "剥", "yao": "初六", "ci": "凶", "buye": "", "suiyun": ""}] * 3
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=2, recent_dayun_yao=bad3)
+        self.assertTrue(any("坎壈" in x for x in w), w)
+
+    def test_kanli_not_triggered_by_liunian_only(self):
+        """只给近三年流年不得触发「连三爻」——原典主语是大运爻。"""
         bad3 = [{"year": 2015, "hexagram": "剥", "ci": "凶", "buye": "", "suiyun": ""}] * 3
         w = judge_si_duan(prenatal_name="比", postnatal_name="解",
                           dayun_line_index=2, recent_years=bad3)
-        self.assertTrue(any("坎壈" in x for x in w), w)
+        self.assertFalse(any("坎壈" in x for x in w), w)
 
     def test_normal_no_trigger(self):
         """正常流年不触发死断"""
@@ -117,6 +184,30 @@ class TestSiDuan(unittest.TestCase):
         w = judge_si_duan(prenatal_name="比", postnatal_name="解",
                           dayun_line_index=1, recent_years=good)
         self.assertEqual(w, [])
+
+    def test_every_line_has_four_segments(self):
+        """每条断语必须是四段式，且开头带「勿字面直解」警示。
+
+        原典硬断句（到此必死／寿必不久／十死八九／定死无疑）在中文里
+        没有第二种读法，直出到 LLM 上下文必被字面复述成寿命断言。
+        """
+        bad = [{"year": 2015, "hexagram": "剥", "ci": "凶", "buye": "", "suiyun": ""}] * 3
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=5,
+                          tian_yuan_fan="坤", di_yuan_fan="震", shu_xiong=True,
+                          recent_years=bad,
+                          recent_dayun_yao=[{"hexagram": "剥", "yao": "初六",
+                                              "ci": "凶", "buye": "", "suiyun": ""}] * 3)
+        self.assertTrue(w)
+        for line in w:
+            self.assertTrue(line.startswith("【原典断语·须带条件读，勿字面直解】"), line)
+            for seg in ("｜触发：", "｜限定：", "｜异说："):
+                self.assertIn(seg, line, f"断语缺 {seg} 段：{line}")
+
+    def test_alt_school_recorded_on_junyao(self):
+        """君爻条须带出原典内部的异说（行到四爻方可断生死）。"""
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
+        self.assertTrue(any("行到四爻，方可断人生死" in x for x in w), w)
 
 
 class TestJiehuaGong(unittest.TestCase):

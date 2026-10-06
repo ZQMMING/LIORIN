@@ -689,6 +689,26 @@ def _yao_buji(ci: str, buye: str = "", suiyun: str = "") -> bool:
     return any(w in text for w in bad)
 
 
+_SD_ALT = "同书「僧人多极后天」条另载：「此数不许行到后天五爻，行到四爻，方可断人生死」"
+
+# 阴骘说明：出《书·洪范》「惟天阴骘下民」，指**暗中积累的德行**（阴德）——
+# 做了不为人知的善事而积下的功德，属相学/伦理范畴，可由泪堂等面相征象佐证。
+# 它**不是**由生辰干支、卦象或河洛数理能推算出来的量。
+# 故本层无法替用户判定有无阴骘，触发时只能两支并陈，不得径取「无阴骘」。
+_SD_YINZHI = ("阴骘＝暗中积累的德行（出《书·洪范》「惟天阴骘下民」），"
+              "非生辰卦数所能推算，故本盘不作预设，两支并陈")
+
+
+def _sd(quote: str, trigger: str, limit: str, alt: str = "—") -> str:
+    """死断断语四段式：原句照出 + 触发 + 限定 + 异说。
+
+    2026-10-06 用户裁定：原典硬断原句**照出**（保留考据），
+    但必须强制前后带限定，避免下游 LLM 脱离条件字面复述成寿命断言。
+    """
+    return (f"【原典断语·须带条件读，勿字面直解】{quote}"
+            f"｜触发：{trigger}｜限定：{limit}｜异说：{alt}")
+
+
 def judge_si_duan(
     *,
     prenatal_name: str,
@@ -698,60 +718,133 @@ def judge_si_duan(
     shu_xiong: bool = False,        # 数凶
     dayun_line_index: int | None = None,      # 当前大运行至爻位（0初~5上）
     recent_years: list[dict] | None = None,   # 近3年流年判词 [{year, hexagram, yao, ci, buye, suiyun}]
+    recent_dayun_yao: list[dict] | None = None,  # 已行大运爻判词（含当前）[{hexagram, yao, ci, buye, suiyun}]
 ) -> list[str]:
     """
-    死断诸法（《河洛真数·起例卷之下·后天详说》原文逐条）：
+    死断诸法（《河洛真数·起例卷之下·后天详说》，2026-10-06 按原著上下文校订）。
 
-      1. "如后天之气数行至君爻之位，此为数足，到此必死。
-         无阴骘者，生日之前便死。……有阴骘者，到君爻阳爻延九年"
-         → 大运行至五爻（君爻）→ 数足必死警示
-      2. "纵到君爻，亦不许行至上极一爻，寿必不久"
-         → 行至上爻（上极）→ 寿必不久警示
-      3. "若行后天，连三爻不吉，必多坎壈。若过了第四爻，遇凶，十死八九"
-         → 近3爻不吉→坎壈；过四爻（五爻）遇凶→十死八九
-      4. "如遇小象与大象反对，定死无疑"
-         → 流年卦与命卦成反对 + 爻辞凶 → 定死无疑（由调用方传入 recent_years 判定）
-      5. "若流年连三年不吉，卦爻又不吉，本身卦不佳，重反支干元气，便可以死断之"
-         → 近3年流年卦爻皆不吉 + 数凶（卦不佳） + 干支元气俱反 → 死断
+    原文逐字：
+
+      「如后天之气数行至君爻之位，此为数足，到此必死。无阴骘者，生日之前便死。
+        如遇小象与大象反对，定死无疑。有阴骘者，到君爻阳爻延九年，必须迍蹇天眚之患，
+        纵到君爻，亦不许行至上极一爻，寿必不久。此或有到此者，必须主大变之祸殃，
+        凶暴之挠，或生异疾，或殃及子孙，或反本复始之失。……有过此上极之爻，
+        当为超凡越世之士，乃逃出先后之命，不系数中，不属天地所拘。」
+
+      「若行后天，连三爻不吉，必多坎壈。若过了第四爻，遇凶，十死八九。
+        若流年连三年不吉，卦爻又不吉，本身卦不佳，重反支干元气，便可以死断之。」
+
+    ── 本次校订的六处（依据原著上下文，非字面臆断）─────────────────
+
+    ① **阴骘前置原先整个丢失**。原文死断明写「无阴骘者…便死」「有阴骘者…延九年」，
+       这是死断的**成立前提**，且同篇《大易之数》另有「九五、六五、上九、上六乃君庙
+       之极，物极必反，理之当然，**非大器阴骘，未至先亡**」——阴骘是两处极断的
+       共同例外条款。旧实现不判阴骘，等于对所有人一律按「无阴骘」断言。
+       然阴骘（暗中积德）属德行/相学范畴，**非生辰卦数可推**，
+       故本层不预设，两支并陈（见 _sd_yinzhi）。
+    ② **「过了第四爻」原先差一位**。旧实现判 li==3（正在第四爻）。
+       原著同篇「大易之数」条自解其义：「假令上爻坐元堂，四五爻是君庙五爻……
+       以上初是初爻，**以五上是过**」——「过」指越过本爻之后，即已入下一爻。
+       故「过了第四爻」＝已过四爻入五爻（li>=4），非「正行第四爻」。
+    ③ **「连三爻」原先换了口径**。原文「连**三爻**」指大运所历的连续三**爻**；
+       旧实现拿「近三年**流年**判词」代替。此条是实测命中最频繁的一条
+       （180 盘 54 盘），口径偏差影响面最大，现改由 recent_dayun_yao 传入。
+    ④ **「反对定死无疑」原先被提成独立法**。它在原文中紧接「无阴骘者…便死」
+       之后，是**该分支的附加条件**，不与前条并列。故有阴骘者不作此断。
+    ⑤ **上爻后果原先只引半句**。原文于上极所列后果为「主大变之祸殃，凶暴之挠，
+       或生异疾，或殃及子孙，或反本复始之失」，且紧接着说「有过此上极之爻，
+       当为超凡越世之士」。旧实现只引「寿必不久」一句，把两头全丢了。
+    ⑥ **原典自相矛盾，须两说并存**。「僧人多极后天」条明载：「或谓康节曰，
+       此数不许行到后天五爻，行到四爻，方可断人生死，今有不满二十而死者，
+       亦有八九十而死者，祸福安在？」——一处说五爻即死、一处说四爻才断，
+       且后一条自带反例否证。故每条均带「异说」段留档，不做单方裁断。
     """
     warns: list[str] = []
 
-    # 1+2+3. 大运爻位死断
-    if dayun_line_index is not None:
-        if dayun_line_index == 5:
-            warns.append("后天之气数行至上极一爻（上爻），寿必不久（原典：纵到君爻，亦不许行至上极一爻）")
-        if dayun_line_index >= 4:
-            warns.append("后天之气数行至君爻（五爻）之位，此为数足，到此必死。无阴骘者生日之前便死，有阴骘者到君爻阳爻延九年（原典：后天详说）")
-        elif dayun_line_index == 3 and recent_years and _yao_buji(
-            recent_years[-1].get("ci", ""), recent_years[-1].get("buye", ""), recent_years[-1].get("suiyun", "")):
-            warns.append("行数过第四爻（五爻）遇凶 → 十死八九（原典：若过了第四爻，遇凶，十死八九）")
+    cur_yao = recent_years[-1] if recent_years else None
+    cur_buji = bool(cur_yao) and _yao_buji(
+        cur_yao.get("ci", ""), cur_yao.get("buye", ""), cur_yao.get("suiyun", ""))
 
-    # 3b. 连三爻不吉 → 多坎壈（近3个大运爻判词凶）
-    if dayun_line_index is not None and dayun_line_index < 4 and recent_years and len(recent_years) >= 3:
-        if all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", "")) for y in recent_years[-3:]):
-            warns.append("若行后天，连三爻不吉，必多坎壈（原典：后天详说）")
+    # ── ① 君爻（五爻）：数足，原典死断以「无阴骘」为前提 ────────────
+    if dayun_line_index is not None and dayun_line_index >= 4:
+        warns.append(_sd(
+            quote="「如后天之气数行至君爻之位，此数为足，到此必死。"
+                  "无阴骘者，生日之前便死。有阴骘者，到君爻阳爻延九年，"
+                  "必须迍蹇天眚之患。」",
+            trigger="后天运程行至五爻（君位·君庙之极）",
+            limit=f"{_SD_YINZHI}。本条为**条件式立断**，两支须同时呈现，"
+                  f"不得径取「无阴骘」一支当作已定之论",
+            alt=_SD_ALT,
+        ))
 
-    # 4. 小象与大象反对 → 定死无疑（流年卦与命卦反对 + 爻辞凶）
-    if recent_years:
-        cur = recent_years[-1]
-        hx = cur.get("hexagram", "")
-        if hx:
-            fan_warns = check_zhengdui_fandui(hx, prenatal_name) + check_zhengdui_fandui(hx, postnatal_name)
-            if any("反对" in w for w in fan_warns) and _yao_buji(cur.get("ci", ""), cur.get("buye", ""), cur.get("suiyun", "")):
-                warns.append(f"如遇小象与大象反对（流年卦{hx}与命卦反对）+ 爻凶 → 定死无疑（原典：后天详说）")
+        # ② 「若过了第四爻，遇凶，十死八九」——原典指已过四爻入五爻（li>=4）
+        if cur_buji:
+            warns.append(_sd(
+                quote="「若过了第四爻，遇凶，十死八九。」",
+                trigger="运程已过第四爻、进入五爻及以上 + 当前流年爻辞凶",
+                limit="原典「大易之数」条以「以五上是过」自释「过」字，"
+                      "「过」指越过本爻入下一爻；故此处不是「正行第四爻」",
+                alt=_SD_ALT,
+            ))
 
-    # 5. 流年连三年不吉 + 卦爻不吉 + 本身卦不佳 + 重反支干元气 → 死断
+        # ③ 「如遇小象与大象反对，定死无疑」——原典系「无阴骘」分支的附加条件
+        if cur_yao:
+            hx = cur_yao.get("hexagram", "")
+            if hx:
+                fan = (check_zhengdui_fandui(hx, prenatal_name)
+                       + check_zhengdui_fandui(hx, postnatal_name))
+                if any("反对" in w for w in fan) and cur_buji:
+                    warns.append(_sd(
+                        quote="「如遇小象与大象反对，定死无疑。」",
+                        trigger=f"行至君爻 + 流年小象（{hx}）与命卦大象成反对 + 爻辞凶",
+                        limit=f"{_SD_YINZHI}。本条在原文系「无阴骘者…便死」的"
+                              "**附加条件**，非独立判据；有阴骘者不作此断",
+                        alt=_SD_ALT,
+                    ))
+
+    # ── ④ 上爻（上极）：原典所列后果不止「寿必不久」 ────────────────
+    if dayun_line_index == 5:
+        warns.append(_sd(
+            quote="「纵到君爻，亦不许行至上极一爻，寿必不久。此或有到此者，"
+                  "必须主大变之祸殃，凶暴之挠，或生异疾，或殃及子孙，"
+                  "或反本复始之失。……有过此上极之爻，当为超凡越世之士，"
+                  "乃逃出先后之命，不系数中，不属天地所拘。」",
+            trigger="后天运程行至上爻（上极）",
+            limit="原典于上极所列后果为祸殃、异疾、殃及子孙、反本复始，"
+                  "**并非直断死亡**；原文紧接着又说「有过此上极之爻，当为超凡越世之士」，"
+                  "旧实现只引「寿必不久」半句，漏此两头",
+        ))
+
+    # ── ⑤ 「连三爻不吉」：原典指大运所历之爻，非流年 ─────────────────
+    if recent_dayun_yao and len(recent_dayun_yao) >= 3:
+        last3 = recent_dayun_yao[-3:]
+        if all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", ""))
+               for y in last3):
+            seq = "、".join(f"{y.get('hexagram', '')}{y.get('yao', '')}" for y in last3)
+            warns.append(_sd(
+                quote="「若行后天，连三爻不吉，必多坎壈。」",
+                trigger=f"已行连续三个大运爻且其爻辞皆不吉（{seq}）",
+                limit="原典「连三爻」主语是大运所历之**爻**；"
+                      "旧实现误用近三年**流年**判词代替，口径不同",
+            ))
+
+    # ── ⑥ 全篇唯一未附阴骘前置者 ─────────────────────────────────────
     if (
         recent_years and len(recent_years) >= 3
-        and all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", "")) for y in recent_years[-3:])
+        and all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", ""))
+                for y in recent_years[-3:])
         and shu_xiong
         and tian_yuan_fan and di_yuan_fan
         and _in_gua(tian_yuan_fan, prenatal_name, postnatal_name)
         and _in_gua(di_yuan_fan, prenatal_name, postnatal_name)
     ):
-        warns.append(
-            f"流年连三年不吉 + 本身卦不佳（数凶） + 重反支干元气"
-            f"（天元反{tian_yuan_fan}、地元反{di_yuan_fan}俱在命卦）→ 便可以死断之（原典：后天详说）")
+        warns.append(_sd(
+            quote="「若流年连三年不吉，卦爻又不吉，本身卦不佳，"
+                  "重反支干元气，便可以死断之。」",
+            trigger="近三年流年卦爻皆不吉 + 数凶（本身卦不佳） + "
+                    f"天元反{tian_yuan_fan}、地元反{di_yuan_fan}俱在命卦",
+            limit="本条原典未附阴骘前置，是《后天详说》全篇唯一无此限定者",
+        ))
 
     return warns
 
@@ -1106,9 +1199,20 @@ def build_guajie_from_result(
             )
             gj.si_duan = si
             gj.evidence.extend(f"  死断：{w}" for w in si)
-            for w in si:
-                if "死断" in w or "必死" in w or "定死" in w:
-                    gj.summary.append(w)
+            # summary 走改写表述，不放原典硬断原句。
+            # 原句仍在 si_duan / evidence 中完整留档可回溯，但直出到
+            # summary 就会被下游 LLM 当成结论复述——「到此必死」「定死无疑」
+            # 在中文里没有第二种读法。四段式断语自带触发与限定，
+            # 这里只取其结构，不取其字面。
+            hit_sd = any(k in w for w in si
+                         for k in ("必死", "定死", "死断", "寿必不久"))
+            if hit_sd and not any("《后天详说》死断条" in s for s in gj.summary):
+                gj.summary.append(
+                    "《后天详说》死断条：运程行至极位，原典于此立断。"
+                    "该断为条件式——原典以「阴骘」（暗中积德，非生辰可推）"
+                    "分两支，且同书另有「行到四爻方可断人生死」一说不采五爻，"
+                    "两存待考。原句与触发条件见 evidence 中「死断」各条；"
+                    "此为术数立断语，不作寿命事实断言。")
         except Exception as _e:  # 死断不阻塞主链
             gj.evidence.append(f"  死断：计算跳过（{_e}）")
 
@@ -1169,7 +1273,13 @@ def _collect_si_duan(
     shu_xiong: bool,
     year_ganzhi: str,
 ) -> list[str]:
-    """收集死断诸法（后天详说）：大运爻位 + 近3年流年判词 + 重反支干元气。"""
+    """收集死断诸法（后天详说）：大运爻位 + 近3年流年判词 + 重反支干元气。
+
+    2026-10-06 校订新增：
+      - recent_dayun_yao：原典「连三爻不吉」主语是大运所历之**爻**，
+        由已行大运段的 (hexagram, line_index) 反查爻辞得出，
+        不再借用近三年流年判词顶替。
+    """
     if not bazi or len(bazi) < 1:
         return []
     year_stem, year_branch = bazi[0][0], bazi[0][1]
@@ -1214,12 +1324,33 @@ def _collect_si_duan(
                 })
         recent.sort(key=lambda r: r["year"])
 
+    # 已行大运所历之爻（截至当前段，含当前）。原典「连三爻不吉」主语在此，
+    # 旧实现误用 recent_years（近三年流年）——口径不同，已在判据层更正。
+    dayun_yao: list[dict] = []
+    if age_now is not None:
+        for de in dayun_entries:
+            ls, le = de.get("age_start"), de.get("age_end")
+            if not (ls and le) or ls > age_now:
+                continue
+            li = de.get("line_index")
+            hx = _short(de.get("hexagram", ""))
+            lines = de.get("lines") or _gua_to_lines(hx) or []
+            yao_name = _yao_name(li, lines[li]) if (li is not None and len(lines) > li) else ""
+            d = query_yao_duan(hx, yao_name) if (hx and yao_name) else None
+            dayun_yao.append({
+                "hexagram": hx, "yao": yao_name, "line_index": li,
+                "age_start": ls, "age_end": le,
+                "ci": (d.ci if d else ""), "buye": (d.buye if d else ""),
+                "suiyun": (d.suiyun if d else ""),
+            })
+
     return judge_si_duan(
         prenatal_name=prenatal, postnatal_name=postnatal,
         tian_yuan_fan=tian_fan, di_yuan_fan=di_fan,
         shu_xiong=shu_xiong,
         dayun_line_index=dayun_line_index,
         recent_years=recent or None,
+        recent_dayun_yao=dayun_yao or None,
     )
 
 
