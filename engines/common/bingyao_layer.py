@@ -985,15 +985,30 @@ def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
         if not yao_in:
             kept.append(bing)
             continue
-        # ① 合判据: 药透干字被天干五合合住 -> 无效 (DTS L250 无合之神)
-        yao_stems = [pillars[pos][0] for pos in ('year', 'month', 'hour')
-                     if GAN_WX.get(pillars[pos][0]) in yao_wx]
-        he_jia = any(WUHE.get(s) in {pillars[p][0] for p in ('year', 'month', 'hour')}
-                     for s in yao_stems)
-        if he_jia:
-            bing['yao_yuanju'] = 'INVALID_HE'  # 药被合, 不能援引
-            bing['yao_note'] = ('药(%s)被天干五合合住 -> 不能援引, 病不消 '
-                                '(DTS L250 通关必得引用无合之神)' % '、'.join(yao_wx))
+        # ① 合判据: 药透干被【非日主他干】紧贴天干五合合走 -> 羁绊, 不能援引
+        #    (DTS L461「羁绊喜神之合, 如乙喜神庚合之则羁绊」; L425 真化需得令逢辰独自合;
+        #     PZZQ L421「合而不化…两失其用」——合即牵绊)。
+        #    分层: 药就日主(月/时干合日主=药来就我, 非绊); 隔位/遥隔合不牢;
+        #          地支本气药根不被天干合绊(地支六合/三合合化药根另立, 登记);
+        #          多药任一未被绊 → 合判据通过。
+        def _gan_blocked(stem, pos):
+            tgt = WUHE.get(stem)
+            _nb = {'year': ('month',), 'month': ('year',), 'hour': ()}[pos]
+            return any(pillars[p][0] == tgt for p in _nb)
+        yao_he_ok = False
+        for wx in yao_wx:
+            _, _bb = _tou_ben(wx, _is_sha)
+            if _bb >= 1:                 # 地支本气药根在, 天干合不绊根
+                yao_he_ok = True; break
+            for pos in ('year', 'month', 'hour'):
+                if GAN_WX.get(pillars[pos][0]) == wx and not _gan_blocked(pillars[pos][0], pos):
+                    yao_he_ok = True; break
+            if yao_he_ok:
+                break
+        if not yao_he_ok:
+            bing['yao_yuanju'] = 'INVALID_HE'  # 药被他干紧贴合绊
+            bing['yao_note'] = ('药(%s)透干被非日主他干紧贴天干五合合走 -> 羁绊, 不能援引, 病不消 '
+                                '(DTS L461 羁绊喜神之合; L425/PZZQ L421)' % '、'.join(yao_wx))
             kept.append(bing)
             continue
         # 病神五行 + 病重/病轻
