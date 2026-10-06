@@ -14,7 +14,7 @@ for f in glob.glob("p0_v2/case_audit/*_clean.jsonl"):
         except Exception as e:
             out[d["case_id"]]={"err":str(e)[:80]};continue
         sp=r.get("special") or {}
-        pats=[(p.get("id"),p.get("name"),p.get("state")) for p in sp.get("patterns",[])]
+        pats=[(p.get("pattern_id"),p.get("name"),p.get("state")) for p in sp.get("patterns",[])]
         bz4=re.findall(r"[子丑寅卯辰巳午未申酉戌亥]",bz)
         out[d["case_id"]]={"pats":pats,"cong_type":sp.get("cong_type"),
             "cong_state":sp.get("cong_state"),"zw":sp.get("zhuanwang_state"),
