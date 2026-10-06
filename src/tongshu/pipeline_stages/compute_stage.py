@@ -166,7 +166,7 @@ class ComputeStage:
         # 河洛计算 → YiAdapter 适配为 YiStructure → YiInterpretationEngine 解释。
         # 任何一步失败都降级为 None，不影响既有 bazi/ziwei/huangli 主链路。
         heluo_result, yi_structure, yi_interpretation = self._compute_heluo_yi(
-            bazi_chart, gender
+            bazi_chart, gender, year=year, month=month, day=day
         )
 
         # 1c. 梅花易数引擎（E7 接入）
@@ -288,6 +288,9 @@ class ComputeStage:
         self,
         bazi_chart,
         gender: str,
+        year: int | None = None,
+        month: int | None = None,
+        day: int | None = None,
     ) -> tuple:
         """河洛理数计算 + 易经解释（BUG-P0-03）。
 
@@ -299,6 +302,15 @@ class ComputeStage:
 
         返回三元组 (heluo_result, yi_structure, yi_interpretation)。
         任一步失败都返回 (None, None, None)，绝不让河洛/易经错误中断既有主链路。
+
+        2026-10-06 修正接通断点：本方法原先只传 bazi/gender/birth_hour/era，
+        **不传 birth_year / birth_date**。而 HeluoCanonical.calculate() 在二者
+        皆缺时会：
+          - _build_timeline: birth_year 兜底成 1984 → 大运/流年/流月/流日/流时
+            整条四层时间轴跑在**占位年份**上，与实际出生年无关；
+          - solar_phase: 因无 birth_date 而跳过 _solar_phase_for_date →
+            纯卦元堂半年相分支拿不到冬至/夏至判定。
+        现由 run() 把真实出生年月日透传下来（calc_context 与直调两条路径都已覆盖）。
         """
         heluo_result = None
         yi_structure = None
@@ -308,11 +320,17 @@ class ComputeStage:
             birth_hour_cn = _BRANCH_CN.get(
                 bazi_chart.hour_pillar.earthly_branch, "子"
             )
+            birth_date_iso = (
+                f"{year:04d}-{month:02d}-{day:02d}"
+                if year and month and day else None
+            )
             heluo_result = self.heluo_canonical.calculate(
                 bazi=bazi_cn,
                 gender=gender,
                 birth_hour=birth_hour_cn,
                 era="zhong",
+                birth_year=year,
+                birth_date=birth_date_iso,
             )
             # 将河洛结果传入 YiAdapter（只消费 Contract 化字段，不重新计算河洛）
             yi_input = YiAdapterInput(
