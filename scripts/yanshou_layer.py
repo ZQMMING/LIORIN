@@ -58,15 +58,16 @@ def main():
             try: v,why = verdict(paipan(c["bazi"]))
             except Exception:
                 crash+=1; continue
+            tot+=1   # 分母=全量有label盘(口径乙 1459), PENDING 计入分母但不计对错
             if v not in ("good","bad"):
                 grid[("PENDING_SPECIAL", v)][0]+=1
                 if lab=="good": grid[("PENDING_SPECIAL", v)][1]+=1
-                continue   # 特殊格CONFIRMED 待 P2 用神读取, 移出本口径一致率
-            tot+=1
+                continue   # 特殊格CONFIRMED 待 P2 用神读取, 标 PENDING 单列
             if v==lab: agree+=1
             grid[(why,v)][0]+=1
             if lab=="good": grid[(why,v)][1]+=1
-    print("验收层公式: 总%d 一致%d 一致率%.1f%% 崩溃%d (PENDING_SPECIAL 移出口径, 见格表)"%(tot,agree,100*agree/tot,crash))
+    print("验收层公式: 总%d 一致%d 一致率%.1f%% 崩溃%d (PENDING_SPECIAL %d盘计分母不计对错, 待P2用神读取)"%(tot,agree,100*agree/tot,crash,
+          sum(g[0] for k,g in grid.items() if k[0]=="PENDING_SPECIAL")))
     print("\n格(理由×判定) | 盘 | 其中label-good")
     for k in sorted(grid):
         n,g=grid[k]; print(" %s | %d | %d"%(k,n,g))

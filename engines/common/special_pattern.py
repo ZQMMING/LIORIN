@@ -407,7 +407,21 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
 
     # ---------- 从格 ----------
     cong = None; side = None; cstate = None
-    if rootless_entry and not zhi_sha_save:  # P0-b: 移除not hua_name互斥分支
+    # [2026-10-07 PATCH-4d-2] 印根/阳干检测提前到入口: 印绶有根则不从(PZZQ L180/L187/L4936/L4939)、
+    #   阳干微根不能从(L179 五阳从气不从势) —— 在主从入口前拦下, 记 ZP-SPECIAL-CONG-BAN 防静默丢
+    #   (4f 化根变化会让印根盘退出 rootless_entry 而不经 4d 检查, 如 QT-0483/DT-0075/DT-0108/
+    #   DT-0332/YH-0039 曾静默消失; 入口前置后印根盘显式 BAN, 回正格路径有记录)。
+    _yin_root_any2 = yin_ben_eff + _yin_zhong_eff + _yin_yu_eff
+    _dm_yang2 = day_stem in ('甲', '丙', '戊', '庚', '壬')
+    _cong_ban_entry = bool(rootless_entry and not zhi_sha_save
+                           and (_yin_root_any2 > 0 or (_dm_yang2 and dm_ben_eff >= 1)))
+    if _cong_ban_entry:
+        _ban_reason2 = ('印绶有根则不从(PZZQ L180/L187/L4936/L4939)' if _yin_root_any2 > 0
+                        else '阳干微根不能从(PZZQ L179, 五阳从气不从势)')
+        out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', _ban_reason2, 'SPECIAL_FAIL', None,
+            '从格入口拦下: ' + _ban_reason2 + '; SPECIAL_FAIL 态待实现, 盘回正格路径',
+            ['daymaster_root', 'wuxing_power']))
+    if rootless_entry and not zhi_sha_save and not _cong_ban_entry:
         sides = {'食伤': (ss, ss_wx), '财': (cai, cai_wx), '官杀': (gs, gs_wx)}
         shi_sides = {k: (v, wx) for k, (v, wx) in sides.items()
                      if (k == '官杀' and gs_pow) or (k != '官杀' and _shi(v))}
