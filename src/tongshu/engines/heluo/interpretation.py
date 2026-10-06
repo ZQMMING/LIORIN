@@ -416,9 +416,45 @@ class RelationalInterpretationEngine:
         return round(max(0.0, min(1.0, confidence)), 2)
     
     def _compute_evidence_closure(self) -> float:
-        """计算证据闭合度。"""
-        # TODO: 从 algorithm_rules 表查询
-        return 0.85  # 简化版
+        """证据闭合度：各证据维度中被**真实填充**的字段占比。
+
+        2026-10-06 修正：本方法原为 ``return 0.85``（注释「简化版」），
+        但它被 ``_compute_confidence()`` 以 0.6 的权重采信，等于
+        **任何命盘的置信度都被这一个常数锚定**——换命盘、换数据都不变。
+
+        现按输入里真实存在的证据字典计算闭合度：line_position（爻位证据）、
+        time_state（时间证据）、element_state（五行证据）三组，
+        逐字段统计已填充且非退化（None / 空 dict / 全 0）的比例。
+        该口径**可复现、可解释**，且随输入变化。
+
+        说明：原设计意图是「从 algorithm_rules 表查询」（见旧注释）。
+        该表在本仓不存在，与 hexagram_state_definitions 同属**待建**资源，
+        故此处采用上述可计算口径并在此明确标注，勿误当作既定规格。
+        """
+        groups = (
+            (getattr(self.input, "line_position", None), ("active_line", "position_type", "yinyang")),
+            (getattr(self.input, "time_state", None), ("solar_term", "hour", "true_solar_time")),
+            (getattr(self.input, "element_state", None), ("木", "火", "土", "金", "水")),
+        )
+        total = filled = 0
+        for container, keys in groups:
+            for key in keys:
+                total += 1
+                val = container.get(key) if isinstance(container, dict) else None
+                if val is None:
+                    continue
+                # 全 0 的数值证据视为未填充（如 element_state 五行皆 0）。
+                # 注意 bool 是 int 的子类，False 是**合法**取值
+                # （如 true_solar_time=False），不可按 falsy 数字剔除。
+                if isinstance(val, bool):
+                    filled += 1
+                    continue
+                if isinstance(val, (int, float)) and not val:
+                    continue
+                if isinstance(val, str) and not val.strip():
+                    continue
+                filled += 1
+        return round(filled / total, 4) if total else 0.0
     
     def _compute_input_completeness(self) -> float:
         """计算输入完整性。"""

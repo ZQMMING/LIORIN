@@ -12,12 +12,21 @@ from datetime import datetime, date
 
 @dataclass(frozen=True)
 class Timeline:
-    """时间序列卦象结果"""
+    """时间序列卦象结果
+
+    2026-10-06 修正字段说明——原先三个字段的声明与实际写入不符：
+      - ``daily_hexagram`` 注释写「今日卦」，实际写入的却是**先天卦**，
+        且 ``date`` 塞的是 ``str(birth_year)``（如 "1990"），既非日期也非流日卦。
+      - ``monthly_hexagrams`` 恒为 ``[]``、``hourly_hexagram`` 恒为 ``None``。
+    三者全仓零消费方，且真实流月/流日/流时卦已在四层时间轴
+    （``yearly_hexagrams[].months[] / .days[]``）内按需产出，
+    故此处一律置空，不再保留名不副实的副本。
+    """
     yearly_hexagrams: list[dict]    # 流年卦列表
-    monthly_hexagrams: list[dict]   # 流月卦列表
-    daily_hexagram: dict             # 今日卦
-    hourly_hexagram: dict | None    # 时刻卦
-    seasonal_hexagram: dict | None  # 节候卦
+    monthly_hexagrams: list[dict]   # 流月卦列表（占位，恒空；真实值见 yearly[].months）
+    daily_hexagram: dict             # 今日卦（占位，恒空；真实值见 yearly[].months[].days）
+    hourly_hexagram: dict | None    # 时刻卦（占位，恒 None；真实值由 guajie 按 target_hour 现算）
+    seasonal_hexagram: dict | None  # 节候卦（占位，恒 None；真实值见 HeluoResult.seasonal_hexagram）
     qi_phase: dict | None           # 卦气
     hua_gong: dict | None           # 化工状态（H6）
 
