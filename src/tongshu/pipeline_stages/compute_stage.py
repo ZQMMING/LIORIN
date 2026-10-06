@@ -56,6 +56,17 @@ _BRANCH_CN = {
     "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥",
 }
 
+#: 规则 ID 前缀 → 引擎名（用于信号缺 source_engine 时反查归属）。
+#: 只登记**能确证归属**的前缀；未登记的一律沿用原默认 ZI_PING，不做猜测。
+#:   HL-  河洛真数 HL-101~121，条件字段为 heluo_benming_guawuxing /
+#:        heluo_dishu_youyu / heluo_birth_season_unfavorable 等 heluo_* 字段
+#:   ZW-  紫微斗数
+#: 注意 HLT-（健康类，active）与 HL- 是不同前缀，不可互相误判。
+_RULE_PREFIX_ENGINE = {
+    "HL-": "HE_LUO",
+    "ZW-": "ZI_WEI",
+}
+
 
 class ComputeStage:
     """阶段 1-6: 纯计算 + SIR 构造。
@@ -539,9 +550,18 @@ class ComputeStage:
                 # 优先用 signal 自带的 engine 字段；其次根据 rule_refs 前缀判断
                 raw_eng = getattr(sig, "source_engine", None) or getattr(sig, "engine", None)
                 if raw_eng is None:
-                    # 从 rule_refs 前缀推断: ZW-* → ZI_WEI, 其余 ZI_PING
-                    rule_refs = getattr(sig, "rule_refs", []) or []
-                    raw_eng = "ZI_WEI" if any(str(r).startswith("ZW-") for r in rule_refs) else "ZI_PING"
+                    # 从 rule_refs 前缀推断引擎。2026-10-06 起补全前缀表：
+                    # 原实现只认 ZW-，其余一律归 ZI_PING，一旦 HL-（河洛）或
+                    # BLIND-（盲派）规则命中就会被错记到子平名下，污染
+                    # CrossDomainResult.by_engine 的归属与 coverage 统计。
+                    # 当前 HL-* 规则全为 draft（EXECUTABLE_STATUSES 门禁），
+                    # 故本修正对现网输出零影响，属消除潜在缺陷。
+                    rule_refs = [str(r) for r in (getattr(sig, "rule_refs", []) or [])]
+                    raw_eng = "ZI_PING"
+                    for prefix, eng in _RULE_PREFIX_ENGINE.items():
+                        if any(r.startswith(prefix) for r in rule_refs):
+                            raw_eng = eng
+                            break
                 engine_name = str(raw_eng)
                 if engine_name not in engine_evidences:
                     engine_evidences[engine_name] = []
