@@ -618,10 +618,13 @@ class HeluoCanonical:
         all_pass = True
         for name, actual, expected_val in checks:
             if actual != expected_val:
-                print(f"  ❌ {name}: expected {expected_val!r}, got {actual!r}")
+                # 2026-10-06: 原用 ❌/✅ 打印，在 GBK 控制台（非 UTF-8 stdout）
+                # 会抛 UnicodeEncodeError —— 而本方法是返回 bool 的公开校验入口，
+                # 一旦打印失败就变成抛异常，调用方拿不到结论。改用 ASCII 标记。
+                print(f"  FAIL {name}: expected {expected_val!r}, got {actual!r}")
                 all_pass = False
             else:
-                print(f"  ✅ {name}: {actual!r}")
+                print(f"  OK   {name}: {actual!r}")
 
         return all_pass
 
