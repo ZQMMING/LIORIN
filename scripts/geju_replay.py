@@ -10,7 +10,7 @@ from bazi_gate import paipan
 DISEASES=[
  # name, 断语pattern, 期望格集, 引擎命中判据(domain,detail子串)
  ("GE_GUAN_BEI_SHANG",re.compile(r"(伤官见官|官星被伤|官被伤|破官|伤其官|官.*逢伤|透官.*伤)"),
-  lambda ge: ge=="正官格", lambda h: h["domain"]=="GEJU" and "伤官" in h["hit_detail"]),
+  lambda ge: ge=="正官格", lambda h: h["domain"]=="GEJU" and ("伤官" in h["hit_detail"] or "七杀" in h["hit_detail"])),  # 七杀=官杀混杂(官不清, PZZQ258)
  ("GE_YONG_BEI_HE",re.compile(r"(合去|逢合|被合|合住|羁绊|合而不化|官星不清|被合去)"),
   lambda ge: ge=="正官格", None),  # 引擎无合维度
  ("GE_YONG_WU_ZHUO",re.compile(r"(孤官无辅|孤官|无着|用神无着|无辅|气势不流通)"),

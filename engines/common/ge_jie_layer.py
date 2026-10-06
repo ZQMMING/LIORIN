@@ -401,13 +401,17 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 # 喜神按成格路径取(原典ZHENG_GUAN_002逐案, 非财印全并):
                 #  官格喜生之护之: 财生官(财护官)/印护官; 官是格体不列喜
                 _guan_xi = sorted(set(GAN_WX[g] for g in cai_gans+yin_gans))
+                _guan_po = [{'type':'组合','match':'ANY','required':['伤官']}, {'type':'地支','match':'ANY','branch_cond':'刑冲'}]
+                if _officer_mixed:
+                    # PZZQ258 官杀混杂破格(官不清): 七杀透干盖官即破; 定格层已核官杀并见
+                    _guan_po.append({'type':'组合','match':'ANY','required':['七杀']})
                 facts['ge_cheng'] = {
                     'ge': '正官格', 'xi_wx': _guan_xi,
                     'ti_wx': [GAN_WX[guan_gans[0]]],
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
-                    'po_ge': [{'type':'组合','match':'ANY','required':['伤官']}, {'type':'地支','match':'ANY','branch_cond':'刑冲'}],
-                    'rule': 'PZZQ255: 官逢财印又无刑冲破害->官格成; 官是格体非杀病; 喜神=财印; 破格: 伤官克/刑冲',
+                    'po_ge': _guan_po,
+                    'rule': 'PZZQ255: 官逢财印又无刑冲破害->官格成; 官是格体非杀病; 喜神=财印; 破格: 伤官克/刑冲/官杀混杂(PZZQ258)',
                 }
                 return facts
             # 默认输出：月令正官+官透，但不满足成格条件（无财印辅助）
@@ -419,13 +423,16 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 _guan_xi_default = [dm_wx_default]
                 if _yin_gans_default:
                     _guan_xi_default.append(GAN_WX[_yin_gans_default[0]])
+                _guan_po_default = [{'type':'组合','match':'ANY','required':['伤官']}, {'type':'地支','match':'ANY','branch_cond':'刑冲'}]
+                if _officer_mixed:
+                    _guan_po_default.append({'type':'组合','match':'ANY','required':['七杀']})
                 facts['ge_cheng'] = {
                     'ge': '正官格', 'xi_wx': sorted(set(_guan_xi_default)),
                     'ti_wx': [GAN_WX[guan_gans[0]]],
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
-                    'po_ge': [{'type':'组合','match':'ANY','required':['伤官']}, {'type':'地支','match':'ANY','branch_cond':'刑冲'}],
-                    'rule': 'PZZQ255: 正官格; 官是格体; 破格: 伤官克/刑冲',
+                    'po_ge': _guan_po_default,
+                    'rule': 'PZZQ255: 正官格; 官是格体; 破格: 伤官克/刑冲/官杀混杂(PZZQ258)',
                 }
                 return facts
         # 食神制杀格：月令正官+无正官透+透干七杀+食伤透
@@ -840,11 +847,12 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         # 提纲当令者须是食伤(与日主五行相同的比劫不算「食伤太旺」)
         _ti_gang_tai_wang = bool(ss_wx_def) and _shi_chengshi and (ss_wx_def == _sswx)
         if _qs_def_xi and not _ss_xi_cai:
-            # 食带煞无财: 喜煞+印(就煞印, 弃食就煞)
-            # 对照表SHI_SHEN_002"不用财而就煞印, 最为威权显赫" -> 印是成格之神;
-            #   食既已弃, 枭无所夺, 故此路径不设枭夺食破格
+            # 食带煞无财: 喜煞+印(就煞印, SHI_SHEN_002"不用财而就煞印, 最为威权显赫")——只影响喜神路径。
+            # 枭夺食破格【不豁免】: PZ-0118(沈文案例)庚申戊寅壬子甲辰——戊杀透且有辰中本气根,
+            #   原文仍断「庚枭夺食而无财为救应…斯乃无财之病也」(印坐禄夺食, 煞反生印助夺)。
+            #   原文未言就煞印免夺食; 就煞印贵格反例标 PENDING 待核(威权显赫案例, 食弃当否另论)。
             _ss_xi = sorted(set(GAN_WX[g] for g in _qs_def_xi + _yin_def_xi))
-            _ss_po = []
+            _ss_po = [{'type': '组合', 'match': 'ANY', 'required': ['偏印']}]
         elif _ti_gang_tai_wang and _yin_def_xi:
             # DTS L215「提纲食伤财官太旺, 则取年月时上印比为喜神」(准神primary)
             _ss_xi = sorted(set(GAN_WX[g] for g in _yin_def_xi))
@@ -1129,15 +1137,23 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
         gc['po_ge_hits'] = []
         return facts
 
-    # 在局十神集合 = 天干透出 + 地支本气（中余不计，ENGINE_DEFINED）
-    present = set()
+    # 在局十神集合，拆两层（ENGINE_DEFINED，存在性 vs 有力口径分离）：
+    #   present_all   = 透干 + 全部藏干（含中余）——模板命中的【存在性】判据
+    #   present_strong= 透干 + 本气（中余不计）——三条件门控【有力】判据（未启用时仅登记）
+    # 依据修正：QT-0728 财格 ANY[七杀] 漏命中——七杀己在午中为【中气】，
+    #   断语「官煞混杂，财煞太旺」明证存在性须含中气；原 present 只取本气 = 存在性误用有力口径。
+    present_all, present_strong = set(), set()
     for pos in ('year', 'month', 'hour'):
-        present.add(ten_god(dg, pillars[pos][0]))
+        _g = ten_god(dg, pillars[pos][0])
+        present_all.add(_g); present_strong.add(_g)
     for pos in ('year', 'month', 'day', 'hour'):
         hd = hidden.get(pos) or []
         bgan = hd[0] if hd else ZHI_BEN_GAN.get(pillars[pos][1], '')
         if bgan:
-            present.add(ten_god(dg, bgan))
+            present_all.add(ten_god(dg, bgan))
+            present_strong.add(ten_god(dg, bgan))
+        for _h in hd[1:]:  # 中余气——仅入存在性
+            present_all.add(ten_god(dg, _h))
 
     # 相邻存活六冲（地支刑冲判据）
     rs = (facts.get('combination_facts') or {}).get('resolved') or {}
@@ -1151,9 +1167,9 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
         ok = False
         if t == '组合':
             req = tpl.get('required') or []
-            hit_gods = [r for r in req if r in present]
+            hit_gods = [r for r in req if r in present_all]
             if match == 'ALL':
-                ok = all(r in present for r in req) and len(req) > 0
+                ok = all(r in present_all for r in req) and len(req) > 0
             else:
                 ok = len(hit_gods) > 0
         elif t == '地支':
@@ -1164,7 +1180,7 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
                 ok = True
         elif t == '缺失':
             forb = tpl.get('forbidden') or []
-            ok = len(forb) > 0 and all(x not in present for x in forb)
+            ok = len(forb) > 0 and all(x not in present_all for x in forb)
             hit_gods = [x for x in forb]
         elif t == '冲月令破格':
             ok = True
