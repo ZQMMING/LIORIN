@@ -98,7 +98,13 @@ def _solar_phase_for_date(birth_date: str) -> str | None:
     if xiazhi_cur <= bd < dongzhi_cur:
         return "summer"
     return None
+#: 节气→农历月 映射缓存，2026-10-06 加容量上限。
+#: 原为无界 dict：实测跑到 124 年 / 1,488 条（出生年跨度可达数百年），
+#: 长期服务会缓慢涨内存且永不回收。超出即按插入顺序丢最旧的（FIFO）。
+#: 刻意用普通 dict 而非 OrderedDict —— Python 3.7+ dict 保序，FIFO 已够，
+#: 且不影响任何外部对 _jie_cache 注入普通 dict 的用法。
 _jie_cache: dict[int, dict[int, str]] = {}
+_JIE_CACHE_MAX = 256
 
 #: sxtwl 惰性单例：_SXTWL 为已解析模块，_SXTWL_FAILED=True 表示本进程不可用。
 #: 2026-10-06：旧实现把 `import sxtwl` 写在 _compute_year_jie 体内，缺依赖时
@@ -131,6 +137,9 @@ def _jie_datetime_for_lunar_month(year: int, lunar_month: int) -> str | None:
     if year not in _jie_cache:
         sxtwl = _get_sxtwl()
         _jie_cache[year] = _compute_year_jie(year, sxtwl) if sxtwl is not None else {}
+        if len(_jie_cache) > _JIE_CACHE_MAX:
+            for stale in list(_jie_cache)[:len(_jie_cache) - _JIE_CACHE_MAX]:
+                _jie_cache.pop(stale, None)
     return _jie_cache[year].get(lunar_month)
 
 
