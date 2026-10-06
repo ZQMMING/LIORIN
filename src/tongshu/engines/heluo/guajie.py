@@ -32,6 +32,7 @@ from pathlib import Path
 from typing import Optional
 
 from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
+from .timeline_yun import compute_liushi
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _GUAJIE_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_data.json"
@@ -363,18 +364,25 @@ class GuaJieResult:
                 "najia_hit": self.liunian_ye_buye.najia_hit,
                 "evidence": self.liunian_ye_buye.evidence,
             } if self.liunian_ye_buye else None,
+            # 2026-10-06 修正：下列三个卦名此前**只存在于 dataclass 字段**，
+            # to_dict() 漏发，导致 build_guajie_from_result 算出的流月/流日/流时
+            # 应期卦名在输出边界被静默丢弃——只发出 _yao，下游拿到"九三"却不知
+            # 是何卦之九三。纯增补，不改动任何既有键。
+            "liuyue_hexagram": self.liuyue_hexagram,
             "liuyue_yao": {
                 "yao": self.liuyue_yao.yao, "ci": self.liuyue_yao.ci,
                 "ye": self.liuyue_yao.ye, "buye": self.liuyue_yao.buye,
                 "suiyun": self.liuyue_yao.suiyun, "shao": self.liuyue_yao.shao,
                 "jingyi": self.liuyue_yao.jingyi, "shiyi": self.liuyue_yao.shiyi,
             } if self.liuyue_yao else None,
+            "liuri_hexagram": self.liuri_hexagram,
             "liuri_yao": {
                 "yao": self.liuri_yao.yao, "ci": self.liuri_yao.ci,
                 "ye": self.liuri_yao.ye, "buye": self.liuri_yao.buye,
                 "suiyun": self.liuri_yao.suiyun, "shao": self.liuri_yao.shao,
                 "jingyi": self.liuri_yao.jingyi, "shiyi": self.liuri_yao.shiyi,
             } if self.liuri_yao else None,
+            "liushi_hexagram": self.liushi_hexagram,
             "liushi_yao": {
                 "yao": self.liushi_yao.yao, "ci": self.liushi_yao.ci,
                 "ye": self.liushi_yao.ye, "buye": self.liushi_yao.buye,
@@ -1025,11 +1033,16 @@ def build_guajie_from_result(
                                             liuri_hex_name = _short(dseg.get("name", ""))
                                             dl = dseg.get("lines") or []
                                             diffs = [k for k in range(6) if len(dl) > k and len(ml) > k and dl[k] != ml[k]]
-                                            if len(diffs) == 1 and len(dl) > diffs[0]:
-                                                liuri_yao_name = _yao_name(diffs[0], dl[diffs[0]])
+                                            day_yao = diffs[0] if len(diffs) == 1 else None
+                                            if day_yao is not None and len(dl) > day_yao:
+                                                liuri_yao_name = _yao_name(day_yao, dl[day_yao])
                                             # 流时应期：值日卦 hours（起时卦例：前六时进/后六时退）
-                                            if target_hour and dseg.get("hours"):
-                                                for hs in dseg["hours"]:
+                                            # 2026-10-06：_build_timeline 不再预展开流时卦
+                                            # （6,696 段 / 80,352 条，占四层载荷 91%），
+                                            # 只存 flip_index；此处按 target_hour 现算，
+                                            # 命中即止，算法口径与预展开完全一致。
+                                            if target_hour and day_yao is not None:
+                                                for hs in compute_liushi(dseg.get("lines") or [], day_yao).hours:
                                                     if hs.get("hour") == target_hour:
                                                         liushi_hex_name = _short(hs.get("name", ""))
                                                         si = hs.get("shi_yao_index")

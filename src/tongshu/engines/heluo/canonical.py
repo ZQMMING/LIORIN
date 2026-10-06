@@ -27,7 +27,6 @@ from .timeline_yun import (
     compute_dayun_liyao,
     compute_liunian,
     compute_liuri,
-    compute_liushi,
     compute_liuyue,
 )
 
@@ -101,48 +100,105 @@ def _solar_phase_for_date(birth_date: str) -> str | None:
     return None
 _jie_cache: dict[int, dict[int, str]] = {}
 
+#: sxtwl 惰性单例：_SXTWL 为已解析模块，_SXTWL_FAILED=True 表示本进程不可用。
+#: 2026-10-06：旧实现把 `import sxtwl` 写在 _compute_year_jie 体内，缺依赖时
+#: 每调用一次就重走一遍 import 机制并抛 ImportError（一盘 1,116 次 ≈ 206 ms），
+#: 且异常穿透使 _jie_cache 永远写不进去，缓存完全失效。此处改为进程级解析一次。
+_SXTWL = None
+_SXTWL_FAILED = False
+
+
+def _get_sxtwl():
+    """惰性解析 sxtwl，进程内至多解析一次；不可用时返回 None 并记住失败。"""
+    global _SXTWL, _SXTWL_FAILED
+    if _SXTWL is None and not _SXTWL_FAILED:
+        try:
+            import sxtwl as _m
+            _SXTWL = _m
+        except ImportError:
+            _SXTWL_FAILED = True
+    return _SXTWL
+
 
 def _jie_datetime_for_lunar_month(year: int, lunar_month: int) -> str | None:
     """返回农历 lunar_month 月"节"的精确时刻（公历 YYYY-MM-DD HH:MM）。
 
     一次遍历拿到该公历年的全部12个"节"并缓存，后续查表（避免逐月重复遍历）。
     用于流日卦节气对齐（《河洛理数》卷二下）。
+    sxtwl 不可用时缓存空表并返回 None，不重复试探 import。
     """
     global _jie_cache
     if year not in _jie_cache:
-        _jie_cache[year] = _compute_year_jie(year)
+        sxtwl = _get_sxtwl()
+        _jie_cache[year] = _compute_year_jie(year, sxtwl) if sxtwl is not None else {}
     return _jie_cache[year].get(lunar_month)
 
 
-def _compute_year_jie(year: int) -> dict[int, str]:
-    """遍历公历 year-1~year+1，找齐 12 个"节"，按农历月 1-12 建映射。"""
-    import sxtwl
+def _jie_by_batch(sxtwl, year: int) -> dict[int, tuple] | None:
+    """用 sxtwl.getJieQiByYear 批量取 year-1~year+1 的 12 个"节"。
+
+    返回 {农历月: (gap, "YYYY-MM-DD HH:MM")}；批量接口不可用时返回 None，
+    由调用方回退到逐日扫描。取窗与取月口径与旧逐日实现完全一致。
+    """
+    jie_to_lm = {idx: m for m, idx in _LUNAR_MONTH_JIE.items()}
+    best: dict[int, tuple] = {}
+    try:
+        for target in (year - 1, year, year + 1):
+            for info in sxtwl.getJieQiByYear(target):
+                jq = info.getJieQi()
+                lm = jie_to_lm.get(jq)
+                if lm is None:
+                    continue
+                t = sxtwl.JD2DD(info.getJieQiJD())
+                if not (0 < t.Y <= 2200):
+                    continue
+                gap = abs(t.Y - year)
+                if lm not in best or gap < best[lm][0]:
+                    best[lm] = (gap, f"{t.Y:04d}-{t.M:02d}-{t.D:02d} "
+                                       f"{int(t.h):02d}:{int(t.m):02d}")
+    except Exception:
+        return None
+    return best
+
+
+def _jie_by_dayscan(sxtwl, year: int) -> dict[int, tuple]:
+    """回退路径：逐日遍历公历 year-1~year+1 找齐 12 个"节"（1,095 天）。"""
     from datetime import date, timedelta
-    result: dict[int, str] = {}
+    jie_to_lm = {idx: m for m, idx in _LUNAR_MONTH_JIE.items()}
     best: dict[int, tuple] = {}
     d = date(year - 1, 1, 1)
     end = date(year + 1, 12, 31)
     while d <= end:
         day_obj = sxtwl.fromSolar(d.year, d.month, d.day)
         jq = day_obj.getJieQi()
-        if jq in _LUNAR_MONTH_JIE.values():
-            jd = day_obj.getJieQiJD()
-            t = sxtwl.JD2DD(jd)
-            if not (0 < t.Y <= 2200):
-                d += timedelta(days=1)
-                continue
-            # 该节对应的农历月
-            lm = next((m for m, idx in _LUNAR_MONTH_JIE.items() if idx == jq), None)
-            if lm is None:
-                d += timedelta(days=1)
-                continue
-            gap = abs(d.year - year)
-            if lm not in best or gap < best[lm][0]:
-                best[lm] = (gap, f"{t.Y:04d}-{t.M:02d}-{t.D:02d} {int(t.h):02d}:{int(t.m):02d}")
+        lm = jie_to_lm.get(jq)
+        if lm is not None:
+            t = sxtwl.JD2DD(day_obj.getJieQiJD())
+            if 0 < t.Y <= 2200:
+                gap = abs(d.year - year)
+                if lm not in best or gap < best[lm][0]:
+                    best[lm] = (gap, f"{t.Y:04d}-{t.M:02d}-{t.D:02d} "
+                                       f"{int(t.h):02d}:{int(t.m):02d}")
         d += timedelta(days=1)
-    for lm, (_, dtstr) in best.items():
-        result[lm] = dtstr
-    return result
+    return best
+
+
+def _compute_year_jie(year: int, sxtwl=None) -> dict[int, str]:
+    """找齐该公历年对应农历 1-12 月的 12 个"节"，返回 {农历月: 时刻字符串}。
+
+    2026-10-06：主路径改用 sxtwl.getJieQiByYear 批量取节气。旧实现自 year-1-01-01
+    逐日扫到 year+1-12-31（1,095 天 × 1 次 fromSolar），一盘 93 个流年即约 10 万次
+    天文推算；批量接口 3 次调用覆盖同一取窗。取窗、取月、同月择优口径均不变。
+    批量接口不可用时自动回退逐日扫描，保证结果不劣于旧实现。
+    """
+    if sxtwl is None:
+        sxtwl = _get_sxtwl()
+    if sxtwl is None:
+        return {}
+    best = _jie_by_batch(sxtwl, year)
+    if best is None:
+        best = _jie_by_dayscan(sxtwl, year)
+    return {lm: dt for lm, (_, dt) in best.items()}
 from .hexagram import analyze_hexagram, HexagramStructure
 from .yi_interpreter import interpret_all_liunian
 from .hua_gong import compute_huagong, HuaGongResult
@@ -383,15 +439,16 @@ class HeluoCanonical:
                 except Exception:
                     jie_dt = None
                 liuri = compute_liuri(m["lines"], m["yue_yao_index"], jie_dt)
-                # 流时卦（《河洛真数·起例卷之上·起时卦例》）：以值日卦为本，
-                # 前六时(子~巳)进数变/后六时(午~亥)退数变，阳时变爻阴时取应
+                # 流时卦（2026-10-06 改按需）：旧实现在此把 93 流年 × 12 月 × 6 日
+                # 全部展开为流时卦，共 6,696 次 compute_liushi / 80,352 条小时记录，
+                # 占四层载荷 91%、卦名换算 92%——而消费方（guajie）按 target_hour
+                # 点查，每次只需 1 条。此处只记动爻 flip_index，hours 由 guajie 命中
+                # 该日段时调 compute_liushi() 现算，算法口径不变。
                 for dseg in liuri.days:
                     diffs = [k for k in range(6) if len(dseg["lines"]) > k and len(m["lines"]) > k
                              and dseg["lines"][k] != m["lines"][k]]
                     if len(diffs) == 1:
-                        liushi = compute_liushi(dseg["lines"], diffs[0])
                         dseg["flip_index"] = diffs[0]
-                        dseg["hours"] = liushi.hours
                 months.append({
                     "month": m["month"],
                     "name": m["name"],
