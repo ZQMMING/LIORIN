@@ -30,7 +30,14 @@ they pass `test_condition_fields_in_field_specs`. The matcher's `_eval_leaf`
 does NOT actually evaluate these fields against RuleContext (the EVENT_TOPIC
 rules are gated by SignalEngine's SIGNAL_LAYER_ORDER = (BASELINE,
 CYCLE_CONTEXT, DAILY_ACTIVATION) and never enter the matcher's eval path).
-The dedicated evaluator lives in `tongshu.reasoning.event_topic`.
+
+2026-10-06 更正：本文件此前多处（含此行）声称"专用求值器位于
+`tongshu.reasoning.event_topic`"，**该模块并不存在**（src/tongshu/reasoning/
+下无此文件），`annual_event_evaluator.py` 同样不存在。因此 EVENT_TOPIC 层规则
+目前**没有任何求值路径**。这不影响生产正确性：现网全部 EVENT_TOPIC 规则
+（含 21 条 HL-* 河洛规则）的 status 均为 draft，而
+EXECUTABLE_STATUSES = ("validated", "active")（DECISION-010：防止 AI 静默激活
+规则），故本就在门禁之外。EVENT_TOPIC 求值器属**待建**而非已存在于别处。
 """
 
 from __future__ import annotations
@@ -69,11 +76,12 @@ FIELD_SPECS: dict[str, str] = {
     "day_master_absolute_month": "月支是否为日主帝旺位(bool;阳刃/帝旺,《渊海子平·论阳刃》)",
     "day_branch_main_ten_god": "日支主气藏干对日主的十神(通根/得地判据,《滴天髓·论地支》)",
     "tianyi_guiren_branches": "命局四支(年月日时)中为日干天乙贵人的支列表(神煞判据,《三命通会·论天乙贵人》通行口诀)",
-    # EVENT_TOPIC 层字段（婚姻/健康断事, EventTopicEngine 提供）
-    # These are present so draft EVENT_TOPIC rules pass the static
-    # `test_condition_fields_in_field_specs` audit. The matcher's _eval_leaf
-    # never receives them in production (SignalEngine's SIGNAL_LAYER_ORDER
-    # gates EVENT_TOPIC rules out of the matcher).
+    # EVENT_TOPIC 层字段（婚姻/健康断事）
+    # 2026-10-06 更正：原注释写「EventTopicEngine 提供」，但该引擎与模块
+    # tongshu.reasoning.event_topic 都不存在，EVENT_TOPIC 求值器属**待建**。
+    # 这些字段当前只用于让 draft 规则通过 test_condition_fields_in_field_specs
+    # 静态审计；matcher._eval_leaf 在生产中永不收到它们
+    # （SIGNAL_LAYER_ORDER 把 EVENT_TOPIC 规则挡在门外）。
     "spouse_star": "配偶星强度(男=正财/女=正官, dict)",
     "spouse_star_attack": "配偶星受克状态(rob_wealth/guan_sha_mixed/none)",
     "officer_mixed": "女命官杀混杂(bool)",
@@ -251,13 +259,13 @@ def _eval_leaf(conditions: dict, ctx: RuleContext) -> bool:  # noqa: PLR0911 - i
             return re.search(str(value), str(actual)) is not None
         except re.error as exc:
             raise ValueError(f"invalid regex in rule: {value!r}: {exc}") from exc
-    # EVENT_TOPIC-only ops (has/has_any/has_all/present/absent): never reach
-    # here in production (SignalEngine gates EVENT_TOPIC rules out of matcher).
-    # If they do (e.g. someone bypasses the layer gate), fall through to a
-    # fail-loud default.
+    # EVENT_TOPIC-only ops (has/has_any/has_all/present/absent)。
+        # 2026-10-06 更正：原注释称"handled by EventTopicEngine._eval_leaf"，
+        # 但该引擎/模块并不存在——EVENT_TOPIC 求值器待建。故这些 op 在生产中
+        # 无处理者。若真的流到这里（有人绕过层门禁），走 fail-loud 默认分支。
     raise UnknownOperatorError(
-        f"operator '{op}' is EVENT_TOPIC-only and must not reach the matcher; "
-        f"use EventTopicEngine instead (DECISION-009 fail-loud)"
+        f"operator '{op}' is EVENT_TOPIC-only and must not reach the matcher "
+        f"(DECISION-009 fail-loud); the EVENT_TOPIC evaluator is not built yet"
     )
 
 
