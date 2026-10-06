@@ -32,7 +32,7 @@ from pathlib import Path
 from typing import Optional
 
 from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
-from .timeline_yun import compute_liushi
+from .timeline_yun import compute_liushi, materialize_month_days
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _GUAJIE_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_data.json"
@@ -1025,8 +1025,12 @@ def build_guajie_from_result(
                                 if yi is not None and len(ml) > yi:
                                     liuyue_yao_name = _yao_name(yi, ml[yi])
                                 # 流日应期：当月 days 段（每爻管5日）自动定位
+                                # 2026-10-06：days 已按需化，_build_timeline
+                                # 只存六段廉价定位字段，此处对**命中的这一个月**
+                                # 现算完整日段（含卦名/六爻），1,116 个月里
+                                # 只付这一次代价。算法口径与预展开完全一致。
                                 if target_day and m.get("days"):
-                                    for dseg in m["days"]:
+                                    for dseg in materialize_month_days(m):
                                         d_from = dseg.get("day_from", 1)
                                         d_to = dseg.get("day_to", 5)
                                         if d_from <= target_day <= d_to:
