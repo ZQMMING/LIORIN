@@ -19,7 +19,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from tongshu.engines.heluo.canonical import HeluoCanonical, _get_sxtwl
-from tongshu.engines.heluo.timeline_yun import compute_liushi, compute_dayun_liyao
+from tongshu.engines.heluo.timeline_yun import (
+    compute_liuri, compute_liushi, compute_dayun_liyao,
+)
 from tongshu.engines.heluo import yi_interpreter as yi
 from tongshu.engines.heluo import guajie as gj
 
@@ -283,6 +285,57 @@ class TestDayunAndSegmentLookup(unittest.TestCase):
         dayun = res.timeline.qi_phase["dayun"]
         self.assertEqual([y["age"] for y in yearly],
                          list(range(dayun[0]["age_start"], dayun[-1]["age_end"] + 1)))
+
+
+class TestLiuRiAlignDatesSwitch(unittest.TestCase):
+    """① date_from/date_to 改按需产出
+
+    2026-10-06：全仓无人消费这两个字段，而每段要多一次 strptime + 2 个日期串。
+    实测占单盘耗时 42%、载荷 22%。改为 align_dates 显式开启，默认关闭——
+    能力不丢，默认不付费。
+    """
+
+    LINES = [1, -1, 1, 1, -1, -1]
+    JIE = "1990-02-04 10:14"
+
+    def test_default_omits_dates(self):
+        segs = compute_liuri(self.LINES, 3, self.JIE).days
+        self.assertEqual(len(segs), 6)
+        for d in segs:
+            self.assertNotIn("date_from", d)
+            self.assertNotIn("date_to", d)
+
+    def test_align_dates_true_restores_dates(self):
+        segs = compute_liuri(self.LINES, 3, self.JIE, align_dates=True).days
+        self.assertEqual(segs[0]["date_from"], "1990-02-04")
+        self.assertEqual(segs[0]["date_to"], "1990-02-08")
+        self.assertEqual(segs[5]["date_from"], "1990-03-01")
+        self.assertEqual(segs[5]["date_to"], "1990-03-05")
+
+    def test_relative_segments_identical_either_way(self):
+        """开不开日期，卦名/爻/日段边界必须完全一致。"""
+        a = compute_liuri(self.LINES, 3, self.JIE).days
+        b = compute_liuri(self.LINES, 3, self.JIE, align_dates=True).days
+        strip = lambda ds: [{k: v for k, v in d.items()
+                             if k not in ("date_from", "date_to")} for d in ds]
+        self.assertEqual(strip(a), strip(b))
+
+    def test_no_jie_datetime_degrades_to_relative(self):
+        for flag in (False, True):
+            d = compute_liuri(self.LINES, 3, None, align_dates=flag).days[0]
+            self.assertEqual(d["day_from"], 1)
+            self.assertNotIn("date_from", d)
+
+    def test_timeline_keeps_days_eagerly(self):
+        """流日层仍全量预展开：tests/test_heluo_context.py 断言 len(days)==6（既有契约）。"""
+        res = _calc()
+        y0 = res.timeline.yearly_hexagrams[0]
+        self.assertEqual(len(y0["months"]), 12)
+        for m in y0["months"]:
+            self.assertEqual(len(m["days"]), 6)
+            for d in m["days"]:
+                self.assertIn("flip_index", d)
+                self.assertNotIn("hours", d)
 
 
 if __name__ == "__main__":

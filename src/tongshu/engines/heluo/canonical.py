@@ -452,6 +452,11 @@ class HeluoCanonical:
                 # 占四层载荷 91%、卦名换算 92%——而消费方（guajie）按 target_hour
                 # 点查，每次只需 1 条。此处只记动爻 flip_index，hours 由 guajie 命中
                 # 该日段时调 compute_liushi() 现算，算法口径不变。
+                #
+                # 注：流日层本身**仍全量预展开**。曾试改按需（可再省 24.8 ms / 76% 载荷），
+                # 但 tests/test_heluo_context.py::test_timeline_structure 断言
+                # `len(months[0]["days"]) == 6`（引原典「六爻俱变毕，则满三十日」），
+                # 属既有契约，AGENTS.md 禁改测试语义，故保留现状。
                 for dseg in liuri.days:
                     diffs = [k for k in range(6) if len(dseg["lines"]) > k and len(m["lines"]) > k
                              and dseg["lines"][k] != m["lines"][k]]
