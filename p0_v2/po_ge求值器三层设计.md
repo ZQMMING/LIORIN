@@ -21,15 +21,17 @@
 - normalize **不读 cheng_bai/求值器**（只读 ge 字符串、pillars、hidden），无循环；
 - 破格盘 normalize 跳过。
 
-## 三、xi_wx_status 三值（生产源码实测，核验读源码）
+## 三、xi_wx_status 三值（2106盘全量实测，核验读源码）
 
-UNVERIFIED 仅出现在 cheng_bai 探针假数据，**生产不产生**。生产三值：
+UNVERIFIED 仅出现在 cheng_bai 探针假数据，**生产 0 盘**（旧"27盘 UNVERIFIED"系探针残留，作废）。全量实测：
 
-| 值 | 含义 |
-|---|---|
-| `DEFINED` | xi_wx 有值，喜神明确 |
-| `UNDEFINED` | 无原典喜用明文（从官/从杀/从势） |
-| `None`（键缺） | 正格未写该字段（占多数） |
+| 值 | 盘数 | 含义 |
+|---|---|---|
+| `None`（键缺） | 1935 | 正格未写该字段 |
+| `DEFINED` | 109 | xi_wx 有值，喜神明确 |
+| `UNDEFINED` | 62 | 无原典喜用明文（从官/从杀/从势等） |
+
+**关键：status 键缺失 ≠ 喜神空。H>0 的权威判据读 `xi_wx` 列表实际空否，不读 status 字符串。**
 
 ## 四、cheng_bai 状态机（六态，穷尽）
 
@@ -41,8 +43,17 @@ UNVERIFIED 仅出现在 cheng_bai 探针假数据，**生产不产生**。生产
 | special 格（从/专/化）H=0，真成立 | `SPECIAL_PASS` |
 | special 格 H>0，或假从/假化 | `SPECIAL_FAIL` |
 | 普通格 H=0 | `CHENG` |
-| 普通格 H>0 且 xi_status=DEFINED | `CHENG_ZHONG_YOU_PO` |
-| 普通格 H>0 且 xi_status=None/UNDEFINED | `PO` |
+| 普通格 H>0 且 **xi_wx 列表非空**（喜神在，含 status 键缺但 xi_wx 有值） | `CHENG_ZHONG_YOU_PO` |
+| 普通格 H>0 且 **xi_wx 列表空**（喜神被清空/本无；status None·UNDEFINED 均以此判） | `PO` |
+
+**H>0 × status 全映射（权威＝xi_wx 列表）：**
+
+| status | xi_wx 列表 | 状态 |
+|---|---|---|
+| DEFINED | 非空 | 成中有败 |
+| None(键缺) | 非空 | 成中有败 |
+| None(键缺) | 空 | PO |
+| UNDEFINED | 空 | PO |
 
 ## 五、命中事件 schema
 
@@ -76,8 +87,9 @@ UNVERIFIED 仅出现在 cheng_bai 探针假数据，**生产不产生**。生产
 
 ## 七、多命中聚合（H>1）
 
-- 事件**各自独立产出**，不合并（一事件一病），保留全部 domain；
-- 验收层综合：任一真病无救 → bad；
+- 事件层：各命中**独立产出、不合并**（一事件一病），保留全部 domain；
+- **cheng_bai 判定层聚合＝看最终 xi_wx 列表**：任一命中导致喜神被清空（xi_wx 空）→ `PO`
+  （最严重覆盖，与"任一 PO 则 PO"一致）；xi_wx 仍非空 → 成中有败；
 - 不引入 severity 连续权重（序数另立）。
 
 ## 八、求值口径与分级
