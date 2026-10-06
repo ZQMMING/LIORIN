@@ -145,42 +145,113 @@ class TestInterpretShallowCopy(unittest.TestCase):
 
 
 class TestSxtwlLazySingleton(unittest.TestCase):
-    """③ sxtwl 惰性单例"""
+    """③ sxtwl 惰性单例
 
-    def test_missing_sxtwl_resolved_once(self):
-        """缺依赖时不得反复走 import 机制（旧实现 1,116 次 ≈ 206 ms）"""
+    2026-10-06 修正：本组原先假设「本机无 sxtwl」，装上 sxtwl 后断言反向而失败。
+    改为与环境无关——只锁定真正的不变量：解析至多一次、缓存每年只算一次、
+    失败状态被记住且不反复试探 import。
+    """
+
+    def test_get_sxtwl_is_memoized(self):
+        """惰性单例：进程内至多解析一次，重复调用返回同一对象。"""
+        import tongshu.engines.heluo.canonical as cn
+        a = cn._get_sxtwl()
+        b = cn._get_sxtwl()
+        self.assertIs(a, b, "重复调用须返回同一对象，不得重新 import")
+        if a is None:
+            self.assertTrue(cn._SXTWL_FAILED, "无 sxtwl 时应记住失败")
+
+    def test_failed_resolution_is_remembered(self):
+        """强制失败态后不得反复走 import 机制（旧实现 1,116 次 ≈ 206 ms）。"""
         import tongshu.engines.heluo.canonical as cn
         saved = (cn._SXTWL, cn._SXTWL_FAILED, cn._jie_cache)
         try:
-            cn._SXTWL, cn._SXTWL_FAILED, cn._jie_cache = None, False, {}
+            cn._SXTWL, cn._SXTWL_FAILED, cn._jie_cache = None, True, {}
             for _ in range(50):
                 cn._jie_datetime_for_lunar_month(2026, 6)
-            self.assertTrue(cn._SXTWL_FAILED, "缺 sxtwl 时应记住失败")
-            self.assertIn(2026, cn._jie_cache, "失败后仍应写缓存，不重复试探 import")
+            self.assertIsNone(cn._get_sxtwl(), "记住失败后不应再试探 import")
+            self.assertIn(2026, cn._jie_cache, "失败也须写缓存，否则每月重试")
             self.assertEqual(cn._jie_cache[2026], {})
+            self.assertIsNone(cn._jie_datetime_for_lunar_month(2026, 6))
         finally:
             cn._SXTWL, cn._SXTWL_FAILED, cn._jie_cache = saved
 
-    def test_jie_cache_reused_across_months(self):
-        """同一年 12 个月只应触发一次计算"""
+    def test_jie_cache_computed_once_per_year(self):
+        """同一年 12 个月只应触发一次 _compute_year_jie。"""
         import tongshu.engines.heluo.canonical as cn
-        saved = (cn._SXTWL, cn._SXTWL_FAILED, cn._jie_cache)
+        saved = (cn._jie_cache, cn._compute_year_jie)
         calls = []
         try:
-            cn._jie_cache = {2027: {}}
-            real = cn._compute_year_jie
+            cn._jie_cache = {}
 
             def spy(year, sxtwl=None):
                 calls.append(year)
-                return real(year, sxtwl)
+                return {}
 
             cn._compute_year_jie = spy
             for m in range(1, 13):
                 cn._jie_datetime_for_lunar_month(2027, m)
+            self.assertEqual(calls, [2027], f"应只算一次，实得 {calls}")
+        finally:
+            cn._jie_cache, cn._compute_year_jie = saved
+
+    def test_jie_cache_hit_skips_compute(self):
+        """命中缓存时不得重算。"""
+        import tongshu.engines.heluo.canonical as cn
+        saved = (cn._jie_cache, cn._compute_year_jie)
+        calls = []
+        try:
+            cn._jie_cache = {2028: {1: "2028-02-04 10:14"}}
+            cn._compute_year_jie = lambda y, sxtwl=None: calls.append(y) or {}
+            self.assertEqual(cn._jie_datetime_for_lunar_month(2028, 1), "2028-02-04 10:14")
+            self.assertIsNone(cn._jie_datetime_for_lunar_month(2028, 2))
             self.assertEqual(calls, [], "命中缓存时不应重算")
         finally:
-            cn._compute_year_jie = saved[0] and getattr(cn, "_compute_year_jie", None) or real
-            cn._SXTWL, cn._SXTWL_FAILED, cn._jie_cache = saved
+            cn._jie_cache, cn._compute_year_jie = saved
+
+
+class TestJieBatchEquivalence(unittest.TestCase):
+    """批量取节气路径：与逐日扫描口径必须逐值一致
+
+    ⚠ sxtwl 有两个返回类，方法名不能混用（2026-10-06 实机核正）：
+      fromSolar()     → Day        有方法 getJieQi() / getJieQiJD()
+      getJieQiByYear() → JieQiInfo  只有属性 .jd / .jqIndex，无上述方法
+    _jie_by_batch 初版误按方法取 → 每次抛 AttributeError 被兜底吞掉 → 静默空转。
+    本组锁定「batch 真的返回数据且与 dayscan 一致」，防止再次空转。
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            import sxtwl
+        except ImportError:
+            raise unittest.SkipTest("本机无 sxtwl，跳过真实数据对拍")
+        cls.sxtwl = sxtwl
+
+    def test_batch_returns_data_not_none(self):
+        """防回归：batch 不得恒返回 None（那等于优化空转）。"""
+        for y in (1984, 1990, 2026):
+            b = self._call_batch(y)
+            self.assertIsNotNone(b, f"{y} 年 batch 返回 None —— 又空转了？")
+            self.assertEqual(len(b), 12, f"{y} 年应得 12 个节，实得 {len(b)}")
+
+    def test_batch_matches_dayscan(self):
+        """逐值对拍：批量与逐日扫描必须完全一致。"""
+        for y in (1975, 1990, 2024, 2026, 2050):
+            b, s = self._call_batch(y), self._call_dayscan(y)
+            self.assertEqual(b, s, f"{y} 年批量与逐日结果不一致")
+
+    def test_dayscan_and_batch_cover_all_12_months(self):
+        for y in (1990, 2026):
+            self.assertEqual(len(self._call_dayscan(y)), 12)
+
+    def _call_batch(self, y):
+        from tongshu.engines.heluo.canonical import _jie_by_batch
+        return _jie_by_batch(self.sxtwl, y)
+
+    def _call_dayscan(self, y):
+        from tongshu.engines.heluo.canonical import _jie_by_dayscan
+        return _jie_by_dayscan(self.sxtwl, y)
 
 
 class TestDayunAndSegmentLookup(unittest.TestCase):

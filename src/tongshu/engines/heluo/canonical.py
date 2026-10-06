@@ -139,17 +139,25 @@ def _jie_by_batch(sxtwl, year: int) -> dict[int, tuple] | None:
 
     返回 {农历月: (gap, "YYYY-MM-DD HH:MM")}；批量接口不可用时返回 None，
     由调用方回退到逐日扫描。取窗与取月口径与旧逐日实现完全一致。
+
+    ⚠ API 形态（2026-10-06 实机核正）：sxtwl 有两个不同的返回类，方法名不能混用——
+      - ``sxtwl.fromSolar(...)``      → ``Day``，有**方法** getJieQi() / getJieQiJD()
+      - ``sxtwl.getJieQiByYear(y)``  → ``JieQiInfo`` 元组（25 项，含跨年小寒/大寒），
+        只有**属性** .jd / .jqIndex，**没有** getJieQi() / getJieQiJD()
+    本函数初版误按方法取，抛 AttributeError 被兜底吞掉，静默退回慢路径（空转）。
+    此处按 bazi_engine._compute_with_sxtwl 的既有形态取属性，并保留 tuple 兼容分支。
     """
     jie_to_lm = {idx: m for m, idx in _LUNAR_MONTH_JIE.items()}
     best: dict[int, tuple] = {}
     try:
         for target in (year - 1, year, year + 1):
             for info in sxtwl.getJieQiByYear(target):
-                jq = info.getJieQi()
-                lm = jie_to_lm.get(jq)
+                # JieQiInfo 形态：属性 .jd/.jqIndex；老版本为 tuple，兜底 _jq[0]/_jq[1]
+                jd, idx = (info.jd, info.jqIndex) if hasattr(info, "jd") else (info[0], info[1])
+                lm = jie_to_lm.get(idx)
                 if lm is None:
                     continue
-                t = sxtwl.JD2DD(info.getJieQiJD())
+                t = sxtwl.JD2DD(jd)
                 if not (0 < t.Y <= 2200):
                     continue
                 gap = abs(t.Y - year)
@@ -158,7 +166,7 @@ def _jie_by_batch(sxtwl, year: int) -> dict[int, tuple] | None:
                                        f"{int(t.h):02d}:{int(t.m):02d}")
     except Exception:
         return None
-    return best
+    return best or None
 
 
 def _jie_by_dayscan(sxtwl, year: int) -> dict[int, tuple]:
