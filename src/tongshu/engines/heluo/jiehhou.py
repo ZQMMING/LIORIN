@@ -25,6 +25,17 @@ from typing import Optional
 # 节候卦：节气 → 起始卦（从卦气歌推导）
 # ═══════════════════════════════════════════════════════════════
 
+#: 节气全表缓存：公历年 → ((Y, M, D, jqIndex), ...) 升序。
+#: 有界 FIFO —— 出生年跨度可达数百年，无界增长会让长期服务缓慢涨内存
+#: （canonical._jie_cache 是同类问题，本轮一并处理）。
+_JIEQI_TIMELINE: dict[int, tuple] = {}
+_JIEQI_TIMELINE_MAX = 64
+
+#: sxtwl ``Day.getJieQi()`` 在「当日无交节」时返回的哨兵值。
+#: 实测 1970-01-01~2050-12-31 共 29,585 天，落在 0..23 之外的取值**只有 255**，
+#: 而 0..23 的有效日恰好 1,944 天 = 81 年 × 24 节气，无一例外。
+_JQ_NO_JIEQI_SENTINEL = 255
+
 # 节气名称（24节气，按 sxtwl jqIndex 0-23 顺序）
 SOLAR_TERMS = [
     "冬至", "小寒", "大寒", "立春", "雨水", "惊蛰",
@@ -205,6 +216,42 @@ def get_qi_phase(year: int, jq_index: int) -> QiPhase:
     )
 
 
+def _jieqi_timeline(sxtwl, year: int) -> tuple:
+    """公历年 `year` 全年 24 节气的 (Y, M, D, jqIndex) 升序表，带进程内有界缓存。
+
+    2026-10-06：旧实现用 ``sxtwl.fromSolar(y, m, d).getJieQi()`` 取"当日节气"，
+    而该方法**只在节气当天返回索引**，其余日期返回 255（sxtwl 的无效哨兵），
+    于是节候卦一年只有约 24 天可取、354 天直接判 None——而本函数的 docstring
+    声称"查找最近一个已过节气"，实现与自述不符。生产上 H11 节候卦几乎恒为 None。
+
+    改用批量接口 ``getJieQiByYear`` 取全表再二分。注意其窗口是
+    **[该年立春, 次年立春]**（实测 getJieQiByYear(2026) 返回
+    2026-02-04 ~ 2027-02-04 共 25 项），故须合并 (year-1, year) 两年，
+    合并后跨度为 (year-1)立春 ~ (year+1)立春，完整覆盖 `year` 公历年。
+
+    日界口径：取**日期不晚于目标日**的最近一个节气。即交节当日即归入新节气，
+    与旧实现在 24 个节气当天的行为完全一致（实测 1984 年 24/24 相符、0 不一致）。
+    """
+    cached = _JIEQI_TIMELINE.get(year)
+    if cached is not None:
+        return cached
+
+    merged: dict[tuple[int, int, int, int], None] = {}
+    for yy in (year - 1, year):
+        for info in sxtwl.getJieQiByYear(yy):
+            # JieQiInfo 形态：属性 .jd/.jqIndex；老版本为 tuple，兜底下标取法
+            jd, idx = (info.jd, info.jqIndex) if hasattr(info, "jd") else (info[0], info[1])
+            t = sxtwl.JD2DD(jd)
+            merged[(int(t.Y), int(t.M), int(t.D), int(idx))] = None
+    table = tuple(sorted(merged))
+
+    _JIEQI_TIMELINE[year] = table
+    if len(_JIEQI_TIMELINE) > _JIEQI_TIMELINE_MAX:
+        for stale in list(_JIEQI_TIMELINE)[:len(_JIEQI_TIMELINE) - _JIEQI_TIMELINE_MAX]:
+            _JIEQI_TIMELINE.pop(stale, None)
+    return table
+
+
 def get_current_jieqi_info(year: int, month: int, day: int) -> Optional[SeasonalHexagram]:
     """
     根据公历日期获取当前所在节气的节候卦信息。
@@ -217,8 +264,8 @@ def get_current_jieqi_info(year: int, month: int, day: int) -> Optional[Seasonal
         day: 公历日
 
     Returns:
-        SeasonalHexagram；
-        None 仅两种情形：sxtwl 未安装，或该日不在任何节气日（jq_idx 越界）。
+        SeasonalHexagram；None 仅两种情形：sxtwl 未安装，或目标日早于可算窗口
+        （公历年 < 2，或窗口内无任何节气早于该日）。
 
     Raises:
         Exception: sxtwl 已安装但计算过程出错时，异常原样上抛。
@@ -234,9 +281,28 @@ def get_current_jieqi_info(year: int, month: int, day: int) -> Optional[Seasonal
     # 以下为真实计算，异常一律上抛，不在此处降级。
     d = sxtwl.fromSolar(year, month, day)
     jq_idx = d.getJieQi()
-    if jq_idx < 0 or jq_idx > 23:
+    if 0 <= jq_idx <= 23:
+        # 交节当日：与旧实现逐字一致（快路径，无需查表）。
+        return get_seasonal_hexagram(jq_idx)
+    if jq_idx != _JQ_NO_JIEQI_SENTINEL:
+        # 其它非法值（如 -1）不是"当日无交节"，维持旧契约返回 None，不上抛。
         return None
-    return get_seasonal_hexagram(jq_idx)
+
+    # 当日无交节（哨兵 255）：节候卦本就该取"最近一个已过节气"，
+    # 旧实现到此直接判 None，导致一年只有约 24 天可取。改查全表取最近者。
+    if year < 2:
+        return None
+    table = _jieqi_timeline(sxtwl, year)
+    key = (year, month, day)
+    found = None
+    for entry in table:          # 表已升序，一旦越过目标日即止
+        if entry[:3] <= key:
+            found = entry[3]
+        else:
+            break
+    if found is None:
+        return None
+    return get_seasonal_hexagram(found)
 
 
 __all__ = [
