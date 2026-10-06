@@ -56,8 +56,10 @@ GOLDEN_DIR = REPO / "docs" / "golden_cases"
 
 VALID_STATUSES = ("draft", "review", "validated", "active", "deprecated")
 
-# extract_baseline_signal 已在 Z1b 删除，计算层不再产出旧 Signal 形态
-VITAL_RULE_REFS: set[str] = set()
+# extract_baseline_signal 已在 Z1b 删除，计算层不再产出旧 Signal 形态。
+# 2026-10-06 修正拼写：50b9247b 把 VIRTUAL_RULE_REFS 改名时误写成 VITAL_RULE_REFS，
+# 而下方两处仍按 VIRTUAL_RULE_REFS 引用 → NameError，本测试自 2026-09-04 起从未执行。
+VIRTUAL_RULE_REFS: set[str] = set()
 
 REQUIRED_RULE_FIELDS = [
     "rule_id", "title", "rule_type", "source", "conditions", "conclusion",
