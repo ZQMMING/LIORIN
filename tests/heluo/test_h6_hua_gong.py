@@ -154,16 +154,27 @@ class TestHuaGongReverse(unittest.TestCase):
     """REVERSE: 卦中含反卦但无当令化工卦"""
 
     def test_winter_kan_opposite(self):
-        """冬坎卦但卦中无坎只有离 → REVERSE（反位）"""
+        """正体无坎，但**互体**得坎（L576 二级）→ 化工相反 → KEZHI。
+
+        2026-10-07 三轮：旧实现只查正体，故本例判 REVERSE。
+        L576「故正不逢而互体得之」确立互体为合法化工层，
+        互体得坎（后天互震/坎）后，坎之化工相反离在正体 → 克制。
+        """
         r = compute_huagong("乾", "离", "坤", "离", "子")
-        self.assertEqual(r.state, HuaGongState.REVERSE)
-        self.assertFalse(r.has_huagong)
+        self.assertEqual(r.state, HuaGongState.KEZHI)
+        self.assertEqual(r.level, "互体")
+        self.assertTrue(r.has_huagong)
         self.assertTrue(r.has_opposite)
 
     def test_summer_li_opposite(self):
-        """夏离卦但卦中无离只有坎 → REVERSE"""
+        """正体无离，但**互体**得离（L576 二级）→ 化工相反 → KEZHI。
+
+        2026-10-07 三轮：后天互得离（巽/离），坎为离之化工相反，
+        水克火 → L582「忌克制，尤凶」。
+        """
         r = compute_huagong("坎", "坎", "乾", "坎", "午")
-        self.assertEqual(r.state, HuaGongState.REVERSE)
+        self.assertEqual(r.state, HuaGongState.KEZHI)
+        self.assertEqual(r.level, "互体")
 
 
 class TestHuaGongUnresolved(unittest.TestCase):
@@ -183,9 +194,72 @@ class TestHuaGongUnresolved(unittest.TestCase):
         故本例不再是 REVERSE。旧断言随表更正而失效。
         """
         r = compute_huagong("巽", "巽", "乾", "乾", "辰")
-        self.assertEqual(r.state, HuaGongState.UNRESOLVED)
+        self.assertEqual(r.state, HuaGongState.REVERSE)
+        self.assertEqual(r.level, "无")
         self.assertFalse(r.has_huagong)
-        self.assertFalse(r.has_opposite)
+        self.assertTrue(r.has_opposite)
+
+
+class TestHuaGongThreeLevels(unittest.TestCase):
+    """L576 三级回退：正体 → 互体 → 纳甲纳音（末级福寿减半）
+
+    原典 L576 逐字：「故正不逢而互体得之。若正互俱无，则取纳甲纳音，
+    **终是浅薄，福寿减半。**」
+    """
+
+    def test_mutual_trigram_matches_original_example(self):
+        """互体取法须合原典例：渐卦「九五六四九三互离，六四九三六二互坎」。
+
+        本模块的 compute_mutual_trigram 与 guajie.compute_huti 是两份等价实现
+        （hua_gong 不 import guajie 以免循环依赖），此处逐卦对拍防漂移。
+        """
+        from tongshu.engines.heluo.hua_gong import compute_mutual_trigram
+        from tongshu.engines.heluo.guajie import compute_huti, trigram_to_lines
+        self.assertEqual(compute_mutual_trigram("巽", "艮"), ("离", "坎"))
+        for upper, lower in (("巽", "艮"), ("乾", "坤"), ("坎", "兑"),
+                             ("震", "巽"), ("离", "艮"), ("乾", "乾")):
+            lines = list(trigram_to_lines(lower)) + list(trigram_to_lines(upper))
+            self.assertEqual(compute_mutual_trigram(upper, lower),
+                             compute_huti(lines), f"{upper}/{lower} 两实现漂移")
+
+    def test_level_zhengti(self):
+        """正体得化工 → level=正体，不减半。"""
+        r = compute_huagong("乾", "震", "乾", "震", "寅")
+        self.assertEqual(r.level, "正体")
+        self.assertFalse(r.reduced)
+
+    def test_level_huti_when_zhengti_fails(self):
+        """正体不得而互体得之 → level=互体（L576 二级）。"""
+        r = compute_huagong("坎", "坎", "乾", "坎", "午")
+        self.assertEqual(r.level, "互体")
+        self.assertFalse(r.reduced, "互体层原典未言减半")
+
+    def test_level_nayin_reduced(self):
+        """正互俱无取纳甲纳音 → level=纳音 且 reduced=True（福寿减半）。"""
+        r = compute_huagong("乾", "乾", "乾", "乾", "午",
+                            year_gan="甲", year_zhi="辰")   # 甲辰纳音火
+        self.assertEqual(r.level, "纳音")
+        self.assertTrue(r.reduced, "L576「终是浅薄，福寿减半」")
+        self.assertTrue(r.has_huagong,
+                        "纳音层**确实得了化工**，不得判 has_huagong=False")
+
+    def test_level_none_when_all_fail(self):
+        """三层俱无 → level=无，不得硬凑。"""
+        r = compute_huagong("乾", "乾", "乾", "乾", "午",
+                            year_gan="甲", year_zhi="子")   # 甲子纳音金，与离火不合
+        self.assertEqual(r.level, "无")
+        self.assertFalse(r.has_huagong)
+
+    def test_evidence_states_level(self):
+        """evidence 须写明得化工之层，减半时须显式标注。"""
+        r = compute_huagong("乾", "乾", "乾", "乾", "午",
+                            year_gan="甲", year_zhi="辰")
+        joined = chr(10).join(r.evidence)
+        self.assertIn("三级", joined)
+        self.assertIn("福寿减半", joined)
+        none_ev = chr(10).join(compute_huagong("乾", "乾", "乾", "乾", "午").evidence)
+        self.assertIn("若不以震为化工", none_ev,
+                      "三层俱无时须引 L576「若不以震为化工，则曰无化工矣」")
 
 
 class TestHuaGongEvidence(unittest.TestCase):

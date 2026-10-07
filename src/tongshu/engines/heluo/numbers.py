@@ -218,5 +218,11 @@ def build_six_lines(upper_name: str, lower_name: str) -> list[int]:
     return lower_lines + upper_lines
 
 
-# 向后兼容：旧 API 别名
-resolve_yuantang = None
+# ⚠ 2026-10-07 审计修：此处原为「# 向后兼容：旧 API 别名 / resolve_yuantang = None」。
+#   名为别名、实为空值——任何人写 from .numbers import resolve_yuantang 都会静默
+#   拿到 None，调用时才抛 "TypeError: 'NoneType' object is not callable"，
+#   报错点离病因十万八千里。真身在 yuan_tang.resolve_yuantang（= find_yuantang）
+#   与 postnatal.py，__init__.py 导入的也是 yuan_tang 那个，故生产路径一直没炸。
+#   既然是「兼容」就该指对地方，而不是留一个会咬人的空壳；直接删掉，
+#   让误用者拿到明确的 ImportError。
+# 真身：from .yuan_tang import resolve_yuantang   # = find_yuantang

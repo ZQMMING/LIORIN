@@ -233,6 +233,10 @@ class HeluoResult:
     timeline: Timeline | None
     structure: HexagramStructure | None
     hua_gong: HuaGongResult | None = None          # H6: 化工状态
+    # 2026-10-07 审计修：era（shang/zhong/xia 上中下元）此前只是 calculate() 的
+    # 入参，算完即丢。下游 frozen_state 拿不到，只能去读 result.input.timezone
+    # （恒为 "Asia/Shanghai"）冒充 era——**世代出处彻底丢失且被写成时区**。
+    era: str = "zhong"
     seasonal_hexagram: dict | None = None          # H11: 节候卦（出生日）
     guajie: dict | None = None                     # H8: 解卦层（原典判词，可选挂载）
 
@@ -382,7 +386,7 @@ class HeluoCanonical:
 
         # Step 8: H6 化工计算
         hua_gong = self._compute_huagong(
-            prenatal, postnatal, birth_date, gender, birth_year
+            prenatal, postnatal, bazi, birth_date, gender, birth_year
         )
 
         # Step 9: H11 节候卦（出生日所在节气）
@@ -398,6 +402,7 @@ class HeluoCanonical:
             structure=structure,
             hua_gong=hua_gong,
             seasonal_hexagram=seasonal_hex,
+            era=era,
         )
 
     def _build_timeline(
@@ -542,28 +547,32 @@ class HeluoCanonical:
         self,
         prenatal: PrenatalHexagram,
         postnatal: PostnatalHexagram,
+        bazi: list[tuple[str, str]],
         birth_date: str,
         gender: str,
         birth_year: int | None,
     ) -> HuaGongResult | None:
-        """H6: 计算化工状态。"""
+        """H6: 计算化工状态。
+
+        2026-10-07 修：原先**拿公历月份硬凑月支**（{1:丑, 2:寅, …, 12:子}），
+        而月令以**节气**为界（立春起寅、大雪起子）。公历 1 月实为戌/亥月
+        而非丑月 —— 立春至大雪之间的出生**全部判错化工卦**。
+        例：1983-11-03 生，公历 11 月 → 亥 → 坎；实为霜降后戌月 → 兑。
+
+        `calculate()` 手上有 bazi，月柱地支即真实月令，现直接取用；
+        年干支一并下传，供 L576 的纳音第三级回退使用。
+        公历月近似映射整个删除。
+        """
         try:
-            from datetime import datetime as dt
-            bd = dt.fromisoformat(birth_date)
-            # 用月支确定季节 → 化工卦
-            # 简化：根据月份推断月支（立春后为寅月）
-            month = bd.month
-            # 月份→地支映射（简化：以节气为界，此处用月份近似）
-            month_to_branch = {
-                1: "丑", 2: "寅", 3: "卯", 4: "辰",
-                5: "巳", 6: "午", 7: "未", 8: "申",
-                9: "酉", 10: "戌", 11: "亥", 12: "子",
-            }
-            branch = month_to_branch.get(month, "子")
+            if not bazi or len(bazi) < 2:
+                return None
+            month_branch = bazi[1][1]     # 月柱地支＝节气月令
+            year_gan, year_zhi = bazi[0][0], bazi[0][1]
             return compute_huagong(
                 prenatal.upper_gua, prenatal.lower_gua,
                 postnatal.upper_gua, postnatal.lower_gua,
-                branch,
+                month_branch,
+                year_gan=year_gan, year_zhi=year_zhi,
             )
         except Exception:
             return None

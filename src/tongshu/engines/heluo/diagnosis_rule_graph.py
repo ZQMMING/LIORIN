@@ -74,15 +74,20 @@ HELUO_RULES: Dict[str, RuleNode] = {
         "HL_HUA_GONG", "化工状态判定",
         "起例卷下·论化工", confidence=0.9, is_authorized=True,
     ),
-    "HL_DAYUN": RuleNode(
+    # ⚠ 2026-10-07 审计修：以下三条注册了但 HeLuoEvidenceProducer 从不产出，
+    #   属「注册了却不存在」的空授权——confidence=1.0 / is_authorized=True 会让人
+    #   以为已接入。引擎侧算法本身在 timeline_yun / guajie 里确实存在，只是
+    #   **没有对应的 EngineEvidence**。如实标注而不擅自删除（注册表即授权面，
+    #   删了等于放弃授权）；接入证据时删掉本段注释即可。
+    "HL_DAYUN": RuleNode(          # TODO(证据未接入): 已注册未产出，见上
         "HL_DAYUN", "大运爻位值运",
         "起例卷上·小象阳爻九年运行例", confidence=1.0, is_authorized=True,
     ),
-    "HL_YUEGUA": RuleNode(
+    "HL_YUEGUA": RuleNode(         # TODO(证据未接入): 已注册未产出，见上
         "HL_YUEGUA", "流月卦",
         "起例卷下·论月卦从世应起诀", confidence=0.95, is_authorized=True,
     ),
-    "HL_RIGUA": RuleNode(
+    "HL_RIGUA": RuleNode(          # TODO(证据未接入): 已注册未产出，见上
         "HL_RIGUA", "流日卦",
         "起例卷下·起日卦定式", confidence=0.95, is_authorized=True,
     ),
@@ -93,7 +98,10 @@ HELUO_RULES: Dict[str, RuleNode] = {
 }
 
 # 规则 ID → 领域映射
+# ⚠ 2026-10-07 审计修：HL_TIAN_DI_SHU 原先漏登记，落到 default "LIFE_EVENT"——
+#   本命天数地数属基本盘，归入「人生事件」领域是语义错配。
 RULE_DOMAIN_MAP: Dict[str, str] = {
+    "HL_TIAN_DI_SHU": "CAREER",
     "HL_PRENATAL_HEXAGRAM": "FAMILY",
     "HL_POSTNATAL_HEXAGRAM": "FAMILY",
     "HL_YUANTANG": "FAMILY",
@@ -114,6 +122,7 @@ HUAGONG_DIRECTION: Dict[str, AssertionDirection] = {
     HuaGongState.RESCUED.value:  AssertionDirection.SUPPORTIVE,  # 仅限五行确实相生
     HuaGongState.REVERSE.value:  AssertionDirection.CAUTION,
     HuaGongState.KEZHI.value:    AssertionDirection.CAUTION,     # L582「忌克制，尤凶」
+    HuaGongState.WEAK.value:     AssertionDirection.NEUTRAL,      # L576「终是浅薄，福寿减半」
     HuaGongState.UNRESOLVED.value: AssertionDirection.NEUTRAL,
 }
 
@@ -135,6 +144,16 @@ class DiagnosisResult:
             "coverage": self.coverage.to_dict() if self.coverage else None,
             "judgment": self.judgment.to_dict() if self.judgment else None,
         }
+
+
+#: 最近一次 build_diagnosis_graph 中因「未在 HELUO_RULES 注册」而被丢弃的 rule_id。
+#: 非空即表示有事实产出了却没进断言链，调用方应据此披露，而不是当成「没产出」。
+_DROPPED_RULES: List[str] = []
+
+
+def dropped_rules() -> List[str]:
+    """最近一次 build_diagnosis_graph 丢弃的 rule_id 清单（正常应为空）。"""
+    return list(_DROPPED_RULES)
 
 
 def build_diagnosis_graph(
@@ -159,9 +178,16 @@ def build_diagnosis_graph(
     domain_map: Dict[str, List[str]] = {}  # domain → assertion_ids
 
     # ── 从 EngineEvidence 提取事实断言 ──────────────────────────
+    dropped_rule_ids: List[str] = []
     for ev in evidences:
         rule_node = HELUO_RULES.get(ev.rule_id)
         if rule_node is None or not rule_node.is_authorized:
+            # ⚠ 2026-10-07 审计修：原代码此处直接 continue，**不留任何痕迹**。
+            #   实测 HeLuoEvidenceProducer 产出的 HL_HEXAGRAM_STRUCTURE 未在
+            #   HELUO_RULES 注册 → 这条证据被静默吞掉，下游看不到卦体结构事实，
+            #   却也无从判断「是没产出」还是「产出后丢了」。
+            #   现登记到 dropped_rule_ids，由 dropped_rules() 供调用方披露。
+            dropped_rule_ids.append(ev.rule_id)
             continue
 
         domain = RULE_DOMAIN_MAP.get(ev.rule_id, "LIFE_EVENT")
@@ -289,6 +315,16 @@ def build_diagnosis_graph(
     # ── 构建 Judgment（需授权规则） ─────────────────────────────
     judgment = None
     if assertions and len(assertions) >= 2:
+        # ⚠ 2026-10-07 审计修：此处原写死 authorized_by="V13_河洛诊断规则集"，
+        #   而全仓**没有任何叫这个名字的规则注册表**（只在此处与 guidance.py 出现），
+        #   实际唯一门槛是上面那句 len(assertions) >= 2——把一条**计数条件**
+        #   包装成了「经某某规则集授权」的结论，正违反本模块第 11 行自己写的
+        #   「禁止聚合成群即判断：需经 Authorized Judgment Rule 授权才产生 Judgment」。
+        #   现改为列出**真正授权本结论的规则节点**（每条断言的 authorized_rule_id
+        #   来自 HELUO_RULES 中 is_authorized=True 的节点）。计数门槛仍保留为
+        #   「最小证据量」，但不再冒充授权来源。
+        _auth = sorted({a.authorized_rule_id for a in assertions
+                        if getattr(a, "authorized_rule_id", "")})
         judgment = Judgment(
             judgment_id="HELUO_DIAG_001",
             domain="MULTI_DOMAIN",
@@ -301,9 +337,12 @@ def build_diagnosis_graph(
                 evidence_types=["evidence"],
                 assertion_ids=[a.assertion_id for a in assertions],
             ),
-            authorized_by="V13_河洛诊断规则集",
+            authorized_by="HELUO_RULES::" + (",".join(_auth) if _auth else "NONE"),
             supporting_assertions=[a.assertion_id for a in assertions],
         )
+
+    _DROPPED_RULES.clear()
+    _DROPPED_RULES.extend(sorted(set(dropped_rule_ids)))
 
     return DiagnosisResult(
         assertions=assertions,

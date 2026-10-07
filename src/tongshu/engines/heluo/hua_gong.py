@@ -36,7 +36,7 @@
      就是四季对宫，是**原表的震↔巽/兑↔艮错了**，不是注释错。首轮把对的
      注释改错去迁就错的表，本轮一并改回。
 
-  3. 状态枚举：NORMAL / RESCUED / REVERSE / KEZHI / UNRESOLVED
+  3. 状态枚举：NORMAL / RESCUED / REVERSE / KEZHI / WEAK / UNRESOLVED
 
   ⚠ **RESCUED 在本轴上不可达**（2026-10-07 实测，属可验事实）：
      按 L585–594 的四组，坎(水)↔离(火) 为水克火、震(木)↔兑(金) 为金克木，
@@ -60,17 +60,9 @@ class HuaGongState(str, Enum):
     REVERSE = "REVERSE"     # 反位：只有反卦，无当令化工卦
     RESCUED = "RESCUED"     # 救应：虽有反卦，但化工卦与反卦**五行相生**（L582「则吉」）
     KEZHI = "KEZHI"         # 克制：虽有化工卦，但与反卦**五行相克**（L582「忌克制，尤凶」）
+    WEAK = "WEAK"           # 浅薄：只得纳音级化工，L576「终是浅薄，福寿减半」
     UNRESOLVED = "UNRESOLVED"  # 无据：无法判定（含原典未载的「比和」一档）
 
-
-#: 八卦五行
-TRIGRAM_ELEMENT: dict[str, str] = {
-    "乾": "金", "兑": "金",
-    "震": "木", "巽": "木",
-    "坎": "水",
-    "离": "火",
-    "坤": "土", "艮": "土",
-}
 
 #: 五行相生：a 生 b
 _WU_SHENG = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
@@ -125,6 +117,22 @@ OPPOSITE_TRIGRAM: dict[str, str] = {
     "震": "兑",   # L594
 }
 
+#: 三画卦 → 六爻（自下而上）。1=阳 0=阴。
+#: 与 guajie.trigram_to_lines 同源，加守卫逐一对拍防漂移。
+TRIGRAM_LINES: dict[str, tuple[int, int, int]] = {
+    "乾": (1, 1, 1), "兑": (1, 1, 0), "离": (1, 0, 1), "震": (1, 0, 0),
+    "巽": (0, 1, 1), "坎": (0, 1, 0), "艮": (0, 0, 1), "坤": (0, 0, 0),
+}
+
+#: 三画卦 → 五行
+TRIGRAM_ELEMENT: dict[str, str] = {
+    "乾": "金", "兑": "金",
+    "震": "木", "巽": "木",
+    "坎": "水",
+    "离": "火",
+    "坤": "土", "艮": "土",
+}
+
 #: 先天方位对宫（六爻全变）。**与化工相反无关**，仅供先天方位判断。
 #: 化工相反请用 OPPOSITE_TRIGRAM（L585–594）。
 QIANXI_DUKONG: dict[str, str] = {
@@ -133,6 +141,35 @@ QIANXI_DUKONG: dict[str, str] = {
     "离": "坎", "坎": "离",
     "震": "巽", "巽": "震",
 }
+
+
+def _lines_to_trigram(chunk: tuple[int, ...] | list[int]) -> str:
+    rev = {(1, 1, 1): "乾", (1, 1, 0): "兑", (1, 0, 1): "离", (1, 0, 0): "震",
+           (0, 1, 1): "巽", (0, 1, 0): "坎", (0, 0, 1): "艮", (0, 0, 0): "坤"}
+    return rev.get(tuple(chunk), "")
+
+
+def compute_mutual_trigram(upper: str, lower: str) -> tuple[str, str]:
+    """由卦的上下三画卦求互体，返回 ``(上互, 下互)``。
+
+    取法与 guajie.compute_huti 完全一致：下互＝二三四爻（lines[1:4]），
+    上互＝三四五爻（lines[2:5]）。原典 L104 例（渐卦）：
+    「九五六四九三互离，六四九三六二互坎，合之为未济」✓
+
+    ⚠ 本函数与 guajie.compute_huti 是**两份等价实现**（hua_gong 不 import guajie
+    以免循环依赖），由 tests/heluo/test_h6_hua_gong.py 逐卦对拍防漂移。
+    """
+    lo = TRIGRAM_LINES.get(lower, ())
+    up = TRIGRAM_LINES.get(upper, ())
+    if not lo or not up:
+        return "", ""
+    lines = list(lo) + list(up)          # 六爻，自下而上
+    return (_lines_to_trigram(lines[2:5]),
+            _lines_to_trigram(lines[1:4]))
+
+
+#: 纳音层可成立的五行——化工只取四正（水木火金），土不硬套
+HUAGONG_ELEMENTS = frozenset({"水", "木", "火", "金"})
 
 
 @dataclass(frozen=True)
@@ -144,6 +181,8 @@ class HuaGongResult:
     has_huagong: bool             # 先天/后天卦中是否有化工卦
     has_opposite: bool            # 先天/后天卦中是否有反卦
     wu_relation: str = ""         # 化工卦与反卦的五行关系：相生/克制/比和/空
+    level: str = "正体"           # 得化工之层：正体 / 互体 / 纳音 / 无（L576 三级）
+    reduced: bool = False         # 末级减半（L576「终是浅薄，福寿减半」）
     evidence: list[str] = field(default_factory=list)  # 可审计证据链
 
 
@@ -153,21 +192,23 @@ def compute_huagong(
     postnatal_upper: str,
     postnatal_lower: str,
     birth_month_branch: str,
+    year_gan: str = "",
+    year_zhi: str = "",
 ) -> HuaGongResult:
     """
     计算化工状态。
 
-    算法：
-    1. 确定当令化工卦（出生月支 → 四季 → 卦）
-    2. 检查先天卦上下卦是否有机气
-    3. 检查后天卦上下卦是否有机气
-    4. 检查是否有正反对（反卦）
-    5. 判定状态
+    算法（L576 三级回退）：
+      1. 确定当令化工卦（出生月支 → 四季 → 卦）
+      2. **正体**：先天/后天卦的上下卦中是否有该化工卦
+      3. **互体**：正体不得而互体得之
+      4. **纳音**：正互俱无则取纳甲纳音，**终是浅薄，福寿减半**
+      5. 判定状态（正常 / 化工相反 → 按 L582 分相生·克制）
 
-    原典原则：
-      "根基不得化工者，灾重也"
-      "有化工之气者，艰难获福"
-      "大象与小象化工虽相反，却又有相生者，则吉"
+    原典原则（L576 / L582 / L597）：
+      「故正不逢而互体得之。若正互俱无，则取纳甲纳音，终是浅薄，福寿减半。」
+      「又有大象与小象化工虽相反，却又有相生者，则吉。但忌克制，尤凶。」
+      「凡人根基不得化工者，灾重也。……有化工之气者，艰难获福。」
     """
     evidence: list[str] = []
 
@@ -175,15 +216,87 @@ def compute_huagong(
     huagong_trigram = SEASON_BRANCH_TO_HUAGONG.get(birth_month_branch, "?")
     opposite_trigram = OPPOSITE_TRIGRAM.get(huagong_trigram, "")
 
-    # Step 2: 检查卦中是否有化工卦 / 反卦
-    all_trigrams = {prenatal_upper, prenatal_lower, postnatal_upper, postnatal_lower}
-    has_huagong = huagong_trigram in all_trigrams
+    # Step 2: L576 三级回退 —— 正体 → 互体 → 纳音
+    zhengti = {prenatal_upper, prenatal_lower, postnatal_upper, postnatal_lower}
+    pre_mut = compute_mutual_trigram(prenatal_upper, prenatal_lower)
+    post_mut = compute_mutual_trigram(postnatal_upper, postnatal_lower)
+    huti = set(pre_mut) | set(post_mut)
+    huti.discard("")
+
+    # L576 第三级「纳甲纳音」：须有年干支方能取到纳音。
+    # ⚠ 2026-10-07 审计修：旧实现把「未传年干支」与「取纳音抛异常」一律静默置空，
+    #   随后 evidence 照写「正体、互体、纳音三层俱不得化工」——把**根本没跑的检查**
+    #   写成**已检查且未通过**。现改为逐层登记，本级未参与则如实说明。
+    nayin_elem = ""
+    nayin_checked = False
+    nayin_note = "未启用（本级缺年干支输入，未参与判定）"
+    if year_gan and year_zhi:
+        try:
+            from .guajie import get_nayin_element  # 延迟导入：避免循环依赖
+            nayin_elem = get_nayin_element(year_gan, year_zhi)
+            nayin_checked = True
+            nayin_note = ("已查：「%s%s」纳音属%s"
+                          % (year_gan, year_zhi, nayin_elem or "未知（不在六十甲子纳音表内）"))
+        except Exception as exc:
+            nayin_note = ("查询失败（%s: %s），本级不可判"
+                          % (type(exc).__name__, exc))
+
+    hg_elem = TRIGRAM_ELEMENT.get(huagong_trigram, "")
+    level, reduced, pool = "无", False, zhengti
+    if huagong_trigram in zhengti:
+        level, pool = "正体", zhengti
+        evidence.append(f"一级 正体得化工卦{huagong_trigram}（{sorted(zhengti)}）")
+    elif huagong_trigram in huti:
+        level, pool = "互体", huti
+        evidence.append(f"二级 互体得化工卦{huagong_trigram}"
+                        f"（先天互{pre_mut}／后天互{post_mut}）"
+                        f"——L576「故正不逢而互体得之」")
+    elif nayin_elem and nayin_elem == hg_elem and hg_elem in HUAGONG_ELEMENTS:
+        # pool 记当令化工卦本身：纳音层**确实得了化工**（只是浅薄减半），
+        # 若 pool 置空会让 has_huagong=False、state 落到「无据」，
+        # 与 evidence「取纳甲纳音…与化工卦同气」自相矛盾。
+        level, reduced, pool = "纳音", True, {huagong_trigram}
+        evidence.append(f"三级 正互俱无，取纳甲纳音「{year_gan}{year_zhi}」"
+                        f"得{nayin_elem}，与化工卦{huagong_trigram}同气"
+                        f"——L576「终是浅薄，福寿减半」")
+    else:
+        if nayin_checked:
+            evidence.append("正体、互体俱不得化工；三级纳音%s，与当令化工卦%s(%s)不同气"
+                            "——L576「若不以震为化工，则曰无化工矣」"
+                            % (nayin_note, huagong_trigram, hg_elem or "无"))
+        else:
+            evidence.append("正体、互体俱不得化工；三级纳音%s，"
+                            "故本盘**只作二级否定**，不得称「三层俱不得」"
+                            "——L576「若不以震为化工，则曰无化工矣」" % nayin_note)
+
+    # 「卦中所有三画卦」= 正体 ∪ 互体。
+    # 互体亦由本卦六爻化出（L576「故正不逢而互体得之」），其三画卦同属本卦之体；
+    # 化工相反（L579/L585–594）判的是**卦与卦**的对应，故按全卦体求，不限于化工所在层。
+    # 2026-10-07 审计指出旧版 evidence 会打印当层集合、下一行却宣称全集里的反卦，
+    # 审计链自相矛盾；现改为——判定按全集，**打印也按全集并逐卦标层**。
+    all_trigrams = zhengti | huti
+
+    def _where(t: str) -> str:
+        parts = []
+        if t in zhengti:
+            parts.append("正体")
+        if t in huti:
+            parts.append("互体")
+        return "、".join(parts) or "未见"
+
+    has_huagong = huagong_trigram in pool
     has_opposite = opposite_trigram in all_trigrams
 
-    evidence.append(f"出生月支{birth_month_branch} → 当令化工卦={huagong_trigram}")
-    evidence.append(f"卦中含化工卦: {has_huagong}（{all_trigrams}）")
+    evidence.append(f"出生月支{birth_month_branch} → 当令化工卦={huagong_trigram}（{hg_elem}）")
+    evidence.append(f"化工所得之层: {level}"
+                    + ("，**福寿减半**" if reduced else ""))
+    evidence.append(f"卦中三画卦全集: {sorted(all_trigrams)}"
+                    f"（正体{sorted(zhengti)}／互体{sorted(huti)}）；"
+                    f"化工取自「{level}」层")
+    evidence.append(f"卦中含化工卦: {has_huagong}（见于{_where(huagong_trigram)}）")
     if has_opposite:
-        evidence.append(f"卦中含反卦{opposite_trigram}（{huagong_trigram}↔{opposite_trigram}）")
+        evidence.append(f"卦中含反卦{opposite_trigram}"
+                        f"（{huagong_trigram}↔{opposite_trigram}，见于{_where(opposite_trigram)}）")
 
     # Step 3: 判定状态
     # 原典 L597："凡人根基不得化工者，灾重也" / "有化工之气者，艰难获福"
@@ -191,7 +304,14 @@ def compute_huagong(
     #   —— 2026-10-07 修：旧实现命中「有化工卦+有反卦」就无条件判 RESCUED，
     #   evidence 只写「需五行相生救应」却从不计算；而下游把 RESCUED 当吉。
     #   坎(水)克离(火) 原典明说「尤凶」，却被判吉——此为有害误判，现按 L582 实算。
-    if has_huagong and not has_opposite:
+    if reduced:
+        # L576：「若正互俱无，则取纳甲纳音，终是浅薄，福寿减半。」
+        # 减半的化工**不得**报 NORMAL（得位·有机气）——那是高报。
+        # 既非吉（无正逢互得之实），亦非凶（到底还是得了化工）→ NEUTRAL。
+        state = HuaGongState.WEAK
+        evidence.append("浅薄：仅得纳音级化工，按 L576「终是浅薄，福寿减半」"
+                        "——不作得位论")
+    elif has_huagong and not has_opposite:
         state = HuaGongState.NORMAL
         evidence.append("得位：卦中含当令化工卦，无正反对")
     elif has_huagong and has_opposite:
@@ -232,5 +352,7 @@ def compute_huagong(
         wu_relation=_wu_relation(
             TRIGRAM_ELEMENT.get(huagong_trigram, ""),
             TRIGRAM_ELEMENT.get(opposite_trigram, "")),
+        level=level,
+        reduced=reduced,
         evidence=evidence,
     )

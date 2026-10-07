@@ -62,7 +62,7 @@ class FrozenHeluoState:
     qi_phase: Optional[dict]               # 卦气阶段信息
 
     # ── 状态判断层（H6）───────────────────────────────────────
-    hua_gong_state: Optional[str]          # NORMAL / REVERSE / RESCUED / UNRESOLVED
+    hua_gong_state: Optional[str]          # NORMAL / REVERSE / RESCUED / KEZHI / WEAK / UNRESOLVED
     hua_gong_evidence: Optional[list[str]] # 化工证据链
 
     # ── 时间序列（从 canonical._build_timeline 提取）──────────
@@ -74,6 +74,13 @@ class FrozenHeluoState:
     gender: str                            # "male" / "female"
     birth_hour: str                        # 出生时辰
     birth_date: str                        # 出生日期 ISO
+
+    # 2026-10-07 审计修：L576 三级回退的两个决定性标志此前不在冻结态内，
+    # 导致「正体得位」与「仅得纳音、福寿减半」在下游只剩同一个 state 值可看。
+    # 必须追加在末尾——dataclass 里带默认值的字段不能后接非默认值，
+    # 插在 hua_gong_state 之后会连累 dayun_summary 等后续字段全部报错。
+    hua_gong_level: Optional[str] = None   # 正体 / 互体 / 纳音 / 无
+    hua_gong_reduced: Optional[bool] = None  # 末级减半（L576「终是浅薄，福寿减半」）
 
     def to_dict(self) -> dict:
         """序列化为字典，供 Signal/Assertion 层消费。"""
@@ -111,6 +118,8 @@ class FrozenHeluoState:
             },
             "hua_gong": {
                 "state": self.hua_gong_state,
+                "level": self.hua_gong_level,
+                "reduced": self.hua_gong_reduced,
                 "evidence": self.hua_gong_evidence,
             },
             "seasonal": self.seasonal_hexagram,
@@ -135,9 +144,13 @@ def build_frozen_state(result: Any, calculation_policy: Optional[dict] = None) -
     """
     from .numbers import TRIGRAM_LINES
 
+    # ⚠ 2026-10-07 审计修：era 此前取的是 result.input.timezone（恒为
+    # "Asia/Shanghai"）——把**时区**填进了**世代**字段，上中下元出处彻底丢失。
+    # 现从 result.era 读真值；旧结果对象无该字段时记 "unknown"，不再拿时区顶替。
+    _era = getattr(result, "era", None) or "unknown"
     policy = calculation_policy or {
         "stem_method": "河图",
-        "era": getattr(getattr(result, 'input', None), 'timezone', "zhong"),
+        "era": _era,
         "calc_version": "v2.0",
     }
 
@@ -187,6 +200,8 @@ def build_frozen_state(result: Any, calculation_policy: Optional[dict] = None) -
         seasonal_hexagram=seasonal_hex,
         qi_phase=qi_phase if timeline else None,
         hua_gong_state=hua_gong.state.value if hua_gong else None,
+        hua_gong_level=getattr(hua_gong, "level", None) if hua_gong else None,
+        hua_gong_reduced=getattr(hua_gong, "reduced", None) if hua_gong else None,
         hua_gong_evidence=hua_gong.evidence if hua_gong else None,
         dayun_summary=dayun_summary,
         liunian_count=liunian_count,

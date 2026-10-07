@@ -105,6 +105,11 @@ HUAGONG_ADVICE: dict[str, str] = {
     "RESCUED": "虽有波折，但能逢凶化吉，坚持正道可成。",
     "REVERSE": "化工反位，行事多阻，宜守不宜攻。",
     "UNRESOLVED": "化工不明，形势未定，需审时度势后再行决断。",
+    # ⚠ 2026-10-07 审计修：以下两态 2026-10-07 才加入 hua_gong / diagnosis_rule_graph，
+    #   本表未同步。KEZHI 是原典「忌克制，尤凶」的**最凶一档**，此前竟落到
+    #   default「化工状态待判定」，产出 0 条建议 0 条警示——最凶档被当成未知档。
+    "KEZHI": "化工受克，原典明言「尤凶」，宜彻底守成，不可进取。",
+    "WEAK": "只得纳音级浅薄化工，福泽减半，宜安分培本，不可好高骛远。",
 }
 
 # 化工状态 → 行动建议模板
@@ -124,6 +129,12 @@ HUAGONG_ACTION_TEMPLATES: dict[str, List[dict]] = {
     "UNRESOLVED": [
         {"title": "观察等待", "desc": "形势不明朗，宜静观其变，等待更清晰的信号再行动。", "scope": "month"},
         {"title": "打好基础", "desc": "利用这段时期充实自身，为后续机会做准备。", "scope": "year"},
+    ],
+    "KEZHI": [
+        {"title": "全面守成", "desc": "化工受克，原典明言「尤凶」，宜彻底收缩、不可主动出击。", "scope": "year"},
+    ],
+    "WEAK": [
+        {"title": "培本固元", "desc": "仅得纳音级浅薄化工，福寿减半，宜务实积累。", "scope": "year"},
     ],
 }
 
@@ -159,7 +170,7 @@ class HeluoGuidanceEngine:
             source_gua: 先天卦名
             target_gua: 后天卦名
             yuan_tang: 元堂名
-            hua_gong_state: 化工状态（NORMAL/REVERSE/RESCUED/UNRESOLVED）
+            hua_gong_state: 化工状态（NORMAL/REVERSE/RESCUED/KEZHI/WEAK/UNRESOLVED）
             subject: 案例标识
 
         Returns:
@@ -249,13 +260,21 @@ class HeluoGuidanceEngine:
         cautions = []
         id_counter = 1
 
-        # 化工反位时的默认警示
-        if hua_gong_state == "REVERSE":
+        # 化工反位 / 受克时的默认警示。
+        # ⚠ 2026-10-07 审计修：旧条件只有 "REVERSE"，KEZHI（原典最凶一档）
+        #   连一条警示都拿不到。WEAK 是减半的浅薄化工、非凶，故不入此表。
+        _CAUTION_BY_STATE = {
+            "REVERSE": ("谨慎决策", "化工反位，当前不宜做重大决策或冒险行动。", 0.9),
+            "KEZHI": ("化工业已受克", "化工受克，原典「但忌克制，尤凶」——本岁宜彻底守成，"
+                                       "不可主动出击，亦不宜大额投入。", 0.95),
+        }
+        if hua_gong_state in _CAUTION_BY_STATE:
+            _t, _d, _c = _CAUTION_BY_STATE[hua_gong_state]
             cautions.append(CautionItem(
                 id=f"CAU-{id_counter:03d}",
-                title="谨慎决策",
-                description="化工反位，当前不宜做重大决策或冒险行动。",
-                confidence=0.9,
+                title=_t,
+                description=_d,
+                confidence=_c,
                 source_ref="河洛真数·论化工",
                 temporal_scope="year",
             ))

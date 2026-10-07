@@ -120,6 +120,19 @@ ELEMENT_MODIFIERS = {
 }
 
 # 时间衰减系数
+
+#: 机会/风险因子的 classical_basis 一律取此值。
+#:
+#: ⚠ 2026-10-07 审计修：原代码在此处硬写《河洛理数·卷之二/三/四》与《易·否卦》
+#: 《易·乾卦·上九》等书名，但：
+#:   ① 全无卷内行号，无法定位；
+#:   ② 《易》不是本项目所据之书；
+#:   ③ 更要命的是——这些字段按 score 分支选取，而 score 只由本引擎自拟权重
+#:      与已作废的 _hexagram_base_score 决定，与原典任何条文无关。
+#:   也就是说书名是**事后贴上去的**，属把虚构逻辑冠以典籍名（伪引）。
+#:   现一律改为显式声明「无原典依据」，不拿书名充门面。
+_NO_BASIS = "无原典依据（本项为引擎自拟归纳，未得《河洛真数》条文支持）"
+
 TIME_DECAY = {
     "年": 0.8,    # 年度趋势
     "月": 0.9,    # 月度机会
@@ -180,19 +193,27 @@ class RelationalInterpretationEngine:
         )
     
     def _compute_factor_weights(self) -> Dict[str, float]:
-        """计算各因子权重（含五行修正）。"""
+        """计算各因子权重。
+
+        ⚠ 2026-10-07 审计修：本函数原名「含五行修正」，且源码里真有两段修正代码，
+        但**两段都恒等于无操作**，现已删除，函数名一并去掉「修正」二字：
+
+        ① 五行修正：``weights[key] *= (1 + element_modifier)`` 对**所有**权重同乘
+           同一个常数，紧接着又按 ``sum(weights)``（已含该同乘）归一化 ——
+           数学上精确抵消。实测 element_modifier 取 0.08 / −0.1，输出权重与
+           完全不修正时相差 1.39e-17（浮点 epsilon）。
+        ② 时间衰减：``time_modifier.get(key, 1.0)`` 的键是 年/月/日/时，
+           被查的键却是 da_yun / day_cycle / hour_cycle / month_cycle /
+           postnatal_hexagram / prenatal_hexagram / year_cycle / yuan_tang
+           ——**键集零交集**，每个键都命中默认值 1.0。
+
+        两者都属「宣称的特性从不发生」。此处不修成真实现（那需要原典依据，
+        目前没有），而是删掉假装实现的代码，让权重口径回归其真实来源
+        FACTOR_WEIGHTS。_calculate_element_modifier / _calculate_time_decay
+        两个方法保留（仍有测试直接调用其返回值），但不再参与权重计算。
+        """
         weights = FACTOR_WEIGHTS.copy()
-        
-        # 应用五行修正
-        element_modifier = self._calculate_element_modifier()
-        for key in weights:
-            weights[key] *= (1 + element_modifier)
-        
-        # 应用时间衰减
-        time_modifier = self._calculate_time_decay()
-        for key in weights:
-            weights[key] *= time_modifier.get(key, 1.0)
-        
+
         # 归一化
         total = sum(weights.values())
         if total > 0:
@@ -303,32 +324,44 @@ class RelationalInterpretationEngine:
         """构建解释链。"""
         steps = []
         
-        # Step 1: 本命卦分析
+        # ⚠ 2026-10-07 审计修：以下四条断语**与输入无关**——任何本命卦都写
+        #   「刚健中正」、任何元堂都写「尊位当权」、**任何流年**都写「火运当令」；
+        #   出处则指向《河洛理数》卷一/三/四与《协纪辨方书》，其中《协纪辨方书》
+        #   根本不是本项目所据之书，且四条出处均无卷内行号。
+        #   同一虚构逻辑的「_year_cycle_factor」早已因「针对 2025 乙巳写死常量」
+        #   被作废，如今又原样搬进解释链并冠以典籍名。
+        #   现保留步骤数（下游断言链长为 5），但断语改为**如实描述输入**，
+        #   出处改为可核对的本项目出处；原典未载的判断一律标注，不硬挂书名。
+        # Step 1: 本命卦
         steps.append(InterpretationStep(
             step=1,
-            logic=f"本命卦{self.input.prenatal_hexagram}→刚健中正",
-            source="《河洛理数·卷之一》"
+            logic=f"本命卦={self.input.prenatal_hexagram}（卦名由天数地数推出；"
+                  f"性情吉凶须查原典得卦正/失正表，该表判据原典未载，暂不判）",
+            source="河洛真数·起例卷之上·天数地数例"
         ))
-        
-        # Step 2: 元堂定位
+
+        # Step 2: 元堂
         steps.append(InterpretationStep(
             step=2,
-            logic=f"元堂{self.input.yuan_tang}→尊位当权",
-            source="《河洛理数·卷之三》"
+            logic=f"元堂={self.input.yuan_tang}（元堂定位依生时与卦体定；"
+                  f"吉凶随爻位而异，此处仅记位次，不作断语）",
+            source="三才发秘·详元堂爻位式"
         ))
-        
-        # Step 3: 后天卦变换
+
+        # Step 3: 后天卦
         steps.append(InterpretationStep(
             step=3,
-            logic=f"后天卦{self.input.postnatal_hexagram}→天地交泰",
-            source="《河洛理数·卷之四》"
+            logic=f"后天卦={self.input.postnatal_hexagram}（由先天卦变换而来；"
+                  f"吉凶须查原典相应断语，此处仅记卦名）",
+            source="河洛真数·起例卷之上·换后天卦例"
         ))
-        
-        # Step 4: 流年分析
+
+        # Step 4: 流年
         steps.append(InterpretationStep(
             step=4,
-            logic=f"流年{self.input.year_cycle}→火运当令",
-            source="《协纪辨方书》"
+            logic=f"流年={self.input.year_cycle}（流年干支仅记录，不作火运/水运判定"
+                  f"——原典无「某干支必主火运」之通则）",
+            source="河洛真数·起例卷之下·流年卦例"
         ))
         
         # Step 5: 综合判定
@@ -361,21 +394,21 @@ class RelationalInterpretationEngine:
                 type="进德修业",
                 strength=0.75,
                 time_window="当前大运周期内",
-                classical_basis="《河洛理数·卷之二》"
+                classical_basis=_NO_BASIS
             )
         elif score > 0.2:
             return OpportunityFactor(
                 type="稳中求进",
                 strength=0.55,
                 time_window="本月内",
-                classical_basis="《河洛理数·卷之三》"
+                classical_basis=_NO_BASIS
             )
         else:
             return OpportunityFactor(
                 type="守正待机",
                 strength=0.35,
                 time_window="待定",
-                classical_basis="《河洛理数·卷之四》"
+                classical_basis=_NO_BASIS
             )
     
     def _identify_risk(self, weights: Dict[str, float], score: float) -> RiskFactor:
@@ -385,21 +418,21 @@ class RelationalInterpretationEngine:
                 type="困顿受阻",
                 severity=0.7,
                 trigger_condition="进退失据",
-                classical_basis="《易·否卦》"
+                classical_basis=_NO_BASIS
             )
         elif score < 0:
             return RiskFactor(
                 type="波动起伏",
                 severity=0.4,
                 trigger_condition="急躁冒进",
-                classical_basis="《河洛理数·卷之三》"
+                classical_basis=_NO_BASIS
             )
         else:
             return RiskFactor(
                 type="亢龙有悔",
                 severity=0.2,
                 trigger_condition="刚愎自用",
-                classical_basis="《易·乾卦·上九》"
+                classical_basis=_NO_BASIS
             )
     
     def _generate_recommended_action(self, opp: OpportunityFactor, risk: RiskFactor, score: float) -> RecommendedAction:

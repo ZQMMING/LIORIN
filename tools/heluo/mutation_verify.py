@@ -37,6 +37,7 @@ SUITES = {
     "shu_ge": ("tools/heluo/mutation_verify_shu_ge.py",),
     "jiehhou": ("tools/heluo/mutation_verify_jiehhou.py",),
     "hua_gong": ("tools/heluo/mutation_verify_hua_gong.py",),
+    "audit_batch": ("tools/heluo/mutation_verify_audit_batch.py",),
 }
 
 

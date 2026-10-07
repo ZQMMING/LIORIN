@@ -56,10 +56,22 @@ class TestFrozenStateGoldenCase(unittest.TestCase):
         self.assertEqual(self.state.postnatal_lines, (1, 1, 1, 1, -1, -1))
 
     def test_huagong(self):
-        """纪晓岚生于丑月（冬）→ 化工卦为坎，卦中无坎无离 → UNRESOLVED"""
-        self.assertEqual(self.state.hua_gong_state, "UNRESOLVED")
+        """纪晓岚 甲辰辛未丙戌甲午，月柱**辛未** → 月支「未」→ 化工卦离(火)。
+
+        2026-10-07 三轮更正：本断言原写「生于丑月」，那是 `canonical` 拿
+        **公历月份**硬凑月支的产物。月令以节气为界，本就该取月柱地支；
+        甲辰辛未的月支是「未」不是「丑」。公历月近似映射已从源码删除。
+
+        正体互体皆无离 → 纳音回退：甲辰纳音火，与离同气 → level=纳音，
+        按 L576「终是浅薄，福寿减半」标 reduced；但四卦中既无离亦无坎，
+        无化工相反。state 为 **WEAK**（浅薄·减半），非 NORMAL 亦非 UNRESOLVED——
+        减半的化工若报 NORMAL（得位·有机气）即为高报，L576 明言「终是浅薄」。
+        """
+        self.assertEqual(self.state.hua_gong_state, "WEAK")
         self.assertIsNotNone(self.state.hua_gong_evidence)
-        self.assertTrue(any("丑" in e for e in self.state.hua_gong_evidence))
+        joined = chr(10).join(self.state.hua_gong_evidence)
+        self.assertTrue(any("未" in e for e in self.state.hua_gong_evidence), joined)
+        self.assertIn("纳音", joined)
 
     def test_dayun_count(self):
         """先天6爻 + 后天6爻 = 12段大运"""

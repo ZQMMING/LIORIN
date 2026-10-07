@@ -382,12 +382,21 @@ class GuaJieResult:
             "liunian_year": self.liunian_year,
             "liunian_yao": {
                 "yao": self.liunian_yao.yao, "ci": self.liunian_yao.ci,
+                # 2026-10-07 审计修：xiang（象曰）与 yi（释义）是 YaoDuan 的
+                # 两个非空字段，实测确有内容，此前**四处模板全丢**——生产 API 走
+                # dataclasses.asdict 而非本 to_dict，故此丢失只在 to_dict 路径上生效。
+                "xiang": self.liunian_yao.xiang, "yi": self.liunian_yao.yi,
                 "ye": self.liunian_yao.ye, "buye": self.liunian_yao.buye,
                 "suiyun": self.liunian_yao.suiyun, "shao": self.liunian_yao.shao,
                 "jingyi": self.liunian_yao.jingyi, "shiyi": self.liunian_yao.shiyi,
             } if self.liunian_yao else None,
             "liunian_ye_buye": {
                 "ye": self.liunian_ye_buye.ye, "buye": self.liunian_ye_buye.buye,
+                # 2026-10-07 审计修：gua_qi_month（卦气属几月）与 birth_month
+                # 是「叶/不叶」这一判定的**两个决定性输入**，此前只存在于
+                # dataclass 上，to_dict 未序列化 → 下游拿到结论却看不到依据。
+                "gua_qi_month": self.liunian_ye_buye.gua_qi_month,
+                "birth_month": self.liunian_ye_buye.birth_month,
                 "najia_hit": self.liunian_ye_buye.najia_hit,
                 "evidence": self.liunian_ye_buye.evidence,
             } if self.liunian_ye_buye else None,
@@ -398,6 +407,7 @@ class GuaJieResult:
             "liuyue_hexagram": self.liuyue_hexagram,
             "liuyue_yao": {
                 "yao": self.liuyue_yao.yao, "ci": self.liuyue_yao.ci,
+                "xiang": self.liuyue_yao.xiang, "yi": self.liuyue_yao.yi,   # 2026-10-07 补，见流年模板
                 "ye": self.liuyue_yao.ye, "buye": self.liuyue_yao.buye,
                 "suiyun": self.liuyue_yao.suiyun, "shao": self.liuyue_yao.shao,
                 "jingyi": self.liuyue_yao.jingyi, "shiyi": self.liuyue_yao.shiyi,
@@ -405,6 +415,7 @@ class GuaJieResult:
             "liuri_hexagram": self.liuri_hexagram,
             "liuri_yao": {
                 "yao": self.liuri_yao.yao, "ci": self.liuri_yao.ci,
+                "xiang": self.liuri_yao.xiang, "yi": self.liuri_yao.yi,   # 2026-10-07 补，见流年模板
                 "ye": self.liuri_yao.ye, "buye": self.liuri_yao.buye,
                 "suiyun": self.liuri_yao.suiyun, "shao": self.liuri_yao.shao,
                 "jingyi": self.liuri_yao.jingyi, "shiyi": self.liuri_yao.shiyi,
@@ -412,6 +423,7 @@ class GuaJieResult:
             "liushi_hexagram": self.liushi_hexagram,
             "liushi_yao": {
                 "yao": self.liushi_yao.yao, "ci": self.liushi_yao.ci,
+                "xiang": self.liushi_yao.xiang, "yi": self.liushi_yao.yi,   # 2026-10-07 补，见流年模板
                 "ye": self.liushi_yao.ye, "buye": self.liushi_yao.buye,
                 "suiyun": self.liushi_yao.suiyun, "shao": self.liushi_yao.shao,
                 "jingyi": self.liushi_yao.jingyi, "shiyi": self.liushi_yao.shiyi,
@@ -451,6 +463,15 @@ class GuaJieResult:
 # ═══════════════════════════════════════════════════════════════════
 
 _LOADED: Optional[dict[str, GuaDuan]] = None
+
+#: 精义库（guajie_jingyi.json）最近一次加载失败的痕迹；正常为 ""。
+#: 非空即表示精义/释义层缺失，须由调用方向 evidence 披露。
+_JINGYI_LOAD_ERROR = ""
+
+
+def jingyi_load_error() -> str:
+    """精义库加载失败痕迹（空串＝正常）。"""
+    return _JINGYI_LOAD_ERROR
 
 
 def _split_duans(duans: list[str]) -> tuple[str, str, str]:
@@ -509,10 +530,14 @@ def load_guajie_data() -> dict[str, GuaDuan]:
     if _LOADED is not None:
         return _LOADED
     raw = json.loads(_GUAJIE_DATA.read_text(encoding="utf-8"))
+    global _JINGYI_LOAD_ERROR
     try:
         jy_raw = json.loads(_JINGYI_DATA.read_text(encoding="utf-8"))
-    except Exception:
+    except Exception as exc:
         jy_raw = {}  # 精义库缺失/损坏不阻塞判词主链
+        # ⚠ 2026-10-07 审计修：旧代码静默置空、不留任何痕迹，精义/释义整层
+        # 缺失却无法与「本来就没写」区分。现记录失败原因供调用方披露。
+        _JINGYI_LOAD_ERROR = "%s: %s" % (type(exc).__name__, exc)
     out: dict[str, GuaDuan] = {}
     for g in raw:
         month, najia = _parse_gua_header(g.get("lines", []))
@@ -928,10 +953,26 @@ def check_zhengdui_fandui(hexagram: str, other_hexagram: str = "") -> list[str]:
     # 反对：综卦
     if ZONG_GUA.get(hexagram) == other_hexagram:
         warns.append(f"{hexagram}与{other_hexagram}互为综卦（反对），卦象倒转")
-    # 十二凶卦
-    if hexagram in TWELVE_XIONG_GUA:
-        warns.append(f"命卦{hexagram}属十二凶卦（复临泰大壮夬乾姤遁否观剥坤）→ 不吉，若卦中相生或与月卦相投可去凶")
+    # ⚠ 2026-10-07 审计修：十二凶卦原写在此处，且有两个硬伤——
+    #   ① 本函数第一参数在两个调用点传的都是**流年卦/日卦**，文案却写死「命卦」，
+    #      实测 case2 命卦实为艮卦，却产出「命卦夬属十二凶卦」的错误凶警；
+    #   ② 该判只依赖 hexagram，与 other_hexagram 无关，而调用点按
+    #      「先天卦 + 后天卦」调了两次 → **必然重复两条**。
+    #   现拆为独立函数 check_twelve_xiong，由调用方按真实卦名与标签各调一次。
     return warns
+
+
+def check_twelve_xiong(hexagram: str, label: str = "卦") -> list[str]:
+    """十二凶卦判别（**单卦属性**，与配对卦无关，故独立成函数）。
+
+    ⚠ 口径：TWELVE_XIONG_GUA 出自今人「三门观易」整理口径，非原典。
+    label 必须由调用方按该卦的真实身份传入（命卦／流年卦／日卦…），
+    不得写死——2026-10-07 审计查出写死「命卦」曾导致流年卦被误标为命卦。
+    """
+    if hexagram and hexagram in TWELVE_XIONG_GUA:
+        return [f"{label}{hexagram}属十二凶卦（复临泰大壮夬乾姤遁否观剥坤）"
+                f" → 不吉，若卦中相生或与月卦相投可去凶"]
+    return []
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1068,6 +1109,7 @@ def judge_si_duan(
         if cur_yao:
             hx = cur_yao.get("hexagram", "")
             if hx:
+                # 只取「反对」信号，故不并入 check_twelve_xiong
                 fan = (check_zhengdui_fandui(hx, prenatal_name)
                        + check_zhengdui_fandui(hx, postnatal_name))
                 if any("反对" in w for w in fan) and cur_buji:
@@ -1205,9 +1247,13 @@ def compose_guajie(
         if yb:
             res.liunian_ye_buye = yb
             ev.extend(f"  叶/不叶：{e}" for e in yb.evidence)
-        # 正对反对（流年卦 vs 命卦）
-        zdfd = check_zhengdui_fandui(liunian_hexagram, prenatal_name)
-        zdfd += check_zhengdui_fandui(liunian_hexagram, postnatal_name)
+        # 正对反对（流年卦 vs 先天卦 / vs 后天卦）——两次配对的 other 各不相同，
+        # 本身合法；但先天卦与后天卦可能同名，故此处去重（保持原序）。
+        # 十二凶卦是流年卦自身的属性，调一次、标签写「流年卦」（见 P1-a）。
+        zdfd = (check_zhengdui_fandui(liunian_hexagram, prenatal_name)
+                + check_zhengdui_fandui(liunian_hexagram, postnatal_name)
+                + check_twelve_xiong(liunian_hexagram, "流年卦"))
+        zdfd = list(dict.fromkeys(zdfd))   # 去重且保序
         res.zhengdui_fandui = zdfd
         ev.extend(f"  正对反对：{w}" for w in zdfd)
 
@@ -1490,6 +1536,10 @@ def build_guajie_from_result(
                                 break
                     break
 
+        # ⚠ 2026-10-07 审计修：`birth_month or 1` 把漏传静默改成正月，
+        # 叶/不叶与 kuozhan 会整体走错分支（实测 kuozhan 由 11 项缩至 8 项）
+        # 而 summary 不作任何提示。缺生月就**明确留痕**，仍按 1 兜底以免中断主链。
+        _birth_month_missing = not birth_month
         gj = compose_guajie(
             prenatal_name=prenatal, postnatal_name=postnatal,
             yuantang_yao=yuantang_yao,
@@ -1499,6 +1549,12 @@ def build_guajie_from_result(
             liuyue_hexagram=liuyue_hex_name, liuyue_yao=liuyue_yao_name,
             target_year=target_year,
         )
+        if _birth_month_missing:
+            gj.summary.append("⚠ 未取得出生月，叶/不叶与部分扩展断法按正月兜底，"
+                              "相关结论不可尽信（生月缺失已影响判定）")
+            gj.evidence.append("  生月：调用方未传 birth_month，已按正月(1)兜底——"
+                               "叶/不叶、kuozhan 相关项结果随之改变")
+
         # ── 三阳奇偶合象（L99 / L714 平行印证）────────────────────
         # 该条按节气窗口「冬至后至雨水前」判，**必须有出生公历日**。
         # compose_guajie 只有 birth_month，故在此处补判——
@@ -1519,7 +1575,8 @@ def build_guajie_from_result(
             gj.liuri_hexagram = liuri_hex_name
             gj.liuri_yao = query_yao_duan(liuri_hex_name, liuri_yao_name)
             gj.evidence.append(
-                f"流日定位：{liuri_hex_name}{liuri_yao_name}（原典起日卦例·每爻管5日，第{target_day}日）")
+                f"流日定位：{liuri_hex_name}{liuri_yao_name}"
+                f"（原典起日卦例·**逐日一爻**，段内五日各变一次；本行为第{target_day}日）")
         # 流时层已剥离（2026-10-06）：起时卦例的推演整段摘除。
         # 若调用方仍传 target_hour，**明确留痕**而不是静默忽略——
         # 静默忽略会让调用方以为该层已生效，正是本轮反复清理的那类缺陷。
@@ -2813,7 +2870,8 @@ def _build_kuozhan(
 __all__ = [
     "GuaDuan", "YaoDuan", "YeBuYeResult", "ShuXiongResult", "GuaJieResult",
     "load_guajie_data", "query_yao_duan", "judge_ye_buye",
-    "judge_shu_xiong", "check_zhengdui_fandui", "judge_si_duan",
+    "judge_shu_xiong", "check_zhengdui_fandui", "check_twelve_xiong",
+    "jingyi_load_error", "judge_si_duan",
     "compute_huti", "judge_nayin_yuanqi", "get_nayin_element",
     "judge_jiehua_gong", "judge_nayin_huti", "hexagram_to_lines",
     "compose_guajie", "build_guajie_from_result",
