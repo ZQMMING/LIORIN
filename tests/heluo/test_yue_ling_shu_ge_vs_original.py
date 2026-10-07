@@ -235,12 +235,24 @@ class TestOriginalConflictMustBeDisclosed(unittest.TestCase):
         self._c = shu_ge_conflicts
 
     def test_conflict_is_reported(self):
+        """须报出重叠，且措辞必须是**更正后**的「同向不同severity」。
+
+        2026-10-07 此前写作「判语相反」——经全库取证证伪：
+        L995「阴令得之犹可喜，若生阳月必孤睽」
+        L1076「阴令忧危浅，阳月有大殃」
+        两条诗断同向（阴月令较轻、阳月令较重），仅以弱敌强判词更重。
+        此断言锁死更正后的措辞，防止旧错误复发。
+        """
         c = self._c(24, 30)
-        self.assertTrue(c, "(24,30) 须报出原典冲突")
+        self.assertTrue(c, "(24,30) 须报出原典重叠")
         joined = " ".join(c)
         self.assertIn("阳数偏少", joined)
         self.assertIn("以弱敌强", joined)
-        self.assertIn("未裁", joined)
+        self.assertIn("同向", joined, "重叠关系必须表述为「同向」，不得回退为「相反」")
+        self.assertIn("更重", joined)
+        self.assertIn("阴令得之犹可喜", joined, "须直引 L995 诗断原文")
+        self.assertIn("阴令忧危浅", joined, "须直引 L1076 诗断原文")
+        self.assertNotIn("判语相反", joined, "「判语相反」已被证伪，不得复现")
 
     def test_both_rules_actually_match(self):
         from tongshu.engines.heluo.yue_ling_shu_ge import classify_shu_ge

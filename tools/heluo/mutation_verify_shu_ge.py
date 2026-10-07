@@ -23,7 +23,12 @@ from pathlib import Path
 ROOT = Path(r"D:\shuntian_heluo")
 GE = ROOT / "src" / "tongshu" / "engines" / "heluo" / "yue_ling_shu_ge.py"
 GJ = ROOT / "src" / "tongshu" / "engines" / "heluo" / "guajie.py"
-TEST = "tests/heluo/test_yue_ling_shu_ge_vs_original.py"
+#: 本模块的全部守卫文件。**必须一次跑完**——第二轮验证新增的
+#: test_refusal_corrections_round2.py 里锁着「天数至弱」「三阳奇偶合象」
+#: 等本轮新实现；只跑第一个文件时，那八条变异会「存活」，
+#: 看起来像守卫失效，实则是套件配置漏了文件。
+TEST = ("tests/heluo/test_yue_ling_shu_ge_vs_original.py",
+        "tests/heluo/test_refusal_corrections_round2.py")
 
 MUTATIONS = [
     (GE, "以强伏弱漏掉地数非矩形判据（退化为全命中）",
@@ -73,9 +78,42 @@ MUTATIONS = [
      "REFUSED: tuple[tuple[str, str, str], ...] = (",
      "REFUSED: tuple[tuple[str, str, str], ...] = (\n"
      "    (\"占位\", \"占位\", \"占位\"),)\n_UNUSED_REFUSED = ("),
-    (GE, "REFUSED 丢失天数至弱的矛盾登记",
-     "    (\"L38「天数至弱　天数一十有五，",
+    (GE, "REFUSED 丢失天数至弱的基线存疑登记",
+     "    (\"L38 首句「天数一十有五」的**基线数字**",
      "    (\"X38「占位"),
+    # ── 本轮新增实现 ──
+    (GE, "天数至弱上界写成 9（吞掉「不足」的下界）",
+     'tian_band="4–8（不足一策）", di_band="不限", match="tian", lo_t=4, hi_t=8,',
+     'tian_band="4–8（不足一策）", di_band="不限", match="tian", lo_t=4, hi_t=9,'),
+    (GE, "天数至弱下界写成 1（凭空扩大区间）",
+     'tian_band="4–8（不足一策）", di_band="不限", match="tian", lo_t=4, hi_t=8,',
+     'tian_band="4–8（不足一策）", di_band="不限", match="tian", lo_t=1, hi_t=8,'),
+    (GE, "三阳窗口缩小（漏掉立春）",
+     "CHUNQI_JQ: frozenset[int] = frozenset({1, 2, 3})",
+     "CHUNQI_JQ: frozenset[int] = frozenset({1, 2})"),
+    (GE, "三阳窗口扩大（把雨水也算进去）",
+     "CHUNQI_JQ: frozenset[int] = frozenset({1, 2, 3})",
+     "CHUNQI_JQ: frozenset[int] = frozenset({1, 2, 3, 4})"),
+    # ── 本轮实际踩到的两个坑 ──
+    (GE, "solar_jq_index 不回溯（getJieQi 哨兵 255 导致整年失效）",
+     "            jq = sxtwl.fromSolar(cur.year, cur.month, cur.day).getJieQi()\n"
+     "            if jq is not None and jq != NO_JIEQI and 0 <= jq < len(JIE_QI_ORDER):\n"
+     "                return jq\n"
+     "            cur -= _td(days=1)",
+     "            return sxtwl.fromSolar(y, m, d).getJieQi()\n"
+     "            cur -= _td(days=1)"),
+    (GE, "conflict 文案退回被全库证伪的「判语相反」",
+     "且两条**同向、只严重度有别**：",
+     "且两条**判语相反**："),
+    (GJ, "to_dict 不再输出六项新增判定（新增功能全丢）",
+     '                "matched": list(self.shu_xiong.matched),',
+     '                "matched_off": list(self.shu_xiong.matched),'),
+    (GJ, "build_guajie_from_result 误用 tian_shu（该函数内无此名）",
+     "            _cq_note, _cq_ok = _jq(tian, _bd)",
+     "            _cq_note, _cq_ok = _jq(tian_shu, _bd)"),
+    (GJ, "天数至弱未接入 pattern 链",
+     '        pattern = "天数至弱"',
+     '        pattern = "天数不足"'),
     (GJ, "性别参数被忽略（退回三参）",
      "sx = judge_shu_xiong(tian_shu, di_shu, birth_month, gender)",
      "sx = judge_shu_xiong(tian_shu, di_shu, birth_month)"),
@@ -123,7 +161,7 @@ base = {p: sha(t) for p, t in originals.items()}
 
 def run() -> tuple[bool, str]:
     pr = subprocess.run(
-        [sys.executable, "-m", "pytest", TEST, "-q", "--no-header", "-p", "no:cacheprovider"],
+        [sys.executable, "-m", "pytest", *TEST, "-q", "--no-header", "-p", "no:cacheprovider"],
         cwd=ROOT, env=ENV, capture_output=True, text=True, encoding="utf-8")
     lines = [ln for ln in pr.stdout.strip().splitlines() if ln.strip()]
     return pr.returncode == 0, (lines[-1] if lines else pr.stdout[-200:])

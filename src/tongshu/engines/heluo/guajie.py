@@ -345,7 +345,8 @@ class ShuXiongResult:
     conflicts: tuple[str, ...] = ()      # 命中数格之间的原典冲突，须显式披露
     lu_shu: tuple = ()                   # 阴阳禄数命中（L105）
     xingbei: tuple = ()                  # 性别向背（L34/L56/L61/L80）
-    ming_wu_yin_yang: tuple = ()         # 命无阴阳（L95）：(说明, 凶否)
+    ming_wu_yin_yang: tuple = ()         # 命无阴阳（L95）：(说明, 凶否）
+    chun_qi_qi_ou: tuple = ()            # 三阳奇偶合象（L99/L714）：(说明, 合否)
 
 
 @dataclass
@@ -420,6 +421,15 @@ class GuaJieResult:
                 "tian_state": self.shu_xiong.tian_state, "di_state": self.shu_xiong.di_state,
                 "shu_xiong": self.shu_xiong.shu_xiong, "pattern": self.shu_xiong.pattern,
                 "evidence": self.shu_xiong.evidence,
+                # 2026-10-07 补：以下六项此前只存在于 dataclass 上，
+                # to_dict 未序列化，等于新增判定**根本没进输出管道**。
+                # （守卫生成时只查 evidence 文本，故未暴露。）
+                "matched": list(self.shu_xiong.matched),
+                "conflicts": list(self.shu_xiong.conflicts),
+                "lu_shu": [vars(h) for h in self.shu_xiong.lu_shu],
+                "xingbei": [vars(x) for x in self.shu_xiong.xingbei],
+                "ming_wu_yin_yang": list(self.shu_xiong.ming_wu_yin_yang),
+                "chun_qi_qi_ou": list(self.shu_xiong.chun_qi_qi_ou),
             } if self.shu_xiong else None,
             "yuan_qi_hit": self.yuan_qi_hit,
             "hua_gong_hit": self.hua_gong_hit,
@@ -653,6 +663,7 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int,
     from .yue_ling_shu_ge import (
         classify_shu_ge, judge_lu_shu, judge_you_yin_yang,
         judge_ming_wu_yin_yang, shu_ge_conflicts, xingbie_xiang_bei,
+        judge_chun_qi_qi_ou,
     )
 
     ev: list[str] = []
@@ -682,6 +693,18 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int,
         pattern = "孤阳自偶"
         ev.append(f"天数{tian_shu}（余{tian_yu}，奇）、地数30："
                   f"阳数自偶 → 孤阳自偶（原典 L983）")
+    elif 4 <= tian_shu <= 8:
+        # 原典 L38：「天数至弱　天数一十有五，如只得四五六七八数，此不满一策，
+        #           是谓至弱。」
+        # 判据「四五六七八」自足：策＝9（L950「论九是阳之一策」），8 不足一策；
+        # 且 L950 明确 9–24 属「不足」而「即非至弱之比」，二者互不重叠。
+        # 「天数一十有五」是与「地数三十」平行的**基线陈述**，与 L950
+        # 「天数二十五为正」有冲突，但基线不影响落点（正＝25 或正＝15
+        # 推出来都是「至弱＝天数 4–8」），故不据此拒算。基线数字本身仍待
+        # 网络第二证据，登记在 yue_ling_shu_ge.REFUSED。
+        pattern = "天数至弱"
+        ev.append(f"天数{tian_shu}（4–8）：「如只得四五六七八数，此不满一策，是谓至弱」"
+                  f"→ 天数至弱（原典 L38；策＝9）")
     elif 4 <= tian_shu <= 24 and di_shu == 30:
         # 原典 L56：「阳数偏少　天数二十有五，只得四、五、六至二十四，
         #           地数三十是也。乃阳数不足，阴数足也。此谓之有阴无阳，
@@ -790,6 +813,12 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int,
                   f"{'相利' if _ok else '相妨'}（该条利{_x.favor}、"
                   f"不利{_x.against}）——{_x.reason}")
 
+    # ── 三阳奇偶合象（L99/L714）──────────────────────────────
+    # 该条要按**节气窗口**判，须出生公历日；本函数只有 birth_month，
+    # 故此处以 birth_date="" 调用，恒返回 None 不判——真正的判定在
+    # build_guajie_from_result（有 result.input.birth_date）处另行接入。
+    _cq = judge_chun_qi_qi_ou(tian_shu, "")
+
     # ── 命无阴阳（L95）────────────────────────────────────────
     _mwy, _mwy_xiong = judge_ming_wu_yin_yang(tian_shu, di_shu, birth_month, gender)
     if gender:
@@ -865,7 +894,8 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int,
     return ShuXiongResult(tian_shu=tian_shu, di_shu=di_shu, tian_state=t_state,
                           di_state=d_state, shu_xiong=shu_xiong, pattern=pattern,
                           evidence=ev, matched=matched, conflicts=conflicts,
-                          lu_shu=_lu, xingbei=_xb, ming_wu_yin_yang=(_mwy, _mwy_xiong))
+                          lu_shu=_lu, xingbei=_xb, ming_wu_yin_yang=(_mwy, _mwy_xiong),
+                          chun_qi_qi_ou=_cq)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1179,6 +1209,7 @@ def compose_guajie(
     res.shu_xiong = sx
     ev.extend(f"  数之凶吉：{e}" for e in sx.evidence)
 
+
     # ── 元气化工（流年遇） ─────────────────────────────────────
     if yuan_qi_trigrams:
         res.yuan_qi_hit = bool(yuan_qi_trigrams)
@@ -1452,6 +1483,21 @@ def build_guajie_from_result(
             liuyue_hexagram=liuyue_hex_name, liuyue_yao=liuyue_yao_name,
             target_year=target_year,
         )
+        # ── 三阳奇偶合象（L99 / L714 平行印证）────────────────────
+        # 该条按节气窗口「冬至后至雨水前」判，**必须有出生公历日**。
+        # compose_guajie 只有 birth_month，故在此处补判——
+        # build_guajie_from_result 是全链路唯一握有 result.input.birth_date 的地方。
+        try:
+            from .yue_ling_shu_ge import judge_chun_qi_qi_ou as _jq
+            _bd = str(getattr(getattr(result, "input", None), "birth_date", "") or "")
+            _cq_note, _cq_ok = _jq(tian, _bd)
+            if gj.shu_xiong is not None:
+                gj.shu_xiong.chun_qi_qi_ou = (_cq_note, _cq_ok)
+            if _cq_ok is not None:
+                gj.evidence.append(f"  三阳奇偶合象（L99/L714）：{_cq_note}")
+        except Exception as _e:            # 该条不阻塞主链
+            gj.evidence.append(f"  三阳奇偶合象：计算跳过（{_e}）")
+
         # 流日判词（应期定位，独立查询不并入综合判词）
         if liuri_hex_name and liuri_yao_name:
             gj.liuri_hexagram = liuri_hex_name
