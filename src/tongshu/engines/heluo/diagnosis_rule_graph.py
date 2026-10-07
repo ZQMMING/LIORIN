@@ -106,10 +106,14 @@ RULE_DOMAIN_MAP: Dict[str, str] = {
 
 
 # 化工状态 → 方向映射（原典断语）
+# 2026-10-07 补 KEZHI：原典 L582「又有大象与小象化工虽相反，却又有相生者则吉，
+# **但忌克制，尤凶**」。此前 RESCUED 无条件判吉，致坎(水)克离(火)之盘误作吉断——
+# 而原典明说此为最凶一档。KEZHI 现映射为 CAUTION，不作 SUPPORTIVE。
 HUAGONG_DIRECTION: Dict[str, AssertionDirection] = {
     HuaGongState.NORMAL.value:   AssertionDirection.SUPPORTIVE,
-    HuaGongState.RESCUED.value:  AssertionDirection.SUPPORTIVE,
+    HuaGongState.RESCUED.value:  AssertionDirection.SUPPORTIVE,  # 仅限五行确实相生
     HuaGongState.REVERSE.value:  AssertionDirection.CAUTION,
+    HuaGongState.KEZHI.value:    AssertionDirection.CAUTION,     # L582「忌克制，尤凶」
     HuaGongState.UNRESOLVED.value: AssertionDirection.NEUTRAL,
 }
 

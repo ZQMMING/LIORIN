@@ -243,11 +243,26 @@ class TestHuaGongEndToEnd(unittest.TestCase):
         self.assertFalse(r.has_opposite)
 
     def test_rescued_state_detection(self):
-        """化工有反卦 → RESCUED"""
-        r = compute_huagong("乾", "离", "坎", "兑", "午")
-        self.assertEqual(r.state, HuaGongState.RESCUED)
+        """化工有反卦 → 按 L585–594 五行关系实算，不得一律判吉。
+
+        原典 L582「却又有相生者，则吉。但忌克制，尤凶。」
+        2026-10-07 两轮修：旧实现无条件判 RESCUED（下游映射为吉），
+        且反卦表用的是先天对宫（震↔巽/兑↔艮），与原典「化工相反图」
+        L585–594 的四季对宫（震↔兑）不符。两轮一并改回后，
+        四组相反两两互为克制，本轴判 KEZHI。
+        """
+        from tongshu.engines.heluo.hua_gong import OPPOSITE_TRIGRAM
+        r = compute_huagong("乾", "兑", OPPOSITE_TRIGRAM["兑"], "乾", "申")
+        self.assertEqual(r.state, HuaGongState.KEZHI)
+        self.assertEqual(r.wu_relation, "克制")
         self.assertTrue(r.has_huagong)
         self.assertTrue(r.has_opposite)
+
+    def test_kezhi_when_opposite_keeps_huagong(self):
+        """化工有反卦但五行**相克** → KEZHI（原典 L582「忌克制，尤凶」）。"""
+        r = compute_huagong("乾", "离", "坎", "兑", "午")
+        self.assertEqual(r.state, HuaGongState.KEZHI)
+        self.assertEqual(r.wu_relation, "克制")
 
     def test_reverse_state_detection(self):
         """无反卦无化工卦 → REVERSE（或 UNRESOLVED）"""

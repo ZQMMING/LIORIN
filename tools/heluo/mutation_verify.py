@@ -36,6 +36,7 @@ SUITES = {
     "xian_tian_ce_shu": ("tools/heluo/mutation_verify_xian_tian_ce_shu.py",),
     "shu_ge": ("tools/heluo/mutation_verify_shu_ge.py",),
     "jiehhou": ("tools/heluo/mutation_verify_jiehhou.py",),
+    "hua_gong": ("tools/heluo/mutation_verify_hua_gong.py",),
 }
 
 
