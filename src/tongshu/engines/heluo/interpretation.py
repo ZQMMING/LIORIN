@@ -111,6 +111,15 @@ FACTOR_WEIGHTS = {
 }
 
 # 五行修正系数
+#: ⛔ 已作废（2026-10-08 标注）。此处的系数
+#:     当令 +0.15 / 相生 +0.08 / 相克 −0.10 / 被克 −0.12 / 休囚 −0.05
+#:     与 ``hexagram_state.py`` 中**同名判为「在《河洛真数》全书写不出任何出处」
+#:     并据此作废**的那一组完全相同。此前本模块原样保留、无任何作废标注，
+#:     任何人看到「五行修正系数」五个字都会以为它是有效规则而拿去复用。
+#:     现显式标注作废并指向判定它无出处的那一处，避免二次传播。
+#:     原典确有「旺相休囚死」一类的**定性**表述（见 hexagram_state），但那是
+#:     枚举不是权重，**没有 0.15 / 0.08 这类数值**——数值系自拟。
+#:     保留本常量仅供日后接续真正依据，**不得在未补出处前投入判定**。
 ELEMENT_MODIFIERS = {
     "当令": 0.15,
     "相生": 0.08,
@@ -166,6 +175,9 @@ class RelationalInterpretationEngine:
         # 4. 识别机会和风险
         opportunity = self._identify_opportunity(weights, total_score)
         risk = self._identify_risk(weights, total_score)
+        # 登记供 _generate_recommended_action 真正消费（见该方法注释）
+        self._opportunities = [opportunity]
+        self._risks = [risk]
         
         # 5. 生成建议
         action = self._generate_recommended_action(opportunity, risk, total_score)
@@ -435,29 +447,39 @@ class RelationalInterpretationEngine:
                 classical_basis=_NO_BASIS
             )
     
+    #: 本次 compute() 已识别的机会 / 风险，供 _generate_recommended_action 取用。
+    #: 原先是纯局部变量、只被扔进一个根本不读它们的参数；改为实例属性，
+    #: 「综合机会与风险」才名实相符。
+    _opportunities: List[OpportunityFactor] = []
+    _risks: List[RiskFactor] = []
+
     def _generate_recommended_action(self, opp: OpportunityFactor, risk: RiskFactor, score: float) -> RecommendedAction:
-        """生成建议行动。"""
-        if score > 0.5:
-            return RecommendedAction(
-                primary="积极进取，把握机遇",
-                secondary=["广结善缘", "积累资源"],
-                avoid=["刚愎自用", "急躁冒进"],
-                confidence=0.82
-            )
-        elif score > 0:
-            return RecommendedAction(
-                primary="守正待时",
-                secondary=["巩固基础", "学习提升"],
-                avoid=["盲目扩张"],
-                confidence=0.75
-            )
-        else:
-            return RecommendedAction(
-                primary="韬光养晦",
-                secondary=["反思总结", "等待时机"],
-                avoid=["冒险投机"],
-                confidence=0.70
-            )
+        """生成建议行动。
+
+        ⚠ 2026-10-08 审计修（🟡10）：原先签名收下 opp / risk，函数体却**只用了
+        score**；三档的 secondary / avoid 全是硬编码常数，换任何输入都吐同一串字。
+        现让机会与风险真正参与：各自的 type 进入 secondary 与 avoid，
+        以 strength / severity 排序取前二，并用「最强机会 − 最强风险」调制置信度。
+
+        分档仍以 score 为主轴（那是本引擎唯一的综合刻度），但档内条目不再写死。
+        """
+        pool_o = self._opportunities or [opp]
+        pool_r = self._risks or [risk]
+        opp_s = sorted(pool_o, key=lambda o: -o.strength)
+        risk_s = sorted(pool_r, key=lambda r: -r.severity)
+
+        secondary = [o.type for o in opp_s[:2]] or ["巩固基础"]
+        avoid = [r.type for r in risk_s[:2]] or ["急躁冒进"]
+
+        base = 0.82 if score > 0.5 else (0.75 if score > 0 else 0.70)
+        net = opp_s[0].strength - risk_s[0].severity
+        conf = round(max(0.0, min(1.0, base + 0.05 * net)), 2)
+
+        primary = ("积极进取，把握机遇" if score > 0.5
+                   else ("守正待时" if score > 0 else "韬光养晦"))
+        return RecommendedAction(
+            primary=primary, secondary=secondary, avoid=avoid, confidence=conf
+        )
     
     def _compute_confidence(self) -> float:
         """计算置信度。"""

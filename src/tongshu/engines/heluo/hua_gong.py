@@ -93,6 +93,18 @@ def _wu_relation(elem_a: str, elem_b: str) -> str:
 # 虽未及冬至，以为化工，岂不可乎？如正月生人，坎为得局化工也。而卦内无坎，
 # 却有震，岂必拘于坎而不以震木为化工乎？若不以震为化工，则曰无化工矣。」
 # ——故此处只作取象近似，不得当作原典硬规则引用。
+#: 本轮拒算登记（新增于 2026-10-08）。
+#: 坤艮十八日**判据不全**，不落码、不猜。
+HUAGONG_REFUSED: tuple[tuple[str, str, str], ...] = (
+    ("L570「坤艮卦主四季辰戌丑未月，除正节气十二日外，各旺十八日。」",
+     "前半句（辰戌丑未月主坤艮）可落码且不冲突，但**「正节气十二日」是哪十二日，"
+     "本卷未给**——只说「除……外」而未说从哪天起算、到哪天止。月长约三十日，"
+     "十二日 + 十八日 = 三十，可见十二日与十八日互补，但互补只锁定了总量，"
+     "没锁定在月内的位置。取错了就是整月偏移十八日，无从校验。",
+     "须定案「正节气十二日」的起讫（是节气前六后六？是交节后十二日？还是别的）。"
+     "定案前坤艮一律不落码，已落码的四正卦窗口不受影响。"),
+)
+
 SEASON_BRANCH_TO_HUAGONG: dict[str, str] = {
     "亥": "坎", "子": "坎", "丑": "坎",   # 冬
     "寅": "震", "卯": "震", "辰": "震",   # 春
@@ -141,6 +153,170 @@ QIANXI_DUKONG: dict[str, str] = {
     "离": "坎", "坎": "离",
     "震": "巽", "巽": "震",
 }
+
+
+
+# ═══════════════════════════════════════════════════════════════════
+# 四正卦化工窗口（原典 L558–L567，2026-10-08 落码）
+# ═══════════════════════════════════════════════════════════════════
+#
+#   L558「坎卦自冬至十一月中以后至惊蛰终止。」
+#   L561「震卦自春分二月中以后至芒种终止。」
+#   L564「离卦自夏至五月中以后至白露终止。」
+#   L567「兑卦自秋分八月中以后至大雪终止。」
+#
+# 四条起止**全是节气**，合起来正好把 jq 0–23 切成四等段：
+#
+#     坎 [冬至0, 惊蛰5]   震 [春分6, 芒种11]
+#     离 [夏至12, 白露17] 兑 [秋分18, 大雪23]
+#
+# ══ 自校验：与 L585–L594「化工相反」表互证 ══
+#   L585「坎卦反离，主**夏至以后秋分前**。」→ jq[12,18) = 离窗口
+#   L588「离卦反坎，主**冬至以后春分前**。」→ jq[0,6)   = 坎窗口
+#   L591「兑卦反震，主**春分以后夏至前**。」→ jq[6,12)  = 震窗口
+#   L594「震卦反兑，主**秋分以后冬至前**。」→ jq[18,24) = 兑窗口
+#
+#   四条「反」窗口 = 四条「正」窗口各自**放宽到下一个节**，
+#   一一对上、无一错位。这组互证是本表最硬的证据：不是我说它对，
+#   是原典另一张独立的表在同一轴上说了同一件事。
+#
+# ⚠ 为什么不能压成月支表（2026-10-08 实测）：
+#   窗口边界与月支边界不重合。卯月=[惊蛰,清明)，而震自**春分**起，
+#   故卯月上半月属坎、下半月属震；午月、酉月同理被拦腰截断。
+#   压成月支 → 这三个月各自劈成两半，再凭空多出三段「无窗口」。
+#   那是映射丢精度造出来的洞，原典没有。
+_JQ_ORDER: tuple[str, ...] = (
+    "冬至", "小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏",
+    "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露",
+    "霜降", "立冬", "小雪", "大雪",
+)
+
+#: (化工卦, 起始 jq, 终止 jq)，闭区间。原典出场次序。
+HUAGONG_JIEQI_WINDOWS: tuple[tuple[str, int, int], ...] = (
+    ("坎", 0, 5), ("震", 6, 11), ("离", 12, 17), ("兑", 18, 23),
+)
+
+#: 化工相反窗口（L585–L594），(本卦, 相反卦, 起 jq, 止 jq 半开)。
+#: 保留供守卫与 L558–L567 表互证，不另起判定口径。
+HUAGONG_FAN_JIEQI: tuple[tuple[str, str, int, int], ...] = (
+    ("坎", "离", 12, 18), ("离", "坎", 0, 6),
+    ("兑", "震", 6, 12), ("震", "兑", 18, 24),
+)
+
+
+def huagong_by_jieqi(jq: int | None) -> str:
+    """节气索引 → 当令化工卦。越界/未知一律返回空串，**不猜**。"""
+    if jq is None or not (0 <= jq < len(_JQ_ORDER)):
+        return ""
+    for gua, lo, hi in HUAGONG_JIEQI_WINDOWS:
+        if lo <= jq <= hi:
+            return gua
+    return ""
+
+
+def huagong_by_birth_date(date_str: str) -> tuple[str, str]:
+    """出生日 → ``(当令化工卦, 取法说明)``。卦取不到时返回 ``("", 说明)``。
+
+    取不到只有两种情形，都如实说明、不静默回落：
+      * 没给日期；
+      * 缺 sxtwl 或日期不合法，节气定不出来。
+    两种情形下调用方一律回落 ``SEASON_BRANCH_TO_HUAGONG`` 近似表，
+    并把本说明原样写进 evidence。
+    """
+    if not date_str:
+        return "", "未给出生日，无法定节气窗口"
+    try:
+        from .yue_ling_shu_ge import solar_jq_index
+    except Exception as exc:                      # pragma: no cover
+        return "", "无法导入节气计算（%s）" % type(exc).__name__
+    jq = solar_jq_index(date_str)
+    if jq is None:
+        return "", "无法由出生日「%s」定出所处节气（缺 sxtwl 或日期不合法）" % date_str
+    gua = huagong_by_jieqi(jq)
+    if not gua:                                   # jq 0–23 已被四段完整切分，理论上不可达
+        return "", "节气「%s」未落入 L558–L567 任何一个窗口（按原典即无化工卦）" % _JQ_ORDER[jq]
+    return gua, "按原典 L558–L567 节气窗口：生日 %s 处「%s」→ 当令化工卦=%s" % (
+        date_str, _JQ_ORDER[jq], gua)
+
+
+def _huagong_self_check() -> None:
+    """导入即验：三件事必须同时成立，否则宁可导入失败也不要带着错表跑。"""
+    # ① 四窗口必须把 jq 0–23 **完整**切分：无缝、不重叠、不少不重。
+    covered: list[int] = []
+    for _gua, lo, hi in HUAGONG_JIEQI_WINDOWS:
+        covered.extend(range(lo, hi + 1))
+    assert sorted(covered) == list(range(len(_JQ_ORDER))), \
+        "L558–L567 四窗口未把 jq 0–23 切满：%d/%d" % (len(set(covered)), len(_JQ_ORDER))
+    # ② 与 L585–L594「化工相反」表互证：每条「反」窗口须正好覆盖一个正窗口。
+    for gua, fan, lo, hi in HUAGONG_FAN_JIEQI:
+        inside = {g for g, a, b in HUAGONG_JIEQI_WINDOWS
+                  if a >= lo and b < hi}
+        assert inside == {fan}, (
+            "L585–L594「%s反%s，主%s以后%s前」jq[%d,%d) 实际覆盖 %s，与本表对不上"
+            % (gua, fan, _JQ_ORDER[lo], _JQ_ORDER[hi % len(_JQ_ORDER)],
+               lo, hi, inside or "空"))
+        assert OPPOSITE_TRIGRAM.get(gua) == fan, \
+            "OPPOSITE_TRIGRAM 与 L585–L594 不一致：%s" % gua
+    # ③ 每卦恰有一个窗口。
+    names = [g for g, _lo, _hi in HUAGONG_JIEQI_WINDOWS]
+    assert len(set(names)) == len(names), "有卦占了两个窗口"
+    assert set(names) == set(OPPOSITE_TRIGRAM), "窗口表与相反表覆盖的卦不一致"
+
+
+
+#: ══ 待批准项：生产链尚未切到 L558–L567 节气窗口 ══
+#:
+#: :func:`huagong_by_birth_date` 已实现、已导入自校验、已有守卫，
+#: :func:`compute_huagong` 也已支持 ``birth_date`` 入参——
+#: **唯独 canonical._compute_huagong 没有把 birth_date 传下来**，
+#: 于是生产链仍落在 :data:`SEASON_BRANCH_TO_HUAGONG` 近似表上。
+#:
+#: 不是漏做，是按 AGENTS.md「禁改 Golden 期望值」「P0 批次须显式批准」停在这里。
+#:
+#: **实测差异（2026 全年逐日，脚本见 tools 目录同批提交）**
+#:
+#:   月支   近似表   L558–L567 窗口        差异
+#:   子     坎       坎                    一致
+#:   丑     坎       坎                    一致
+#:   寅     震       坎                    **整月不符**
+#:   卯     震       坎（上半月）/震（下半月） **跨窗口**
+#:   辰     震       震                    一致
+#:   巳     离       震                    **整月不符**
+#:   午     离       震（上半月）/离（下半月） **跨窗口**
+#:   未     离       离                    一致
+#:   申     兑       离                    **整月不符**
+#:   酉     兑       离（上半月）/兑（下半月） **跨窗口**
+#:   戌     兑       兑                    一致
+#:   亥     坎       兑                    **整月不符**
+#:
+#: **翻转会翻盘的两个 Golden 用例**
+#:
+#:   1. tests/heluo/test_h2_frozen_state.py::TestFrozenStateGoldenCase::test_huagong
+#:      纪晓岚 1724-05-22：月柱辛未，近似表给「离」→ 节气窗口给「震」
+#:      （L561「震卦自春分二月中以后至芒种终止」，五月正在窗口内）
+#:      → hua_gong_state 由 WEAK 变 UNRESOLVED
+#:   2. tests/heluo/test_audit_batch_20261007.py::
+#:      TestHuaGongLevelPervasive::test_weak_case_level_and_reduced_reach_frozen_state
+#:      同一生日 1724-05-22（月支巳）：WEAK 变 KEZHI
+#:
+#: 两处**都不是代码算错，是原典口径与近似口径本来就不同**，
+#: 且节气窗口那一边才是 L558–L567 的原话。故翻转方向是对的，
+#: 只是必须由人签字，不能由我顺手把 Golden 改绿。
+HUAGONG_PENDING_BRANCH_SWITCH: dict = {
+    "已落码": ["HUAGONG_JIEQI_WINDOWS", "huagong_by_jieqi",
+               "huagong_by_birth_date", "compute_huagong(birth_date=…)"],
+    "未接线": "canonical._compute_huagong 未下传 birth_date",
+    "待批准原因": "AGENTS.md：禁改 Golden 期望值；P0 批次须显式批准",
+    "受影响 Golden": [
+        "tests/heluo/test_h2_frozen_state.py::TestFrozenStateGoldenCase::test_huagong",
+        "tests/heluo/test_audit_batch_20261007.py::"
+        "TestHuaGongLevelPervasive::test_weak_case_level_and_reduced_reach_frozen_state",
+    ],
+    "解除条件": "批准后：canonical 下传 birth_date，并逐条复核上述两个用例的期望值",
+}
+
+
+_huagong_self_check()
 
 
 def _lines_to_trigram(chunk: tuple[int, ...] | list[int]) -> str:
@@ -194,12 +370,15 @@ def compute_huagong(
     birth_month_branch: str,
     year_gan: str = "",
     year_zhi: str = "",
+    birth_date: str = "",
 ) -> HuaGongResult:
     """
     计算化工状态。
 
     算法（L576 三级回退）：
-      1. 确定当令化工卦（出生月支 → 四季 → 卦）
+      1. 确定当令化工卦：
+         有出生日 → 原典 L558–L567 **节气窗口**（本轮落码）
+         无出生日 → 月支近似表 :data:`SEASON_BRANCH_TO_HUAGONG`（兜底）
       2. **正体**：先天/后天卦的上下卦中是否有该化工卦
       3. **互体**：正体不得而互体得之
       4. **纳音**：正互俱无则取纳甲纳音，**终是浅薄，福寿减半**
@@ -212,8 +391,19 @@ def compute_huagong(
     """
     evidence: list[str] = []
 
-    # Step 1: 确定当令化工卦
-    huagong_trigram = SEASON_BRANCH_TO_HUAGONG.get(birth_month_branch, "?")
+    # Step 1: 确定当令化工卦（两条取法，evidence 必须写明走了哪条）
+    # ⚠ 2026-10-08：兜底披露曾挂在 `if not _jq_note` 下——可 _jq_note 恰恰是
+    #   **取不到节气窗口时才有值**，于是走兜底反而不写「兜底」二字，
+    #   披露逻辑整个反了（守卫 test_disclosed_in_evidence_when_falling_back 逮到）。
+    #   现改为按**实际走了哪条**分支，与 _jq_note 有无无关。
+    huagong_trigram, _jq_note = huagong_by_birth_date(birth_date)
+    if huagong_trigram:
+        _huagong_basis = "节气窗口（原典 L558–L567）"
+    else:
+        huagong_trigram = SEASON_BRANCH_TO_HUAGONG.get(birth_month_branch, "?")
+        _huagong_basis = ("月支近似表（**兜底**）——" + _jq_note
+                          + "；该近似与 L558–L567 节气窗口在 寅/巳/申/亥 整月不符，"
+                            "卯/午/酉 跨窗口，结论仅供参考")
     opposite_trigram = OPPOSITE_TRIGRAM.get(huagong_trigram, "")
 
     # Step 2: L576 三级回退 —— 正体 → 互体 → 纳音
@@ -288,6 +478,7 @@ def compute_huagong(
     has_opposite = opposite_trigram in all_trigrams
 
     evidence.append(f"出生月支{birth_month_branch} → 当令化工卦={huagong_trigram}（{hg_elem}）")
+    evidence.append(f"当令化工卦取法：{_huagong_basis}")
     evidence.append(f"化工所得之层: {level}"
                     + ("，**福寿减半**" if reduced else ""))
     evidence.append(f"卦中三画卦全集: {sorted(all_trigrams)}"

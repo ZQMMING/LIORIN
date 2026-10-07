@@ -59,6 +59,8 @@ _GUAJIE_KEYS = {
     "benming", "kuozhan", "summary", "evidence",
     # 2026-10-06 接入：参评诗断（K3-447卷十·金锁银匙歌）
     "canping",
+    # 2026-10-08 接入：爻辞取象命中（原典 L741「近取诸身，远取诸物」）
+    "yao_xiang_hits",
 }
 
 

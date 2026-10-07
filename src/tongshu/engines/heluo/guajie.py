@@ -33,6 +33,7 @@ from typing import Optional
 
 from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
 from .timeline_yun import materialize_month_days
+from .yao_xiang import scan_and_evidence as _scan_yao_xiang
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _GUAJIE_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_data.json"
@@ -375,6 +376,9 @@ class GuaJieResult:
     canping: Optional[dict] = None  # 参评诗断（K3-447卷十·金锁银匙歌，2026-10-06 接入）
     summary: list[str] = field(default_factory=list)  # 综合判词（人话）
     evidence: list[str] = field(default_factory=list)
+    #: 爻辞取象命中（原典 L741「近取诸身，远取诸物，如言龙则必贵……」），
+    #: 2026-10-08 接入生产链。元素为 yao_xiang.YaoXiangHit。
+    yao_xiang_hits: list = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -455,6 +459,14 @@ class GuaJieResult:
             "canping": self.canping,
             "summary": self.summary,
             "evidence": self.evidence,
+            # 2026-10-08 补：爻辞取象命中的结构化输出（原典 L741）。
+            # 逐条给 key/verdict/条件/是否参与判定，下游不必回解析 evidence 文本。
+            "yao_xiang_hits": [
+                {"key": h.key, "verdict": h.verdict,
+                 "conditional": h.conditional, "condition": h.condition,
+                 "satisfied": h.satisfied, "participated": h.participated}
+                for h in self.yao_xiang_hits
+            ],
         }
 
 
@@ -1270,6 +1282,37 @@ def compose_guajie(
     sx = judge_shu_xiong(tian_shu, di_shu, birth_month, gender)
     res.shu_xiong = sx
     ev.extend(f"  数之凶吉：{e}" for e in sx.evidence)
+
+    # ── 爻辞取象（原典 L741，2026-10-08 接入）─────────────────────
+    # 原典「凡看爻辞依不得周易正解……文王作易，近取诸身，远取诸物，
+    #       如言龙则必贵」——不看爻辞吉凶，只看辞中出了哪个字。
+    # 本层取**辞面**（ci 爻辞 + xiang 象曰）逐层扫描，三层爻辞都在内：
+    #   流年（主断位）＞ 流月、流日（应期位，辞面较短，命中自然少）。
+    #
+    # 两个入参刻意**不填**，理由如下，不得随手补上：
+    #   ① 农历日（言月「生望前者佳」）：compose_guajie 没有日粒度输入。
+    #      拿公历日冒充农历日正是 2026-10-07 化工层修掉的那类错，不重犯。
+    #   ② 卦数凶（言鸟「如卦数凶，此走空浮薄之夫」）：本卷未给「卦数凶」判法。
+    #      judge_shu_xiong 判的是**天数/地数**之凶，与「卦数」不是同一物，
+    #      拿它代填等于凭空造一条原典没有的判据。→ 二者条件均判为不可判。
+    #
+    # 条件不可判者**照常登记断语**，但不参与判定（participated=False），
+    # 与 yao_xiang 模块的约定一致：能落的是取字↔断语，不能落的是吉凶方向。
+    for _tag, _yd in (("流年", res.liunian_yao), ("流月", res.liuyue_yao),
+                      ("流日", res.liuri_yao)):
+        if _yd is None:
+            continue
+        _text = f"{_yd.ci or ''} {_yd.xiang or ''}"
+        _hits, _evs = _scan_yao_xiang(
+            _text, birth_month=birth_month or None, day_lunar=None,
+            gender=gender, shu_gua_xiang=None)
+        if not _hits:
+            continue
+        for _h in _hits:
+            res.yao_xiang_hits.append(_h)
+        ev.append(f"  {_tag}爻辞取象（{len(_hits)} 条）："
+                  + "、".join(f"言{h.key}" for h in _hits))
+        ev.extend(f"    {e}" for e in _evs)
 
 
     # ── 元气化工（流年遇） ─────────────────────────────────────
@@ -2779,7 +2822,28 @@ def to_structured(gj: dict) -> dict:
     out["nayin_yuanqi"] = gj.get("nayin_yuanqi") or []
     out["jiehua_gong"] = gj.get("jiehua_gong") or []
     out["summary"] = gj.get("summary") or []
+    # 2026-10-08 审计修（P4）：以下三块此前**只存在于 to_dict**，
+    # 结构化视图里完全看不到——运行时实测 to_dict 有 23 键而 structured 只 6 块，
+    # benming / canping / evidence 整块丢失（evidence 数十行）。
+    # 本函数在 src/ 下零调用方，属潜伏缺陷，但「结构化视图比原始 dict 少三块」
+    # 本身就是个坑：任何接上它的人都会静默丢判词。
+    # 注意口径：透传原值，不改结构、不编造出处。
+    out["benming"] = gj.get("benming")
+    out["canping"] = gj.get("canping")
+    out["evidence"] = gj.get("evidence") or []
+    # 2026-10-08 接入：爻辞取象命中。与上面三块同理——to_dict 有、结构化
+    # 视图无，则接上本函数的人会静默丢掉 L741 整层取象。透传原值不改结构。
+    out["yao_xiang_hits"] = gj.get("yao_xiang_hits") or []
     return out
+
+
+#: 八个扩展断法中**计算失败**的痕迹；正常应为空。非空即表示该判法失败而非无结论。
+_KZ_ERRORS: list[str] = []
+
+
+def kuozhan_errors() -> list[str]:
+    """最近一次 _build_kuozhan 中失败的判法及异常（正常应为空）。"""
+    return list(_KZ_ERRORS)
 
 
 def _build_kuozhan(
@@ -2861,8 +2925,12 @@ def _build_kuozhan(
             v = fn()
             if v:
                 kz[name] = v
-        except Exception:
-            pass
+        except Exception as _e:
+            # 2026-10-08 审计修（⚪19）：旧代码此处是裸 pass——八个判法逐个 try，
+            # 任一失败即从 kz 里**彻底消失**，既不进 evidence 也不记日志，
+            # 比本文件其他块（至少写「计算跳过（{e}）」）更弱，下游只会看到
+            # 「这个判法好像本来就没结论」。现登记到 kuozhan_errors() 供调用方披露。
+            _KZ_ERRORS.append("%s: %s: %s" % (name, type(_e).__name__, _e))
     return kz
 
 

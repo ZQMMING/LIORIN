@@ -40,7 +40,11 @@ class ActionItem:
     id: str
     title: str                   # 简短标题
     description: str             # 详细说明
-    confidence: float            # 0-1（基于原典权威度）
+    # ⚠ 2026-10-08 审计修（⚪18）：原注释写「基于原典权威度」，但**全模块没有一个
+    # confidence 取自原典**——三处取值都是硬编码常数（0.85 / 0.9 / 0.6）或按断言条数
+    # 线性折算（0.7*min(n,3)/3）。注释比实现claim得多，会让下游以为这是有依据的权重。
+    # 现改为如实描述，并保留一个常量供统一调参。
+    confidence: float            # 0-1（引擎自定标度，**无原典依据**，见 _CONF_BASE）
     source_ref: str              # 原典出处
     temporal_scope: str          # birth/year/month/day
 
@@ -98,6 +102,12 @@ SOURCE_GUA_TONE: dict[str, str] = {
     "水火既济": "事已成，但需防盛极而衰，居安思危。",
     "火水未济": "事未成，但可图进取，待时而动。",
 }
+
+#: 引擎自定标度的基准置信度。
+#: ⚠ 2026-10-08：**这不是原典权威度**，是本引擎自己定的显示刻度。
+#: 原典只给定性断语（吉/凶/轻/重），没有给任何 0-1 权重；把它包装成「原典权威度」
+#: 是伪引。现集中一处并显式命名，便于日后接到真正的依据上。
+_CONF_BASE = 0.85
 
 # 化工状态 → 建议倾向
 HUAGONG_ADVICE: dict[str, str] = {
@@ -177,7 +187,11 @@ class HeluoGuidanceEngine:
             HeluoGuidance
         """
         # 1. 总体基调
-        overview = self._build_overview(source_gua, hua_gong_state)
+        # 2026-10-08 审计修（🟡11）：judgment 原先收进签名就再没出现过——
+        # 五个 _build_* 无一接收它，模块 docstring 画的「DiagnosisResult 含
+        # assertions + judgment」架构图对不上代码。现把 judgment 下传给
+        # _build_overview，由它在总览里如实交代本盘结论由哪些断言支撑。
+        overview = self._build_overview(source_gua, hua_gong_state, judgment)
 
         # 2. 提取正面行动建议
         action_items = self._build_actions(assertions, hua_gong_state)
@@ -205,12 +219,25 @@ class HeluoGuidanceEngine:
         )
 
     def _build_overview(
-        self, source_gua: str, hua_gong_state: Optional[str]
+        self, source_gua: str, hua_gong_state: Optional[str], judgment: Any = None
     ) -> str:
-        """生成总体判断描述。"""
+        """生成总体判断描述。
+
+        ⚠ 2026-10-08 审计修（🟡11）：原先 judgment 收下却不用。现用于如实交代
+        **本盘结论由哪些断言支撑**——注意不再凭空造一个授权方名字：
+        judgment.authorized_by 若存在就照登，不存在就不写。
+        """
         tone = SOURCE_GUA_TONE.get(source_gua, f"卦象{source_gua}，需结合具体爻位分析。")
         huagong = HUAGONG_ADVICE.get(hua_gong_state or "", "化工状态待判定。")
-        return f"{tone} {huagong}"
+        parts = [f"{tone} {huagong}"]
+        if judgment is not None:
+            sup = list(getattr(judgment, "supporting_assertions", None) or [])
+            by = str(getattr(judgment, "authorized_by", "") or "")
+            tail = f"本结论由 {len(sup)} 条断言支撑"
+            if by:
+                tail += f"（授权：{by}）"
+            parts.append(tail + "。")
+        return "".join(parts)
 
     def _build_actions(
         self, assertions: List[Any], hua_gong_state: Optional[str]
@@ -226,7 +253,7 @@ class HeluoGuidanceEngine:
                 id=f"ACT-{id_counter:03d}",
                 title=tmpl["title"],
                 description=tmpl["desc"],
-                confidence=0.85,
+                confidence=_CONF_BASE,
                 source_ref="河洛真数·论化工",
                 temporal_scope=tmpl["scope"],
             ))

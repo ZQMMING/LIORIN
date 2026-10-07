@@ -568,6 +568,17 @@ class HeluoCanonical:
                 return None
             month_branch = bazi[1][1]     # 月柱地支＝节气月令
             year_gan, year_zhi = bazi[0][0], bazi[0][1]
+            # ⚠ 2026-10-08（F-3）：**未**下传 birth_date，即生产链当前仍走
+            #   月支近似表 SEASON_BRANCH_TO_HUAGONG，而非已落码并自校验通过的
+            #   原典 L558–L567 节气窗口（hua_gong.huagong_by_birth_date）。
+            #   实测二者差异：寅/巳/申/亥 四个月支**整月**不同，卯/午/酉 跨窗口。
+            #   例 1724-05-22：节气窗口判「震」(L561 五月正在震窗口内)，
+            #   近似表判「离」；下游 state 由 WEAK 变 UNRESOLVED。
+            #   翻转会让 tests/heluo/test_h2_frozen_state.py::test_huagong 与
+            #   tests/heluo/test_audit_batch_20261007.py::test_weak_case_..._reach_frozen_state
+            #   两个 **Golden** 用例翻盘。AGENTS.md 禁擅改 Golden 期望值，
+            #   故此处保持原样，待显式批准后再改这两条 + 打开本行。
+            #   登记见 hua_gong.HUAGONG_PENDING_BRANCH_SWITCH。
             return compute_huagong(
                 prenatal.upper_gua, prenatal.lower_gua,
                 postnatal.upper_gua, postnatal.lower_gua,

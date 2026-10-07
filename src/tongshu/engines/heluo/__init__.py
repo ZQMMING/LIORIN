@@ -26,6 +26,22 @@ from .yuan_tang import YuanTang, find_yuantang, resolve_yuantang
 from .hexagram import HexagramStructure, analyze_hexagram, compute_ti_yong
 from .temporal import Timeline, compute_timeline
 from .hua_gong import compute_huagong, HuaGongResult, HuaGongState
+from .yuanqi_tables import (
+    DUI_GUA,
+    GANZHI_GUA_GROUPS,
+    GANZHI_TO_GUA,
+    YUANQI_FAN_TABLE,
+    YUANQI_GANZHI_TABLE_A,
+    YUANQI_GANZHI_TABLE_B,
+    ganzhi_element,
+    ganzhi_guas,
+    gua_of_ganzhi_table_a,
+    gua_of_ganzhi_table_b,
+    yuanqi_fan_ganzhi,
+    yuanqi_fan_relation,
+    yuanqi_fan_suffering,
+    yuanqi_ganzhi_conflict,
+)
 from .jiehhou import (
     SOLAR_TERMS, JIEHOU_GUA, SeasonalHexagram, QiPhase,
     get_seasonal_hexagram, get_qi_phase, get_current_jieqi_info,
@@ -71,6 +87,21 @@ __all__ = [
     "compute_huagong",
     "HuaGongResult",
     "HuaGongState",
+    # 起例卷之上·元气干支两说 + 干支纳卦表（L471–L516 / L681–L693）
+    "DUI_GUA",
+    "GANZHI_GUA_GROUPS",
+    "GANZHI_TO_GUA",
+    "YUANQI_FAN_TABLE",
+    "YUANQI_GANZHI_TABLE_A",
+    "YUANQI_GANZHI_TABLE_B",
+    "ganzhi_element",
+    "ganzhi_guas",
+    "gua_of_ganzhi_table_a",
+    "gua_of_ganzhi_table_b",
+    "yuanqi_fan_ganzhi",
+    "yuanqi_fan_relation",
+    "yuanqi_fan_suffering",
+    "yuanqi_ganzhi_conflict",
     "SOLAR_TERMS",
     "JIEHOU_GUA",
     "SeasonalHexagram",
