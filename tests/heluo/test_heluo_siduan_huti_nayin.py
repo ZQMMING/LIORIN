@@ -20,6 +20,7 @@ from tongshu.engines.heluo.guajie import (
     judge_si_duan, judge_jiehua_gong, judge_nayin_huti,
     compose_guajie, hexagram_to_lines,
 )
+from tongshu.engines.heluo.yuan_tang import find_yuantang, HOUR_NAMES
 
 
 class TestComputeHuti(unittest.TestCase):
@@ -164,11 +165,24 @@ class TestSiDuan(unittest.TestCase):
         self.assertTrue(any("十死八九" in x for x in at_five), at_five)
 
     def test_kanli(self):
-        """连三爻不吉 → 多坎壈（主语是大运所历之爻，非流年）"""
-        bad3 = [{"hexagram": "剥", "yao": "初六", "ci": "凶", "buye": "", "suiyun": ""}] * 3
+        """连三爻不吉 → 多坎壈（主语是大运所历之爻，非流年）
+
+        原典「若**行后天**，连三爻不吉」——主语是后天段，故三爻须全带
+        phase="后天" 才成立（2026-10-06 补门控，见 test_kanli_not_in_prenatal）。
+        """
+        bad3 = [{"hexagram": "剥", "yao": "初六", "phase": "后天",
+                 "ci": "凶", "buye": "", "suiyun": ""}] * 3
         w = judge_si_duan(prenatal_name="比", postnatal_name="解",
                           dayun_line_index=2, recent_dayun_yao=bad3)
         self.assertTrue(any("坎壈" in x for x in w), w)
+
+    def test_kanli_not_in_prenatal(self):
+        """先天段不得触发「连三爻不吉」——原典限定「行后天」。"""
+        bad3 = [{"hexagram": "渐", "yao": "初六", "phase": "先天",
+                 "ci": "凶", "buye": "", "suiyun": ""}] * 3
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=2, recent_dayun_yao=bad3)
+        self.assertFalse(any("坎壈" in x for x in w), w)
 
     def test_kanli_not_triggered_by_liunian_only(self):
         """只给近三年流年不得触发「连三爻」——原典主语是大运爻。"""
@@ -197,6 +211,7 @@ class TestSiDuan(unittest.TestCase):
                           tian_yuan_fan="坤", di_yuan_fan="震", shu_xiong=True,
                           recent_years=bad,
                           recent_dayun_yao=[{"hexagram": "剥", "yao": "初六",
+                                              "phase": "后天",
                                               "ci": "凶", "buye": "", "suiyun": ""}] * 3)
         self.assertTrue(w)
         for line in w:
@@ -208,6 +223,81 @@ class TestSiDuan(unittest.TestCase):
         """君爻条须带出原典内部的异说（行到四爻方可断生死）。"""
         w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
         self.assertTrue(any("行到四爻，方可断人生死" in x for x in w), w)
+
+
+class TestSiDuanJunyaoNotShangji(unittest.TestCase):
+    """君爻（五爻）与上极（上爻）两级分明，不得合并。
+
+    原典「纵到君爻，亦不许行至上极一爻」——君爻在前、上极在后，是先后
+    两级。旧实现 dayun_line_index >= 4 把上爻并入君爻条，导致行上爻时
+    误报「行至君爻」。2026-10-06 修为 == 4。
+    """
+
+    def test_junyao_only_at_five(self):
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
+        self.assertTrue(any("君爻" in x for x in w), w)
+
+    def test_shangji_does_not_report_junyao(self):
+        """行上爻（li=5）只出上极条，不得并报君爻条。
+
+        注意：上极条引文含「纵到**君爻**，亦不许行至上极一爻」——「君爻」
+        二字属原句内容，不是误报君爻。故按「触发」段判定，不做全文匹配。
+        """
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=5)
+        self.assertTrue(any("上极" in x for x in w), w)
+        # 君爻条的触发段写「行至五爻」，上极条触发段写「行至上爻」——
+        # 上爻时不应出现「行至五爻」这一君爻专属触发语。
+        self.assertFalse(any("触发：后天运程行至五爻" in x for x in w), w)
+
+
+class TestYuantangPureGuaChongshu(unittest.TestCase):
+    """乾坤纯卦元堂「重数」锚点（起例卷之上，四条明文）
+
+    原典：
+      男得乾：自下而上，子卯二时皆在初爻，午酉二时皆在三爻
+      女得乾：自上而下，子卯二时皆在上爻，午酉二时皆在三爻
+      女得坤：自下而上，子卯二时皆在初爻，午酉二时皆在四爻
+      男得坤：自上而下，子卯二时皆在上爻，午酉二时皆在三爻
+
+    「重数」＝同一爻被两个时辰各数一次，故子卯必须同位、午酉必须同位。
+    旧实现是 hour_idx % 6 线性遍历，十二时各占一爻，**一个重数点都没有**，
+    四种组合的子卯午酉四时全部落错位。
+    """
+
+    # (标签, 六爻, 性别, 子卯应落位, 午酉应落位)
+    CASES = [
+        ('男乾', [1] * 6, 'male', 0, 2),
+        ('女乾', [1] * 6, 'female', 5, 2),
+        ('女坤', [-1] * 6, 'female', 0, 3),
+        ('男坤', [-1] * 6, 'male', 5, 2),
+    ]
+
+    def _idx(self, lines, gender, hour):
+        y = find_yuantang(six_lines=lines, birth_hour=hour, gender=gender,
+                          xiantian_name='乾', solar_phase='winter')
+        return y.yuantang_index
+
+    def test_anchor_zimao(self):
+        """子卯二时同位（重数）"""
+        for label, lines, gender, want, _ in self.CASES:
+            zi, mao = self._idx(lines, gender, '子'), self._idx(lines, gender, '卯')
+            self.assertEqual(zi, want, f'{label} 子时应落 index {want}，实得 {zi}')
+            self.assertEqual(mao, want, f'{label} 卯时应落 index {want}，实得 {mao}')
+
+    def test_anchor_wuyou(self):
+        """午酉二时同位（重数）"""
+        for label, lines, gender, _, want in self.CASES:
+            wu, you = self._idx(lines, gender, '午'), self._idx(lines, gender, '酉')
+            self.assertEqual(wu, want, f'{label} 午时应落 index {want}，实得 {wu}')
+            self.assertEqual(you, want, f'{label} 酉时应落 index {want}，实得 {you}')
+
+    def test_pure_gua_all_ten_two_hours_defined(self):
+        """十二时辰都必须有确定落点，不得因未取证而抛错或返 None。"""
+        for label, lines, gender, _, _ in self.CASES:
+            for h in HOUR_NAMES:
+                v = self._idx(lines, gender, h)
+                self.assertIsInstance(v, int, f'{label} {h}时落点非整数')
+                self.assertIn(v, range(6), f'{label} {h}时落点越界：{v}')
 
 
 class TestJiehuaGong(unittest.TestCase):
