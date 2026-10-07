@@ -301,38 +301,37 @@ from tongshu.engines.heluo.jiehhou import (
     get_qi_phase, get_current_jieqi_info, SIZHENG_GUA, BI_GUA,
 )
 
-# 原典案例：冬至→颐六四动→复
+# 原典 L1492：节卦坎初六起冬至，每卦总管九十日，每一爻各直十五日
+# （旧本此处引「冬至一索得中男，颐六四爻动，为地雷复卦」，
+#   经原著全库检索零命中，2026-10-07 订正为原典节卦口径）
 info = get_seasonal_hexagram(0)
-check("冬至主卦=颐", info.main_gua, "山雷颐",
-      "原典：冬至一索得中男，颐六四爻动，为地雷复卦")
-check("冬至动爻=4", info.moving_line, 4,
-      "原典：颐六四动（idx=4，自下而上第4爻）")
-check("冬至结果卦=复", info.result_gua, "地雷复",
-      "原典：颐六四动→复")
+check("冬至节卦=坎", info.main_gua, "坎", "原典：节卦坎初六起冬至")
+check("冬至爻位=0", info.moving_line, 0, "原典：坎初六，自下而上第一爻")
+check("冬至爻名=初六", info.result_gua, "初六", "原典：坎初六")
 
-# 立春→泰三动→解
+# 立春：坎六四（原典「六四立春」）
 info = get_seasonal_hexagram(3)
-check("立春主卦=泰", info.main_gua, "地天泰", "卦气歌：渐泰发")
-check("立春动爻=3", info.moving_line, 3, "原典：泰六三动→解")
-check("立春结果卦=解", info.result_gua, "雷水解", "原典：泰六三动→解")
+check("立春节卦=坎", info.main_gua, "坎", "原典：坎卦六四值立春")
+check("立春爻位=3", info.moving_line, 3, "原典：坎六四，自下而上第四爻")
+check("立春爻名=六四", info.result_gua, "六四", "原典：六四立春")
 
-# 夏至→比四动→剥
+# 夏至：离初九（原典「离初九起夏至」）
 info = get_seasonal_hexagram(12)
-check("夏至主卦=比", info.main_gua, "水地比", "卦气歌：师托离大壮列")
-check("夏至动爻=4", info.moving_line, 4, "原典：比六四动→剥")
-check("夏至结果卦=剥", info.result_gua, "山地剥", "原典：比六四动→山地剥")
+check("夏至节卦=离", info.main_gua, "离", "原典：离初九起夏至")
+check("夏至爻位=0", info.moving_line, 0, "原典：离初九")
+check("夏至爻名=初九", info.result_gua, "初九", "原典：离初九起夏至")
 
-# 秋分→丰四动→遁
+# 秋分：兑初九（原典「兑初九起秋分」）
 info = get_seasonal_hexagram(18)
-check("秋分主卦=丰", info.main_gua, "雷火丰", None)
-check("秋分动爻=4", info.moving_line, 4, None)
-check("秋分结果卦=遁", info.result_gua, "天山遁", None)
+check("秋分节卦=兑", info.main_gua, "兑", "原典：兑初九起秋分")
+check("秋分爻位=0", info.moving_line, 0, "原典：兑初九")
+check("秋分爻名=初九", info.result_gua, "初九", "原典：兑初九起秋分")
 
-# 春分→夬二动→损
+# 春分：震初九（原典「震初九起春分」）
 info = get_seasonal_hexagram(6)
-check("春分主卦=夬", info.main_gua, "泽天夬", None)
-check("春分动爻=2", info.moving_line, 2, None)
-check("春分结果卦=损", info.result_gua, "山泽损", None)
+check("春分节卦=震", info.main_gua, "震", "原典：震初九起春分")
+check("春分爻位=0", info.moving_line, 0, "原典：震初九")
+check("春分爻名=初九", info.result_gua, "初九", "原典：震初九起春分")
 
 # 24节气名称一致
 all_ok = all(get_seasonal_hexagram(i).jq_name == SOLAR_TERMS[i] for i in range(24))

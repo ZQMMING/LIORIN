@@ -176,13 +176,18 @@ class TestEndToEndSeasonalHexagram(unittest.TestCase):
         self.assertEqual(r.seasonal_hexagram["main_gua"], direct.main_gua)
 
     def test_winter_solstice_hexiagram_matches_classic(self):
-        """原典：冬至「一索得中男，颐六四爻动，为地雷复卦」。"""
+        """原典 L1492：「节卦坎初六起冬至……每卦总管九十日，
+        自下而上，每一爻各直十五日。」
+
+        旧本守卫引的「冬至一索得中男，颐六四爻动，为地雷复卦」经原著
+        全库检索**零命中**，不是《河洛真数》原句，已于 2026-10-07 订正。
+        """
         r = self._calc("1984-12-25")     # 1984 冬至为 12-22，此日仍属冬至
         sh = r.seasonal_hexagram
         self.assertEqual(sh["jq_name"], "冬至")
-        self.assertEqual(sh["main_gua"], "山雷颐")
-        self.assertEqual(sh["result_gua"], "地雷复")
-        self.assertEqual(sh["moving_line"], 4)     # 六四
+        self.assertEqual(sh["main_gua"], "坎")
+        self.assertEqual(sh["result_gua"], "初六")
+        self.assertEqual(sh["moving_line"], 0)
 
 
 class TestCacheIsBounded(unittest.TestCase):

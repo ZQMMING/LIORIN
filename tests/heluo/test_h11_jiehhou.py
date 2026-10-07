@@ -52,32 +52,40 @@ class TestSeasonalHexagram(unittest.TestCase):
             self.assertIn(info.main_gua, JIEHOU_GUA_NAME.values())
 
     def test_dongzhi_yi_fu(self):
-        """冬至：颐六四动→复（原典）"""
+        """冬至：坎初六（原典 L1492「节卦坎初六起冬至」）"""
         info = get_seasonal_hexagram(0)
         self.assertEqual(info.jq_name, "冬至")
-        self.assertEqual(info.main_gua, "山雷颐")
-        self.assertEqual(info.moving_line, 4)
-        self.assertEqual(info.result_gua, "地雷复")
+        self.assertEqual(info.main_gua, "坎")
+        self.assertEqual(info.moving_line, 0)
+        self.assertEqual(info.result_gua, "初六")
 
     def test_lichun_jie(self):
-        """立春：泰三动→解（原典）"""
+        """立春：坎六四（原典「六四立春」，坎卦第四爻）"""
         info = get_seasonal_hexagram(3)
-        self.assertEqual(info.result_gua, "雷水解")
+        self.assertEqual(info.main_gua, "坎")
+        self.assertEqual(info.moving_line, 3)
+        self.assertEqual(info.result_gua, "六四")
 
     def test_chunfen_duogua(self):
-        """春分：夬二动→损"""
+        """春分：震初九（原典「震初九起春分」）"""
         info = get_seasonal_hexagram(6)
-        self.assertEqual(info.result_gua, "山泽损")
+        self.assertEqual(info.main_gua, "震")
+        self.assertEqual(info.moving_line, 0)
+        self.assertEqual(info.result_gua, "初九")
 
     def test_xiazhi_shi_pou(self):
-        """夏至：师五动→剥"""
+        """夏至：离初九（原典「离初九起夏至」）"""
         info = get_seasonal_hexagram(12)
-        self.assertEqual(info.result_gua, "山地剥")
+        self.assertEqual(info.main_gua, "离")
+        self.assertEqual(info.moving_line, 0)
+        self.assertEqual(info.result_gua, "初九")
 
     def test_qiufen_dun(self):
-        """秋分：丰四动→遁"""
+        """秋分：兑初九（原典「兑初九起秋分」）"""
         info = get_seasonal_hexagram(18)
-        self.assertEqual(info.result_gua, "天山遁")
+        self.assertEqual(info.main_gua, "兑")
+        self.assertEqual(info.moving_line, 0)
+        self.assertEqual(info.result_gua, "初九")
 
     def test_invalid_index_raises(self):
         """越界应抛出 ValueError"""

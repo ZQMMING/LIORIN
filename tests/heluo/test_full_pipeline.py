@@ -273,11 +273,12 @@ class TestJiehhouEndToEnd(unittest.TestCase):
             self.assertIn(info.moving_line, range(6))
 
     def test_dongzhi_yi_fu(self):
+        """原典 L1492：节卦坎初六起冬至。"""
         info = get_seasonal_hexagram(0)
         self.assertEqual(info.jq_name, "冬至")
-        self.assertEqual(info.main_gua, "山雷颐")
-        self.assertEqual(info.result_gua, "地雷复")
-        self.assertEqual(info.moving_line, 4)
+        self.assertEqual(info.main_gua, "坎")
+        self.assertEqual(info.result_gua, "初六")
+        self.assertEqual(info.moving_line, 0)
 
     def test_invalid_index_raises(self):
         with self.assertRaises(ValueError):

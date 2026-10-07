@@ -35,6 +35,7 @@ ROOT = Path(__file__).resolve().parents[2]
 SUITES = {
     "xian_tian_ce_shu": ("tools/heluo/mutation_verify_xian_tian_ce_shu.py",),
     "shu_ge": ("tools/heluo/mutation_verify_shu_ge.py",),
+    "jiehhou": ("tools/heluo/mutation_verify_jiehhou.py",),
 }
 
 
