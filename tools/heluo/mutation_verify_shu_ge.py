@@ -27,8 +27,10 @@ GJ = ROOT / "src" / "tongshu" / "engines" / "heluo" / "guajie.py"
 #: test_refusal_corrections_round2.py 里锁着「天数至弱」「三阳奇偶合象」
 #: 等本轮新实现；只跑第一个文件时，那八条变异会「存活」，
 #: 看起来像守卫失效，实则是套件配置漏了文件。
+#: 2026-10-07 续挂 test_heluo_siduan_huti_nayin.py（死断四法的后天门控）。
 TEST = ("tests/heluo/test_yue_ling_shu_ge_vs_original.py",
-        "tests/heluo/test_refusal_corrections_round2.py")
+        "tests/heluo/test_refusal_corrections_round2.py",
+        "tests/heluo/test_heluo_siduan_huti_nayin.py")
 
 MUTATIONS = [
     (GE, "以强伏弱漏掉地数非矩形判据（退化为全命中）",
@@ -123,6 +125,16 @@ MUTATIONS = [
     (GJ, "compose_guajie 不再把性别传给 build_guajie",
      "year_ganzhi=year_ganzhi, gender=_gender,",
      "year_ganzhi=year_ganzhi,"),
+    # ── 死断四法的后天门控（2026-10-07）──
+    (GJ, "死断四法去掉后天门控（先天段上爻又误触上极条）",
+     '    is_hou_tian = (dayun_phase == "后天")',
+     "    is_hou_tian = True"),
+    (GJ, "_collect_si_duan 把当前段 phase 写死成后天（端到端失效）",
+     '                dayun_phase = de.get("phase", "") or ""',
+     '                dayun_phase = "后天"'),
+    (GJ, "dayun_phase 形参默认值偷偷给成后天（漏传即按后天立断）",
+     '    dayun_phase: str = "",                # 当前大运段 先天/后天（死断四法限定用）',
+     '    dayun_phase: str = "后天",             # 当前大运段 先天/后天（死断四法限定用）'),
 ]
 
 

@@ -86,7 +86,8 @@ class TestSiDuan(unittest.TestCase):
 
     def test_junyao_death(self):
         """后天行至君爻（五爻）→ 原典立断"""
-        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=4, dayun_phase="后天")
         self.assertTrue(any("君爻" in x for x in w), w)
 
     def test_junyao_keeps_yinzhi_both_branches(self):
@@ -96,7 +97,8 @@ class TestSiDuan(unittest.TestCase):
         阴骘＝暗中积德（出《书·洪范》「惟天阴骘下民」），非生辰可推，
         故引擎不得替用户预设其有无。
         """
-        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=4, dayun_phase="后天")
         joined = "\n".join(w)
         self.assertIn("无阴骘者", joined)
         self.assertIn("有阴骘者", joined)
@@ -104,7 +106,8 @@ class TestSiDuan(unittest.TestCase):
 
     def test_shangji(self):
         """上极一爻 → 原典于上极所列后果"""
-        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=5)
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=5, dayun_phase="后天")
         self.assertTrue(any("上极" in x for x in w), w)
 
     def test_shangji_keeps_full_consequences(self):
@@ -113,13 +116,20 @@ class TestSiDuan(unittest.TestCase):
         原典另列「主大变之祸殃…或生异疾，或殃及子孙，或反本复始之失」，
         且紧接着说「有过此上极之爻，当为超凡越世之士」。
         """
-        joined = "\n".join(judge_si_duan(prenatal_name="比", postnatal_name="解",
-                                        dayun_line_index=5))
+        joined = "\n".join(judge_si_duan(
+            prenatal_name="比", postnatal_name="解",
+            dayun_line_index=5, dayun_phase="后天"))
         for kw in ("祸殃", "异疾", "殃及子孙", "反本复始", "超凡越世"):
             self.assertIn(kw, joined, f"上爻断语漏了「{kw}」")
 
     def test_three_years_bad_plus_chongfan(self):
-        """流年连三年不吉+数凶+重反支干元气 → 死断"""
+        """流年连三年不吉+数凶+重反支干元气 → 死断
+
+        本条**刻意不传 dayun_phase**：原典该句另起「若」字新分句、
+        主语是流年（流年不分先后天段），与①②③④的大运爻位口径不同。
+        门控与否原典未明，两存待考——此处锁死「不门控」这一侧，
+        改判须同步改本守卫，不得静默变更。
+        """
         bad3 = [
             {"year": 2015, "hexagram": "剥", "ci": "剥床以足，蔑贞凶", "buye": "", "suiyun": ""},
             {"year": 2016, "hexagram": "否", "ci": "倾否，先否后喜。凶", "buye": "", "suiyun": ""},
@@ -136,7 +146,7 @@ class TestSiDuan(unittest.TestCase):
         原典该句系「无阴骘」分支的附加条件，故须 dayun_line_index>=4。
         """
         w = judge_si_duan(prenatal_name="泰", postnatal_name="大畜",
-                          dayun_line_index=4,
+                          dayun_line_index=4, dayun_phase="后天",
                           recent_years=[{"year": 2020, "hexagram": "否",
                                          "ci": "否之匪人，不利君子贞。凶", "buye": "", "suiyun": ""}])
         self.assertTrue(any("定死" in x for x in w), w)
@@ -144,7 +154,7 @@ class TestSiDuan(unittest.TestCase):
     def test_fandui_requires_junyao(self):
         """未入君爻时不作「定死无疑」——原典该句是君爻分支的附加条件。"""
         w = judge_si_duan(prenatal_name="泰", postnatal_name="大畜",
-                          dayun_line_index=2,
+                          dayun_line_index=2, dayun_phase="后天",
                           recent_years=[{"year": 2020, "hexagram": "否",
                                          "ci": "否之匪人，不利君子贞。凶", "buye": "", "suiyun": ""}])
         self.assertFalse(any("定死" in x for x in w), w)
@@ -158,10 +168,12 @@ class TestSiDuan(unittest.TestCase):
         bad = [{"year": 2020, "hexagram": "否",
                 "ci": "否之匪人，不利君子贞。凶", "buye": "", "suiyun": ""}]
         at_four = judge_si_duan(prenatal_name="比", postnatal_name="解",
-                                dayun_line_index=3, recent_years=bad)
+                                dayun_line_index=3, dayun_phase="后天",
+                                recent_years=bad)
         self.assertFalse(any("十死八九" in x for x in at_four), at_four)
         at_five = judge_si_duan(prenatal_name="比", postnatal_name="解",
-                                dayun_line_index=4, recent_years=bad)
+                                dayun_line_index=4, dayun_phase="后天",
+                                recent_years=bad)
         self.assertTrue(any("十死八九" in x for x in at_five), at_five)
 
     def test_kanli(self):
@@ -196,7 +208,8 @@ class TestSiDuan(unittest.TestCase):
         good = [{"year": 2020, "hexagram": "井", "ci": "井渫不食，为我心恻",
                  "buye": "", "suiyun": "岁运逢之，得贵人助"}]
         w = judge_si_duan(prenatal_name="比", postnatal_name="解",
-                          dayun_line_index=1, recent_years=good)
+                          dayun_line_index=1, dayun_phase="后天",
+                          recent_years=good)
         self.assertEqual(w, [])
 
     def test_every_line_has_four_segments(self):
@@ -207,7 +220,7 @@ class TestSiDuan(unittest.TestCase):
         """
         bad = [{"year": 2015, "hexagram": "剥", "ci": "凶", "buye": "", "suiyun": ""}] * 3
         w = judge_si_duan(prenatal_name="比", postnatal_name="解",
-                          dayun_line_index=5,
+                          dayun_line_index=5, dayun_phase="后天",
                           tian_yuan_fan="坤", di_yuan_fan="震", shu_xiong=True,
                           recent_years=bad,
                           recent_dayun_yao=[{"hexagram": "剥", "yao": "初六",
@@ -221,7 +234,8 @@ class TestSiDuan(unittest.TestCase):
 
     def test_alt_school_recorded_on_junyao(self):
         """君爻条须带出原典内部的异说（行到四爻方可断生死）。"""
-        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=4, dayun_phase="后天")
         self.assertTrue(any("行到四爻，方可断人生死" in x for x in w), w)
 
 
@@ -234,7 +248,8 @@ class TestSiDuanJunyaoNotShangji(unittest.TestCase):
     """
 
     def test_junyao_only_at_five(self):
-        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=4, dayun_phase="后天")
         self.assertTrue(any("君爻" in x for x in w), w)
 
     def test_shangji_does_not_report_junyao(self):
@@ -243,11 +258,125 @@ class TestSiDuanJunyaoNotShangji(unittest.TestCase):
         注意：上极条引文含「纵到**君爻**，亦不许行至上极一爻」——「君爻」
         二字属原句内容，不是误报君爻。故按「触发」段判定，不做全文匹配。
         """
-        w = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=5)
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=5, dayun_phase="后天")
         self.assertTrue(any("上极" in x for x in w), w)
         # 君爻条的触发段写「行至五爻」，上极条触发段写「行至上爻」——
         # 上爻时不应出现「行至五爻」这一君爻专属触发语。
         self.assertFalse(any("触发：后天运程行至五爻" in x for x in w), w)
+
+
+class TestSiDuanHouTianOnly(unittest.TestCase):
+    """死断四法（君爻/过四爻/小象大象反对/上极）原典**只限后天段**。
+
+    原典三处独立明证：
+      L1552「如**后天**之气数行至君爻之位，此为数足，到此必死……
+             纵到君爻，亦不许行至上极一爻，寿必不久」
+      L1555「若**行后天**，连三爻不吉，必多坎壈」
+      L1567「此数不许行到**后天**五爻，行到四爻，方可断人生死」
+    且全库检索「先天之气数」零命中——原典无先天死断一支。
+
+    2026-10-07 修：_collect_si_duan 取 dayun_line_index 时只按虚岁命中段、
+    不辨 phase，致**先天段行至上爻误触上极条**，而该条触发语写死
+    「后天运程行至上爻」——标签与事实相反。本类锁死该边界。
+    """
+
+    def test_xiantian_five_no_shangji(self):
+        """先天段行上爻（li=5）不得出上极条。"""
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=5, dayun_phase="先天")
+        self.assertFalse(any("上极" in x for x in w), w)
+
+    def test_xiantian_four_no_junyao(self):
+        """先天段行君爻（li=4）不得出君爻条。"""
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=4, dayun_phase="先天")
+        self.assertFalse(any("君爻" in x for x in w), w)
+
+    def test_xiantian_four_no_shishiba(self):
+        """先天段行君爻不得出「过了第四爻，十死八九」。"""
+        bad = [{"year": 2020, "hexagram": "否",
+                "ci": "否之匪人，不利君子贞。凶", "buye": "", "suiyun": ""}]
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=4, dayun_phase="先天", recent_years=bad)
+        self.assertFalse(any("十死八九" in x for x in w), w)
+
+    def test_xiantian_four_no_dingsi(self):
+        """先天段行君爻不得出「小象大象反对，定死无疑」。"""
+        w = judge_si_duan(prenatal_name="泰", postnatal_name="大畜",
+                          dayun_line_index=4, dayun_phase="先天",
+                          recent_years=[{"year": 2020, "hexagram": "否",
+                                         "ci": "否之匪人，不利君子贞。凶",
+                                         "buye": "", "suiyun": ""}])
+        self.assertFalse(any("定死" in x for x in w), w)
+
+    def test_missing_phase_is_silent_not_houtian(self):
+        """漏传 dayun_phase（默认空串）不得默认按后天立断。
+
+        宁可沉默，也不得替原典补一条它没有的先天死断。
+        """
+        w4 = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=4)
+        self.assertFalse(any("君爻" in x for x in w4), w4)
+        w5 = judge_si_duan(prenatal_name="比", postnatal_name="解", dayun_line_index=5)
+        self.assertFalse(any("上极" in x for x in w5), w5)
+
+    def test_houtian_still_fires(self):
+        """阳性对照：后天段 li=5 仍须出上极条（门控不得写死）。"""
+        w = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                          dayun_line_index=5, dayun_phase="后天")
+        self.assertTrue(any("上极" in x for x in w), w)
+        w4 = judge_si_duan(prenatal_name="比", postnatal_name="解",
+                           dayun_line_index=4, dayun_phase="后天")
+        self.assertTrue(any("君爻" in x for x in w4), w4)
+
+
+class TestSiDuanPhaseWiringEndToEnd(unittest.TestCase):
+    """端到端：案例 A（仓库既有基线案例）虚岁44 落先天 37-45 上爻，
+    不得出上极死断条，且引擎须确实把 phase 传到底。
+
+    这是本次修复的**原始触发场景**——case_demo 的案例 A
+    （1983-11-03 午时男，2026 流年虚岁44）正是靠它暴露出的标签反相。
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        import sxtwl
+        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from tongshu.engines.heluo.guajie import build_guajie_from_result
+        gan = "甲乙丙丁戊己庚辛壬癸"
+        zhi = "子丑寅卯辰巳午未申酉戌亥"
+        day = sxtwl.fromSolar(1983, 11, 3)
+        bz = [(gan[g.tg], zhi[g.dz]) for g in
+              (day.getYearGZ(), day.getMonthGZ(), day.getDayGZ(), day.getHourGZ(12))]
+        r = HeluoCanonical().calculate(
+            bazi=bz, gender="male", birth_hour="午", era="zhong",
+            birth_year=1983, birth_date="1983-11-03")
+        cls.bz = bz
+        cls.dayun = (r.timeline.qi_phase or {}).get("dayun") or []
+        cls.gj = build_guajie_from_result(
+            r, bazi=bz, target_year=2026, target_month=7, target_day=5)
+
+    def test_case_a_is_in_prenatal_shangji(self):
+        """先确认本守卫的前提本身成立：虚岁44 确在先天段上爻。"""
+        seg = [d for d in self.dayun
+               if d.get("age_start") and d.get("age_end")
+               and d["age_start"] <= 44 <= d["age_end"]]
+        self.assertEqual(len(seg), 1, self.dayun)
+        self.assertEqual(seg[0]["phase"], "先天")
+        self.assertEqual(seg[0]["line_index"], 5)
+
+    def test_case_a_no_shangji_si_duan(self):
+        """案例 A 不得出上极/君爻死断条。"""
+        joined = "\n".join(self.gj.get("si_duan") or [])
+        self.assertFalse(any("上极" in x for x in (self.gj.get("si_duan") or [])), joined)
+        self.assertFalse(any("触发：后天运程行至五爻" in x
+                             for x in (self.gj.get("si_duan") or [])), joined)
+
+    def test_case_a_phase_key_present_in_dayun(self):
+        """qi_phase.dayun 必须带 phase，否则门控无从判起。"""
+        for d in self.dayun:
+            self.assertIn("phase", d, d)
+            self.assertIn(d["phase"], ("先天", "后天"), d)
 
 
 class TestYuantangPureGuaZhengwen(unittest.TestCase):

@@ -973,6 +973,7 @@ def judge_si_duan(
     di_yuan_fan: str = "",          # 地元反卦（年支宫位之错卦）
     shu_xiong: bool = False,        # 数凶
     dayun_line_index: int | None = None,      # 当前大运行至爻位（0初~5上）
+    dayun_phase: str = "",                # 当前大运段 先天/后天（死断四法限定用）
     recent_years: list[dict] | None = None,   # 近3年流年判词 [{year, hexagram, yao, ci, buye, suiyun}]
     recent_dayun_yao: list[dict] | None = None,  # 已行大运爻判词（含当前）[{hexagram, yao, ci, buye, suiyun}]
 ) -> list[str]:
@@ -1010,6 +1011,18 @@ def judge_si_duan(
     ⑤ **上爻后果原先只引半句**。原文于上极所列后果为「主大变之祸殃，凶暴之挠，
        或生异疾，或殃及子孙，或反本复始之失」，且紧接着说「有过此上极之爻，
        当为超凡越世之士」。旧实现只引「寿必不久」一句，把两头全丢了。
+    ⑦ **四法（①君爻②过四爻③小象大象反对④上极）原典全部限定在**后天段**。
+       原文三处独立明证：L1552「如**后天**之气数行至君爻之位」
+       「纵到君爻，亦不许行至上极一爻」、L1555「若**行后天**，连三爻不吉」、
+       L1567「此数不许行到**后天**五爻，行到四爻，方可断人生死」。
+       且全库检索「先天之气数」**零命中**——原典根本没有先天死断一支。
+       旧实现取 dayun_line_index 只按虚岁命中段、不辨 phase，
+       致先天段行至上爻（li=5）误触上极条，而该条触发语写死
+       「后天运程行至上爻」——标签与事实相反。2026-10-07 补 phase 门控。
+       形参 dayun_phase 默认空串而非「后天」：漏传时不触发，
+       宁可沉默也不替原典补一条它没有的先天死断。
+       **⑥流年三连条未加门控**：原典该句另起「若」字新分句、主语是流年
+       （流年不分先后天段），与①②③④的大运爻位口径不同，两存待考。
     ⑥ **原典自相矛盾，须两说并存**。「僧人多极后天」条明载：「或谓康节曰，
        此数不许行到后天五爻，行到四爻，方可断人生死，今有不满二十而死者，
        亦有八九十而死者，祸福安在？」——一处说五爻即死、一处说四爻才断，
@@ -1021,11 +1034,14 @@ def judge_si_duan(
     cur_buji = bool(cur_yao) and _yao_buji(
         cur_yao.get("ci", ""), cur_yao.get("buye", ""), cur_yao.get("suiyun", ""))
 
+    # 2026-10-07 修：死断四法（①②③④）原典限定后天段，详见 docstring ⑦。
+    is_hou_tian = (dayun_phase == "后天")
+
     # ── ① 君爻（五爻）：数足，原典死断以「无阴骘」为前提 ────────────
     # 2026-10-06 修：原判 `>= 4` 把上爻（li=5）也并入君爻条。
     # 原文「纵到君爻，亦不许行至上极一爻」——君爻=五爻、上极=上爻，两级分明；
     # li=5 只走上极条（④），不报君爻。
-    if dayun_line_index == 4:
+    if is_hou_tian and dayun_line_index == 4:
         warns.append(_sd(
             quote="「如后天之气数行至君爻之位，此数为足，到此必死。"
                   "无阴骘者，生日之前便死。有阴骘者，到君爻阳爻延九年，"
@@ -1064,7 +1080,7 @@ def judge_si_duan(
                     ))
 
     # ── ④ 上爻（上极）：原典所列后果不止「寿必不久」 ────────────────
-    if dayun_line_index == 5:
+    if is_hou_tian and dayun_line_index == 5:
         warns.append(_sd(
             quote="「纵到君爻，亦不许行至上极一爻，寿必不久。此或有到此者，"
                   "必须主大变之祸殃，凶暴之挠，或生异疾，或殃及子孙，"
@@ -1635,6 +1651,7 @@ def _collect_si_duan(
 
     # 当前大运爻位（qi_phase.dayun：age_start..age_end → line_index）
     dayun_line_index: int | None = None
+    dayun_phase: str = ""
     qi = (result.timeline.qi_phase if result.timeline else None) or {}
     dayun_entries = qi.get("dayun") or []
     age_now: int | None = None
@@ -1647,6 +1664,7 @@ def _collect_si_duan(
         for de in dayun_entries:
             if de.get("age_start") and de.get("age_end") and de["age_start"] <= age_now <= de["age_end"]:
                 dayun_line_index = de.get("line_index")
+                dayun_phase = de.get("phase", "") or ""
                 break
 
     # 近3年流年判词（target_year-2 .. target_year）
@@ -1695,6 +1713,7 @@ def _collect_si_duan(
         tian_yuan_fan=tian_fan, di_yuan_fan=di_fan,
         shu_xiong=shu_xiong,
         dayun_line_index=dayun_line_index,
+        dayun_phase=dayun_phase,
         recent_years=recent or None,
         recent_dayun_yao=dayun_yao or None,
     )
