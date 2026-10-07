@@ -341,6 +341,11 @@ class ShuXiongResult:
     shu_xiong: bool             # 数凶
     pattern: str                # 孤阳不偶/孤阴背阳/以弱敌强/安和自宁…
     evidence: list[str] = field(default_factory=list)
+    matched: tuple[str, ...] = ()        # 全部命中的数格名（原典出场次序）
+    conflicts: tuple[str, ...] = ()      # 命中数格之间的原典冲突，须显式披露
+    lu_shu: tuple = ()                   # 阴阳禄数命中（L105）
+    xingbei: tuple = ()                  # 性别向背（L34/L56/L61/L80）
+    ming_wu_yin_yang: tuple = ()         # 命无阴阳（L95）：(说明, 凶否)
 
 
 @dataclass
@@ -611,7 +616,8 @@ def judge_ye_buye(
 # 数之凶吉（起例卷·数足不足论）
 # ═══════════════════════════════════════════════════════════════════
 
-def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongResult:
+def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int,
+                     gender: str = "") -> ShuXiongResult:
     """
     数足不足论（原典「余」= 天数−25／地数−30，奇偶据此判）：
       天数二十五为正、地数三十为正；无余无不足=安和自宁。
@@ -627,6 +633,16 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongRes
       以弱敌强  L1073「地数三十至四十、五十、六十以上，天数只得二十四以下」
       太过有余伤（诗）：有余为凶。
 
+      2026-10-07 补入八条原典命名（详见 yue_ling_shu_ge.SHU_GE_TABLE）：
+        阳数偏少 L56、以强伏弱 L58、地数至弱 L65、地数得中 L71、
+        地数太过 L72、阴数偏少 L80、天地俱羸 L90、阴阳相战 L93。
+      并接入性别向背（L34/L56/L61/L80）、禄数（L105）、援阴阳（L100/L101）、
+      命无阴阳（L95）。
+
+    :param gender: ``"male"`` / ``"female"`` / ``""``（未给）。未给性别时，
+        性别向背、禄数男女利害、命无阴阳三项一律**不判**，
+        绝不按默认性别强套。
+
       ⚠️ 凶断集合只含 孤阳不偶 / 孤阴背阳 / 以弱敌强 / 太过有余 四条。
          **孤阳自偶与孤阴向阳不进该集合**——原典对二者只给诗断、未言「必凶」：
            孤阳自偶「壮岁艰辛勤苦立，**晚年得势始荣欣**」
@@ -634,6 +650,11 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongRes
          故按原典只记录命名前后，不套用孤阳不偶的凶断。
          （2026-10-07 修正前，二者被误吞进孤阳不偶/孤阴背阳而误判凶。）
     """
+    from .yue_ling_shu_ge import (
+        classify_shu_ge, judge_lu_shu, judge_you_yin_yang,
+        judge_ming_wu_yin_yang, shu_ge_conflicts, xingbie_xiang_bei,
+    )
+
     ev: list[str] = []
     t_state = "有余" if tian_shu > 25 else ("不足" if tian_shu < 25 else "足")
     d_state = "有余" if di_shu > 30 else ("不足" if di_shu < 30 else "足")
@@ -661,6 +682,31 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongRes
         pattern = "孤阳自偶"
         ev.append(f"天数{tian_shu}（余{tian_yu}，奇）、地数30："
                   f"阳数自偶 → 孤阳自偶（原典 L983）")
+    elif 4 <= tian_shu <= 24 and di_shu == 30:
+        # 原典 L56：「阳数偏少　天数二十有五，只得四、五、六至二十四，
+        #           地数三十是也。乃阳数不足，阴数足也。此谓之有阴无阳，
+        #           得阳数偏少，利女子，不利男子。」
+        pattern = "阳数偏少"
+        ev.append(f"天数{tian_shu}（4–24）、地数30：阳数不足而阴数足 → "
+                  f"阳数偏少（原典 L56，「利女子，不利男子」）")
+    elif tian_shu >= 30 and (di_shu == 30 or di_shu <= 12):
+        # 原典 L58：「以强伏弱　如天数三十、四十、五十之类，
+        #           地数三十或至十二以下是也。若值阳月令不妨，
+        #           逢阴月令颇有恃势致凶之象。」
+        # 注：地数 13–29 原典未言，本条不覆盖。
+        pattern = "以强伏弱"
+        ev.append(f"天数{tian_shu}（≥30，原典举三十、四十、五十之类）、"
+                  f"地数{di_shu}（30 或 ≤12）→ 天强地弱 → 以强伏弱（原典 L58）")
+    elif 8 <= di_shu <= 12:
+        # 原典 L65：「地数至弱　地数三十，只得八、九、十、十一、十二数者，是谓至弱。」
+        pattern = "地数至弱"
+        ev.append(f"地数{di_shu}（8–12）：「地数三十，只得八、九、十、十一、十二数者，"
+                  f"是谓至弱」→ 阴数至弱（原典 L65）")
+    # 注：「地数得中 L71（32–45）」「地数太过 L72（≥50）」是**地数单轴分档**，
+    # 不是「数×月」组合判，故**不占用 pattern 主判位**——否则会把
+    # (天数20, 地数40) 的「以弱敌强」顶成「地数得中」，进而让阴月令也被判凶，
+    # 与原典 L1073「阴月令逢之，尚庶几」相悖。二者改由下方
+    # 「全部命中的数格」循环统一输出判语。
     elif 30 <= di_shu <= 60 and tian_shu == 25 and di_yu % 2 == 0:
         # 原典 L1046：「孤阴背阳　地数三十至五十、六十，**余偶数**，
         #              而天数只二十五是也。乃阳无余，阴数有余。」
@@ -674,15 +720,82 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongRes
         pattern = "孤阴向阳"
         ev.append(f"天数25、地数{di_shu}（余{di_yu}）："
                   f"阴数过、阳数足 → 孤阴向阳（原典 L1055）")
+    elif tian_shu == 25 and 18 <= di_shu <= 28:
+        # 原典 L80：「阴数偏少　地数十八至二十八，天数二十五是也。
+        #           乃阳数足，阴数不足。阴数无用与不足，同是谓阴数偏于少也。」
+        pattern = "阴数偏少"
+        ev.append(f"天数25、地数{di_shu}（18–28）：阳数足、阴数不足 → "
+                  f"阴数偏少（原典 L80，「利男子不利女人」）")
     elif di_shu >= 30 and tian_shu <= 24:
         # 原典 L1073：「以弱敌强　地数三十至四十、五十、六十以上，
         #              天数只得二十四以下是也。」
         pattern = "以弱敌强"
         ev.append("地数30以上、天数24以下：地数太过天数不足 → 以弱敌强")
+    elif tian_shu <= 24 and di_shu <= 29:
+        # 原典 L90：「天地俱羸　天数二十四以下，地数二十九以下，
+        #           是乃阴阳二数俱不足者也。」
+        pattern = "天地俱羸"
+        ev.append(f"天数{tian_shu}（≤24）、地数{di_shu}（≤29）：阴阳二数俱不足 → "
+                  f"天地俱羸（原典 L90）")
+    elif tian_shu > 25 and di_shu != 30:
+        # 原典 L93：「阴阳相战　盖阳数多，阴数少，或阴阳二数俱多，
+        #           清浊相干者是也。」
+        pattern = "阴阳相战"
+        side = "阴数少" if di_shu < 30 else "阴阳二数俱多"
+        ev.append(f"天数{tian_shu}（>25，阳数多）、地数{di_shu}（{side}）→ "
+                  f"阴阳相战（原典 L93）")
     elif t_state == "有余" or d_state == "有余":
         pattern = "太过有余"
         ev.append("天数或地数有余 → 太过有余伤（诗曰：太过有余伤，性暴应多狠，祸去有余殃）")
 
+    # ── 全量命中与原典冲突披露（2026-10-07 补）────────────────────
+    # 不做「首个命中即返回」：L56 阳数偏少与 L83 以弱敌强在
+    # (天数≤24, 地数=30) 处判语相反且原典未裁先后，须把全部命中摊开，
+    # 由上层显式披露，不静默挑一条。
+    _ge = classify_shu_ge(tian_shu, di_shu)
+    matched = tuple(r.name for r in _ge)
+    conflicts = shu_ge_conflicts(tian_shu, di_shu)
+    if matched:
+        ev.append("原典命中的数格（出场次序）：" + "、".join(matched))
+    for _r in _ge:
+        ev.append(f"  数格「{_r.name}」（{_r.citation.split(chr(12290))[0]}）：{_r.verdict}")
+    for _c in conflicts:
+        ev.append(f"⚠️ 原典冲突未裁：{_c}")
+
+    # ── 援阴／援阳（L100–L101）──────────────────────────────────
+    _yy = judge_you_yin_yang(tian_shu, di_shu)
+    if _yy["name"]:
+        ev.append(f"阳弱援：{_yy['name']}（天数{tian_shu} → {_yy['gua']}卦）"
+                  f"（原典 L100「阳弱而余二四六八者，谓之援阴；"
+                  f"阳弱而余一三七九者，谓之援阳」）")
+    if _yy.get("di_jie"):
+        ev.append(f"阴弱援：地数{di_shu} → {_yy['di_jie']}（原典 L101）")
+
+    # ── 阴阳禄数（L105）────────────────────────────────────────
+    _lu = judge_lu_shu(tian_shu, di_shu, gender)
+    for _h in _lu:
+        _fit = ("（性别未给，不判利不利）" if _h.gender_fit is None else
+                "（与本性别相利）" if _h.gender_fit else "（与本性别相妨）")
+        ev.append(f"阴阳禄数：{_h.which}数{_h.value} 为{_h.name}，"
+                  f"{_h.xing_bie} {_fit}（原典 L105）")
+
+    # ── 性别向背（L34/L56/L61/L80）─────────────────────────────
+    _xb = xingbie_xiang_bei(tian_shu, di_shu, birth_month, gender)
+    for _x in _xb:
+        if not _x.applies:
+            continue
+        _ok = (gender == "male" and _x.favor == "男") or \
+              (gender == "female" and _x.favor == "女")
+        ev.append(f"性别向背（{_x.rule}）：{gender}命 → "
+                  f"{'相利' if _ok else '相妨'}（该条利{_x.favor}、"
+                  f"不利{_x.against}）——{_x.reason}")
+
+    # ── 命无阴阳（L95）────────────────────────────────────────
+    _mwy, _mwy_xiong = judge_ming_wu_yin_yang(tian_shu, di_shu, birth_month, gender)
+    if gender:
+        ev.append(f"命无阴阳（L95）：{_mwy}")
+        if _mwy_xiong:
+            shu_xiong = True
 
     # 数凶：有余/不足 + 生月合时（阳月令 / 阴月令）
     #
@@ -715,7 +828,17 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongRes
     # 用处：原典 L1073「以弱敌强……阴月令逢之，尚庶几，
     #       阳月令逢之，必主灭顶之凶」——阳月令逢之才凶，阴月令尚可。
     yang_month = birth_month in YANG_YUE_LING
-    if pattern in ("孤阳不偶", "孤阴背阳", "以弱敌强", "太过有余"):
+    if pattern == "以强伏弱":
+        # 原典 L58 的方向与下面几条**相反**：「若值阳月令不妨，
+        # 逢阴月令颇有恃势致凶之象。」故单独判，不并入通用分支。
+        if not yang_month:
+            shu_xiong = True
+            ev.append(f"生月{birth_month}月（阴月），以强伏弱逢阴月令 → "
+                      f"恃势致凶（原典 L58「颇有恃势致凶之象」）")
+        else:
+            ev.append(f"生月{birth_month}月（阳月），以强伏弱逢阳月令 → "
+                      f"「不妨」（原典 L58）")
+    elif pattern in ("孤阳不偶", "孤阴背阳", "以弱敌强", "太过有余"):
         if yang_month:
             shu_xiong = True
             ev.append(f"生月{birth_month}月（阳月），数有余逢阳月 → 数凶（不可妄行致凶）")
@@ -740,7 +863,9 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongRes
               "L741「如卦数凶，此走空浮薄之夫」")
 
     return ShuXiongResult(tian_shu=tian_shu, di_shu=di_shu, tian_state=t_state,
-                          di_state=d_state, shu_xiong=shu_xiong, pattern=pattern, evidence=ev)
+                          di_state=d_state, shu_xiong=shu_xiong, pattern=pattern,
+                          evidence=ev, matched=matched, conflicts=conflicts,
+                          lu_shu=_lu, xingbei=_xb, ming_wu_yin_yang=(_mwy, _mwy_xiong))
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -980,6 +1105,10 @@ def compose_guajie(
     tian_shu: int,
     di_shu: int,
     year_ganzhi: str = "",        # 年干支（纳甲本命）
+    gender: str = "",             # "male"/"female"/""（未给）。起例卷之中
+                                   # L34/L61「利男子/利女人」、L95「命无阴阳」、
+                                   # L105「利男不利女/利女不利男」的入参；
+                                   # 空串表示未给，judge_shu_xiong 一律不判性别向背。
     # 流年
     liunian_hexagram: str = "",
     liunian_yao: str = "",
@@ -1046,7 +1175,7 @@ def compose_guajie(
                 ev.append(f"  岁运逢之：{y.suiyun}")
 
     # ── 数凶 ──────────────────────────────────────────────────
-    sx = judge_shu_xiong(tian_shu, di_shu, birth_month)
+    sx = judge_shu_xiong(tian_shu, di_shu, birth_month, gender)
     res.shu_xiong = sx
     ev.extend(f"  数之凶吉：{e}" for e in sx.evidence)
 
@@ -1230,6 +1359,12 @@ def build_guajie_from_result(
             mb = bazi[1][1]
             birth_month = BRANCH_TO_MONTH.get(mb)
 
+        # 性别（起例卷之中 L34/L61「利男子/利女人」、L95「命无阴阳」、
+        # L105「利男不利女/利女不利男」四条性判的入参）。
+        # 取法与本函数下方参评诗断处一致：result.input.gender 缺省为空串，
+        # 空串表示**未给性别**，judge_shu_xiong 会一律不判性别向背，不按默认性别强套。
+        _gender = str(getattr(getattr(result, "input", None), "gender", "") or "")
+
         # 流年（timeline 定位）
         liunian_hex = ""
         liunian_yao_name = ""
@@ -1312,7 +1447,7 @@ def build_guajie_from_result(
             prenatal_name=prenatal, postnatal_name=postnatal,
             yuantang_yao=yuantang_yao,
             birth_month=birth_month or 1, tian_shu=tian, di_shu=di,
-            year_ganzhi=year_ganzhi,
+            year_ganzhi=year_ganzhi, gender=_gender,
             liunian_hexagram=liunian_hex, liunian_yao=liunian_yao_name,
             liuyue_hexagram=liuyue_hex_name, liuyue_yao=liuyue_yao_name,
             target_year=target_year,
