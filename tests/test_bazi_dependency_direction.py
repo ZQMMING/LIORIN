@@ -105,11 +105,12 @@ class TestDependencyDirection(unittest.TestCase):
 
         之前 _BRANCH_HIDDEN_MAIN 是简化副本, 现在应通过 canonical
         bazi_ten_gods.hidden_main_stem 查询.
+
+        注意: 不得 reload —— 类身份替换会污染同会话后续测试
+        (混跑时 blind_bazi_engine 的类型守卫曾因此误拒 BaziChart)。
+        直接检查当前模块对象即可。
         """
-        import importlib
-        if "tongshu.engines.bazi_engine" in sys.modules:
-            importlib.reload(sys.modules["tongshu.engines.bazi_engine"])
-        be_mod = sys.modules["tongshu.engines.bazi_engine"]
+        import tongshu.engines.bazi_engine as be_mod
         self.assertFalse(
             hasattr(be_mod, "_BRANCH_HIDDEN_MAIN"),
             "bazi_engine 不应再持有 _BRANCH_HIDDEN_MAIN 副本, "
@@ -239,26 +240,24 @@ class TestDependencyDirection(unittest.TestCase):
     def test_04_no_circular_dependency(self):
         """完整依赖图必须无环。
 
-        检查方法: 加载三个模块, 验证 import 链能完整解析 (无 ImportError)。
-        """
-        # 清缓存
-        import importlib
-        for mod_name in list(sys.modules.keys()):
-            if mod_name.startswith("tongshu.facts") or \
-               mod_name.startswith("tongshu.reasoning.bazi_ten_gods") or \
-               mod_name.startswith("tongshu.engines.bazi_engine"):
-                del sys.modules[mod_name]
+        检查方法: 干净 import 三个模块 (无 ImportError), 并验证
+        bazi_engine 内联的 _ten_god 就是 reasoning 的 ten_god 本体
+        (单一来源, 无副本 → 无环)。
 
-        # 应能干净 import 三个模块, 无 ImportError
+        注意: 不得 del sys.modules —— 会让其他测试重新导入产生新的
+        BaziChart 类对象, 使已绑旧类的跨模块守卫 isinstance 失败(混跑污染)。
+        """
+        from tongshu.facts import bazi_facts
+        from tongshu.reasoning.bazi_ten_gods import ten_god
         try:
-            from tongshu.facts import bazi_facts
-            from tongshu.reasoning.bazi_ten_gods import ten_god
             from tongshu.engines.bazi_engine import _ten_god
         except ImportError as e:
             self.fail(f"循环依赖未消除: {e}")
 
-        # 验证同一函数
+        # 同一函数对象 = 单一来源
         self.assertIs(_ten_god, ten_god)
+        # bazi_facts 可正常访问（未因循环半途加载失败）
+        self.assertTrue(hasattr(bazi_facts, "HEAVENLY_STEMS"))
 
 
 class TestBaziFactsSoleSource(unittest.TestCase):

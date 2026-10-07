@@ -545,7 +545,7 @@ _register(
 _register(
     "兄弟宫", "兄弟宫", "十二宫册·兄弟宫",
     category="fortune", direction="凶", strength="强",
-    text="你的兄弟宫化忌。这个忌我们意思就是说有凶星在兄弟宫。第一个，有兄弟不和，非常不和睦。第二个解释，有兄弟夭折。第三个解释，兄弟姐妹合伙破财。",
+    text="你的兄弟宫化忌。这个忌我们意思就是说有凶星在兄弟宫。有两个解释。第一个，有兄弟不和，非常不和睦。第二个解释，有兄弟夭折。第三个解释，兄弟姐妹合伙破财。",
 )
 _register(
     "夫妻宫", "夫妻宫", "十二宫册·夫妻宫",
@@ -599,6 +599,140 @@ _register(
 )
 
 
+# ── Z50 扩容（2026-10-06）：十二宫总论补全，逐字取自精选集十二宫册 ──
+
+_register(
+    "命宫", "命宫", "十二宫册·命宫",
+    category="personality", direction="中性", strength="中",
+    text="命宫探讨的东西就是一般的我们个性，我们的动作还有我们的长相，这些外相而已。",
+)
+_register(
+    "兄弟宫", "兄弟宫", "十二宫册·兄弟宫",
+    category="fortune", direction="凶", strength="中",
+    text="兄弟在一起不和，你看他的眉毛。那个眉毛乱七八糟长得前后。那他突然都是颠倒，左叉右叉。兄弟不和，他就写在脸上。",
+)
+_register(
+    "兄弟宫", "兄弟宫", "十二宫册·兄弟宫",
+    category="fortune", direction="中性", strength="弱",
+    text="眉毛断掉，断眉。左边眉毛代表兄兄弟，右边眉毛代表姐妹。",
+)
+_register(
+    "夫妻宫", "夫妻宫", "十二宫册·夫妻宫",
+    category="marriage", direction="中性", strength="强",
+    text="如果你的夫妻宫化权，代表你的那一半在个性上面领导力很强，主见很强的一个人。",
+)
+_register(
+    "夫妻宫", "夫妻宫", "十二宫册·夫妻宫",
+    category="marriage", direction="中性", strength="弱",
+    text="外面所有坊间的算命，都是必须要会到红鸾天喜星才会结婚其实不然",
+)
+_register(
+    "子女宫", "子女宫", "十二宫册·子女宫",
+    category="fortune", direction="中性", strength="弱",
+    text="外面很多相书上去统计几男几女，实际上你不用去，光算男的就好了。算男的有几个。",
+)
+_register(
+    "子女宫", "子女宫", "十二宫册·子女宫",
+    category="fortune", direction="中性", strength="中",
+    text="你的命里面两个，你的太太命里面两个，加起来的话四个儿子。他的命上两个，他就会生到两个脸孔像他。他的另外一半命里两个，生的另外两个脸孔像她。",
+)
+_register(
+    "仆役宫", "仆役宫", "十二宫册·仆役宫",
+    category="fortune", direction="中性", strength="弱",
+    text="仆役也可以叫朋友宫，交友宫，这个名词不重要。你要知道它的意义最重要。",
+)
+_register(
+    "仆役宫", "仆役宫", "十二宫册·仆役宫",
+    category="fortune", direction="中性", strength="弱",
+    text="这个宫里面落入了星，我们看它的星辰的吉凶来断定。",
+)
+_register(
+    "官禄宫", "官禄宫", "十二宫册·官禄宫",
+    category="career", direction="中性", strength="中",
+    text="有的星代表官，他带个印，所以当官的有个官印。",
+)
+_register(
+    "官禄宫", "官禄宫", "十二宫册·官禄宫",
+    category="career", direction="凶", strength="强",
+    text="官星一定要进入官禄宫最好。财星要进入财帛宫最好。叫做适得其所，叫做正位。你的财星跑到官星里面就是贪官。",
+)
+_register(
+    "田宅宫", "田宅宫", "十二宫册·田宅宫",
+    category="fortune", direction="凶", strength="弱",
+    text="还有的人田宅宫是小人星，看不到的小人。",
+)
+_register(
+    "福德宫", "福德宫", "十二宫册·福德宫",
+    category="fortune", direction="中性", strength="中",
+    text="祸福无门，咎由自取。咎是咎在易经里面就是悔恨后悔懊恼，都是自找的。",
+)
+_register(
+    "福德宫", "福德宫", "十二宫册·福德宫",
+    category="fortune", direction="凶", strength="中",
+    text="福德宫代表夫妻的关系，也代表一世的福禄，他的财禄他的事业。所以福德宫很差的人很累。",
+)
+_register(
+    "父母宫", "父母宫", "十二宫册·父母宫",
+    category="fortune", direction="中性", strength="弱",
+    text="一上一下，左右不对称。我们眼睛是平的。他怎么一上一下。庶出，领养。",
+)
+_register(
+    "父母宫", "父母宫", "十二宫册·父母宫",
+    category="fortune", direction="中性", strength="弱",
+    text="我养儿子烦恼的时候纹路是这样的。我养不是我的儿子，领养过来的儿子，烦恼的时候皱的纹路不一样，鼻子变成一条直纹。",
+)
+
+
+
+# ============================================================================
+# Z51 扩容（2026-10-07）：星×他宫断言，逐字取自 ziwei-samples-toolkit
+# corpus/verified（已验证倪师原话册）。仅收本机制可无歧义触发的条目；
+# 含地支宫位或双星复合前提的原话（如「火星地空在丑=肝」「廉破在福德=横祸」
+# 「贪狼在午非桃花」）不入本库，待断言引擎支持条件触发后再迁，避免死数据。
+# 出处照抄原册标注：02-palaces 财帛/迁移/田宅三节原文无"出处"行，故不标集数。
+# ============================================================================
+
+_register(
+    "太阴", "财帛", "02-palaces·财帛宫",
+    category="wealth", direction="吉", strength="强",
+    text="太阴入财帛 = 正财",
+)
+_register(
+    "武曲", "财帛", "02-palaces·财帛宫",
+    category="wealth", direction="吉", strength="强",
+    text="武曲入财帛 = 大财星",
+)
+_register(
+    "紫微", "财帛", "02-palaces·财帛宫",
+    category="wealth", direction="中性", strength="中",
+    text="紫微入财帛 = 守成为主（不主动生财）",
+)
+_register(
+    "禄存", "财帛", "02-palaces·财帛宫",
+    category="wealth", direction="中性", strength="中",
+    text="禄存入财帛 = 守财能力强（小气鬼）",
+)
+_register(
+    "紫微", "迁移", "02-palaces·迁移宫",
+    category="fortune", direction="中性", strength="强",
+    text="紫微在迁移 = 外地会逢贵人，但也是孤君象",
+)
+_register(
+    "紫微", "田宅", "02-palaces·田宅宫",
+    category="fortune", direction="吉", strength="中",
+    text="紫微入田宅 = 祖产有规模",
+)
+_register(
+    "擎羊", "疾厄", "05-illness·煞星入疾厄(天纪11、12)",
+    category="health", direction="凶", strength="强",
+    text="擎羊、陀罗入疾厄 = 开刀见血光",
+)
+_register(
+    "陀罗", "疾厄", "05-illness·煞星入疾厄(天纪11、12)",
+    category="health", direction="凶", strength="强",
+    text="擎羊、陀罗入疾厄 = 开刀见血光",
+)
+
 # ===========================================================================
 # 查询接口
 # ===========================================================================
@@ -641,6 +775,21 @@ def count_keys() -> int:
     return len(_NIHAI_ASSERTIONS)
 
 
+def get_palace_overview(palace: str) -> List[NihaiAssertion]:
+    """按宫位查『本宫总论』断言（自动归一宫名后缀）.
+
+    命盘宫名不带"宫"字（如 "夫妻"/"疾厄"），而总论注册键带"宫"
+    （("夫妻宫","夫妻宫")；疾厄册特例 ("疾厄","疾厄宫")）。
+    本函数按 (X宫,X宫) → (X不带宫,X宫) 顺序回退，避免调用方各自拼键。
+    """
+    bare = palace[:-1] if palace.endswith("宫") else palace
+    full = bare + "宫"
+    items = _NIHAI_ASSERTIONS.get((full, full))
+    if not items:
+        items = _NIHAI_ASSERTIONS.get((bare, full))
+    return list(items or [])
+
+
 def get_assertions_by_category(category: str) -> List[NihaiAssertion]:
     """按类别过滤断言."""
     return [a for items in _NIHAI_ASSERTIONS.values() for a in items
@@ -655,6 +804,7 @@ __all__ = [
     "NihaiAssertion",
     "get_assertion",
     "get_assertions",
+    "get_palace_overview",
     "get_all_assertions",
     "count_assertions",
     "count_keys",

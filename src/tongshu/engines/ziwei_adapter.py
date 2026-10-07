@@ -81,6 +81,11 @@ def compute_via_solar(year: int, month: int, day: int, hour: int,
         soul: a.earthlyBranchOfSoulPalace,
         body: a.earthlyBranchOfBodyPalace,
         wuxing: a.fiveElementsClass,
+        natalYearStem: (a.rawDates && a.rawDates.chineseDate && a.rawDates.chineseDate.yearly) ? a.rawDates.chineseDate.yearly[0] : '',
+        soulStar: a.soul || '', bodyStar: a.body || '',
+        solarDate: a.solarDate || '', lunarDateText: a.lunarDate || '',
+        timeText: a.time || '', timeRange: a.timeRange || '',
+        sign: a.sign || '', zodiac: a.zodiac || '',
         palaces: a.palaces.map(p => ({{
             name: p.name,
             branch: p.earthlyBranch,
@@ -89,6 +94,14 @@ def compute_via_solar(year: int, month: int, day: int, hour: int,
             stem: p.heavenlyStem,
             decadalRange: p.decadal?.range || [],
             decadalStem: p.decadal?.heavenlyStem || '',
+            adjective: (p.adjectiveStars||[]).map(s=>s.name),
+            starDetail: []
+                .concat((p.majorStars||[]).map(s => ({{ name: s.name, kind: 'major', brightness: s.brightness || '', mutagen: s.mutagen || '' }})))
+                .concat((p.minorStars||[]).map(s => ({{ name: s.name, kind: 'minor', brightness: s.brightness || '', mutagen: s.mutagen || '' }}))),
+            changsheng12: p.changsheng12 || '', boshi12: p.boshi12 || '',
+            jiangqian12: p.jiangqian12 || '', suiqian12: p.suiqian12 || '',
+            isBody: !!p.isBodyPalace, isOriginal: !!p.isOriginalPalace,
+            ages: p.ages || [],
         }}))
     }}));
     '''
@@ -155,6 +168,15 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
             'major': major_keys,
             'minor': minor_keys,
             'decadal_range': p.get('decadalRange', []),
+            'adjective': p.get('adjective', []),
+            'starDetail': p.get('starDetail', []),
+            'changsheng12': p.get('changsheng12', ''),
+            'boshi12': p.get('boshi12', ''),
+            'jiangqian12': p.get('jiangqian12', ''),
+            'suiqian12': p.get('suiqian12', ''),
+            'isBody': p.get('isBody', False),
+            'isOriginal': p.get('isOriginal', False),
+            'ages': p.get('ages', []),
         }
     
     # 命宫主星
@@ -164,6 +186,8 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
     
     # 构建 ZiweiChart：顶层字段是规则层 canonical contract，
     # palace_data 保留为旧调用方兼容结构。
+    # Z52: 阳历接入路径同样透传农历界生年干（修 birth_year=阳历年 直推年干的分叉）
+    natal_stem = raw_result.get('natalYearStem', '') or ''
     return ZiweiChart(
         soul_palace_main_star=main_star,
         soul_palace_main_stars=main_stars,
@@ -181,6 +205,11 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
         fiveElementsClass=wuxing,
         birth_year=solar_input.year,
         gender=solar_input.gender,
+        natal_year_stem=natal_stem,
+        soul_star=raw_result.get('soulStar', ''), body_star=raw_result.get('bodyStar', ''),
+        solar_date=raw_result.get('solarDate', ''), lunar_date_text=raw_result.get('lunarDateText', ''),
+        time_text=raw_result.get('timeText', ''), time_range=raw_result.get('timeRange', ''),
+        sign=raw_result.get('sign', ''), zodiac=raw_result.get('zodiac', ''),
     )
 
 

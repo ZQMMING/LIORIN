@@ -12,12 +12,17 @@ from typing import List, Dict, Any
 # 数据集路径
 DATASET_PATH = Path('./docs/k2g/datasets/baziqa_2021.json')
 
+def _dataset_available() -> bool:
+    return DATASET_PATH.exists()
+
 class TestBaziQA:
     """BaziQA基准测试"""
     
     @pytest.fixture(autouse=True)
     def load_dataset(self):
-        """加载数据集"""
+        """加载数据集（外部 K2G 基准未随仓库入库时跳过，不误报引擎缺陷）."""
+        if not _dataset_available():
+            pytest.skip(f"K2G 外部数据集未入库: {DATASET_PATH}")
         with open(DATASET_PATH, 'r', encoding='utf-8') as f:
             self.dataset = yaml.safe_load(f)
         self.questions = self.dataset.get('data', [])
@@ -79,6 +84,10 @@ class TestShuntianBenchmark:
         except ImportError:
             self.loaded = False
             pytest.skip("K2G模块未安装")
+        except FileNotFoundError:
+            # K2G 词库目录(docs/k2g)属外部资产，未随仓库入库 → 跳过，不误报引擎缺陷
+            self.loaded = False
+            pytest.skip("K2G registry 目录未入库 (docs/k2g)")
     
     def test_registry_loaded(self):
         """测试Registry加载"""

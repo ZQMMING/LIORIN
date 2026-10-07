@@ -1133,7 +1133,7 @@ class ZiweiLifeReadingOutputV3:
                     "dimension": d.dimension,
                     "palace": d.palace,
                     "stars": d.natal_stars,
-                    " Natal": d.natal_transforms,
+                    "生年": d.natal_transforms,
                     "大运": d.decadal_transforms,
                     "流年": d.annual_transforms,
                     "流月": d.monthly_transforms,
@@ -1826,12 +1826,18 @@ class ZiweiLifeReadingBuilder:
         if enable_nihai:
             from .nihai_assertions import count_assertions
             if count_assertions() > 0:
-                from .nihai_assertions import get_assertion
+                from .nihai_assertions import get_assertion, get_palace_overview
                 for pname, pdata in chart.palaces.items():
-                    for star in pdata.get("major", []):
+                    # Z51: 主星+辅星双读，与 NihaiAssertionResolver（Z22）口径一致
+                    # —— 禄存@财帛 / 擎羊陀罗@疾厄 等断言的星是 minor 星
+                    for star in (pdata.get("major") or []) + (pdata.get("minor") or []):
                         ref = get_assertion(star, pname)
                         if ref:
                             output.nihai_assertions.append(ref)
+                    # Z50: 本宫总论并入（此前总论键带"宫"后缀，逐星键永不命中）
+                    for ov in get_palace_overview(pname):
+                        if ov not in output.nihai_assertions:
+                            output.nihai_assertions.append(ov)
 
         return output
 
@@ -2034,7 +2040,8 @@ class ZiweiLifeReadingBuilder:
 
         parts = []
 
-        # 1. 倪师断言（命宫优先）
+        # 1. 倪师断言（命宫=坐宫主星断语；余宫=本宫总论，Z50 挂载修复）
+        from .nihai_assertions import get_palace_overview as _get_overview
         if palace_name == "命宫":
             main = [s for s in stars if s in STAR_BRIGHTNESS]
             for star in main:
@@ -2045,6 +2052,13 @@ class ZiweiLifeReadingBuilder:
                         break
                 except Exception:
                     pass
+        else:
+            try:
+                ov = _get_overview(palace_name)
+                if ov:
+                    parts.append(f"【倪师断语】{ov[0].text}")
+            except Exception:
+                pass
 
         # 2. 维度专属断语（主星 + 庙旺利陷 → 对应维度规则）
         main_stars = [s for s in stars if s in STAR_BRIGHTNESS]
@@ -2297,11 +2311,11 @@ def build_life_reading(
         signal = compute_multi_method_signals(chart)
         reading = build_life_reading(chart, signal, target_year=2024)
     """
-    from tongshu.engines.ziwei_engine import ZiweiEngine as _Eng, GAN_SIHUA
+    from tongshu.engines.ziwei_engine import ZiweiEngine as _Eng, GAN_SIHUA, ziwei_natal_stem
 
     eng = _Eng()
-    stems = ("甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸")
-    birth_year_stem = stems[(chart.birth_year - 4) % 10]
+    # Z52: 生年干消费时间事实源（iztro chineseDate 透传），不再自行推 (年-4)%10
+    birth_year_stem = ziwei_natal_stem(chart)
     sihua_stars = GAN_SIHUA.get(birth_year_stem, ("", "", "", ""))
 
     builder = ZiweiLifeReadingBuilder(eng)

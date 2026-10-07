@@ -28,7 +28,58 @@ logger = logging.getLogger(__name__)
 
 
 class ZiweiEngineUnavailableError(RuntimeError):
-    """Raised when iztro is not available and stub fallback is not explicitly enabled."""
+    """Raised when iztro is not installed/failed at runtime (never for invalid
+    caller inputs — those raise ValueError via _validate_inputs)."""
+
+
+class ZiweiInputError(ValueError):
+    """Raised when caller input (lunar date / hour / gender) is invalid.
+    Fail-closed at the engine boundary so dirty data never silently charts."""
+
+
+_LUNAR_MONTH_MAX = {1: 30, 2: 30, 3: 29, 4: 30, 5: 29, 6: 30, 7: 29,
+                    8: 30, 9: 29, 10: 30, 11: 29, 12: 30}
+
+
+def _validate_inputs(lunar_date, hour, gender) -> None:
+    """入参 fail-closed 校验（引擎边界，不信任调用方）。
+
+    校验项：
+      - lunar_date: 三元组 (年, 月, 日)，月 1-12（闰月以负数表示，同限），
+        日 1-30；月大小尽度用静态历表只校验 1-30 区间（29 日小月交 iztro
+        校验，与本引擎农历输入约定一致）。
+      - hour: 0-23 的整数钟点（此前 hour=25 会被取模静默排盘——禁止）。
+      - gender: 仅 "male" / "female"（此前 unknown 静默当 male——禁止）。
+    """
+    if not isinstance(lunar_date, (tuple, list)) or len(lunar_date) != 3:
+        raise ZiweiInputError(
+            f"lunar_date 必须是 (年, 月, 日) 三元组，收到: {lunar_date!r}")
+    y, m, d = lunar_date
+    for label, v in (("year", y), ("month", m), ("day", d)):
+        if not isinstance(v, int) or isinstance(v, bool):
+            raise ZiweiInputError(f"lunar_date.{label} 必须是整数，收到: {v!r}")
+    if not (1000 <= y <= 3000):
+        raise ZiweiInputError(f"lunar_date.year 超出合理区间 1000-3000: {y}")
+    if m == 0 or abs(m) > 12:
+        raise ZiweiInputError(f"lunar_date.month 必须为 ±1..12（负值=闰月），收到: {m}")
+    if not (1 <= d <= 30):
+        raise ZiweiInputError(f"lunar_date.day 必须为 1..30，收到: {d}")
+    if not isinstance(hour, int) or isinstance(hour, bool):
+        raise ZiweiInputError(f"hour 必须是 0-23 的整数钟点，收到: {hour!r}")
+    if not (0 <= hour <= 23):
+        raise ZiweiInputError(f"hour 超出钟点区间 0-23: {hour}")
+    if gender not in ("male", "female"):
+        raise ZiweiInputError(f"gender 仅支持 'male'/'female'，收到: {gender!r}")
+
+
+def _iztro_input_rejected(stderr: str) -> bool:
+    """识别 iztro 对「月内无此日/非法月」的确定性拒绝（lunar-typescript 抛错）。
+
+    这类错误属于输入组合非法（如小月 30 日），重试不可恢复，应报 ValueError；
+    与「iztro 运行时故障」区分开，避免 ZiweiEngineUnavailableError 语义混用。
+    """
+    return ("only " in stderr and " days in lunar year" in stderr
+            or "wrong lunar year" in stderr)
 
 
 # MAIN_STAR_USO: Star → Semantic Ontology Mapping (SIGNAL EXTRACTION LAYER)
@@ -118,6 +169,28 @@ def time_index_from_hour(hour: int) -> int:
     return ((hour + 1) // 2) % 12
 
 
+def ziwei_natal_stem(chart) -> str:
+    """生年天干（农历界·春节起算）— 紫微盘唯一时间事实源。
+
+    Z52 接入（2026-10-07）：权威值=iztro rawDates.chineseDate.yearly[0]，
+    由排盘两路径（_compute_via_iztro / full_chart / ZiweiSolarAdapter）透传为
+    chart.natal_year_stem。本函数优先读透传值；stub/旧快照缺失时回退
+    (birth_year-4)%10 并告警。
+    与八字引擎年柱（立春界）的分界是流派口径（窗口=立春~春节），
+    两界各自消费，不得互相覆盖；生年四化/宫干/来因一律以本函数为准。
+    """
+    s = getattr(chart, "natal_year_stem", "") or ""
+    if s:
+        return s
+    by = getattr(chart, "birth_year", 0) or 0
+    if by:
+        logger.warning(
+            "ziwei_natal_stem: chart 缺 natal_year_stem，回退 (birth_year-4)%%10 "
+            "(birth_year=%s；农历年口径由调用方保证)", by)
+        return "甲乙丙丁戊己庚辛壬癸"[(by - 4) % 10]
+    return ""
+
+
 @dataclass(frozen=True)
 class ZiweiChart:
     soul_palace_main_star: str = ""           # 命宫第一主星(向后兼容)
@@ -140,6 +213,16 @@ class ZiweiChart:
     flow_day_gan: str = ""  # Z76: 流日天干（iztro daily.heavenlyStem，默认空=不启用流日）
     flow_day_zhi: str = ""  # Z76: 流日地支（iztro daily.earthlyBranch）
     flow_day_mutagen: list = field(default_factory=list)  # Z76: 流日四化 [禄,权,科,忌]
+    natal_year_stem: str = ""  # Z52: 生年天干（农历界，iztro chineseDate 权威）
+    # Z53: iztro 元信息透传（全量漏接修复，命主/身主/历法文本/星座生肖）
+    soul_star: str = ""       # 命主（iztro soul，按命宫地支定）
+    body_star: str = ""       # 身主（iztro body，按生年支定）
+    solar_date: str = ""      # 历书阳历文本（iztro solarDate）
+    lunar_date_text: str = ""  # 历书农历文本（iztro lunarDate，含闰月标注）
+    time_text: str = ""       # 时辰名（午时）
+    time_range: str = ""      # 钟点区间（11:00~13:00）
+    sign: str = ""            # 星座（辅助字段，不参与命理计算）
+    zodiac: str = ""          # 生肖（辅助字段，不参与命理计算）
 
     def to_dict(self) -> dict:
         return {
@@ -162,6 +245,11 @@ class ZiweiChart:
             "flow_day_gan": self.flow_day_gan,
             "flow_day_zhi": self.flow_day_zhi,
             "flow_day_mutagen": list(self.flow_day_mutagen),
+            "natal_year_stem": self.natal_year_stem,
+            "soul_star": self.soul_star, "body_star": self.body_star,
+            "solar_date": self.solar_date, "lunar_date_text": self.lunar_date_text,
+            "time_text": self.time_text, "time_range": self.time_range,
+            "sign": self.sign, "zodiac": self.zodiac,
         }
 
     @classmethod
@@ -199,6 +287,11 @@ class ZiweiChart:
             flow_day_gan=data.get("flow_day_gan", ""),
             flow_day_zhi=data.get("flow_day_zhi", ""),
             flow_day_mutagen=list(data.get("flow_day_mutagen", [])),
+            natal_year_stem=data.get("natal_year_stem", ""),
+            soul_star=data.get("soul_star", ""), body_star=data.get("body_star", ""),
+            solar_date=data.get("solar_date", ""), lunar_date_text=data.get("lunar_date_text", ""),
+            time_text=data.get("time_text", ""), time_range=data.get("time_range", ""),
+            sign=data.get("sign", ""), zodiac=data.get("zodiac", ""),
         )
 
     # ── 向后兼容: dict-like 访问 (F-04) ──
@@ -288,7 +381,16 @@ class ZiweiEngine:
         """Compute Ziwei chart from lunar date.
 
         紫微斗数传统使用农历输入，与八字(阳历)不同。
+
+        Raises:
+            ZiweiInputError(ValueError): 入参非法（农历/钟点/性别），
+                引擎边界 fail-closed，非法输入绝不静默出盘。
+            ZiweiEngineUnavailableError(RuntimeError): iztro 未安装或
+                运行时故障（与入参非法明确分流）。
         """
+        # 入参 fail-closed：先于可用性检查——无论 iztro 在不在，
+        # 脏数据都必须在这里被拒绝（不静默取模/不降级 stub）。
+        _validate_inputs(lunar_date, hour, gender)
         if not self._iztro_available:
             if os.environ.get("TONGSHU_ALLOW_ZIWEI_STUB") == "1":
                 logger.warning("ZiweiEngine: iztro unavailable, using stub fallback (TONGSHU_ALLOW_ZIWEI_STUB=1)")
@@ -299,6 +401,8 @@ class ZiweiEngine:
             )
         try:
             return self._compute_via_iztro(lunar_date, hour, gender)
+        except ZiweiInputError:
+            raise  # 确定性输入拒绝（如小月 30 日）：原样传播，不降级为 unavailable
         except (OSError, RuntimeError, ValueError, TypeError, json.JSONDecodeError) as exc:
             logger.exception("ZiweiEngine: iztro computation or parsing failed")
             if os.environ.get("TONGSHU_ALLOW_ZIWEI_STUB") == "1":
@@ -380,6 +484,15 @@ class ZiweiEngine:
             soulEarthlyBranch: astrolabe.earthlyBranchOfSoulPalace,
             bodyEarthlyBranch: astrolabe.earthlyBranchOfBodyPalace,
             fiveElementsClass: astrolabe.fiveElementsClass || '',
+            natalYearStem: (astrolabe.rawDates && astrolabe.rawDates.chineseDate && astrolabe.rawDates.chineseDate.yearly) ? astrolabe.rawDates.chineseDate.yearly[0] : '',
+            soulStar: astrolabe.soul || '',
+            bodyStar: astrolabe.body || '',
+            solarDate: astrolabe.solarDate || '',
+            lunarDateText: astrolabe.lunarDate || '',
+            timeText: astrolabe.time || '',
+            timeRange: astrolabe.timeRange || '',
+            sign: astrolabe.sign || '',
+            zodiac: astrolabe.zodiac || '',
             palaces: {{}},
             decadalMutagen: horoscope.decadal ? horoscope.decadal.mutagen : [],
             yearlyMutagen: horoscope.yearly ? horoscope.yearly.mutagen : [],
@@ -394,7 +507,18 @@ class ZiweiEngine:
                 minor: (p.minorStars || []).map(s => s.name),
                 decadalRange: (p.decadal && p.decadal.range) || [],
                 decadalStem: (p.decadal && p.decadal.heavenlyStem) || '',
-                decadalBranch: (p.decadal && p.decadal.earthlyBranch) || ''
+                decadalBranch: (p.decadal && p.decadal.earthlyBranch) || '',
+                adjective: (p.adjectiveStars || []).map(s => s.name),
+                starDetail: []
+                    .concat((p.majorStars || []).map(s => ({{ name: s.name, kind: 'major', brightness: s.brightness || '', mutagen: s.mutagen || '' }})))
+                    .concat((p.minorStars || []).map(s => ({{ name: s.name, kind: 'minor', brightness: s.brightness || '', mutagen: s.mutagen || '' }}))),
+                changsheng12: p.changsheng12 || '',
+                boshi12: p.boshi12 || '',
+                jiangqian12: p.jiangqian12 || '',
+                suiqian12: p.suiqian12 || '',
+                isBody: !!p.isBodyPalace,
+                isOriginal: !!p.isOriginalPalace,
+                ages: p.ages || []
             }};
         }});
         process.stdout.write(JSON.stringify(result));
@@ -408,7 +532,13 @@ class ZiweiEngine:
             timeout=10,
         )
         if proc.returncode != 0:
-            raise RuntimeError(f"iztro failed: {proc.stderr}")
+            stderr = proc.stderr or ""
+            if _iztro_input_rejected(stderr):
+                raise ZiweiInputError(
+                    f"农历日期非法（该年月无此日 / 非法月）: {year}-{month}-{day}"
+                    f" (闰月={is_leap})。iztro: "
+                    f"{(stderr.strip().splitlines()[-1] if stderr.strip() else stderr)}")
+            raise RuntimeError(f"iztro failed: {stderr}")
         data = json.loads(proc.stdout)
         raw_main_star = data.get("soulMainStar", "")
         main_key = CHINESE_STAR_TO_KEY.get(raw_main_star, raw_main_star)
@@ -428,6 +558,11 @@ class ZiweiEngine:
             "yearly_mutagen": data.get("yearlyMutagen", []),
             "monthly_mutagen": data.get("monthlyMutagen", []),
             "daily_mutagen": data.get("dailyMutagen", []),
+            "natal_year_stem": data.get("natalYearStem", ""),
+            "soul_star": data.get("soulStar", ""), "body_star": data.get("bodyStar", ""),
+            "solar_date": data.get("solarDate", ""), "lunar_date_text": data.get("lunarDateText", ""),
+            "time_text": data.get("timeText", ""), "time_range": data.get("timeRange", ""),
+            "sign": data.get("sign", ""), "zodiac": data.get("zodiac", ""),
             "palaces": raw_palaces,
         }
         return ZiweiChart(
@@ -445,6 +580,11 @@ class ZiweiEngine:
             fiveElementsClass=data.get("fiveElementsClass", ""),
             birth_year=year,
             gender=gender,
+            natal_year_stem=data.get("natalYearStem", ""),
+            soul_star=data.get("soulStar", ""), body_star=data.get("bodyStar", ""),
+            solar_date=data.get("solarDate", ""), lunar_date_text=data.get("lunarDateText", ""),
+            time_text=data.get("timeText", ""), time_range=data.get("timeRange", ""),
+            sign=data.get("sign", ""), zodiac=data.get("zodiac", ""),
         )
 
     def flow_years_mutagen(self, years, lunar_date, hour, gender):
@@ -852,6 +992,11 @@ class ZiweiEngine:
             fiveElementsClass: a.fiveElementsClass || '',
             soulPalaceBranch: a.earthlyBranchOfSoulPalace || '',
             bodyPalaceBranch: a.earthlyBranchOfBodyPalace || '',
+            natalYearStem: (a.rawDates && a.rawDates.chineseDate && a.rawDates.chineseDate.yearly) ? a.rawDates.chineseDate.yearly[0] : '',
+            soulStar: a.soul || '', bodyStar: a.body || '',
+            solarDate: a.solarDate || '', lunarDateText: a.lunarDate || '',
+            timeText: a.time || '', timeRange: a.timeRange || '',
+            sign: a.sign || '', zodiac: a.zodiac || '',
             palaces: {}
         };
         a.palaces.forEach(p => {
@@ -862,7 +1007,18 @@ class ZiweiEngine:
                 minor: (p.minorStars || []).map(s => s.name),
                 decadalRange: (p.decadal && p.decadal.range) || [],
                 decadalStem: (p.decadal && p.decadal.heavenlyStem) || '',
-                decadalBranch: (p.decadal && p.decadal.earthlyBranch) || ''
+                decadalBranch: (p.decadal && p.decadal.earthlyBranch) || '',
+                adjective: (p.adjectiveStars || []).map(s => s.name),
+                starDetail: []
+                    .concat((p.majorStars || []).map(s => ({ name: s.name, kind: 'major', brightness: s.brightness || '', mutagen: s.mutagen || '' })))
+                    .concat((p.minorStars || []).map(s => ({ name: s.name, kind: 'minor', brightness: s.brightness || '', mutagen: s.mutagen || '' }))),
+                changsheng12: p.changsheng12 || '',
+                boshi12: p.boshi12 || '',
+                jiangqian12: p.jiangqian12 || '',
+                suiqian12: p.suiqian12 || '',
+                isBody: !!p.isBodyPalace,
+                isOriginal: !!p.isOriginalPalace,
+                ages: p.ages || []
             };
         });
         process.stdout.write(JSON.stringify(out));
@@ -957,8 +1113,66 @@ class ZiweiEngine:
             flow_day_gan=_fd_gan,
             flow_day_zhi=_fd_zhi,
             flow_day_mutagen=_fd_mutagen,
+            natal_year_stem=corrected_chart.get("natalYearStem", ""),
+            soul_star=corrected_chart.get("soulStar", ""), body_star=corrected_chart.get("bodyStar", ""),
+            solar_date=corrected_chart.get("solarDate", ""), lunar_date_text=corrected_chart.get("lunarDateText", ""),
+            time_text=corrected_chart.get("timeText", ""), time_range=corrected_chart.get("timeRange", ""),
+            sign=corrected_chart.get("sign", ""), zodiac=corrected_chart.get("zodiac", ""),
             source="iztro",
         )
+
+    def horoscope_layers(self, lunar_date, hour, gender, target_date=None):
+        """Z53: 六层时间盘全量透传 — 小限/大限/流年/流月/流日/流时。
+
+        修复漏接：每层 palaceNames（该层十二宫宫序）与 stars（逐宫流曜名单）、
+        小限层（iztro horoscope.age，此前整层未接）、流年将前/岁前十二神
+        （yearlyDecStar）。
+
+        Args:
+            target_date: (阳历Y, M, D)；缺省用 iztro 默认（今日）。
+        Returns:
+            dict: {decadal|age|yearly|monthly|daily|hourly:
+                   {name, stem, branch, palace_names, mutagen, stars,
+                    nominal_age, dec_star}}
+        """
+        y, mo, d = lunar_date
+        is_leap = mo < 0
+        ti = time_index_from_hour(hour)
+        tgt = "undefined" if target_date is None else "'%s-%s-%s'" % tuple(target_date)
+        script = """
+        const { byLunar } = require('iztro').astro;
+        const a = byLunar('%s-%s-%s', %d, '%s', %s);
+        const h = %s === undefined ? a.horoscope() : a.horoscope(%s);
+        const pick = L => L ? {
+            name: L.name || '', stem: L.heavenlyStem || '', branch: L.earthlyBranch || '',
+            palaceNames: L.palaceNames || [], mutagen: L.mutagen || [],
+            nominalAge: (L.nominalAge === undefined ? null : L.nominalAge),
+            stars: (L.stars || []).map(ps => ps.map(s => s.name)),
+            decStar: (L.yearlyDecStar === undefined ? null : L.yearlyDecStar)
+        } : null;
+        process.stdout.write(JSON.stringify({
+            decadal: pick(h.decadal), age: pick(h.age), yearly: pick(h.yearly),
+            monthly: pick(h.monthly), daily: pick(h.daily), hourly: pick(h.hourly)
+        }));
+        """ % (y, abs(mo), d, ti, gender, str(is_leap).lower(), tgt, tgt)
+        proc = subprocess.run(
+            ["node", "-e", script], capture_output=True, text=True, encoding="utf-8",
+            cwd=str(self._node_modules.parent) if self._node_modules else None, timeout=20,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError("iztro horoscope_layers failed: " + proc.stderr)
+        raw = json.loads(proc.stdout)
+        out = {}
+        for k, v in raw.items():
+            if not isinstance(v, dict):
+                continue
+            out[k] = {
+                "name": v.get("name", ""), "stem": v.get("stem", ""), "branch": v.get("branch", ""),
+                "palace_names": v.get("palaceNames", []), "mutagen": v.get("mutagen", []),
+                "stars": v.get("stars", []), "nominal_age": v.get("nominalAge"),
+                "dec_star": v.get("decStar"),
+            }
+        return out
 
     def _resolve_flow_day(self, lunar_date, hour, gender, flow_day):
         """Z76: 流日参数契约——调 iztro daily 层拿流日干支+四化。

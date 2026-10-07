@@ -389,7 +389,9 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
                 "[SanheRuleGraph] birth_year 未设置，无法计算生年干四化。"
             )
             return RuleMatchResult(method_id=self.METHOD_ID)
-        birth_stem = self._stem_from_year(chart.birth_year)
+        # Z52: 优先消费盘内时间事实（iztro chineseDate），缺失回退旧推算
+        from tongshu.engines.ziwei_engine import ziwei_natal_stem
+        birth_stem = ziwei_natal_stem(chart) or self._stem_from_year(chart.birth_year)
         return self._match_sihua(chart, birth_stem)
 
     def _match_sihua(self, chart: FrozenZiweiChart, stem: str) -> Any:

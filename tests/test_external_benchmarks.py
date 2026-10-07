@@ -37,9 +37,9 @@ class TestExternalBenchmarks(unittest.TestCase):
         """
         from tongshu.engines.ziwei_engine import ZiweiEngine
         engine = ZiweiEngine()
-        # 紫微斗数传统使用农历，这里尝试转换
+        # 紫微斗数传统使用农历（契约: (年,月,日) 元组）
         # 1974年4月28日公历 ≈ 甲寅年三月十七日 申时
-        result = engine.compute("1974-03-17", 15, gender="male")
+        result = engine.compute((1974, 3, 17), 15, gender="male")
         
         self.assertIsNotNone(result)
         

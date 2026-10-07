@@ -182,6 +182,8 @@ for (let i = 0; i < dates.length; i++) {{
         lunarDay: j.lunarDate.day, yearStem: 0, yearBranch: 0, isLeapMonth: l,
       }},
       mingGongBranch: 0, shenGongBranch: 0,
+      natalYearStem: (j.rawDates && j.rawDates.chineseDate && j.rawDates.chineseDate.yearly) ? j.rawDates.chineseDate.yearly[0] : '',
+      natalYearBranch: (j.rawDates && j.rawDates.chineseDate && j.rawDates.chineseDate.yearly) ? j.rawDates.chineseDate.yearly[1] : '',
       wuxingJu: 5, wuxingJuName: '土五局', ziweiPos: 0,
       palaces: j.palaces.map(p => ({{
         branch: BRANCHES.indexOf(p.earthlyBranch),
@@ -351,7 +353,8 @@ def check_12_items(sample: dict) -> List[CheckResult]:
     ))
 
     # #7 生年四化
-    ys_ = year_stem(year)
+    # Z53: 优先用 iztro 农历界年干（窗口日期防阳历年推错干），缺失回退旧推算
+    ys_ = chart.get("natalYearStem") or year_stem(year)
     exp_nfs = dict(zip(MUTAGEN_KEYS, NFS_TABLE[ys_]))
     # iztro v2.3: mutagen 字段在所有 stars 里, 但**只主星**进入生年四化
     # 辅星 (文昌/文曲/左辅/右弼) 可能也有 mutagen = 神杀级, 排除
@@ -390,7 +393,8 @@ def check_12_items(sample: dict) -> List[CheckResult]:
 
     # #9 流年四化 (2026 丙午年, 流年命宫=本命+(流年支-原年支))
     flow_year = 2026
-    diff = (BRANCHES.index(year_branch(flow_year)) - BRANCHES.index(year_branch(year))) % 12
+    natal_br = chart.get("natalYearBranch") or year_branch(year)  # Z53: 农历界年支优先
+    diff = (BRANCHES.index(year_branch(flow_year)) - BRANCHES.index(natal_br)) % 12
     flow_idx = (BRANCHES.index(ming_branch) + diff) % 12
     flow_branch = BRANCHES[flow_idx]
     flow_palace = next((p for p in palaces if p["branch"] == flow_idx), None)
