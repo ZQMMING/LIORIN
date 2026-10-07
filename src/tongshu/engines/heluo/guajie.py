@@ -156,14 +156,24 @@ _TRIGRAM_LINES = {
     "巽": [0, 1, 1], "坎": [0, 1, 0], "艮": [0, 0, 1], "坤": [0, 0, 0],
 }
 
-# 四正节卦：起于二分二至，每卦90日、每爻15日（起例卷之下·节候卦爻）
-# "节卦坎初六起冬至…震初九起春分…离初九起夏至…兑初九起秋分。每卦总管九十日"
-_JIE_GUA_START = [  # (月, 日, 卦, 爻名序列[初→上])
-    (12, 22, "坎", ["初六", "九二", "六三", "六四", "九五", "上六"]),
-    (3, 21, "震", ["初九", "六二", "六三", "九四", "六五", "上六"]),
-    (6, 21, "离", ["初九", "六二", "九三", "九四", "六五", "上九"]),
-    (9, 23, "兑", ["初九", "九二", "六三", "九四", "九五", "上六"]),
-]
+# 四正节卦：起于二分二至，每卦90日、每爻15日（起例卷之下·节候卦爻 L1492）
+# 原典：「节卦坎初六起冬至，九二小寒，六三大寒，六四立春，九五雨水，上六惊蛰。
+#        震初九起春分，六二清明，六三谷雨，九四立夏，六五小满，上六芒种。
+#        离初九起夏至，六二小暑，**九二大暑**，九四立秋，六五处暑，上九白露。
+#        兑初九起秋分，九二寒露，**九三霜降**，九四立冬，九五小雪，上六大雪。」
+#
+# 2026-10-07 更正两处错字：
+#   离卦第三爻「九三」→「**九二**」（原典作「九二大暑」）
+#   兑卦第三爻「六三」→「**九三**」（原典作「九三霜降」）
+# 更进一步：爻名序列改由 jiegua.JIE_GUA_TABLE 单一来源提供，
+# 本表只保留**二分二至的公历起点日**（原典未给具体日期，属近似），
+# 避免节卦爻名在两处各抄一份、日后再次分叉。
+_JIE_GUA_START: tuple[tuple[int, int, str], ...] = (
+    (12, 22, "坎"),   # 冬至附近
+    (3, 21, "震"),    # 春分附近
+    (6, 21, "离"),    # 夏至附近
+    (9, 23, "兑"),    # 秋分附近
+)
 
 
 def trigram_to_lines(trigram: str) -> list[int]:
@@ -194,16 +204,26 @@ def judge_jiehua_gong(birth_date: str) -> list[str]:
         return ev
     import datetime as _dt
     cur = _dt.date(y, m, d)
-    # 四正节卦各自起点（含上年，坎跨年12/22~3/21）
-    for sm, sd, gua, yaos in _JIE_GUA_START:
+    # 节卦爻名取自 jiegua.JIE_GUA_TABLE（单一来源，已由原典逐条校验）
+    from .jiegua import JIE_GUA_TABLE, get_jie_gua
+    for sm, sd, gua in _JIE_GUA_START:
         for yy in (y - 1, y):
             start = _dt.date(yy, sm, sd)
             days = (cur - start).days
             if 0 <= days < 90:
+                # 爻位按原典「每一爻各直十五日」推进。
+                # ⚠️ 原典明文：「气候有盈虚，**卦爻有超接**」——故此均分是
+                #    近似，原典自身即声明「分至之爻既定，其余可推而知矣」。
+                #    精确超接需逐年实测超接量，本仓未实现，不臆造。
                 idx = min(days // 15, 5)
+                # JIE_GUA_TABLE 依四正卦分组（坎/震/离/兑各六爻，起冬至/春分/夏至/秋分）
+                trigram_entries = [e for e in JIE_GUA_TABLE if e.trigram == gua]
+                yao_name = trigram_entries[idx].yao_name if idx < len(trigram_entries) else "?"
+                jq_name = trigram_entries[idx].jq_name if idx < len(trigram_entries) else "?"
                 ev.append(
                     f"生时值节卦：{gua}节卦起于{sm}月{sd}日，出生日距起{days}日"
-                    f"（第{idx + 1}段，{yaos[idx]}爻）→ 化工（原典：生时值节卦者谓之化工）")
+                    f"（第{idx + 1}段，{jq_name}·{yao_name}爻）"
+                    f"→ 化工（原典：生时值节卦者谓之化工）")
                 return ev
     return ev
 
@@ -664,7 +684,20 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongRes
     elif t_state == "不足" or d_state == "不足":
         shu_xiong = True
         ev.append("数不足 → 主夭贫贱薄（虚贫之象），须参元气化工与卦爻断")
-    ev.append("判词：数凶者身亡，但德小者不能当之")
+    # 2026-10-07 更正：本行原为
+    #   「判词：数凶者身亡，但德小者不能当之」
+    # 经 20158 行全库检索，「**德小者**」「**不能当之**」两段**零命中**——
+    # 该判词是**拼凑半句伪造**的，且已污染 guajie.py:1039 的下游 summary 输出。
+    # 原典中数凶之判分散在多处，且随「数」与「月令」而异，摘录如下：
+    #   L2274「岁运逢之，皆当如此处之，数凶则当以不吉祥断。」
+    #   L2292「岁运逢之，居家见服，在仕防谗，去仕不遑，是非难辨，
+    #         若数凶，寿何可久？」
+    #   L741  「如卦数凶，此走空浮薄之夫。」
+    #   L956  「……若阳不足，则非所困而困焉，名必辱……」——合时不足之凶
+    # 故按原典分条列出，不拼造整句。
+    ev.append("判词（据原典分条，非整句）："
+              "L2274「数凶则当以不吉祥断」；L2292「若数凶，寿何可久」；"
+              "L741「如卦数凶，此走空浮薄之夫」")
 
     return ShuXiongResult(tian_shu=tian_shu, di_shu=di_shu, tian_state=t_state,
                           di_state=d_state, shu_xiong=shu_xiong, pattern=pattern, evidence=ev)
@@ -1036,7 +1069,11 @@ def compose_guajie(
         if res.liunian_yao.suiyun:
             s.append(f"岁运逢之：{res.liunian_yao.suiyun}")
     if sx.shu_xiong:
-        s.append(f"数凶（{sx.pattern}：天{sx.tian_shu}/{sx.di_shu}）→ 数凶者身亡，但德小者不能当之")
+        # 2026-10-07 更正：原为「→ 数凶者身亡，但德小者不能当之」，
+        # 该整句经全库检索证伪（「德小者」「不能当之」零命中，系拼凑伪造）。
+        # 改引原典 L2274 / L2292 两条明文。
+        s.append(f"数凶（{sx.pattern}：天{sx.tian_shu}/{sx.di_shu}）"
+                 f"→ 原典 L2274「数凶则当以不吉祥断」；L2292「若数凶，寿何可久」")
     if res.zhengdui_fandui:
         s.append("流年卦与命卦成正对/反对 + 爻辞凶 + 无元气化工 → 生死大凶（不死亦有横灾）")
     if res.yuan_qi_hit and not sx.shu_xiong:
