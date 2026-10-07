@@ -259,18 +259,34 @@ class TestYuantangPureGuaChongshu(unittest.TestCase):
       女得坤：自下而上，子卯二时皆在初爻，午酉二时皆在四爻
       男得坤：自上而下，子卯二时皆在上爻，午酉二时皆在三爻
 
-    「重数」＝同一爻被两个时辰各数一次，故子卯必须同位、午酉必须同位。
-    旧实现是 hour_idx % 6 线性遍历，十二时各占一爻，**一个重数点都没有**，
-    四种组合的子卯午酉四时全部落错位。
+    「重数」据本节首句「当依羲皇三画卦立身，与文王后天六画卦不同」定：
+    三画卦重数即成六画卦 —— 一个三爻卦配六时辰，三爻走两轮。
+    十二时分为阳时组（子..巳）先数、阴时组（午..亥）后数，各重一卦。
+
+      自下而上：阳时组重数下卦（初二三轮）、阴时组重数上卦（四五上两轮）
+      自上而下：阳时组重数上卦（上五四两轮）、阴时组重数下卦（三二初两轮）
+
+    故子卯必同位（三轮头爻、第五时回首爻）、午酉亦必同位（三轮二轮头爻、第八时）。
+
+    男乾「午酉二时皆在三爻」与同配置的女坤「四爻」矛盾，且「重数上卦」不可能落三爻
+    （三爻属下卦）——已裁定为形近涉笔之讹，取「四」。见 yuan_tang.py 同处裁决注。
     """
 
     # (标签, 六爻, 性别, 子卯应落位, 午酉应落位)
     CASES = [
-        ('男乾', [1] * 6, 'male', 0, 2),
+        ('男乾', [1] * 6, 'male', 0, 3),
         ('女乾', [1] * 6, 'female', 5, 2),
         ('女坤', [-1] * 6, 'female', 0, 3),
         ('男坤', [-1] * 6, 'male', 5, 2),
     ]
+
+    # 重数全表（爻位 0=初 … 5=上），子丑寅卯辰巳午未申酉戌亥
+    FULL_TABLE = {
+        '男乾': (0, 1, 2, 0, 1, 2, 3, 4, 5, 3, 4, 5),   # 自下而上
+        '女乾': (5, 4, 3, 5, 4, 3, 2, 1, 0, 2, 1, 0),   # 自上而下
+        '女坤': (0, 1, 2, 0, 1, 2, 3, 4, 5, 3, 4, 5),   # 自下而上
+        '男坤': (5, 4, 3, 5, 4, 3, 2, 1, 0, 2, 1, 0),   # 自上而下
+    }
 
     def _idx(self, lines, gender, hour):
         y = find_yuantang(six_lines=lines, birth_hour=hour, gender=gender,
@@ -298,6 +314,56 @@ class TestYuantangPureGuaChongshu(unittest.TestCase):
                 v = self._idx(lines, gender, h)
                 self.assertIsInstance(v, int, f'{label} {h}时落点非整数')
                 self.assertIn(v, range(6), f'{label} {h}时落点越界：{v}')
+
+    def test_chongshu_full_table_twelve_hours(self):
+        """重数规则：十二时落点全表钉死（不再有「未取证」的线性兜底）。"""
+        lines_of = {'男乾': [1] * 6, '女乾': [1] * 6,
+                    '女坤': [-1] * 6, '男坤': [-1] * 6}
+        gender_of = {'男乾': 'male', '女乾': 'female',
+                     '女坤': 'female', '男坤': 'male'}
+        for label, want in self.FULL_TABLE.items():
+            got = tuple(self._idx(lines_of[label], gender_of[label], h)
+                        for h in HOUR_NAMES)
+            self.assertEqual(got, want, f'{label} 十二时全表不符：实得 {got}')
+
+    def test_chongshu_each_yao_counted_twice(self):
+        """重数的结构定义：三爻走两轮，故每一爻恰被两个时辰各数一次。"""
+        for label, lines, gender, _, _ in self.CASES:
+            counts = [0] * 6
+            for h in HOUR_NAMES:
+                counts[self._idx(lines, gender, h)] += 1
+            self.assertEqual(counts, [2, 2, 2, 2, 2, 2],
+                             f'{label} 各爻计数应为 2，实得 {counts}')
+
+    def test_same_config_agrees_across_qian_kun(self):
+        """同配置必须一致：男乾≡女坤（自下而上）、女乾≡男坤（自上而下）。
+
+        原典男乾条作「午酉三爻」而女坤条作「四爻」，二者是同一配置，
+        本守卫确保实现不再分叉（取女坤「四爻」，男乾「三」判为涉笔之讹）。
+        """
+        for yang, kun in (('男乾', '女坤'), ('女乾', '男坤')):
+            for h in HOUR_NAMES:
+                a = self._idx([1] * 6, 'male' if yang == '男乾' else 'female', h)
+                b = self._idx([-1] * 6, 'female' if yang == '男乾' else 'male', h)
+                self.assertEqual(a, b,
+                                 f'{yang}与{kun}同配置，{h}时却落位不同：{a} vs {b}')
+
+    def test_group_split_six_and_six(self):
+        """阳时组（子..巳）与阴时组（午..亥）各管一卦，不得互相越界。
+
+        自下而上：阳时组只可落初/二/三，阴时组只可落四/五/上。
+        自上而下：阳时组只可落上/五/四，阴时组只可落三/二/初。
+        """
+        up_groups = (range(0, 3), range(3, 6))
+        down_groups = (range(3, 6), range(0, 3))
+        for label, lines, gender, _, _ in self.CASES:
+            is_up = label in ('男乾', '女坤')
+            yang_g, yin_g = up_groups if is_up else down_groups
+            for i, h in enumerate(HOUR_NAMES):
+                v = self._idx(lines, gender, h)
+                g = yang_g if i < 6 else yin_g
+                self.assertIn(v, g,
+                              f'{label} {h}时落 {v}，越出本组卦位 {list(g)}')
 
 
 class TestJiehuaGong(unittest.TestCase):
