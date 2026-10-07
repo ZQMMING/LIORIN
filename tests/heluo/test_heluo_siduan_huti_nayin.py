@@ -250,120 +250,156 @@ class TestSiDuanJunyaoNotShangji(unittest.TestCase):
         self.assertFalse(any("触发：后天运程行至五爻" in x for x in w), w)
 
 
-class TestYuantangPureGuaChongshu(unittest.TestCase):
-    """乾坤纯卦元堂「重数」锚点（起例卷之上，四条明文）
+class TestYuantangPureGuaZhengwen(unittest.TestCase):
+    """乾坤纯卦元堂「正文」锚点（起例卷之上 L297 / L300）
 
-    原典：
-      男得乾：自下而上，子卯二时皆在初爻，午酉二时皆在三爻
-      女得乾：自上而下，子卯二时皆在上爻，午酉二时皆在三爻
-      女得坤：自下而上，子卯二时皆在初爻，午酉二时皆在四爻
-      男得坤：自上而下，子卯二时皆在上爻，午酉二时皆在三爻
+    原典正文：
+      「假令男得乾卦纯阳，不问阴阳，但十二时皆自下而行上，**子午皆在初爻**。
+        如女得乾卦，生冬至以后，至夏至以前，**自上九为始，往下行至初爻**。
+        若生夏至以后，至冬至以前，当**自初九为始，往上行至上九**。」
+      「假令女得坤卦，不问阴阳，但十二时皆自下而上，**子午皆在初爻**，如上例。
+        如男得坤卦，生冬至以后，夏至以前，**自上六行至初六**，
+        夏至以后，冬至以前，当**自下而上行**。」
 
-    「重数」据本节首句「当依羲皇三画卦立身，与文王后天六画卦不同」定：
-    三画卦重数即成六画卦 —— 一个三爻卦配六时辰，三爻走两轮。
-    十二时分为阳时组（子..巳）先数、阴时组（午..亥）后数，各重一卦。
+    落表（爻位 0=初 … 5=上），子丑寅卯辰巳午未申酉戌亥：
+      自下而上 = h % 6      子(0)→初爻、午(6)→初爻  ← 正文「子午皆在初爻」
+      自上而下 = (5-h) % 6  子(0)→上爻、午(6)→上爻
 
-      自下而上：阳时组重数下卦（初二三轮）、阴时组重数上卦（四五上两轮）
-      自上而下：阳时组重数上卦（上五四两轮）、阴时组重数下卦（三二初两轮）
+    交叉验证（L318 同节）：
+      「十一月冬至生，元堂居初九为顺时」——男得乾冬，子时 → 初爻 ✓
+      「如坤卦夏至生，居初六爻」          ——女得坤夏，子时 → 初爻 ✓
 
-    故子卯必同位（三轮头爻、第五时回首爻）、午酉亦必同位（三轮二轮头爻、第八时）。
-
-    男乾「午酉二时皆在三爻」与同配置的女坤「四爻」矛盾，且「重数上卦」不可能落三爻
-    （三爻属下卦）——已裁定为形近涉笔之讹，取「四」。见 yuan_tang.py 同处裁决注。
+    「又一本云」重数版（L306-315）**不采**：明标他本、编者自评「宜更详之」、
+    无冬夏分支、且其自身男乾「午酉三爻」与女坤「午酉四爻」同配置而异说。
+    2026-10-07 早前据该版立的「重数全表」已推翻，见
+    data/heluo/纯卦元堂重数规则定案_20261007.md 更正块。
     """
 
-    # (标签, 六爻, 性别, 子卯应落位, 午酉应落位)
+    # (标签, 六爻, 性别)  —— 冬半年
     CASES = [
-        ('男乾', [1] * 6, 'male', 0, 3),
-        ('女乾', [1] * 6, 'female', 5, 2),
-        ('女坤', [-1] * 6, 'female', 0, 3),
-        ('男坤', [-1] * 6, 'male', 5, 2),
+        ('男乾', [1] * 6, 'male'),
+        ('女乾', [1] * 6, 'female'),
+        ('女坤', [-1] * 6, 'female'),
+        ('男坤', [-1] * 6, 'male'),
     ]
 
-    # 重数全表（爻位 0=初 … 5=上），子丑寅卯辰巳午未申酉戌亥
-    FULL_TABLE = {
-        '男乾': (0, 1, 2, 0, 1, 2, 3, 4, 5, 3, 4, 5),   # 自下而上
-        '女乾': (5, 4, 3, 5, 4, 3, 2, 1, 0, 2, 1, 0),   # 自上而下
-        '女坤': (0, 1, 2, 0, 1, 2, 3, 4, 5, 3, 4, 5),   # 自下而上
-        '男坤': (5, 4, 3, 5, 4, 3, 2, 1, 0, 2, 1, 0),   # 自上而下
+    # 冬半年全表（爻位 0=初 … 5=上），子丑寅卯辰巳午未申酉戌亥
+    WINTER_TABLE = {
+        '男乾': (0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5),   # 自下而行上
+        '女乾': (5, 4, 3, 2, 1, 0, 5, 4, 3, 2, 1, 0),   # 自上九为始往下行
+        '女坤': (0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5),   # 自下而上，如上例
+        '男坤': (5, 4, 3, 2, 1, 0, 5, 4, 3, 2, 1, 0),   # 自上六行至初六
     }
 
-    def _idx(self, lines, gender, hour):
+    # 夏半年全表：女乾「自初九为始，往上行至上九」、男坤「当自下而上行」
+    SUMMER_TABLE = {
+        '男乾': (0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5),
+        '女乾': (0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5),
+        '女坤': (0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5),
+        '男坤': (0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5),
+    }
+
+    def _idx(self, lines, gender, hour, phase='winter'):
         y = find_yuantang(six_lines=lines, birth_hour=hour, gender=gender,
-                          xiantian_name='乾', solar_phase='winter')
+                          xiantian_name='乾', solar_phase=phase)
         return y.yuantang_index
 
-    def test_anchor_zimao(self):
-        """子卯二时同位（重数）"""
-        for label, lines, gender, want, _ in self.CASES:
-            zi, mao = self._idx(lines, gender, '子'), self._idx(lines, gender, '卯')
-            self.assertEqual(zi, want, f'{label} 子时应落 index {want}，实得 {zi}')
-            self.assertEqual(mao, want, f'{label} 卯时应落 index {want}，实得 {mao}')
+    def _table(self, lines_of, gender_of, phase):
+        return {label: tuple(self._idx(lines_of[label], gender_of[label], h, phase)
+                             for h in HOUR_NAMES)
+                for label in lines_of}
 
-    def test_anchor_wuyou(self):
-        """午酉二时同位（重数）"""
-        for label, lines, gender, _, want in self.CASES:
-            wu, you = self._idx(lines, gender, '午'), self._idx(lines, gender, '酉')
-            self.assertEqual(wu, want, f'{label} 午时应落 index {want}，实得 {wu}')
-            self.assertEqual(you, want, f'{label} 酉时应落 index {want}，实得 {you}')
+    @property
+    def _lines_of(self):
+        return {label: lines for label, lines, _ in self.CASES}
 
-    def test_pure_gua_all_ten_two_hours_defined(self):
-        """十二时辰都必须有确定落点，不得因未取证而抛错或返 None。"""
-        for label, lines, gender, _, _ in self.CASES:
+    @property
+    def _gender_of(self):
+        return {label: g for label, _, g in self.CASES}
+
+    # ── 正文两条硬锚点 ────────────────────────────────────────────
+    def test_anchor_ziwu_both_in_first_yao(self):
+        """正文「子午皆在初爻」——男得乾、女得坤，十二时自下而上，子午皆 0。"""
+        for label in ('男乾', '女坤'):
+            zi = self._idx(self._lines_of[label], self._gender_of[label], '子')
+            wu = self._idx(self._lines_of[label], self._gender_of[label], '午')
+            self.assertEqual(zi, 0, f'{label} 子时应在初爻，实得 {zi}')
+            self.assertEqual(wu, 0, f'{label} 午时应在初爻，实得 {wu}')
+
+    def test_anchor_winter_starts_from_top_yao(self):
+        """正文「自上九为始」「自上六行」——女乾/男坤冬半年子时皆在上爻。"""
+        for label in ('女乾', '男坤'):
+            zi = self._idx(self._lines_of[label], self._gender_of[label], '子', 'winter')
+            self.assertEqual(zi, 5, f'{label} 冬半年子时应起上爻，实得 {zi}')
+
+    def test_anchor_summer_starts_from_first_yao(self):
+        """正文「自初九为始」「当自下而上行」——夏半年子时皆在初爻。"""
+        for label in ('女乾', '男坤'):
+            zi = self._idx(self._lines_of[label], self._gender_of[label], '子', 'summer')
+            self.assertEqual(zi, 0, f'{label} 夏半年子时应起初爻，实得 {zi}')
+
+    # ── 全表钉死 ──────────────────────────────────────────────────
+    def test_winter_full_table_twelve_hours(self):
+        got = self._table(self._lines_of, self._gender_of, 'winter')
+        for label, want in self.WINTER_TABLE.items():
+            self.assertEqual(got[label], want, f'{label} 冬半年十二时全表不符')
+
+    def test_summer_full_table_twelve_hours(self):
+        got = self._table(self._lines_of, self._gender_of, 'summer')
+        for label, want in self.SUMMER_TABLE.items():
+            self.assertEqual(got[label], want, f'{label} 夏半年十二时全表不符')
+
+    def test_summer_all_four_configurations_identical(self):
+        """夏半年四条皆「自初爻为始往上行」，故四配置全表必然相同——
+        这是正文四条的直接推论，若实现再分叉（如保留「重数」）此断言即红。"""
+        got = self._table(self._lines_of, self._gender_of, 'summer')
+        vals = set(got.values())
+        self.assertEqual(len(vals), 1,
+                         f'夏半年四配置落表竟不一致（重数版残留？）：{got}')
+
+    def test_none_phase_behaves_as_winter(self):
+        """未给节气时按冬半年处理（向后兼容），且明文「不抛错、不返 None」。"""
+        for label, lines, gender in self.CASES:
+            no_phase = tuple(find_yuantang(
+                six_lines=lines, birth_hour=h, gender=gender,
+                xiantian_name='乾').yuantang_index for h in HOUR_NAMES)
+            self.assertEqual(no_phase, self.WINTER_TABLE[label],
+                             f'{label} 未给节气时应等同冬半年')
             for h in HOUR_NAMES:
                 v = self._idx(lines, gender, h)
-                self.assertIsInstance(v, int, f'{label} {h}时落点非整数')
+                self.assertIsInstance(v, int)
                 self.assertIn(v, range(6), f'{label} {h}时落点越界：{v}')
 
-    def test_chongshu_full_table_twelve_hours(self):
-        """重数规则：十二时落点全表钉死（不再有「未取证」的线性兜底）。"""
-        lines_of = {'男乾': [1] * 6, '女乾': [1] * 6,
-                    '女坤': [-1] * 6, '男坤': [-1] * 6}
-        gender_of = {'男乾': 'male', '女乾': 'female',
-                     '女坤': 'female', '男坤': 'male'}
-        for label, want in self.FULL_TABLE.items():
-            got = tuple(self._idx(lines_of[label], gender_of[label], h)
-                        for h in HOUR_NAMES)
-            self.assertEqual(got, want, f'{label} 十二时全表不符：实得 {got}')
+    def test_each_yao_counted_twice(self):
+        """十二时配六爻、逐时推移，两轮走完 → 每一爻恰 2 次。"""
+        for phase in ('winter', 'summer'):
+            got = self._table(self._lines_of, self._gender_of, phase)
+            for label, tbl in got.items():
+                counts = [0] * 6
+                for v in tbl:
+                    counts[v] += 1
+                self.assertEqual(counts, [2, 2, 2, 2, 2, 2],
+                                 f'{label}（{phase}）各爻计数应为 2，实得 {counts}')
 
-    def test_chongshu_each_yao_counted_twice(self):
-        """重数的结构定义：三爻走两轮，故每一爻恰被两个时辰各数一次。"""
-        for label, lines, gender, _, _ in self.CASES:
-            counts = [0] * 6
-            for h in HOUR_NAMES:
-                counts[self._idx(lines, gender, h)] += 1
-            self.assertEqual(counts, [2, 2, 2, 2, 2, 2],
-                             f'{label} 各爻计数应为 2，实得 {counts}')
+    def test_step_is_always_one_yao(self):
+        """「皆自下而行上」「往下行至初爻」——逐时相邻爻位恰差 1 爻。
 
-    def test_same_config_agrees_across_qian_kun(self):
-        """同配置必须一致：男乾≡女坤（自下而上）、女乾≡男坤（自上而下）。
-
-        原典男乾条作「午酉三爻」而女坤条作「四爻」，二者是同一配置，
-        本守卫确保实现不再分叉（取女坤「四爻」，男乾「三」判为涉笔之讹）。
+        第六时→第七时（巳→午）为一轮走完后的回绕（末爻回首爻），属同一循环，
+        故差值 5（= -1 mod 6）亦算相邻。**恰好 6→0 这一处必须回绕**，
+        因为「十二时配六爻」必然走两轮。
         """
-        for yang, kun in (('男乾', '女坤'), ('女乾', '男坤')):
-            for h in HOUR_NAMES:
-                a = self._idx([1] * 6, 'male' if yang == '男乾' else 'female', h)
-                b = self._idx([-1] * 6, 'female' if yang == '男乾' else 'male', h)
-                self.assertEqual(a, b,
-                                 f'{yang}与{kun}同配置，{h}时却落位不同：{a} vs {b}')
-
-    def test_group_split_six_and_six(self):
-        """阳时组（子..巳）与阴时组（午..亥）各管一卦，不得互相越界。
-
-        自下而上：阳时组只可落初/二/三，阴时组只可落四/五/上。
-        自上而下：阳时组只可落上/五/四，阴时组只可落三/二/初。
-        """
-        up_groups = (range(0, 3), range(3, 6))
-        down_groups = (range(3, 6), range(0, 3))
-        for label, lines, gender, _, _ in self.CASES:
-            is_up = label in ('男乾', '女坤')
-            yang_g, yin_g = up_groups if is_up else down_groups
-            for i, h in enumerate(HOUR_NAMES):
-                v = self._idx(lines, gender, h)
-                g = yang_g if i < 6 else yin_g
-                self.assertIn(v, g,
-                              f'{label} {h}时落 {v}，越出本组卦位 {list(g)}')
+        for phase in ('winter', 'summer'):
+            got = self._table(self._lines_of, self._gender_of, phase)
+            for label, tbl in got.items():
+                for i in range(6):
+                    d = abs(tbl[i + 1] - tbl[i])
+                    self.assertIn(d, (1, 5),
+                                  f'{label}（{phase}）{HOUR_NAMES[i]}→'
+                                  f'{HOUR_NAMES[i + 1]} 未相邻：{tbl[i]}→{tbl[i + 1]}')
+                # 一轮走完必回绕一次，且只此一次
+                wraps = [i for i in range(6) if abs(tbl[i + 1] - tbl[i]) == 5]
+                self.assertEqual(wraps, [5],
+                                 f'{label}（{phase}）回绕点应恰在巳→午，实得 {wraps}')
 
 
 class TestJiehuaGong(unittest.TestCase):

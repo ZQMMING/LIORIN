@@ -155,27 +155,36 @@ class TestYuantangEngineDefinedPaths(unittest.TestCase):
         # 末位「初六」即原典 L282「巳时得大过，元堂在初六」
 
     def test_pure_gua_summer_phase_is_engine_defined(self):
-        """纯卦夏半年分支 = 正文线性 %6，与冬半年重数异族 —— 待用户裁决。
+        """**已于 2026-10-07 裁决并改实现**：纯卦元堂冬夏**同族**，皆为线性六爻推移。
 
-        L297/300 正文是线性说（子午皆在初爻），
-        L306-315「又一本云」是重数说（子卯同爻）。
-        当前实现冬半年采重数、夏半年抄正文线性，两版缝在同一分支。
-        本测试只锁定「现状确实如此」，不表示认可。
+        本测试原为「冬重数、夏线性」两版缝合现状的快照，现改为正文版守卫：
+        L297「男得乾……十二时皆自下而行上，子午皆在初爻」＋
+        「女得乾……生冬至以后至夏至以前，自上九为始，往下行至初爻；
+          若生夏至以后至冬至以前，当自初九为始，往上行至上九」。
+
+        故女乾：冬半年自上爻起步往下行，夏半年自初爻起步往上行，
+        两者**同为「逐时移一爻」的线性推移**，只是起点相反。
+        「又一本云」重数版（L306-315）已废止，理由见 yuan_tang.py 同处裁决注
+        与 data/heluo/纯卦元堂重数规则定案_20261007.md 更正块。
         """
         qian = [1] * 6
+        hours = ("子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥")
         winter = [find_yuantang(six_lines=qian, birth_hour=h, gender="female",
                                 xiantian_name="乾", solar_phase="winter").yuantang_index
-                  for h in ("子", "卯", "午", "酉")]
+                  for h in hours]
         summer = [find_yuantang(six_lines=qian, birth_hour=h, gender="female",
                                 xiantian_name="乾", solar_phase="summer").yuantang_index
-                  for h in ("子", "卯", "午", "酉")]
-        # 冬半年：子卯同位(重数)、午酉同位
-        self.assertEqual(winter, [5, 5, 2, 2])
-        # 夏半年：子午同位(线性 %6)、子卯不同位 —— 与冬半年性质不同
-        self.assertEqual(summer, [0, 3, 0, 3])
+                  for h in hours]
+        # 冬：自上九(5)为始往下行 → 子5 丑4 寅3 卯2 辰1 巳0 午5 …
+        self.assertEqual(winter, [5, 4, 3, 2, 1, 0, 5, 4, 3, 2, 1, 0])
+        # 夏：自初九(0)为始往上行 → 子0 丑1 寅2 卯3 辰4 巳5 午0 …
+        self.assertEqual(summer, [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5])
         self.assertNotEqual(winter, summer,
-                            "若此断言失败，说明夏半年已改为重数，请更新本测试与"
+                            "若此断言失败，说明冬夏已同向，请更新本测试与"
                             "data/heluo/元堂算法核验_20261007.md 的裁决记录")
+        # 冬夏互为镜像：夏[h] == 5 - 冬[h]
+        for w, s in zip(winter, summer):
+            self.assertEqual(s, 5 - w, "冬夏两分支应为起点相反的同族线性推移")
 
 
 class TestHexagramAuxiliaryGua(unittest.TestCase):
