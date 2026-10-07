@@ -159,20 +159,58 @@ class TestTargetPassthrough(unittest.TestCase):
         self.assertEqual(a["liuyue_hexagram"], b["liuyue_hexagram"])
 
     def test_distinct_target_dates_give_distinct_month_day(self):
-        """应期日必须真的参与推演——四个农历月日各异，流月/流日卦应随之变化。
+        """应期日必须真的参与推演。
 
-        已知映射（_heluo_lunar_target 口径）：
-            2026-08-17 → 农历七月；2026-01-20 → 农历十二月
-            2026-05-04 → 农历三月； 2026-11-03 → 农历九月
+        **注意（2026-10-07 起日卦改逐日后）**：不得再要求「四个农历月 → 四个
+        各不相同的流日卦」。流日卦 = 月卦六爻翻其「居位爻下一爻」起的日位爻，
+        不同农历月的同日序可合法落在同一爻位、得到同一卦（实测
+        2026-08-17/2026-01-20/2026-05-04/2026-11-03 只得晋/姤/蒙三卦）。
+        那不是 bug，是原典 L390 规则的必然结果。
+
+        此处改为两条有牙齿的断言：
+          1. 同月不同日 → 流日卦**必**不同（同一月卦翻不同爻位，必得不同卦）
+          2. 每个日期的流日卦都等于按 liuri_day_positions 独立复算的值
+             （若 target_day 根本没进推演，此断言立刻红）
         """
-        seen_month, seen_day = set(), set()
-        for d in (date(2026, 8, 17), date(2026, 1, 20),
-                  date(2026, 5, 4), date(2026, 11, 3)):
+        from tongshu.engines.heluo.timeline_yun import (
+            _flip_line, _lines_to_hexagram, liuri_day_positions,
+        )
+        tl = _run(self.pipeline, heluo_target_date=_TARGET).heluo_result.timeline
+        y2026 = next(y for y in tl.yearly_hexagrams if y["year"] == 2026)
+
+        def _month(no: int) -> dict:
+            return y2026["months"][no - 1]
+
+        # 1) 同农历月内，初五 vs 初七 → 必不同
+        a = _run(self.pipeline, heluo_target_date=date(2026, 8, 17)).heluo_result.guajie
+        b = _run(self.pipeline, heluo_target_date=date(2026, 8, 19)).heluo_result.guajie
+        self.assertEqual(a["liuyue_hexagram"], b["liuyue_hexagram"],
+                         "同一农历月的流月卦应相同")
+        self.assertNotEqual(a["liuri_hexagram"], b["liuri_hexagram"],
+                            "同月不同日的流日卦必须不同——target_day 未进推演")
+
+        # 2) 逐个日期按原典 L390 规则独立复算
+        # 已知映射（_heluo_lunar_target 口径）：
+        #   2026-08-17 → 农历七月初五；2026-01-20 → 农历十二月初二
+        #   2026-05-04 → 农历三月十八； 2026-11-03 → 农历九月廿五
+        cases = [
+            (date(2026, 8, 17), 7, 5),
+            (date(2026, 1, 20), 12, 2),
+            (date(2026, 5, 4), 3, 18),
+            (date(2026, 11, 3), 9, 25),
+        ]
+        for d, m_no, m_day in cases:
             g = _run(self.pipeline, heluo_target_date=d).heluo_result.guajie
-            seen_month.add(g["liuyue_hexagram"])
-            seen_day.add(g["liuri_hexagram"])
-        self.assertEqual(len(seen_month), 4, f"流月卦未随应期日变化：{seen_month}")
-        self.assertEqual(len(seen_day), 4, f"流日卦未随应期日变化：{seen_day}")
+            m = _month(m_no)
+            # 链式累变：自月卦逐日累积翻爻至目标日
+            cur = list(m["lines"])
+            for pos in liuri_day_positions(m["yue_yao_index"])[:m_day]:
+                cur = _flip_line(cur, pos)
+            want = guajie_mod._short(_lines_to_hexagram(cur)[2])
+            self.assertEqual(
+                g["liuri_hexagram"], want,
+                f"{d}（农历{m_no}月{m_day}日）流日卦与原典 L390 复算不符")
+            self.assertTrue(g["liuyue_hexagram"], f"{d} 流月卦未定位")
 
 
 class TestLunarTargetConversion(unittest.TestCase):

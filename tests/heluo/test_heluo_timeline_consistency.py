@@ -138,15 +138,39 @@ class TestLiuriRuleConsistency(unittest.TestCase):
         self.assertEqual(bad, [], "《起日卦例》六爻俱变毕，则满三十日 → 应为 6 段×5日")
 
     def test_flip_index_starts_from_next_yao_and_wraps(self):
-        """动爻从居位爻的下一爻起算，绕六爻一圈回到同一爻位。"""
+        """起日卦逐日推进（原典 L390「挨次而变，不容紊也」）。
+
+        2026-10-07 依原典改正：旧实现按「六段顺次绕回」，
+        每段固定一爻管五日；原典则是**逐日一爻**，且
+        「阳日寻阳爻位（初三五）、阴日寻阴爻位（二四上）」（见 liuri_day_positions）。
+        故「首尾相衔」应验在**逐日序列**上，不是段首 flip_index 上。
+        """
         first_month = self.yearly[0]["months"][0]
-        seq = [d["flip_index"] for d in first_month["days"]]
-        self.assertEqual(len(seq), 6)
-        # 六段应恰好覆盖六个不同爻位，且首尾衔接（末段+1 == 首段）
-        self.assertEqual(sorted(seq), list(range(6)),
-                         f"六段应各覆盖一个爻位，实得 {seq}")
-        self.assertEqual((seq[-1] + 1) % 6, seq[0],
-                         f"动爻序列应首尾相衔，实得 {seq}")
+        # 时间轴走按需化 stub：段内五日爻位存于 day_positions
+        seq = []
+        for d in first_month["days"]:
+            seq.extend(d.get("day_positions") or [])
+        self.assertEqual(len(seq), 30, "起日卦应覆盖 30 日")
+
+        from tongshu.engines.heluo.timeline_yun import liuri_day_positions
+        self.assertEqual(seq, liuri_day_positions(first_month["yue_yao_index"]),
+                         "逐日爻位须与原典规则复算一致")
+
+        # 挨次而变：日 n+1 的爻位必自日 n 顺推，不跳不紊
+        for a, b in zip(seq, seq[1:]):
+            self.assertEqual((a + 1) % 6, b,
+                             f"流日应挨次推进，实得 {a} -> {b}")
+
+        # 每一爻管五日：30 日内每爻恰 5 次
+        counts = [seq.count(i) for i in range(6)]
+        self.assertEqual(counts, [5] * 6,
+                         f"《起日卦例》每一爻管五日，实得 {counts}")
+
+        # 阴阳日各走各位序
+        yang = [seq[d] for d in range(30) if d % 2 == 0]
+        yin = [seq[d] for d in range(30) if d % 2 == 1]
+        self.assertTrue(all(p in (0, 2, 4) for p in yang), f"阳日应落阳位：{yang}")
+        self.assertTrue(all(p in (1, 3, 5) for p in yin), f"阴日应落阴位：{yin}")
 
     def test_day_segments_carry_no_hour_data(self):
         """流时应按需现算，不得预展开（2026-10-06 性能改造）。"""

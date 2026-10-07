@@ -59,15 +59,18 @@ class TestLazyLiuShi(unittest.TestCase):
                     self.assertEqual([h["hour"] for h in hours], list(range(1, 13)))
 
     def test_flip_index_is_single_line_diff_vs_month(self):
-        """flip_index 必须是日段相对月卦唯一变动的爻，否则按需路径无从重建"""
+        """2026-10-07 起日卦改**链式累变**（原典 L390），日卦与月卦不再只差一爻。
+
+        变爻位改由 :func:`liuri_day_positions` 的逐日序列直接给出；
+        本断言改为校验「段级 flip_index = 该段首日爻位、day_positions 逐日吻合」。
+        """
+        from tongshu.engines.heluo.timeline_yun import liuri_day_positions
         for y in self.yearly:
             for m in y["months"]:
-                ml = m["lines"]
-                for d in m["days"]:
-                    diffs = [k for k in range(6)
-                             if len(d["lines"]) > k and len(ml) > k and d["lines"][k] != ml[k]]
-                    if len(diffs) == 1:
-                        self.assertEqual(d["flip_index"], diffs[0])
+                pos = liuri_day_positions(m["yue_yao_index"])
+                for k, d in enumerate(m["days"]):
+                    self.assertEqual(d["flip_index"], pos[k * 5])
+                    self.assertEqual(d["day_positions"], pos[k * 5:k * 5 + 5])
 
     def test_guajie_hours_layer_stripped_others_intact(self):
         """2026-10-06 流时层剥离：流时恒空，但流年/流月/流日仍须正确定位。"""
@@ -80,7 +83,26 @@ class TestLazyLiuShi(unittest.TestCase):
         # 剥离流时不得牵连其余三层
         self.assertEqual(out["liunian_hexagram"], "困")
         self.assertEqual(out["liuyue_hexagram"], "蛊")
-        self.assertEqual(out["liuri_hexagram"], "升")
+        # 流日：2026-10-07 起按原典 L390 逐日一爻规则复算，不再硬编码卦名
+        self.assertEqual(out["liuri_hexagram"], self._expected_liuri_gua(6, 15))
+
+    def _expected_liuri_gua(self, month_no: int, day: int) -> str:
+        """按原典 L390 复算第 month_no 月第 day 日的日卦名。
+
+        链式累变：自月卦起，逐日翻下一爻——须从头累积到目标日，
+        不能只翻目标爻（那正是被原典否掉的「单变」口径）。
+        """
+        from tongshu.engines.heluo.timeline_yun import (
+            _flip_line, _lines_to_hexagram, liuri_day_positions,
+        )
+        y2026 = next(y for y in self.res.timeline.yearly_hexagrams
+                     if y["year"] == 2026)
+        m = y2026["months"][month_no - 1]
+        cur = list(m["lines"])
+        for pos in liuri_day_positions(m["yue_yao_index"])[:day]:
+            cur = _flip_line(cur, pos)
+        # guajie 对外一律走 _short() 短名，复算须同口径
+        return gj._short(_lines_to_hexagram(cur)[2])
 
     def test_guajie_all_twelve_hours_uniformly_stripped(self):
         """12 个时辰一律不产流时，且都在 evidence 留痕。"""
@@ -330,9 +352,20 @@ class TestLiuRiAlignDatesSwitch(unittest.TestCase):
         """开不开日期，卦名/爻/日段边界必须完全一致。"""
         a = compute_liuri(self.LINES, 3, self.JIE).days
         b = compute_liuri(self.LINES, 3, self.JIE, align_dates=True).days
-        strip = lambda ds: [{k: v for k, v in d.items()
-                             if k not in ("date_from", "date_to")} for d in ds]
-        self.assertEqual(strip(a), strip(b))
+
+        def _clean(d):
+            out = {k: v for k, v in d.items()
+                   if k not in ("date_from", "date_to")}
+            # 2026-10-07：起日卦改为逐日一爻后，段内 day_items 也会带 date，
+            # 一并剔除，否则两条路径的日级条目会因日期字段不等。
+            if "day_items" in out:
+                out["day_items"] = [
+                    {k: v for k, v in it.items()
+                     if k not in ("date", "date_align_error")}
+                    for it in out["day_items"]]
+            return out
+
+        self.assertEqual([_clean(d) for d in a], [_clean(d) for d in b])
 
     def test_no_jie_datetime_degrades_to_relative(self):
         for flag in (False, True):

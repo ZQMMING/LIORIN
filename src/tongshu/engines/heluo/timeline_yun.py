@@ -315,6 +315,74 @@ class LiuRiResult:
     days: list[dict] = field(default_factory=list)
 
 
+
+# 起日卦「阳位/阴位」（原典 L390：初三五为阳位，二四上为阴位）
+_LIURI_YANG_POS = (0, 2, 4)   # 初、三、五
+_LIURI_YIN_POS = (1, 3, 5)    # 二、四、上
+_LIURI_DAYS_PER_MONTH = 30    # 「六爻俱变毕，则满三十日」
+
+
+def liuri_day_positions(yue_yao_index: int) -> list[int]:
+    """起日卦 30 日**逐日**爻位（原典 L390「挨次而变，不容紊也」）。
+
+    自月卦居位爻的下一爻起（原文「进一爻起」），
+    阳日（奇数日）只在阳位（初/三/五）取，阴日（偶数日）只在阴位（二/四/上）取，
+    逐日顺推不回头。
+
+    该式同时满足原典「每一爻管五日」：30 日内每爻恰出现 5 次。
+
+    原典实例（乾九二居位 → start=三爻）：
+        初一(阳)→三爻 履六三 ｜ 初二(阴)→四爻 中孚六四
+        初三(阳)→五爻 损六五 ｜ 初四(阴)→上爻 临上六
+        初五(阳)→初爻 师初六
+    """
+    pos = (yue_yao_index + 1) % 6
+    out: list[int] = []
+    for d in range(1, _LIURI_DAYS_PER_MONTH + 1):
+        pool = _LIURI_YANG_POS if d % 2 == 1 else _LIURI_YIN_POS
+        for step in range(6):
+            cand = (pos + step) % 6
+            if cand in pool:
+                pos = cand
+                break
+        out.append(pos)
+    return out
+
+
+def liuri_day_lines(yue_lines: list[int], yue_yao_index: int) -> list[tuple[int, list[int]]]:
+    """起日卦 30 日**逐日链式累变**（原典 L390）。
+
+    原典不是「月卦各翻一爻」，而是**每日自前一日卦继续翻下一爻**：
+
+        初一日当在三爻，变为履六三
+        初二日变履九四为中孚六四        ← 自「履」的九四翻，非自月卦乾
+        初三日变中孚九五为损六五        ← 自「中孚」的九五翻
+        初四日变损上九为临上六
+        初五日变临初九为师初六
+
+    乾初爻居位实测五日（卦名 + 变爻名）逐字吻合：
+        履六三 / 中孚六四 / 损六五 / 临上六 / 师初六
+    若改成「月卦单爻翻转」则得 履 / 小畜 / 大有 / 夬 / 姤，与原典 4/5 不符。
+
+    2026-10-07 据此改正。此前实现（2026-09-12 考证裁定，文档亦作「另画一乾卦
+    ……非链式」）与原典实例冲突，以原典为准。
+
+    Returns:
+        30 组 ``(爻位, 该日卦六爻)``；第 0 日即 ``liuri_day_positions[0]``。
+    """
+    out: list[tuple[int, list[int]]] = []
+    cur = list(yue_lines)
+    for pos in liuri_day_positions(yue_yao_index):
+        cur = _flip_line(cur, pos)
+        out.append((pos, cur))
+    return out
+
+
+def _lines_to_hexagram_name(lines: list[int]) -> tuple[str, str, str]:
+    u, lo, name = _lines_to_hexagram(lines)
+    return u, lo, name
+
+
 def compute_liuri(
     yue_lines: list[int],
     yue_yao_index: int,
@@ -324,17 +392,31 @@ def compute_liuri(
     """
     流日卦（《河洛真数·起例卷之上·起日卦例》万历二十年李学诗刻本）。
 
-    规则（按现存最早刻本口径，2026-09-12 考证裁定）：
-      1. 以当月月卦为本，从月卦居位爻的下一爻起，自下而上变六爻
-         （绕一圈回到居位爻为止），即"六爻俱变毕，则满三十日"。
-      2. "每一爻管五日"：六爻各管五日，共三十日。
-      3. "另画一乾卦"：各段以月卦为本独立变对应爻位（非链式）。
-      例（乾九二居位）：九三→履、九四→小畜、九五→大有、
-         上九→夬、初九→姤、九二（居位）→同人。
+    规则（原典 L390 口径，2026-10-07 复核定案）：
+      1. 自月卦居位爻的**下一爻**起，逐日翻一爻，**自前一日卦继续翻**
+         （链式累变）。原文：「挨次而变，不容紊也」，并逐日点名
+         「初二日变**履**九四为中孚六四」——明言自前一日卦而变。
+      2. 阳日（初、三、五等奇数日）只在阳位（初/三/五爻）取爻，
+         阴日只在阴位（二/四/上爻）取爻。原文：「阳日寻阳爻位，
+         （初三五为阳位。）阴日寻阴爻位。（二四上为阴位。）」
+      3. 「每一爻管五日」+「六爻俱变毕，则满三十日」：30 日内每爻恰 5 次。
+      4. 「进一爻起」：居位爻的下一爻为初一之位。此读法与原文两处实例
+         （乾初爻居位初一日在三爻、乾二爻居位初一日亦在三爻）**同时吻合**；
+         首句「以流月卦前一爻为初一日」与之矛盾，登记为异文，不据此造规则。
 
-    异文记录：《河洛理数》卷二下（国图藏史应选校订明刊本，晚出约40年）
-      "除此一爻不变…每管六日…自下爻行至上爻"为 5 爻×6 日口径
-      （不含居位爻），按"最早书籍为准"原则不采用，保留为异文。
+      例（乾初爻居位，原文五日实例逐字复现）：
+        初一 翻三爻 → 天泽履 六三
+        初二 翻四爻 → 风泽中孚 六四
+        初三 翻五爻 → 山泽损 六五
+        初四 翻上爻 → 地泽临 上六
+        初五 翻初爻 → 地水师 初六
+
+    异文记录：2026-09-12 曾据「另画一乾卦」一句定为「各段以月卦为本独立变
+      对应爻位（非链式）」，并据晚出约 40 年的《河洛理数》卷二下
+      「除此一爻不变…每管六日…自下爻行至上爻」取 5 爻×6 日口径。
+      **两说均与 L390 逐日实例冲突**（单变则初二得小畜、初三得大有，
+      原文明作中孚、损），2026-10-07 依原典实例定案为链式 6 爻×5 日，
+      前说废止；晚出本异文仅备查。
 
     节气对齐（《河洛真数》："日卦行起必须按月卦节气方不误"）：
       若提供 jie_datetime（当月"节"的精确时刻，如 2024-08-07 08:09）且
@@ -343,16 +425,39 @@ def compute_liuri(
       而每段多算 2 个日期串 + 一次 strptime，实测占单盘载荷的大头。
       仍可由调用方显式开启，不丢能力。
     """
-    start = (yue_yao_index + 1) % 6
+    positions = liuri_day_positions(yue_yao_index)
+    day_lines = liuri_day_lines(yue_lines, yue_yao_index)
     base = _parse_datetime(jie_datetime) if (jie_datetime and align_dates) else None
     days = []
     for k in range(6):
-        flip_idx = (start + k) % 6
-        seg_lines = _flip_line(yue_lines, flip_idx)
+        seg_days = positions[k * 5:k * 5 + 5]
+        flip_idx = seg_days[0]          # 段首爻位（保留旧键语义=该段第一日）
+        seg_lines = day_lines[k * 5][1]
         u, lo, name = _lines_to_hexagram(seg_lines)
+        # 段内五日逐日各有一卦（原典「挨次而变」），不共一卦
+        day_items = []
+        for j, pos in enumerate(seg_days):
+            dl = day_lines[k * 5 + j][1]
+            du, dlo, dname = _lines_to_hexagram(dl)
+            item = {
+                "day": k * 5 + j + 1,
+                "polarity": "阳日" if (k * 5 + j) % 2 == 0 else "阴日",
+                "flip_index": pos,
+                "day_yao_index": pos,   # 原典「变为履六三」的「三」即当日变爻
+                "name": dname, "upper": du, "lower": dlo, "lines": dl,
+            }
+            if base is not None:
+                try:
+                    from datetime import timedelta
+                    item["date"] = (base + timedelta(days=k * 5 + j)).strftime("%Y-%m-%d")
+                except Exception as exc:
+                    item["date_align_error"] = f"节气日期对齐失败：{exc}"
+            day_items.append(item)
         entry = {
             "segment": k + 1, "day_from": k * 5 + 1, "day_to": k * 5 + 5,
+            "flip_index": flip_idx,
             "name": name, "upper": u, "lower": lo, "lines": seg_lines,
+            "day_items": day_items,
         }
         if base is not None:
             # 节气对齐：段k覆盖节起第(k*5+1)~第(k*5+5)天
@@ -386,23 +491,29 @@ def compute_liuri_stub(yue_lines: list[int], yue_yao_index: int) -> list[dict]:
     ``TestLazyLiuShi`` 两项断言直接读 ``d["lines"]`` 校验 flip_index，
     保留它即可在**不改任何既有测试**的前提下拿到全部收益。
 
-    ``flip_index`` 用闭式公式而非 diff：实测 3 盘 20,592 个日段，
-    ``(yue_yao_index + 1 + k) % 6`` 与「逐爻 diff 求唯一差异爻」
-    **0 处不一致**，且每段 diff 恒恰好一爻，故公式与原算法等价。
+    ``flip_index`` 即该日/该段的变爻位置（与 ``day_yao_index`` 同值），
+    由 :func:`liuri_day_positions` 直接给出。
+
+    2026-10-07 起 ``lines``/``day_lines`` 为**链式累变**结果（见
+    :func:`liuri_day_lines`），不再是对月卦的单爻翻转。
 
     需要卦名时，由调用方对命中的那一个月调 :func:`materialize_month_days` 现算。
     """
-    start = (yue_yao_index + 1) % 6
-    return [
-        {
+    positions = liuri_day_positions(yue_yao_index)
+    day_lines = liuri_day_lines(yue_lines, yue_yao_index)
+    out = []
+    for k in range(6):
+        seg_days = positions[k * 5:k * 5 + 5]
+        out.append({
             "segment": k + 1,
             "day_from": k * 5 + 1,
             "day_to": k * 5 + 5,
-            "flip_index": (start + k) % 6,
-            "lines": _flip_line(yue_lines, (start + k) % 6),
-        }
-        for k in range(6)
-    ]
+            "flip_index": seg_days[0],
+            "lines": day_lines[k * 5][1],
+            "day_positions": seg_days,
+            "day_lines": [day_lines[k * 5 + j][1] for j in range(5)],
+        })
+    return out
 
 
 def materialize_month_days(month: dict) -> list[dict]:
@@ -425,9 +536,6 @@ def materialize_month_days(month: dict) -> list[dict]:
     if yue_yao is None or not lines:
         return list(month.get("days") or [])
     days = compute_liuri(lines, yue_yao, month.get("jie_datetime")).days
-    start = (yue_yao + 1) % 6
-    for k, dseg in enumerate(days):
-        dseg["flip_index"] = (start + k) % 6
     return days
 
 
@@ -506,5 +614,6 @@ __all__ = [
     "compute_liunian", "LiuNianResult", "LiuNianYear",
     "compute_liuyue", "LiuYueResult",
     "compute_liuri", "LiuRiResult",
+    "liuri_day_positions", "liuri_day_lines",
     "compute_liushi", "LiuShiResult",
 ]

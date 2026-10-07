@@ -78,29 +78,42 @@ class TestMaterializeEquivalence(unittest.TestCase):
                 new = materialize_month_days(m)
                 old = compute_liuri(m["lines"], m["yue_yao_index"],
                                     m.get("jie_datetime")).days
+                # 2026-10-07：起日卦改「逐日一爻」后，flip_index 须按
+                # liuri_day_positions 复算（旧顺次公式 (start+k)%6 已不成立），
+                # 且段级取首日、日级取逐日。
+                from tongshu.engines.heluo.timeline_yun import liuri_day_positions
+                pos = liuri_day_positions(m["yue_yao_index"])
                 for k in range(6):
                     o, n = dict(old[k]), dict(new[k])
-                    o["flip_index"] = (m["yue_yao_index"] + 1 + k) % 6
+                    o["flip_index"] = pos[k * 5]
+                    o["day_items"] = [
+                        dict(it, flip_index=pos[k * 5 + j])
+                        for j, it in enumerate(o.get("day_items") or [])]
                     for key in ("segment", "day_from", "day_to",
-                                "flip_index", "name", "upper", "lower", "lines"):
+                                "flip_index", "name", "upper", "lower", "lines",
+                                "day_items"):
                         if o.get(key) != n.get(key):
                             mism.append((y["year"], m["month"], k, key))
         self.assertEqual(mism, [], f"物化结果与旧算法不一致：{mism[:5]}")
 
     def test_flip_index_equals_single_line_diff(self):
-        """闭式公式 ≡ 逐爻 diff 求唯一差异爻（flip_index 的原始定义）。"""
+        """2026-10-07 起本断言**已失效**：原典 L390 是**链式累变**，
+        日卦与月卦相差不止一爻，「唯一差异爻」不再是变爻。
+
+        变爻改由 :func:`liuri_day_positions` 的逐日爻位直接给出，
+        此处断言二者一致（并覆盖全部 1,116 个月 × 6 段）。
+        """
+        from tongshu.engines.heluo.timeline_yun import liuri_day_positions
         yearly = _calc().timeline.yearly_hexagrams
         checked = 0
         for y in yearly:
             for m in y["months"]:
-                ml = m["lines"]
-                for d in m["days"]:
-                    diffs = [i for i in range(6)
-                             if len(d["lines"]) > i and len(ml) > i
-                             and d["lines"][i] != ml[i]]
-                    self.assertEqual(len(diffs), 1,
-                                     "日段相对月卦应恰好变一爻")
-                    self.assertEqual(d["flip_index"], diffs[0])
+                pos = liuri_day_positions(m["yue_yao_index"])
+                for k, d in enumerate(m["days"]):
+                    self.assertEqual(d["flip_index"], pos[k * 5],
+                                     f"第{k + 1}段 flip_index 与原典爻位序列不符")
+                    self.assertEqual(d["day_positions"], pos[k * 5:k * 5 + 5])
+                    self.assertEqual(len(d["day_lines"]), 5)
                     checked += 1
         self.assertGreater(checked, 6000, "应覆盖全部 1,116 个月 × 6 段")
 

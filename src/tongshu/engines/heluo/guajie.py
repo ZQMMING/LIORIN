@@ -1135,10 +1135,27 @@ def build_guajie_from_result(
                                         d_from = dseg.get("day_from", 1)
                                         d_to = dseg.get("day_to", 5)
                                         if d_from <= target_day <= d_to:
-                                            liuri_hex_name = _short(dseg.get("name", ""))
-                                            dl = dseg.get("lines") or []
-                                            diffs = [k for k in range(6) if len(dl) > k and len(ml) > k and dl[k] != ml[k]]
-                                            day_yao = diffs[0] if len(diffs) == 1 else None
+                                            # 2026-10-07：起日卦改逐日一爻（原典 L390
+                                            # 「挨次而变」+「阳日寻阳位、阴日寻阴位」），
+                                            # 段内五日**各有一卦**，段级 name/lines
+                                            # 只代表该段首日。故须取 day_items 中
+                                            # 目标日那一条；缺失时才退回段级。
+                                            item = next(
+                                                (it for it in (dseg.get("day_items") or [])
+                                                 if it.get("day") == target_day), None)
+                                            src = item or dseg
+                                            liuri_hex_name = _short(src.get("name", ""))
+                                            dl = src.get("lines") or []
+                                            # 2026-10-07：起日卦改**链式累变**（原典 L390
+                                            # 「初二日变履九四」明言自前一日卦而变），
+                                            # 日卦与月卦相差**不止一爻**，故不能再靠
+                                            # 「与月卦 diff 唯一差异爻」反推变爻——
+                                            # 直接取原典登记的当日变爻位。
+                                            day_yao = src.get("day_yao_index")
+                                            if day_yao is None:
+                                                diffs = [k for k in range(6)
+                                                         if len(dl) > k and len(ml) > k and dl[k] != ml[k]]
+                                                day_yao = diffs[0] if len(diffs) == 1 else None
                                             if day_yao is not None and len(dl) > day_yao:
                                                 liuri_yao_name = _yao_name(day_yao, dl[day_yao])
                                             # 流时应期：值日卦 hours（起时卦例：前六时进/后六时退）
