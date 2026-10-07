@@ -89,44 +89,54 @@ def find_yuantang(
     is_yang_hour = hour_idx in UPPER_HOURS
 
     trace: list[dict] = []
-    action = "PURE"
+    action = "PURE_CHONGSHU"
 
     # ── 纯卦特殊规则 ────────────────────────────────────────────────
-    # 2026-10-06 修：原典《河洛真数·起例卷之上》L101-104 明载纯卦四条「重数」规则，
-    #   非线性递推——子卯二时同爻、午酉二时同爻（重数=两时重复落同一爻）：
-    #     男得乾自下而上：子卯→初爻、午酉→三爻；女得乾自上而下：子卯→上爻、午酉→三爻
-    #     女得坤自下而上：子卯→初爻、午酉→四爻；男得坤自上而下：子卯→上爻、午酉→三爻
-    #   锚点外八时（丑寅辰巳未申戌亥）原典无明文 → 保留旧线性（ENGINE_DEFINED，待他版/案例取证）
+    # 2026-10-07 定案：原典《河洛真数·起例卷之上·乾坤卦元堂式》L306-315「又一本云」四条，
+    #   「重数」释义据本节首句「当依羲皇三画卦立身，与文王后天六画卦不同」——
+    #   三画卦重数即成六画卦，故一个三爻卦配六个时辰，三爻走两轮。
+    #   十二时分为阳时组（子..巳）先数、阴时组（午..亥）后数，各重一卦：
+    #     自下而上：阳时组重数下卦（初·二·三各二轮），阴时组重数上卦（四·五·上各二轮）
+    #     自上而下：阳时组重数上卦（上·五·四各二轮），阴时组重数下卦（三·二·初各二轮）
+    #   落表（爻位 0=初 … 5=上）：
+    #     男乾/女坤 子初 丑二 寅三 卯初 辰二 巳三 午四 未五 申上 酉四 戌五 亥上
+    #     女乾/男坤 子上 丑五 寅四 卯上 辰五 巳四 午三 未二 申初 酉三 戌二 亥初
+    #   与本仓库杂卦 N=3 分支 `(candidates * 2)[t % 6]` 同一「三爻走两轮」语义，互相印证。
+    #
+    #   原典 16 个明文锚点核对：14 中，唯男乾「午酉二时皆在三爻」不中（推得四爻）。
+    #     裁决：男乾与女坤是同一配置（纯卦·自下而上·阳时组下卦·阴时组上卦），
+    #     女坤明文正作「午酉二时皆在四爻」；且「重数上卦」不可能落三爻（三爻属下卦）——
+    #     故男乾条之「三」为形近涉笔之讹，取「四」。此为本轮唯一改动的原典取值。
+    #
     #   solar_phase 冬夏分支：原典四条无冬夏明文 → ENGINE_DEFINED（依据 p051-052 后人注，保留向后兼容）
-    _PURE_ANCHOR_UP = {0: 0, 3: 0, 6: 2, 9: 2}      # 自下而上（男乾）：子卯→初(0)、午酉→三(2)
-    _PURE_ANCHOR_DOWN = {0: 5, 3: 5, 6: 2, 9: 2}    # 自上而下（女乾/男坤）：子卯→上(5)、午酉→三(2)
-    _PURE_ANCHOR_UP_KUN = {0: 0, 3: 0, 6: 3, 9: 3}  # 自下而上（女坤）：子卯→初(0)、午酉→四(3)
+    _CHONGSHU_UP = (0, 1, 2, 0, 1, 2, 3, 4, 5, 3, 4, 5)      # 自下而上（男乾/女坤）
+    _CHONGSHU_DOWN = (5, 4, 3, 5, 4, 3, 2, 1, 0, 2, 1, 0)    # 自上而下（女乾/男坤）
 
     if _is_pure_yang(six_lines):
         if gender == "male":
-            # 男得乾：自下而上，重数锚点
-            target_idx = _PURE_ANCHOR_UP.get(hour_idx, hour_idx % 6)
+            # 男得乾：自下而上，重数下卦→重数上卦
+            target_idx = _CHONGSHU_UP[hour_idx]
             target_line = 1
         else:
-            # 女得乾：冬半年自上而下（重数锚点）；夏半年自下而上（ENGINE_DEFINED）
+            # 女得乾：冬半年自上而下（重数上卦→重数下卦）；夏半年自下而上（ENGINE_DEFINED）
             if solar_phase == "summer":
                 target_idx = hour_idx % 6
             else:
-                target_idx = _PURE_ANCHOR_DOWN.get(hour_idx, (5 - hour_idx) % 6)
+                target_idx = _CHONGSHU_DOWN[hour_idx]
             target_line = 1
         yao_nature = "阳"
 
     elif _is_pure_yin(six_lines):
         if gender == "female":
-            # 女得坤：自下而上，重数锚点
-            target_idx = _PURE_ANCHOR_UP_KUN.get(hour_idx, hour_idx % 6)
+            # 女得坤：自下而上，重数下卦→重数上卦
+            target_idx = _CHONGSHU_UP[hour_idx]
             target_line = -1
         else:
-            # 男得坤：冬半年自上而下（重数锚点）；夏半年自下而上（ENGINE_DEFINED）
+            # 男得坤：冬半年自上而下（重数上卦→重数下卦）；夏半年自下而上（ENGINE_DEFINED）
             if solar_phase == "summer":
                 target_idx = hour_idx % 6
             else:
-                target_idx = _PURE_ANCHOR_DOWN.get(hour_idx, (5 - hour_idx) % 6)
+                target_idx = _CHONGSHU_DOWN[hour_idx]
             target_line = -1
         yao_nature = "阴"
 
