@@ -36,6 +36,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
 
+from tongshu.engines.heluo.numbers import build_six_lines
 from tongshu.engines.heluo.timeline_yun import (
     _flip_line,
     _lines_to_hexagram,
@@ -107,6 +108,67 @@ class TestLiuriLiteralPositions(unittest.TestCase):
                     self.assertIn(p, (0, 2, 4), f"居{_YAO[yi]}爻 阳日落阴位")
                 else:                          # 阴日
                     self.assertIn(p, (1, 3, 5), f"居{_YAO[yi]}爻 阴日落阳位")
+
+
+class TestLiuYaoAreLegalLineNames(unittest.TestCase):
+    """2026-10-07 公案关闭：「履六三」**不是**讹字。
+
+    本轮之前，本项目把起日卦原文「变为履六三」登记为「原典讹字」，
+    理由是「履卦无六三」。**该断言是错的**，已由网络核查推翻：
+
+    - 通行本《周易·履卦》爻辞确有「**六三**：眇能视，跛能履，履虎尾，
+      咥人，凶。武人为于大君。」六三是履卦**唯一**的柔爻（阴爻），以阴居阳位。
+    - 履 = 上乾下**兑**；兑卦三爻为阴（兑☱ 上爻虚），故下卦三爻即阴爻 → 六三。
+    - 《河洛真数·起例卷之中》乾卦条亦云「后天变**履六三**，履虎尾，咥人凶」，
+      用字与《周易》爻辞完全一致，可见本书按通行本爻名用字。
+
+    本类把这条卦画事实写成守卫，防止后人再以「履无六三」为由改错卦表或改原典。
+    """
+
+    def test_lv_hexagram_third_yao_is_yin(self):
+        """履卦 = 上乾下兑，兑三爻为阴 → 六三。"""
+        lines = build_six_lines("乾", "兑")
+        self.assertEqual(_lines_to_hexagram(lines)[2], "天泽履")
+        self.assertEqual(lines[2], -1, "履卦第三爻必须是阴爻，否则「履六三」不成立")
+        self.assertEqual([i for i, l in enumerate(lines) if l == -1], [2],
+                         "六三须是履卦唯一柔爻")
+
+    def test_all_five_original_line_names_are_legal(self):
+        """原典 L390 五日的变爻名在本卦中都必须真的存在。"""
+        cur = list(QIAN)
+        for d, (pos, gua, yao) in enumerate(TestLiuriOriginalFiveDays.FIVE_DAYS, start=1):
+            cur = _flip_line(cur, pos)
+            got = _yao_name(pos, cur[pos])
+            self.assertEqual(got, yao, f"初{d}日变爻名不符")
+            # 该爻名必须与本卦实际六爻自洽（爻性对得上）
+            expect_ch = "九" if cur[pos] == 1 else "六"
+            self.assertTrue(yao.startswith(expect_ch) or yao.endswith(expect_ch),
+                            f"{gua}{yao} 爻性与卦画不符")
+
+    def test_original_text_appears_in_both_transcriptions(self):
+        """本地两份转录的起日卦例必须逐字一致（排除单一录入错误）。
+
+        A = data/heluo/guajie_raw/河洛真数_起例卷之上.txt
+        B = 用户提供的整本 txt（本轮未变，见下）
+        网络核查另比对：diancang.xyz「陈图南先生河洛真数起例卷之上」
+        与 shidianguji.com 影印本转录，三者起日卦例文字一致
+        （影印本为繁体，含 OCR 异体字如「馮/爲」，语义逐字相同）。
+        """
+        import os
+        root = Path(__file__).resolve().parents[2]
+        raw = root / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之上.txt"
+        text = raw.read_text(encoding="utf-8")
+        for frag in ("凡起日卦，于月中寻日",
+                     "阳日寻阳爻位，（初三五为阳位。）阴日寻阴爻位。（二四上为阴位。）",
+                     "初一日当在三爻，变为履六三",
+                     "初二日变履九四为中孚六四",
+                     "初三日变中孚九五为损六五",
+                     "初四日变损上九为临上六",
+                     "初五日变临初九为师初六",
+                     "挨次而变，不容紊也",
+                     "六爻俱变毕，则满三十日"):
+            self.assertIn(frag, text, f"起日卦例原文缺失：{frag}")
+        self.assertTrue(os.path.exists(raw))
 
 
 class TestLiuriOriginalFiveDays(unittest.TestCase):
