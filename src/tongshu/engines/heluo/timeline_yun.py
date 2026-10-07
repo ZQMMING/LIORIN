@@ -360,8 +360,12 @@ def compute_liuri(
                 from datetime import timedelta
                 entry["date_from"] = (base + timedelta(days=k * 5)).strftime("%Y-%m-%d")
                 entry["date_to"] = (base + timedelta(days=k * 5 + 4)).strftime("%Y-%m-%d")
-            except Exception:
-                pass  # 解析/格式化失败则保持相对分段
+            except Exception as exc:
+                # 2026-10-07：原为 pass（静默吞掉），改为留痕。
+                # 失败时本段仍保持相对分段 day_from/day_to，可用性不受影响，
+                # 但必须能从 payload 看出「日期没对上」，否则调用方无从分辨
+                # 「无节气基准」与「有基准但换算失败」。
+                entry["date_align_error"] = f"节气日期对齐失败（保留相对分段）：{exc}"
         days.append(entry)
     return LiuRiResult(month=0, days=days)
 

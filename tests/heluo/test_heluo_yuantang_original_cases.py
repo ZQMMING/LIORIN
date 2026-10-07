@@ -178,5 +178,51 @@ class TestYuantangEngineDefinedPaths(unittest.TestCase):
                             "data/heluo/元堂算法核验_20261007.md 的裁决记录")
 
 
+class TestHexagramAuxiliaryGua(unittest.TestCase):
+    """互卦/错卦/综卦 —— 2026-10-07 接线（原三键恒 None）
+
+    互体依据原典 L423「以正体内外卦除初上二爻，用中四爻，交互成卦，谓之互体」，
+    并有原典实例可核：渐卦「九五六四九三互离，六四九三六二互坎，合之为未济」。
+    错卦＝六爻全变（上下各取对宫）；综卦＝上下卦互换。
+    """
+
+    def _s(self, gua: str):
+        from tongshu.engines.heluo.hexagram import analyze_hexagram
+        return analyze_hexagram(gua)
+
+    def test_hu_gua_matches_original_jian_case(self):
+        """原典硬验证：渐卦互体必为未济"""
+        self.assertEqual(self._s("风山渐").hu_gua, "火水未济")
+
+    def test_hu_gua_known_cases(self):
+        cases = {
+            "乾为天": "乾为天",       # 六爻同阴阳，取中四爻仍同
+            "坤为地": "坤为地",
+            "天水讼": "风火家人",
+            "泽山咸": "天风姤",
+        }
+        for gua, want in cases.items():
+            self.assertEqual(self._s(gua).hu_gua, want, f"{gua} 互体")
+
+    def test_cuo_gua_is_opposite(self):
+        """错卦：上下各取对宫。乾↔坤、坎↔离、震↔巽、艮↔兑"""
+        for gua, want in {"乾为天": "坤为地", "天水讼": "地火明夷",
+                          "泽山咸": "山泽损", "水雷屯": "火风鼎"}.items():
+            self.assertEqual(self._s(gua).cuo_gua, want, f"{gua} 错卦")
+
+    def test_zong_gua_swaps_trigrams(self):
+        """综卦：上下互换。讼↔需、咸↔损、明夷↔晋"""
+        for gua, want in {"天水讼": "水天需", "泽山咸": "山泽损",
+                          "地火明夷": "火地晋", "乾为天": "乾为天"}.items():
+            self.assertEqual(self._s(gua).zong_gua, want, f"{gua} 综卦")
+
+    def test_no_key_is_none_anymore(self):
+        """三键不得再为 None（本次接线前恒空）"""
+        for gua in ("乾为天", "风山渐", "天水讼", "泽山咸", "地火明夷"):
+            s = self._s(gua)
+            for key in ("hu_gua", "cuo_gua", "zong_gua"):
+                self.assertTrue(getattr(s, key), f"{gua}.{key} 仍为空")
+
+
 if __name__ == "__main__":
     unittest.main()
