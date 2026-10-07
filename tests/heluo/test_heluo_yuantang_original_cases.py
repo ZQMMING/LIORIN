@@ -1,0 +1,182 @@
+# -*- coding: utf-8 -*-
+"""元堂定位 —— 原典逐盘实例守卫（起例卷 定元堂式 L255-288）
+
+原典在「定元堂式」后给了 21 条逐盘断语，是元堂算法唯一的硬验算材料。
+本类把这些断语逐条固化为断言，防止后续改动悄悄漂移。
+
+    L255  如亥时生人得小畜，午未同在六四，申九五，酉上九，戌初九，亥九二是也
+    L258  戌时生得讼，午初六，未六三，申复初六，酉复六三，戌九四是也
+    L261  亥时生得咸，亥在上六是也
+    L264  戌时得明夷，元堂初九是也
+    L267  亥时得颐，元堂初九是也
+    L270  亥时得升，元堂九三是也
+    L273  亥时得谦，元堂九三是也
+    L276  巳时得屯，元堂六二是也
+    L279  巳时得既济，元堂九五是也
+    L282  巳时得大过，元堂在初六
+    L285  巳时得遁，元堂在六二
+    L288  申时得渐…申时是第三个阴时，合在本卦第三阴爻…正是六四
+
+各条覆盖的算法分支：
+    REPEAT               —— N=1/2/3 的重数段
+    QI_GONG              —— N=1/2 的寄位回绕
+    QI_GONG_ROUNDTRIP    —— N=4/5 且同类爻连续时的寄位回绕
+    QI_GONG_MODULO       —— N=4/5 且同类爻有 gap 时的寄位取模
+"""
+
+import unittest
+
+from tongshu.engines.heluo.numbers import (
+    SIXTY_FOUR_HEXAGRAMS,
+    build_six_lines,
+)
+from tongshu.engines.heluo.yuan_tang import find_yuantang
+
+_NAME2UL = {v: k for k, v in SIXTY_FOUR_HEXAGRAMS.items()}
+
+
+def _lines(short: str) -> list[int]:
+    """简称（渐 / 小畜 / 讼）→ 六爻（自下而上）。"""
+    hits = [v for v in _NAME2UL if v.endswith(short)]
+    assert len(hits) == 1, f"卦名无法唯一解析：{short} -> {hits}"
+    upper, lower = _NAME2UL[hits[0]]
+    return build_six_lines(upper, lower)
+
+
+# 原典断语：(卦, 时辰, 元堂, 命中的 action 档位)
+ORIGINAL_CASES = [
+    ("小畜", "午", "六四", "REPEAT"),
+    ("小畜", "未", "六四", "REPEAT"),
+    ("小畜", "申", "九五", "QI_GONG"),
+    ("小畜", "酉", "上九", "QI_GONG"),
+    ("小畜", "戌", "初九", "QI_GONG"),
+    ("小畜", "亥", "九二", "QI_GONG"),
+    ("讼", "午", "初六", "REPEAT"),
+    ("讼", "未", "六三", "REPEAT"),
+    ("讼", "申", "初六", "REPEAT"),
+    ("讼", "酉", "六三", "REPEAT"),
+    ("讼", "戌", "九四", "QI_GONG"),
+    ("咸", "亥", "上六", "REPEAT"),
+    ("明夷", "戌", "初九", "QI_GONG_MODULO"),
+    ("颐", "亥", "初九", "QI_GONG_ROUNDTRIP"),
+    ("升", "亥", "九三", "QI_GONG_MODULO"),
+    ("谦", "亥", "九三", "QI_GONG_MODULO"),
+    ("屯", "巳", "六二", "QI_GONG"),
+    ("既济", "巳", "九五", "REPEAT"),
+    ("大过", "巳", "初六", "QI_GONG_ROUNDTRIP"),
+    ("遁", "巳", "六二", "QI_GONG_ROUNDTRIP"),
+    ("渐", "申", "六四", "REPEAT"),
+]
+
+
+class TestYuantangOriginalCases(unittest.TestCase):
+    """原典 21 条逐盘断语 —— 元堂杂卦算法的硬约束"""
+
+    def _yt(self, gua: str, hour: str):
+        return find_yuantang(six_lines=_lines(gua), birth_hour=hour,
+                             gender="male", xiantian_name=gua,
+                             solar_phase="winter")
+
+    def test_all_21_original_cases(self):
+        """21 条原典断语逐条命中"""
+        for gua, hour, want, action in ORIGINAL_CASES:
+            y = self._yt(gua, hour)
+            self.assertEqual(y.yuantang, want,
+                             f"原典「{gua} {hour}时元堂{want}」，实得 {y.yuantang}")
+            self.assertEqual(y.trace[0]["action"], action,
+                             f"{gua} {hour}时 应走 {action} 分支")
+
+    def test_case_count_never_shrinks(self):
+        """新增/删除原典用例时必须同步更新本守卫的条数说明"""
+        self.assertEqual(len(ORIGINAL_CASES), 21)
+
+    def test_xugua_group_covers_whole_six_hours(self):
+        """小畜 L255 给了整组六时断语，全部要中"""
+        want = {"午": "六四", "未": "六四", "申": "九五",
+                "酉": "上九", "戌": "初九", "亥": "九二"}
+        for h, exp in want.items():
+            self.assertEqual(self._yt("小畜", h).yuantang, exp, f"小畜 {h}时")
+
+    def test_song_group_covers_five_hours(self):
+        """讼 L258 给了整组断语（原文至戌时止）"""
+        want = {"午": "初六", "未": "六三", "申": "初六",
+                "酉": "六三", "戌": "九四"}
+        for h, exp in want.items():
+            self.assertEqual(self._yt("讼", h).yuantang, exp, f"讼 {h}时")
+
+    def test_zhan_third_yin_hour_takes_third_yin_yao(self):
+        """渐 L288 原典自释：申时是第三个阴时，取本卦第三阴爻（六四）"""
+        y = self._yt("渐", "申")
+        self.assertEqual(y.yuantang, "六四")
+        # 阴时组第三个时辰 = 申（午、未、申）
+        yin_yao_idx = [i for i, l in enumerate(_lines("渐")) if l == -1]
+        self.assertEqual(y.yuantang_index, yin_yao_idx[2],
+                         "申时（第三个阴时）应落第三个阴爻")
+
+    def test_mixed_gua_ignores_gender(self):
+        """L294「父母与六子安时元堂不同」—— 乾坤之外诸卦不按男女分"""
+        for gua, hour, want, _ in ORIGINAL_CASES:
+            for gender in ("male", "female"):
+                y = find_yuantang(six_lines=_lines(gua), birth_hour=hour,
+                                  gender=gender, xiantian_name=gua,
+                                  solar_phase="winter")
+                self.assertEqual(y.yuantang, want,
+                                 f"{gua} {hour}时 {gender} 应同为 {want}")
+
+    def test_mixed_gua_ignores_solar_phase(self):
+        """杂卦不应受节气影响（冬夏两季结果必须相同）"""
+        for gua, hour, want, _ in ORIGINAL_CASES:
+            for phase in ("winter", "summer"):
+                y = find_yuantang(six_lines=_lines(gua), birth_hour=hour,
+                                  gender="male", xiantian_name=gua,
+                                  solar_phase=phase)
+                self.assertEqual(y.yuantang, want,
+                                 f"{gua} {hour}时 {phase} 应同为 {want}")
+
+
+class TestYuantangEngineDefinedPaths(unittest.TestCase):
+    """ENGINE_DEFINED 路径的现状锁定（无原典实例者，显式登记而非默默跑）"""
+
+    def test_n4n5_single_pass_is_engine_defined(self):
+        """N=4/5 的单飞段（action=NORMAL）原典零实例。
+
+        L249/252 只说「四阴四阳卦…虽有寄位，无重数」，未给落点。
+        当前实现为「N 个同类爻配 N 个时辰顺飞」，属结构性推论。
+        本测试锁定现状并显式命名，防止后人误认有原典背书。
+        """
+        lines = _lines("大过")          # 阳爻 idx=[1,2,3,4] 连续，n=4
+        sub = [find_yuantang(six_lines=lines, birth_hour=h, gender="male",
+                             xiantian_name="大过", solar_phase="winter")
+               for h in ("子", "丑", "寅", "卯", "辰", "巳")]
+        self.assertEqual([y.trace[0]["action"] for y in sub],
+                         ["NORMAL"] * 4 + ["QI_GONG_ROUNDTRIP", "QI_GONG_ROUNDTRIP"])
+        self.assertEqual([y.yuantang for y in sub],
+                         ["九二", "九三", "九四", "九五", "上六", "初六"])
+        # 末位「初六」即原典 L282「巳时得大过，元堂在初六」
+
+    def test_pure_gua_summer_phase_is_engine_defined(self):
+        """纯卦夏半年分支 = 正文线性 %6，与冬半年重数异族 —— 待用户裁决。
+
+        L297/300 正文是线性说（子午皆在初爻），
+        L306-315「又一本云」是重数说（子卯同爻）。
+        当前实现冬半年采重数、夏半年抄正文线性，两版缝在同一分支。
+        本测试只锁定「现状确实如此」，不表示认可。
+        """
+        qian = [1] * 6
+        winter = [find_yuantang(six_lines=qian, birth_hour=h, gender="female",
+                                xiantian_name="乾", solar_phase="winter").yuantang_index
+                  for h in ("子", "卯", "午", "酉")]
+        summer = [find_yuantang(six_lines=qian, birth_hour=h, gender="female",
+                                xiantian_name="乾", solar_phase="summer").yuantang_index
+                  for h in ("子", "卯", "午", "酉")]
+        # 冬半年：子卯同位(重数)、午酉同位
+        self.assertEqual(winter, [5, 5, 2, 2])
+        # 夏半年：子午同位(线性 %6)、子卯不同位 —— 与冬半年性质不同
+        self.assertEqual(summer, [0, 3, 0, 3])
+        self.assertNotEqual(winter, summer,
+                            "若此断言失败，说明夏半年已改为重数，请更新本测试与"
+                            "data/heluo/元堂算法核验_20261007.md 的裁决记录")
+
+
+if __name__ == "__main__":
+    unittest.main()
