@@ -106,13 +106,31 @@ class TestHexagramStateClaims(unittest.TestCase):
     """不得再指向不存在的 definitions 表。"""
 
     def test_definitions_table_really_absent(self):
-        """该表确实不存在——注释若再说「从表读取」就是误导。"""
+        """该 definitions 表确实不存在——注释若再说「从表读取」就是误导。
+
+        2026-10-07 更新：原典**确有**判据（L630–L648 六项），
+        只是不在名为 ``hexagram_state_definitions`` 的表里，
+        而在起例卷之中正文。已落成 ``gui_ming_liu_ju.py``。
+        故本断言仅守「不要再去找那张不存在的表」。
+        """
         hits = [p for base in (_REPO_ROOT / "backend" / "data", _REPO_ROOT / "data")
                 if base.exists()
                 for p in base.rglob("*hexagram_state*")]
         hits += [p for base in (_REPO_ROOT / "backend" / "data", _REPO_ROOT / "data")
                  if base.exists() for p in base.rglob("*state_definition*")]
         self.assertEqual(hits, [], "若表已建，注释与本断言都需同步更新")
+
+    def test_real_judgement_module_exists_and_is_used_by_docs(self):
+        """作废的假分数必须有**有据替代**指向，否则只是删功能。"""
+        from pathlib import Path as _P
+
+        import tongshu.engines.heluo.hexagram_state as hs
+        mod = _P(hs.__file__).parent / "gui_ming_liu_ju.py"
+        self.assertTrue(mod.exists(), "缺少有原典依据的替代实现 gui_ming_liu_ju.py")
+        import inspect
+        src = inspect.getsource(hs.get_base_factors)
+        self.assertIn("gui_ming_liu_ju", src,
+                      "作废提示必须指向有据替代实现")
 
     def test_docstring_does_not_promise_table_read(self):
         import inspect
@@ -121,11 +139,34 @@ class TestHexagramStateClaims(unittest.TestCase):
         src = inspect.getsource(get_base_factors)
         self.assertNotIn("从 hexagram_state_definitions 表读取", src)
 
-    def test_base_factors_still_deterministic(self):
-        """修正只动注释，取值行为不变。"""
+    def test_base_factors_now_refuses_invented_scores(self):
+        """2026-10-07 起：无原典依据的自拟分数一律**拒绝提供**。
+
+        本断言原为 ``test_base_factors_still_deterministic``，
+        守的是「修正只动注释、取值行为不变」——那是当时为避免越界而设的约束。
+        2026-10-07 经用户 P0 批准，``get_base_factors`` 的静/动/变/互 因子
+        被查证为**全书中无出处的凭空捏造**（且 ``hexagram`` 参数从未被使用，
+        不同卦返回同一组分数），故整项作废并改为恒抛出。
+
+        本断言的**意图未变**：占位层不得再输出看似可信的假数。
+        形式由「锁定捏造的数值」改为「锁定拒绝提供」。
+        """
         from tongshu.engines.heluo.hexagram_state import get_base_factors
-        self.assertEqual(get_base_factors("乾为天", "静"), (0.5, 0.3))
-        self.assertEqual(get_base_factors("乾为天", "动"), (0.7, 0.4))
+        for gua, state in (("乾为天", "静"), ("乾为天", "动"), ("坤为地", "变")):
+            with self.assertRaises(NotImplementedError,
+                                   msg=f"{gua}/{state} 仍在返回自拟分数"):
+                get_base_factors(gua, state)
+
+    def test_legacy_scores_are_marked_as_archaeology(self):
+        """旧数值若被保留，只能以「已作废、仅供考古」的形式存在。"""
+        import inspect
+
+        from tongshu.engines.heluo.hexagram_state import get_base_factors_legacy
+        src = inspect.getsource(get_base_factors_legacy)
+        self.assertIn("已作废", src)
+        self.assertIn("没有原典出处", src)
+        # 旧函数确实还留着那组数——但用途被文档钉死为考古
+        self.assertEqual(get_base_factors_legacy(), (0.5, 0.3))
 
 
 class TestTimelinePlaceholdersAreHonest(unittest.TestCase):

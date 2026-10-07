@@ -235,31 +235,55 @@ class RelationalInterpretationEngine:
         return max(-1.0, min(1.0, weighted_sum))
     
     def _hexagram_base_score(self) -> float:
-        """计算卦象基础分。"""
-        # 简化版：乾/坤为中正，其他按上下卦判断
-        hex = self.input.prenatal_hexagram
-        if "乾" in hex:
-            return 0.8
-        elif "坤" in hex:
-            return 0.6
-        elif "震" in hex or "巽" in hex:
-            return 0.5
-        elif "坎" in hex or "离" in hex:
-            return 0.4
-        else:
-            return 0.3
+        """⛔ 已作废（2026-10-07）：本函数的自拟分数无原典依据。
+
+        原实现返回一组按「上下卦」硬编码的分数
+        （乾0.8 / 坤0.6 / 震巽0.5 / 坎离0.4 / 其余0.3），
+        判据是 ``"乾" in hex`` 这种**字符串包含**——它既不是原典规则，
+        也会误判：凡卦名含该字即命中，与卦的上下卦结构无关
+        （如「地天泰」含「天」不命中，但「天泽履」含「天」亦不命中，
+        而「泽天夬」会命中「天」，行为不可解释）。
+
+        原典的真实判据见起例卷之中 L630–L648「贵命十体」六项
+        （一卦名吉 / 二爻吉 / 三辞吉 / 四得时 / 五有援 / 六顺时），
+        已落成 :mod:`gui_ming_liu_ju`，返回**原典判据名 + 原文依据 +
+        吉/凶/不判**，而非自拟分数。
+
+        Raises:
+            NotImplementedError: 恒抛出。**不得**静默回退到旧分数。
+        """
+        raise NotImplementedError(
+            "_hexagram_base_score 的卦象基础分无原典依据，已于 2026-10-07 作废。"
+            "请改用 gui_ming_liu_ju.judge_liu_ju() 的六项原典判据"
+            "（起例卷之中 L630–L648）。若确需 0-1 数值，须先补原典出处。"
+        )
     
     def _year_cycle_factor(self) -> float:
-        """流年因子。"""
-        # 简化版：根据天干地支判断
-        year = self.input.year_cycle
-        if not year:
+        """⛔ 已作废（2026-10-07）：流年因子为单年硬编码，无原典依据。
+
+        原实现是：
+
+            # 乙巳年 - 火运
+            if "乙" in year or "巳" in year:
+                return 0.3
             return 0.0
-        
-        # 乙巳年 - 火运
-        if "乙" in year or "巳" in year:
-            return 0.3
-        return 0.0
+
+        这**不是简化规则**，而是针对某一个具体年份写死的常量——
+        它对 2025 乙巳之外的任何年份一律返回 0.0，对含「乙」或「巳」的
+        任何组合一律返回 0.3。这既无原典依据，也不具备算法意义。
+
+        原典中与流年相关的是**查表式**判据（流年卦、爻辞、元气化工等），
+        见 :mod:`guajie` 的十二凶/判词/元气化工链与 :mod:`gui_ming_liu_ju`
+        的六项判据，**不存在**「流年数值因子」这种东西。
+
+        Raises:
+            NotImplementedError: 恒抛出。**不得**静默回退。
+        """
+        raise NotImplementedError(
+            "_year_cycle_factor 的流年因子（原为 '乙巳年-火运' 单年硬编码）"
+            "无原典依据，已于 2026-10-07 作废。"
+            "请改用 guajie 的流年卦查表判据或 gui_ming_liu_ju 的六项判据。"
+        )
     
     def _month_cycle_factor(self) -> float:
         """流月因子。"""
