@@ -39,6 +39,7 @@ HS = E / "hexagram_state.py"
 JQ = E / "jiegua.py"
 JH = E / "jiehhou.py"
 YQ = E / "yuan_qi.py"
+DR = E / "diagnosis_rule_graph.py"
 
 #: 本模块全部守卫文件（E/F 三批一次跑完，见约束 1）
 TEST = (
@@ -47,6 +48,8 @@ TEST = (
     "tests/heluo/test_yaoxiang_and_shu_ge_l741_l726.py",
     "tests/heluo/test_huagong_jieqi_windows.py",
     "tests/heluo/test_single_source_tables.py",
+    "tests/heluo/test_diagnosis_wiring_20261008.py",
+    "tests/heluo/test_h12_diagnosis.py",
     "tests/heluo/test_h11_jiehhou.py",
     "tests/heluo/test_full_pipeline.py",
     # 受影响模块的既有守卫：数格表既有判域、guajie 输出契约
@@ -291,6 +294,22 @@ MUTATIONS = [
      'HUAGONG_FAN_GUA: dict[str, str] = {\n'
      '    "乾": "坤", "坤": "乾", "坎": "离", "离": "坎",\n'
      '    "震": "巽", "巽": "震", "艮": "兑", "兑": "艮"\n}'),
+    # == 批次 H：诊断图 signals 契约 + 建议层伪引 ==
+    (DR, 'H 方向匹配退回只认 dict（真实链路数据类又炸了）',
+     '        for sig_rule in _sig_rule_ids(sig):\n',
+     '            for sig_rule in [sig.get("rule_id", "")]:\n'),
+    (DR, 'H 枚举 direction 不解包（静默全落 neutral）',
+     '                d = _sig_direction_str(sig)\n',
+     '        d = str(sig.direction)\n'),
+    (DR, 'H 流年/流月那段退回 sig.get（第二份拷贝复活）',
+     '        direction_str = _sig_direction_str(sig)\n        rule_id = (_sig_rule_ids(sig) or [""])[0]\n',
+     '        direction_str = sig.get("direction", "NEUTRAL")\n        rule_id = sig.get("rule_id", "")\n'),
+    (DR, 'H 匹配不上信号不再登记（无信号与方向未知混同）',
+     '    _UNMATCHED_EVIDENCE.append(ev.rule_id)\n',
+     '    pass\n'),
+    (GD, 'H 建议层伪引复活（又写回不存在的规则集名）',
+     '                source_ref=("HELUO_RULES::" + ",".join(supportive_rules)\n',
+     '                source_ref="V13_河洛诊断规则集",\n'),
 ]
 
 
@@ -310,7 +329,7 @@ ENV.update({
 })
 
 TARGETS = (GJ, GD, IT, NUM, SG, YX, YT, HG, CN,
-            HX, HS, JQ, JH, YQ)
+            HX, HS, JQ, JH, YQ, DR)
 originals: dict[Path, str] = {}
 
 

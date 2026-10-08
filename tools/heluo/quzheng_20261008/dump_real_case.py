@@ -207,10 +207,25 @@ if R is not None:
             cs = getattr(R, "canonical_signals", None) or {}
             sigs = ([x for v in cs.values() for x in v]
                     if isinstance(cs, dict) else list(cs))
-            try_layer("build_diagnosis_graph 诊断图/断言",
-                      lambda: dgmod.build_diagnosis_graph(
-                          evidences=list(evs), signals=sigs,
-                          frozen_state=fs, subject="dump"))
+            def _diag():
+                g = dgmod.build_diagnosis_graph(evidences=list(evs),
+                                               signals=sigs,
+                                               frozen_state=fs,
+                                               subject="dump")
+                out.append("   断言 %d 条 / 丢弃 %s / 无信号可依 %s"
+                           % (len(g.assertions), dgmod.dropped_rules(),
+                              dgmod.unmatched_evidence()))
+                for a in g.assertions:
+                    out.append("     · %-26s %-10s %s"
+                               % (a.source_rule, a.direction.value,
+                                  a.semantic))
+                j = g.judgment
+                out.append("   判决: %s" % ("None" if j is None else
+                    "domain=%s | semantic=%s | authorized_by=%s | 支撑断言 %s 条"
+                    % (getattr(j.domain, "value", j.domain), j.semantic,
+                       j.authorized_by, len(j.supporting_assertions or []))))
+                return g
+            try_layer("build_diagnosis_graph 诊断图/断言", _diag)
         except Exception as exc:
             gaps.append("diagnosis_rule_graph 不可用：%s" % exc)
 
@@ -232,9 +247,11 @@ if R is not None:
                                               subject="dump")
                 assertions = getattr(graph, "assertions", None) or []
                 judgment = getattr(graph, "judgment", None)
-                out.append("   (诊断图: 断言 %d 条, 判决 %s)"
+                out.append("   (诊断图: 断言 %d 条, 判决 domain=%s, 支撑 %s)"
                            % (len(assertions),
-                              getattr(judgment, "direction", "None")))
+                              getattr(getattr(judgment, "domain", None),
+                                      "value", "None"),
+                              judgment is not None))
                 return HeluoGuidanceEngine().generate(
                     assertions=list(assertions),
                     judgment=judgment,

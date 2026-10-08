@@ -260,10 +260,13 @@ class HeluoGuidanceEngine:
             id_counter += 1
 
         # 从断言中提取正面信号
-        supportive_count = sum(
-            1 for a in assertions
+        supportive_rules = [
+            getattr(a, "authorized_rule_id", "") or getattr(a, "source_rule", "")
+            for a in assertions
             if hasattr(a, 'direction') and a.direction.value == "supportive"
-        )
+        ]
+        supportive_rules = [r for r in supportive_rules if r]
+        supportive_count = len(supportive_rules)
         if supportive_count > 0:
             actions.append(ActionItem(
                 id=f"ACT-{id_counter:03d}",
@@ -273,7 +276,13 @@ class HeluoGuidanceEngine:
                     "建议抓住时机推进重点事项。"
                 ),
                 confidence=0.7 * min(supportive_count, 3) / 3,
-                source_ref="V13_河洛诊断规则集",
+                # ⚠ 2026-10-08：原为 "V13_河洛诊断规则集" —— 该规则集**不存在**，
+                #   是伪引。批次 C 把 diagnosis_rule_graph 的 authorized_by 改成了
+                #   真实的 HELUO_RULES 清单，**却漏了这里**，同一处伪引两处不一致。
+                #   现改为登记**实际支撑本条建议的规则 id**，取自断言自身，
+                #   而非再编一个名字：拿不到就如实写空，不拿占位名顶替。
+                source_ref=("HELUO_RULES::" + ",".join(supportive_rules)
+                            if supportive_rules else ""),
                 temporal_scope="year",
             ))
             id_counter += 1

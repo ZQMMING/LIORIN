@@ -99585,7 +99585,7 @@ guajie 解卦                ✅ 有            24 字段/键
 ── HeLuoEvidenceProducer 证据产出
 [7]
   EngineEvidence
-    'HL-NUMBERS-74bfc0fd'
+    'HL-NUMBERS-16a0d2f3'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_TIAN_DI_SHU'
     {共 4 键}
@@ -99602,7 +99602,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-PRENATAL-ca0f01bb'
+    'HL-PRENATAL-61f64646'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_PRENATAL_HEXAGRAM'
     '风山渐'
@@ -99617,7 +99617,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-YUANTANG-b9035bbf'
+    'HL-YUANTANG-8f56fff8'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_YUANTANG'
     '初六'
@@ -99631,7 +99631,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-POSTNATAL-c7214046'
+    'HL-POSTNATAL-437a06da'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_POSTNATAL_HEXAGRAM'
     '火风鼎'
@@ -99646,7 +99646,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-STRUCT-94719525'
+    'HL-STRUCT-c4d8d902'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_HEXAGRAM_STRUCTURE'
     "HexagramStructure(name='火风鼎', upper='离', lower='巽', lines=(-1, 1, 1, 1, -1, 1), ti_yong={'ti': '巽', 'ti_element': '木', 'yong': '离', 'yong_element': '火', 'relation': '体生用（泄）'}, sheng_ke='体生用（泄）', cheng_cheng=['1承2', '5承6', '4乘5'], bi=['2比3', '3比4'], ying=['3应6'], hu_gua='泽天夬', cuo_gua='水雷屯', zong_gu…
@@ -99660,7 +99660,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-HUAGONG-8ace22fb'
+    'HL-HUAGONG-bd8cf68d'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_HUA_GONG'
     'NORMAL'
@@ -99678,7 +99678,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-JIEHOU-7f34f55f'
+    'HL-JIEHOU-b8662983'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_JIEHOU_GUA'
     '兑'
@@ -99934,12 +99934,281 @@ FrozenHeluoState
 [0]
 
 ── build_diagnosis_graph 诊断图/断言
-   ❌ 抛异常 AttributeError: 'CanonicalSignal' object has no attribute 'get'
-          sig_rule = sig.get("rule_id", "")
+   断言 8 条 / 丢弃 ['HL_HEXAGRAM_STRUCTURE'] / 无信号可依 ['HL_TIAN_DI_SHU', 'HL_PRENATAL_HEXAGRAM', 'HL_YUANTANG', 'HL_POSTNATAL_HEXAGRAM', 'HL_HUA_GONG', 'HL_JIEHOU_GUA']
+     · HL_TIAN_DI_SHU             neutral    河洛天干地支取数
+     · HL_PRENATAL_HEXAGRAM       neutral    河洛先天卦计算
+     · HL_YUANTANG                neutral    河洛元堂定位
+     · HL_POSTNATAL_HEXAGRAM      neutral    河洛后天卦变换
+     · HL_HUA_GONG                neutral    河洛化工状态判定
+     · HL_JIEHOU_GUA              neutral    河洛节候卦
+     · HL_HUA_GONG                supportive 化工状态: NORMAL
+     · ZPZ-001                    neutral    ·NEUTRAL（置信0.50）
+   判决: domain=MULTI_DOMAIN | semantic=河洛理数诊断结论 | authorized_by=HELUO_RULES::HELUO_AUTH_HL_HUA_GONG,HELUO_AUTH_HL_JIEHOU_GUA,HELUO_AUTH_HL_POSTNATAL_HEXAGRAM,HELUO_AUTH_HL_PRENATAL_HEXAGRAM,HELUO_AUTH_HL_TIAN_DI_SHU,HELUO_AUTH_HL_YUANTANG,HELUO_AUTH_ZPZ-001 | 支撑断言 8 条
+DiagnosisResult
+  [8]
+    CanonicalAssertion
+      'HE_LUO_HL_TIAN_DI_SHU'
+      'dump'
+      'CAREER'
+      '河洛天干地支取数'
+      <AssertionDirection.NEUTRAL: 'neutral'>
+      'birth'
+      'HE_LUO'
+      'HL_TIAN_DI_SHU'
+      'HELUO_AUTH_HL_TIAN_DI_SHU'
+      EvidenceRef
+        'HL-NUMBERS-1fd35380'
+        'HE_LUO'
+        {共 4 键}
+          18
+          44
+          8
+          4
+        '起例卷上·天干取数定局'
+        'numbers'
+        'birth'
+        'HL_TIAN_DI_SHU'
+        '2026.09'
+        'v13.0'
+    CanonicalAssertion
+      'HE_LUO_HL_PRENATAL_HEXAGRAM'
+      'dump'
+      'FAMILY'
+      '河洛先天卦计算'
+      <AssertionDirection.NEUTRAL: 'neutral'>
+      'birth'
+      'HE_LUO'
+      'HL_PRENATAL_HEXAGRAM'
+      'HELUO_AUTH_HL_PRENATAL_HEXAGRAM'
+      EvidenceRef
+        'HL-PRENATAL-5ef199de'
+        'HE_LUO'
+        '风山渐'
+        '起例卷上·八字内天数地数例'
+        'prenatal_hexagram'
+        'birth'
+        'HL_PRENATAL_HEXAGRAM'
+        '2026.09'
+        'v13.0'
+    CanonicalAssertion
+      'HE_LUO_HL_YUANTANG'
+      'dump'
+      'FAMILY'
+      '河洛元堂定位'
+      <AssertionDirection.NEUTRAL: 'neutral'>
+      'birth'
+      'HE_LUO'
+      'HL_YUANTANG'
+      'HELUO_AUTH_HL_YUANTANG'
+      EvidenceRef
+        'HL-YUANTANG-8619d376'
+        'HE_LUO'
+        '初六'
+        '三才发秘·详元堂爻位式'
+        'yuantang'
+        'birth'
+        'HL_YUANTANG'
+        '2026.09'
+        'v13.0'
+    CanonicalAssertion
+      'HE_LUO_HL_POSTNATAL_HEXAGRAM'
+      'dump'
+      'FAMILY'
+      '河洛后天卦变换'
+      <AssertionDirection.NEUTRAL: 'neutral'>
+      'birth'
+      'HE_LUO'
+      'HL_POSTNATAL_HEXAGRAM'
+      'HELUO_AUTH_HL_POSTNATAL_HEXAGRAM'
+      EvidenceRef
+        'HL-POSTNATAL-df03bbb7'
+        'HE_LUO'
+        '火风鼎'
+        '起例卷上·换后天卦例'
+        'postnatal_hexagram'
+        'birth'
+        'HL_POSTNATAL_HEXAGRAM'
+        '2026.09'
+        'v13.0'
+    CanonicalAssertion
+      'HE_LUO_HL_HUA_GONG'
+      'dump'
+      'FAMILY'
+      '河洛化工状态判定'
+      <AssertionDirection.NEUTRAL: 'neutral'>
+      'birth'
+      'HE_LUO'
+      'HL_HUA_GONG'
+      'HELUO_AUTH_HL_HUA_GONG'
+      EvidenceRef
+        'HL-HUAGONG-bd7a9d88'
+        'HE_LUO'
+        'NORMAL'
+        '起例卷下·论化工'
+        'hua_gong'
+        'birth'
+        'HL_HUA_GONG'
+        '2026.09'
+        'v13.0'
+    CanonicalAssertion
+      'HE_LUO_HL_JIEHOU_GUA'
+      'dump'
+      'LIFE_EVENT'
+      '河洛节候卦'
+      <AssertionDirection.NEUTRAL: 'neutral'>
+      'birth'
+      'HE_LUO'
+      'HL_JIEHOU_GUA'
+      'HELUO_AUTH_HL_JIEHOU_GUA'
+      EvidenceRef
+        'HL-JIEHOU-5caac2de'
+        'HE_LUO'
+        '兑'
+        '易冒引河洛理数'
+        'seasonal_hexagram'
+        'birth'
+        'HL_JIEHOU_GUA'
+        '2026.09'
+        'v13.0'
+    CanonicalAssertion
+      'HELUO_HL_HUA_GONG'
+      'dump'
+      'FAMILY'
+      '化工状态: NORMAL'
+      <AssertionDirection.SUPPORTIVE: 'supportive'>
+      'birth'
+      'HELUO'
+      'HL_HUA_GONG'
+      'HELUO_AUTH_HL_HUA_GONG'
+      EvidenceRef
+        'HL_HUA_GONG'
+        'HELUO'
+        'NORMAL'
+        '起例卷下·论化工'
+        (None)
+        (None)
+        'HL_HUA_GONG'
+        (None)
+        (None)
+    CanonicalAssertion
+      'HELUO_ZPZ-001'
+      'dump'
+      'FAMILY'
+      '·NEUTRAL（置信0.50）'
+      <AssertionDirection.NEUTRAL: 'neutral'>
+      'year'
+      'HELUO'
+      'ZPZ-001'
+      'HELUO_AUTH_ZPZ-001'
+      EvidenceRef
+        'EVE_ZPZ-001'
+        'HELUO'
+        ''
+        'yi_interpreter.py·爻辞语义'
+        (None)
+        (None)
+        'ZPZ-001'
+        (None)
+        (None)
+  EvidenceCoverage
+    'MULTI_DOMAIN'
+    '河洛理数全链路诊断'
+    8
+    [1]
+      'HELUO'
+    [3]
+      'evidence'
+      'signal'
+      'hua_gong'
+    [8]
+      'HE_LUO_HL_TIAN_DI_SHU'
+      'HE_LUO_HL_PRENATAL_HEXAGRAM'
+      'HE_LUO_HL_YUANTANG'
+      'HE_LUO_HL_POSTNATAL_HEXAGRAM'
+      'HE_LUO_HL_HUA_GONG'
+      'HELUO_HL_HUA_GONG'
+      'HELUO_ZPZ-001'
+      'HE_LUO_HL_JIEHOU_GUA'
+  Judgment
+    'HELUO_DIAG_001'
+    'MULTI_DOMAIN'
+    '河洛理数诊断结论'
+    EvidenceCoverage
+      'MULTI_DOMAIN'
+      '河洛理数全链路诊断'
+      8
+      [1]
+        'HELUO'
+      [3]
+        'evidence'
+        'signal'
+        'hua_gong'
+      [8]
+        'HE_LUO_HL_TIAN_DI_SHU'
+        'HE_LUO_HL_PRENATAL_HEXAGRAM'
+        'HE_LUO_HL_YUANTANG'
+        'HE_LUO_HL_POSTNATAL_HEXAGRAM'
+        'HE_LUO_HL_HUA_GONG'
+        'HELUO_HL_HUA_GONG'
+        'HELUO_ZPZ-001'
+        'HE_LUO_HL_JIEHOU_GUA'
+    'HELUO_RULES::HELUO_AUTH_HL_HUA_GONG,HELUO_AUTH_HL_JIEHOU_GUA,HELUO_AUTH_HL_POSTNATAL_HEXAGRAM,HELUO_AUTH_HL_PRENATAL_HEXAGRAM,HELUO_AUTH_HL_TIAN_DI_SHU,HELUO_AUTH_HL_YUANTANG,HELUO_AUTH_ZPZ-001'
+    [8]
+      'HE_LUO_HL_TIAN_DI_SHU'
+      'HE_LUO_HL_PRENATAL_HEXAGRAM'
+      'HE_LUO_HL_YUANTANG'
+      'HE_LUO_HL_POSTNATAL_HEXAGRAM'
+      'HE_LUO_HL_HUA_GONG'
+      'HE_LUO_HL_JIEHOU_GUA'
+      'HELUO_HL_HUA_GONG'
+      'HELUO_ZPZ-001'
 
 ── HeluoGuidanceEngine 行动建议
-   ❌ 抛异常 AttributeError: 'CanonicalSignal' object has no attribute 'get'
-          sig_rule = sig.get("rule_id", "")
+   (诊断图: 断言 8 条, 判决 domain=None, 支撑 True)
+HeluoGuidance
+  'dump'
+  '风山渐'
+  '火风鼎'
+  ''
+  'NORMAL'
+  '卦象风山渐，需结合具体爻位分析。 化工得位，根基稳固，行事多有助力。本结论由 8 条断言支撑（授权：HELUO_RULES::HELUO_AUTH_HL_HUA_GONG,HELUO_AUTH_HL_JIEHOU_GUA,HELUO_AUTH_HL_POSTNATAL_HEXAGRAM,HELUO_AUTH_HL_PRENATAL_HEXAGRAM,HELUO_AUTH_HL_TIAN_DI_SHU,HELUO_AUTH_HL_YUANTANG,HELUO_AUTH_ZPZ-001）。'
+  [3]
+    ActionItem
+      'ACT-001'
+      '顺势而为'
+      '化工得位，时机有利，可积极推进目标。'
+      0.85
+      '河洛真数·论化工'
+      'year'
+    ActionItem
+      'ACT-002'
+      '巩固根基'
+      '根基稳固，可考虑扩大影响力或深入发展。'
+      0.85
+      '河洛真数·论化工'
+      'year'
+    ActionItem
+      'ACT-003'
+      '把握当前趋势'
+      '当前有1条正面信号支持，建议抓住时机推进重点事项。'
+      0.2333333333333333
+      'V13_河洛诊断规则集'
+      'year'
+  [0]
+  [5]
+    'CAREER（birth）：平稳过渡，无明显利弊。'
+    'FAMILY（birth）：趋势向好，可积极作为。'
+    'LIFE_EVENT（birth）：平稳过渡，无明显利弊。'
+    'FAMILY（year）：平稳过渡，无明显利弊。'
+    '全年整体：根基稳固，适合长期规划。'
+  [7]
+    'HL_HUA_GONG'
+    'HL_JIEHOU_GUA'
+    'HL_POSTNATAL_HEXAGRAM'
+    'HL_PRENATAL_HEXAGRAM'
+    'HL_TIAN_DI_SHU'
+    'HL_YUANTANG'
+    'ZPZ-001'
 
 ── interpretation 关系解释
    ❌ 抛异常 NotImplementedError: _hexagram_base_score 的卦象基础分无原典依据，已于 2026-10-07 作废。请改用 gui_ming_liu_ju.judge_liu_ju() 的六项原典判据（起例卷之中 L630–L648）。若确需 0-1 数值，须先补原典出处。
@@ -99950,6 +100219,4 @@ FrozenHeluoState
 ================================================================================================
 以下层「没接上 / 为空」，需处理：
   · PipelineResult.rendered_text 为空
-  · build_diagnosis_graph 诊断图/断言 调用失败：'CanonicalSignal' object has no attribute 'get'
-  · HeluoGuidanceEngine 行动建议 调用失败：'CanonicalSignal' object has no attribute 'get'
   · interpretation 关系解释 调用失败：_hexagram_base_score 的卦象基础分无原典依据，已于 2026-10-07 作废。请改用 gui_ming_liu_ju.judge_liu_ju() 的六项原典判据（起例卷之中 L630–L648）。若确需 0-1 数值，须先补原典出处。
