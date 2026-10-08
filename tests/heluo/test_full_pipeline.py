@@ -251,8 +251,8 @@ class TestHuaGongEndToEnd(unittest.TestCase):
         L585–594 的四季对宫（震↔兑）不符。两轮一并改回后，
         四组相反两两互为克制，本轴判 KEZHI。
         """
-        from tongshu.engines.heluo.hua_gong import OPPOSITE_TRIGRAM
-        r = compute_huagong("乾", "兑", OPPOSITE_TRIGRAM["兑"], "乾", "申")
+        from tongshu.engines.heluo.hua_gong import HUAGONG_FAN_GUA
+        r = compute_huagong("乾", "兑", HUAGONG_FAN_GUA["兑"], "乾", "申")
         self.assertEqual(r.state, HuaGongState.KEZHI)
         self.assertEqual(r.wu_relation, "克制")
         self.assertTrue(r.has_huagong)

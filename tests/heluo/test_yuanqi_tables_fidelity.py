@@ -178,10 +178,10 @@ class TestGanzhiGuaTable(unittest.TestCase):
 class TestModuleBoundary(unittest.TestCase):
     def test_dui_gua_not_same_as_huagong_opposite(self):
         """对宫（错卦）与化工相反（四季对宫）必须是两张不同的表。"""
-        from tongshu.engines.heluo.hua_gong import OPPOSITE_TRIGRAM
-        self.assertNotEqual(Y.DUI_GUA, OPPOSITE_TRIGRAM,
+        from tongshu.engines.heluo.hua_gong import HUAGONG_FAN_GUA
+        self.assertNotEqual(Y.DUI_GUA, HUAGONG_FAN_GUA,
                             "对宫与化工相反被合成了同一张表")
-        self.assertEqual(set(OPPOSITE_TRIGRAM), {"坎", "离", "兑", "震"})
+        self.assertEqual(set(HUAGONG_FAN_GUA), {"坎", "离", "兑", "震"})
         self.assertEqual(set(Y.DUI_GUA), set(GUAS))
 
 

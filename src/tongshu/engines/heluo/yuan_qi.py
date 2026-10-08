@@ -48,13 +48,8 @@ BRANCH_TO_TRIGRAM: dict[str, str] = {
     "酉": "兑", "戌": "乾", "亥": "乾",
 }
 
-# 错卦（先天方位对宫，六爻全变）
-OPPOSITE_TRIGRAM: dict[str, str] = {
-    "乾": "坤", "坤": "乾",
-    "坎": "离", "离": "坎",
-    "震": "巽", "巽": "震",
-    "艮": "兑", "兑": "艮",
-}
+# 错卦（先天方位对宫，六爻全变）—— 引用单一来源，不再自存一份
+from .hexagram_state import QIANXI_DUKONG
 
 
 @dataclass(frozen=True)
@@ -85,9 +80,9 @@ def compute_yuan_qi(
     3. 检查先天/后天卦中是否含元气卦（得元气）或错卦（元反）
     """
     tian = STEM_TO_TRIGRAM.get(year_stem, "?")
-    tian_fan = OPPOSITE_TRIGRAM.get(tian, "")
+    tian_fan = QIANXI_DUKONG.get(tian, "")
     di = BRANCH_TO_TRIGRAM.get(year_branch, "?")
-    di_fan = OPPOSITE_TRIGRAM.get(di, "")
+    di_fan = QIANXI_DUKONG.get(di, "")
 
     evidence = [
         f"年干{year_stem} → 天元气={tian}（纳甲），天元反={tian_fan}",

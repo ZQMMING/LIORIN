@@ -107,9 +107,9 @@ class TestJieqiWindows(unittest.TestCase):
                          {g for g, _lo, _hi in self.W})
 
     def test_fan_table_still_agrees_with_opposite_trigram(self):
-        from tongshu.engines.heluo.hua_gong import OPPOSITE_TRIGRAM
+        from tongshu.engines.heluo.hua_gong import HUAGONG_FAN_GUA
         for gua, fan, _lo, _hi in self.FAN:
-            self.assertEqual(OPPOSITE_TRIGRAM[gua], fan)
+            self.assertEqual(HUAGONG_FAN_GUA[gua], fan)
 
     # ── 静态：自校验必须在导入期跑 ───────────────────────────
     def test_self_check_runs_at_import(self):
@@ -119,10 +119,10 @@ class TestJieqiWindows(unittest.TestCase):
         i = body.find("def _huagong_self_check")
         j = body.find("def ", i + 10)
         blk = re.sub(r"\s+", "", body[i:j])
-        # 三件都要在：切满、互证、与 OPPOSITE_TRIGRAM 一致
+        # 三件都要在：切满、互证、与 HUAGONG_FAN_GUA 一致
         self.assertIn("==list(range(len(_JQ_ORDER)))", blk)
         self.assertIn("inside=={fan}", blk)
-        self.assertIn("OPPOSITE_TRIGRAM.get(gua)==fan", blk)
+        self.assertIn("HUAGONG_FAN_GUA.get(gua)==fan", blk)
 
     def test_tampering_with_window_is_caught_by_self_check(self):
         """把窗口改坏，导入期自校验必须直接炸——不能带着错表跑。"""

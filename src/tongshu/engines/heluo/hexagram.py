@@ -14,11 +14,8 @@ _LINES_TO_TRIGRAM = {
     '111': '乾', '110': '兑', '101': '离', '100': '震',
     '011': '巽', '010': '坎', '001': '艮', '000': '坤',
 }
-# 错卦：先天方位对宫
-_OPPOSITE_TRIGRAM = {
-    '乾': '坤', '坤': '乾', '兑': '艮', '艮': '兑',
-    '离': '坎', '坎': '离', '震': '巽', '巽': '震',
-}
+# 错卦：先天方位对宫 —— 引用单一来源，不再自存一份
+from .hexagram_state import QIANXI_DUKONG as _QIANXI_DUKONG
 
 
 def _lines_to_gua_name(lines: list[int]) -> str:
@@ -45,7 +42,7 @@ def compute_hu_gua(lines: list[int]) -> str:
 def compute_cuo_gua(upper: str, lower: str) -> str:
     """错卦：上下卦各取对宫（六爻全变）。"""
     return SIXTY_FOUR_HEXAGRAMS.get(
-        (_OPPOSITE_TRIGRAM.get(upper, upper), _OPPOSITE_TRIGRAM.get(lower, lower)),
+        (_QIANXI_DUKONG.get(upper, upper), _QIANXI_DUKONG.get(lower, lower)),
         '')
 
 

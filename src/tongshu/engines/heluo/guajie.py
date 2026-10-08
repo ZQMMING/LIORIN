@@ -34,6 +34,8 @@ from typing import Optional
 from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
 from .timeline_yun import materialize_month_days
 from .yao_xiang import scan_and_evidence as _scan_yao_xiang
+# 错卦（先天方位对宫）单一来源；批次 G 起本模块不再自存一份。
+from .hexagram_state import QIANXI_DUKONG
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _GUAJIE_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_data.json"
@@ -42,8 +44,14 @@ _JINGYI_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_jingyi.json"  # 精义/�
 # 十二凶卦（命卦正对/反对为其中之一 → 不吉）
 TWELVE_XIONG_GUA = ["复", "临", "泰", "大壮", "夬", "乾", "姤", "遁", "否", "观", "剥", "坤"]
 
-# 错卦（先天方位对宫，六爻全变）— 与 yuan_qi/hua_gong 一致
-OPPOSITE_TRIGRAM = {"乾": "坤", "坤": "乾", "坎": "离", "离": "坎", "震": "巽", "巽": "震", "艮": "兑", "兑": "艮"}
+# 错卦（先天方位对宫，六爻全变）—— 见顶部 import 的 QIANXI_DUKONG。
+# ⚠ 2026-10-08 批次 G：错卦此前在 guajie / yuan_qi / hexagram / hua_gong
+#   四处各存一份（内容相同），名字统一叫 OPPOSITE_TRIGRAM。
+#   更糟的是另有一个**不同义**的表也叫 OPPOSITE_TRIGRAM——化工相反
+#   （四季对宫，仅坎离震兑四项），对乾/坤/艮/巽 取 .get() 直接返回 None。
+#   import 错了就是静默判错。故错卦统一名 QIANXI_DUKONG（单一来源），
+#   化工相反另名 HUAGONG_FAN_GUA；改后无任何公开符号叫 OPPOSITE_TRIGRAM。
+
 
 # 纯卦 → 上/下三画
 PURE_GUA = {"乾": ("乾", "乾"), "坤": ("坤", "坤"), "坎": ("坎", "坎"), "离": ("离", "离"),
@@ -960,7 +968,7 @@ def check_zhengdui_fandui(hexagram: str, other_hexagram: str = "") -> list[str]:
     if hexagram in COMPOUND_GUA and other_hexagram in COMPOUND_GUA:
         u1, l1 = COMPOUND_GUA[hexagram]
         u2, l2 = COMPOUND_GUA[other_hexagram]
-        if OPPOSITE_TRIGRAM.get(u1) == u2 and OPPOSITE_TRIGRAM.get(l1) == l2:
+        if QIANXI_DUKONG.get(u1) == u2 and QIANXI_DUKONG.get(l1) == l2:
             warns.append(f"{hexagram}与{other_hexagram}互为错卦（正对），六爻全变")
     # 反对：综卦
     if ZONG_GUA.get(hexagram) == other_hexagram:
@@ -1745,9 +1753,9 @@ def _collect_si_duan(
         return []
     year_stem, year_branch = bazi[0][0], bazi[0][1]
     tian = STEM_TO_TRIGRAM.get(year_stem, "")
-    tian_fan = OPPOSITE_TRIGRAM.get(tian, "")
+    tian_fan = QIANXI_DUKONG.get(tian, "")
     di = BRANCH_TO_TRIGRAM.get(year_branch, "")
-    di_fan = OPPOSITE_TRIGRAM.get(di, "")
+    di_fan = QIANXI_DUKONG.get(di, "")
 
     # 当前大运爻位（qi_phase.dayun：age_start..age_end → line_index）
     dayun_line_index: int | None = None
@@ -1893,7 +1901,7 @@ def compute_siti_bati(prenatal_name: str, postnatal_name: str) -> dict:
         hu_up, hu_low = compute_huti(six)
     return {
         "zheng_ti": {"upper": up, "lower": low},
-        "fu_ti": {"upper": OPPOSITE_TRIGRAM.get(up, ""), "lower": OPPOSITE_TRIGRAM.get(low, "")},
+        "fu_ti": {"upper": QIANXI_DUKONG.get(up, ""), "lower": QIANXI_DUKONG.get(low, "")},
         "hu_ti": {"upper": hu_up, "lower": hu_low},
         "bian_ti": {"upper": post_up, "lower": post_low},
     }
@@ -2951,6 +2959,6 @@ __all__ = [
     "structure_kuozhan", "to_structured", "KUOZHAN_META",
     "polarity_of", "dimension_of", "KUOZHAN_DIMENSION",
     "wuming_element",
-    "TWELVE_XIONG_GUA", "OPPOSITE_TRIGRAM", "ZONG_GUA", "BRANCH_TO_MONTH",
+    "TWELVE_XIONG_GUA", "QIANXI_DUKONG", "ZONG_GUA", "BRANCH_TO_MONTH",
     "TRIGRAM_ELEMENT", "ELEMENT_GENERATES",
 ]

@@ -64,10 +64,11 @@ class HuaGongState(str, Enum):
     UNRESOLVED = "UNRESOLVED"  # 无据：无法判定（含原典未载的「比和」一档）
 
 
-#: 五行相生：a 生 b
-_WU_SHENG = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
-#: 五行相克：a 克 b
-_WU_KE = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
+#: ⚠ 2026-10-08 批次 G：五行生克此前在本模块与 hexagram_state 各存一份，
+#:   内容相同。五行生克是全库最基本的五行关系，容不得两份各改各的——
+#:   统一引用 hexagram_state，本模块不再自存。
+from .hexagram_state import (ELEMENT_GENERATES as _WU_SHENG,  # noqa: E402
+                             ELEMENT_OVERCOMES as _WU_KE)
 
 
 def _wu_relation(elem_a: str, elem_b: str) -> str:
@@ -122,7 +123,7 @@ SEASON_BRANCH_TO_HUAGONG: dict[str, str] = {
 #   去迁就错的表。本轮表与注一并改回原典口径。
 # ⚠ 乾/坤/艮/巽在化工相反图中**不出现**，故此表不收；
 #   先天对宫另见 QIANXI_DUKONG（与本规则无关，不得混用）。
-OPPOSITE_TRIGRAM: dict[str, str] = {
+HUAGONG_FAN_GUA: dict[str, str] = {
     "坎": "离",   # L585
     "离": "坎",   # L588
     "兑": "震",   # L591
@@ -145,14 +146,14 @@ TRIGRAM_ELEMENT: dict[str, str] = {
     "坤": "土", "艮": "土",
 }
 
-#: 先天方位对宫（六爻全变）。**与化工相反无关**，仅供先天方位判断。
-#: 化工相反请用 OPPOSITE_TRIGRAM（L585–594）。
-QIANXI_DUKONG: dict[str, str] = {
-    "乾": "坤", "坤": "乾",
-    "兑": "艮", "艮": "兑",
-    "离": "坎", "坎": "离",
-    "震": "巽", "巽": "震",
-}
+#: 错卦（先天方位对宫，六爻全变）—— **单一来源 hexagram_state.QIANXI_DUKONG**。
+#: ⚠ 与化工相反**不是一回事**，化工相反见 HUAGONG_FAN_GUA（L585–594）。
+#:
+#: 批次 G 之前的乱局：本表与「化工相反」表**都叫 HUAGONG_FAN_GUA**，
+#: 而两者含义不同（本表八项先天对宫；化工相反四项四季对宫）。
+#: 谁 `from … import HUAGONG_FAN_GUA` 拿错了就是**静默判错**——
+#: 对乾/坤/艮/巽 取 .get() 直接返回 None。故一并消歧义，且错卦只留一份数据。
+from .hexagram_state import QIANXI_DUKONG  # noqa: E402
 
 
 
@@ -282,12 +283,12 @@ def _huagong_self_check() -> None:
             "L585–L594「%s反%s，主%s以后%s前」jq[%d,%d) 实际覆盖 %s，与本表对不上"
             % (gua, fan, _JQ_ORDER[lo], _JQ_ORDER[hi % len(_JQ_ORDER)],
                lo, hi, inside or "空"))
-        assert OPPOSITE_TRIGRAM.get(gua) == fan, \
-            "OPPOSITE_TRIGRAM 与 L585–L594 不一致：%s" % gua
+        assert HUAGONG_FAN_GUA.get(gua) == fan, \
+            "HUAGONG_FAN_GUA 与 L585–L594 不一致：%s" % gua
     # ③ 每卦恰有一个窗口。
     names = [g for g, _lo, _hi in HUAGONG_JIEQI_WINDOWS]
     assert len(set(names)) == len(names), "有卦占了两个窗口"
-    assert set(names) == set(OPPOSITE_TRIGRAM), "窗口表与相反表覆盖的卦不一致"
+    assert set(names) == set(HUAGONG_FAN_GUA), "窗口表与相反表覆盖的卦不一致"
 
 
 
@@ -436,7 +437,7 @@ def compute_huagong(
         _huagong_basis = ("月支近似表（**兜底**）——" + _jq_note
                           + "；该近似与 L558–L567 节气窗口在 寅/巳/申/亥 整月不符，"
                             "卯/午/酉 跨窗口，结论仅供参考")
-    opposite_trigram = OPPOSITE_TRIGRAM.get(huagong_trigram, "")
+    opposite_trigram = HUAGONG_FAN_GUA.get(huagong_trigram, "")
 
     # Step 2: L576 三级回退 —— 正体 → 互体 → 纳音
     zhengti = {prenatal_upper, prenatal_lower, postnatal_upper, postnatal_lower}

@@ -38,7 +38,20 @@ class TestSolarTerms(unittest.TestCase):
             "夏至", "小暑", "大暑", "立秋", "处暑", "白露",
             "秋分", "寒露", "霜降", "立冬", "小雪", "大雪",
         ]
-        self.assertEqual(SOLAR_TERMS, expected)
+        # 2026-10-08 批次 G：SOLAR_TERMS 改为引用 jiegua.JIEQI_24（单一来源），
+        # 后者是 tuple，故此处比 list(...)；下面的 test 是「确为同一对象」的断言。
+        self.assertEqual(list(SOLAR_TERMS), expected)
+
+    def test_solar_terms_is_the_single_source_object(self):
+        """二十四节气序全库只许有一处定义。
+
+        批次 G 之前此处、jiegua.JIEQI_24、yue_ling_shu_ge.JIE_QI_ORDER 各抄一份。
+        三份各改各的，索引错位要到出卦时才炸——故钉住「必须是同一个对象」。
+        """
+        from tongshu.engines.heluo.jiegua import JIEQI_24
+        from tongshu.engines.heluo.yue_ling_shu_ge import JIE_QI_ORDER
+        self.assertIs(SOLAR_TERMS, JIEQI_24, "SOLAR_TERMS 与 jiegua.JIEQI_24 不是同一对象")
+        self.assertIs(JIE_QI_ORDER, JIEQI_24, "JIE_QI_ORDER 与 jiegua.JIEQI_24 不是同一对象")
 
 
 class TestSeasonalHexagram(unittest.TestCase):

@@ -34,6 +34,11 @@ NUM = E / "numbers.py"
 SG = E / "yue_ling_shu_ge.py"
 YX = E / "yao_xiang.py"
 YT = E / "yuanqi_tables.py"
+HX = E / "hexagram.py"
+HS = E / "hexagram_state.py"
+JQ = E / "jiegua.py"
+JH = E / "jiehhou.py"
+YQ = E / "yuan_qi.py"
 
 #: 本模块全部守卫文件（E/F 三批一次跑完，见约束 1）
 TEST = (
@@ -41,6 +46,9 @@ TEST = (
     "tests/heluo/test_yuanqi_tables_fidelity.py",
     "tests/heluo/test_yaoxiang_and_shu_ge_l741_l726.py",
     "tests/heluo/test_huagong_jieqi_windows.py",
+    "tests/heluo/test_single_source_tables.py",
+    "tests/heluo/test_h11_jiehhou.py",
+    "tests/heluo/test_full_pipeline.py",
     # 受影响模块的既有守卫：数格表既有判域、guajie 输出契约
     "tests/heluo/test_yue_ling_shu_ge_vs_original.py",
     "tests/heluo/test_refusal_corrections_round2.py",
@@ -241,6 +249,48 @@ MUTATIONS = [
      "        seasonal_hex = (self._compute_seasonal_hexagram(_real_birth_date)\n"
      "                        if _real_birth_date else None)",
      "        seasonal_hex = self._compute_seasonal_hexagram(birth_date)"),
+    # ══ 批次 G：副本表去重 + 同名不同义消歧 ═══════════════════════
+    (GJ, "G 错卦在 guajie 又抄一份（副本重新分叉）",
+     "from .hexagram_state import QIANXI_DUKONG",
+     'QIANXI_DUKONG = {"乾": "坤", "坤": "乾", "坎": "离", "离": "坎",\n'
+     '    "震": "巽", "巽": "震", "艮": "兑", "兑": "艮"}'),
+    (HX, "G 错卦在 hexagram 又抄一份",
+     "from .hexagram_state import QIANXI_DUKONG as _QIANXI_DUKONG",
+     '_QIANXI_DUKONG = {"乾": "坤", "坤": "乾", "兑": "艮", "艮": "兑",\n'
+     '    "离": "坎", "坎": "离", "震": "巽", "巽": "震"}'),
+    (YQ, "G 错卦在 yuan_qi 又抄一份",
+     "from .hexagram_state import QIANXI_DUKONG",
+     'QIANXI_DUKONG = {"乾": "坤", "坤": "乾", "坎": "离", "离": "坎",\n'
+     '    "震": "巽", "巽": "震", "艮": "兑", "兑": "艮"}'),
+    (HG, "G 二十四节气在 hua_gong 又抄一份",
+     "from .jiehhou import SOLAR_TERMS as _JQ_ORDER",
+     '_JQ_ORDER = ("冬至", "小寒", "大寒", "立春", "雨水", "惊蛰", "春分", '
+     '"清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋", '
+     '"处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪")'),
+    (JH, "G 二十四节气在 jiehhou 又抄一份",
+     "from .jiegua import JIEQI_24 as SOLAR_TERMS",
+     'SOLAR_TERMS = ["冬至", "小寒", "大寒", "立春", "雨水", "惊蛰",\n'
+     '    "春分", "清明", "谷雨", "立夏", "小满", "芒种",\n'
+     '    "夏至", "小暑", "大暑", "立秋", "处暑", "白露",\n'
+     '    "秋分", "寒露", "霜降", "立冬", "小雪", "大雪"]'),
+    (HG, "G 五行生克在 hua_gong 又抄一份",
+     "from .hexagram_state import (ELEMENT_GENERATES as _WU_SHENG,  # noqa: E402\n"
+     "                             ELEMENT_OVERCOMES as _WU_KE)",
+     '_WU_SHENG = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}\n'
+     '_WU_KE = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}'),
+    (HG, "G 歧义名 OPPOSITE_TRIGRAM 复活（错卦/化工相反又同名）",
+     "HUAGONG_FAN_GUA: dict[str, str] = {",
+     "OPPOSITE_TRIGRAM: dict[str, str] = {"),
+    (HG, "G 化工相反混回错卦（四季对宫被替换成先天对宫）",
+     'HUAGONG_FAN_GUA: dict[str, str] = {\n'
+     '    "坎": "离",   # L585\n'
+     '    "离": "坎",   # L588\n'
+     '    "兑": "震",   # L591\n'
+     '    "震": "兑",   # L594\n'
+     '}',
+     'HUAGONG_FAN_GUA: dict[str, str] = {\n'
+     '    "乾": "坤", "坤": "乾", "坎": "离", "离": "坎",\n'
+     '    "震": "巽", "巽": "震", "艮": "兑", "兑": "艮"\n}'),
 ]
 
 
@@ -259,7 +309,8 @@ ENV.update({
                                       "admission_registry:test-cred-hash"),
 })
 
-TARGETS = (GJ, GD, IT, NUM, SG, YX, YT, HG, CN)
+TARGETS = (GJ, GD, IT, NUM, SG, YX, YT, HG, CN,
+            HX, HS, JQ, JH, YQ)
 originals: dict[Path, str] = {}
 
 

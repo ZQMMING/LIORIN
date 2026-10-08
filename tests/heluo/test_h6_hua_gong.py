@@ -102,22 +102,22 @@ class TestHuaGongWuRelation(unittest.TestCase):
         免得日后有人以为漏了相生档。
         """
         from tongshu.engines.heluo.hua_gong import (
-            OPPOSITE_TRIGRAM, TRIGRAM_ELEMENT, _wu_relation)
-        self.assertEqual(OPPOSITE_TRIGRAM,
+            HUAGONG_FAN_GUA, TRIGRAM_ELEMENT, _wu_relation)
+        self.assertEqual(HUAGONG_FAN_GUA,
                          {"坎": "离", "离": "坎", "兑": "震", "震": "兑"})
-        for g, o in OPPOSITE_TRIGRAM.items():
+        for g, o in HUAGONG_FAN_GUA.items():
             rel = _wu_relation(TRIGRAM_ELEMENT[g], TRIGRAM_ELEMENT[o])
             self.assertEqual(rel, "克制", f"{g}↔{o} 应为克制，实为 {rel}")
-        self.assertNotIn("乾", OPPOSITE_TRIGRAM)
-        self.assertNotIn("坤", OPPOSITE_TRIGRAM)
-        self.assertNotIn("艮", OPPOSITE_TRIGRAM)
-        self.assertNotIn("巽", OPPOSITE_TRIGRAM)
+        self.assertNotIn("乾", HUAGONG_FAN_GUA)
+        self.assertNotIn("坤", HUAGONG_FAN_GUA)
+        self.assertNotIn("艮", HUAGONG_FAN_GUA)
+        self.assertNotIn("巽", HUAGONG_FAN_GUA)
 
     def test_rescued_unreachable_on_this_axis(self):
         """本轴任一组合都不得判出 RESCUED（因四组全克制）。"""
-        from tongshu.engines.heluo.hua_gong import OPPOSITE_TRIGRAM
+        from tongshu.engines.heluo.hua_gong import HUAGONG_FAN_GUA
         for b, g in (("子", "坎"), ("午", "离"), ("寅", "震"), ("申", "兑")):
-            r = compute_huagong("乾", g, OPPOSITE_TRIGRAM[g], "乾", b)
+            r = compute_huagong("乾", g, HUAGONG_FAN_GUA[g], "乾", b)
             self.assertNotEqual(r.state, HuaGongState.RESCUED,
                                 f"{b}月{g} 竟判出 RESCUED")
             self.assertEqual(r.wu_relation, "克制")
@@ -360,14 +360,19 @@ class TestHuaGongProvenance(unittest.TestCase):
         第二轮一并改回并把两套对宫彻底分开命名。
         """
         from tongshu.engines.heluo.hua_gong import (
-            OPPOSITE_TRIGRAM, QIANXI_DUKONG)
-        self.assertEqual(OPPOSITE_TRIGRAM["震"], "兑")
-        self.assertEqual(OPPOSITE_TRIGRAM["兑"], "震")
-        self.assertEqual(OPPOSITE_TRIGRAM["坎"], "离")
+            HUAGONG_FAN_GUA, QIANXI_DUKONG)
+        self.assertEqual(HUAGONG_FAN_GUA["震"], "兑")
+        self.assertEqual(HUAGONG_FAN_GUA["兑"], "震")
+        self.assertEqual(HUAGONG_FAN_GUA["坎"], "离")
         self.assertEqual(QIANXI_DUKONG["震"], "巽")
         self.assertEqual(QIANXI_DUKONG["兑"], "艮")
-        self.assertIsNot(OPPOSITE_TRIGRAM, QIANXI_DUKONG)
-        block = self._slice(self._src(), "# 化工相反（四季对宫）", "QIANXI_DUKONG: dict")
+        self.assertIsNot(HUAGONG_FAN_GUA, QIANXI_DUKONG)
+        self.assertEqual(set(HUAGONG_FAN_GUA), {"坎", "离", "震", "兑"},
+                         "化工相反只收四季四卦，乾/坤/艮/巽 不在其列")
+        # 2026-10-08 批次 G：QIANXI_DUKONG 由本模块的字典改成了对
+        # hexagram_state 的引用，故切片终点跟着改成 import 语句。
+        block = self._slice(self._src(), "# 化工相反（四季对宫）",
+                            "from .hexagram_state import QIANXI_DUKONG")
         self.assertIn("坎卦反离", block)
         self.assertIn("震卦反兑", block)
 
