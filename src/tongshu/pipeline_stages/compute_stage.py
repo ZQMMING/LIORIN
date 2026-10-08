@@ -196,6 +196,12 @@ class ComputeStage:
         signals = build_result["signals"]
         canonical_signals = build_result.get("canonical_signals", {})
 
+        # 2b. 河洛诊断 + 行动建议（2026-10-08 接线）。
+        #  必须排在 Step 2 **之后**：诊断要吃 canonical_signals 求方向，
+        #  排在 Step 1b 会拿不到信号、全部断言静默落 neutral。
+        diagnosis, guidance = self._compute_heluo_diagnosis(
+            heluo_result, canonical_signals, subject="pipeline")
+
         # 3. Cross-domain orchestration (P1.6)
         # If assertion_library is provided, use CrossDomainOrchestrator to produce
         # authorized assertions with direction from Rule (not from Signal).
@@ -295,6 +301,9 @@ class ComputeStage:
             yi_structure=yi_structure,
             yi_interpretation=yi_interpretation,
             meihua_result=meihua_result,
+            # 2026-10-08 接线：河洛诊断与行动建议进入 ComputeResult
+            heluo_diagnosis=diagnosis,
+            heluo_guidance=guidance,
             # BZ-FNDR-15: ⑮-0 接入契约 — 装上 canonical_bazi_chart 给下游 Ziping 消费
             canonical_bazi_chart=canonical_bazi_chart,
         )
@@ -414,6 +423,48 @@ class ComputeStage:
         except Exception as exc:  # noqa: BLE001 — 河洛/易经降级，不中断主管道
             log.warning("Heluo/Yi integration failed (degraded, 不影响主链路): %s", exc)
         return heluo_result, yi_structure, yi_interpretation
+
+    def _compute_heluo_diagnosis(self, heluo_result, canonical_signals,
+                                  subject="unknown"):
+        """河洛诊断图 + 行动建议 → ``(diagnosis, guidance)``；失败降级为 None。
+
+        ⚠ 这两层此前**生产调用方为零**：只在单元测试里被手动调过，
+          真实排盘从来看不到它们的输出 —— 单元测试全绿也照样漏。
+
+        降级口径与本类其余河洛接线一致：单层失败不中断主链路，
+        但失败留 warning，不静默。
+        """
+        diagnosis = guidance = None
+        if heluo_result is None:
+            return None, None
+        try:
+            from ..engines.heluo.evidence_producer import HeLuoEvidenceProducer
+            from ..engines.heluo.frozen_state import build_frozen_state
+            from ..engines.heluo.diagnosis_rule_graph import build_diagnosis_graph
+
+            evidences = HeLuoEvidenceProducer().produce(heluo_result)
+            frozen = build_frozen_state(heluo_result)
+            sigs = [x for v in (canonical_signals or {}).values() for x in v]
+            diagnosis = build_diagnosis_graph(
+                evidences=list(evidences), signals=sigs,
+                frozen_state=frozen, subject=subject)
+        except Exception as exc:  # noqa: BLE001 — 诊断降级，不中断主链路
+            log.warning("Heluo H12 诊断降级 (diagnosis=None): %s", exc)
+            return None, None
+        try:
+            from ..engines.heluo.guidance import generate_guidance
+            hg = getattr(heluo_result, "hua_gong", None)
+            guidance = generate_guidance(
+                assertions=list(diagnosis.assertions),
+                judgment=diagnosis.judgment,
+                source_gua=getattr(heluo_result.prenatal, "hexagram_name", ""),
+                target_gua=getattr(heluo_result.postnatal, "hexagram_name", ""),
+                yuan_tang=getattr(heluo_result.yuantang, "yuantang", "") or "",
+                hua_gong_state=(hg.state.value if hg is not None else None),
+                subject=subject)
+        except Exception as exc:  # noqa: BLE001 — 建议降级，不中断主链路
+            log.warning("Heluo H12 建议降级 (guidance=None): %s", exc)
+        return diagnosis, guidance
 
     def _compute_meihua(
         self,

@@ -152,7 +152,23 @@ if R is not None:
             out.append("%-24s %-14s %s" % (name, state, summ))
 
         # ── 下游消费者层 ──────────────────────────────────
-        sec("【3】下游消费者层（逐个独立调用，看谁没接上）")
+        sec("【3】管线内建输出（接线后应直接可得，不必手工调）")
+        out.append("  heluo_diagnosis = %s" % type(R.heluo_diagnosis).__name__)
+        out.append("  heluo_guidance  = %s" % type(R.heluo_guidance).__name__)
+        d = getattr(R, "heluo_diagnosis", None)
+        if d is not None:
+            out.append("  断言 %d 条" % len(d.assertions))
+            out.append("  判决 %s" % (getattr(getattr(d.judgment, "domain", None),
+                                          "value", None)))
+            from tongshu.engines.heluo import diagnosis_rule_graph as _dg
+            out.append("  丢弃 %s" % _dg.dropped_rules())
+            out.append("  无信号可依 %s" % _dg.unmatched_evidence())
+        g = getattr(R, "heluo_guidance", None)
+        if g is not None:
+            out.append("  建议 %d 条：%s" % (len(g.action_items),
+                                        [i.title for i in g.action_items]))
+
+        sec("【3b】下游消费者层（逐个独立调用，看谁没接上）")
 
         def try_layer(label, fn):
             out.append("")

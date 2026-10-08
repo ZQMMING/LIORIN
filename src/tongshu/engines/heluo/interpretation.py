@@ -13,6 +13,7 @@
 from __future__ import annotations
 import json
 import logging
+import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional, List, Dict, Any
@@ -248,24 +249,90 @@ class RelationalInterpretationEngine:
     
     def _compute_total_score(self, weights: Dict[str, float]) -> float:
         """计算综合评分 (-1 到 1)。"""
-        # 本命卦基础分
-        base_score = self._hexagram_base_score()
-        
+        # 本命基础分：来自原典六项判据（贵命十体 L630–L648），非自拟权重
+        base_score, _ju = self._liuju_base()
+        self._liu_ju_detail = _ju
+
         # 加权综合
         weighted_sum = base_score * weights.get("prenatal_hexagram", 0)
         weighted_sum += 0.1 * weights.get("yuan_tang", 0)
         weighted_sum += 0.05 * weights.get("postnatal_hexagram", 0)
-        
+
         # 时间因子
-        year_factor = self._year_cycle_factor()
+        # ⚠ 2026-10-08：原 _year_cycle_factor() 已作废（针对 2025 乙巳写死常量），
+        #   本层**不再给它留位置**——原典没有「流年数值因子」这种东西，
+        #   与其换一个自造因子顶上，不如让它不进公式。
+        #   流年该看什么，见 guajie 的流年卦查表判据（L558–L741 已落码）。
         month_factor = self._month_cycle_factor()
         day_factor = self._day_cycle_factor()
-        
-        weighted_sum += year_factor * weights.get("year_cycle", 0)
+
         weighted_sum += month_factor * weights.get("month_cycle", 0)
         weighted_sum += day_factor * weights.get("day_cycle", 0)
-        
+
         return max(-1.0, min(1.0, weighted_sum))
+
+    def _liuju_base(self) -> tuple[float, dict]:
+        """吃 :func:`gui_ming_liu_ju.judge_liu_ju` 的六项原典判据 → 基础分。
+
+        返回 ``(base, 明细)``。base = (吉项数 − 凶项数) / 已判项数，∈ [−1, 1]。
+
+        ⚠ 这个比例是**引擎的归一化刻度，不是原典的数值权重**。
+          原典只给「吉 / 凶 / 不判」三元，从未给「吉 = +0.33」这种东西；
+          是本引擎为了喂进既有 0–1 接口而做的**计数归一**。
+          明细一并输出，任何人质疑某个分值都能追到具体哪几项吉、哪几项凶。
+
+        六项全为「不判」时返回 0.0 —— 此时**不是**「中性吉凶」，
+          而是「原典判据不足以断」，明细里会写明。
+        """
+        from .gui_ming_liu_ju import judge_liu_ju
+        from .yue_ling_shu_ge import SHU_GE_TABLE, classify_shu_ge  # noqa: F401
+
+        kw = self._liuju_kwargs()
+        if not kw:
+            return 0.0, {"_说明": "输入不足以喂任一原典判据，不判"}
+
+        results = judge_liu_ju(**kw)
+        good = [k for k, v in results.items() if v.passed is True]
+        bad = [k for k, v in results.items() if v.passed is False]
+        judged = good + bad
+        detail = {
+            "吉": good, "凶": bad,
+            "不判": [k for k, v in results.items() if v.passed is None],
+            "明细": {k: v.detail for k, v in results.items()},
+            "依据": {k: v.basis for k, v in results.items()},
+            "刻度说明": "(吉−凶)/已判项数；原典只给吉凶不给数值，此为引擎归一化",
+        }
+        if not judged:
+            detail["结论"] = "六项皆不判 —— 原典判据不足以断，不等于中性"
+            return 0.0, detail
+        return round((len(good) - len(bad)) / len(judged), 4), detail
+
+    def _liuju_kwargs(self) -> dict:
+        """从 HeluoInput 里剥出 judge_liu_ju 需要的入参（剥不出的就不传）。"""
+        from .gui_ming_liu_ju import GUA_MING_GOOD_EXAMPLES  # noqa: F401
+        out: dict = {}
+        raw_gua = (self.input.prenatal_hexagram or "").strip()
+        if raw_gua:
+            # 「乾上乾下」/「乾」都收；只要能取到**不含「上/下」的那个卦名**
+            # 段里恰有一个卦名（取下卦），judge_liu_ju 只要卦名一层。
+            for seg in re.split(r"上", raw_gua):
+                seg = seg.replace("下", "").strip()
+                if seg in ("乾", "坤", "震", "巽", "坎", "离", "艮", "兑"):
+                    out["gua_name"] = seg
+                    break
+        yw = (self.input.yuan_tang or "").strip()
+        m = re.match(r"^(初|[二三四五]|上)", yw)
+        if m:
+            tok = m.group(1)
+            idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}[tok]
+            out["yuantang_index"] = idx
+            out["yuantang_line"] = idx
+        lp = getattr(self.input, "line_position", None)
+        if isinstance(lp, dict):
+            yao = lp.get("ying_yao") or lp.get("ying_yao_index")
+            if isinstance(yao, int):
+                out["ying_yao_line"] = yao
+        return out
     
     def _hexagram_base_score(self) -> float:
         """⛔ 已作废（2026-10-07）：本函数的自拟分数无原典依据。
@@ -282,13 +349,17 @@ class RelationalInterpretationEngine:
         已落成 :mod:`gui_ming_liu_ju`，返回**原典判据名 + 原文依据 +
         吉/凶/不判**，而非自拟分数。
 
-        Raises:
-            NotImplementedError: 恒抛出。**不得**静默回退到旧分数。
+        2026-10-08：**已由 `_liuju_base()` 取代**，本函数不再被调用。
+        取代方式是吃 :func:`gui_ming_liu_ju.judge_liu_ju` 的六项原典判据，
+        而非复活这套自拟分数。
+
+        保留本函数作为**显式拒绝点**：若有人又把自拟分数接回来，
+        这里仍会炸，且这次是带着「已有人正确替代品」的理由炸。
         """
         raise NotImplementedError(
-            "_hexagram_base_score 的卦象基础分无原典依据，已于 2026-10-07 作废。"
-            "请改用 gui_ming_liu_ju.judge_liu_ju() 的六项原典判据"
-            "（起例卷之中 L630–L648）。若确需 0-1 数值，须先补原典出处。"
+            "_hexagram_base_score 的卦象基础分无原典依据，已于 2026-10-07 作废，"
+            "2026-10-08 起由 _liuju_base() 取代（吃 gui_ming_liu_ju 六项原典判据）。"
+            "**不得**复活本函数的自拟分数。"
         )
     
     def _year_cycle_factor(self) -> float:
@@ -309,13 +380,17 @@ class RelationalInterpretationEngine:
         见 :mod:`guajie` 的十二凶/判词/元气化工链与 :mod:`gui_ming_liu_ju`
         的六项判据，**不存在**「流年数值因子」这种东西。
 
-        Raises:
-            NotImplementedError: 恒抛出。**不得**静默回退。
+        2026-10-08：**已从 `_compute_total_score` 的公式里移除**。
+        原典没有「流年数值因子」这种东西，所以既不复活它、也不换一个自造因子顶上——
+        让它不进公式，是这里唯一诚实的处理。
+        流年该看什么：guajie 的流年卦查表判据（L558–L741 已落码）。
+
+        保留本函数作为显式拒绝点，防止有人把单年硬编码接回去。
         """
         raise NotImplementedError(
             "_year_cycle_factor 的流年因子（原为 '乙巳年-火运' 单年硬编码）"
-            "无原典依据，已于 2026-10-07 作废。"
-            "请改用 guajie 的流年卦查表判据或 gui_ming_liu_ju 的六项判据。"
+            "无原典依据，已于 2026-10-07 作废、2026-10-08 起从总分公式移除。"
+            "**不得**以任何形式接回总分公式。"
         )
     
     def _month_cycle_factor(self) -> float:

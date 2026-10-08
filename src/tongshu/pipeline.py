@@ -59,6 +59,9 @@ class PipelineResult:
     db_audit_id: str | None = None
     # B-01: 河洛/易经透传（None = 降级未产出）
     heluo_result: Any = None
+    # 2026-10-08 接线：河洛诊断与行动建议（None = 降级未产出）
+    heluo_diagnosis: Any = None
+    heluo_guidance: Any = None
     yi_structure: Any = None
     yi_interpretation: Any = None
     # P1.3 dual-track: CanonicalSignal by layer (empty dict = not enabled)
@@ -461,6 +464,8 @@ class TONGSHUPipeline:
             db_run_id=db_run_id,
             db_audit_id=db_audit_id,
             heluo_result=compute.heluo_result,
+            heluo_diagnosis=compute.heluo_diagnosis,
+            heluo_guidance=compute.heluo_guidance,
             yi_structure=compute.yi_structure,
             yi_interpretation=compute.yi_interpretation,
             canonical_signals=compute.canonical_signals,

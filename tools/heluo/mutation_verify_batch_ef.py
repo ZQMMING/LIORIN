@@ -40,6 +40,10 @@ JQ = E / "jiegua.py"
 JH = E / "jiehhou.py"
 YQ = E / "yuan_qi.py"
 DR = E / "diagnosis_rule_graph.py"
+IT = E / "interpretation.py"
+CS = ROOT / "src" / "tongshu" / "pipeline_stages" / "compute_stage.py"
+PP = ROOT / "src" / "tongshu" / "pipeline.py"
+TD = ROOT / "src" / "tongshu" / "types.py"
 
 #: 本模块全部守卫文件（E/F 三批一次跑完，见约束 1）
 TEST = (
@@ -49,6 +53,8 @@ TEST = (
     "tests/heluo/test_huagong_jieqi_windows.py",
     "tests/heluo/test_single_source_tables.py",
     "tests/heluo/test_diagnosis_wiring_20261008.py",
+    "tests/heluo/test_interp_and_wiring_20261008.py",
+    "tests/test_h4_interpretation.py",
     "tests/heluo/test_h12_diagnosis.py",
     "tests/heluo/test_h11_jiehhou.py",
     "tests/heluo/test_full_pipeline.py",
@@ -71,7 +77,7 @@ MUTATIONS = [
 
     (GJ, "E2 kuozhan 八个判法退回裸 pass（异常被吞）",
      '            _KZ_ERRORS.append("%s: %s: %s" % (name, type(_e).__name__, _e))',
-     "            pass"),
+     "            _swallow(exc)"),
     (GJ, "E2 异常留痕只剩一句「失败」，定位不到判法",
      '            _KZ_ERRORS.append("%s: %s: %s" % (name, type(_e).__name__, _e))',
      '            _KZ_ERRORS.append("计算失败")'),
@@ -310,6 +316,28 @@ MUTATIONS = [
     (GD, 'H 建议层伪引复活（又写回不存在的规则集名）',
      '                source_ref=("HELUO_RULES::" + ",".join(supportive_rules)\n',
      '                source_ref="V13_河洛诊断规则集",\n'),
+    # == 批次 I/J：六项原典判据 + 管线接线 ==
+    (IT, 'I 总分公式不再走六项判据（退回自拟分数）',
+     '        base_score, _ju = self._liuju_base()\n',
+     '        base_score, _ju = self._liuju_base(), 0.0\n'),
+    (IT, 'I 六项比例改成写死 1.0（不再随输入变）',
+     '        return round((len(good) - len(bad)) / len(judged), 4), detail\n',
+     '        return 1.0, detail\n'),
+    (IT, 'I 六项皆不判时谎称中性（丢掉「不等于中性」的登记）',
+     '            detail["结论"] = "六项皆不判 —— 原典判据不足以断，不等于中性"\n',
+     '            结论 = 中性\n'),
+    (CS, 'J 诊断接回管线又被摘掉',
+     '        diagnosis, guidance = self._compute_heluo_diagnosis(\n',
+     '        diagnosis, guidance = None, None\n'),
+    (CS, "J 诊断改排在 canonical_signals 之前（方向全落 neutral）",
+     '        canonical_signals = build_result.get("canonical_signals", {})\n\n        # 2b. 河洛诊断 + 行动建议（2026-10-08 接线）。\n        #  必须排在 Step 2 **之后**：诊断要吃 canonical_signals 求方向，\n        #  排在 Step 1b 会拿不到信号、全部断言静默落 neutral。\n        diagnosis, guidance = self._compute_heluo_diagnosis(\n            heluo_result, canonical_signals, subject="pipeline")\n',
+     '        # 变异：诊断提前到 signals 产出之前 —— 此时 canonical_signals\n        # 尚未赋值，方向拿不到信号，全部断言静默落 neutral。\n        _diag_early = self._compute_heluo_diagnosis(\n            heluo_result, None, subject="pipeline")\n        canonical_signals = build_result.get("canonical_signals", {})\n\n        diagnosis, guidance = _diag_early\n'),
+    (CS, 'J 降级不再留 warning（静默失败）',
+     '            log.warning("Heluo H12 诊断降级 (diagnosis=None): %s", exc)\n',
+     '            pass\n'),
+    (PP, 'J PipelineResult 不透传诊断与建议',
+     '            heluo_diagnosis=compute.heluo_diagnosis,\n',
+     '            _heluo_diagnosis_unused=None,\n'),
 ]
 
 
@@ -329,7 +357,7 @@ ENV.update({
 })
 
 TARGETS = (GJ, GD, IT, NUM, SG, YX, YT, HG, CN,
-            HX, HS, JQ, JH, YQ, DR)
+            HX, HS, JQ, JH, YQ, DR, CS, PP, TD)
 originals: dict[Path, str] = {}
 
 

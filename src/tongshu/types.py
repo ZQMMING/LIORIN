@@ -125,6 +125,11 @@ class ComputeResult:
     temporal_convergence: Any = None  # TemporalConvergence | None
     # E7: 梅花易数引擎输出（可选项，None = 未启用）
     meihua_result: Any = None         # MeihuaResult | FeatureMapResult | None
+    # 2026-10-08 接线：河洛诊断图与行动建议。
+    # 这两层此前生产调用方为零，只在单测里被手动调过 → 真实排盘
+    # 从来看不到它们。None = 未接入或该层降级（已记 warning）。
+    heluo_diagnosis: Any = None      # DiagnosisResult | None
+    heluo_guidance: Any = None       # HeluoGuidance | None
 
     # BZ-FNDR-15 (⑮-0 接入契约): CanonicalBaziChart 字段.
     # 由 compute_stage 内部通过 CanonicalBaziChart.from_bazi_chart(bazi_chart) 构造,

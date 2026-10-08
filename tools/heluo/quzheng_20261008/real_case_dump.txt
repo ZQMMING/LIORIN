@@ -6,12 +6,14 @@ birth_date   = (1983, 11, 3, 12)
 gender       = male
 location     = 中山   timezone = Asia/Shanghai   （实参启用：False）
 analysis_date= 2026-10-08   河洛流年日 = 2026-08-17
-PipelineResult 字段: ['audit_entry_id', 'canonical', 'canonical_signals', 'db_audit_id', 'db_run_id', 'heluo_result', 'meihua_result', 'render_elapsed_ms', 'rendered_text', 'source', 'temporal_convergence', 'validation_passed', 'yi_interpretation', 'yi_structure']
+PipelineResult 字段: ['audit_entry_id', 'canonical', 'canonical_signals', 'db_audit_id', 'db_run_id', 'heluo_diagnosis', 'heluo_guidance', 'heluo_result', 'meihua_result', 'render_elapsed_ms', 'rendered_text', 'source', 'temporal_convergence', 'validation_passed', 'yi_interpretation', 'yi_structure']
   audit_entry_id             str       
   canonical                  CanonicalContent
   canonical_signals          dict      
   db_audit_id                NoneType  
   db_run_id                  NoneType  
+  heluo_diagnosis            DiagnosisResult
+  heluo_guidance             HeluoGuidance
   heluo_result               HeluoResult
   meihua_result              FeatureMapResult
   render_elapsed_ms          NoneType  
@@ -99579,13 +99581,24 @@ seasonal_hexagram 节候卦    ✅ 有            6 字段/键
 guajie 解卦                ✅ 有            24 字段/键
 
 ================================================================================================
-【3】下游消费者层（逐个独立调用，看谁没接上）
+【3】管线内建输出（接线后应直接可得，不必手工调）
+================================================================================================
+  heluo_diagnosis = DiagnosisResult
+  heluo_guidance  = HeluoGuidance
+  断言 8 条
+  判决 None
+  丢弃 ['HL_HEXAGRAM_STRUCTURE']
+  无信号可依 ['HL_TIAN_DI_SHU', 'HL_PRENATAL_HEXAGRAM', 'HL_YUANTANG', 'HL_POSTNATAL_HEXAGRAM', 'HL_HUA_GONG', 'HL_JIEHOU_GUA']
+  建议 3 条：['顺势而为', '巩固根基', '把握当前趋势']
+
+================================================================================================
+【3b】下游消费者层（逐个独立调用，看谁没接上）
 ================================================================================================
 
 ── HeLuoEvidenceProducer 证据产出
 [7]
   EngineEvidence
-    'HL-NUMBERS-16a0d2f3'
+    'HL-NUMBERS-ca688e30'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_TIAN_DI_SHU'
     {共 4 键}
@@ -99602,7 +99615,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-PRENATAL-61f64646'
+    'HL-PRENATAL-30b09b4a'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_PRENATAL_HEXAGRAM'
     '风山渐'
@@ -99617,7 +99630,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-YUANTANG-8f56fff8'
+    'HL-YUANTANG-a048bba8'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_YUANTANG'
     '初六'
@@ -99631,7 +99644,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-POSTNATAL-437a06da'
+    'HL-POSTNATAL-d4496c20'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_POSTNATAL_HEXAGRAM'
     '火风鼎'
@@ -99646,7 +99659,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-STRUCT-c4d8d902'
+    'HL-STRUCT-50955ee6'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_HEXAGRAM_STRUCTURE'
     "HexagramStructure(name='火风鼎', upper='离', lower='巽', lines=(-1, 1, 1, 1, -1, 1), ti_yong={'ti': '巽', 'ti_element': '木', 'yong': '离', 'yong_element': '火', 'relation': '体生用（泄）'}, sheng_ke='体生用（泄）', cheng_cheng=['1承2', '5承6', '4乘5'], bi=['2比3', '3比4'], ying=['3应6'], hu_gua='泽天夬', cuo_gua='水雷屯', zong_gu…
@@ -99660,7 +99673,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-HUAGONG-bd8cf68d'
+    'HL-HUAGONG-e12f5b22'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_HUA_GONG'
     'NORMAL'
@@ -99678,7 +99691,7 @@ guajie 解卦                ✅ 有            24 字段/键
     '2026.09'
     'v13.0'
   EngineEvidence
-    'HL-JIEHOU-b8662983'
+    'HL-JIEHOU-d9be2759'
     <EngineName.HE_LUO: 'HE_LUO'>
     'HL_JIEHOU_GUA'
     '兑'
@@ -99931,7 +99944,8 @@ FrozenHeluoState
   False
 
 ── diagnosis_rule_graph 未注册规则
-[0]
+[1]
+  'HL_HEXAGRAM_STRUCTURE'
 
 ── build_diagnosis_graph 诊断图/断言
    断言 8 条 / 丢弃 ['HL_HEXAGRAM_STRUCTURE'] / 无信号可依 ['HL_TIAN_DI_SHU', 'HL_PRENATAL_HEXAGRAM', 'HL_YUANTANG', 'HL_POSTNATAL_HEXAGRAM', 'HL_HUA_GONG', 'HL_JIEHOU_GUA']
@@ -99957,7 +99971,7 @@ DiagnosisResult
       'HL_TIAN_DI_SHU'
       'HELUO_AUTH_HL_TIAN_DI_SHU'
       EvidenceRef
-        'HL-NUMBERS-1fd35380'
+        'HL-NUMBERS-cf245d84'
         'HE_LUO'
         {共 4 键}
           18
@@ -99981,7 +99995,7 @@ DiagnosisResult
       'HL_PRENATAL_HEXAGRAM'
       'HELUO_AUTH_HL_PRENATAL_HEXAGRAM'
       EvidenceRef
-        'HL-PRENATAL-5ef199de'
+        'HL-PRENATAL-0ec5c89a'
         'HE_LUO'
         '风山渐'
         '起例卷上·八字内天数地数例'
@@ -100001,7 +100015,7 @@ DiagnosisResult
       'HL_YUANTANG'
       'HELUO_AUTH_HL_YUANTANG'
       EvidenceRef
-        'HL-YUANTANG-8619d376'
+        'HL-YUANTANG-80d76350'
         'HE_LUO'
         '初六'
         '三才发秘·详元堂爻位式'
@@ -100021,7 +100035,7 @@ DiagnosisResult
       'HL_POSTNATAL_HEXAGRAM'
       'HELUO_AUTH_HL_POSTNATAL_HEXAGRAM'
       EvidenceRef
-        'HL-POSTNATAL-df03bbb7'
+        'HL-POSTNATAL-83f47715'
         'HE_LUO'
         '火风鼎'
         '起例卷上·换后天卦例'
@@ -100041,7 +100055,7 @@ DiagnosisResult
       'HL_HUA_GONG'
       'HELUO_AUTH_HL_HUA_GONG'
       EvidenceRef
-        'HL-HUAGONG-bd7a9d88'
+        'HL-HUAGONG-916d9d98'
         'HE_LUO'
         'NORMAL'
         '起例卷下·论化工'
@@ -100061,7 +100075,7 @@ DiagnosisResult
       'HL_JIEHOU_GUA'
       'HELUO_AUTH_HL_JIEHOU_GUA'
       EvidenceRef
-        'HL-JIEHOU-5caac2de'
+        'HL-JIEHOU-3cf63cd7'
         'HE_LUO'
         '兑'
         '易冒引河洛理数'
@@ -100192,7 +100206,7 @@ HeluoGuidance
       '把握当前趋势'
       '当前有1条正面信号支持，建议抓住时机推进重点事项。'
       0.2333333333333333
-      'V13_河洛诊断规则集'
+      'HELUO_RULES::HELUO_AUTH_HL_HUA_GONG'
       'year'
   [0]
   [5]
@@ -100211,12 +100225,12 @@ HeluoGuidance
     'ZPZ-001'
 
 ── interpretation 关系解释
-   ❌ 抛异常 NotImplementedError: _hexagram_base_score 的卦象基础分无原典依据，已于 2026-10-07 作废。请改用 gui_ming_liu_ju.judge_liu_ju() 的六项原典判据（起例卷之中 L630–L648）。若确需 0-1 数值，须先补原典出处。
-        File "D:\shuntian_heluo\src\tongshu\engines\heluo\interpretation.py", line 288, in _hexa
+   ❌ 抛异常 AttributeError: 'HeluoInput' object has no attribute 'prenatal_hexagram'
+          raw_gua = (self.input.prenatal_hexagram or "").strip()
 
 ================================================================================================
 【4】接线缺口汇总
 ================================================================================================
 以下层「没接上 / 为空」，需处理：
   · PipelineResult.rendered_text 为空
-  · interpretation 关系解释 调用失败：_hexagram_base_score 的卦象基础分无原典依据，已于 2026-10-07 作废。请改用 gui_ming_liu_ju.judge_liu_ju() 的六项原典判据（起例卷之中 L630–L648）。若确需 0-1 数值，须先补原典出处。
+  · interpretation 关系解释 调用失败：'HeluoInput' object has no attribute 'prenatal_hexagram'
