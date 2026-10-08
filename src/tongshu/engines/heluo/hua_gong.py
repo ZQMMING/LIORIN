@@ -185,11 +185,11 @@ QIANXI_DUKONG: dict[str, str] = {
 #   故卯月上半月属坎、下半月属震；午月、酉月同理被拦腰截断。
 #   压成月支 → 这三个月各自劈成两半，再凭空多出三段「无窗口」。
 #   那是映射丢精度造出来的洞，原典没有。
-_JQ_ORDER: tuple[str, ...] = (
-    "冬至", "小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏",
-    "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露",
-    "霜降", "立冬", "小雪", "大雪",
-)
+#: 节气名**不自造**：直接引 jiehhou.SOLAR_TERMS（全库单一来源，按 sxtwl
+#: jqIndex 0–23 排，与 jiegua.JIE_GUA_TABLE 同序）。
+#: 本轮初版在这里另抄了一份 24 字元组，属典型的「两份表各抄各的、
+#: 索引错位无人发现」——同 jiehhou 自己在 SOLAR_TERMS 处记的旧账。
+from .jiehhou import SOLAR_TERMS as _JQ_ORDER  # noqa: E402
 
 #: (化工卦, 起始 jq, 终止 jq)，闭区间。原典出场次序。
 HUAGONG_JIEQI_WINDOWS: tuple[tuple[str, int, int], ...] = (
@@ -214,29 +214,56 @@ def huagong_by_jieqi(jq: int | None) -> str:
     return ""
 
 
+def huagong_by_jieqi_index(jq: int | None) -> tuple[str, str]:
+    """节气索引 → ``(当令化工卦, 取法说明)``。**上游已有 jq 时走这里，零次计算**。
+
+    canonical 的节候卦层（H11）本来就要算同一个 jq；化工再自己调一次 sxtwl
+    属重复计算。故本函数与 :func:`huagong_by_birth_date` 分开：
+    有 jq 直接用，没有才由出生日换算。
+    """
+    if jq is None or not (0 <= jq < len(_JQ_ORDER)):
+        return "", "节气索引不可用（%r），不在 0–23 内" % (jq,)
+    gua = huagong_by_jieqi(jq)
+    if not gua:                                   # jq 0–23 已被四段完整切分，理论上不可达
+        return "", "节气「%s」未落入 L558–L567 任何一个窗口（按原典即无化工卦）" % _JQ_ORDER[jq]
+    return gua, "处「%s」→ 当令化工卦=%s" % (_JQ_ORDER[jq], gua)
+
+
 def huagong_by_birth_date(date_str: str) -> tuple[str, str]:
     """出生日 → ``(当令化工卦, 取法说明)``。卦取不到时返回 ``("", 说明)``。
 
-    取不到只有两种情形，都如实说明、不静默回落：
-      * 没给日期；
-      * 缺 sxtwl 或日期不合法，节气定不出来。
-    两种情形下调用方一律回落 ``SEASON_BRANCH_TO_HUAGONG`` 近似表，
-    并把本说明原样写进 evidence。
+    节气换算**委托 jiehhou.get_current_jieqi_info** —— 全库已有两处节气实现
+    （本函数原先用的 yue_ling_shu_ge.solar_jq_index、以及 jiehhou 那份带
+    时间线缓存的），本模块不再当第三处。二者逐日对 sxtwl 原始表比对目前
+    零误差，但两份实现并存必然漂移，故统一吃 jiehhou。
+
+    取不到的情形都如实说明、不静默回落：没给日期 / 日期不合法 / 缺 sxtwl /
+    真实计算异常。调用方据此回落近似表并把说明写进 evidence。
     """
     if not date_str:
         return "", "未给出生日，无法定节气窗口"
     try:
-        from .yue_ling_shu_ge import solar_jq_index
+        from datetime import datetime as _dt
+        bd = _dt.fromisoformat(date_str)
+    except ValueError:
+        return "", "出生日「%s」不是合法 ISO 日期，节气无法换算" % date_str
+    except Exception as exc:                      # pragma: no cover
+        return "", "出生日解析失败（%s: %s）" % (type(exc).__name__, exc)
+    try:
+        from .jiehhou import get_current_jieqi_info
     except Exception as exc:                      # pragma: no cover
         return "", "无法导入节气计算（%s）" % type(exc).__name__
-    jq = solar_jq_index(date_str)
-    if jq is None:
-        return "", "无法由出生日「%s」定出所处节气（缺 sxtwl 或日期不合法）" % date_str
-    gua = huagong_by_jieqi(jq)
-    if not gua:                                   # jq 0–23 已被四段完整切分，理论上不可达
-        return "", "节气「%s」未落入 L558–L567 任何一个窗口（按原典即无化工卦）" % _JQ_ORDER[jq]
-    return gua, "按原典 L558–L567 节气窗口：生日 %s 处「%s」→ 当令化工卦=%s" % (
-        date_str, _JQ_ORDER[jq], gua)
+    try:
+        info = get_current_jieqi_info(bd.year, bd.month, bd.day)
+    except Exception as exc:
+        # jiehhou 有意让真实计算异常上抛（不吞成 None），此处如实转述，不降级。
+        return "", "节气计算出错（%s: %s）" % (type(exc).__name__, exc)
+    if info is None:
+        return "", "无法由出生日「%s」定出所处节气（缺 sxtwl 或该日无可取节气）" % date_str
+    gua, note = huagong_by_jieqi_index(info.jq_index)
+    if not gua:
+        return "", note
+    return gua, "按原典 L558–L567 节气窗口：生日 %s %s" % (date_str, note)
 
 
 def _huagong_self_check() -> None:
@@ -264,20 +291,17 @@ def _huagong_self_check() -> None:
 
 
 
-#: ══ 待批准项：生产链尚未切到 L558–L567 节气窗口 ══
+#: ══ 接线记录：生产链已切到 L558–L567 节气窗口（2026-10-08 经用户批准）═══
 #:
-#: :func:`huagong_by_birth_date` 已实现、已导入自校验、已有守卫，
-#: :func:`compute_huagong` 也已支持 ``birth_date`` 入参——
-#: **唯独 canonical._compute_huagong 没有把 birth_date 传下来**，
-#: 于是生产链仍落在 :data:`SEASON_BRANCH_TO_HUAGONG` 近似表上。
+#: :func:`huagong_by_birth_date` 已实现、已导入自校验、已有守卫；
+#: :func:`compute_huagong` 支持 ``jieqi_index`` 入参，
+#: ``canonical._compute_huagong`` 已把它接上 —— 节候卦层（H11）算一次 jq，
+#: 下传给化工复用，**同一份 sxtwl 结果不再算两遍**。
 #:
-#: 不是漏做，是按 AGENTS.md「禁改 Golden 期望值」「P0 批次须显式批准」停在这里。
-#:
-#: **实测差异（2026 全年逐日，脚本见 tools 目录同批提交）**
+#: 下方差异表是**当初为什么必须接线**的依据，不是遗留问题；
+#: 保留在此是为了让后来人知道那张近似表与原典差在哪儿、别再拿它当依据。
 #:
 #:   月支   近似表   L558–L567 窗口        差异
-#:   子     坎       坎                    一致
-#:   丑     坎       坎                    一致
 #:   寅     震       坎                    **整月不符**
 #:   卯     震       坎（上半月）/震（下半月） **跨窗口**
 #:   辰     震       震                    一致
@@ -289,32 +313,32 @@ def _huagong_self_check() -> None:
 #:   戌     兑       兑                    一致
 #:   亥     坎       兑                    **整月不符**
 #:
-#: **翻转会翻盘的两个 Golden 用例**
+#: 跨窗口的卯/午/酉 说明**月支粒度不够**（月支月跨两个节气），
+#: 这是原典窗口的固有粒度，不是实现取巧。
+#:
+#: **翻过的两个 Golden（经用户显式批准，非静默改绿）**
 #:
 #:   1. tests/heluo/test_h2_frozen_state.py::TestFrozenStateGoldenCase::test_huagong
-#:      纪晓岚 1724-05-22：月柱辛未，近似表给「离」→ 节气窗口给「震」
-#:      （L561「震卦自春分二月中以后至芒种终止」，五月正在窗口内）
-#:      → hua_gong_state 由 WEAK 变 UNRESOLVED
+#:      纪晓岚 1724-05-22 处小满（jq=10）：旧期望「离(火)→WEAK」出自自造近似表，
+#:      按 L561「震卦自春分二月中以后至芒种终止」应为「震(木)→KEZHI」
 #:   2. tests/heluo/test_audit_batch_20261007.py::
 #:      TestHuaGongLevelPervasive::test_weak_case_level_and_reduced_reach_frozen_state
-#:      同一生日 1724-05-22（月支巳）：WEAK 变 KEZHI
+#:      同一生日：WEAK/纳音/reduced=True → KEZHI/正体/reduced=False。
+#:      旧用例顺带守的「reduced 必须透传」已拆出 test_reduced_false_is_propagated。
 #:
-#: 两处**都不是代码算错，是原典口径与近似口径本来就不同**，
-#: 且节气窗口那一边才是 L558–L567 的原话。故翻转方向是对的，
-#: 只是必须由人签字，不能由我顺手把 Golden 改绿。
-HUAGONG_PENDING_BRANCH_SWITCH: dict = {
-    "已落码": ["HUAGONG_JIEQI_WINDOWS", "huagong_by_jieqi",
-               "huagong_by_birth_date", "compute_huagong(birth_date=…)"],
-    "未接线": "canonical._compute_huagong 未下传 birth_date",
-    "待批准原因": "AGENTS.md：禁改 Golden 期望值；P0 批次须显式批准",
-    "受影响 Golden": [
+#: ⚠ :data:`SEASON_BRANCH_TO_HUAGONG` 近似表**仍在**（无出生日且无 jieqi_index
+#:   时的兜底），但生产链已不再走它。不得以它为依据，也不得把它「优化」回去。
+HUAGONG_BRANCH_SWITCH: dict = {
+    "状态": "已接线（2026-10-08，经用户显式批准）",
+    "接线方式": "canonical 节候卦层算 jq 一次，下传 jieqi_index 给化工复用，零重复计算",
+    "自造近似表的现状": "仅作无出生日/无 jq 时的兜底；生产链不走，不得为依据",
+    "已翻转的 Golden": [
         "tests/heluo/test_h2_frozen_state.py::TestFrozenStateGoldenCase::test_huagong",
         "tests/heluo/test_audit_batch_20261007.py::"
         "TestHuaGongLevelPervasive::test_weak_case_level_and_reduced_reach_frozen_state",
     ],
-    "解除条件": "批准后：canonical 下传 birth_date，并逐条复核上述两个用例的期望值",
+    "不得回退": "把 jieqi_index 停传、或改回只用月支近似表",
 }
-
 
 _huagong_self_check()
 
@@ -371,14 +395,16 @@ def compute_huagong(
     year_gan: str = "",
     year_zhi: str = "",
     birth_date: str = "",
+    jieqi_index: int | None = None,
 ) -> HuaGongResult:
     """
     计算化工状态。
 
     算法（L576 三级回退）：
-      1. 确定当令化工卦：
-         有出生日 → 原典 L558–L567 **节气窗口**（本轮落码）
-         无出生日 → 月支近似表 :data:`SEASON_BRANCH_TO_HUAGONG`（兜底）
+      1. 确定当令化工卦（优先级自上而下）：
+         jieqi_index 入参 → **复用上游已算的节气**，零次计算（生产走这条）
+         无 jieqi_index 但有出生日 → 委托 jiehhou 换算节气，再查原典窗口
+         两者皆无 → 回落月支近似表 :data:`SEASON_BRANCH_TO_HUAGONG`（兜底，非原典口径）
       2. **正体**：先天/后天卦的上下卦中是否有该化工卦
       3. **互体**：正体不得而互体得之
       4. **纳音**：正互俱无则取纳甲纳音，**终是浅薄，福寿减半**
@@ -396,9 +422,15 @@ def compute_huagong(
     #   **取不到节气窗口时才有值**，于是走兜底反而不写「兜底」二字，
     #   披露逻辑整个反了（守卫 test_disclosed_in_evidence_when_falling_back 逮到）。
     #   现改为按**实际走了哪条**分支，与 _jq_note 有无无关。
-    huagong_trigram, _jq_note = huagong_by_birth_date(birth_date)
+    if jieqi_index is not None:
+        # 上游（H11 节候卦）已算过同一个 jq，直接复用，**不再调第二次 sxtwl**。
+        huagong_trigram, _jq_note = huagong_by_jieqi_index(jieqi_index)
+        _jq_note = ("复用节候卦层已算的节气索引（jieqi_index=%d），未重复计算；"
+                    "按原典 L558–L567 节气窗口：%s" % (jieqi_index, _jq_note))
+    else:
+        huagong_trigram, _jq_note = huagong_by_birth_date(birth_date)
     if huagong_trigram:
-        _huagong_basis = "节气窗口（原典 L558–L567）"
+        _huagong_basis = "节气窗口（原典 L558–L567）——" + _jq_note
     else:
         huagong_trigram = SEASON_BRANCH_TO_HUAGONG.get(birth_month_branch, "?")
         _huagong_basis = ("月支近似表（**兜底**）——" + _jq_note

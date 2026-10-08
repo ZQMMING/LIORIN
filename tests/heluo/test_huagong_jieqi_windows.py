@@ -200,41 +200,147 @@ class TestKunGenEighteenDaysRefused(unittest.TestCase):
                              f"可执行代码里冒出了未经原典定义的「{fake}」坤艮常量")
 
 
-class TestBranchSwitchPendingIsDeclared(unittest.TestCase):
-    """反向守卫：窗口算对了不等于接上了。没接线这件事必须写在明处。"""
+class TestBranchSwitchedAndMustNotRegress(unittest.TestCase):
+    """接线已获批准并完成。此处钉的是**不得回退**，外加「吃引擎」三条纪律。
+
+    这一类曾两次翻车：
+      * 早先接线被 AGENTS.md 拦下（改 Golden 须显式批准）——那次拦对了；
+      * 后来接线获批时，我又顺手造了第三份节气计算、自造了一张节气名表——
+        那是「能跑就行」的惯性，与本项目「单一来源」的纪律相悖。
+    故这三条纪律各有守卫，防止下一个人再犯。
+    """
 
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo.hua_gong import HUAGONG_PENDING_BRANCH_SWITCH
-        cls.P = HUAGONG_PENDING_BRANCH_SWITCH
+        from tongshu.engines.heluo.hua_gong import HUAGONG_BRANCH_SWITCH
+        cls.S = HUAGONG_BRANCH_SWITCH
 
-    def test_pending_registered(self):
-        self.assertIn("未接线", self.P)
-        self.assertTrue(self.P["未接线"])
+    def test_switch_recorded_as_done(self):
+        self.assertIn("已接线", self.S["状态"])
+        self.assertTrue(self.S["不得回退"])
 
-    def test_lists_both_affected_golden_tests(self):
-        self.assertEqual(len(self.P["受影响 Golden"]), 2)
-        joined = " ".join(self.P["受影响 Golden"])
+    def test_lists_the_two_flipped_goldens(self):
+        self.assertEqual(len(self.S["已翻转的 Golden"]), 2)
+        joined = " ".join(self.S["已翻转的 Golden"])
         self.assertIn("test_h2_frozen_state.py", joined)
         self.assertIn("test_audit_batch_20261007.py", joined)
 
-    def test_canonical_really_does_not_pass_birth_date_yet(self):
-        """登记表说没接线，代码就真得没接——否则登记表在骗人。"""
+    def test_canonical_really_passes_jieqi_index(self):
+        """登记说已接线，代码就真得在传——否则登记在骗人。"""
         code = re.sub(r"\s+", "", _code_only(CN))
         i = code.find("returncompute_huagong(")
         self.assertGreater(i, 0)
-        seg = code[i:i + 300]
-        self.assertNotIn("birth_date=birth_date", seg,
-                         "canonical 已下传 birth_date——待批准登记该撤销并改 Golden")
+        self.assertIn("jieqi_index=jieqi_index", code[i:i + 300],
+                      "canonical 未把 jieqi_index 传给化工——生产链退回兜底近似表了")
 
-    def test_compute_huagong_does_accept_birth_date(self):
-        """接口侧必须已就位，解除条件才只剩「改两条 Golden」。"""
+    def test_seasonal_hexagram_computed_before_huagong(self):
+        """jq 必须**先**算出来，否则化工拿不到、只能自己再算一遍。"""
+        src = io.open(CN, encoding="utf-8").read()
+        a = src.index("self._compute_seasonal_hexagram(")
+        b = src.index("self._compute_huagong(")
+        self.assertLess(a, b,
+                        "节候卦又排到化工之后了——顺序倒回去，jq 就得算两遍")
+
+    # ── 缺失输入不得被当成真实输入 ──────────────────────────
+    def test_synthetic_birth_date_never_drives_the_judgment(self):
+        """⚠ 本轮真实踩过的坑。
+
+        calculate() 会把缺失的 birth_date 补成 f"{yr}-01-01" 喂 HeluoInput。
+        节候卦提到化工之前后，这个**合成日期**也跟着进了节气链路 ——
+        1724 年补成 01-01 → 算出「冬至 jq=0」→ 化工凭空得到一个当令卦，
+        且 evidence 不再标兜底。**缺失输入被当成真实输入，比答错更坏。**
+        """
+        from tongshu.engines.heluo.canonical import HeluoCanonical
+        r = HeluoCanonical().calculate(
+            bazi=[("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")],
+            gender="male", birth_hour="午", era="zhong", birth_year=1724)
+        self.assertIsNone(r.seasonal_hexagram,
+                          "没给出生日却算出了节候卦——用的是合成日期")
+        self.assertIn("兜底", " ".join(r.hua_gong.evidence),
+                      "拿不到 jq 时必须自曝走的是兜底近似表")
+
+    def test_real_birth_date_is_kept_separate_from_the_placeholder(self):
+        """占位日期只许喂 HeluoInput，须留住真值供节气层使用。"""
+        src = io.open(CN, encoding="utf-8").read()
+        code = re.sub(r"\s+", "", _code_only(CN))
+        self.assertIn("_real_birth_date", code)
+        self.assertIn("self._compute_seasonal_hexagram(_real_birth_date)", code,
+                      "节候卦仍在吃可能被替换过的 birth_date")
+        # 顺序：先留真值，后补占位
+        self.assertLess(src.index("_real_birth_date = birth_date"),
+                        src.index('birth_date = f"{yr}-01-01"'))
+
+    def test_same_case_gives_same_answer_either_way(self):
+        """同一具案例：有出生日走原典窗口、无出生日走兜底，**两个都要能说清**。
+
+        这里钉的不是「两者答案相同」——它们本就该不同（有输入优于无输入），
+        而是：给定完整输入时，答案必须与另一组测试一致（KEZHI/震）。
+        """
+        from tongshu.engines.heluo.canonical import HeluoCanonical
+        a = HeluoCanonical().calculate(
+            bazi=[("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")],
+            gender="male", birth_hour="午", era="zhong", birth_year=1724,
+            birth_date="1724-05-22")
+        self.assertEqual(a.hua_gong.huagong_trigram, "震")
+        self.assertEqual(a.hua_gong.state.value, "KEZHI")
+        self.assertEqual(a.hua_gong.level, "正体")
+
+    # ── 纪律一：不重复计算 ──────────────────────────────────
+    def test_no_second_sxtwl_call_inside_huagong(self):
+        """化工**不得**在有 jieqi_index 时还去调 sxtwl。"""
+        code = re.sub(r"\s+", "", _code_only(HG))
+        # huagong_by_jieqi_index 纯查表，不许碰节气换算
+        i = code.find("defhuagong_by_jieqi_index")
+        j = code.find("defhuagong_by_birth_date", i)
+        self.assertGreater(i, 0)
+        body = code[i:j]
+        for forbidden in ("get_current_jieqi_info", "solar_jq_index", "fromsolar",
+                          "sxtwl"):
+            self.assertNotIn(forbidden, body,
+                             f"huagong_by_jieqi_index 里又调了 {forbidden}——重复计算")
+
+    def test_huagong_stops_using_the_second_jq_implementation(self):
+        """全库已有 jiehhou 一份带缓存的实现；化工不得再吃 yue_ling 那份。"""
+        code = re.sub(r"\s+", "", _code_only(HG))
+        self.assertNotIn("solar_jq_index", code,
+                         "化工又改回 solar_jq_index——全库会出现第三份节气计算")
+
+    def test_evidence_says_it_reused_upstream_jq(self):
+        """复用必须**可审计**：evidence 要写明未重复计算。"""
         from tongshu.engines.heluo.hua_gong import compute_huagong
-        import inspect
-        self.assertIn("birth_date", inspect.signature(compute_huagong).parameters)
+        r = compute_huagong("乾", "乾", "乾", "乾", "午", jieqi_index=10)
+        ev = " ".join(r.evidence)
+        self.assertIn("复用", ev)
+        self.assertIn("未重复计算", ev)
 
-    def test_disclosed_in_evidence_when_falling_back(self):
-        """没给出生日时，evidence 必须自曝走了兜底近似，不能装作用了原典。"""
+    # ── 纪律二：不自造表 ────────────────────────────────────
+    def test_no_self_made_solar_term_table(self):
+        """节气名必须引 jiehhou.SOLAR_TERMS，不得在化工里另抄一份 24 字元组。"""
+        src = io.open(HG, encoding="utf-8").read()
+        self.assertIn("from .jiehhou import SOLAR_TERMS as _JQ_ORDER", src,
+                      "节气名未引 jiehhou.SOLAR_TERMS")
+        code = re.sub(r"\s+", "", _code_only(HG))
+        # 自造表长这样：_JQ_ORDER=(...24个字...) 或 _JQ_ORDER=[...]
+        self.assertNotIn("_JQ_ORDER=('冬至'", code)
+        self.assertNotIn('_JQ_ORDER=("冬至"', code)
+        self.assertNotIn("_JQ_ORDER=['冬至'", code)
+
+    def test_solar_term_list_is_the_engine_one(self):
+        from tongshu.engines.heluo.hua_gong import _JQ_ORDER
+        from tongshu.engines.heluo.jiehhou import SOLAR_TERMS
+        self.assertIs(_JQ_ORDER, SOLAR_TERMS, "引的不是引擎那份对象")
+
+    def test_window_table_is_still_original_text_not_a_duplicate(self):
+        """窗口表**不是**重复实现——它是原典 L558–L567 的规则本身，必须保留。
+
+        这条防的是把「不重复计算」执行过头：把原典规则也当成"自造表"删掉。
+        """
+        code = re.sub(r"\s+", "", _code_only(HG))
+        self.assertIn("HUAGONG_JIEQI_WINDOWS", code)
+        self.assertIn("HUAGONG_FAN_JIEQI", code, "L585–L594 互证表被删了")
+
+    # ── 纪律三：兜底必须自曝 ────────────────────────────────
+    def test_fallback_disclosed_when_no_jq(self):
         from tongshu.engines.heluo.hua_gong import compute_huagong
         r = compute_huagong("乾", "乾", "乾", "乾", "午")
         ev = " ".join(r.evidence)
@@ -242,13 +348,19 @@ class TestBranchSwitchPendingIsDeclared(unittest.TestCase):
         self.assertIn("寅/巳/申/亥", ev,
                       "兜底时须写明近似表与原典窗口差在哪些月支")
 
-    def test_date_path_discloses_which_basis_used(self):
+    def test_date_path_still_works_when_no_upstream_jq(self):
+        """无上游 jq 时仍可由出生日换算（委托 jiehhou，零自造）。"""
         from tongshu.engines.heluo.hua_gong import compute_huagong
-        r = compute_huagong("乾", "乾", "乾", "乾", "午",
-                            birth_date="1724-05-22")
+        r = compute_huagong("乾", "乾", "乾", "乾", "午", birth_date="1724-05-22")
         ev = " ".join(r.evidence)
         self.assertIn("L558–L567", ev)
-        self.assertIn("震", ev)
+        self.assertIn("小满", ev)
+
+    def test_bad_date_is_refused_not_guessed(self):
+        from tongshu.engines.heluo.hua_gong import huagong_by_birth_date
+        gua, note = huagong_by_birth_date("not-a-date")
+        self.assertEqual(gua, "")
+        self.assertIn("不是合法 ISO 日期", note)
 
 
 if __name__ == "__main__":

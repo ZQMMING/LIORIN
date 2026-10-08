@@ -369,6 +369,12 @@ class HeluoCanonical:
 
         # 构建 HeluoInput（DISPUTE-HL-03：落真实出生日期，不再用误导占位）
         from datetime import date
+        # ⚠ 2026-10-08：下方会把缺失的 birth_date 补成 f"{yr}-01-01" 喂 HeluoInput。
+        #   那个占位日期**只许喂 HeluoInput**，不得流进节气链路：
+        #   节气窗口（L558–L567）按节气切，补出来的 1 月 1 日会算成「冬至 jq=0」，
+        #   化工据此给出一个凭空造出的当令卦，且 evidence 不再标兜底——
+        #   **缺失输入被当成真实输入，比答错更坏**。故此处先留住真值。
+        _real_birth_date = birth_date
         if birth_date is None:
             yr = birth_year if birth_year is not None else 1984
             birth_date = f"{yr}-01-01"
@@ -384,13 +390,20 @@ class HeluoCanonical:
             day_boundary="23:00",
         )
 
-        # Step 8: H6 化工计算
-        hua_gong = self._compute_huagong(
-            prenatal, postnatal, bazi, birth_date, gender, birth_year
-        )
+        # Step 8: H11 节候卦（出生日所在节气）—— **提前到化工之前**。
+        # 2026-10-08：原先它在 Step 9、排在化工之后，于是化工要自己再调一次
+        # sxtwl 求同一个 jq_index——同一份结果算两遍。jq 只依赖 birth_date、
+        # 与盘面无关，提前算不影响任何东西，故改为算一次、两处共用。
+        # 只用**真值**。为 None/空串时返回 None（不判），
+        #        化工随之拿不到 jq_index，自会走兜底并在 evidence 里自曝。
+        seasonal_hex = (self._compute_seasonal_hexagram(_real_birth_date)
+                        if _real_birth_date else None)
 
-        # Step 9: H11 节候卦（出生日所在节气）
-        seasonal_hex = self._compute_seasonal_hexagram(birth_date)
+        # Step 9: H6 化工计算（复用上面已算好的 jq_index，不再重复求节气）
+        hua_gong = self._compute_huagong(
+            prenatal, postnatal, bazi, birth_date, gender, birth_year,
+            jieqi_index=(seasonal_hex or {}).get("jq_index"),
+        )
 
         return HeluoResult(
             input=input_obj,
@@ -551,6 +564,7 @@ class HeluoCanonical:
         birth_date: str,
         gender: str,
         birth_year: int | None,
+        jieqi_index: int | None = None,
     ) -> HuaGongResult | None:
         """H6: 计算化工状态。
 
@@ -584,6 +598,7 @@ class HeluoCanonical:
                 postnatal.upper_gua, postnatal.lower_gua,
                 month_branch,
                 year_gan=year_gan, year_zhi=year_zhi,
+                jieqi_index=jieqi_index,
             )
         except Exception:
             return None

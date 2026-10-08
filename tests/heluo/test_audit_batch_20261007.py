@@ -285,13 +285,36 @@ class TestHuaGongLevelPervasive(unittest.TestCase):
     """B6 三级回退的 level / reduced 曾只存在于 HuaGongResult 上。"""
 
     def test_weak_case_level_and_reduced_reach_frozen_state(self):
+        """三级回退的 level / reduced 须真的进到冻结态里。
+
+        ⚠ 2026-10-08（**经用户显式批准**）：本用例原期望 WEAK/纳音/reduced=True，
+        那出自 `SEASON_BRANCH_TO_HUAGONG` 自造近似表（未→离）。改按原典
+        L558–L567 节气窗口后，1724-05-22 处小满（jq=10）落在
+        L561「震卦自春分二月中以后至芒种终止」窗口内 → 当令化工卦为**震**。
+
+        正体即见震 → level=正体、reduced=False（不属纳音末级）；
+        震(木) 与其相反卦兑(金) 相克 → L582「但忌克制，尤凶」判 **KEZHI**。
+        旧期望值已不成立，但它当初守的是「reduced 必须透传」这件事——
+        该项由下方 test_reduced_false_is_propagated 继续守住。
+        """
         r = HeluoCanonical().calculate(JXL, "male", "午", birth_year=1724,
                                        birth_date="1724-05-22")
         fs = build_frozen_state(r)
         hg = fs.to_dict()["hua_gong"]
-        self.assertEqual(hg["state"], "WEAK", hg["state"])
-        self.assertEqual(hg["level"], "纳音", hg["level"])
-        self.assertIs(hg["reduced"], True, hg["reduced"])
+        self.assertEqual(hg["state"], "KEZHI", hg["state"])
+        self.assertEqual(hg["level"], "正体", hg["level"])
+        self.assertIs(hg["reduced"], False, hg["reduced"])
+
+    def test_reduced_false_is_propagated(self):
+        """reduced=False 也必须真的落到冻结态里（旧用例顺带守的那件事）。"""
+        r = HeluoCanonical().calculate(JXL, "male", "午", birth_year=1724,
+                                       birth_date="1724-05-22")
+        hg = build_frozen_state(r).to_dict()["hua_gong"]
+        self.assertIn("reduced", hg)
+        self.assertIs(hg["reduced"], False, "reduced 未透传")
+        ev = HeLuoEvidenceProducer().produce(r)
+        row = [e for e in ev if e.rule_id.endswith("_HUA_GONG")][0]
+        self.assertIn("reduced", row.attributes)
 
     def test_evidence_carries_level_and_reduced(self):
         r = HeluoCanonical().calculate(JXL, "male", "午", birth_year=1724,

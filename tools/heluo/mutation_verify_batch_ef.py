@@ -45,6 +45,8 @@ TEST = (
     "tests/heluo/test_yue_ling_shu_ge_vs_original.py",
     "tests/heluo/test_refusal_corrections_round2.py",
     "tests/heluo/test_h6_hua_gong.py",
+    "tests/heluo/test_h2_frozen_state.py",
+    "tests/heluo/test_audit_batch_20261007.py",
     "tests/test_heluo_guajie_wiring.py",
 )
 
@@ -185,8 +187,9 @@ MUTATIONS = [
      '    ("坎", 0, 5), ("震", 6, 11),', '    ("坎", 0, 4), ("震", 6, 11),'),
     (HG, "F3 震窗口起点从春分挪到惊蛰（与 L585–L594 互证立刻对不上）",
      '    ("坎", 0, 5), ("震", 6, 11),', '    ("坎", 0, 5), ("震", 5, 11),'),
-    (HG, "F3 节气序被改（窗口起止名全错位）",
-     '"小满", "芒种", "夏至",', '"芒种", "夏至", "小暑",'),
+    # 注：原「F3 节气序被改」一条已随自造 _JQ_ORDER 的删除而失效（锚点不存在），
+    #   其语义由下面的「F4 节气名改回自造表」覆盖，故不再保留——留着一个打空的
+    #   变异只会让人以为这条有牙，实际是假绿。
     (HG, "F3 导入自校验被摘（窗口错了没人喊）",
      "\n_huagong_self_check()\n", "\n# _huagong_self_check()\n"),
     (HG, "F3 兜底披露被抹掉（走近似表时不写「兜底」）",
@@ -195,17 +198,49 @@ MUTATIONS = [
     (HG, "F3 L570 坤艮拒算被撤销（无出处的十八日窗口被放进来）",
      '    ("L570「坤艮卦主四季辰戌丑未月，除正节气十二日外，各旺十八日。」',
      '    ("L599「某某占位。"'),
-    (HG, "F3 待批准登记被删（没接线这件事被当成已完成）",
-     'HUAGONG_PENDING_BRANCH_SWITCH: dict = {',
-     '_DROPPED_PENDING: dict = {'),
-    (HG, "F3 越界节气开始瞎猜（jq 24 悄悄夹到末窗）",
-     "    if jq is None or not (0 <= jq < len(_JQ_ORDER)):\n        return \"\"",
-     "    if jq is None:\n        return \"\"\n"
-     "    if not (0 <= jq < len(_JQ_ORDER)):\n        jq = len(_JQ_ORDER) - 1"),
-    (CN, "F3 canonical 擅自接线（未批准就翻 Golden）",
-     "                year_gan=year_gan, year_zhi=year_zhi,\n            )",
-     "                year_gan=year_gan, year_zhi=year_zhi,\n"
-     "                birth_date=birth_date,\n            )"),
+    (HG, "F3 接线记录被删（已接线这件事被当成没发生）",
+     'HUAGONG_BRANCH_SWITCH: dict = {', '_DROPPED_SWITCH: dict = {'),
+
+    # ── F4 吃引擎/不重复算/不自造表（2026-10-08 用户口径）──────────
+    (HG, "F4 节气名改回自造表（不引引擎单一来源）",
+     "from .jiehhou import SOLAR_TERMS as _JQ_ORDER  # noqa: E402",
+     '_JQ_ORDER = ("冬至", "小寒", "大寒", "立春", "雨水", "惊蛰",\n'
+     '              "春分", "清明", "谷雨", "立夏", "小满", "芒种",\n'
+     '              "夏至", "小暑", "大暑", "立秋", "处暑", "白露",\n'
+     '              "秋分", "寒露", "霜降", "立冬", "小雪", "大雪")'),
+    (HG, "F4 化工又去吃第二份节气实现（全库三份）",
+     "        from .jiehhou import get_current_jieqi_info",
+     "        from .yue_ling_shu_ge import solar_jq_index as _sjq"),
+    (HG, "F4 huagong_by_jieqi_index 里又去算节气（有 jq 还要重算）",
+     'def huagong_by_jieqi_index(jq: int | None) -> tuple[str, str]:',
+     'def huagong_by_jieqi_index(jq: int | None) -> tuple[str, str]:\n'
+     '    from .yue_ling_shu_ge import solar_jq_index  # 变异：偷偷重算'),
+    (HG, "F4 复用路径被摘（退回自己算，重复计算复现）",
+     "    if jieqi_index is not None:", "    if False and jieqi_index is not None:"),
+    (HG, "F4 复用不再自曝（evidence 谎称自己算的）",
+     '        _jq_note = ("复用节候卦层已算的节气索引（jieqi_index=%d），未重复计算；"',
+     '        _jq_note = ("（jieqi_index=%d）；"'),
+    (CN, "F4 canonical 顺序倒回（jq 算两遍）",
+     "        # Step 9: H6 化工计算（复用上面已算好的 jq_index，不再重复求节气）\n"
+     "        hua_gong = self._compute_huagong(\n"
+     "            prenatal, postnatal, bazi, birth_date, gender, birth_year,\n"
+     "            jieqi_index=(seasonal_hex or {}).get(\"jq_index\"),\n"
+     "        )\n",
+     "        # 变异：把化工提到节候卦之前 —— jq 还没算出来，只能再算一遍\n"
+     "        hua_gong = self._compute_huagong(\n"
+     "            prenatal, postnatal, bazi, birth_date, gender, birth_year,\n"
+     "        )\n"
+     "        seasonal_hex = (self._compute_seasonal_hexagram(_real_birth_date)\n"
+     "                        if _real_birth_date else None)\n"),
+    (CN, "F4 canonical 停传 jieqi_index（生产退回兜底近似表）",
+     "            jieqi_index=(seasonal_hex or {}).get(\"jq_index\"),\n", ""),
+    (CN, "F4 合成占位日期又流回节气层（缺失输入被当真实输入）",
+     "        seasonal_hex = (self._compute_seasonal_hexagram(_real_birth_date)",
+     "        seasonal_hex = (self._compute_seasonal_hexagram(birth_date)"),
+    (CN, "F4 缺出生日也硬算节候卦（凭空造 jq）",
+     "        seasonal_hex = (self._compute_seasonal_hexagram(_real_birth_date)\n"
+     "                        if _real_birth_date else None)",
+     "        seasonal_hex = self._compute_seasonal_hexagram(birth_date)"),
 ]
 
 
