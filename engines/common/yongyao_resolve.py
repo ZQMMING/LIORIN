@@ -68,10 +68,47 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                 rejected_climate.append({'stem': stem, 'wuxing': cwx, 'reason': reason})
 
     if not bw:
+        # [2026-10-08 PATCH-GE2YO] 源1(病药主病)空 → fallback 源2(格体喜神 xi_wx) + 源3(格局所需神)
+        #   架构 §2.9: 用神层 = 五域药方 + L4 格体喜神 取用神。
+        #   源1 空(病0→无主病)时, 走 ge_cheng.xi_wx(格成喜神) / ge_cheng.zhi_wx(格破救应神)。
+        #   [2026-10-08 PATCH-SRC4] 源4: 破格盘 xi_wx 被清空, 改读 jiu_ying.rescue_wx(破格救应药)
+        #   + ge_cheng.hua_wx(专旺化神)。不替代源1, 仅在源1 无产出时补, 防"无主病→用神全空"静默丢。
+        _gc = facts.get('ge_cheng') or {}
+        _xi = _gc.get('xi_wx') or []
+        _zhi = _gc.get('zhi_wx') or []
+        _hua = _gc.get('hua_wx') or []
+        _jy = facts.get('jiu_ying') or {}
+        _rescue = _jy.get('rescue_wx') or []
+        _source = None
+        _w = ''
+        if _zhi:
+            _w = _zhi[0]
+            _source = '源3:格破救应神(zhi_wx)'
+        elif _xi:
+            _w = _xi[0]
+            _source = '源2:格体喜神(xi_wx)'
+        elif _rescue:
+            _w = _rescue[0]
+            _source = '源4:破格救应药(jiu_ying.rescue_wx, PZZQ L1226)'
+        elif _hua:
+            _w = _hua[0]
+            _source = '源4:专旺化神(ge_cheng.hua_wx, PZZQ L170 独象喜行化地)'
+        if _w:
+            return {'layer': 'YONGYAO_RESOLVE', 'state': 'GE_FALLBACK',
+                    'primary_medicine': {'wuxing': _w, 'gan': list(WX_GAN.get(_w, ())),
+                                          'function': _source, 'kind': '格体喜神/救应神',
+                                          'classic': '架构§2.9 用神层=L4格体喜神+P1格局病域救应',
+                                          'blocked': None},
+                    'auxiliary_medicine': [],
+                    'ji_shen': [bm for bm in (_gc.get('ti_wx') or []) if bm != _w],
+                    'rejected_climate': rejected_climate,
+                    'ge_fallback_source': _source,
+                    'boundary_note': '源1无主病, 走格体喜神/救应神 fallback(架构§2.9 五源)'
+                    }
         return {'layer': 'YONGYAO_RESOLVE', 'state': 'NO_BING',
                 'primary_medicine': None, 'auxiliary_medicine': [],
                 'ji_shen': [], 'rejected_climate': rejected_climate,
-                'boundary_note': '无主病, 不裁决用药'}
+                'boundary_note': '无主病且无格体喜神/救应神, 不裁决用药'}
 
     edges = []   # 每条: 五行/gan/边类型/功能/是否采纳/剔除理由
 
