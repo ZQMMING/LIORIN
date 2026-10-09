@@ -26,6 +26,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date
 from typing import Optional
 
 
@@ -281,6 +282,71 @@ def _jieqi_timeline(sxtwl, year: int) -> tuple:
         for stale in list(_JIEQI_TIMELINE)[:len(_JIEQI_TIMELINE) - _JIEQI_TIMELINE_MAX]:
             _JIEQI_TIMELINE.pop(stale, None)
     return table
+
+
+#: 带**时刻**的全年节气缓存（批次 L）。与 _JIEQI_TIMELINE 分开：
+#: 后者只存 (Y,M,D,jq) 且有别的调用方，不能改它的形状。
+_JIEQI_TIMELINE_FULL: dict[int, tuple] = {}
+
+
+def jieqi_timeline(year: int):
+    """某年的全部节气点（**带缓存**）→ tuple((Y, M, D, hh, mm, jq), …)，升序。
+
+    ⚠ 必须带**时刻**。缓存表只存 (Y,M,D,jq) 时，拿它替掉 ``sxtwl.JD2DD(jd)``
+      会把节气时刻抹成 00:00 —— 而农历月起点是带时刻的（如「1975-01-06 07:17」）。
+      该回归由 tests/heluo/test_timeline_yun_perf.py::test_batch_matches_dayscan
+      当场逮到：改快路径时最容易丢的就是没人看的那些字段。
+    """
+    try:
+        import sxtwl
+    except ImportError:
+        return ()
+    if year < 2:
+        return ()
+    cached = _JIEQI_TIMELINE_FULL.get(year)
+    if cached is not None:
+        return cached
+    merged: dict[tuple[int, int, int, int, int, int], None] = {}
+    for yy in (year - 1, year):
+        for info in sxtwl.getJieQiByYear(yy):
+            jd, idx = ((info.jd, info.jqIndex) if hasattr(info, "jd")
+                       else (info[0], info[1]))
+            t = sxtwl.JD2DD(jd)
+            merged[(int(t.Y), int(t.M), int(t.D),
+                    int(t.h), int(t.m), idx)] = None
+    table = tuple(sorted(merged))
+    _JIEQI_TIMELINE_FULL[year] = table
+    if len(_JIEQI_TIMELINE_FULL) > _JIEQI_TIMELINE_MAX:
+        for stale in list(_JIEQI_TIMELINE_FULL)[
+                :len(_JIEQI_TIMELINE_FULL) - _JIEQI_TIMELINE_MAX]:
+            _JIEQI_TIMELINE_FULL.pop(stale, None)
+    return table
+
+
+def solar_term_date(year: int, jq_index: int):
+    """按年 + 节气索引取**该年该节气**的公历日；无则 ``None``。
+
+    ⚠ 2026-10-08 批次 L 新增。原先河洛有两处**逐字相同**的 ``_find_jie``，
+      靠逐日扫整月调 ``sxtwl.fromSolar`` 求节气日（canonical.py 与 guajie.py 各一份），
+      一次调用 92 次 sxtwl，两处共 184 次做同一件事。
+      而 ``sxtwl.getJieQiByYear`` 一次就能给出全年节气的精确日期。
+      已实测 1900–2100 逐年 201 组**零不一致**（见 tools/…/verify_jq_equiv.py）。
+
+    本函数复用 ``_jieqi_timeline`` 的按年缓存，重复调用不再打 sxtwl。
+    """
+    if not (0 <= jq_index < 24):
+        return None
+    try:
+        import sxtwl
+    except ImportError:
+        return None
+    if year < 2:
+        return None
+    for entry in _jieqi_timeline(sxtwl, year):
+        y, mo, d, idx = entry
+        if idx == jq_index and y == year:
+            return date(y, mo, d)
+    return None
 
 
 def get_current_jieqi_info(year: int, month: int, day: int) -> Optional[SeasonalHexagram]:

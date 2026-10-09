@@ -33,6 +33,7 @@ from typing import Optional
 
 from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
 from .timeline_yun import materialize_month_days
+from .jiehhou import solar_term_date  # 批次 L：带缓存的节气查表
 from .yao_xiang import scan_and_evidence as _scan_yao_xiang
 # 错卦（先天方位对宫）单一来源；批次 G 起本模块不再自存一份。
 from .hexagram_state import QIANXI_DUKONG
@@ -2034,14 +2035,14 @@ def _solar_phase(birth_date: str) -> str:
     bd = _date(y, m, d)
 
     def _find_jie(year: int, month: int, jq: int) -> _date:
-        d0 = _date(year, month, 1)
-        found = d0
-        while d0.month == month:
-            day = sxtwl.fromSolar(d0.year, d0.month, d0.day)
-            if day.getJieQi() == jq:
-                found = d0
-            d0 += timedelta(days=1)
-        return found
+        # 批次 L：原为逐日扫整月调 sxtwl.fromSolar（一次 ~92 次），且 guajie.py
+        # 有一份**逐字相同**的拷贝 —— 两处合计 184 次做同一件事。
+        # 改用 jiehhou.solar_term_date（走 getJieQiByYear 的按年缓存）。
+        # 等价性已实测：1900–2100 逐年 201 组与逐日扫描**零不一致**。
+        d = solar_term_date(year, jq)
+        if d is not None and d.month == month:
+            return d
+        return _date(year, month, 1)
 
     try:
         dongzhi_prev = _find_jie(y - 1, 12, 0)   # 冬至 jq=0（上一年）

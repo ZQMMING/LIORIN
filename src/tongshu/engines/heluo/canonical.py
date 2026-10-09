@@ -78,14 +78,14 @@ def _solar_phase_for_date(birth_date: str) -> str | None:
     bd = _date(y, m, d)
 
     def _find_jie(year: int, month: int, jq: int) -> _date:
-        d0 = _date(year, month, 1)
-        found = d0
-        while d0.month == month:
-            day = sxtwl.fromSolar(d0.year, d0.month, d0.day)
-            if day.getJieQi() == jq:
-                found = d0
-            d0 += timedelta(days=1)
-        return found
+        # 批次 L：原为逐日扫整月调 sxtwl.fromSolar（一次 ~92 次），且 guajie.py
+        # 有一份**逐字相同**的拷贝 —— 两处合计 184 次做同一件事。
+        # 改用 jiehhou.solar_term_date（走 getJieQiByYear 的按年缓存）。
+        # 等价性已实测：1900–2100 逐年 201 组与逐日扫描**零不一致**。
+        d = solar_term_date(year, jq)
+        if d is not None and d.month == month:
+            return d
+        return _date(year, month, 1)
 
     dongzhi_prev = _find_jie(y - 1, 12, 0)   # 冬至 jq=0（上一年）
     dongzhi_cur = _find_jie(y, 12, 0)        # 冬至 jq=0（当年）
@@ -160,19 +160,19 @@ def _jie_by_batch(sxtwl, year: int) -> dict[int, tuple] | None:
     best: dict[int, tuple] = {}
     try:
         for target in (year - 1, year, year + 1):
-            for info in sxtwl.getJieQiByYear(target):
-                # JieQiInfo 形态：属性 .jd/.jqIndex；老版本为 tuple，兜底 _jq[0]/_jq[1]
-                jd, idx = (info.jd, info.jqIndex) if hasattr(info, "jd") else (info[0], info[1])
+            # 批次 L：原为直调 sxtwl.getJieQiByYear（**绕过缓存**），
+            # 而本函数在一条流年时间轴上按年被调约 93 次 → 93×3=279 次 sxtwl。
+            # 改经 jiehhou.jieqi_timeline（带按年缓存），语义不变。
+            for y_, m_, d_, hh_, mm_, idx in jieqi_timeline(target):
                 lm = jie_to_lm.get(idx)
                 if lm is None:
                     continue
-                t = sxtwl.JD2DD(jd)
-                if not (0 < t.Y <= 2200):
+                if not (0 < y_ <= 2200):
                     continue
-                gap = abs(t.Y - year)
+                gap = abs(y_ - year)
                 if lm not in best or gap < best[lm][0]:
-                    best[lm] = (gap, f"{t.Y:04d}-{t.M:02d}-{t.D:02d} "
-                                       f"{int(t.h):02d}:{int(t.m):02d}")
+                    best[lm] = (gap, f"{y_:04d}-{m_:02d}-{d_:02d} "
+                                       f"{hh_:02d}:{mm_:02d}")
     except Exception:
         return None
     return best or None
@@ -219,7 +219,8 @@ def _compute_year_jie(year: int, sxtwl=None) -> dict[int, str]:
 from .hexagram import analyze_hexagram, HexagramStructure
 from .yi_interpreter import interpret_all_liunian
 from .hua_gong import compute_huagong, HuaGongResult
-from .jiehhou import get_seasonal_hexagram, get_current_jieqi_info
+from .jiehhou import (get_seasonal_hexagram, get_current_jieqi_info,
+                      solar_term_date, jieqi_timeline)
 
 
 @dataclass(frozen=True)
