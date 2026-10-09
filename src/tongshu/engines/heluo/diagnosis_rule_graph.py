@@ -182,6 +182,7 @@ def build_diagnosis_graph(
     domain_map: Dict[str, List[str]] = {}  # domain → assertion_ids
     _DROPPED_RULES.clear()
     _UNMATCHED_EVIDENCE.clear()
+    _HELUO_OWN_BASIS.clear()
 
     # ── 从 EngineEvidence 提取事实断言 ──────────────────────────
     dropped_rule_ids: List[str] = []
@@ -198,8 +199,12 @@ def build_diagnosis_graph(
 
         domain = RULE_DOMAIN_MAP.get(ev.rule_id, "LIFE_EVENT")
 
-        # 匹配对应的 EVENT_SIGNAL 获取方向
-        direction = _signal_direction_for_evidence(ev, signals)
+        # 方向：先问河洛自己的判据，问不到才回落信号层（批次 K）
+        direction, own_basis = heluo_own_direction(ev.rule_id, frozen_state)
+        if direction is None:
+            direction = _signal_direction_for_evidence(ev, signals)
+        else:
+            _HELUO_OWN_BASIS[ev.rule_id] = own_basis
 
         evidence_ref = EvidenceRef(
             evidence_id=ev.evidence_id,
@@ -360,6 +365,123 @@ def build_diagnosis_graph(
     )
 
 
+# ═══════════════════════════════════════════════════════════════════
+# 河洛自有判据 → 断言方向（2026-10-08 批次 K）
+# ═══════════════════════════════════════════════════════════════════
+# 诊断方向**优先**取自河洛自己的判据，而不是等信号层：
+# 信号引擎当前只产出 1 条八字信号，河洛信号为 0，若只依赖信号，
+# 六条河洛断言会永远停在默认值 neutral —— 而 neutral 与「判过了是中���」
+# 在输出上完全一样，没人能分辨。
+#
+# 取不到（河洛判据判不了）时**回落信号层**，再取不到才是不判并登记。
+
+
+def _dir_from_jiu_ji(result) -> AssertionDirection | None:
+    """六项判据的**单项** JuResult → 断言方向；「不判」返回 None。
+
+    ⚠ 这里必须收单项，不能收 ``judge_liu_ju()`` 返回的整张 dict
+    （形如 ``{"卦名": JuResult(...), "爻位": ...}``）—— 传整张进来
+    会取不到 ``.passed``，直接 AttributeError。
+    同时容忍 dict 形态的 JuResult（测试替身会给 dict）。
+    """
+    if result is None:
+        return None
+    if isinstance(result, dict):
+        if "passed" in result:
+            passed = result.get("passed")
+        else:                       # 整张 dict → 取「卦名」这一项
+            item = result.get("卦名")
+            if item is None:
+                return None
+            passed = item.get("passed") if isinstance(item, dict) \
+                else getattr(item, "passed", None)
+    else:
+        passed = getattr(result, "passed", None)
+    if passed is None:
+        return None
+    return (AssertionDirection.SUPPORTIVE if passed
+            else AssertionDirection.CAUTION)
+
+
+def heluo_own_direction(rule_id: str, frozen_state: Any
+                        ) -> tuple[AssertionDirection | None, str]:
+    """河洛自有判据 → (方向, 依据)。**判不了就返回 (None, 理由)**。
+
+    只用已落码的判据，不臆造阈值：
+      · 数格：只判「凶」，不判「吉」→ 不凶时返回 None，不硬报 SUPPORTIVE
+      · 六项：卦名 / 爻位 / 爻辞 / 得时 / 有援 / 顺时，各项自带「不判」
+    """
+    if frozen_state is None:
+        return None, "无冻结态"
+    try:
+        from .gui_ming_liu_ju import (GUA_MING_GOOD_EXAMPLES, judge_liu_ju,
+                                       judge_yao_wei)
+    except Exception as exc:                     # pragma: no cover
+        return None, "六项判据不可用：%s" % exc
+
+    if rule_id == "HL_TIAN_DI_SHU":
+        try:
+            from .guajie import judge_shu_xiong
+            # ⚠ 必须用 **原始** tian_shu / di_shu，不是归一后的 tian_reduced /
+            #   di_reduced。数格表的天数档位是「至弱 4–8 / 不足 9–24 / 正 25 /
+            #   有余 ≥30」（L38/L42/L47），那是原始和的量纲；
+            #   guajie.build_guajie_from_result 也是这么传的。
+            #   传归一值会让 8 落进「至弱」，**几乎所有盘都被判成数凶**。
+            sx = judge_shu_xiong(frozen_state.tian_shu,
+                                 frozen_state.di_shu, None,
+                                 frozen_state.gender or "")
+        except Exception as exc:
+            return None, "数格判不了：%s" % exc
+        if sx is None:
+            return None, "数格未产出"
+        if getattr(sx, "shu_xiong", False):
+            return (AssertionDirection.CAUTION,
+                    "数格判凶（%s）：%s" % (getattr(sx, "pattern", "") or "数凶",
+                                           getattr(sx, "pattern", "")))
+        # ⚠ 数格只判凶、不判吉。此处返回 None 让它走信号档，
+        #   **不得**把「不凶」当成「吉」——那是把没有判据说成有判据。
+        return None, "数格只判凶不判吉，此项不判方向"
+
+    if rule_id == "HL_YUANTANG":
+        idx = getattr(frozen_state, "yuan_tang_index", None)
+        if idx is None:
+            return None, "元堂索引缺失"
+        r = _dir_from_jiu_ji(judge_yao_wei(idx))
+        if r is None:
+            return None, "六项·爻位不判"
+        return r, "六项·爻位：元堂在第%d爻（二五爻为吉，L636）" % idx
+
+    if rule_id == "HL_PRENATAL_HEXAGRAM":
+        name = (getattr(frozen_state, "prenatal_name", "") or "").strip()
+        if not name:
+            return None, "先天卦名缺失"
+        if not any(g in name for g in GUA_MING_GOOD_EXAMPLES):
+            return None, ("六项·卦名：原文明举吉卦%s，本卦%s不在其列"
+                          "（原文作「之类」=举例未穷举，故不判）"
+                          % ("、".join(GUA_MING_GOOD_EXAMPLES), name))
+        r = _dir_from_jiu_ji(
+            judge_liu_ju(gua_name=name))
+        if r is None:
+            return None, "六项·卦名不判"
+        return r, "六项·卦名：%s 在原文明举吉卦之列" % name
+
+    if rule_id == "HL_HUA_GONG":
+        # 证据环里的这条化工断言：方向同样走 HUAGONG_DIRECTION（L573/L576/L582），
+        # 与下方 frozen_state 分支补的那条保持一致。此前只有后者接上，
+        # 同一条规则出现「一条有方向、一条没有」的不一致。
+        st = getattr(frozen_state, "hua_gong_state", None)
+        if not st:
+            return None, "无化工状态"
+        d = HUAGONG_DIRECTION.get(st)
+        if d is None:
+            return None, "化工状态 %s 未在 HUAGONG_DIRECTION 中" % st
+        if d == AssertionDirection.NEUTRAL:
+            return None, "化工状态 %s → 中性（WEAK/UNRESOLVED 本就不分吉凶）" % st
+        return d, "化工状态 %s（L573/L576/L582）" % st
+
+    return None, "该规则暂无河洛自有判据"
+
+
 def _sig_field(sig: Any, name: str, default: Any = "") -> Any:
     """从一个 signal 上取字段，**dict 与数据类都支持**。
 
@@ -431,6 +553,14 @@ def _signal_direction_for_evidence(
 #: 最近一次 build_diagnosis_graph 中**没匹配到任何 signal** 的河洛 rule_id。
 #: 非空即表示这些断言的方向是「无信号可依」的默认值，不是判出来的 NEUTRAL。
 _UNMATCHED_EVIDENCE: List[str] = []
+
+
+_HELUO_OWN_BASIS: Dict[str, str] = {}
+
+
+def heluo_own_basis() -> Dict[str, str]:
+    """本次构建中，由**河洛自有判据**定出方向的 rule_id → 依据。"""
+    return dict(_HELUO_OWN_BASIS)
 
 
 def unmatched_evidence() -> List[str]:

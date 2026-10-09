@@ -54,6 +54,7 @@ TEST = (
     "tests/heluo/test_single_source_tables.py",
     "tests/heluo/test_diagnosis_wiring_20261008.py",
     "tests/heluo/test_interp_and_wiring_20261008.py",
+    "tests/heluo/test_own_direction_20261008.py",
     "tests/test_h4_interpretation.py",
     "tests/heluo/test_h12_diagnosis.py",
     "tests/heluo/test_h11_jiehhou.py",
@@ -338,6 +339,22 @@ MUTATIONS = [
     (PP, 'J PipelineResult 不透传诊断与建议',
      '            heluo_diagnosis=compute.heluo_diagnosis,\n',
      '            _heluo_diagnosis_unused=None,\n'),
+    # == 批次 K：河洛自有判据优先 ==
+    (DR, 'K 方向又只等信号层（河洛判据被绕过）',
+     '        direction, own_basis = heluo_own_direction(ev.rule_id, frozen_state)\n',
+     '        direction, _ignored = heluo_own_direction(ev.rule_id, None)\n        direction = _signal_direction_for_evidence(ev, signals)\n'),
+    (DR, 'K 元堂的六项判据被摘',
+     '    if rule_id == "HL_YUANTANG":\n',
+     '    if rule_id == "__NO_SUCH_RULE__":\n'),
+    (DR, 'K 数格「不凶」被当成「吉」（伪造判据）',
+     '        return None, "数格只判凶不判吉，此项不判方向"\n',
+     '        return AssertionDirection.SUPPORTIVE, "变异：把不凶当成吉"\n'),
+    (DR, 'K 无化工状态也报吉（凭空造判据）',
+     '            return None, "化工状态 %s 未在 HUAGONG_DIRECTION 中" % st\n',
+     '        return AssertionDirection.SUPPORTIVE, "变异：无化工状态也报吉"\n'),
+    (DR, 'K 河洛自有判据整体退化为空实现',
+     'def heluo_own_direction(rule_id: str, frozen_state: Any\n',
+     'def heluo_own_direction(rule_id: str, frozen_state: Any\n                        ) -> tuple[AssertionDirection | None, str]:\n    return None, "变异：河洛自有判据被摘空"\n\n\ndef _dead_heluo_own_direction(rule_id: str, frozen_state: Any'),
 ]
 
 
