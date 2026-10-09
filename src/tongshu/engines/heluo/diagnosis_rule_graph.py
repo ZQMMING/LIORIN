@@ -422,13 +422,27 @@ def heluo_own_direction(rule_id: str, frozen_state: Any
     if rule_id == "HL_TIAN_DI_SHU":
         try:
             from .guajie import judge_shu_xiong
-            # ⚠ 必须用 **原始** tian_shu / di_shu，不是归一后的 tian_reduced /
+            # ⚠ 必须用**原始** tian_shu / di_shu，不是归一后的 tian_reduced /
             #   di_reduced。数格表的天数档位是「至弱 4–8 / 不足 9–24 / 正 25 /
             #   有余 ≥30」（L38/L42/L47），那是原始和的量纲；
             #   guajie.build_guajie_from_result 也是这么传的。
             #   传归一值会让 8 落进「至弱」，**几乎所有盘都被判成数凶**。
+            #
+            # ⚠ 2026-10-09 修：birth_month 也**不能传 None**。数格判据含
+            #   阳月/阴月加减，原先这里硬传 None，导��**诊断层与解卦层对
+            #   同一份数据给出不同结论**（实测 1983-11-03：解卦层判
+            #   「以弱敌强」shu_xiong=True，诊断层却因 None 落到「不凶」）。
+            #   现从 frozen_state.birth_date 取真实生月；取不到才回落 None
+            #   并在依据里注明。
+            _bm = None
+            _bd = str(getattr(frozen_state, "birth_date", "") or "")
+            if len(_bd) >= 7 and _bd[4] == "-":
+                try:
+                    _bm = int(_bd[5:7])
+                except ValueError:
+                    _bm = None
             sx = judge_shu_xiong(frozen_state.tian_shu,
-                                 frozen_state.di_shu, None,
+                                 frozen_state.di_shu, _bm,
                                  frozen_state.gender or "")
         except Exception as exc:
             return None, "数格判不了：%s" % exc

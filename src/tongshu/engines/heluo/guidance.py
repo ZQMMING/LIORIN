@@ -260,13 +260,14 @@ class HeluoGuidanceEngine:
             id_counter += 1
 
         # 从断言中提取正面信号
-        supportive_rules = [
+        supportive_rules = sorted({
             getattr(a, "authorized_rule_id", "") or getattr(a, "source_rule", "")
             for a in assertions
             if hasattr(a, 'direction') and a.direction.value == "supportive"
-        ]
-        supportive_rules = [r for r in supportive_rules if r]
-        supportive_count = len(supportive_rules)
+        } - {""})
+        supportive_count = len(
+            [a for a in assertions
+             if hasattr(a, 'direction') and a.direction.value == "supportive"])
         if supportive_count > 0:
             actions.append(ActionItem(
                 id=f"ACT-{id_counter:03d}",
@@ -276,11 +277,17 @@ class HeluoGuidanceEngine:
                     "建议抓住时机推进重点事项。"
                 ),
                 confidence=0.7 * min(supportive_count, 3) / 3,
-                # ⚠ 2026-10-08：原为 "V13_河洛诊断规则集" —— 该规则集**不存在**，
+                # ⚠ 2026-10-08 审计修：原为 "V13_河洛诊断规则集" —— 该规则集**不存在**，
                 #   是伪引。批次 C 把 diagnosis_rule_graph 的 authorized_by 改成了
                 #   真实的 HELUO_RULES 清单，**却漏了这里**，同一处伪引两处不一致。
                 #   现改为登记**实际支撑本条建议的规则 id**，取自断言自身，
                 #   而非再编一个名字：拿不到就如实写空，不拿占位名顶替。
+                #
+                # ⚠ 2026-10-09 修：HL_HUA_GONG 本来就有**两条**断言
+                #   （证据环一条 + 冻结态补一条），按列表拼会得到
+                #   「…,HELUO_AUTH_HL_HUA_GONG,HELUO_AUTH_HL_HUA_GONG」——
+                #   同一 id 出现两次。故此处用 set 去重。
+                #   计数 supportive_count 仍按断言条数，两者口径不同、不可混用。
                 source_ref=("HELUO_RULES::" + ",".join(supportive_rules)
                             if supportive_rules else ""),
                 temporal_scope="year",
