@@ -334,7 +334,13 @@ def paipan(bazi: str) -> Dict[str, Any]:
         return _s - _removed_br
     _heavy_eff = _dm_root_br("HEAVY")
     _light_eff = _dm_root_br("LIGHT")
-    _de_di_indep = bool(_heavy_eff)
+    # ★ PATCH-DEDI-A (2026-10-09, 裁·方案甲) de_di 含中余气根
+    #   PZZQ L201「长生禄旺根之重者; 墓库余气根之轻者」+ L204「不通根即判弱=谬论」:
+    #   "有根"含 本气(重)/长生禄刃(重)/墓库余气(轻) —— 中余气算根, 只分轻重。
+    #   旧 de_di=bool(_heavy_eff) 只算重根, 漏中余气(LIGHT) → 误判无根。
+    #   改: de_di = root_grade != "无" = bool(_heavy_eff or _light_eff)
+    #   下游: l3_contract["de_di"] 无消费点(grep 0 命中), 仅翻字段值, 零连带。
+    _de_di_indep = bool(_heavy_eff or _light_eff)
     _root_grade = "本" if _heavy_eff else ("余" if _light_eff else "无")
 
     # 同党 = 日主五行 + 生我(印); 异党 = 克泄耗三向
@@ -362,6 +368,27 @@ def paipan(bazi: str) -> Dict[str, Any]:
     #   故接 L3, 不改既有字段, 只新增维度。判据全整数/枚举, 无浮点。
     _fan_ju = resolve_fan_ju(f)
 
+    # ★ PATCH-L3-SV (2026-10-08) strength_verdict 判层落值 (甲路 · ENGINE_DEFINED 工程合成)
+    #   不是 DTS 判据, 不是 775 盘反标定。f = 三输入, 参考 DTS L110(干支轻重)/L230(旺宜泄/衰喜帮) 两句方向;
+    #   L240(源流章「源头取最旺」判据) 属跨层, 撤出 L3, 归源流层。predictive=False 保持。
+    # ★ PATCH-L3-SV-程级 (2026-10-09, 裁·f 改程级) AND 三全且 → 程级序(得令主+辅程级)
+    #   旧 STRONG = 得令 AND 有根 AND 党多 (三全且, 门槛过严, 41% 单向"案例强/引擎弱"根因)
+    #   新 STRONG = 得令(主) AND (有根 OR 党多 程级辅) —— 得令为主, 有根/党多程级辅助
+    #   程级序 = ENGINE_DEFINED(工程合成, 非案例反推); 有根/党多相对权重 = 待反标定(禁数值)
+    #   依据: DTS L230「旺宜泄/衰喜帮」只给方向(判后处理), 无"得令>有根>党多"优先级明文
+    # ★ PATCH-L3-SV-口径统一 (2026-10-09, 裁1甲): f 有根口径改用 root_grade(含中余气), 与 de_di 统一
+    #   原 f 用 dm_ben_eff(本气严口径) 与 de_di(方案甲含中余气) 口径分裂 → 统一为 root_grade!=\"无\"
+    #   依据 PZZQ L201「长生禄旺根之重/墓库余气根之轻」: 原典"根"含中余气, f 判有根应同口径
+    _sv_ling = _dmp.get("ling_state", "")
+    _sv_root = (_root_grade != "无")        # 有根=含中余气(root_grade), 与 de_di 统一 (裁1甲)
+    _sv_dang_duo = (_support_state == "SHENG_FU_CHENG_SHI")
+    if _sv_ling in ("囚", "死") and not _sv_root and not _sv_dang_duo:
+        _sv_value = "EXTREME_WEAK"          # 失令 + 无根(含中余气) + 党少: 三弱 → 衰极
+    elif _sv_ling in ("旺", "相") and (_sv_root or _sv_dang_duo):
+        _sv_value = "STRONG"                # 得令(主) + (有根 或 党多 程级辅) → 强
+    else:
+        _sv_value = "WEAK"
+
     f["l3_contract"] = {
         "dm_ben_eff": int(special.get("dm_ben_eff", 0) or 0),
         "yin_ben_eff": int(special.get("yin_ben_eff", 0) or 0),
@@ -384,10 +411,10 @@ def paipan(bazi: str) -> Dict[str, Any]:
         #     "STRONG"/"WEAK"/"EXTREME_WEAK"  映射已落但仍 predictive=False
         #     恒不出 "EXTREME_STRONG"(§2.4 已否决, 三源语义冲突)
         "strength_verdict": {
-            "value": None,
+            "value": _sv_value,
             "status": "ENGINE_DEFINED",
             "predictive": False,
-            "basis": "L110 相对比较 + L235 方向 + L245 取最多最旺; 阈值 ENGINE_DEFINED",
+            "basis": "L110/L230 散句方向 + ENGINE_DEFINED 合成规则(非 DTS 判据, 非案例反推); 阈值=工程边界(日主月令位/根/党); L240(源流章源头) 归源流层, 不进 L3",
         },
         # ★ PATCH-L3-01 (2026-10-03) L3 契约补 5 冲激字段
         #   契约: p0_v2/l3_contract_spec.md v1.0 §1 字段 6~10
@@ -411,15 +438,16 @@ def paipan(bazi: str) -> Dict[str, Any]:
         # ★ PATCH-L3-02 (2026-10-03) 第1刀 布尔补齐
         #   契约: p0_v2/l3_contract_spec.md v1.1 §1 字段 11~13
         #   三个布尔, 值域严格 {True, False}, 由已有判据投影, 不新增判据。
-        #   de_ling  : (ling_state == '旺')          DTS L225「气象得令者吉」
-        #   de_di    : (dm_ben_eff >= 1)              DTS L119「有根无根」+ L9「根拔」
-        #   dang_duo : (support_state == 同党成势)    DTS L280/L604「党多/党少」
-        #   ★ de_di 与 root_grade 的关系(见契约 §1.5):
-        #     root_grade == '无'  当且仅当  dm_ben_eff == 0
-        #     root_grade 是 dm_ben_eff 的【门控派生】(L240: "无" if dm_ben_eff0<=0 else raw)
-        #     故 de_di 是 dm_ben_eff 的布尔投影, 【不是】root_grade 的。
-        #     实测 2106 盘: de_di_raw(de_di) 与 de_di_eff 完全恒等, 零差异 -> 落一个不落两个。
-        "de_ling": _dmp.get("ling_state") == "旺",
+        #   注释行号已核(raw grep 实测, 原标注错):
+        #   de_ling  : (ling_state in {旺,相})  得令={旺,相}
+        #              "得令=旺"准神仅 DTS L220「气象得令者吉」(原标 L225✗→L220),
+        #              "收相"无 DTS 粒度明文 → 工程扩, 标 ENGINE_DEFINED (非 BOOK_CITED)
+        #   de_di    : (root_grade != '无') 含中余气              PZZQ L201「墓库余气根之轻者」+ L204「不通根即弱=谬论」(原标 DTS L83/L119✗=空行→L68/L114/L122)
+        #   dang_duo : (support_state == 同党成势)                DTS L275/L302「党多/众寡」(原标 L280/L604✗→L275/L302)
+        #   ★ de_di 与 root_grade 的关系: 方案甲后 de_di = root_grade!="无" 的布尔投影
+        #     (含中余气 LIGHT), 不再只是 dm_ben_eff(本气) 的投影。
+        #     原注释 L431「root_grade=='无' iff dm_ben_eff==0」实测为错: dm_ben_eff=0 时 root_grade 可为"余"(中余气根)。
+        "de_ling": _dmp.get("ling_state") in ("旺", "相"),
         "de_di": _de_di_indep,
         "dang_duo": _support_state == "SHENG_FU_CHENG_SHI",
         "fan_ju": {
