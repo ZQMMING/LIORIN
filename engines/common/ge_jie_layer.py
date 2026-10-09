@@ -924,13 +924,16 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             sp = _purge(_special_of(facts.get('special')))
             if sp.get('zhuanwang'):
                 dm_wx = GAN_WX.get(dg, '')
+                # [2026-10-08 PATCH-SRC4] 专旺所需神 hua_wx = 日主所生(食伤泄秀, PZZQ L170「独象喜行化地」)
+                _ZW_SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+                _hua_wx = [_ZW_SHENG.get(dm_wx, '')] if dm_wx else []
                 facts['ge_cheng'] = {
-                    'ge': sp['zhuanwang'], 'xi_wx': [],
+                    'ge': sp['zhuanwang'], 'xi_wx': _hua_wx,
                     'ti_wx': [dm_wx],
                     'overpower_combo': 6,
-                    'zhi_wx': [], 'hua_wx': [],
+                    'zhi_wx': [], 'hua_wx': _hua_wx,
                     'po_ge': [],
-                    'rule': '专旺/从格兜底(P0): 正格不成->专旺格; ti_wx=[日主五行]',
+                    'rule': '专旺/从格兜底(P0): 正格不成->专旺格; ti_wx=[日主五行]; hua_wx=日主所生(食伤泄秀, 独象喜行化地)',
                 }
                 return facts
             # PATCH-GAP11 (2026-09-30): 从格兜底原读 sp['cong_type']/sp['cong_state']，
@@ -964,6 +967,24 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 # 从格格体五行=所从之神
                 _cong_wx_map = {'从杀格': 'gs_wx', '从官格': 'gs_wx',
                                 '从财格': 'cai_wx', '从儿格': 'ss_wx'}
+                # [2026-10-08 PATCH-SRC4] 从旺格: 独象喜行化地(PZZQ L170), 喜=日主所生(食伤泄秀), 格体=日主
+                _cong_wx = ''
+                _zw_sheng = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+                if sp['cong_type'] == '从旺格':
+                    _dm_wx_zw = GAN_WX.get(dg, '')
+                    _cong_wx = _dm_wx_zw
+                    _xi_cong = [_zw_sheng.get(_dm_wx_zw, '')]  # 独象喜行化地=食伤泄
+                    facts['ge_cheng'] = {
+                        'ge': '从格(' + sp['cong_type'] + ')',
+                        'xi_wx': sorted(set(w for w in _xi_cong if w)),
+                        'ti_wx': [_cong_wx] if _cong_wx else [],
+                        'overpower_combo': 6,
+                        'zhi_wx': [],
+                        'hua_wx': sorted(set(w for w in _xi_cong if w)),
+                        'po_ge': [],
+                        'rule': '从旺格(独象喜行化地, PZZQ L170): 日主旺极顺泄, 喜=日主所生(食伤泄秀)',
+                    }
+                    return facts
                 _cong_key = _cong_wx_map.get(sp['cong_type'], '')
                 _cong_wx = ''
                 if _cong_key == 'gs_wx':

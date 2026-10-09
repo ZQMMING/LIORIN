@@ -196,7 +196,7 @@ def build_jiu_ying(bazi, ge_cheng):
     if _is_cong(ge, cong_type):
         return {
             "triggered": False, "type": [], "success": "NA_NOT_IN_SCOPE",
-            "evidence": [], "xiang_note": None,
+            "evidence": [], "xiang_note": None, "rescue_wx": [],
             "note": "从格盘, 6 条救应判据全为正八格语境, 无从格依据 → 范围外"
         }
 
@@ -204,7 +204,7 @@ def build_jiu_ying(bazi, ge_cheng):
     if ge in (None, "", "无格"):
         return {
             "triggered": False, "type": [], "success": "NA",
-            "evidence": [], "xiang_note": None,
+            "evidence": [], "xiang_note": None, "rescue_wx": [],
             "note": "无格, 不适用"
         }
 
@@ -212,7 +212,7 @@ def build_jiu_ying(bazi, ge_cheng):
     if ge_cheng.get("po_n", 0) == 0 and ge_cheng.get("xi_status") != "DEFINED":
         return {
             "triggered": False, "type": [], "success": "NA",
-            "evidence": [], "xiang_note": None,
+            "evidence": [], "xiang_note": None, "rescue_wx": [],
             "note": "纯成格, 无救应需求"
         }
 
@@ -225,6 +225,7 @@ def build_jiu_ying(bazi, ge_cheng):
     types = []
     ev = []
     ok = []  # 各命中判据的 success 布尔, 合取定 SUCCESS/UNS
+    _rescue_wx = set()  # [2026-10-08 PATCH-SRC4] 救应神五行(.001通关中间神 + .005八格救应解神)
 
     # .001 通关 (DTS §二十 L245, 裁150甲: 缺中间神才需引通)
     #   "有神"(裁150甲) = 该组五行 十神 在盘里(干或藏干任一)
@@ -369,10 +370,31 @@ def build_jiu_ying(bazi, ge_cheng):
         if t5_subs:
             types[-1] = "JIU_YING.005-" + "+".join(
                 s.split()[0] for s in t5_subs)  # 子型 a/b/c...
+        # [2026-10-08 PATCH-SRC4] .005 八格破格救应子型 -> 救应神五行(解神, PZZQ L1226)
+        #   官伤透印=印 / 煞合清=合神 / 财劫透食=食 / 食枭就煞=煞 / 煞印护=印 / 阳刃重印=印
+        _defsub = "".join(s.split()[0] for s in t5_subs)
+        _yin_wx = {GAN_WX[s] for s in yin_stems}
+        _shi_wx = {GAN_WX[s] for s in shi_stems}
+        _sha_wx = {GAN_WX[s] for s in sha_stems}
+        _he_sha_wx = set()
+        for s in sha_stems:
+            for a, b, _nm in wuhe:
+                if s in (a, b):
+                    _partner = b if a == s else a
+                    _he_sha_wx.add(GAN_WX.get(_partner, ""))
+        if "a" in _defsub: _rescue_wx |= _yin_wx      # 官伤透印 -> 印
+        if "b" in _defsub: _rescue_wx |= _he_sha_wx    # 煞合清 -> 合神
+        if "d" in _defsub: _rescue_wx |= _shi_wx       # 财劫透食 -> 食
+        if "f" in _defsub: _rescue_wx |= _sha_wx       # 食枭就煞 -> 煞
+        if "g" in _defsub: _rescue_wx |= _yin_wx       # 煞印护 -> 印
+        if "i" in _defsub: _rescue_wx |= _yin_wx       # 阳刃重印 -> 印
         ev.append(".005 八格破格后救应: po_n=%d>0, 命中原文子型=%s"
                   % (ge_cheng.get("po_n", 0),
                      "、".join(t5_subs) if t5_subs else "无"))
         ok.append(t5_ok)
+    # [2026-10-08 PATCH-SRC4] .001 通关 也贡献 救应神(中间神)
+    if t1_trig and mid_found:
+        _rescue_wx.add(mid_found)
 
     # .006 相神 (PZZQ §十五 L1857, 裁147甲 归入 success): 相神不被合
     #   success = 相神(用神/解神) 不被五合合走
@@ -397,6 +419,7 @@ def build_jiu_ying(bazi, ge_cheng):
         return {
             "triggered": True, "type": [], "success": "UNS",
             "evidence": ["6 条判据无一条触发(本盘不属任何救应场景)"],
+            "rescue_wx": sorted(_rescue_wx),
             "xiang_note": None, "note": "触发但 6 条无一适用"
         }
 
@@ -411,6 +434,7 @@ def build_jiu_ying(bazi, ge_cheng):
     return {
         "triggered": True, "type": types, "success": success,
         "evidence": ev, "xiang_note": xiang_note,
+        "rescue_wx": sorted(_rescue_wx),
         "note": None,
     }
 
