@@ -309,13 +309,29 @@ class ComputeStage:
         )
 
     @staticmethod
-    def _heluo_lunar_target(target_date: date) -> tuple[int, int, int]:
+    def _heluo_lunar_target(target_date: date,
+                            huangli_day=None) -> tuple[int, int, int]:
         """公历应期日 → 河洛解卦口径 (流年公历年, 农历月, 农历日)。
 
         河洛流月/流日以**农历**月日与月令"节"对齐（见 canonical._LUNAR_MONTH_JIE
-        与 compute_liuri 的 jie_datetime），直接传公历月日会错位一整个月，故此处统一
-        换算。换算失败时回退按公历月日处理，不抛。
+        与 compute_liuri 的 jie_datetime），直接传公历月日会错位一整个月。
+
+        ⚠ 2026-10-09 批次 P（用户口径「时间上接黄历引擎」）：
+          原实现用 **lunar_python** 自行换算，于是仓库里并存**三套历法实现**
+          （sxtwl 底层 / lunar_python 专用 / HuangliEngine 黄历层），
+          同一件事算两遍且可能漂移。
+          现**优先取黄历引擎的权威值**（HuangliDay.lunar_month / lunar_day），
+          黄历不可用才回退 lunar_python，再不行回退公历口径。降级链不丢。
         """
+        hd = huangli_day
+        if hd is not None:
+            try:
+                m = int(str(hd.lunar_month).strip() or 0)
+                d = int(str(hd.lunar_day).strip() or 0)
+                if m > 0 and d > 0:
+                    return target_date.year, m, d
+            except Exception:  # noqa: BLE001 — 字段异常，走回退
+                pass
         try:
             from lunar_python import Solar as _Solar
             lun = _Solar.fromYmd(target_date.year, target_date.month,
@@ -323,6 +339,18 @@ class ComputeStage:
             return target_date.year, int(lun.getMonth()), int(lun.getDay())
         except Exception:  # noqa: BLE001 — 换算失败不阻断，回退公历口径
             return target_date.year, target_date.month, target_date.day
+
+    def _huangli_for_heluo(self, day: date):
+        """取该日的黄历对象（供河洛消费）；不可用时返回 None，不抛。
+
+        黄历引擎是**引擎的时间系统**，河洛的农历/节气一律以它为准
+        （用户口径「时间上接黄历引擎」）。取不到就返回 None，
+        由 _heluo_lunar_target 走既有回退链。
+        """
+        try:
+            return self.huangli_engine.get_day(day)
+        except Exception:  # noqa: BLE001 — 黄历不可用不阻断河洛
+            return None
 
     def _compute_heluo_yi(
         self,
@@ -362,6 +390,19 @@ class ComputeStage:
         heluo_result = None
         yi_structure = None
         yi_interpretation = None
+        # 2026-10-10 批次 P 第二步：把"应期公历日→农历月日"提到 try 顶部，让
+        # canonical.calculate(target_year/target_month) 与下游
+        # build_guajie_from_result 用同一组农历口径。target_date=None 时两者
+        # 都置 None，fast-path 不启用，旧全量路径完整保留。
+        t_year: int | None = None
+        t_month: int | None = None
+        t_day: int | None = None
+        if target_date is not None:
+            try:
+                t_year, t_month, t_day = self._heluo_lunar_target(
+                    target_date, self._huangli_for_heluo(target_date))
+            except Exception:  # noqa: BLE001 — 兜底不阻断主链
+                pass
         try:
             bazi_cn = self._bazi_to_heluo_pillars(bazi_chart)
             birth_hour_cn = _BRANCH_CN.get(
@@ -378,6 +419,11 @@ class ComputeStage:
                 era="zhong",
                 birth_year=year,
                 birth_date=birth_date_iso,
+                # 2026-10-10 批次 P 第二步：目标年/月透传给 _build_timeline 启用
+                # fast-path。与下方 build_guajie_from_result 同一农历口径。
+                # target_date 未给 → 两者都 None → 旧全量路径完整保留。
+                target_year=t_year,
+                target_month=t_month,
             )
             # 将河洛结果传入 YiAdapter（只消费 Contract 化字段，不重新计算河洛）
             yi_input = YiAdapterInput(
@@ -409,7 +455,6 @@ class ComputeStage:
                 try:
                     from dataclasses import replace as _replace
                     from ..engines.heluo.guajie import build_guajie_from_result
-                    t_year, t_month, t_day = self._heluo_lunar_target(target_date)
                     heluo_result = _replace(
                         heluo_result,
                         guajie=build_guajie_from_result(

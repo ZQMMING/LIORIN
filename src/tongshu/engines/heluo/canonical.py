@@ -296,6 +296,8 @@ class HeluoCanonical:
         birth_date: str | None = None,
         true_solar_datetime: str | None = None,
         solar_phase: str | None = None,
+        target_year: int | None = None,
+        target_month: int | None = None,
     ) -> HeluoResult:
         """
         完整计算链：
@@ -310,6 +312,11 @@ class HeluoCanonical:
         true_solar_datetime: 真太阳时 ISO 格式。可选，默认取 birth_date。
         solar_phase: "winter"（冬至后至夏至前）/ "summer"（夏至后至冬至前）。
                       纯卦（女乾/男坤）元堂上下行向分支；未传且 birth_date 有效时自动推算。
+        target_year: 公历年（int，可选）。批次 P 第二步（2026-10-10）新增 fast-path 门控：
+                     传值时启用算力裁剪（见 _build_timeline 头部注释）；None 退回全量
+                     （保留旧契约，避免冻结回归）。
+        target_month: 农历月（int，可选；1-12）。仅在 target_year 非 None 时生效。
+                     命中则顶层 daily_hexagram 填目标月 6 日段字典。
         """
         # Step 1: 计算天数地数
         numbers = compute_tian_di_shu(bazi, gender)
@@ -362,7 +369,8 @@ class HeluoCanonical:
 
         # Step 6: 时间序列（大运爻位值运 + 流年卦 + 流月卦）
         timeline = self._build_timeline(
-            prenatal, yuantang, postnatal, postnatal_yuantang, birth_year
+            prenatal, yuantang, postnatal, postnatal_yuantang, birth_year,
+            target_year=target_year, target_month=target_month,
         )
 
         # Step 7: 卦象结构分析
@@ -426,10 +434,29 @@ class HeluoCanonical:
         postnatal: PostnatalHexagram,
         postnatal_yuantang: YuanTang,
         birth_year: int | None,
+        target_year: int | None = None,
+        target_month: int | None = None,
     ) -> Timeline:
         """构建时间序列：大运（爻位值运）+ 流年卦 + 流月卦。
 
         基于 timeline_yun 模块（《河洛理数·卷之四/五》论大运/流年/流月）。
+
+        算力裁剪（2026-10-10 批次 P 第二步）：
+          当 ``target_year`` 非 None 时启用 fast-path：
+            · 大运仍全量算（依赖大运段判定）
+            · 流年 99 段骨架全量算（compute_liunian 本身依赖大运段，年段顺序定先后）
+            · **目标流年 + 上一年 2 段**才嵌入 12 流月 + 6 流日子树
+            · 其余 97 段只保留元数据（年份/虚岁/干支/卦名/六爻/元堂）
+            · 不再调 interpret_all_liunian（yearly[].yi_signal / yi_interpretation
+              全仓零消费方，是 dead-write）
+            · 顶层 monthly_hexagrams 填目标年 12 月（建立扁平路径）
+            · 顶层 daily_hexagram 填目标年目标月 6 日段（链式累变）
+            · dayun_summary 沿用 qi_phase.dayun（本就是元数据，guajie 判运反用）
+
+          ``target_year is None`` → 退回全量（保留旧契约）。
+
+          target_year 必传顶层；target_month 可选（不传时顶层 daily_hexagram 留空骨架，
+          真正的日段由 guajie 命中目标年那一段现算）。
         """
         if birth_year is None:
             birth_year = 1984  # 未提供时占位（甲子年），后续需由调用方传入真实年份
@@ -457,13 +484,41 @@ class HeluoCanonical:
             age_to=100,
         )
 
+        fast_path = target_year is not None
+        # fast-path 仅在 (target_year-1, target_year) 两段嵌入月/日子树
+        material_years: set[int] = set()
+        if fast_path:
+            material_years = {target_year - 1, target_year}
+
         # 流月卦（以流年卦为本，元堂取该流年所属大运段元堂）+ 流日卦
-        yearly = []
+        yearly: list[dict] = []
+        target_months: list[dict] = []   # fast-path: 目标年 12 月字典（顶层用）
+        target_days: list[dict] = []     # fast-path: 目标年目标月 6 日段（顶层用）
         for y in liunian.years:
             # 流年卦元堂：大运分段后取该年所属大运段元堂；无则回退先天元堂
             yyt = y.yuantang_index if y.yuantang_index >= 0 else yuantang.yuantang_index
             # 流年卦元堂爻性（H8 解卦层：流年卦断爻=流年卦元堂，规格书"流月以流年卦元堂为本"）
             yyt_nature = y.lines[yyt] if y.lines and 0 <= yyt < len(y.lines) else None
+
+            entry: dict = {
+                "age": y.age,
+                "year": y.year,
+                "ganzhi": y.ganzhi,
+                "yang_year": y.yang_year,
+                "hexagram": y.hexagram_name,
+                "upper": y.upper,
+                "lower": y.lower,
+                "lines": y.lines,
+                "yuantang_index": yyt,
+                "yuantang_nature": yyt_nature,
+            }
+
+            if fast_path and y.year not in material_years:
+                # 非目标流年：只元数据。months/days/yi_* 全部不带。
+                yearly.append(entry)
+                continue
+
+            # 全量模式 或 目标/上一年：嵌入 12 月 + 6 日（廉价字段，不换卦名）
             liuyue = compute_liuyue(y.lines, yyt)
             months = []
             for m in liuyue.months:
@@ -487,10 +542,10 @@ class HeluoCanonical:
                 #     与原「逐爻 diff 求唯一差异爻」在 20,592 个日段上实测全等。
                 #
                 # tests/test_heluo_context.py::test_timeline_structure 只断言
-                # `len(months[0]["days"]) == 6`（引原典「六爻俱变毕，则满三十日」），
+                # `len(months[0]["days"]) == 6`（引原典「六爻俱变毕，则满三十日》），
                 # **不检查日段内容**，故本改造不触碰其断言。
                 # 需要完整日段时走 materialize_month_days（仅命中月）。
-                months.append({
+                month_entry = {
                     "month": m["month"],
                     "name": m["name"],
                     "upper": m["upper"],
@@ -500,27 +555,30 @@ class HeluoCanonical:
                     "yue_yao_index": m["yue_yao_index"],
                     "jie_datetime": jie_dt,
                     "days": compute_liuri_stub(m["lines"], m["yue_yao_index"]),
-                })
-            yearly.append({
-                "age": y.age,
-                "year": y.year,
-                "ganzhi": y.ganzhi,
-                "yang_year": y.yang_year,
-                "hexagram": y.hexagram_name,
-                "upper": y.upper,
-                "lower": y.lower,
-                "lines": y.lines,
-                "yuantang_index": yyt,
-                "yuantang_nature": yyt_nature,
-                "months": months,
-            })
+                }
+                months.append(month_entry)
+
+                # fast-path：仅对目标年那段抽月卦进顶层
+                if fast_path and y.year == target_year:
+                    target_months.append(month_entry)
+                    if target_month is not None and m["month"] == target_month:
+                        target_days = month_entry["days"]
+
+            entry["months"] = months
+            yearly.append(entry)
 
         # P1：易经解卦层 — 为每个流年卦附加 EVENT_SIGNAL
-        yearly = interpret_all_liunian(
-            yearly,
-            yuan_tang_index=yuantang.yuantang_index,
-            yuan_tang_nature=yuantang.yao_nature,
-        )
+        # fast-path 不调（yearly[].yi_signal / yi_interpretation 全仓零消费方，是
+        # dead-write——guajie 唯一读 yearly 的字段是 hexagram/lines/yuantang_index/
+        # yuantang_nature/age/year/ganzhi，以及目标那一段的 months[]）。这是
+        # 99 段里最大的开销：每次 interpret_liunian_year 要查相邻年上下卦+动爻+
+        # EVENT_SIGNAL 构造 + EVENT_SIGNAL.to_dict()，99 次都丢。
+        if not fast_path:
+            yearly = interpret_all_liunian(
+                yearly,
+                yuan_tang_index=yuantang.yuantang_index,
+                yuan_tang_nature=yuantang.yao_nature,
+            )
 
         dayun_entries = [
             {
@@ -536,18 +594,20 @@ class HeluoCanonical:
 
         return Timeline(
             yearly_hexagrams=yearly,
-            # ── 2026-10-06 修正三处名实不符的占位字段 ────────────────
-            # 原先 daily_hexagram 存的是**先天卦**，而字段注释写「今日卦」，
-            # 其 date 还塞了 str(birth_year)（如 "1990"）——既不是日期，也不是
-            # 流日卦。monthly_hexagrams 恒 []、hourly_hexagram 恒 None。
-            # 三者全仓零消费方（测试里的同名 daily_hexagram 均为黄历字段）。
-            #
-            # 真实流月/流日/流时卦在四层时间轴内：yearly[].months[] 及
-            # months[].days[]（日段按需物化，见 compute_liuri_stub /
-            # materialize_month_days），消费方 guajie 按时应期定位。
-            # 这里不再重复一份**名不副实**的副本，一律置空并在此说明。
-            monthly_hexagrams=[],
-            daily_hexagram={},
+            # ── 2026-10-10 批次 P 第二步：flat 化月/日 ────────────────
+            # 旧实现 monthly_hexagrams 恒 [] / daily_hexagram 恒 {} 是名不副实
+            # 占位（注释自承），下游必须 yearly[].months[].days[] 嵌套定位。
+            # fast-path 下扁平到顶层：monthly_hexagrams=目标年 12 月，
+            # daily_hexagram=目标年目标月 6 日段。target_month 未传则置空骨架，
+            # guajie 由 yearly[目标年].months[] 现取。
+            monthly_hexagrams=target_months if fast_path else [],
+            # daily_hexagram 在 fast-path 且 target_month 命中时填 6 段字典
+            # （每段 segment/day_from/day_to/flip_index）；未命中时 {}。
+            daily_hexagram={
+                "year": target_year,
+                "month": target_month,
+                "segments": target_days,
+            } if fast_path and target_month is not None else {},
             hourly_hexagram=None,
             seasonal_hexagram=None,
             qi_phase={

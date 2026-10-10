@@ -197,13 +197,26 @@ class TestPipelineEndToEnd(unittest.TestCase):
         self.assertEqual(yearly[-1]["year"], _YEAR + len(yearly) - 1)
 
     def test_four_layers_present(self):
+        """排盘产出四层时间序列（先天/后天/99 流年/目标段月日）。
+
+        2026-10-10 批次 P 第二步算力裁剪后：full-path 仍 99 段都嵌 months
+        （钉旧契约，见 test_heluo_fastpath.py::TestFastPathDisabled）；
+        fast-path 下首段（出生年 1983）无 months（只有目标/上一年 2 段嵌）。
+        这里锚的不是单段 months，而是时间轴四层都在——先天/后天/流年骨架
+        + **至少一段** 含满 12 月 × 6 日。
+        """
         h = self.cr.heluo_result
         self.assertTrue(h.prenatal.hexagram_name, "先天卦")
         self.assertTrue(h.postnatal.hexagram_name, "后天卦")
         self.assertTrue(h.timeline.yearly_hexagrams, "流年")
-        y0 = h.timeline.yearly_hexagrams[0]
-        self.assertEqual(len(y0["months"]), 12, "流月")
-        self.assertEqual(len(y0["months"][0]["days"]), 6, "流日")
+        # 至少要有一段嵌满 12 流月 × 6 流日（fast-path 下是目标年+上一年，
+        # 全量下是任意一段）
+        full_segs = [e for e in h.timeline.yearly_hexagrams
+                     if e.get("months") and len(e["months"]) == 12
+                     and e["months"][0].get("days")
+                     and len(e["months"][0]["days"]) == 6]
+        self.assertGreaterEqual(len(full_segs), 1,
+                                "至少应有一段含满 12 流月 × 6 流日")
 
     def test_yi_block_serializable(self):
         """排盘输出的 yi 块可 JSON 序列化（API 出口契约）。"""
