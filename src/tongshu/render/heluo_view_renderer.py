@@ -130,15 +130,21 @@ class HeluoViewRenderer:
         lines.append(f"卦名：{name}（上{upper} 下{lower}）")
         if post_lines:
             lines.append(f"六爻：{post_lines}")
-        # 后天卦辞
-        gj = h.guajie or {}
-        ev = gj.get("evidence") or []
-        # 找命卦的后天卦辞（通常没单独列出，复用 benming）
-        benming = gj.get("benming") or {}
-        if benming.get("gua_ci") and "后天" not in "\n".join(lines):
-            # 后天卦没有独立 benming 时跳过
+        # 后天卦辞：直接从 guajie_data 查（短卦名）
+        try:
+            from tongshu.engines.heluo.guajie import load_guajie_data
+            data = load_guajie_data()
+            short = name[-1] if name else ""
+            if short in data:
+                gd = data[short]
+                if gd.gua_ci:
+                    lines.append(f"卦辞：{gd.gua_ci}")
+                if gd.gua_ci_jingyi:
+                    lines.append(f"卦辞精义：{gd.gua_ci_jingyi}")
+                if gd.gua_ci_shiyi:
+                    lines.append(f"卦辞释义：{gd.gua_ci_shiyi}")
+        except Exception:
             pass
-        # 但 6 爻中如果某爻被命为「流年/流月」用后天卦爻，可不再列
         return "§2 时空变换（后天卦）\n" + "\n".join(lines) if lines else ""
 
     # ── §3 大运当年 ──────────────────────
