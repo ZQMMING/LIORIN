@@ -221,6 +221,13 @@ class HeluoViewRenderer:
             return ""
         lines = [f"流年卦：{name}（{yao_name} 爻 / {year}）"]
         if isinstance(yao, dict):
+            # 解读放最前（释义 + 精义 = 引擎算的现代语义解读）
+            if yao.get("shiyi"):
+                lines.append(f"解读（现代语义）：{_truncate(yao['shiyi'], 360)}")
+            if yao.get("jingyi"):
+                lines.append(f"解读精义：{yao['jingyi']}")
+            # 原典字段放后面（让解读与原文分层）
+            lines.append("─── 原典 ───")
             if yao.get("ci"):
                 lines.append(f"卦辞：{yao['ci']}")
             if yao.get("xiang"):
@@ -229,10 +236,6 @@ class HeluoViewRenderer:
                 lines.append(f"爻辞：{_truncate(yao['yi'], 240)}")
             if yao.get("suiyun"):
                 lines.append(f"岁运逢之：{_truncate(yao['suiyun'], 200)}")
-            if yao.get("jingyi"):
-                lines.append(f"精义：{yao['jingyi']}")
-            if yao.get("shiyi"):
-                lines.append(f"释义：{_truncate(yao['shiyi'], 360)}")
         return "§4 流年卦\n" + "\n".join(lines) if lines else ""
 
     # ── §5 流月卦 ──────────────────────
@@ -245,6 +248,11 @@ class HeluoViewRenderer:
             return ""
         lines = [f"流月卦：{name}（{yao_name} 爻）"]
         if isinstance(yao, dict):
+            if yao.get("shiyi"):
+                lines.append(f"解读（现代语义）：{_truncate(yao['shiyi'], 360)}")
+            if yao.get("jingyi"):
+                lines.append(f"解读精义：{yao['jingyi']}")
+            lines.append("─── 原典 ───")
             if yao.get("ci"):
                 lines.append(f"卦辞：{yao['ci']}")
             if yao.get("xiang"):
@@ -253,8 +261,6 @@ class HeluoViewRenderer:
                 lines.append(f"爻辞：{_truncate(yao['yi'], 240)}")
             if yao.get("suiyun"):
                 lines.append(f"岁运逢之：{_truncate(yao['suiyun'], 200)}")
-            if yao.get("jingyi"):
-                lines.append(f"精义：{yao['jingyi']}")
         return "§5 流月卦\n" + "\n".join(lines) if lines else ""
 
     # ── §6 流日卦 ──────────────────────
@@ -267,6 +273,11 @@ class HeluoViewRenderer:
             return ""
         lines = [f"流日卦：{name}（{yao_name} 爻）"]
         if isinstance(yao, dict):
+            if yao.get("shiyi"):
+                lines.append(f"解读（现代语义）：{_truncate(yao['shiyi'], 360)}")
+            if yao.get("jingyi"):
+                lines.append(f"解读精义：{yao['jingyi']}")
+            lines.append("─── 原典 ───")
             if yao.get("ci"):
                 lines.append(f"卦辞：{yao['ci']}")
             if yao.get("xiang"):
@@ -275,8 +286,6 @@ class HeluoViewRenderer:
                 lines.append(f"爻辞：{_truncate(yao['yi'], 240)}")
             if yao.get("suiyun"):
                 lines.append(f"岁运逢之：{_truncate(yao['suiyun'], 200)}")
-            if yao.get("jingyi"):
-                lines.append(f"精义：{yao['jingyi']}")
         return "§6 流日卦\n" + "\n".join(lines) if lines else ""
 
     # ── §7 元气化工 ──────────────────────
