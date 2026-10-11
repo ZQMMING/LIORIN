@@ -1,0 +1,1914 @@
+{
+ "classic": "DTS",
+ "total": 510,
+ "stats": {
+  "ALIGNED": 193,
+  "DIVERGE": 317,
+  "NO_EVIDENCE": 0,
+  "ERROR": 0
+ },
+ "diverge": [
+  {
+   "case_id": "DT-0001",
+   "bazi": "辛卯 丁酉 庚午 丙子",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0004",
+   "bazi": "壬辰 壬寅 甲寅 庚午",
+   "label": "good",
+   "note": "label=good 吉词['贵'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0006",
+   "bazi": "丁亥 庚戌 甲辰 壬申",
+   "label": "good",
+   "note": "label=good 吉词['科甲'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0007",
+   "bazi": "乙亥 庚辰 甲戌 壬申",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0009",
+   "bazi": "丙子 己亥 乙丑 壬午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0011",
+   "bazi": "癸巳 癸亥 甲寅 壬申",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0012",
+   "bazi": "辛卯 丁酉 戊子 戊午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0013",
+   "bazi": "辛未 辛丑 戊辰 壬戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0015",
+   "bazi": "丙子 辛卯 壬子 癸卯",
+   "label": "good",
+   "note": "label=good 吉词['科甲', '郡守'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0018",
+   "bazi": "庚戌 乙酉 甲寅 庚午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0020",
+   "bazi": "庚寅 辛巳 丙寅 辛卯",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克', '刑']"
+  },
+  {
+   "case_id": "DT-0022",
+   "bazi": "庚寅 壬午 丁卯 癸卯",
+   "label": "good",
+   "note": "label=good 吉词['寿'] 凶词['夭', '贫']"
+  },
+  {
+   "case_id": "DT-0023",
+   "bazi": "丙子 己亥 乙亥 丙子",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0025",
+   "bazi": "己亥 丁卯 庚申 庚辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0028",
+   "bazi": "庚申 壬午 辛酉 甲午",
+   "label": "good",
+   "note": "label=good 吉词['贵', '观察'] 凶词['克', '贫']"
+  },
+  {
+   "case_id": "DT-0030",
+   "bazi": "戊子 戊午 戊戌 戊午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0031",
+   "bazi": "戊申 戊午 戊戌 戊午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0033",
+   "bazi": "辛卯 庚寅 甲辰 丙寅",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0034",
+   "bazi": "庚寅 庚辰 甲寅 丁卯",
+   "label": "good",
+   "note": "label=good 吉词['科甲', '郡守'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0035",
+   "bazi": "癸巳 丙辰 丙午 庚寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0036",
+   "bazi": "戊寅 乙丑 丙寅 庚寅",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0037",
+   "bazi": "丙子 己亥 乙酉 壬午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0039",
+   "bazi": "甲寅 戊辰 丙寅 丙申",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0040",
+   "bazi": "壬申 甲辰 丙寅 丙申",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0046",
+   "bazi": "己巳 癸酉 丙寅 庚寅",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0047",
+   "bazi": "癸亥 癸亥 丙辰 甲午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0048",
+   "bazi": "甲寅 庚午 乙卯 丙子",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0055",
+   "bazi": "甲午 丁卯 甲午 丁卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0056",
+   "bazi": "丁卯 乙巳 丁卯 乙巳",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0057",
+   "bazi": "丙午 戊戌 丙午 戊戌",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0058",
+   "bazi": "戊戌 辛酉 戊戌 辛酉",
+   "label": "mixed",
+   "note": "label=mixed 吉词['科甲', '富贵'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0060",
+   "bazi": "癸亥 己未 癸亥 己未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0061",
+   "bazi": "壬戌 壬子 甲子 戊辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0062",
+   "bazi": "戊寅 乙卯 甲辰 辛未",
+   "label": "mixed",
+   "note": "label=mixed 吉词['州牧'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0066",
+   "bazi": "丙寅 甲午 丙戌 乙未",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0067",
+   "bazi": "庚申 乙酉 庚戌 庚辰",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0068",
+   "bazi": "壬子 辛亥 癸丑 壬子",
+   "label": "mixed",
+   "note": "label=mixed 吉词['州牧'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0069",
+   "bazi": "戊申 丙辰 丁卯 甲辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0071",
+   "bazi": "丁丑 庚戌 庚子 甲申",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0073",
+   "bazi": "庚申 辛巳 丙辰 乙未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0075",
+   "bazi": "甲寅 丁卯 戊辰 己未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0077",
+   "bazi": "甲寅 乙亥 乙卯 癸未",
+   "label": "good",
+   "note": "label=good 吉词['司马', '观察'] 凶词['克', '刑']"
+  },
+  {
+   "case_id": "DT-0078",
+   "bazi": "甲寅 丁卯 乙未 丁亥",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0080",
+   "bazi": "丁卯 甲辰 甲寅 乙亥",
+   "label": "good",
+   "note": "label=good 吉词['寿', '州牧'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0081",
+   "bazi": "戊寅 甲寅 甲辰 丁卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0082",
+   "bazi": "癸卯 丙辰 甲辰 丙寅",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0083",
+   "bazi": "辛未 辛卯 乙未 丁亥",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0088",
+   "bazi": "癸未 乙卯 丙午 辛卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0090",
+   "bazi": "辛卯 丙申 癸卯 甲寅",
+   "label": "neutral",
+   "note": "label=neutral 吉词['贵', '寿', '司马'] 凶词['夭', '贫']"
+  },
+  {
+   "case_id": "DT-0092",
+   "bazi": "丁丑 癸卯 乙卯 己卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克', '刑']"
+  },
+  {
+   "case_id": "DT-0094",
+   "bazi": "丁亥 癸丑 甲子 辛未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0100",
+   "bazi": "甲戌 丙寅 戊寅 丙辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0101",
+   "bazi": "甲戌 丙寅 戊辰 庚申",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0103",
+   "bazi": "癸卯 乙卯 甲寅 乙亥",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0105",
+   "bazi": "己巳 己巳 乙酉 丙戌",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0106",
+   "bazi": "乙丑 壬午 丙戌 甲午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0107",
+   "bazi": "戊寅 丁巳 丙寅 甲午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0108",
+   "bazi": "辛巳 丁酉 丁酉 辛丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0109",
+   "bazi": "辛亥 壬辰 丙申 己亥",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0111",
+   "bazi": "戊戌 丙辰 己巳 己巳",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0112",
+   "bazi": "壬辰 辛亥 戊子 癸丑",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克', '刑']"
+  },
+  {
+   "case_id": "DT-0114",
+   "bazi": "壬申 己酉 庚子 庚辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0115",
+   "bazi": "庚申 乙酉 庚戌 庚辰",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0116",
+   "bazi": "己卯 庚午 辛卯 甲午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0117",
+   "bazi": "己亥 丁卯 庚寅 丙子",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0118",
+   "bazi": "壬寅 辛亥 壬子 辛丑",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0120",
+   "bazi": "丙辰 乙未 壬午 癸卯",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0121",
+   "bazi": "癸卯 戊午 壬寅 丙午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0122",
+   "bazi": "辛巳 甲午 癸卯 癸亥",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0124",
+   "bazi": "辛酉 庚子 丙寅 癸巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0128",
+   "bazi": "癸酉 甲子 丁卯 丙午",
+   "label": "good",
+   "note": "label=good 吉词['观察'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0129",
+   "bazi": "戊寅 癸亥 丁未 辛亥",
+   "label": "good",
+   "note": "label=good 吉词['科甲'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0130",
+   "bazi": "戊辰 乙卯 辛丑 丁酉",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0131",
+   "bazi": "己巳 丁卯 辛卯 乙未",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0134",
+   "bazi": "戊子 甲寅 戊午 甲寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0135",
+   "bazi": "己亥 丙寅 戊子 甲寅",
+   "label": "mixed",
+   "note": "label=mixed 吉词['进士'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0138",
+   "bazi": "癸亥 癸亥 丁卯 癸卯",
+   "label": "good",
+   "note": "label=good 吉词['观察'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0139",
+   "bazi": "戊辰 戊午 壬辰 甲辰",
+   "label": "mixed",
+   "note": "label=mixed 吉词['科甲'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0140",
+   "bazi": "庚申 庚辰 甲戌 丙寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0143",
+   "bazi": "癸丑 戊午 丙午 壬辰",
+   "label": "good",
+   "note": "label=good 吉词['州牧'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0144",
+   "bazi": "癸巳 戊午 丙午 壬辰",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0145",
+   "bazi": "戊申 癸亥 丙午 壬辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0148",
+   "bazi": "甲辰 己巳 戊辰 乙卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0149",
+   "bazi": "丙辰 辛卯 庚申 丁丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0150",
+   "bazi": "丙辰 辛卯 乙亥 庚辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0151",
+   "bazi": "癸亥 戊午 壬午 己酉",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0152",
+   "bazi": "壬辰 壬子 丙寅 癸巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0153",
+   "bazi": "甲子 乙亥 己巳 丁卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0154",
+   "bazi": "丙辰 丁酉 庚午 戊寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0155",
+   "bazi": "戊午 己未 壬申 辛亥",
+   "label": "good",
+   "note": "label=good 吉词['科甲', '富贵'] 凶词['贫']"
+  },
+  {
+   "case_id": "DT-0156",
+   "bazi": "辛卯 戊戌 丙辰 己亥",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0157",
+   "bazi": "辛卯 戊戌 丙辰 壬辰",
+   "label": "neutral",
+   "note": "label=neutral 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0158",
+   "bazi": "壬辰 丙午 丙午 壬辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0159",
+   "bazi": "甲寅 戊辰 壬辰 壬寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0161",
+   "bazi": "己丑 辛未 丙寅 己丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0162",
+   "bazi": "辛酉 丁酉 戊午 辛酉",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0163",
+   "bazi": "壬戌 壬子 庚辰 己卯",
+   "label": "mixed",
+   "note": "label=mixed 吉词['州牧'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0164",
+   "bazi": "丙辰 癸巳 乙丑 丙子",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0165",
+   "bazi": "丙申 戊戌 丁卯 乙巳",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0166",
+   "bazi": "癸亥 乙卯 壬申 乙巳",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0167",
+   "bazi": "戊子 辛酉 戊午 丁巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0168",
+   "bazi": "壬申 辛亥 辛酉 庚寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0169",
+   "bazi": "癸亥 辛酉 戊申 己未",
+   "label": "good",
+   "note": "label=good 吉词['州牧'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0170",
+   "bazi": "己未 癸酉 戊戌 庚申",
+   "label": "good",
+   "note": "label=good 吉词['州牧'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0171",
+   "bazi": "癸亥 甲寅 癸亥 甲寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0173",
+   "bazi": "戊辰 庚申 己酉 癸酉",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0175",
+   "bazi": "乙酉 戊寅 癸酉 癸丑",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0176",
+   "bazi": "己卯 庚午 甲寅 丁卯",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0177",
+   "bazi": "丙子 乙未 丙辰 乙未",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克', '刑']"
+  },
+  {
+   "case_id": "DT-0181",
+   "bazi": "癸酉 己未 丙午 癸巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0182",
+   "bazi": "戊申 戊午 丁巳 乙巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0184",
+   "bazi": "壬辰 壬子 壬子 癸卯",
+   "label": "mixed",
+   "note": "label=mixed 吉词['寿'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0185",
+   "bazi": "戊午 丙辰 戊辰 辛酉",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0187",
+   "bazi": "丁酉 乙巳 戊午 丙辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0188",
+   "bazi": "丁丑 丙午 己酉 辛未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0189",
+   "bazi": "癸酉 甲子 丙寅 乙未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0190",
+   "bazi": "甲子 丙寅 己亥 辛未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0191",
+   "bazi": "癸未 甲子 丙寅 丁酉",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0192",
+   "bazi": "乙亥 庚辰 戊戌 丁巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0193",
+   "bazi": "癸亥 己未 丙午 己丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0194",
+   "bazi": "丁卯 丁未 庚午 己卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0196",
+   "bazi": "壬申 壬寅 丙子 乙未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0197",
+   "bazi": "庚申 戊寅 壬子 甲辰",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0198",
+   "bazi": "乙酉 戊寅 壬午 庚戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0199",
+   "bazi": "庚戌 戊寅 癸未 癸丑",
+   "label": "mixed",
+   "note": "label=mixed 吉词['州牧'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0201",
+   "bazi": "壬申 戊申 庚辰 甲申",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0202",
+   "bazi": "壬戌 戊申 庚寅 丙戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0204",
+   "bazi": "戊辰 辛酉 乙亥 甲申",
+   "label": "good",
+   "note": "label=good 吉词['侍郎'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0205",
+   "bazi": "庚辰 庚辰 庚申 庚辰",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0206",
+   "bazi": "癸酉 甲子 庚辰 甲申",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克', '刑']"
+  },
+  {
+   "case_id": "DT-0207",
+   "bazi": "壬子 辛亥 乙亥 丙子",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克', '刑']"
+  },
+  {
+   "case_id": "DT-0208",
+   "bazi": "甲申 丙子 庚辰 戊寅",
+   "label": "good",
+   "note": "label=good 吉词['科甲'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0211",
+   "bazi": "癸未 丁巳 丙午 癸巳",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0213",
+   "bazi": "丁未 壬子 庚戌 丙戌",
+   "label": "good",
+   "note": "label=good 吉词['州牧'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0215",
+   "bazi": "癸丑 丁巳 甲辰 庚午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0216",
+   "bazi": "己卯 辛未 丙子 辛卯",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0217",
+   "bazi": "壬午 乙巳 丁丑 丙午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0219",
+   "bazi": "戊午 壬戌 丁卯 癸卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0220",
+   "bazi": "癸丑 壬戌 丙午 庚寅",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0221",
+   "bazi": "丙寅 庚寅 甲申 乙丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0224",
+   "bazi": "庚戌 甲申 甲戌 乙丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克', '刑']"
+  },
+  {
+   "case_id": "DT-0227",
+   "bazi": "壬午 壬寅 壬戌 庚戌",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0231",
+   "bazi": "癸卯 乙丑 庚申 丁丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0232",
+   "bazi": "丁未 乙巳 丁酉 癸卯",
+   "label": "good",
+   "note": "label=good 吉词['郡守'] 凶词['贫']"
+  },
+  {
+   "case_id": "DT-0233",
+   "bazi": "乙亥 庚辰 丙申 壬辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0234",
+   "bazi": "辛丑 辛丑 戊戌 癸丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0235",
+   "bazi": "癸亥 甲子 丁酉 癸卯",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0237",
+   "bazi": "戊子 癸亥 壬戌 甲辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0238",
+   "bazi": "庚寅 丙戌 辛亥 辛卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0240",
+   "bazi": "辛卯 辛卯 甲辰 丁卯",
+   "label": "good",
+   "note": "label=good 吉词['寿'] 凶词['夭']"
+  },
+  {
+   "case_id": "DT-0241",
+   "bazi": "癸卯 乙丑 丙子 己丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0243",
+   "bazi": "丁巳 辛亥 戊子 戊午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0245",
+   "bazi": "丁亥 壬寅 丙子 丁酉",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0247",
+   "bazi": "甲申 丙子 壬寅 辛亥",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0248",
+   "bazi": "壬申 丙午 癸亥 戊午",
+   "label": "good",
+   "note": "label=good 吉词['贵', '富贵'] 凶词['克', '刑', '贫']"
+  },
+  {
+   "case_id": "DT-0250",
+   "bazi": "癸酉 丁巳 丙午 壬辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0251",
+   "bazi": "甲午 丙寅 辛酉 己丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0252",
+   "bazi": "乙巳 辛巳 庚辰 甲申",
+   "label": "good",
+   "note": "label=good 吉词['科甲', '贵', '富贵'] 凶词['破家', '贫']"
+  },
+  {
+   "case_id": "DT-0253",
+   "bazi": "壬子 戊申 戊戌 辛酉",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['贫']"
+  },
+  {
+   "case_id": "DT-0254",
+   "bazi": "癸卯 甲寅 丁巳 己酉",
+   "label": "bad",
+   "note": "label=bad 吉词['贵'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0257",
+   "bazi": "辛丑 丙申 癸巳 庚申",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0260",
+   "bazi": "丙辰 庚寅 丙午 壬辰",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0263",
+   "bazi": "丙申 己亥 庚辰 戊寅",
+   "label": "good",
+   "note": "label=good 吉词['寿'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0269",
+   "bazi": "丁未 庚戌 庚辰 丙子",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0270",
+   "bazi": "乙未 戊寅 乙卯 庚辰",
+   "label": "good",
+   "note": "label=good 吉词['寿'] 凶词['贫']"
+  },
+  {
+   "case_id": "DT-0272",
+   "bazi": "戊辰 庚申 己卯 戊辰",
+   "label": "good",
+   "note": "label=good 吉词['寿'] 凶词['夭', '僧', '克', '贫']"
+  },
+  {
+   "case_id": "DT-0273",
+   "bazi": "乙丑 乙酉 丙辰 辛卯",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0280",
+   "bazi": "戊午 乙丑 戊戌 丙辰",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0283",
+   "bazi": "丁丑 癸丑 庚子 乙酉",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0284",
+   "bazi": "丁丑 壬子 辛巳 丙申",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0286",
+   "bazi": "乙未 辛巳 乙亥 丙戌",
+   "label": "neutral",
+   "note": "label=neutral 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0288",
+   "bazi": "乙亥 癸酉 甲辰 丙寅",
+   "label": "good",
+   "note": "label=good 吉词['贵', '一品'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0291",
+   "bazi": "庚辰 壬午 乙亥 癸未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0294",
+   "bazi": "丙寅 辛卯 癸酉 戊午",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0295",
+   "bazi": "辛丑 辛卯 丙子 癸巳",
+   "label": "mixed",
+   "note": "label=mixed 吉词['诰封', '寿'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0298",
+   "bazi": "癸未 庚申 戊戌 己未",
+   "label": "good",
+   "note": "label=good 吉词['贵'] 凶词['贫']"
+  },
+  {
+   "case_id": "DT-0299",
+   "bazi": "己酉 辛未 戊辰 壬戌",
+   "label": "good",
+   "note": "label=good 吉词['富贵', '寿', '郡守'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0300",
+   "bazi": "丁亥 壬子 癸丑 甲寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0304",
+   "bazi": "甲午 丙寅 乙卯 己卯",
+   "label": "good",
+   "note": "label=good 吉词['贵', '寿'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0305",
+   "bazi": "丁未 壬寅 乙卯 己卯",
+   "label": "good",
+   "note": "label=good 吉词['寿'] 凶词['贫']"
+  },
+  {
+   "case_id": "DT-0308",
+   "bazi": "庚戌 壬午 丙寅 己亥",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0311",
+   "bazi": "癸丑 壬戌 丁亥 壬寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0313",
+   "bazi": "癸酉 戊午 庚寅 丁丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['贫']"
+  },
+  {
+   "case_id": "DT-0314",
+   "bazi": "丙寅 庚子 己亥 甲戌",
+   "label": "neutral",
+   "note": "label=neutral 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0315",
+   "bazi": "丙戌 辛丑 己卯 甲子",
+   "label": "bad",
+   "note": "label=bad 吉词['富贵'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0317",
+   "bazi": "甲申 丙子 癸亥 癸亥",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0319",
+   "bazi": "癸丑 乙丑 癸丑 癸丑",
+   "label": "bad",
+   "note": "label=bad 吉词['富贵'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0320",
+   "bazi": "丁酉 甲辰 戊戌 戊午",
+   "label": "good",
+   "note": "label=good 吉词['科甲', '尚书'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0321",
+   "bazi": "丁酉 乙巳 丁丑 丙午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0323",
+   "bazi": "庚寅 戊子 甲寅 丙寅",
+   "label": "good",
+   "note": "label=good 吉词['科甲', '尚书'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0324",
+   "bazi": "甲子 丁卯 甲寅 庚午",
+   "label": "mixed",
+   "note": "label=mixed 吉词['贵', '观察'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0327",
+   "bazi": "丁卯 辛亥 丙寅 丙申",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0328",
+   "bazi": "辛巳 丙申 壬寅 庚戌",
+   "label": "good",
+   "note": "label=good 吉词['观察'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0329",
+   "bazi": "戊戌 丙辰 乙未 丙戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0330",
+   "bazi": "壬寅 壬寅 庚寅 戊寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0331",
+   "bazi": "丙寅 庚寅 壬午 乙巳",
+   "label": "good",
+   "note": "label=good 吉词['侍郎'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0332",
+   "bazi": "丁卯 壬寅 庚午 丙戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0333",
+   "bazi": "辛巳 辛丑 乙酉 乙酉",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0334",
+   "bazi": "癸卯 乙卯 甲寅 乙亥",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0335",
+   "bazi": "丙午 甲午 丙午 甲午",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0336",
+   "bazi": "癸酉 癸亥 庚申 丁亥",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0337",
+   "bazi": "丙戌 壬辰 癸巳 甲寅",
+   "label": "mixed",
+   "note": "label=mixed 吉词['观察'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0338",
+   "bazi": "癸酉 乙丑 丙申 丙申",
+   "label": "mixed",
+   "note": "label=mixed 吉词['州牧'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0339",
+   "bazi": "乙丑 甲申 甲辰 己巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0340",
+   "bazi": "戊辰 壬戌 甲辰 己巳",
+   "label": "good",
+   "note": "label=good 吉词['州牧'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0342",
+   "bazi": "己卯 丁卯 壬午 癸卯",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0343",
+   "bazi": "丙戌 戊戌 癸巳 壬戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0346",
+   "bazi": "乙卯 己卯 戊辰 癸亥",
+   "label": "mixed",
+   "note": "label=mixed 吉词['科甲'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0347",
+   "bazi": "丁卯 丙寅 辛亥 庚寅",
+   "label": "good",
+   "note": "label=good 吉词['郡守'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0348",
+   "bazi": "癸亥 乙卯 己未 丁卯",
+   "label": "good",
+   "note": "label=good 吉词['科甲', '观察'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0349",
+   "bazi": "己卯 甲戌 甲子 己巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0350",
+   "bazi": "甲子 丙子 甲申 己巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0352",
+   "bazi": "甲寅 辛未 癸亥 戊午",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0354",
+   "bazi": "丁卯 壬寅 癸卯 丙辰",
+   "label": "mixed",
+   "note": "label=mixed 吉词['科甲'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0355",
+   "bazi": "丁巳 癸卯 癸卯 丙辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0356",
+   "bazi": "己未 丁丑 丙戌 戊戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0357",
+   "bazi": "己未 辛未 丙戌 戊戌",
+   "label": "neutral",
+   "note": "label=neutral 吉词['贵'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0358",
+   "bazi": "甲午 丁丑 甲午 丙寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0359",
+   "bazi": "辛丑 辛丑 戊申 壬子",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0361",
+   "bazi": "壬寅 辛亥 辛亥 壬辰",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0362",
+   "bazi": "壬子 辛亥 辛卯 辛卯",
+   "label": "good",
+   "note": "label=good 吉词['富贵'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0363",
+   "bazi": "壬辰 壬子 甲寅 戊辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0365",
+   "bazi": "己巳 戊辰 辛酉 己亥",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0366",
+   "bazi": "戊午 丁巳 己卯 庚午",
+   "label": "neutral",
+   "note": "label=neutral 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0367",
+   "bazi": "甲申 丙寅 甲申 庚午",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0368",
+   "bazi": "甲申 丙子 乙酉 丙戌",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0369",
+   "bazi": "丙辰 乙未 壬辰 甲辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0370",
+   "bazi": "癸卯 乙卯 己卯 辛未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0372",
+   "bazi": "戊戌 丙辰 辛丑 戊戌",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0375",
+   "bazi": "己亥 戊辰 甲寅 辛未",
+   "label": "good",
+   "note": "label=good 吉词['科甲'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0377",
+   "bazi": "乙亥 辛巳 丁巳 庚戌",
+   "label": "mixed",
+   "note": "label=mixed 吉词['尚书'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0378",
+   "bazi": "癸亥 甲子 戊戌 癸丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0379",
+   "bazi": "癸亥 癸亥 戊午 甲寅",
+   "label": "good",
+   "note": "label=good 吉词['贵', '富贵'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0381",
+   "bazi": "癸酉 辛酉 乙卯 己卯",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0382",
+   "bazi": "壬申 壬寅 壬午 甲辰",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0384",
+   "bazi": "乙亥 辛巳 戊申 甲寅",
+   "label": "mixed",
+   "note": "label=mixed 吉词['郡守'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0387",
+   "bazi": "戊子 庚申 壬寅 辛丑",
+   "label": "mixed",
+   "note": "label=mixed 吉词['科甲'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0389",
+   "bazi": "己亥 甲戌 戊寅 丙辰",
+   "label": "good",
+   "note": "label=good 吉词['侍郎'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0391",
+   "bazi": "丁亥 壬寅 甲戌 甲子",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0395",
+   "bazi": "戊寅 甲寅 甲寅 庚午",
+   "label": "mixed",
+   "note": "label=mixed 吉词['科甲', '侍郎'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0397",
+   "bazi": "戊午 戊午 戊午 甲寅",
+   "label": "mixed",
+   "note": "label=mixed 吉词['显赫'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0398",
+   "bazi": "甲寅 丙子 己酉 己巳",
+   "label": "good",
+   "note": "label=good 吉词['科甲'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0399",
+   "bazi": "戊午 甲寅 乙卯 己卯",
+   "label": "mixed",
+   "note": "label=mixed 吉词['侍郎'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0401",
+   "bazi": "癸亥 乙卯 甲寅 乙亥",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0402",
+   "bazi": "乙亥 己卯 甲寅 甲子",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0403",
+   "bazi": "己丑 丙寅 甲子 戊辰",
+   "label": "neutral",
+   "note": "label=neutral 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0404",
+   "bazi": "己酉 丁卯 己卯 乙丑",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0405",
+   "bazi": "丙戌 乙未 丙子 甲午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0406",
+   "bazi": "丙戌 甲午 丙午 己丑",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0407",
+   "bazi": "辛巳 甲午 丙子 甲午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0408",
+   "bazi": "癸亥 甲子 壬申 庚子",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克', '刑']"
+  },
+  {
+   "case_id": "DT-0409",
+   "bazi": "壬寅 壬子 壬辰 壬寅",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0410",
+   "bazi": "癸未 癸亥 壬子 戊申",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0411",
+   "bazi": "庚辰 壬午 甲午 丙寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0413",
+   "bazi": "甲申 癸酉 庚子 乙酉",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0415",
+   "bazi": "癸亥 庚申 壬申 甲辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0416",
+   "bazi": "癸亥 庚申 壬子 丙午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0418",
+   "bazi": "丁卯 丙午 丙午 庚寅",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0421",
+   "bazi": "壬子 辛亥 甲寅 甲子",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0423",
+   "bazi": "戊戌 丁巳 甲寅 己巳",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0426",
+   "bazi": "癸亥 辛酉 癸丑 壬戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0429",
+   "bazi": "丙寅 甲午 丙申 壬辰",
+   "label": "good",
+   "note": "label=good 吉词['科甲'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0430",
+   "bazi": "丙申 甲午 丙寅 壬辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0431",
+   "bazi": "戊子 戊午 丙辰 戊戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0433",
+   "bazi": "己丑 丙子 壬辰 戊申",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0434",
+   "bazi": "辛卯 乙未 甲子 庚午",
+   "label": "good",
+   "note": "label=good 吉词['中堂'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0436",
+   "bazi": "甲子 丙子 庚辰 庚辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0437",
+   "bazi": "丁巳 壬子 辛巳 丁酉",
+   "label": "mixed",
+   "note": "label=mixed 吉词['显赫'] 凶词[]"
+  },
+  {
+   "case_id": "DT-0438",
+   "bazi": "癸未 甲寅 戊戌 庚申",
+   "label": "good",
+   "note": "label=good 吉词['寿'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0440",
+   "bazi": "甲子 丙子 癸亥 乙卯",
+   "label": "good",
+   "note": "label=good 吉词['贵'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0442",
+   "bazi": "壬寅 丁未 丙申 甲午",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0444",
+   "bazi": "庚寅 己丑 丙子 乙未",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0446",
+   "bazi": "壬辰 甲辰 庚午 丙戌",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0447",
+   "bazi": "癸丑 戊午 壬寅 庚戌",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0448",
+   "bazi": "乙亥 庚辰 丙子 庚寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0450",
+   "bazi": "丙戌 乙未 乙巳 丁亥",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0451",
+   "bazi": "己巳 辛未 戊戌 己未",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0452",
+   "bazi": "庚辰 己丑 己亥 壬申",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0453",
+   "bazi": "壬辰 壬子 辛酉 己丑",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0454",
+   "bazi": "己丑 丙子 辛酉 壬辰",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0455",
+   "bazi": "甲戌 丙子 庚子 丙戌",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0456",
+   "bazi": "己巳 庚午 己亥 丙寅",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0458",
+   "bazi": "己丑 丁丑 己亥 乙丑",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0462",
+   "bazi": "壬辰 壬寅 己未 戊辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0463",
+   "bazi": "壬戌 甲辰 甲戌 丙寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0464",
+   "bazi": "甲寅 丁丑 丁卯 庚戌",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0465",
+   "bazi": "丁亥 壬子 庚子 辛巳",
+   "label": "good",
+   "note": "label=good 吉词['科甲'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0466",
+   "bazi": "戊辰 乙卯 己卯 丙辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0468",
+   "bazi": "癸未 癸亥 甲午 丁卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0469",
+   "bazi": "壬辰 己酉 癸卯 己卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0470",
+   "bazi": "己亥 甲戌 庚子 丙子",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0471",
+   "bazi": "己亥 丙子 庚子 辛巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0472",
+   "bazi": "丙申 壬辰 丙子 壬辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0474",
+   "bazi": "庚戌 辛巳 乙卯 戊寅",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0475",
+   "bazi": "癸亥 乙卯 戊午 甲寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0476",
+   "bazi": "戊子 壬戌 庚寅 癸未",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0477",
+   "bazi": "戊子 己未 辛亥 戊子",
+   "label": "good",
+   "note": "label=good 吉词['科甲'] 凶词['克', '贫']"
+  },
+  {
+   "case_id": "DT-0478",
+   "bazi": "癸巳 壬戌 乙卯 戊寅",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0479",
+   "bazi": "癸未 庚申 甲申 乙亥",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0480",
+   "bazi": "壬午 甲辰 丁巳 己酉",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0484",
+   "bazi": "己巳 壬申 甲寅 戊辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0486",
+   "bazi": "己丑 庚午 戊申 癸亥",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0487",
+   "bazi": "壬子 甲辰 戊戌 丙辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0488",
+   "bazi": "癸巳 甲寅 丙戌 庚寅",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0493",
+   "bazi": "己亥 丁卯 庚申 庚辰",
+   "label": "good",
+   "note": "label=good 吉词['贵', '侍郎'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0494",
+   "bazi": "壬寅 己酉 庚午 丙戌",
+   "label": "good",
+   "note": "label=good 吉词['科甲', '尚书'] 凶词['刑']"
+  },
+  {
+   "case_id": "DT-0495",
+   "bazi": "庚戌 壬午 丙子 壬辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0499",
+   "bazi": "丙寅 戊戌 丁酉 乙巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0500",
+   "bazi": "丙子 庚寅 辛巳 戊子",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0501",
+   "bazi": "丁亥 丙午 戊寅 甲寅",
+   "label": "good",
+   "note": "label=good 吉词['科甲'] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0503",
+   "bazi": "壬辰 壬寅 戊戌 丙辰",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0504",
+   "bazi": "壬午 癸丑 甲寅 丁卯",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0506",
+   "bazi": "乙酉 丙戌 癸酉 丁巳",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0507",
+   "bazi": "甲申 戊辰 戊子 戊午",
+   "label": "good",
+   "note": "label=good 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0513",
+   "bazi": "乙未 戊子 庚辰 丁丑",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克']"
+  },
+  {
+   "case_id": "DT-0514",
+   "bazi": "戊子 乙卯 丙寅 丁酉",
+   "label": "bad",
+   "note": "label=bad 吉词[] 凶词[]"
+  },
+  {
+   "case_id": "DT-0517",
+   "bazi": "辛卯 甲午 乙卯 乙酉",
+   "label": "mixed",
+   "note": "label=mixed 吉词[] 凶词['克', '刑']"
+  }
+ ]
+}

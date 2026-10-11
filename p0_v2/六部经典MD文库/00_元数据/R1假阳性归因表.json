@@ -1,0 +1,1282 @@
+[
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_DI_ZHI_LIU_HE_003.md",
+  "book": "SMTH",
+  "cause": "H 其他边界",
+  "len": 208,
+  "cover": 43.3,
+  "probe_hit": "子云是从无而立有谓见不见之形也从无立有喻如甲生人以寅为禄不见寅而见亥谓之合禄寅生人以申为马不见申而见"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_DI_ZHI_LIU_PO_002.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 55,
+  "cover": 61.8,
+  "probe_hit": "酉以卯为财午为煞煞财兼有故主财官双美然所以相破者以其相克也必四正相破"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_GAN_HE_007.md",
+  "book": "SMTH",
+  "cause": "H 其他边界",
+  "len": 149,
+  "cover": 34.2,
+  "probe_hit": "慝之合主人眼明神娇多情易动不事高洁习下无去枕欢溺色于我则吝于彼则贪若五行死绝或带煞见咸池大耗天中自败"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_SHI_SHEN_004.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 117,
+  "cover": 76.9,
+  "probe_hit": "五干属陽喜合以甲为例见甲为比肩兄弟见乙为劫财败财克父及妻见丙为食神天厨寿星为男见丁为伤官退财耗气子甥"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_SHI_SHEN_005.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 113,
+  "cover": 79.6,
+  "probe_hit": "五干属陰喜冲以乙为例见甲为劫财逐马克妻见乙为比肩兄弟朋友见丙为伤官小人盗气为侄见丁为食神天厨寿星子孙"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_WU_XING_SHENG_KE_001.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 20,
+  "cover": 100.0,
+  "probe_hit": "论五行相生金生水水生木木生火火生土土生金"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_WU_XING_SHENG_KE_002.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 20,
+  "cover": 100.0,
+  "probe_hit": "论五行相克金克木木克土土克水水克火火克金"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/02_透藏关系/FOUNDATION_TOU_CANG_CANG_GAN_TOU_CHU_004.md",
+  "book": "PZZQ",
+  "cause": "A 纯标点/全半角差异",
+  "len": 92,
+  "cover": 85.9,
+  "probe_hit": "而运逢戌透出辰中伤官壬生戌月丁己并透而支又会寅会午作财旺生官矣而运逢戊土透出戌中七煞壬生亥月透己为用"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_TI_GANG_003.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 21,
+  "cover": 33.3,
+  "probe_hit": "提纲有用提纲重"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_TI_GANG_005.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 15,
+  "cover": 100.0,
+  "probe_hit": "以日为主年为本月为提纲时为辅佐"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_TI_GANG_007.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 15,
+  "cover": 100.0,
+  "probe_hit": "欲知贵贱先观月令乃提纲次断吉凶"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_001.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 25,
+  "cover": 44.0,
+  "probe_hit": "甲生酉月逢卯则冲而或支"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_002.md",
+  "book": "PZZQ",
+  "cause": "A 纯标点/全半角差异",
+  "len": 15,
+  "cover": 100.0,
+  "probe_hit": "不如以另位之刑冲解月令之刑冲矣"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_004.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 24,
+  "cover": 100.0,
+  "probe_hit": "忌年与时冲月支日支自冲不妨大运及岁君来冲月支则祸"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_006.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 8,
+  "cover": 100.0,
+  "probe_hit": "月令逢冲过房离祖"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_007.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 15,
+  "cover": 100.0,
+  "probe_hit": "冲破提纲多亏父母或是刑或是离异"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_GE_JU_005.md",
+  "book": "PZZQ",
+  "cause": "A 纯标点/全半角差异",
+  "len": 21,
+  "cover": 100.0,
+  "probe_hit": "用神既主月令矣然月令所藏不一而用神遂有变化"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_GE_JU_010.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 21,
+  "cover": 100.0,
+  "probe_hit": "大凡看命先看月支有无财官方看其它月令为命也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_GE_JU_012.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 11,
+  "cover": 100.0,
+  "probe_hit": "如月令全无可用方看他格"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_GE_JU_013.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 18,
+  "cover": 100.0,
+  "probe_hit": "凡看命专以日干为主取提纲所用之物为命"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_TIAO_HOU_001.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 17,
+  "cover": 100.0,
+  "probe_hit": "天道有寒暖发育万物人道行之不可过也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_TIAO_HOU_002.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 17,
+  "cover": 100.0,
+  "probe_hit": "地道有燥湿生成品汇人道得之不可偏也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_WANG_SHUAI_006.md",
+  "book": "PZZQ",
+  "cause": "A 纯标点/全半角差异",
+  "len": 24,
+  "cover": 100.0,
+  "probe_hit": "况八字虽以月令为重而旺相休囚年月日时亦有损益之权"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_WANG_SHUAI_007.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 11,
+  "cover": 100.0,
+  "probe_hit": "法分月气深浅得令不得令"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_WANG_SHUAI_008.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 12,
+  "cover": 100.0,
+  "probe_hit": "以五行之气惟月令当时为最"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_WANG_SHUAI_009.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 12,
+  "cover": 100.0,
+  "probe_hit": "官星不见者不但失令被伤也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_BEI_CHONG_002.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 16,
+  "cover": 100.0,
+  "probe_hit": "後杀克年父母早丧前杀克後子息必亏"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_BEI_CHONG_003.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 11,
+  "cover": 100.0,
+  "probe_hit": "时冲年兮儿女旺父母易损"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_BEI_CHONG_005.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 24,
+  "cover": 100.0,
+  "probe_hit": "忌年与时冲月支日支自冲不妨大运及岁君来冲月支则祸"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_002.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 15,
+  "cover": 100.0,
+  "probe_hit": "大忌年上伤官主产厄带疾否则伤寿"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_003.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 20,
+  "cover": 100.0,
+  "probe_hit": "马入妻宫必得能家之妇杀临子位必招悖逆之儿"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_004.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 16,
+  "cover": 100.0,
+  "probe_hit": "禄入妻宫食妻之禄印临子位受子之荣"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_005.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 16,
+  "cover": 100.0,
+  "probe_hit": "枭居子位破祖之基财官月旺得父赀财"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_006.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 20,
+  "cover": 100.0,
+  "probe_hit": "辛巳壬午甲申乙酉俱是坐下财官逢之富贵不少"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_002.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 15,
+  "cover": 100.0,
+  "probe_hit": "取年为根为上祖财产知世运之盛衰"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_003.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 19,
+  "cover": 100.0,
+  "probe_hit": "假令年为本带官星印绶则早年有官出自祖宗"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_004.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 22,
+  "cover": 100.0,
+  "probe_hit": "年有用神得祖宗力时有用神得子孙力反此则不得力"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_005.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 20,
+  "cover": 100.0,
+  "probe_hit": "年为祖上月为父母伯叔兄弟门户日为妻妾己身"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_006.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 8,
+  "cover": 100.0,
+  "probe_hit": "年为本主宜细推详"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_001.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 17,
+  "cover": 100.0,
+  "probe_hit": "日干为己身日支为妻妾则知妻妾之贤淑"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_002.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 18,
+  "cover": 100.0,
+  "probe_hit": "以日为妻如在冲刑克杀之地言克妻妾之断"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_003.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 8,
+  "cover": 100.0,
+  "probe_hit": "日乃自身须究强弱"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_006.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 16,
+  "cover": 100.0,
+  "probe_hit": "日下月下坐财官主妻多内助更得妻财"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_007.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 8,
+  "cover": 100.0,
+  "probe_hit": "日坐空亡难为妻妾"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_SHI_ZHU_001.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 14,
+  "cover": 100.0,
+  "probe_hit": "时为花实为子息方知嗣续之所归"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_SHI_ZHU_002.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 8,
+  "cover": 100.0,
+  "probe_hit": "时为辅佐平生操履"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_SHI_ZHU_003.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 22,
+  "cover": 100.0,
+  "probe_hit": "年有用神得祖宗力时有用神得子孙力反此则不得力"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_SHI_ZHU_004.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 15,
+  "cover": 100.0,
+  "probe_hit": "以时为子息临死绝之乡言子少之断"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_YUE_ZHU_001.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 14,
+  "cover": 100.0,
+  "probe_hit": "取月为苗为父母则知亲荫之有无"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_YUE_ZHU_002.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 18,
+  "cover": 100.0,
+  "probe_hit": "月为提纲带官星印绶则慷慨聪明见识高人"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_YUE_ZHU_003.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 11,
+  "cover": 100.0,
+  "probe_hit": "假令月令有用神得父母力"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_YUE_ZHU_004.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 22,
+  "cover": 100.0,
+  "probe_hit": "以月为兄弟如火命生酉戌亥子月言兄弟不得力之断"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_DE_DI_005.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 54,
+  "cover": 75.9,
+  "probe_hit": "注解凡日主用神俱要著落之处如四柱中不得通根有靠又遇空亡死绝则终无成立必然飘荡失所矣"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_DE_LING_006.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 74,
+  "cover": 51.4,
+  "probe_hit": "身旺则宜泄宜伤身衰则喜扶喜助务禀中和之气莫令太过不及若遵此法推详祸福验如影响"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_DE_SHI_001.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 22,
+  "cover": 100.0,
+  "probe_hit": "强众而敌寡者势在去其寡强寡而敌众者势在成乎众"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_GEN_QI_001.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 48,
+  "cover": 60.4,
+  "probe_hit": "为极弱然已有庚金为水根也火虽至亥为极母也然亥有木为火之根也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_SHUAI_002.md",
+  "book": "DTS",
+  "cause": "B 省略号折叠多句",
+  "len": 41,
+  "cover": 70.7,
+  "probe_hit": "衰之极者不可益所当损者而损之反凶实所当益者而益之反害此真机"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_SHUAI_006.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 40,
+  "cover": 75.0,
+  "probe_hit": "木值秋生失时乃弱柱中虽遇生旺之官若运行衰绝之一地终不为之生地"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_WANG_002.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 77,
+  "cover": 97.4,
+  "probe_hit": "然旺中有衰者存不可损也衰中有旺者存不可益也旺之可损以损在其中矣衰之极者不可益所当损者而损之反凶实所当"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_WANG_006.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 39,
+  "cover": 74.4,
+  "probe_hit": "木值春生得时乃旺柱中虽遇死绝之中若运行生旺之乡亦不为之死也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_ZHONG_HE_001.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 17,
+  "cover": 100.0,
+  "probe_hit": "既识中和之正理而于五行之妙有全能焉"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_CONG_GE_001.md",
+  "book": "DTS",
+  "cause": "C md标记+省略号",
+  "len": 74,
+  "cover": 78.4,
+  "probe_hit": "既从矣当论所从之神如从财只以财为主财神是木而旺又看意向或要火要土要金而行运得所者吉否则凶余皆仿此金不"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_CONG_GE_002.md",
+  "book": "DTS",
+  "cause": "B 省略号折叠多句",
+  "len": 56,
+  "cover": 71.4,
+  "probe_hit": "中有比劫暗生从之不真至于岁运财官得地虽是假从亦可取富贵但其人不能免祸或心术不端耳"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_HUA_GE_002.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 77,
+  "cover": 97.4,
+  "probe_hit": "既化矣又论化神如甲己化土土阴寒要火气昌旺土太旺又要取水为财木为官金为食神随其所向论其喜忌再见甲乙亦不"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_HUA_GE_004.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 44,
+  "cover": 95.5,
+  "probe_hit": "有以四柱为体有以化神为体四柱为用化之真者即以化神为体以四柱中与化神相生相克者取以为用"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_JIAN_LU_YANG_REN_001.md",
+  "book": "PZZQ",
+  "cause": "A 纯标点/全半角差异",
+  "len": 65,
+  "cover": 95.4,
+  "probe_hit": "四十五论建禄月劫建禄者月建逢禄堂也禄即是劫或以禄堂透出即可依以用者非也故建禄与月劫可同一格不必加分皆"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_JIAN_LU_YANG_REN_002.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 189,
+  "cover": 47.6,
+  "probe_hit": "四十三论阳刃阳刃者劫我正财之神乃正财之七煞也禄前一位惟五阳有之故为旭刃不曰劫而曰刃劫之甚也刃宜伏制官"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_JIAN_LU_YANG_REN_005.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 70,
+  "cover": 40.0,
+  "probe_hit": "建禄庚辛旺在申有官有印有财星逆行辰巳荣财禄北地须知富贵成"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_JIAN_LU_YANG_REN_006.md",
+  "book": "SMTH",
+  "cause": "B 省略号折叠多句",
+  "len": 251,
+  "cover": 25.1,
+  "probe_hit": "当其极处火则焦灭水则涌竭金则折缺土则崩裂木则摧折故既成而未极则为福已极则将反而为凶极盛之地十干中正处"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_PI_CAI_001.md",
+  "book": "DTS",
+  "cause": "E 跨书并置",
+  "len": 63,
+  "cover": 28.6,
+  "probe_hit": "十二八格财官印绶发偏正兼论食伤八格定"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_PI_GUAN_001.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 181,
+  "cover": 49.7,
+  "probe_hit": "三十九论偏官煞以攻身似非美物百大贵之格多存七煞盖控制得宜煞为我用如大英雄大豪杰似难驾驭而处之有方则惊"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_PI_YIN_001.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 160,
+  "cover": 56.2,
+  "probe_hit": "也十九论四凶神能成格煞伤枭刃四凶神也然施之得宜亦能成格如印绶根轻透煞为助煞能成格也财逢比劫伤官可解伤"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_PI_YIN_002.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 14,
+  "cover": 100.0,
+  "probe_hit": "枭神兴早年折夭食神旺老寿弥高"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_SHANG_GUAN_003.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 247,
+  "cover": 36.4,
+  "probe_hit": "四十一论伤官伤官虽非吉神实为秀气故文人学士多于伤官格内得之而夏木见水冬金见火则又为秀之尤秀者也其中格"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_SHI_SHEN_001.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 132,
+  "cover": 68.2,
+  "probe_hit": "三十七论食神食神本属泄气以其能生正财所以喜之故食神生财美格也财要有根不必偏正叠出如身强食旺而财透大贵"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHENG_CAI_001.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 157,
+  "cover": 57.3,
+  "probe_hit": "三十三论财财为我克使用之物也以能生官所以为美为财帛为妻妾为才能为驿马皆财类也财喜根深不宜太露然透一位"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHENG_GUAN_002.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 190,
+  "cover": 47.4,
+  "probe_hit": "三十一论正官官以克身虽与七煞有别终受彼制何以切忌刑冲破害尊之若是乎岂知人生天地间必无矫焉自尊之理虽贵"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHENG_YIN_001.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 207,
+  "cover": 43.5,
+  "probe_hit": "三十五论印绶印绶喜其生身正偏同为美格故财与印不分偏正同为一格而论之印绶之格局亦不一有印而透官者正官不"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHENG_YIN_004.md",
+  "book": "PZZQ",
+  "cause": "A 纯标点/全半角差异",
+  "len": 22,
+  "cover": 100.0,
+  "probe_hit": "若印轻财重又无劫财以救则为贪财破印贫贱之局也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHUAN_WANG_001.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 28,
+  "cover": 92.9,
+  "probe_hit": "自八格之外若曲直五格皆为格而方局气象定之者不可言格也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_009.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 60,
+  "cover": 46.7,
+  "probe_hit": "官杀混杂当寿夭去官留杀仔细寻留官去杀莫逢杀留杀去官莫逢官"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_011.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 38,
+  "cover": 42.1,
+  "probe_hit": "印轻逢财或身强印重而透煞印格败也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_017.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 208,
+  "cover": 32.2,
+  "probe_hit": "食神有气要日干自旺则贵而有禄富而有寿故曰食神有气胜才官先要强他旺本干最忌枭神夺食比肩分食又不喜见官星"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_019.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 36,
+  "cover": 41.7,
+  "probe_hit": "食逢枭而就煞以成格或生财以护食"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_020.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 49,
+  "cover": 61.2,
+  "probe_hit": "财逢劫而透食以化之生官以制之逢煞而食神制煞以生财或存财而合煞"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_022.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 28,
+  "cover": 100.0,
+  "probe_hit": "伤官务要伤尽伤之不尽官来乘旺其祸不可胜言伤官见官为祸百端"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_023.md",
+  "book": "SMTH",
+  "cause": "H 其他边界",
+  "len": 70,
+  "cover": 60.0,
+  "probe_hit": "伤官火土宜伤尽金水伤官要见官木火见官官要旺土金官去反成官惟有水木伤官格财官两见始为欢"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_006.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 80,
+  "cover": 97.5,
+  "probe_hit": "官星不见者不但失令被伤也身轻官重官轻印重财重无官官重无印者皆是官星不见也中有一味浊财则不贫至于用神无"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_007.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 74,
+  "cover": 97.3,
+  "probe_hit": "气浊神枯之命极易看印绶太旺日主无着落财杀太旺日主无依倚忌神与喜神杂而虞四柱与用神反而绝冲而不和旺而无"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_008.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 184,
+  "cover": 37.0,
+  "probe_hit": "愚尝先前未谙病药之说屡以中和而究人之造化十无一二有验又以财官为论亦俱无归趣后始得悟病药之旨再以财官中"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_009.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 179,
+  "cover": 34.6,
+  "probe_hit": "也或本身病重而药少或本身病轻而得药重又宜行运以取其中和若病重而得药大富贵之人也病轻而得药略富贵之人也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_011.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 270,
+  "cover": 32.6,
+  "probe_hit": "如身居休囚死败天元赢弱柱中支干重重三合财多非徒无益则反生杀生灾所谓只怕日干元自弱财多生杀赶身衰是也如"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_014.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 110,
+  "cover": 77.3,
+  "probe_hit": "精英则是母胎虚耗子无托生之所正谓子多无子若得东方甲乙运有木克去子星存养丁火精神庶无尚可生子此造何期运"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_020.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 96,
+  "cover": 72.9,
+  "probe_hit": "旺者宜行比劫运以去财星印星太旺者宜行财星运以破其印星日干太旺者宜行官杀运以制其日干一理如是百理皆然若"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_021.md",
+  "book": "SFTK",
+  "cause": "C md标记+省略号",
+  "len": 182,
+  "cover": 23.6,
+  "probe_hit": "盖日主之气破泄其精英是其英华发于外也故多聪明若日干旺精英喜泄则为卿为相若日干弱泄气太多"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_024.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 10,
+  "cover": 100.0,
+  "probe_hit": "财多身弱正为富屋贫人"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_025.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 8,
+  "cover": 100.0,
+  "probe_hit": "杀重身轻终身有损"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QI_HOU_001.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 17,
+  "cover": 100.0,
+  "probe_hit": "天道有寒暖发育万物人道行之不可过也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QI_HOU_003.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 17,
+  "cover": 100.0,
+  "probe_hit": "地道有燥湿生成品汇人道得之不可偏也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QI_HOU_021.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 20,
+  "cover": 100.0,
+  "probe_hit": "木相火明此辈宜登甲第金寒水冷斯人终是贫寒"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_WU_XING_BING_001.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 18,
+  "cover": 100.0,
+  "probe_hit": "震兑主仁义之真机势不两立而有相成者存"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_WU_XING_BING_003.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 18,
+  "cover": 100.0,
+  "probe_hit": "坎离宰天地之中气成不独成而有相持者在"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_WU_XING_BING_009.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 158,
+  "cover": 31.0,
+  "probe_hit": "旺者宜行比劫运以去财星印星太旺者宜行财星运以破其印星日干太旺者宜行官杀运以制其日干一理如是百理皆然"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_WU_XING_BING_010.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 16,
+  "cover": 100.0,
+  "probe_hit": "水泛木浮死无棺停火炎土燥生受孤单"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_ZHI_FA_018.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 90,
+  "cover": 77.8,
+  "probe_hit": "旺者宜行比劫运以去财星印星太旺者宜行财星运以破其印星日干太旺者宜行官杀运以制其日干一理如是百理皆然若"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LIU_PAI_004.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 171,
+  "cover": 39.8,
+  "probe_hit": "愚尝先前未谙病药之说屡以中和而究人之造化十无一二有验又以财官为论亦俱无归趣后始得悟病药之旨再以财官中"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LI_WAI_003.md",
+  "book": "DTS",
+  "cause": "C md标记+省略号",
+  "len": 85,
+  "cover": 83.5,
+  "probe_hit": "大率伤官有财皆可见官伤官无财皆不可见官又要看身强身弱何财官印绶比肩不同方可不必分金木火土也又曰伤官用"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LI_WAI_005.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 191,
+  "cover": 47.1,
+  "probe_hit": "是会合可以解刑也又有因解而反得刑冲者何也假如甲生子月支逢二卯相并二卯不刑一子而支又逢戌戌与卯合本为解"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LI_WAI_006.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 123,
+  "cover": 73.2,
+  "probe_hit": "然亦有逢成格而不喜者何也如壬生午月运透己官而本命有甲乙之类是也又有逢变格而不忌者何也如丁生辰月透壬用"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LI_WAI_008.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 39,
+  "cover": 35.9,
+  "probe_hit": "火土伤官宜伤尽金水伤官要见官"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_ZHENG_JU_LIAN_005.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 172,
+  "cover": 52.3,
+  "probe_hit": "何谓救应如官逢伤而透印以解之杂煞而合煞以清之刑冲而会合以解之财逢劫而透食以化之生官以制之逢煞而食神制"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_BING_YAO_006.md",
+  "book": "QTBJ",
+  "cause": "A 纯标点/全半角差异",
+  "len": 19,
+  "cover": 100.0,
+  "probe_hit": "或有土无甲为有病无药常人有甲者衣衿可望"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_005.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 206,
+  "cover": 43.7,
+  "probe_hit": "八论用神八字用神专求月令以日干配月令地支而生克不同格局分焉财官印食此用神之善而顺用之者也煞伤劫刃用神"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_006.md",
+  "book": "PZZQ",
+  "cause": "B 省略号折叠多句",
+  "len": 240,
+  "cover": 37.5,
+  "probe_hit": "况八字虽以月令为重而旺相休囚年月日时亦有损益之权故生月即不值令而年时如值禄旺岂便为衰不可执一而论犹如"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_007.md",
+  "book": "SFTK",
+  "cause": "A 纯标点/全半角差异",
+  "len": 96,
+  "cover": 93.8,
+  "probe_hit": "然或官星太旺者宜行伤官运以去其官星财星丈旺者宜行比劫运以去财星印星太旺者宜行财星运以破其印星日干太旺"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_008.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 213,
+  "cover": 31.9,
+  "probe_hit": "当权者不宜资助得位者不必生扶假或水又滋土土或培金若木有余之病用金以制之金气有余之病用火以克之官星之气"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_011.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 199,
+  "cover": 45.2,
+  "probe_hit": "魃之苗得雨之机难遇焉故冲霄之羽健贵在三年之不飞惊人之声雄贵在三年之不鸣是以清凉之候恒伸于炎烈之余和煦"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_019.md",
+  "book": "PZZQ",
+  "cause": "A 纯标点/全半角差异",
+  "len": 80,
+  "cover": 88.8,
+  "probe_hit": "然亦有月令无用神者将若之何如木生寅卯日与月同本身不可为用必看四柱有无财官煞食透干会支另取用神然终以月"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_TIAO_HOU_013.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 147,
+  "cover": 61.2,
+  "probe_hit": "十四论用神配气候得失论命惟以月令用神为主然亦须配气候而互参之譬如英雄豪杰生得其时自然事半功倍遭时不顺"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_TONG_GUAN_002.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 100,
+  "cover": 90.0,
+  "probe_hit": "中间上下远隔为物所间前后远绝或被刑冲或被劫占或隔一物皆谓之关也必得引用无合之神及刑冲所间之物前后上下"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_XI_JI_002.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 41,
+  "cover": 95.1,
+  "probe_hit": "有以四柱为体岁运为用有以喜神为体辅喜神之神为用所喜之神不能自用以为体用辅喜之神"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_XI_JI_011.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 21,
+  "cover": 90.5,
+  "probe_hit": "至于喜神伏藏死绝者又要冲动引用生发之气"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_YONG_SHEN_ZHEN_JIA_005.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 45,
+  "cover": 53.3,
+  "probe_hit": "纯杂之理不出变化分而疏之其理愈明学命者不可不知也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_003.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 81,
+  "cover": 85.2,
+  "probe_hit": "如用神不行于流行之地且又行助体之运财不妙有体用各立者体用皆旺不分胜负行运又无轻重上下则各立有体用俱滞"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_025.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 252,
+  "cover": 35.7,
+  "probe_hit": "子平之法大运看支岁君看干交运同接木何也且干支二字六十甲子之说用花字若天干地支得其时则自然开花结子盛矣"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_026.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 162,
+  "cover": 40.1,
+  "probe_hit": "刃比肩俱各争旺惟有财官格神等物虚浮轻少无力成功名矣出门行运又非作福之地所以一生饥寒劳苦落剥有志无成或"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_027.md",
+  "book": "SFTK",
+  "cause": "C md标记+省略号",
+  "len": 145,
+  "cover": 62.1,
+  "probe_hit": "用财见比肩为病喜见官杀为药也如用食神伤官以印为病喜财为药也或本身病重而药少或本身病轻而得药重又宜行运"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_028.md",
+  "book": "SFTK",
+  "cause": "C md标记+省略号",
+  "len": 92,
+  "cover": 76.1,
+  "probe_hit": "旺者宜行比劫运以去财星印星太旺者宜行财星运以破其印星日干太旺者宜行官杀运以制其日干一理如是百理皆然若"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_029.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 179,
+  "cover": 40.2,
+  "probe_hit": "益者益其不及也若木之死于午若水之死于卯也不及则宜资助且如木气之本衰庚辛又来克木也水气之本衰戊己土又来"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_ZHI_YU_008.md",
+  "book": "SFTK",
+  "cause": "B 省略号折叠多句",
+  "len": 138,
+  "cover": 44.2,
+  "probe_hit": "或本身病重而药少或本身病轻而得药重又宜行运以取其中和若病重而得药大富贵之人也病轻而得药略富贵之人也无"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_ZHI_YU_011.md",
+  "book": "YHZP",
+  "cause": "B 省略号折叠多句",
+  "len": 53,
+  "cover": 66.0,
+  "probe_hit": "大抵偏官七杀最喜身旺有制伏为妙元有制伏可行杀旺之方元无制伏可行制伏之运"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_LIU_NIAN_011.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 168,
+  "cover": 53.6,
+  "probe_hit": "日干支冲克太岁曰征运支干伤冲太岁亦曰征太岁干支冲日干支者亦曰征但看八字有无救助仔细推详百发百中日干支"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_SUI_YUN_BING_LIN_003.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 16,
+  "cover": 100.0,
+  "probe_hit": "劫财陽刃切忌时逢岁运并临灾殃立至"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_SUI_YUN_BING_LIN_007.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 90,
+  "cover": 85.6,
+  "probe_hit": "刃杀俱全非常人有之大要身旺运行身旺之乡不要见伤官刃旺运若命中元有杀刃岁运又逢之其祸非常若命有刃无杀岁"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_YUN_XIAN_006.md",
+  "book": "SFTK",
+  "cause": "A 纯标点/全半角差异",
+  "len": 74,
+  "cover": 91.9,
+  "probe_hit": "小运逆顺由时注释小运者补大运之不足而立名也古人以男起丙寅女起壬申以是定逐年祸福鲜有不左予尝见一秘书以"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_FU_GUI_PIN_JIAN_008.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 443,
+  "cover": 20.3,
+  "probe_hit": "夫人生有秉富贵之荣而当兴富贵而且能享福而保其终身其何故也盖四柱中身主专旺而其所用吉神或为财或为官或为"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_JI_XIONG_SHOU_YAO_008.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 20,
+  "cover": 100.0,
+  "probe_hit": "日干困弱伯牛敢怨苍穹禄马衰微颜子难逃短命"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_NV_MING_013.md",
+  "book": "PZZQ",
+  "cause": "H 其他边界",
+  "len": 67,
+  "cover": 77.6,
+  "probe_hit": "贵众者官众也女以官为夫正夫岂可叠出乎一女众夫舞裙歌扇理固然也若作贵人乃是天星并非夫主何碍于众而必为娼"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_NV_MING_015.md",
+  "book": "SFTK",
+  "cause": "A 纯标点/全半角差异",
+  "len": 104,
+  "cover": 86.5,
+  "probe_hit": "阴阳刚柔各有其体故女命以柔为本以刚为刑以清为奇以浊为贱乾阳也坤阴也阴阳交则成人道阳刚而阴柔禀得乾道则"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_NV_MING_018.md",
+  "book": "SMTH",
+  "cause": "D md标记残留",
+  "len": 1020,
+  "cover": 8.8,
+  "probe_hit": "戊午辛酉丙申本身专禄旺不从化辛用丙官为夫星五月火旺夫健丙用癸为官坐贵见戊为食同归禄于巳辛金生癸水为子"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_NV_MING_019.md",
+  "book": "SMTH",
+  "cause": "D md标记残留",
+  "len": 769,
+  "cover": 11.7,
+  "probe_hit": "旺夫克子夫女人有旺夫伤子者何此法皆时上推之时为归宿之地夫子二星引归于时夫星生旺子星衰败是也如一命丙戌"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GUI_REN_013.md",
+  "book": "SMTH",
+  "cause": "B 省略号折叠多句",
+  "len": 146,
+  "cover": 61.6,
+  "probe_hit": "盖日月照临之宫凡天曜地煞尽可制服故可回凶作吉阎东叟云贵神在位诸煞伏藏二德扶持众凶解散凡命中带凶煞得此"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_007.md",
+  "book": "SMTH",
+  "cause": "H 其他边界",
+  "len": 105,
+  "cover": 63.8,
+  "probe_hit": "故以甲旬尽处曰空亡盖有是位而无禄曰空有支而无干曰亡如甲子的遁至酉而十干足所以无戌亥余五干例见是为空亡"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_011.md",
+  "book": "SMTH",
+  "cause": "H 其他边界",
+  "len": 28,
+  "cover": 71.4,
+  "probe_hit": "金空则响火空则明水空则清木空则折土空则崩"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_015.md",
+  "book": "YHZP",
+  "cause": "B 省略号折叠多句",
+  "len": 18,
+  "cover": 55.6,
+  "probe_hit": "印绶逢华华盖尊居翰苑"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_016.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 24,
+  "cover": 50.0,
+  "probe_hit": "空亡官禄遇贵人淡服作高僧"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_018.md",
+  "book": "SMTH",
+  "cause": "A 纯标点/全半角差异",
+  "len": 14,
+  "cover": 100.0,
+  "probe_hit": "柱中若逢华盖遇二德乃清贵之人"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_019.md",
+  "book": "SMTH",
+  "cause": "H 其他边界",
+  "len": 63,
+  "cover": 49.2,
+  "probe_hit": "以甲寅水见辛丑土为鬼来克命戊午见丁丑庚申见乙丑同是空亡忌克命也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_JI_XING_022.md",
+  "book": "SFTK",
+  "cause": "H 其他边界",
+  "len": 23,
+  "cover": 73.9,
+  "probe_hit": "三车一览云学堂有气惟利师儒富贵赋云"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_004.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 183,
+  "cover": 49.2,
+  "probe_hit": "夫羊刃者号天上之凶星作人间之恶杀以禄前一位是也如甲禄在寅卯为羊刃喜偏官七杀喜印绶忌反伏吟忌魁罡忌三合"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_007.md",
+  "book": "SMTH",
+  "cause": "H 其他边界",
+  "len": 413,
+  "cover": 21.8,
+  "probe_hit": "当其极处火则焦灭水则涌竭金则折缺土则崩裂木则摧折故既成而未极则为福已极则将反而为凶极盛之地十干中正处"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_008.md",
+  "book": "SMTH",
+  "cause": "H 其他边界",
+  "len": 263,
+  "cover": 34.2,
+  "probe_hit": "煞主财帛歇灭常人以屠沽刀锯等事为业或因被盗而致命者有刃头鬼如甲人见辛卯之类谓之持刃煞主人不令终虽入贵"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_014.md",
+  "book": "YHZP",
+  "cause": "H 其他边界",
+  "len": 14,
+  "cover": 57.1,
+  "probe_hit": "亡神拱杀盗贼之徒"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_018.md",
+  "book": "SMTH",
+  "cause": "H 其他边界",
+  "len": 30,
+  "cover": 40.0,
+  "probe_hit": "羊刃偏官有制膺职掌于兵刑"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_019.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 41,
+  "cover": 100.0,
+  "probe_hit": "劫财羊刃切忌时逢岁运并临灾殃立至劫财乃是日上天元分争财禄比肩是也羊刃者禄前一位是也"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/02_旺衰类/DUANYU_WANG_SHUAI_MING_TONG_FU_002.md",
+  "book": "YHZP",
+  "cause": "F 赋文夹注连排（v1.8 §10 约束5 豁免）",
+  "len": 2496,
+  "cover": 3.1,
+  "probe_hit": "月令七煞而煞身俱强当为黑头宰相此月令七煞格也大抵月令煞要身煞两强方主大贵若身强煞浅须财以生煞强身弱须"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/03_病药类/DUANYU_BING_YAO_FU_001.md",
+  "book": "YHZP",
+  "cause": "A 纯标点/全半角差异",
+  "len": 20,
+  "cover": 100.0,
+  "probe_hit": "有病方为贵无伤不是奇格中如去病财禄喜相随"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/05_人事类/DUANYU_REN_SHI_WEI_JING_PIAN_001.md",
+  "book": "YHZP",
+  "cause": "F 赋文夹注连排（v1.8 §10 约束5 豁免）",
+  "len": 648,
+  "cover": 3.1,
+  "probe_hit": "是以荣枯贵贱所造渊源务要投明博学领受真传"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/05_人事类/DUANYU_REN_SHI_YA_QUAN_ZHAI_JIN_001.md",
+  "book": "YHZP",
+  "cause": "F 赋文夹注连排（v1.8 §10 约束5 豁免）",
+  "len": 2107,
+  "cover": 4.3,
+  "probe_hit": "崖泉摘锦崖泉男女命赋凡观男命先观日主之盛衰次察财官之强弱日主旺财官得地一生福禄优游日干衰财官败绝一世"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/06_杂赋/DUANYU_ZA_FU_DTS_ZHEN_YUAN_001.md",
+  "book": "DTS",
+  "cause": "A 纯标点/全半角差异",
+  "len": 21,
+  "cover": 100.0,
+  "probe_hit": "造化起于元亦止于贞再肇贞元之会胚胎嗣续之机"
+ }
+]

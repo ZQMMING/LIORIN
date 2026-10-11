@@ -1,0 +1,1129 @@
+[
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_DI_ZHI_LIU_HE_003.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 208
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_DI_ZHI_LIU_PO_002.md",
+  "book": "YHZP",
+  "verdict": "直接命中",
+  "level": "全段(含标点)",
+  "len": 55
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_GAN_HE_007.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 149
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_SHI_SHEN_004.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 117
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_SHI_SHEN_005.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 113
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_WU_XING_SHENG_KE_001.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 20
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/01_基础关系/FOUNDATION_RELATION_WU_XING_SHENG_KE_002.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 20
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/02_透藏关系/FOUNDATION_TOU_CANG_CANG_GAN_TOU_CHU_004.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 92
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_TI_GANG_003.md",
+  "book": "PZZQ",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 21
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_TI_GANG_005.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 15
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_TI_GANG_007.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 15
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_001.md",
+  "book": "PZZQ",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 25
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_002.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 15
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_004.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 24
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_006.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 8
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_007.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 15
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_GE_JU_005.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 21
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_GE_JU_010.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 21
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_GE_JU_012.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 11
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_GE_JU_013.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 18
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_TIAO_HOU_001.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 17
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_TIAO_HOU_002.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 17
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_WANG_SHUAI_006.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 24
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_WANG_SHUAI_007.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 11
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_WANG_SHUAI_008.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 12
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_WANG_SHUAI_009.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 12
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_BEI_CHONG_002.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 16
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_BEI_CHONG_003.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 11
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_BEI_CHONG_005.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 24
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_002.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 15
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_003.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 20
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_004.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 16
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_005.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 16
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_GONG_WEI_XING_SHEN_006.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 20
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_002.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 15
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_003.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 19
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_004.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 22
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_005.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 20
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_NIAN_ZHU_006.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 8
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_001.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 17
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_002.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 18
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_003.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 8
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_006.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 16
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_RI_ZHU_007.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 8
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_SHI_ZHU_001.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 14
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_SHI_ZHU_002.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 8
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_SHI_ZHU_003.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 22
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_SHI_ZHU_004.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 15
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_YUE_ZHU_001.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 14
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_YUE_ZHU_002.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 18
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_YUE_ZHU_003.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 11
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/04_宫位/FOUNDATION_PALACE_YUE_ZHU_004.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 22
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_DE_DI_005.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 50
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_DE_LING_006.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 74
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_DE_SHI_001.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 22
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_GEN_QI_001.md",
+  "book": "SFTK",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 48
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_SHUAI_002.md",
+  "book": "DTS",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 41
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_SHUAI_006.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 36
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_WANG_002.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 81
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_WANG_006.md",
+  "book": "SFTK",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 35
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_ZHONG_HE_001.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 17
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_CONG_GE_001.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 78
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_CONG_GE_002.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 54
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_HUA_GE_002.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 81
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_HUA_GE_004.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 48
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_JIAN_LU_YANG_REN_001.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 65
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_JIAN_LU_YANG_REN_002.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 189
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_JIAN_LU_YANG_REN_005.md",
+  "book": "YHZP",
+  "verdict": "直接命中",
+  "level": "全段(含标点)",
+  "len": 70
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_JIAN_LU_YANG_REN_006.md",
+  "book": "SMTH",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 251
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_PI_CAI_001.md",
+  "book": "DTS",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 63
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_PI_GUAN_001.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 181
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_PI_YIN_001.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 160
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_PI_YIN_002.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 14
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_SHANG_GUAN_003.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 247
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_SHI_SHEN_001.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 132
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHENG_CAI_001.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 157
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHENG_GUAN_002.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 190
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHENG_YIN_001.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 207
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHENG_YIN_004.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 22
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHUAN_WANG_001.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 28
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_009.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 60
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_011.md",
+  "book": "PZZQ",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 38
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_017.md",
+  "book": "SFTK",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 208
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_019.md",
+  "book": "PZZQ",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 36
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_020.md",
+  "book": "PZZQ",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 49
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_022.md",
+  "book": "YHZP",
+  "verdict": "直接命中",
+  "level": "全段(含标点)",
+  "len": 32
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_023.md",
+  "book": "SMTH",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 70
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_006.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 80
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_007.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 82
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_008.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 184
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_009.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 179
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_011.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 270
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_014.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 110
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_020.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 96
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_021.md",
+  "book": "SFTK",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 186
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_024.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 10
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_025.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 8
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QI_HOU_001.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 17
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QI_HOU_003.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 17
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QI_HOU_021.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 20
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_WU_XING_BING_001.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 18
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_WU_XING_BING_003.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 18
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_WU_XING_BING_009.md",
+  "book": "SFTK",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 158
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_WU_XING_BING_010.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 16
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_ZHI_FA_018.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 90
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LIU_PAI_004.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 171
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LI_WAI_003.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 89
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LI_WAI_005.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 191
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LI_WAI_006.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 123
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LI_WAI_008.md",
+  "book": "YHZP",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 39
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_ZHENG_JU_LIAN_005.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 172
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_BING_YAO_006.md",
+  "book": "QTBJ",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 19
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_005.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 206
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_006.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 240
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_007.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 96
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_008.md",
+  "book": "SFTK",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 213
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_011.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 199
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_019.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 80
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_TIAO_HOU_013.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 147
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_TONG_GUAN_002.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 104
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_XI_JI_002.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 45
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_XI_JI_011.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 21
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_YONG_SHEN_ZHEN_JIA_005.md",
+  "book": "PZZQ",
+  "verdict": "直接命中",
+  "level": "全段(含标点)",
+  "len": 45
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_003.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 85
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_025.md",
+  "book": "YHZP",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 252
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_026.md",
+  "book": "YHZP",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 162
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_027.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 149
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_028.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 96
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_029.md",
+  "book": "SFTK",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 179
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_ZHI_YU_008.md",
+  "book": "SFTK",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 138
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_ZHI_YU_011.md",
+  "book": "YHZP",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 53
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_LIU_NIAN_011.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 168
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_SUI_YUN_BING_LIN_003.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 16
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_SUI_YUN_BING_LIN_007.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 90
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_YUN_XIAN_006.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 74
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_FU_GUI_PIN_JIAN_008.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 443
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_JI_XIONG_SHOU_YAO_008.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 20
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_NV_MING_013.md",
+  "book": "PZZQ",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 67
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_NV_MING_015.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 104
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_NV_MING_018.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 1052
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/02_人事论断/LIU_QIN_REN_SHI_NV_MING_019.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 789
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GUI_REN_013.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 146
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_007.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 105
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_011.md",
+  "book": "SMTH",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 28
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_015.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 18
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_016.md",
+  "book": "YHZP",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 24
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_018.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 14
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_019.md",
+  "book": "SMTH",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 63
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_JI_XING_022.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 23
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_004.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 183
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_007.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 413
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_008.md",
+  "book": "SMTH",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 263
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_014.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 14
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_018.md",
+  "book": "SMTH",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 30
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_019.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 41
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/02_旺衰类/DUANYU_WANG_SHUAI_MING_TONG_FU_002.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "中段(去标点)",
+  "len": 2496
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/03_病药类/DUANYU_BING_YAO_FU_001.md",
+  "book": "SFTK",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 20
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/03_病药类/DUANYU_XUAN_JI_FU_001.md",
+  "book": "SFTK",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 737
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/05_人事类/DUANYU_REN_SHI_WEI_JING_PIAN_001.md",
+  "book": "YHZP",
+  "verdict": "真未命中",
+  "level": null,
+  "len": 648
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/05_人事类/DUANYU_REN_SHI_YA_QUAN_ZHAI_JIN_001.md",
+  "book": "YHZP",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 2107
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/06_赋论/06_杂赋/DUANYU_ZA_FU_DTS_ZHEN_YUAN_001.md",
+  "book": "DTS",
+  "verdict": "标点/异体差异",
+  "level": "全段(去标点)",
+  "len": 21
+ }
+]

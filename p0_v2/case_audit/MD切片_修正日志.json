@@ -1,0 +1,227 @@
+[
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_TI_GANG_003.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/01_公共依赖/03_月令权重/FOUNDATION_MONTH_COMMAND_YUE_LING_BEI_CHONG_001.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_DE_DI_005.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "注解"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_GEN_QI_001.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_SHUAI_002.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B+A md标记+省略号",
+  "removed": [
+   "原注"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_SHUAI_006.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "注释"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/01_旺衰诊断/STATE_WANG_SHUAI_WANG_006.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "注释"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_CONG_GE_002.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B+A md标记+省略号",
+  "removed": [
+   "原注"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_JIAN_LU_YANG_REN_006.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "A 省略号折叠多句"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_PI_CAI_001.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "C 跨书拼接"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/02_原局诊断/02_格局/STRUCTURE_GE_JU_ZHUAN_WANG_001.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "原注"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_011.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "A 省略号折叠多句"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_013.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "**加粗**"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_015.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "**加粗**"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_017.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B+A md标记+省略号",
+  "removed": [
+   "**加粗**"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_019.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "A 省略号折叠多句"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_020.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "A 省略号折叠多句"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_JIE_GOU_023.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_006.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "原注"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_013.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "**加粗**"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_020.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B+A md标记+省略号",
+  "removed": [
+   "**加粗**"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_021.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "B+A md标记+省略号"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_QIANG_RUO_022.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "**加粗**"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/01_病药/PATHOLOGY_WU_XING_BING_009.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "A 省略号折叠多句"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/02_冲突消解/DEBATE_CONFLICT_LI_WAI_008.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_FU_YI_008.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "A 省略号折叠多句"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/03_病药冲突/03_用神/MEDICINE_YONG_SHEN_XI_JI_011.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B+A md标记+省略号",
+  "removed": [
+   "原注"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_025.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_026.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_WANG_SHUAI_029.md",
+  "act": "已清除 markdown 标记",
+  "cls": "B markdown标记混入",
+  "removed": [
+   "原注"
+  ]
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_ZHI_YU_008.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "A 省略号折叠多句"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/04_岁运人事/01_动态重评/SUI_YUN_RE_EVALUATION_DA_YUN_ZHI_YU_011.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "A 省略号折叠多句"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_011.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_016.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_GU_XING_019.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ },
+ {
+  "file": "p0_v2/六部经典MD文库/05_辅助/01_神煞/SHEN_SHA_XING_SHA_XIONG_SHA_018.md",
+  "act": "无需改（仅省略号折叠）",
+  "cls": "E 其他"
+ }
+]

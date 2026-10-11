@@ -11,3 +11,7 @@ _archive_*/
 archive/
 vendor/
 tools/
+
+# [backup/ziping-p0-clean] 备份分支例外: 切片库+案例库纳入版本管理
+!p0_v2/六部经典MD文库/
+!p0_v2/case_audit/

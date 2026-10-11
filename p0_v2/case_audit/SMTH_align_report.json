@@ -1,0 +1,402 @@
+{
+ "classic": "SMTH",
+ "total": 114,
+ "stats": {
+  "ALIGNED": 0,
+  "DIVERGE": 65,
+  "NO_EVIDENCE": 22,
+  "ERROR": 27
+ },
+ "diverge": [
+  {
+   "case_id": "SM-0001",
+   "bazi": "己未 庚辰 戊辰 丁丑",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0002",
+   "bazi": "乙卯 癸巳 丁酉 乙亥",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0003",
+   "bazi": "壬申 癸酉 庚戌 辛亥",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0004",
+   "bazi": "丁巳 癸卯 己未 壬申",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0005",
+   "bazi": "丙戌 丁亥 庚子 辛丑",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0007",
+   "bazi": "壬子 癸卯 庚戌 庚辰",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0010",
+   "bazi": "乙丑 壬午 乙丑 壬午",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0011",
+   "bazi": "壬申 己酉 丁巳 庚子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0012",
+   "bazi": "丙子 辛卯 丙子 辛卯",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0015",
+   "bazi": "辛巳 辛丑 丙子 戊子",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0019",
+   "bazi": "庚申 甲申 甲子 乙亥",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0021",
+   "bazi": "己丑 戊辰 壬辰 庚子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0022",
+   "bazi": "庚子 己卯 甲子 甲子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0025",
+   "bazi": "丁巳 壬子 乙丑 丙子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0026",
+   "bazi": "丙申 丙申 丙申 癸巳",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0027",
+   "bazi": "辛亥 辛卯 甲寅 丙寅",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0028",
+   "bazi": "丙戌 癸巳 戊午 丁巳",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0031",
+   "bazi": "己亥 丙寅 丁丑 丙午",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0032",
+   "bazi": "己丑 丁卯 壬午 癸卯",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0033",
+   "bazi": "丙午 庚子 壬午 丙午",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0035",
+   "bazi": "庚辰 己卯 戊辰 甲寅",
+   "label": "bad",
+   "note": "yongyao_state=NO_BING primary=None() label=bad"
+  },
+  {
+   "case_id": "SM-0036",
+   "bazi": "丙申 丙辰 丁酉 丁丑",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0039",
+   "bazi": "甲寅 丙寅 庚寅 戊寅",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0040",
+   "bazi": "庚申 庚辰 庚子 壬午",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0043",
+   "bazi": "丁未 丁未 丙午 丙午",
+   "label": "bad",
+   "note": "yongyao_state=NO_BING primary=None() label=bad"
+  },
+  {
+   "case_id": "SM-0046",
+   "bazi": "壬辰 辛亥 己卯 己巳",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0047",
+   "bazi": "己未 壬申 乙未 甲申",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0049",
+   "bazi": "己亥 乙亥 癸丑 己未",
+   "label": "mixed",
+   "note": "yongyao_state=NO_BING primary=None() label=mixed"
+  },
+  {
+   "case_id": "SM-0050",
+   "bazi": "丁亥 庚戌 戊辰 庚申",
+   "label": "bad",
+   "note": "yongyao_state=NO_BING primary=None() label=bad"
+  },
+  {
+   "case_id": "SM-0051",
+   "bazi": "丙戌 丙申 丁巳 辛亥",
+   "label": "mixed",
+   "note": "yongyao_state=NO_BING primary=None() label=mixed"
+  },
+  {
+   "case_id": "SM-0054",
+   "bazi": "癸巳 庚申 乙卯 丁亥",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0057",
+   "bazi": "癸未 壬戌 癸巳 壬子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0058",
+   "bazi": "癸酉 甲子 己未 乙亥",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0059",
+   "bazi": "庚子 庚寅 庚午 庚申",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0061",
+   "bazi": "癸酉 癸亥 庚子 辛巳",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0066",
+   "bazi": "壬子 丙午 丙午 壬子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0067",
+   "bazi": "乙丑 乙未 庚辰 庚戌",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0068",
+   "bazi": "甲子 乙丑 丙寅 丁卯",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0071",
+   "bazi": "己丑 丁卯 壬午 癸卯",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0072",
+   "bazi": "戊申 甲寅 己丑 丙寅",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0074",
+   "bazi": "丙戌 戊戌 戊子 壬子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0075",
+   "bazi": "丁亥 戊申 壬申 丙午",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0077",
+   "bazi": "丙戌 癸巳 戊午 丁巳",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0078",
+   "bazi": "丁酉 癸巳 癸卯 丁亥",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0083",
+   "bazi": "壬子 甲辰 己卯 壬申",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0085",
+   "bazi": "乙卯 丙子 己卯 丁卯",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0086",
+   "bazi": "癸亥 戊午 戊午 戊午",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0089",
+   "bazi": "甲戌 丁卯 己巳 乙亥",
+   "label": "mixed",
+   "note": "yongyao_state=NO_BING primary=None() label=mixed"
+  },
+  {
+   "case_id": "SM-0090",
+   "bazi": "辛亥 己亥 辛亥 己亥",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0092",
+   "bazi": "乙丑 庚辰 辛酉 戊子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0093",
+   "bazi": "乙未 甲申 癸酉 甲寅",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0094",
+   "bazi": "丁巳 癸亥 丙午 壬子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0095",
+   "bazi": "辛亥 甲午 乙亥 丙子",
+   "label": "bad",
+   "note": "yongyao_state=NO_BING primary=None() label=bad"
+  },
+  {
+   "case_id": "SM-0097",
+   "bazi": "壬寅 壬寅 壬辰 壬寅",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0099",
+   "bazi": "壬辰 戊申 己未 己巳",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0102",
+   "bazi": "甲子 庚午 丁卯 癸酉",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0104",
+   "bazi": "甲申 己巳 戊子 癸亥",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0105",
+   "bazi": "乙亥 丙戌 辛丑 戊子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0107",
+   "bazi": "壬申 辛亥 丁酉 壬寅",
+   "label": "good",
+   "note": "yongyao_state=NO_BING primary=None() label=good"
+  },
+  {
+   "case_id": "SM-0109",
+   "bazi": "戊申 戊午 丙辰 己丑",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0110",
+   "bazi": "癸酉 己未 壬子 庚子",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0111",
+   "bazi": "丙戌 辛丑 丁巳 壬寅",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0113",
+   "bazi": "丁卯 丙午 丙戌 甲午",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0114",
+   "bazi": "丙寅 甲午 乙巳 己卯",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  },
+  {
+   "case_id": "SM-0115",
+   "bazi": "壬申 辛亥 己巳 丙寅",
+   "label": "neutral",
+   "note": "yongyao_state=NO_BING primary=None() label=neutral"
+  }
+ ]
+}

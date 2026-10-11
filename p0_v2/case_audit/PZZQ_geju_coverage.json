@@ -1,0 +1,522 @@
+{
+  "concepts": [
+    {
+      "concept": "正官格",
+      "prefixes": [
+        "ZHENG_GUAN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "ids": [
+        "ZHENG_GUAN_001",
+        "ZHENG_GUAN_002",
+        "ZHENG_GUAN_003",
+        "ZHENG_GUAN_004"
+      ]
+    },
+    {
+      "concept": "偏官格(七杀)",
+      "prefixes": [
+        "PI_GUAN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "ids": [
+        "PI_GUAN_001",
+        "PI_GUAN_002",
+        "PI_GUAN_003",
+        "PI_GUAN_004"
+      ]
+    },
+    {
+      "concept": "正财格",
+      "prefixes": [
+        "ZHENG_CAI"
+      ],
+      "n": 3,
+      "status": "OK",
+      "ids": [
+        "ZHENG_CAI_001",
+        "ZHENG_CAI_002",
+        "ZHENG_CAI_003"
+      ]
+    },
+    {
+      "concept": "偏财格",
+      "prefixes": [
+        "PI_CAI"
+      ],
+      "n": 1,
+      "status": "不足",
+      "ids": [
+        "PI_CAI_001"
+      ]
+    },
+    {
+      "concept": "正印格",
+      "prefixes": [
+        "ZHENG_YIN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "ids": [
+        "ZHENG_YIN_001",
+        "ZHENG_YIN_002",
+        "ZHENG_YIN_003",
+        "ZHENG_YIN_004"
+      ]
+    },
+    {
+      "concept": "偏印格(枭)",
+      "prefixes": [
+        "PI_YIN"
+      ],
+      "n": 2,
+      "status": "不足",
+      "ids": [
+        "PI_YIN_001",
+        "PI_YIN_002"
+      ]
+    },
+    {
+      "concept": "食神格",
+      "prefixes": [
+        "SHI_SHEN"
+      ],
+      "n": 3,
+      "status": "OK",
+      "ids": [
+        "SHI_SHEN_001",
+        "SHI_SHEN_002",
+        "SHI_SHEN_003"
+      ]
+    },
+    {
+      "concept": "伤官格",
+      "prefixes": [
+        "SHANG_GUAN"
+      ],
+      "n": 8,
+      "status": "OK",
+      "ids": [
+        "SHANG_GUAN_001",
+        "SHANG_GUAN_002",
+        "SHANG_GUAN_003",
+        "SHANG_GUAN_004",
+        "SHANG_GUAN_005",
+        "SHANG_GUAN_006",
+        "SHANG_GUAN_007",
+        "SHANG_GUAN_008"
+      ]
+    },
+    {
+      "concept": "建禄",
+      "prefixes": [
+        "JIAN_LU_YANG_REN"
+      ],
+      "n": 6,
+      "status": "OK",
+      "ids": [
+        "JIAN_LU_YANG_REN_001",
+        "JIAN_LU_YANG_REN_002",
+        "JIAN_LU_YANG_REN_003",
+        "JIAN_LU_YANG_REN_004",
+        "JIAN_LU_YANG_REN_005",
+        "JIAN_LU_YANG_REN_006"
+      ]
+    },
+    {
+      "concept": "羊刃(阳刃)",
+      "prefixes": [
+        "JIAN_LU_YANG_REN"
+      ],
+      "n": 6,
+      "status": "OK",
+      "ids": [
+        "JIAN_LU_YANG_REN_001",
+        "JIAN_LU_YANG_REN_002",
+        "JIAN_LU_YANG_REN_003",
+        "JIAN_LU_YANG_REN_004",
+        "JIAN_LU_YANG_REN_005",
+        "JIAN_LU_YANG_REN_006"
+      ]
+    },
+    {
+      "concept": "从格(真从/假从)",
+      "prefixes": [
+        "CONG_GE"
+      ],
+      "n": 4,
+      "status": "OK",
+      "ids": [
+        "CONG_GE_001",
+        "CONG_GE_002",
+        "CONG_GE_003",
+        "CONG_GE_004"
+      ]
+    },
+    {
+      "concept": "化格",
+      "prefixes": [
+        "HUA_GE"
+      ],
+      "n": 7,
+      "status": "OK",
+      "ids": [
+        "HUA_GE_001",
+        "HUA_GE_002",
+        "HUA_GE_003",
+        "HUA_GE_004",
+        "HUA_GE_005",
+        "HUA_GE_006",
+        "HUA_GE_007"
+      ]
+    },
+    {
+      "concept": "专旺格(形象)",
+      "prefixes": [
+        "ZHUAN_WANG"
+      ],
+      "n": 8,
+      "status": "OK",
+      "ids": [
+        "ZHUAN_WANG_001",
+        "ZHUAN_WANG_002",
+        "ZHUAN_WANG_003",
+        "ZHUAN_WANG_004",
+        "ZHUAN_WANG_005",
+        "ZHUAN_WANG_006",
+        "ZHUAN_WANG_007",
+        "ZHUAN_WANG_008"
+      ]
+    },
+    {
+      "concept": "外格",
+      "prefixes": [
+        "WAI_GE"
+      ],
+      "n": 16,
+      "status": "OK",
+      "ids": [
+        "WAI_GE_001",
+        "WAI_GE_002",
+        "WAI_GE_003",
+        "WAI_GE_004",
+        "WAI_GE_005",
+        "WAI_GE_006",
+        "WAI_GE_007",
+        "WAI_GE_008",
+        "WAI_GE_009",
+        "WAI_GE_010",
+        "WAI_GE_011",
+        "WAI_GE_012",
+        "WAI_GE_013",
+        "WAI_GE_014",
+        "WAI_GE_015",
+        "WAI_GE_016"
+      ]
+    },
+    {
+      "concept": "格局成败",
+      "prefixes": [
+        "CHENG_BAI"
+      ],
+      "n": 12,
+      "status": "OK",
+      "ids": [
+        "CHENG_BAI_001",
+        "CHENG_BAI_002",
+        "CHENG_BAI_003",
+        "CHENG_BAI_004",
+        "CHENG_BAI_005",
+        "CHENG_BAI_006",
+        "CHENG_BAI_007",
+        "CHENG_BAI_008",
+        "CHENG_BAI_009",
+        "CHENG_BAI_010",
+        "CHENG_BAI_011",
+        "CHENG_BAI_012"
+      ]
+    },
+    {
+      "concept": "格局救应",
+      "prefixes": [
+        "JIU_YING"
+      ],
+      "n": 6,
+      "status": "OK",
+      "ids": [
+        "JIU_YING_001",
+        "JIU_YING_002",
+        "JIU_YING_003",
+        "JIU_YING_004",
+        "JIU_YING_005",
+        "JIU_YING_006"
+      ]
+    },
+    {
+      "concept": "格局高低",
+      "prefixes": [
+        "GAO_DI"
+      ],
+      "n": 8,
+      "status": "OK",
+      "ids": [
+        "GAO_DI_001",
+        "GAO_DI_002",
+        "GAO_DI_003",
+        "GAO_DI_004",
+        "GAO_DI_005",
+        "GAO_DI_006",
+        "GAO_DI_007",
+        "GAO_DI_008"
+      ]
+    },
+    {
+      "concept": "定格法",
+      "prefixes": [
+        "DING_GE_FA"
+      ],
+      "n": 12,
+      "status": "OK",
+      "ids": [
+        "DING_GE_FA_001",
+        "DING_GE_FA_002",
+        "DING_GE_FA_003",
+        "DING_GE_FA_004",
+        "DING_GE_FA_005",
+        "DING_GE_FA_006",
+        "DING_GE_FA_007",
+        "DING_GE_FA_008",
+        "DING_GE_FA_009",
+        "DING_GE_FA_010",
+        "DING_GE_FA_011",
+        "DING_GE_FA_012"
+      ]
+    }
+  ],
+  "engine_branches": [
+    {
+      "branch": "正官格",
+      "pres": [
+        "ZHENG_GUAN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "正官逢财印/无刑冲"
+    },
+    {
+      "branch": "正官格(不成格)",
+      "pres": [
+        "ZHENG_GUAN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "无财印辅助"
+    },
+    {
+      "branch": "印格(官印双全)",
+      "pres": [
+        "ZHENG_YIN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "官印双全"
+    },
+    {
+      "branch": "印格(印轻逢煞)",
+      "pres": [
+        "ZHENG_YIN",
+        "PI_GUAN"
+      ],
+      "n": 8,
+      "status": "OK",
+      "desc": "印轻逢煞/财透"
+    },
+    {
+      "branch": "印格(印多逢财)",
+      "pres": [
+        "ZHENG_YIN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "印多用财"
+    },
+    {
+      "branch": "印格(印轻逢财)",
+      "pres": [
+        "ZHENG_YIN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "印轻财重"
+    },
+    {
+      "branch": "印格(默认)",
+      "pres": [
+        "ZHENG_YIN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "身印旺食伤泄秀/印浅喜印"
+    },
+    {
+      "branch": "财格",
+      "pres": [
+        "ZHENG_CAI"
+      ],
+      "n": 3,
+      "status": "OK",
+      "desc": "财生官/财逢食/财透印"
+    },
+    {
+      "branch": "财格(不成格)",
+      "pres": [
+        "ZHENG_CAI"
+      ],
+      "n": 3,
+      "status": "OK",
+      "desc": "财不忌伤"
+    },
+    {
+      "branch": "食神格",
+      "pres": [
+        "SHI_SHEN"
+      ],
+      "n": 3,
+      "status": "OK",
+      "desc": "食神生财/就煞印"
+    },
+    {
+      "branch": "食神格(带煞无财)",
+      "pres": [
+        "SHI_SHEN"
+      ],
+      "n": 3,
+      "status": "OK",
+      "desc": "弃食就煞透印"
+    },
+    {
+      "branch": "食神制杀格",
+      "pres": [
+        "SHI_SHEN",
+        "PI_GUAN"
+      ],
+      "n": 7,
+      "status": "OK",
+      "desc": "食制煞"
+    },
+    {
+      "branch": "伤官格(佩印)",
+      "pres": [
+        "SHANG_GUAN"
+      ],
+      "n": 8,
+      "status": "OK",
+      "desc": "伤官佩印"
+    },
+    {
+      "branch": "伤官格(带煞无财)",
+      "pres": [
+        "SHANG_GUAN"
+      ],
+      "n": 8,
+      "status": "OK",
+      "desc": "伤官带煞无财"
+    },
+    {
+      "branch": "伤官格(默认)",
+      "pres": [
+        "SHANG_GUAN"
+      ],
+      "n": 8,
+      "status": "OK",
+      "desc": "伤官用财/金水见官"
+    },
+    {
+      "branch": "七煞格(逢制)",
+      "pres": [
+        "PI_GUAN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "煞用食制/印化"
+    },
+    {
+      "branch": "七煞格(破格)",
+      "pres": [
+        "PI_GUAN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "七煞逢财无制"
+    },
+    {
+      "branch": "七煞格(默认)",
+      "pres": [
+        "PI_GUAN"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "煞不清"
+    },
+    {
+      "branch": "阳刃格",
+      "pres": [
+        "JIAN_LU_YANG_REN"
+      ],
+      "n": 6,
+      "status": "OK",
+      "desc": "刃伏制/官煞皆宜"
+    },
+    {
+      "branch": "建禄月劫格",
+      "pres": [
+        "JIAN_LU_YANG_REN"
+      ],
+      "n": 6,
+      "status": "OK",
+      "desc": "透官/透财/透煞"
+    },
+    {
+      "branch": "从格(从财/从杀/从儿/从官)",
+      "pres": [
+        "CONG_GE"
+      ],
+      "n": 4,
+      "status": "OK",
+      "desc": "五阳从气/五阴从势"
+    },
+    {
+      "branch": "两气成象",
+      "pres": [
+        "WAI_GE",
+        "ZHUAN_WANG"
+      ],
+      "n": 24,
+      "status": "OK",
+      "desc": "形象格"
+    }
+  ],
+  "total_slices": 108,
+  "by_prefix": {
+    "CHENG_BAI": 12,
+    "CONG_GE": 4,
+    "DING_GE_FA": 12,
+    "GAO_DI": 8,
+    "HUA_GE": 7,
+    "JIAN_LU_YANG_REN": 6,
+    "JIU_YING": 6,
+    "PI_CAI": 1,
+    "PI_GUAN": 4,
+    "PI_YIN": 2,
+    "SHANG_GUAN": 8,
+    "SHI_SHEN": 3,
+    "WAI_GE": 16,
+    "ZHENG_CAI": 3,
+    "ZHENG_GUAN": 4,
+    "ZHENG_YIN": 4,
+    "ZHUAN_WANG": 8
+  },
+  "min_n": 3
+}
