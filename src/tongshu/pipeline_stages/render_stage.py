@@ -2,7 +2,7 @@
 
 职责：
     7. 构造 RenderRequest（与 SIR meta / audit 共享 request_id）
-    8. 调用 Renderer（捕获 RenderClientError → TemplateFallback）
+    8. 调 Renderer（被禁用 → 永远走 TemplateFallback）
 
 返回 RenderStageResult，包含最终输出文本与 source 标识。
 
@@ -12,6 +12,14 @@
       是否切到 "template_fallback"——RenderStage 不主动降级（避免抢 ValidationStage 职责）
     - render_elapsed_ms 单位 ms；compute_only 模式下 RenderStage.run() 不被调用
       （由 pipeline.run() 在 compute_only 分支直接构造占位 RenderStageResult）
+
+⚠ 2026-10-11 用户口径：删除 LLM 渲染路径——LLM API key 401（无效），
+  LLM 渲染层整体下线。本阶段改为**直接走 TemplateFallback**：
+    · 不调 self.renderer.render()（跳过 LLM 网络）
+    · rendered 永远 None
+    · rendered_text = TemplateFallback(theme, cross_status) 65-85 字符模板
+    · source 永远 "template_fallback"
+  Renderer 实例保留注入但本阶段不消费；其它 owner（如需恢复）仍可接回。
 
 Version: 1.0.0
 Created: 2026-08-20 (Phase 2 / Step 3 C3)
@@ -26,7 +34,6 @@ from typing import TYPE_CHECKING
 
 from ..render.render_request import build_render_request
 from ..render.renderer import Renderer
-from ..render.clients.openai_compat import RenderClientError
 from ..render.template_fallback import TemplateFallback
 from ..types import RenderStageResult
 
@@ -38,13 +45,17 @@ log = logging.getLogger(__name__)
 
 
 class RenderStage:
-    """阶段 7-8: 渲染 + 模板回退（compute_only 不走此 Stage）。"""
+    """阶段 7-8: 渲染 + 模板回退（compute_only 不走此 Stage）。
+
+    2026-10-11：LLM 渲染层整体下线（API key 401），本阶段只走 TemplateFallback。
+    """
 
     def __init__(
         self,
         renderer: Renderer,
         template_fallback: TemplateFallback,
     ) -> None:
+        # renderer 实例仍保留注入（其它 owner 可恢复），但本阶段不消费。
         self.renderer = renderer
         self.template_fallback = template_fallback
 
@@ -54,10 +65,7 @@ class RenderStage:
         request_id: str,
         theme: str,
     ) -> RenderStageResult:
-        """执行渲染；硬失败 → rendered=None + rendered_text="",RenderStageResult 不主动降级。
-
-        下游 ValidationStage 决定是否切到 template_fallback source。
-        """
+        """直接走 TemplateFallback（LLM 渲染路径已下线）。"""
         canonical = compute.canonical
 
         # 7. Build Render Request (same request_id as the SIR meta / audit)
@@ -68,35 +76,17 @@ class RenderStage:
             request_id=request_id,
         )
 
-        # 8. Render — a hard client failure (contract §7.4: transport error
-        # or MAX_RETRIES exhausted) degrades to Template Fallback, never 500.
+        # 8. LLM 渲染路径已下线（API key 401），直接走 TemplateFallback。
         t0 = time.monotonic()
-        rendered = None
-        try:
-            rendered = self.renderer.render(
-                sir=canonical.to_dict(),
-                render_request=render_request.to_dict(),
-            )
-        except RenderClientError as e:
-            log.warning("Renderer hard failure (contract §7): %s", e)
+        cross_status = self._derive_cross_status(compute.cross_result)
+        fallback = self.template_fallback.render(theme, cross_status)
+        rendered_text = fallback or ""
+        source = "template_fallback" if rendered_text else "template_fallback"
         render_elapsed_ms = (time.monotonic() - t0) * 1000.0
-
-        # source 决策：rendered 不为 None → "llm_renderer"；失败 → TemplateFallback
-        if rendered is not None:
-            source: str = "llm_renderer"
-            rendered_text = rendered.text
-        else:
-            # 硬失败：模板回退兜底（即使 ValidationStage 没要求，也保证非空）
-            # 2026-10-11 修：CrossDomainResult 无 status 字段。改为 _derive_cross_status
-            # 从 coverage 形态派生 cross_status；与 pipeline.run() 阶段 9 的派生口径一致。
-            cross_status = self._derive_cross_status(compute.cross_result)
-            fallback = self.template_fallback.render(theme, cross_status)
-            rendered_text = fallback or ""
-            source = "template_fallback" if rendered_text else "template_fallback"
 
         return RenderStageResult(
             render_request_dict=render_request.to_dict(),
-            rendered=rendered,
+            rendered=None,  # LLM 已下线，永不返回
             rendered_text=rendered_text,
             source=source,  # type: ignore[arg-type]
             render_elapsed_ms=render_elapsed_ms,
