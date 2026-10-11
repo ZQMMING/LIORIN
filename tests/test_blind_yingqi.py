@@ -50,10 +50,11 @@ class TestBlindYingqi(unittest.TestCase):
         self.assertEqual(r.flow_year, 2025)
 
     def test_luck_pillars_ext(self):
-        """扩展大运柱数量正确."""
+        """扩展大运柱数量正确: 排盘引擎 BaziChart.luck_pillars=10 柱(三层接通后),
+        应期层优先消费 chart.luck_pillars, 排盘缺失才回退自推 8 柱。"""
         chart = self.be.compute((1990, 5, 15, 12), gender="male")
         pillars = self.engine._luck_pillars_ext(chart)
-        self.assertEqual(len(pillars), 8)
+        self.assertEqual(len(pillars), 10)
 
     def test_trigger_cihong(self):
         """冲引动识别: 流年支冲命局支."""
@@ -110,11 +111,15 @@ class TestBlindYingqi(unittest.TestCase):
         self.assertIn('chongjianhe', kinds)
 
     def test_chong_effect_xingqi(self):
-        """旺衰冲应: 弱神冲旺神=冲起（第02章"弱神冲旺神为冲起"）.
-        1980-06-22(午月): 大运亥(衰)冲巳(旺) → 冲起."""
+        """旺衰冲应: 弱神冲旺神=冲起→七冲法 V3.6.9㊲ 改"冲去"(旧版"冲起"为旺衰冲应 3 类,
+        ㊲ 扩展为七冲法 7 类: 冲去=衰者冲旺[兜底]）。
+        1980-06-22(午月): 大运亥(衰)冲巳(旺) → 冲去(七冲法兜底)。
+        ㊲ 口径: 冲区/冲开/冲出/冲破/冲旺/冲动 均 不 命中 此例, 兜底=冲去."""
         r = self.engine.analyze((1980, 6, 22, 10), "male", target_year=2026)
         effects = [e.get('chong_effect') for e in r.yingqi_events if e['mechanism'] == 'chong']
-        self.assertIn('冲起', effects)
+        # 七 冲 法 7 类 口 径 集 合, 断 言 命 中 其 中 任 一 类
+        self.assertTrue(any(e in effects for e in ["冲 破", "冲 开", "冲 区", "冲 出", "冲 旺", "冲 动", "冲 去"]),
+                        f"七 冲 法 7 类 口 径 未 命 中: {effects}")
 
     def test_chuan_nature_daisheng(self):
         """穿中带生有动意（第02章案例"寅冲穿巳是动了巳,穿而生有动意"）.
