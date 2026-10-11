@@ -411,6 +411,11 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     #   阳干微根不能从(L179 五阳从气不从势) —— 在主从入口前拦下, 记 ZP-SPECIAL-CONG-BAN 防静默丢
     #   (4f 化根变化会让印根盘退出 rootless_entry 而不经 4d 检查, 如 QT-0483/DT-0075/DT-0108/
     #   DT-0332/YH-0039 曾静默消失; 入口前置后印根盘显式 BAN, 回正格路径有记录)。
+    #   [2026-10-07 实测] 入口前置挂在 rootless_entry 上: 4f 化根后印根盘(印根保留)
+    #   rootless=False -> rootless_entry=False -> 前置被闸门挡死, 5 盘实测仍静默消。
+    #   尝试改独立候选闸门(dm_ben_eff==0 或极弱分支) -> 误拦 571 盘(407 盘旧无 pattern 非从格候选),
+    #   已回退。精确修法(待落): 4f 化根区记录「旧判据(支本气==印五行)会被化、新判据
+    #   (化神克印才化)保留」的印根支 -> 这些盘=旧 rootless 会成立->4f 前判从格->4f 后该 BAN(L180)。
     _yin_root_any2 = yin_ben_eff + _yin_zhong_eff + _yin_yu_eff
     _dm_yang2 = day_stem in ('甲', '丙', '戊', '庚', '壬')
     _cong_ban_entry = bool(rootless_entry and not zhi_sha_save
@@ -828,8 +833,18 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     out['yin_stem'] = yin_stem
     # 被拔/被合化的身根支集合(含本气根冲拔 struck + 合局化根 _hh_dm), 供 de_di 独立投影
     out['root_removed_branches'] = sorted(struck | _hh_dm)
-
+    out['_dbg'] = dict(
+        dm_wx=dm_wx, day_stem=day_stem,
+        yin_stem=yin_stem, yin_ben=yin_ben,
+        yin_ben_eff=yin_ben_eff,
+        _yin_zhong_eff=_yin_zhong_eff, _yin_yu_eff=_yin_yu_eff,
+        _yin_block=_yin_block,
+        rootless=rootless,
+        rootless_entry=rootless_entry,
+        _yin_root_any2=yin_ben_eff+_yin_zhong_eff+_yin_yu_eff,
+        _dm_yang2=day_stem in ("甲","丙","戊","庚","壬"),
+        dm_ben_eff=dm_ben_eff, dm_ling=dm_ling,
+    )
     return out
-
 
 
