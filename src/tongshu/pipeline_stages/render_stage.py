@@ -87,7 +87,10 @@ class RenderStage:
             rendered_text = rendered.text
         else:
             # 硬失败：模板回退兜底（即使 ValidationStage 没要求，也保证非空）
-            fallback = self.template_fallback.render(theme, compute.cross_result.status if compute.cross_result else None)
+            # 2026-10-11 修：CrossDomainResult 无 status 字段。改为 _derive_cross_status
+            # 从 coverage 形态派生 cross_status；与 pipeline.run() 阶段 9 的派生口径一致。
+            cross_status = self._derive_cross_status(compute.cross_result)
+            fallback = self.template_fallback.render(theme, cross_status)
             rendered_text = fallback or ""
             source = "template_fallback" if rendered_text else "template_fallback"
 
@@ -109,3 +112,33 @@ class RenderStage:
             source="computed",
             render_elapsed_ms=None,
         )
+
+    @staticmethod
+    def _derive_cross_status(cross_result) -> str:
+        """从 cross_result 派生 cross_status（与 pipeline.run() 阶段 9 派生口径一致）。
+
+        M2 架构下 CrossDomainResult 无 status 字段，由 coverage 形态推导：
+        - 全无证据 → INSUFFICIENT
+        - 部分引擎有证据 → PARTIAL
+        - 全引擎有证据 + coverage 非空 → ALIGNED
+
+        2026-10-11 修：render_stage.run() 之前直接读 cross_result.status（不存在），
+        AttributeError 把整个渲染兜底打挂；现在用派生口径，模板兜底可命中。
+        """
+        if cross_result is None:
+            return "INSUFFICIENT"
+        try:
+            engines_with_evidence = sum(
+                1 for eng_set in cross_result.by_engine.values()
+                if eng_set.evidence_ids
+            )
+            engines_total = len(cross_result.by_engine)
+            if engines_with_evidence == 0:
+                return "INSUFFICIENT"
+            if engines_with_evidence < engines_total:
+                return "PARTIAL"
+            if cross_result.coverage.total_assertions == 0:
+                return "INSUFFICIENT"
+            return "ALIGNED"
+        except Exception:  # noqa: BLE001 — 派生失败兜底
+            return "INSUFFICIENT"
