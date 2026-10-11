@@ -35,6 +35,7 @@ from typing import TYPE_CHECKING
 from ..render.render_request import build_render_request
 from ..render.renderer import Renderer
 from ..render.template_fallback import TemplateFallback
+from ..render.heluo_view_renderer import HeluoViewRenderer
 from ..types import RenderStageResult
 
 if TYPE_CHECKING:
@@ -44,10 +45,42 @@ if TYPE_CHECKING:
 log = logging.getLogger(__name__)
 
 
+def yearly_target_year(compute, heluo_result) -> int | None:
+    """推断大运当年用的年份。
+
+    顺序：
+    1. compute.render_input.analysis_date.year（如果有）
+    2. heluo_result.timeline.yearly_hexagrams 里 yuantang/year 命中 2026 的
+    3. 兜底：yearly[-1]['year']
+    """
+    # 1. compute 的元数据
+    ri = getattr(compute, "render_input", None)
+    if ri is not None:
+        ad = getattr(ri, "analysis_date", None)
+        if ad is not None:
+            return ad.year
+    # 2. 取 heluo_target_date 推导的 target_year——通过 guajie.liunian_year 推断
+    gj = getattr(heluo_result, "guajie", None) or {}
+    ly = gj.get("liunian_year")
+    if ly:
+        try:
+            return int(str(ly))
+        except Exception:
+            pass
+    # 3. 兜底取 yearly 末年
+    yearly = getattr(getattr(heluo_result, "timeline", None), "yearly_hexagrams", None) or []
+    if yearly:
+        return yearly[-1].get("year")
+    return None
+
+
 class RenderStage:
     """阶段 7-8: 渲染 + 模板回退（compute_only 不走此 Stage）。
 
-    2026-10-11：LLM 渲染层整体下线（API key 401），本阶段只走 TemplateFallback。
+    2026-10-11 用户口径：渲染层接 HeluoResult 字段 → 用户视角中文。
+    - 主路径：HeluoViewRenderer（六层卦象 + 解卦 + 诊断 + 建议 全量映射）
+    - 兜底路径：TemplateFallback（无 heluo_result 或主路径产空时）
+    - LLM 渲染路径下线（API key 401）
     """
 
     def __init__(
@@ -58,6 +91,8 @@ class RenderStage:
         # renderer 实例仍保留注入（其它 owner 可恢复），但本阶段不消费。
         self.renderer = renderer
         self.template_fallback = template_fallback
+        # 2026-10-11：HeluoResult 字段 → 用户视角中文 的映射层（视图层）
+        self.heluo_view_renderer = HeluoViewRenderer()
 
     def run(
         self,
@@ -65,10 +100,11 @@ class RenderStage:
         request_id: str,
         theme: str,
     ) -> RenderStageResult:
-        """直接走 TemplateFallback（LLM 渲染路径已下线）。"""
+        """主路径：HeluoViewRenderer 映射 HeluoResult 字段；
+        兜底：TemplateFallback 通用模板。"""
         canonical = compute.canonical
 
-        # 7. Build Render Request (same request_id as the SIR meta / audit)
+        # 7. Build Render Request
         render_request = build_render_request(
             canonical_id=canonical.canonical_id,
             canonical_schema_version=canonical.schema_version,
@@ -76,12 +112,35 @@ class RenderStage:
             request_id=request_id,
         )
 
-        # 8. LLM 渲染路径已下线（API key 401），直接走 TemplateFallback。
+        # 8. 渲染：HeluoViewRenderer → TemplateFallback
         t0 = time.monotonic()
-        cross_status = self._derive_cross_status(compute.cross_result)
-        fallback = self.template_fallback.render(theme, cross_status)
-        rendered_text = fallback or ""
-        source = "template_fallback" if rendered_text else "template_fallback"
+        rendered_text = ""
+        source = "template_fallback"
+
+        # 主路径：把 HeluoResult 的解卦/诊断/建议映射成中文
+        heluo_result = getattr(compute, "heluo_result", None)
+        if heluo_result is not None:
+            try:
+                # 大运当年取 analysis_date.year；不传则兜底取 yearly 末年
+                target_year = None
+                # analysis_date 不在 render 上下文；compute 也不带——所以从
+                # yearly[-1] 兜底（pipeline 实际跑的 heluo_target_date 已经在
+                # canonical.calculate 中启用 fast-path，yearly 末年是合理近似）
+                target_year = yearly_target_year(compute, heluo_result)
+                mapped = self.heluo_view_renderer.render(
+                    heluo_result, theme=theme, target_year=target_year)
+                if mapped:
+                    rendered_text = mapped
+                    source = "helvo_view"
+            except Exception as exc:  # noqa: BLE001 — 映射失败不阻断
+                log.warning("HeluoViewRenderer failed (degrade to template): %s", exc)
+
+        # 兜底：映射为空时给通用模板
+        if not rendered_text:
+            cross_status = self._derive_cross_status(compute.cross_result)
+            fallback = self.template_fallback.render(theme, cross_status)
+            rendered_text = fallback or ""
+            source = "template_fallback"
         render_elapsed_ms = (time.monotonic() - t0) * 1000.0
 
         return RenderStageResult(
