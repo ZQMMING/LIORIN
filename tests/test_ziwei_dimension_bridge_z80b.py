@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-"""Z80-B: 八维/十二维对齐桥测试。
+"""Z80-D: 15 维/12 维对齐桥测试。
 
 覆盖 dimension_bridge.py：
-  - 映射表完整性（8 维全部有归宿）
-  - 一对多投射正确性
+  - 映射表完整性（15 维全部有归宿）
+  - 12 宫位维 1:1 直连投射正确性
   - 跨维池（格局/应期/四化体用）
   - 不丢信息（未声明维度进跨维池而非静默丢弃）
   - 12 维契约不被污染
   - 与 build_life_reading 的接线（answer_alignment 非 None）
+  - 兼容旧 8 维输入（迁移期兜底）
 
-背景缺陷：answer_layer（8 维）在 src/ 内零调用方，
-interpretation（12 维）独立重算维度体系，两者互为孤岛。
+演进：Z80-B 建桥（8 维一对多投射）→ Z80-D 两侧同构（一宫一维）后退化为 1:1。
 """
 import os
 import sys
@@ -19,10 +19,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 os.environ["TONGSHU_ALLOW_ZIWEI_STUB"] = "1"
 
 from tongshu.engines.ziwei_engine import ZiweiEngine
-from tongshu.engines.ziwei.rules.answer_layer import DIMENSIONS, build_answer
+from tongshu.engines.ziwei.rules.answer_layer import DIMENSIONS_15, build_answer
 from tongshu.engines.ziwei.rules.dimension_bridge import (
     ANSWER_TO_READING_DIMENSION,
     CROSS_DIMENSION_KEYS,
+    PALACE_DIM_TO_READING,
     align_answer_to_dimensions,
 )
 from tongshu.engines.ziwei.rules.interpretation import (
@@ -46,31 +47,35 @@ class TestMappingTable:
     """映射表契约。"""
 
     def test_every_answer_dimension_has_destination(self):
-        """8 维必须全部有归宿（映射目标 或 跨维池）。"""
-        declared = set(ANSWER_TO_READING_DIMENSION) | set(CROSS_DIMENSION_KEYS)
-        assert set(DIMENSIONS) == declared, (
-            f"未归位的 8 维: {set(DIMENSIONS) - declared}"
+        """15 维必须全部有归宿（宫位维投射 或 议题维进跨维池）。"""
+        declared = (
+            set(PALACE_DIM_TO_READING)
+            | set(ANSWER_TO_READING_DIMENSION)
+            | set(CROSS_DIMENSION_KEYS)
         )
+        missing = set(DIMENSIONS_15) - declared
+        assert not missing, f"未归位的 15 维: {sorted(missing)}"
 
     def test_mapping_targets_are_valid_reading_dimensions(self):
         """映射目标必须是合法 12 维名。"""
+        for ans_dim, tgt in PALACE_DIM_TO_READING.items():
+            assert tgt in DIMENSION_ORDER, f"{ans_dim} 映射到非法 12 维名 {tgt}"
         for ans_dim, targets in ANSWER_TO_READING_DIMENSION.items():
             for t in targets:
-                assert t in DIMENSION_ORDER, (
-                    f"{ans_dim} 映射到非法 12 维名 {t}"
-                )
+                assert t in DIMENSION_ORDER, f"{ans_dim} 映射到非法 12 维名 {t}"
 
     def test_cross_dimension_keys_have_no_mapping(self):
         """跨维池的维度不得同时出现在映射表中（避免语义重复）。"""
         for k in CROSS_DIMENSION_KEYS:
+            assert k not in PALACE_DIM_TO_READING
             assert k not in ANSWER_TO_READING_DIMENSION
 
     def test_no_reading_dimension_orphaned_by_mapping(self):
-        """映射表覆盖的 12 维必须真实存在。"""
-        covered = set()
-        for targets in ANSWER_TO_READING_DIMENSION.values():
-            covered.update(targets)
-        assert covered <= set(DIMENSION_ORDER)
+        """12 维必须被宫位维映射完全覆盖（一宫一维双射）。"""
+        covered = set(PALACE_DIM_TO_READING.values())
+        assert covered == set(DIMENSION_ORDER), (
+            f"12 维未被完全覆盖: {set(DIMENSION_ORDER) - covered}"
+        )
 
 
 class TestAlignment:
@@ -80,10 +85,10 @@ class TestAlignment:
         ans, _ = _answer()
         al = align_answer_to_dimensions(ans)
         assert al.by_dimension
-        assert al.coverage["answer_dimensions"] == 8
+        assert al.coverage["answer_dimensions"] == 15
 
     def test_no_unmapped_dimensions(self):
-        """8 维必须全部归位，不得有 unmapped。"""
+        """15 维必须全部归位，不得有 unmapped。"""
         ans, _ = _answer()
         al = align_answer_to_dimensions(ans)
         assert al.coverage["unmapped_dimensions"] == [], (
@@ -103,6 +108,14 @@ class TestAlignment:
         for d in al.by_dimension:
             assert d in DIMENSION_ORDER
 
+    def test_all_twelve_reading_dims_covered(self):
+        """Z80-D 核心验收：12 维全部有投射内容，无空维。"""
+        ans, _ = _answer()
+        al = align_answer_to_dimensions(ans)
+        assert al.coverage["reading_dimensions_empty"] == [], (
+            f"存在空维: {al.coverage['reading_dimensions_empty']}"
+        )
+
     def test_cross_dimension_holds_three_keys(self):
         """格局/应期/四化体用 应进跨维池。"""
         ans, _ = _answer()
@@ -111,6 +124,21 @@ class TestAlignment:
         assert set(CROSS_DIMENSION_KEYS) <= got, (
             f"跨维池缺少: {set(CROSS_DIMENSION_KEYS) - got}"
         )
+
+    def test_palace_dim_projects_to_1to1_target(self):
+        """一宫一维：命宫条目只应投到「性情禀赋」，不得投到别处。"""
+        fake = {
+            "answer": {
+                "命宫": [{"source": "sanhe", "rule_id": "X-命宫",
+                          "text": "命宫文本", "evidence_grade": 1}],
+            }
+        }
+        al = align_answer_to_dimensions(fake)
+        assert [it["text"] for it in al.by_dimension["性情禀赋"]] == ["命宫文本"]
+        # 其余 11 维不应收到
+        for d, items in al.by_dimension.items():
+            if d != "性情禀赋":
+                assert not items, f"{d} 意外收到命宫投射"
 
     def test_source_preserved(self):
         """投射条目必须保留来源派别（可审计）。"""
@@ -121,7 +149,7 @@ class TestAlignment:
         for it in all_items:
             assert "source" in it
             assert "from_answer_dimension" in it
-            assert it["from_answer_dimension"] in DIMENSIONS
+            assert it["from_answer_dimension"] in DIMENSIONS_15
 
 
 class TestNoInfoLoss:
@@ -130,7 +158,7 @@ class TestNoInfoLoss:
     def test_unknown_dimension_goes_to_cross(self):
         fake = {
             "answer": {
-                "性格": [{"source": "sanhe", "rule_id": "X1",
+                "命宫": [{"source": "sanhe", "rule_id": "X1",
                           "text": "t1", "evidence_grade": 1}],
                 "玄学新维": [{"source": "qintian", "rule_id": "X2",
                               "text": "t2", "evidence_grade": 1}],
@@ -141,8 +169,8 @@ class TestNoInfoLoss:
         got = {c.dimension for c in al.cross_dimension}
         assert "玄学新维" in got, "未声明的维度被静默丢弃"
 
-    def test_one_to_many_projection(self):
-        """一对多：性格 → 性情禀赋 + 福德精神，两边都应收到。"""
+    def test_legacy_one_to_many_projection(self):
+        """兼容旧 8 维：性格 → 性情禀赋 + 福德精神，两边都应收到。"""
         fake = {
             "answer": {
                 "性格": [{"source": "sanhe", "rule_id": "P1",
@@ -150,22 +178,22 @@ class TestNoInfoLoss:
             }
         }
         al = align_answer_to_dimensions(fake)
+        assert al.coverage["legacy_dimensions_mapped"] == ["性格"]
         for tgt in ANSWER_TO_READING_DIMENSION["性格"]:
             texts = [it["text"] for it in al.by_dimension[tgt]]
             assert "性格文本" in texts, f"{tgt} 未收到投射"
 
     def test_projection_does_not_mutate_source(self):
-        """投射须深拷贝，不得改写原 8 维条目。"""
+        """投射须深拷贝，不得改写源条目。"""
         fake = {
             "answer": {
-                "性格": [{"source": "sanhe", "rule_id": "P1",
+                "命宫": [{"source": "sanhe", "rule_id": "P1",
                           "text": "原文", "evidence_grade": 1}],
             }
         }
         al = align_answer_to_dimensions(fake)
-        # 改写投射结果，原 answer 不受影响
         al.by_dimension["性情禀赋"][0]["text"] = "被改写"
-        assert fake["answer"]["性格"][0]["text"] == "原文"
+        assert fake["answer"]["命宫"][0]["text"] == "原文"
 
 
 class TestWiring:
@@ -178,7 +206,7 @@ class TestWiring:
             chart, compute_multi_method_signals(chart), target_year=2026
         )
         assert reading.answer_alignment is not None, (
-            "reading.answer_alignment 为 None —— 8 维/12 维对齐桥未接入"
+            "reading.answer_alignment 为 None —— 15 维/12 维对齐桥未接入"
         )
 
     def test_alignment_in_to_dict(self):

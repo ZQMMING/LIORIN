@@ -1,14 +1,19 @@
-﻿# -*- coding: utf-8 -*-
-"""Z74d: 答案层组装测试（两派平行 → 八维度）"""
+# -*- coding: utf-8 -*-
+"""Z74d → Z80-D: 答案层组装测试（两派平行 → 15 维度）。
 
+Z80-D：答案层由 8 维（按议题切）升级为 15 维（12 宫位维 + 3 议题维），
+与 interpretation 的 12 维同构（一宫一维），彻底解决结构性缺桶。
+"""
+
+import os
 import sys
 
-sys.path.insert(0, r"D:\shuntian-ziwei-v2\src")
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 import pytest
 
 from tongshu.engines.ziwei_engine import ZiweiEngine
-from tongshu.engines.ziwei.rules.answer_layer import build_answer, DIMENSIONS
+from tongshu.engines.ziwei.rules.answer_layer import DIMENSIONS_15, build_answer
 
 
 @pytest.fixture(scope="module")
@@ -19,11 +24,11 @@ def engine():
 class TestAnswerLayerZ74d:
     """答案层：两派规则命中 → 分维度平行答案。"""
 
-    def test_eight_dimensions(self, engine):
-        """八维度齐备，两派并行输出。"""
+    def test_fifteen_dimensions(self, engine):
+        """15 维度齐备，两派并行输出。"""
         ch = engine.full_chart((1983, 9, 29), 11, "male")
         ans = build_answer(ch)
-        assert set(ans["dimensions"]) == set(DIMENSIONS)
+        assert set(ans["dimensions"]) == set(DIMENSIONS_15)
         assert ans["summary"]["sanhe_total"] > 0
         assert ans["summary"]["qintian_total"] > 0
 
@@ -31,7 +36,7 @@ class TestAnswerLayerZ74d:
         """每条维度答案有 source/rule_id/text。"""
         ch = engine.full_chart((1983, 9, 29), 11, "male")
         ans = build_answer(ch)
-        for dim in DIMENSIONS:
+        for dim in DIMENSIONS_15:
             for it in ans["answer"][dim]:
                 assert it["source"] in ("sanhe", "qintian")
                 assert it["rule_id"]
@@ -55,8 +60,8 @@ class TestAnswerLayerZ74d:
         # 四化体用维度两派都在
         sources = {it["source"] for it in ans["answer"]["四化体用"]}
         assert sources == {"sanhe", "qintian"}
-        # 主维度至少一方有内容
-        for dim in ("性格", "事业", "财运", "应期"):
+        # 主维度至少一方有内容（15 维口径：宫位维取宫名）
+        for dim in ("命宫", "官禄", "财帛", "应期"):
             assert ans["answer"][dim], dim
 
 
@@ -64,14 +69,14 @@ class TestAnswerLayerZ74f:
     """答案层过滤：三方会照格局归「格局」维度，坐命格局进主维度。"""
 
     def test_sanfang_kept_out_of_main_dim(self, engine):
-        """#38 车祸盘：事业维度不再有「三方会照」贵格误报。"""
+        """#38 车祸盘：官禄维度不再有「三方会照」贵格误报。"""
         ch = engine.full_chart((1954, 9, 30), 20, "male")
         ans = build_answer(ch)
-        career = [it for it in ans["answer"]["事业"] if it["source"] == "sanhe"]
+        career = [it for it in ans["answer"]["官禄"] if it["source"] == "sanhe"]
         for it in career:
             assert "三方会照" not in it["text"]
-        # 坐命断语在主维度
-        joined = "".join(it["text"] for it in ans["answer"]["财运"])
+        # 坐命断语在命宫维度
+        joined = "".join(it["text"] for it in ans["answer"]["命宫"])
         assert "武府同宫" in joined or "武曲坐命" in joined or "天府坐命" in joined
 
     def test_sanfang_goes_to_geju(self, engine):

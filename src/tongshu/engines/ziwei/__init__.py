@@ -35,7 +35,10 @@ from __future__ import annotations
 from .evidence_producer import ZiweiEvidenceProducer
 
 # ── 解层便捷入口（lazy 转发，避免包导入期拉起重依赖）──────────────
-from .rules.answer_layer import DIMENSIONS as ANSWER_DIMENSIONS
+# Z80-D：answer_layer 维度体系由 8 维升级为 15 维（12 宫位维 + 3 议题维）。
+# ANSWER_DIMENSIONS 为兼容旧名，转发至 DIMENSIONS_15。
+from .rules.answer_layer import DIMENSIONS_15 as ANSWER_DIMENSIONS
+from .rules.answer_layer import DIMENSIONS as LEGACY_ANSWER_DIMENSIONS
 from .rules.answer_layer import build_answer
 from .rules.domain_reading import build_domain_readings
 from .rules.interpretation import build_life_reading
@@ -51,4 +54,5 @@ __all__ = [
     "build_answer",
     "build_domain_readings",
     "ANSWER_DIMENSIONS",
+    "LEGACY_ANSWER_DIMENSIONS",
 ]

@@ -12,7 +12,7 @@
 ------
   A. 算层：排盘事实是否完整（宫/星/四化/自化）
   B. 辨层：南北两派信号是否产出
-  C. 解层-8维：answer_layer 八维答案
+  C. 解层-15维：answer_layer 十五维答案（12 宫位维 + 3 议题维）
   D. 解层-12维：interpretation 十二维断语
   E. 解层-领域：domain_reading 十二宫 + 领域聚合
   F. 接线：各层是否有生产调用方（防范「库里存在但无人调用」）
@@ -132,37 +132,48 @@ def check_signal(chart) -> dict | None:
     return sig
 
 
-# ── C. 解层-8维 ────────────────────────────────────────────────────────
+# ── C. 解层-15维（Z80-D：12 宫位维 + 3 议题维）────────────────────────────
 
 def check_answer_layer(chart) -> None:
     try:
-        from tongshu.engines.ziwei.rules.answer_layer import DIMENSIONS, build_answer
+        from tongshu.engines.ziwei.rules.answer_layer import (
+            DIMENSIONS_15,
+            build_answer,
+        )
         ans = build_answer(chart)
     except Exception as e:
-        check("C.解层8维", "answer_layer 可执行", False,
+        check("C.解层15维", "answer_layer 可执行", False,
               f"{type(e).__name__}: {e}")
         return
 
-    check("C.解层8维", "answer_layer 可执行", True)
-    check("C.解层8维", "维度数 == 8", len(ans.get("dimensions", [])) == 8,
+    check("C.解层15维", "answer_layer 可执行", True)
+    check("C.解层15维", "维度数 == 15", len(ans.get("dimensions", [])) == 15,
+          f"{ans.get('dimensions')}")
+    check("C.解层15维", "维度名单一致",
+          list(ans.get("dimensions", [])) == DIMENSIONS_15,
           f"{ans.get('dimensions')}")
 
     counts = ans.get("summary", {}).get("dimension_counts", {})
     empty_dims = [d for d, c in counts.items() if c == 0]
-    check("C.解层8维", "八维均有答案", not empty_dims,
+    # Z80-D：结构性缺桶已解决 —— 12 宫位维不得有空桶
+    from tongshu.engines.ziwei.rules.answer_layer import PALACE_DIMENSIONS
+    empty_palace = [d for d in PALACE_DIMENSIONS if counts.get(d, 0) == 0]
+    check("C.解层15维", "15 维均有答案", not empty_dims,
           f"空维度={empty_dims}" if empty_dims else f"计数={counts}", "WARN")
+    check("C.解层15维", "12 宫位维无空桶", not empty_palace,
+          f"空宫位维={empty_palace}" if empty_palace else "12/12 有内容", "FAIL")
 
     # 接线：是否有生产调用方
     callers = _find_callers("build_answer")
-    check("C.解层8维", "有生产调用方", bool(callers),
+    check("C.解层15维", "有生产调用方", bool(callers),
           f"调用方={callers}" if callers else
           "仅在测试中可达（库里存在但生产链路未接）", "FAIL")
 
 
-# ── C2. 八维/十二维对齐（Z80-B）─────────────────────────────────────────
+# ── C2. 15维/十二维对齐（Z80-D）─────────────────────────────────────────
 
 def check_alignment(chart, sig) -> None:
-    """检查 8 维与 12 维是否已收敛（不再互为孤岛）。"""
+    """检查 15 维与 12 维是否已收敛（一宫一维，1:1 直连）。"""
     try:
         from tongshu.engines.ziwei.rules.answer_layer import build_answer
         from tongshu.engines.ziwei.rules.dimension_bridge import (
@@ -178,12 +189,17 @@ def check_alignment(chart, sig) -> None:
     check("C2.维度对齐", "对齐桥可执行", True)
 
     unmapped = al.coverage.get("unmapped_dimensions", [])
-    check("C2.维度对齐", "8 维全部有归宿", not unmapped,
-          f"未归位={unmapped}" if unmapped else "8/8 归位")
+    check("C2.维度对齐", "15 维全部有归宿", not unmapped,
+          f"未归位={unmapped}" if unmapped else "15/15 归位")
 
     check("C2.维度对齐", "条目已投射", al.coverage.get("mapped_items", 0) > 0,
           f"mapped={al.coverage.get('mapped_items')} "
           f"cross={al.coverage.get('cross_items')}")
+
+    # Z80-D 核心验收：12 维全覆盖，无空维
+    empty = al.coverage.get("reading_dimensions_empty", [])
+    check("C2.维度对齐", "12 维全覆盖无空维", not empty,
+          f"空维={empty}" if empty else "12/12 覆盖", "FAIL")
 
     # 接线：reading 是否携带对齐结果
     try:
