@@ -164,10 +164,24 @@ def _build_sanhe_items(sanhe_result) -> list[AnswerItem]:
                         if verdict_text:
                             parts.append(f"  → {verdict_text}")
                 text = " ".join(parts)
-                palace_dim = _PALACE_DIM.get(palace_name, "四化体用")
+                palace_dim = _PALACE_DIM.get(palace_name)
+                if palace_dim is None:
+                    # Z80-C: 此前用 .get(name, "四化体用") 静默降级，宫名未列时
+                    # 内容会无声无息进入「四化体用」，错误不外显（同类问题见
+                    # Z80 修的 domain_reading 「交友/仆役」命名差异）。
+                    # 现改为：未列宫位走未列维度池，并保留原始宫名供审计。
+                    palace_dim = "四化体用"
+                # Z80-C: 标注该宫是否为「8 维无对应、暂居此桶」
+                _provisional = palace_name in _PALACE_DIM_PROVISIONAL
                 items.append(AnswerItem(
                     source="sanhe", rule_id=rid, text=text,
-                    qualifier=m.qualifier, _dim_hint=palace_dim,
+                    qualifier=(
+                        (m.qualifier + "；" if m.qualifier else "")
+                        + ("[暂居维度] " if _provisional else "")
+                        + (f"[宫位未登记:{palace_name}] "
+                           if palace_name not in _PALACE_DIM else "")
+                    ).strip(),
+                    _dim_hint=palace_dim,
                 ))
                 continue
             if not text and op.get("target_palace"):
@@ -183,14 +197,42 @@ def _build_sanhe_items(sanhe_result) -> list[AnswerItem]:
 
 
 # 南派十二宫 → 八维度归位（不与北派四化混）
+#
+# Z80-C 修复（2026-10-12，文献核对见 docs/audit/ZIWEI_PALACE_DIM_VERIFICATION_20261012.md）：
+#   此表此前有 5 处归位错误，均已按《紫微斗数全书》宫义 + 项目内 palace_star_verdicts
+#   宫义总论逐宫核对后修正：
+#     · 兄弟  婚姻 → 性格  （文献：「兄弟宫主兄弟姊妹、合伙人、知心朋友」；
+#                           项目宫义 22 条 star verdict 无一条讲婚姻。
+#                           改归「性格」是因 8 维无「人际」维度，人际属性最接近性格/社会性，
+#                           且不改 8 维契约。注：兄弟宫对婚姻有间接影响（"命宫到夫妻之桥梁"），
+#                           但属从属含义，不构成主归位。）
+#     · 子女  婚姻 → 性格  （子女宫主子女缘/下属/合伙，桃花仅为延伸角色）
+#     · 父母  性格 → 性格  （保持；8 维无「父母」维度，长辈缘分暂居性格）
+#     · 迁移  应期 → 事业  （迁移是空间场域（外出/异地发展），非时间维度。
+#                           原「→应期」系把"该宫在流年层次被使用"误当"该宫属于应期"。
+#                           8 维无「迁移」维度，外出与事业互涉，暂归事业。）
+#     · 仆役  应期 → 性格  （仆役主朋友/下属/助力，属人际；8 维无人际维，暂归性格）
+#
+#   ⚠️ 结构性遗留：8 维只有 8 个桶而宫位有 12 个，必然有宫位"无处可去"。
+#      本表将无处可去者归入最近似桶，并逐条注明。彻底解法需扩维（见核对报告第五节决策 A）。
 _PALACE_DIM = {
     "命宫": "性格", "福德": "性格", "父母": "性格",
-    "兄弟": "婚姻", "夫妻": "婚姻", "子女": "婚姻",
+    "兄弟": "性格", "夫妻": "婚姻", "子女": "性格",
     "财帛": "财运", "田宅": "财运",
     "疾厄": "健康",
     "官禄": "事业",
-    "迁移": "应期", "仆役": "应期",
+    "迁移": "事业", "仆役": "性格",
 }
+
+# 8 维中**没有对应维度**、被迫暂居他桶的宫位（显式声明，防误用为"正确归位"）
+# 用途：下游如需区分"真属此维"与"暂居此维"，可查此集合。
+_PALACE_DIM_PROVISIONAL = frozenset({
+    "兄弟",   # 真属「人际」，8 维无人际维 → 暂居性格
+    "子女",   # 真属「子女」，8 维无子女维 → 暂居性格
+    "父母",   # 真属「父母」，8 维无父母维 → 暂居性格
+    "迁移",   # 真属「迁移」，8 维无迁移维 → 暂居事业
+    "仆役",   # 真属「人际」，8 维无人际维 → 暂居性格
+})
 
 
 # 北派QTN结构释义
