@@ -30,6 +30,21 @@ phase*_output.txt
 *.tmp
 *.bak
 
+# 临时备份/中间产物目录（下划线前缀，非业务资产）
+_backup_*/
+_blind_clean_wt/
+_triage_*/
+
+# Git 输出转储（可由 git diff/status 随时重建，非业务资产）
+docs/audit/ZIWEI_CLEANUP_FINAL_DIFF_STAT_*.txt
+docs/audit/ZIWEI_CLEANUP_FINAL_STATUS_*.txt
+docs/audit/ZIWEI_CLEANUP_FINAL_LOG_*.txt
+docs/audit/ZIWEI_CURRENT_DIFF_STAT_*.txt
+docs/audit/ZIWEI_CURRENT_SNAPSHOT_STATUS_*.txt
+docs/audit/ZIWEI_CURRENT_LOG_*.txt
+docs/audit/SHUNTIAN_CLEANUP_HASH_*.txt
+docs/audit/SHUNTIAN_CLEANUP_WORKTREE_*.patch
+
 # Large data files (optional - uncomment if needed)
 # audit/*.jsonl
 # data/*.json
