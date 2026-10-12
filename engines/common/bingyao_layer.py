@@ -455,11 +455,9 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     if ok and not _shen_ruo:
         ok = False
         matched = ['日主不弱(%s), 杀为喜, 不触发' % _shen_ruo_note]
-    # 格体过滤: 杀是伤官带煞格体, 不报杀重病(双层属性: 格体非破格)
-    if ok:
-        _gc = facts.get('ge_cheng') or {}
-        if sha_wx in (_gc.get('ti_wx') or []):
-            ok = False
+    # 格体过滤 (2026-10 裁决·删L458): L458 前置单类过滤器已删, 格体删/报统一归 L698(L4报出后兜底)
+    #   单一源: L698 读 ge_cheng.cheng_bai + po_ge_hits[domain==GEJU] 判格体。
+    #   L454触发 + L455身弱 照旧, 格体语义全归 L698。此处不再二次否决。
     # 制化闸门: 杀有食制(食神透/有根)或印化(印透/有根)则不报杀重病
     #   (印绶化杀: 印藏根亦化——DT-0327 卯寅印根化杀; 食制杀同理)
     #   UNVERIFIED: 食神无根/印克食神待校
@@ -679,10 +677,24 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         #   非印(财/官杀/食伤/比劫=克泄耗)当令为格体, 格成则"太过"是格体发挥 -> 不病, 豁免
         #   印(生我)生太过则母强子弱/土厚埋金 -> YIN_DUO_MAI_ZI 保留, 不过滤
         _NONYIN_WS = _WS_DOMAIN - {'YIN_DUO_MAI_ZI'}
+        # 格体删/报统一判据 (2026-10 裁决·L698 重写): 读 L4 cheng_bai + 格局域(GEJU)破格命中数,
+        #   不自判成/败 (旧「po_ge_hits 非空=破格」已作废, 设计文档 L3)。P1 只读 L4 值 (设计文档 L106-107)。
+        #   命中格体(非印旺衰病 且 病五行∈ti_wx)时:
+        #     cheng_bai != PO            -> 格成/成中有败/无格, 格体是喜, 不报(豁免)
+        #     cheng_bai == PO 且 GEJU>=1 -> 真格败(格局域破格), 格体转忌, 报
+        #     cheng_bai == PO 且 GEJU==0 -> 破格驱动全在结构域(JIEGOU, 如财党煞), 结构病域已报,
+        #                                     格体不重复报(域归属在 JIEGOU), 豁免
+        #   domain==JIEGOU 的命中一律走结构病域, 不在此删。
+        _po_hits = _gc.get('po_ge_hits') or []
+        _geju_n = sum(1 for _h in _po_hits if _h.get('domain') == 'GEJU')
+        _cheng_bai = _gc.get('cheng_bai', 'NO_GE')
         for _b in bing_list:
             if _b.get('bing_id') in _WS_DOMAIN:   # STEP-1: 旺衰域原则不受 L4 过滤
                 if _b.get('bing_id') in _NONYIN_WS and _bwx.get(_b['bing_id'], '') in _ti_wx:
-                    continue  # 非印格体当令, 格体行为非病 -> 豁免
+                    if _cheng_bai != 'PO' or _geju_n == 0:
+                        continue  # 格成/成中有败/无GEJU破格 -> 格体不报
+                    _kept.append(_b)  # 真格败(PO) 且 格局域破格>=1 -> 格体转忌, 报
+                    continue
                 _kept.append(_b)
                 continue
             _bw = _bwx.get(_b['bing_id'], '')

@@ -1217,4 +1217,24 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
                          ('DTS_CITED' if t == '冲月令破格' else 'BOOK_CITED'),
             })
     gc['po_ge_hits'] = hits
+    # cheng_bai 六态 (设计文档 §四; 判据 L46-47 已核): L4 求值层产出, P1 只读不重判。
+    #   旧 len(po_ge) 非空=破格 已作废 (设计文档 L3)。先判 H 再看 xi_wx, 避免 H=0 误扫。
+    #   NO_GE:  无格(ge_cheng 缺/ge 空)
+    #   CHENG:  普通格 H=0 (无破格命中, 格体是喜)
+    #   CHENG_ZHONG_YOU_PO: 普通格 H>0 且 xi_wx 列表非空 (喜神在, 成中有败)
+    #   PO:     普通格 H>0 且 xi_wx 列表空 (喜神被清空/本无, 真格败)
+    #   SPECIAL_PASS/SPECIAL_FAIL: 特殊格(从/专/化), 设计文档 §四 六态之二,
+    #     判据须单独标定, 此处不擅落, 标 ENGINE_DEFINED_PENDING —— 特殊格盘回归时补。
+    _H = len(hits)
+    _ge_v = gc.get('ge', '')
+    _xi_v = gc.get('xi_wx') or []
+    if not _ge_v:
+        _cb = 'NO_GE'
+    elif _H == 0:
+        _cb = 'CHENG'
+    elif _xi_v:
+        _cb = 'CHENG_ZHONG_YOU_PO'
+    else:
+        _cb = 'PO'
+    gc['cheng_bai'] = _cb
     return facts
