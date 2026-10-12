@@ -1105,6 +1105,9 @@ class ZiweiLifeReadingOutputV3:
     classical_interpretations: List[Any] = field(default_factory=list)
     nihai_assertions: List[Any] = field(default_factory=list)
 
+    # Z80: 维度断语层（十二宫逐宫 + 领域聚合）
+    domain_readings: Optional[Any] = None
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "natal_chart": self.natal_chart,
@@ -1148,27 +1151,9 @@ class ZiweiLifeReadingOutputV3:
 
 
 # ── 十二维度映射 ────────────────────────────────────────────────────────────
-PALACE_DIMENSION_MAP = {
-    "命宫":  "性情禀赋",
-    "兄弟":  "交游人际",
-    "夫妻":  "婚姻配偶",
-    "子女":  "子女",
-    "财帛":  "财帛",
-    "疾厄":  "身体疾厄",
-    "迁移":  "迁移出行",
-    "官禄":  "事业功名",
-    "田宅":  "田宅家业",
-    "福德":  "福德精神",
-    "父母":  "父母长辈",
-    "交友":  "才艺学业",
-    "仆役":  "才艺学业",
-}
-
-DIMENSION_ORDER = [
-    "性情禀赋", "交游人际", "婚姻配偶", "子女", "财帛",
-    "身体疾厄", "迁移出行", "事业功名", "田宅家业",
-    "福德精神", "父母长辈", "才艺学业",
-]
+# Z80-修复：本表此前在本文件内被**重复定义两次**（旧位置约 L1154 与 L1198），
+# 后定义覆盖前定义，两处内容恰好等价才未致错，但属高危重复。
+# 现统一为单一定义（下方「人生维度映射」处保留注释最全的版本），此处不再重复。
 
 
 @dataclass(frozen=True)
@@ -1207,6 +1192,13 @@ PALACE_DIMENSION_MAP = {
     "交友":  "才艺学业",    # 12
     "仆役":  "才艺学业",    # 12（兼容"仆役"写法）
 }
+
+# 十二维度规范顺序（与 PALACE_DIMENSION_MAP 的值域一致）
+DIMENSION_ORDER = [
+    "性情禀赋", "交游人际", "婚姻配偶", "子女", "财帛",
+    "身体疾厄", "迁移出行", "事业功名", "田宅家业",
+    "福德精神", "父母长辈", "才艺学业",
+]
 
 # 宫位关键字 → 断语方向偏好
 PALACE_DIRECTION_HINT = {
@@ -1358,12 +1350,12 @@ PALACE_STAR_RULES: Dict[str, Dict[str, List[Dict[str, str]]]] = {
             {"brightness":["平","弱","陷"],"text":"孤克之象，助人反被累，宜专注自身"},
         ],
         "七杀": [
-            {"brightness":["庙","旺","得"],"text":"魄力十足，敢闯敢拼，适合开拓型事业"},
-            {"brightness":["平","弱","陷"],"text":"冲动冒进，易招意外，宜三思而后行"},
+            {"brightness":["庙","旺","得"],"text":"魄力十足，敢闯敢拼，独立要强，不喜受人支配，适合开拓型事业"},
+            {"brightness":["平","弱","陷"],"text":"冲动冒进，易招意外，性格刚强不服输，宜三思而后行"},
         ],
         "破军": [
-            {"brightness":["庙","旺"],"text":"破旧立新，敢于变革，具开创精神"},
-            {"brightness":["平","弱","陷"],"text":"破坏力有余建设力不足，需稳中求进"},
+            {"brightness":["庙","旺"],"text":"破旧立新，敢于变革，独立自主不喜受人约束，具开创精神"},
+            {"brightness":["平","弱","陷"],"text":"破坏力有余建设力不足，个性倔强，需稳中求进"},
         ],
     },
     # ── 婚姻配偶（夫妻）──
@@ -1839,6 +1831,19 @@ class ZiweiLifeReadingBuilder:
                         if ov not in output.nihai_assertions:
                             output.nihai_assertions.append(ov)
 
+        # ── Z80: 维度断语层（十二宫逐宫 + 领域聚合）──────────────────
+        try:
+            from .domain_reading import build_domain_readings
+            zihua_map = {}
+            if self._engine:
+                try:
+                    zihua_map = self._engine.get_all_zihua(chart)
+                except Exception:
+                    zihua_map = {}
+            output.domain_readings = build_domain_readings(chart, zihua_map)
+        except Exception:
+            output.domain_readings = None
+
         return output
 
     def _call_mutagen(self, fn):
@@ -2017,7 +2022,8 @@ class ZiweiLifeReadingBuilder:
 
             # 生成综合断语
             state.conclusion = self._synthesize_dimension_conclusion(
-                dim.palace, dim.dimension, dim.natal_stars, state, ming_brightness, cai_brightness
+                dim.palace, dim.dimension, dim.natal_stars, state,
+                ming_brightness, cai_brightness, chart
             )
             result.append(state)
         return result
@@ -2030,8 +2036,13 @@ class ZiweiLifeReadingBuilder:
         state: ZiweiDimensionState,
         ming_brightness: dict = None,
         cai_brightness: dict = None,
+        chart: Any = None,
     ) -> str:
-        """合成单维度断语 — 基于多层四化叠加 + 庙旺利陷 + 命宫亮度增强 + 维度专属规则."""
+        """合成单维度断语 — 基于多层四化叠加 + 庙旺利陷 + 命宫亮度增强 + 维度专属规则.
+
+        chart 为可选显式入参（Z80 修复）：自化解读需完整盘数据查 get_all_zihua，
+        此前依赖 state._chart_ref 该字段并不存在，导致自化段恒不产出。
+        """
         from .nihai_assertions import get_assertion as _get_assertion
         if ming_brightness is None:
             ming_brightness = {}
@@ -2105,10 +2116,62 @@ class ZiweiLifeReadingBuilder:
         if all_transforms:
             parts.append("四化引动：" + "、".join(all_transforms))
 
-        # 5. 辅星
+        # 5. 辅星解读（Z80：从 domain_reading 的 MINOR_STAR_BY_PALACE 取解读）
         non_main = [s for s in stars if s not in STAR_BRIGHTNESS]
         if non_main:
-            parts.append("辅星：" + "、".join(non_main))
+            try:
+                from .domain_reading import MINOR_STAR_BY_PALACE
+                minor_interps = []
+                palace_table = MINOR_STAR_BY_PALACE.get(palace_name, {})
+                for star in non_main:
+                    interp = palace_table.get(star, "")
+                    if interp:
+                        minor_interps.append(interp)
+                if minor_interps:
+                    parts.append("；".join(minor_interps))
+                else:
+                    parts.append("辅星：" + "、".join(non_main))
+            except Exception:
+                parts.append("辅星：" + "、".join(non_main))
+
+        # 6. 自化解读（Z80：从 domain_reading 的 ZIHUA_BY_PALACE 取解读）
+        # Z80-修复：原先读取不存在的 state._chart_ref，chart_dict 恒为 {"palaces": {}}，
+        # 导致 zihua_map 恒空、本段永不产出。改为消费显式 chart 入参。
+        if self._engine and chart is not None and hasattr(self._engine, 'get_all_zihua'):
+            try:
+                zihua_map = self._engine.get_all_zihua(chart)
+                if palace_name in zihua_map:
+                    from .domain_reading import ZIHUA_BY_PALACE
+                    zihua_list = zihua_map[palace_name]
+                    palace_zihua_table = ZIHUA_BY_PALACE.get(palace_name, {})
+                    if not palace_zihua_table and palace_name == "仆役":
+                        palace_zihua_table = ZIHUA_BY_PALACE.get("交友", {})
+                    for zh in zihua_list:
+                        zh_type = ""
+                        for t in ["禄", "权", "科", "忌"]:
+                            if t in zh:
+                                zh_type = t
+                                break
+                        if zh_type:
+                            interp = palace_zihua_table.get(zh_type, "")
+                            if interp:
+                                parts.append(interp)
+                                break  # 只取第一条自化解读
+            except Exception:
+                pass
+
+        # 7. 借对宫解读（空宫时）
+        if not main_stars and state.borrowed_from:
+            opp_name = state.borrowed_from
+            parts.append(f"{palace_name}无主星，借对宫{opp_name}论断")
+            # 如果有对宫冲击解读
+            try:
+                from .domain_reading import OPPOSITE_IMPACT
+                impact = OPPOSITE_IMPACT.get(palace_name, "")
+                if impact:
+                    parts.append(impact)
+            except Exception:
+                pass
 
         if not parts:
             return "【%s】%s暂无主星，借对宫论断。" % (dimension, palace_name)
