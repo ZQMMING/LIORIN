@@ -120,30 +120,34 @@ class TestAnswerLayerDimensionMapping:
             assert rid.startswith("QTN-CMB-")
 
     def test_all_dims_covered_by_qtn_map(self):
-        """钦天映射值必须都是合法维度名（Z80-D：15 维口径）。
+        """钦天映射值必须都是合法目标名（Z80-E：宫位维 + 体用项）。
 
-        注：钦天规则只产出其探测器覆盖的若干宫位维，不追求全覆盖；
-        此测试的约束是「不得映射到 15 维之外的未知名」。
+        注：钦天规则只产出其探测器覆盖的若干宫位维/体用项，不追求全覆盖；
+        此测试的约束是「不得映射到 12 宫位维与 3 体用项之外的未知名」。
         """
         from tongshu.engines.ziwei.rules.answer_layer import (
-            DIMENSIONS_15,
+            BODY_USE_KEYS,
+            PALACE_DIMENSIONS,
             QTN_DIMENSION,
         )
 
+        valid = set(PALACE_DIMENSIONS) | set(BODY_USE_KEYS)
         covered = set(QTN_DIMENSION.values())
         assert covered, "钦天维度映射不得为空"
-        unknown = covered - set(DIMENSIONS_15)
-        assert not unknown, f"钦天映射到未知维度: {sorted(unknown)}"
+        unknown = covered - valid
+        assert not unknown, f"钦天映射到未知目标: {sorted(unknown)}"
 
     def test_pattern_fallback_goes_to_geju(self):
         """南派 PATTERN 未命中趋势表时兜底归「格局」（该路径不得删除）。"""
         from tongshu.engines.ziwei.rules.answer_layer import (
-            DIMENSIONS_15,
+            BODY_USE_KEYS,
+            PALACE_DIMENSIONS,
             SANHE_TREND_DIMENSION,
         )
 
-        assert "格局" in DIMENSIONS_15
-        # 趋势映射表本身不得把任何 trend 映射到 15 维以外的
-        # 维度名（防拼写漂移导致 answer[dim] KeyError）
+        assert "格局" in BODY_USE_KEYS
+        valid = set(PALACE_DIMENSIONS) | set(BODY_USE_KEYS)
+        # 趋势映射表本身不得把任何 trend 映射到未知名
+        # （防拼写漂移导致 answer[dim] / body_use[dim] KeyError）
         for trend, dim in SANHE_TREND_DIMENSION.items():
-            assert dim in DIMENSIONS_15, f"trend {trend!r} → 未知维度 {dim!r}"
+            assert dim in valid, f"trend {trend!r} → 未知维度 {dim!r}"

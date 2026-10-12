@@ -19,7 +19,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 os.environ["TONGSHU_ALLOW_ZIWEI_STUB"] = "1"
 
 from tongshu.engines.ziwei_engine import ZiweiEngine
-from tongshu.engines.ziwei.rules.answer_layer import DIMENSIONS_15, build_answer
+from tongshu.engines.ziwei.rules.answer_layer import (
+    BODY_USE_KEYS,
+    PALACE_DIMENSIONS,
+    build_answer,
+)
 from tongshu.engines.ziwei.rules.dimension_bridge import (
     ANSWER_TO_READING_DIMENSION,
     CROSS_DIMENSION_KEYS,
@@ -47,14 +51,16 @@ class TestMappingTable:
     """映射表契约。"""
 
     def test_every_answer_dimension_has_destination(self):
-        """15 维必须全部有归宿（宫位维投射 或 议题维进跨维池）。"""
+        """12 宫位维 + 3 体用项 必须全部有归宿。"""
         declared = (
             set(PALACE_DIM_TO_READING)
             | set(ANSWER_TO_READING_DIMENSION)
             | set(CROSS_DIMENSION_KEYS)
         )
-        missing = set(DIMENSIONS_15) - declared
-        assert not missing, f"未归位的 15 维: {sorted(missing)}"
+        missing = set(PALACE_DIMENSIONS) - declared
+        assert not missing, f"未归位的宫位维: {sorted(missing)}"
+        missing_body = set(BODY_USE_KEYS) - declared
+        assert not missing_body, f"未归位的体用项: {sorted(missing_body)}"
 
     def test_mapping_targets_are_valid_reading_dimensions(self):
         """映射目标必须是合法 12 维名。"""
@@ -85,10 +91,10 @@ class TestAlignment:
         ans, _ = _answer()
         al = align_answer_to_dimensions(ans)
         assert al.by_dimension
-        assert al.coverage["answer_dimensions"] == 15
+        assert al.coverage["answer_dimensions"] == 12
 
     def test_no_unmapped_dimensions(self):
-        """15 维必须全部归位，不得有 unmapped。"""
+        """12 宫位维必须全部归位，不得有 unmapped。"""
         ans, _ = _answer()
         al = align_answer_to_dimensions(ans)
         assert al.coverage["unmapped_dimensions"] == [], (
@@ -109,7 +115,7 @@ class TestAlignment:
             assert d in DIMENSION_ORDER
 
     def test_all_twelve_reading_dims_covered(self):
-        """Z80-D 核心验收：12 维全部有投射内容，无空维。"""
+        """Z80-E 核心验收：12 维全部有投射内容，无空维。"""
         ans, _ = _answer()
         al = align_answer_to_dimensions(ans)
         assert al.coverage["reading_dimensions_empty"] == [], (
@@ -149,7 +155,7 @@ class TestAlignment:
         for it in all_items:
             assert "source" in it
             assert "from_answer_dimension" in it
-            assert it["from_answer_dimension"] in DIMENSIONS_15
+            assert it["from_answer_dimension"] in PALACE_DIMENSIONS
 
 
 class TestNoInfoLoss:

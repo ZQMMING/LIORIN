@@ -113,30 +113,35 @@ class TestDiagnosisAndAnswerLayers:
         # 命盘必有可匹配事实：至少一派有命中，且命中+未命中=该派规则全集口径
         assert signal.total_matched_rules + signal.total_unmatched_production > 0
 
-    def test_answer_layer_fifteen_dimensions(self, male_chart):
+    def test_answer_layer_layered_output(self, male_chart):
         from tongshu.engines.ziwei.rules.answer_layer import (
-            DIMENSIONS_15,
+            BODY_USE_KEYS,
+            PALACE_DIMENSIONS,
             build_answer,
         )
 
         out = build_answer(male_chart)
-        assert out["dimensions"] == DIMENSIONS_15
-        assert set(out["answer"]) == set(DIMENSIONS_15)
+        assert out["dimensions"] == PALACE_DIMENSIONS
+        assert set(out["answer"]) == set(PALACE_DIMENSIONS)
+        assert set(out["body_use"]) == set(BODY_USE_KEYS)
         counts = out["summary"]["dimension_counts"]
         assert sum(counts.values()) >= 12  # 12宫主题至少全命中一轮
         # 每条答案带溯源字段（治理铁律：可追溯）
         for dim_items in out["answer"].values():
             for it in dim_items:
                 assert it["rule_id"] and it["source"] in ("sanhe", "qintian")
+        for body_items in out["body_use"].values():
+            for it in body_items:
+                assert it["rule_id"] and it["source"] in ("sanhe", "qintian")
 
     def test_answer_layer_female_no_crash(self, female_chart):
         from tongshu.engines.ziwei.rules.answer_layer import (
-            DIMENSIONS_15,
+            PALACE_DIMENSIONS,
             build_answer,
         )
 
         out = build_answer(female_chart)
-        assert set(out["answer"]) == set(DIMENSIONS_15)
+        assert set(out["answer"]) == set(PALACE_DIMENSIONS)
 
     def test_flow_day_contract_via_full_chart(self):
         fc = _ENGINE.full_chart(*MALE, flow_year=2026, flow_day=(2026, 3, 10))

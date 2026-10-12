@@ -1,35 +1,40 @@
 # -*- coding: utf-8 -*-
-"""Z80-D: 15 维 / 12 维体系对齐桥。
+"""Z80-E: 12 宫位维 / 12 人生维度 对齐桥（体用层分离）。
 
 背景
 ----
 引擎历史上存在两套并行、互不知晓的维度体系：
 
-    ┌─ answer_layer.DIMENSIONS_15（15 维，Z80-D）
-    │    12 宫位维：命宫 / 兄弟 / 夫妻 / 子女 / 财帛 / 疾厄 /
-    │              迁移 / 仆役 / 官禄 / 田宅 / 福德 / 父母
-    │    + 3 议题维：格局 / 应期 / 四化体用
-    │    输入：南北两派规则命中；输出：逐维平行答案条目
-    │    （Z80-C 及之前为 8 维「性格/格局/事业/婚姻/财运/健康/应期/四化体用」，
-    │      按议题切；因桶数少于十二宫，导致多宫共挤一桶 + 归位错误）
+    ┌─ answer_layer（Z80-E 起分层输出）
+    │    dimensions : 12 宫位维（命宫/兄弟/夫妻/子女/财帛/疾厄/
+    │                          迁移/仆役/官禄/田宅/福德/父母）
+    │    answer     : {宫位维 → 规则条目}
+    │    body_use   : {格局/应期/四化体用 → 条目}  ← 体用层
     │
     └─ interpretation.DIMENSION_ORDER（12 维）
          性情禀赋 / 交游人际 / 婚姻配偶 / 子女 / 财帛 / 身体疾厄 /
          迁移出行 / 事业功名 / 田宅家业 / 福德精神 / 父母长辈 / 才艺学业
          输入：chart + 多层四化；输出：逐维综合断语
 
-Z80-D 后，两侧**同为「一宫一维」口径**，映射退化为 1:1 直连；3 议题维
-在 12 维中无对应宫位，进 `cross_dimension` 跨维结论池。
+Z80-E 后，两侧**维度层同为「一宫一维」**，映射为 1:1 直连；「格局/应期/
+四化体用」属**体用层**（横跨宫位），在 12 维中无对应，进 `cross_dimension`。
+
+文献依据（见微·斗数术语精解）：
+  · 「格局是本宫与三方四正……的组合体」→ 跨宫
+  · 「命宫为体，其余十一宫为用；主星为体，副星、四化为用」→ 体用分层
+  · 「本命盘为体，限运为用」→ 应期属时间层
+所以体用项**不是第 13/14/15 个维度**，而是与宫位层并列的另一层。
 
 映射规则
 --------
 - 12 宫位维 → 按 `PALACE_DIM_TO_READING` 1:1 直连至 12 维（仅名称翻译）
-- 3 议题维 → 归入 `cross_dimension` 跨维结论池
-- 兼容旧 8 维输入 → 经 `ANSWER_TO_READING_DIMENSION` 一对多兜底（迁移期）
+- 体用项（格局/应期/四化体用）→ 归入 `cross_dimension` 跨维结论池
+- 兼容旧契约：8 维输入经 `ANSWER_TO_READING_DIMENSION` 兜底；Z80-D 的
+  「议题维仍在 answer 里」情形亦被识别（见 align 函数第 3 步）
 
 设计约束
 --------
-1. **单向桥**：只做 15 → 12 的投射，不反向污染 15 维。
+1. **单向桥**：只做 answer → 12 维的投射，不反向污染。
 2. **不丢信息**：无法归位的项进 `cross_dimension`，不静默丢弃。
 3. **可审计**：每条投射保留来源 rule_id 与 source 派别。
 """
@@ -77,7 +82,8 @@ ANSWER_TO_READING_DIMENSION: Dict[str, List[str]] = {
     "健康": ["身体疾厄", "福德精神"],
 }
 
-# 无 12 维对应的议题维（显式声明，防遗漏）
+# 无 12 维对应的体用项（显式声明，防遗漏）
+# Z80-E：原 CROSS_DIMENSION_KEYS，语义由「议题维」改称「体用项」
 CROSS_DIMENSION_KEYS: List[str] = ["格局", "应期", "四化体用"]
 
 
@@ -133,21 +139,26 @@ def align_answer_to_dimensions(
     answer: dict,
     dimension_order: List[str] | None = None,
 ) -> DimensionAlignment:
-    """把 answer_layer 的 15 维答案投射到 12 维体系。
+    """把 answer_layer 的答案投射到 12 维体系。
 
     Args:
-        answer: `answer_layer.build_answer()` 的返回值
-                （须含 "answer": {15维名: [条目]}）
+        answer: `answer_layer.build_answer()` 的返回值。
+                Z80-E 契约：
+                  {"dimensions": [12 宫位维], "answer": {宫位维→条目},
+                   "body_use": {格局/应期/四化体用→条目}, "summary": {...}}
+                兼容旧契约：
+                  - Z80-D：answer 键含 12 宫位维 + 3 议题维（无 body_use 字段）
+                  - Z80-C 及之前：answer 键为 8 维（性格/事业/婚姻/财运/健康…）
         dimension_order: 12 维顺序；默认取 interpretation.DIMENSION_ORDER
 
     Returns:
         DimensionAlignment
 
-    投射规则（Z80-D）:
+    投射规则（Z80-E 分层）:
         - 12 宫位维（命宫/兄弟/…/父母）→ 经 PALACE_DIM_TO_READING 1:1 直连
-        - 3 议题维（格局/应期/四化体用）→ 进 cross_dimension 跨维池
-        - 兼容：若输入仍是 Z80-C 及之前的 8 维（性格/事业/婚姻/财运/健康），
-          则经 ANSWER_TO_READING_DIMENSION 一对多兜底投射，行为与旧版一致。
+        - 体用项（格局/应期/四化体用）→ 进 cross_dimension 跨维池
+          （来源优先取 body_use 字段；旧契约下则从 answer 的议题维取）
+        - 兼容旧 8 维输入（性格/事业/婚姻/财运/健康）→ 一对多兜底
 
     用法:
         from tongshu.engines.ziwei.rules.answer_layer import build_answer
@@ -157,8 +168,8 @@ def align_answer_to_dimensions(
 
         answer = build_answer(chart)
         aligned = align_answer_to_dimensions(answer)
-        aligned.by_dimension["性情禀赋"]   # ← 15 维「命宫」投射来的条目
-        aligned.cross_dimension            # ← 格局/应期/四化体用
+        aligned.by_dimension["性情禀赋"]   # ← 宫位维「命宫」投射来的条目
+        aligned.cross_dimension            # ← 格局/应期/四化体用（体用层）
     """
     if dimension_order is None:
         from .interpretation import DIMENSION_ORDER
@@ -170,6 +181,7 @@ def align_answer_to_dimensions(
     cross_items = 0
 
     answer_map = (answer or {}).get("answer", {}) or {}
+    body_use_map = (answer or {}).get("body_use", {}) or {}
 
     def _project(ans_dim: str, it: dict, tgt: str) -> None:
         """把单条答案条目投射到目标 12 维（深拷贝字段，防下游改写）。"""
@@ -204,18 +216,27 @@ def align_answer_to_dimensions(
 
     # ── 2. 兼容旧 8 维名：一对多兜底投射（迁移期）──
     for ans_dim, targets in ANSWER_TO_READING_DIMENSION.items():
-        # 若同一维名已按宫位维直连处理过，跳过（15 维新名与旧名不冲突，
-        # 但防御性检查避免未来命名重叠导致重复投射）
         if ans_dim in PALACE_DIM_TO_READING:
             continue
         for it in answer_map.get(ans_dim, []) or []:
             for tgt in targets:
                 _project(ans_dim, it, tgt)
 
-    # ── 3. 3 议题维：进跨维池 ──
-    for ans_dim in CROSS_DIMENSION_KEYS:
-        for it in answer_map.get(ans_dim, []) or []:
-            _to_cross(ans_dim, it)
+    # ── 3. 体用项 → 跨维池 ──
+    #     Z80-E：优先从独立字段 body_use 取；旧契约下从 answer 的议题维取。
+    seen_body_use_keys = set()
+    for key in CROSS_DIMENSION_KEYS:
+        items_from_body_use = body_use_map.get(key, []) or []
+        if items_from_body_use:
+            seen_body_use_keys.add(key)
+            for it in items_from_body_use:
+                _to_cross(key, it)
+    # 兼容 Z80-D：议题维仍留在 answer 里的情况（body_use 未提供时）
+    for key in CROSS_DIMENSION_KEYS:
+        if key in seen_body_use_keys:
+            continue
+        for it in answer_map.get(key, []) or []:
+            _to_cross(key, it)
 
     # ── 4. 映射完整性校验：凡未声明的维度一律进跨维池，不得静默丢弃 ──
     declared = (
@@ -240,7 +261,13 @@ def align_answer_to_dimensions(
         "legacy_dimensions_mapped": sorted(
             set(ANSWER_TO_READING_DIMENSION) & actual
         ),
-        "cross_dimension_dimensions": len(set(CROSS_DIMENSION_KEYS) & actual),
+        "body_use_keys": sorted(
+            k for k in CROSS_DIMENSION_KEYS
+            if (body_use_map.get(k) or answer_map.get(k))
+        ),
+        "cross_dimension_dimensions": len(
+            set(CROSS_DIMENSION_KEYS) & (actual | set(body_use_map))
+        ),
         "unmapped_dimensions": sorted(unmapped),
         "mapped_items": mapped_items,
         "cross_items": cross_items,

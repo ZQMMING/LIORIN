@@ -18,35 +18,43 @@ from typing import Any
 DIMENSIONS = ["性格", "格局", "事业", "婚姻", "财运", "健康", "应期", "四化体用"]
 
 # ============================================================================
-# Z80-D: 八维 → 十五维（结构性缺桶彻底解决）
+# Z80-E: 层级修正 —— 「宫位维度」与「体用层级」分离
 # ============================================================================
-# 问题：旧 8 维只有 8 个桶而宫位有 12 个，「兄弟/子女/父母/迁移/仆役」
-#       无处可去被迫塞进他桶（Z80-C 只能标「暂居」，治标）。
+# 演进：
+#   Z80-D 曾把「12 宫位」+「3 议题（格局/应期/四化体用）」并称「15 维」。
+#   经文献核对（`docs/audit/ZIWEI_DIMENSION_ARCHITECTURE_VERIFICATION_*.md`）
+#   与外部案例结构分析（`docs/audit/ZIWEI_EXTERNAL_CASE_*.md`），确认这是
+#   **层级混淆**：
 #
-# 正解（用户 2026-10-12 裁决方案 A）：一宫一维，与 interpretation 的
-#       12 维宫位体系同构，再保留 3 个非宫位议题维。
+#     紫微斗数正统结构（见微·斗数术语精解 / 子平引擎同构设计）：
+#       · 宫位层（12 宫）  —— 空间分区，「命宫为体，余十一宫为用」
+#       · 体用层（格局/四化）—— 「主星为体，四化为用」，跨宫组合体
+#       · 应期层（大限流年）—— 「本命盘为体，限运为用」，时间轴
+#     行业实践中三者**从不与十二宫并列称「维度」**，而称「总览/架构/提示」。
 #
-#   12 宫位维：命宫维? → 见下。宫位维直接用「宫名」命名，避免与
-#              interpretation 的近义维名（性情禀赋/交游人际…）产生二次映射歧义。
-#    3 议题维：格局 / 应期 / 四化体用（非宫位，保留）
+#   故本层（Z80-E）改为：
+#     · dimensions  —— 仅 12 宫位维，与 interpretation.DIMENSION_ORDER 1:1 对齐
+#     · body_use    —— 体用层独立字段（格局/应期/四化体用），内容一条不删
 #
-# 破坏性变更：DIMENSIONS 由 8 → 15；build_answer 的 answer dict 键随之改变。
-#             引用点仅 4 处（ziwei/__init__、interpretation、dimension_bridge、3 测试）。
+# 子平引擎同构参照：`ziping_v3/interpretation_v2.py` 契约为
+#   「15 辨层域 + 12 人生维度」——两层数量不同、层级不同，不要求数量相等。
 # ============================================================================
 
 # 12 宫位维（顺序 = 十二宫规范序：命兄夫子财疾迁仆官田福父）
+# 与 interpretation.DIMENSION_ORDER 一宫一维 1:1 同构
 PALACE_DIMENSIONS = [
     "命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄",
     "迁移", "仆役", "官禄", "田宅", "福德", "父母",
 ]
 
-# 3 议题维（非宫位）
-TOPIC_DIMENSIONS = ["格局", "应期", "四化体用"]
+# 3 体用项（非宫位维度 —— 属「体用层」，横跨宫位）
+BODY_USE_KEYS = ["格局", "应期", "四化体用"]
 
-# 15 维全序（宫位维在前，议题维在后）
-DIMENSIONS_15 = PALACE_DIMENSIONS + TOPIC_DIMENSIONS
+# 兼容别名：Z80-D 曾用名（TOPIC_DIMENSIONS / DIMENSIONS_15）
+TOPIC_DIMENSIONS = BODY_USE_KEYS
+DIMENSIONS_15 = PALACE_DIMENSIONS + BODY_USE_KEYS  # 兼容旧导入，语义=宫位维+体用项
 
-# 旧 8 维 → 新 15 维：兼容映射（供下游迁移期使用；旧维名 → 新维名列表）
+# 旧 8 维 → 新体系：兼容映射（供下游迁移期使用；旧维名 → 新维名列表）
 LEGACY_DIMENSION_MAP = {
     "性格":  ["命宫", "福德"],       # 旧「性格」实际收 命宫/福德/父母/兄弟/子女/仆役
     "事业":  ["官禄", "迁移"],
@@ -347,10 +355,18 @@ def _build_qtn_items(qtn_hits: list) -> list[AnswerItem]:
 
 
 def build_answer(chart) -> dict:
-    """两派平行组装 → 十五维度答案（Z80-D：不投票不融合）。
+    """两派平行组装 → 分维度答案 + 体用层（Z80-E：不投票不融合）。
 
-    15 维 = 12 宫位维（命宫/兄弟/夫妻/子女/财帛/疾厄/迁移/仆役/官禄/田宅/福德/父母）
-            + 3 议题维（格局/应期/四化体用）
+    输出为**分层结构**：
+      · dimensions : 12 宫位维（与 interpretation 12 维 1:1 对齐）
+      · answer     : {宫位维 → 条目}
+      · body_use   : {格局/应期/四化体用 → 条目}  ← 体用层，独立于维度
+      · summary    : 计数
+
+    层级依据（文献核对）：
+      - 宫位层（十二宫）是「空间分区」，一宫一维
+      - 体用层（格局 / 四化 / 应期）横跨宫位，不属单一宫
+      → 两者不同层级，不可并列为「N 维」。
     """
     from .method_graphs import SanheRuleGraph
     from .qintian.combinations import detect_all_production
@@ -358,7 +374,8 @@ def build_answer(chart) -> dict:
     sanhe_result = SanheRuleGraph().match_all(chart)
     qtn_hits = detect_all_production(chart)
 
-    # 南派：rule_id → 维度
+    # 组合规则归位：宫位维 / 体用项
+    _BODY_USE_SET = set(BODY_USE_KEYS)
     sanhe_dims: dict[str, str] = {}
     for m in sanhe_result.matched_rules:
         rid = m.rule_spec.rule_id
@@ -368,27 +385,34 @@ def build_answer(chart) -> dict:
             sanhe_dims[rid] = SANHE_TREND_DIMENSION.get(
                 m.facts.get("pattern_judgment", {}).get("trend", ""), "格局")
         elif rid.startswith("SANHE-PALACE-"):
-            sanhe_dims[rid] = _PALACE_DIM.get(rid.split("-")[-1], "四化体用")
+            sanhe_dims[rid] = _PALACE_DIM.get(rid.split("-")[-1], "命宫")
         else:
             sanhe_dims[rid] = "四化体用"
 
     items = _build_sanhe_items(sanhe_result) + _build_qtn_items(qtn_hits)
-    answer: dict = {dim: [] for dim in DIMENSIONS_15}
+    answer: dict = {dim: [] for dim in PALACE_DIMENSIONS}
+    body_use: dict = {key: [] for key in BODY_USE_KEYS}
+
     for it in items:
         dim = it._dim_hint or sanhe_dims.get(
             it.rule_id, QTN_DIMENSION.get(it.rule_id, "四化体用"))
-        if dim not in answer:
-            # Z80-D：维度名越界时不得静默丢弃（防新增维度漏登记）
-            dim = "四化体用"
-        answer[dim].append(it.to_dict())
+        if dim in _BODY_USE_SET:
+            body_use[dim].append(it.to_dict())
+        elif dim in answer:
+            answer[dim].append(it.to_dict())
+        else:
+            # 未登记的维度名不得静默丢弃 → 归入体用层兜底项
+            body_use["四化体用"].append(it.to_dict())
 
     return {
-        "dimensions": DIMENSIONS_15,
+        "dimensions": PALACE_DIMENSIONS,
         "answer": answer,
+        "body_use": body_use,
         "summary": {
             "sanhe_total": len(sanhe_result.matched_rules),
             "qintian_total": len(qtn_hits),
-            "dimension_counts": {d: len(answer[d]) for d in DIMENSIONS_15},
+            "dimension_counts": {d: len(answer[d]) for d in PALACE_DIMENSIONS},
+            "body_use_counts": {k: len(body_use[k]) for k in BODY_USE_KEYS},
         },
     }
 

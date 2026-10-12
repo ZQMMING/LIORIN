@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-"""Z74d → Z80-D: 答案层组装测试（两派平行 → 15 维度）。
+"""Z74d → Z80-E: 答案层组装测试（两派平行 → 12 宫位维 + 3 体用项）。
 
-Z80-D：答案层由 8 维（按议题切）升级为 15 维（12 宫位维 + 3 议题维），
-与 interpretation 的 12 维同构（一宫一维），彻底解决结构性缺桶。
+Z80-E：答案层分层输出 ——
+  dimensions（12 宫位维，与 interpretation 12 人生维度 1:1 对齐）
+  body_use（格局/应期/四化体用，体用层独立字段）
 """
 
 import os
@@ -13,7 +14,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import pytest
 
 from tongshu.engines.ziwei_engine import ZiweiEngine
-from tongshu.engines.ziwei.rules.answer_layer import DIMENSIONS_15, build_answer
+from tongshu.engines.ziwei.rules.answer_layer import (
+    BODY_USE_KEYS,
+    PALACE_DIMENSIONS,
+    build_answer,
+)
 
 
 @pytest.fixture(scope="module")
@@ -24,19 +29,27 @@ def engine():
 class TestAnswerLayerZ74d:
     """答案层：两派规则命中 → 分维度平行答案。"""
 
-    def test_fifteen_dimensions(self, engine):
-        """15 维度齐备，两派并行输出。"""
+    def test_twelve_palace_dimensions(self, engine):
+        """12 宫位维齐备，两派并行输出。"""
         ch = engine.full_chart((1983, 9, 29), 11, "male")
         ans = build_answer(ch)
-        assert set(ans["dimensions"]) == set(DIMENSIONS_15)
+        assert set(ans["dimensions"]) == set(PALACE_DIMENSIONS)
         assert ans["summary"]["sanhe_total"] > 0
         assert ans["summary"]["qintian_total"] > 0
+
+    def test_body_use_layer_present(self, engine):
+        """体用层独立存在（格局/应期/四化体用）。"""
+        ch = engine.full_chart((1983, 9, 29), 11, "male")
+        ans = build_answer(ch)
+        assert set(ans["body_use"].keys()) == set(BODY_USE_KEYS)
+        for k in BODY_USE_KEYS:
+            assert ans["body_use"][k], f"体用项 {k} 为空"
 
     def test_dimension_items_structured(self, engine):
         """每条维度答案有 source/rule_id/text。"""
         ch = engine.full_chart((1983, 9, 29), 11, "male")
         ans = build_answer(ch)
-        for dim in DIMENSIONS_15:
+        for dim in PALACE_DIMENSIONS:
             for it in ans["answer"][dim]:
                 assert it["source"] in ("sanhe", "qintian")
                 assert it["rule_id"]
@@ -47,26 +60,26 @@ class TestAnswerLayerZ74d:
         ch = engine.full_chart((1983, 9, 29), 11, "male")
         ans = build_answer(ch)
         found = False
-        for it in ans["answer"]["四化体用"]:
+        for it in ans["body_use"]["四化体用"]:
             if it["rule_id"] == "SANHE-SIHUA-癸-化禄":
                 assert "生年癸干化禄入官禄宫" in it["text"]
                 found = True
         assert found
 
     def test_parallel_no_vote(self, engine):
-        """南北派各自保留：四化体用必两派，其余主维度非空即可。"""
+        """南北派各自保留：四化体用必两派，其余宫位维非空即可。"""
         ch = engine.full_chart((1983, 9, 29), 11, "male")
         ans = build_answer(ch)
-        # 四化体用维度两派都在
-        sources = {it["source"] for it in ans["answer"]["四化体用"]}
+        # 四化体用（体用层）两派都在
+        sources = {it["source"] for it in ans["body_use"]["四化体用"]}
         assert sources == {"sanhe", "qintian"}
-        # 主维度至少一方有内容（15 维口径：宫位维取宫名）
-        for dim in ("命宫", "官禄", "财帛", "应期"):
+        # 宫位维至少一方有内容
+        for dim in ("命宫", "官禄", "财帛"):
             assert ans["answer"][dim], dim
 
 
 class TestAnswerLayerZ74f:
-    """答案层过滤：三方会照格局归「格局」维度，坐命格局进主维度。"""
+    """答案层过滤：三方会照格局归「格局」体用项，坐命格局进宫位维。"""
 
     def test_sanfang_kept_out_of_main_dim(self, engine):
         """#38 车祸盘：官禄维度不再有「三方会照」贵格误报。"""
@@ -80,10 +93,10 @@ class TestAnswerLayerZ74f:
         assert "武府同宫" in joined or "武曲坐命" in joined or "天府坐命" in joined
 
     def test_sanfang_goes_to_geju(self, engine):
-        """三方会照格局进「格局」维度并标注（坐命单星格亦归此维度）。"""
+        """三方会照格局进「格局」体用项并标注（坐命单星格亦归此）。"""
         ch = engine.full_chart((1954, 9, 30), 20, "male")
         ans = build_answer(ch)
-        geju = [it for it in ans["answer"]["格局"] if it["source"] == "sanhe"]
+        geju = [it for it in ans["body_use"]["格局"] if it["source"] == "sanhe"]
         assert geju
         sanfang = [it for it in geju if "三方会照" in it["text"]]
         assert sanfang  # 至少有三方会照条目
