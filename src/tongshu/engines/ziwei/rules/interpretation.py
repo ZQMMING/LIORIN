@@ -1108,6 +1108,10 @@ class ZiweiLifeReadingOutputV3:
     # Z80: 维度断语层（十二宫逐宫 + 领域聚合）
     domain_readings: Optional[Any] = None
 
+    # Z80-B: 八维/十二维对齐桥产出（answer_layer 8 维 → 12 维投射 + 跨维池）
+    # None 表示未启用对齐（保持向后兼容；旧调用方不受影响）
+    answer_alignment: Optional[Any] = None
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "natal_chart": self.natal_chart,
@@ -1147,6 +1151,11 @@ class ZiweiLifeReadingOutputV3:
             ],
             "classical_interpretations": self.classical_interpretations,
             "nihai_assertions": [a.to_dict() if hasattr(a, 'to_dict') else a for a in self.nihai_assertions],
+            "answer_alignment": (
+                self.answer_alignment.to_dict()
+                if hasattr(self.answer_alignment, "to_dict")
+                else self.answer_alignment
+            ),
         }
 
 
@@ -1843,6 +1852,18 @@ class ZiweiLifeReadingBuilder:
             output.domain_readings = build_domain_readings(chart, zihua_map)
         except Exception:
             output.domain_readings = None
+
+        # ── Z80-B: 八维/十二维对齐桥 ──────────────────────────────────
+        # 把 answer_layer 的 8 维答案投射到本层 12 维体系，使两套体系
+        # 不再互为孤岛。失败不影响主链路（对齐为增强项）。
+        try:
+            from .answer_layer import build_answer
+            from .dimension_bridge import align_answer_to_dimensions
+
+            answer = build_answer(chart)
+            output.answer_alignment = align_answer_to_dimensions(answer)
+        except Exception:
+            output.answer_alignment = None
 
         return output
 
