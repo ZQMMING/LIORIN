@@ -33,6 +33,37 @@ CASE_SOLAR = "1983-11-03 12:00"
 
 SEP = "=" * 72
 
+# 天干/地支 拼音 → 中文（bazi_engine 的 Pillar 用拼音枚举）
+STEM_CN = {
+    "JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU": "戊",
+    "JI": "己", "GENG": "庚", "XIN": "辛", "REN": "壬", "GUI": "癸",
+}
+BRANCH_CN = {
+    "ZI": "子", "CHOU": "丑", "YIN": "寅", "MAO": "卯", "CHEN": "辰", "SI": "巳",
+    "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥",
+}
+
+
+def _pillar_cn(p):
+    """Pillar → 中文干支（如 癸亥）。"""
+    return STEM_CN.get(p.heavenly_stem, "?") + BRANCH_CN.get(p.earthly_branch, "?")
+
+
+def _four_pillars():
+    """借子平引擎取四柱（紫微引擎本身不产四柱）。返回 (年,月,日,时) 中文干支。"""
+    try:
+        from tongshu.engines.bazi_engine import canonical_bazi_engine
+        b = canonical_bazi_engine.compute((1983, 11, 3, 12), gender=GENDER)
+        return (
+            _pillar_cn(b.year_pillar),
+            _pillar_cn(b.month_pillar),
+            _pillar_cn(b.day_pillar),
+            _pillar_cn(b.hour_pillar),
+        )
+    except Exception as e:  # noqa: BLE001
+        return ("?", "?", "?", f"({e})")
+
+
 # 文章原文基准（逐项）
 EXPECT_PALACES = {
     # 宫名: (宫干支, 主星集合)
@@ -50,6 +81,9 @@ EXPECT_PALACES = {
     "父母":   ("丁巳", {"天机"}),
 }
 EXPECT_WUXING = "土五局"
+EXPECT_FOUR_PILLARS = ("癸亥", "壬戌", "乙未", "壬午")  # 文章原文四柱
+EXPECT_SOUL_STAR = "廉贞"   # 命主
+EXPECT_BODY_STAR = "天机"   # 身主
 EXPECT_SIHUA = {  # 癸干生年四化：星 → 落宫
     "破军": ("禄", "官禄"),
     "巨门": ("权", "子女"),
@@ -71,11 +105,11 @@ def main():
     print(f"  命宫地支/宫名：{getattr(chart, 'soulPalaceBranch', 'N/A')}")
     print(f"  身宫地支：{getattr(chart, 'bodyPalaceBranch', 'N/A')}")
     print(f"  五行局：{getattr(chart, 'wuxingJu', getattr(chart, 'fiveElementsClass', 'N/A'))}")
-    print(f"  命主：{getattr(chart, 'soulStar', 'N/A')}  身主：{getattr(chart, 'bodyStar', 'N/A')}")
-    print(f"  四柱：{getattr(chart, 'lunarYearGanZhi', '?')} "
-          f"{getattr(chart, 'lunarMonthGanZhi', '?')} "
-          f"{getattr(chart, 'lunarDayGanZhi', '?')} "
-          f"{getattr(chart, 'lunarHourGanZhi', '?')}")
+    print(f"  命主：{getattr(chart, 'soul_star', 'N/A')}  身主：{getattr(chart, 'body_star', 'N/A')}")
+    y, m, d, h = _four_pillars()
+    print(f"  四柱（借子平引擎）：{y} {m} {d} {h}")
+    print(f"  农历：{getattr(chart, 'lunar_date_text', '?')} {getattr(chart, 'time_text', '')}"
+          f"（{getattr(chart, 'solar_date', '?')}）")
 
     # 十二宫主星
     print("\n  十二宫主星分布：")
@@ -90,8 +124,9 @@ def main():
     print("  文章：破军禄→官禄、巨门权→子女、太阴科→疾厄、贪狼忌→财帛")
     try:
         from tongshu.engines.ziwei_engine import GAN_SIHUA
-        sihua = GAN_SIHUA.get(getattr(chart, "yearGan", ""), None)
-        print(f"  引擎 yearGan={getattr(chart, 'yearGan', '?')} 四化表：{sihua}")
+        ygan = getattr(chart, "natal_year_stem", "") or getattr(chart, "yearGan", "")
+        sihua = GAN_SIHUA.get(ygan, None)
+        print(f"  引擎 生年干={ygan} 四化表：{sihua}")
     except Exception as e:
         print(f"  (取四化表失败: {e})")
 
@@ -143,6 +178,22 @@ def main():
     ok, fail = (ok + 1, fail) if hit else (ok, fail + 1)
     print(f"  [{'✓' if hit else '✗'}] 命宫=身宫同宫：期望 辰/辰，实得 {soul_br}/{body_br}")
 
+    # 6.2b 命主 / 身主 / 四柱
+    soul = getattr(chart, "soul_star", "")
+    body = getattr(chart, "body_star", "")
+    hit = (soul == EXPECT_SOUL_STAR)
+    ok, fail = (ok + 1, fail) if hit else (ok, fail + 1)
+    print(f"  [{'✓' if hit else '✗'}] 命主：期望 {EXPECT_SOUL_STAR}，实得 {soul}")
+    hit = (body == EXPECT_BODY_STAR)
+    ok, fail = (ok + 1, fail) if hit else (ok, fail + 1)
+    print(f"  [{'✓' if hit else '✗'}] 身主：期望 {EXPECT_BODY_STAR}，实得 {body}")
+
+    got_fp = _four_pillars()
+    hit = (got_fp == EXPECT_FOUR_PILLARS)
+    ok, fail = (ok + 1, fail) if hit else (ok, fail + 1)
+    print(f"  [{'✓' if hit else '✗'}] 四柱：期望 {' '.join(EXPECT_FOUR_PILLARS)}，"
+          f"实得 {' '.join(got_fp)}")
+
     # 6.3 十二宫主星
     print("\n  ── 十二宫主星/干支 ──")
     for pn, (exp_gz, exp_stars) in EXPECT_PALACES.items():
@@ -165,7 +216,7 @@ def main():
     print("\n  ── 生年四化（癸干）落宫 ──")
     try:
         from tongshu.engines.ziwei_engine import GAN_SIHUA
-        year_gan = getattr(chart, "yearGan", None)
+        year_gan = getattr(chart, "natal_year_stem", None) or getattr(chart, "yearGan", None)
         tbl = GAN_SIHUA.get(year_gan, {}) if year_gan else {}
         # 建「星 → 所在宫」索引
         star_palace = {}
