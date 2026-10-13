@@ -64,6 +64,7 @@ from engines.common.bing_debate import resolve_primary_bing
 from engines.common.zhuangui_layer import resolve_zhuangui
 from engines.common.qtbj_climate_candidates import build_climate_candidates
 from engines.common.yongyao_resolve import resolve_yongyao
+from engines.common.suiyun_validate import validate_suiyun
 from engines.common.fan_ju import resolve_fan_ju
 from engines.common.special_pattern import build_special_patterns
 from engines.common.ge_jie_layer import (build_ge_cheng, apply_he_po_ge,
@@ -95,7 +96,7 @@ _POS = ("year", "month", "day", "hour")
 
 # ==================== ① 八字排盘临时接口 ====================
 
-def paipan(bazi: str) -> Dict[str, Any]:
+def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] = None) -> Dict[str, Any]:
     """四柱字符串进真实引擎, 返回全部层事实。只排盘, 不下任何结论。"""
     bz = "".join(str(bazi).split())
     if len(bz) != 8:
@@ -528,6 +529,20 @@ def paipan(bazi: str) -> Dict[str, Any]:
     dm_wx = f.get("daymaster_element", "") or (f["wuxing_power"].get("daymaster_element", ""))
     dmd = (f["wuxing_power"].get("wuxing_power", {}) or {}).get(dm_wx, {}) or {}
 
+    # P3 岁运层 (架构 §2.10): 喂了 dayun_list 才在复合局逐步重跑 算→辩→转归→解;
+    #   不喂 = 空结构(原局稳定后建, 不强行造岁运).
+    _prod = {
+        'engine_result': f,
+        'l1_result': {'queries': queries},
+        'zhenglun': {'bingyao': by, 'debate': debate, 'zhuangui': zg, 'yongyao': yy},
+    }
+    if dayun_list:
+        _suiyun = validate_suiyun(p, _prod, dayun_list, liunian_map)
+    else:
+        _suiyun = {'layer': 'SUIYUN_VALIDATE', 'state': 'NO_DAYUN',
+                   'dayun_steps': [],
+                   'boundary_note': '未喂 dayun_list, 岁运层空; 传 dayun_list 才逐步重跑'}
+
     return {
         "bazi": bz,
         "pillars": p,
@@ -596,6 +611,7 @@ def paipan(bazi: str) -> Dict[str, Any]:
                         "compare_key": debate.get("compare_key")},
         "zhuangui": zg,
         "climate": cli,
+        "suiyun": _suiyun,
         # STEP-DBG-11 (2026-10-03) 用神层投影补全 (GAP-7)
         #   yongyao_resolve 内部【已算好】all_edges / auxiliary_medicine /
         #   medicine_blocked 三项, 但顶层只投影 primary/ji_shen 两个键,
