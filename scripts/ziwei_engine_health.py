@@ -17,6 +17,7 @@
   E. 解层-领域：domain_reading 十二宫 + 领域聚合
   F. 接线：各层是否有生产调用方（防范「库里存在但无人调用」）
   G. 唯一入口：是否存在统一对外入口
+  H. 随机盘冒烟：跨盘写死 / 文实一致性 / 借宫真实性 / 重复句 / 领域污染
 
 用法
 ----
@@ -352,6 +353,96 @@ def check_wiring() -> None:
 
 # ── 主流程 ─────────────────────────────────────────────────────────────
 
+def check_smoke(n: int = 8) -> None:
+    """H. 随机盘冒烟 —— 跨盘写死 / 文实一致性 / 借宫 / 重复句 / 领域污染。
+
+    复用 scripts/ziwei_smoke_random.py 的检查函数，跑 n 张固定种子随机盘，
+    要求 6 类缺陷计数全为 0 —— 防「只对某张盘成立」的写死文案回归。
+    """
+    section = "H.随机盘冒烟"
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent))
+        import random as _random
+        import ziwei_smoke_random as smoke
+    except Exception as exc:  # noqa: BLE001
+        check(section, "冒烟模块可导入", False, f"{type(exc).__name__}: {exc}")
+        return
+    check(section, "冒烟模块可导入", True)
+
+    try:
+        from tongshu.engines.ziwei_engine import ZiweiEngine
+        from tongshu.engines.ziwei.rules.interpretation import build_life_reading
+        from tongshu.engines.ziwei.rules.multi_method import (
+            compute_multi_method_signals,
+        )
+        from tongshu.engines.ziwei.rules.domain_reading import (
+            build_domain_readings,
+        )
+    except Exception as exc:  # noqa: BLE001
+        check(section, "解层入口可导入", False, f"{type(exc).__name__}: {exc}")
+        return
+
+    rng = _random.Random(20261014)
+    eng = ZiweiEngine()
+    ok = crashes = fact_bads = borrow_bads = dup_bads = poll_bads = 0
+    palace_star_text: dict = {}
+    for _ in range(n):
+        lunar, hour, gender = smoke.gen_chart(rng)
+        try:
+            chart = eng.full_chart(lunar, hour, gender)
+            present = smoke.collect_present_stars(chart)
+            sig = compute_multi_method_signals(chart)
+            reading = build_life_reading(chart, sig, target_year=2026)
+            domains = build_domain_readings(chart, eng.get_all_zihua(chart))
+            ok += 1
+            texts = [(d.dimension, (d.conclusion or "").strip())
+                     for d in reading.dimensions]
+            texts += [(f"领域-{dr.domain}", (dr.conclusion or "").strip())
+                      for dr in (getattr(domains, "domain_readings", []) or [])]
+            for _dim, txt in texts:
+                if not txt:
+                    continue
+                fact_bads += len(smoke.check_text_facts(txt, present))
+                borrow_bads += len(smoke.check_borrow(txt, present))
+                dup_bads += len(smoke.check_dup(txt))
+            for dr in (getattr(domains, "domain_readings", []) or []):
+                poll_bads += len(smoke.check_domain_pollution(
+                    dr.domain, (dr.conclusion or "")))
+            for pr in (getattr(domains, "palace_readings", []) or []):
+                t = (pr.conclusion or "").strip()
+                if t:
+                    palace_star_text.setdefault(pr.palace, {}).setdefault(
+                        frozenset(pr.stars or []), t)
+        except Exception:  # noqa: BLE001
+            crashes += 1
+
+    # F/G 跨盘检查（需跨盘聚合）
+    _seen: dict = {}
+    for _pal, _mp in palace_star_text.items():
+        for _s, _t in _mp.items():
+            _seen.setdefault((_pal, _t), set()).add(_s)
+    hard = sum(1 for _c in _seen.values() if len(_c) >= 2)
+
+    near = 0
+    for _pal, _mp in palace_star_text.items():
+        _its = [(_s, _t) for _s, _t in _mp.items() if len(_t) >= 20]
+        for _i in range(len(_its)):
+            for _j in range(_i + 1, len(_its)):
+                _m1 = {x for x in _its[_i][0] if x in smoke.MAIN_STARS}
+                _m2 = {x for x in _its[_j][0] if x in smoke.MAIN_STARS}
+                if _m1 == _m2:
+                    continue
+                if smoke.similarity(_its[_i][1], _its[_j][1]) >= 0.85:
+                    near += 1
+
+    check(section, f"冒烟 {n} 盘全链路", ok == n, f"{ok}/{n} 成功")
+    total_bad = (crashes + fact_bads + borrow_bads + dup_bads
+                 + poll_bads + hard + near)
+    check(section, "跨盘缺陷计数为 0", total_bad == 0,
+          f"崩溃{crashes} 文实{fact_bads} 借宫{borrow_bads} "
+          f"重复{dup_bads} 污染{poll_bads} 写死{hard} 雷同{near}")
+
+
 def evaluate(json_out: str | None = None) -> int:
     print("=" * 66)
     print("紫微引擎健康检查 — 三层架构接线与产出完整性")
@@ -367,6 +458,7 @@ def evaluate(json_out: str | None = None) -> int:
         check_interpretation(chart, sig)
         check_domain(chart)
     check_wiring()
+    check_smoke()
 
     # ── 输出 ──
     cur = None

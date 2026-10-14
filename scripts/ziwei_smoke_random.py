@@ -127,6 +127,19 @@ def check_domain_pollution(domain: str, text: str) -> list:
     return hits
 
 
+def _bigrams(s: str) -> set:
+    s = re.sub(r"[\s；;。，,、（）()]", "", s)
+    return {s[i:i + 2] for i in range(len(s) - 1)} if len(s) > 1 else {s}
+
+
+def similarity(a: str, b: str) -> float:
+    """字符 bigram Jaccard 相似度（0~1）。"""
+    ga, gb = _bigrams(a), _bigrams(b)
+    if not ga or not gb:
+        return 0.0
+    return len(ga & gb) / len(ga | gb)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=40, help="随机盘数量")
@@ -142,6 +155,10 @@ def main():
     #    若同一宫位的同一句断语对应 >=2 个不同星组合，说明该句与星曜无关
     #    （= 写死盘面），是跨盘写死残留的强信号。
     palace_text_stars = defaultdict(set)
+    # G: 同宫不同星组合的断语相似度 —— {宫名: {frozenset(星): 断语}}
+    #    不同星组合本应产出不同断语；若两句高度雷同，说明该段文字与星曜
+    #    弱相关（模板化过度/写死），是 F 之外的加严检查。
+    palace_star_text = defaultdict(dict)
 
     for i in range(args.n):
         lunar, hour, gender = gen_chart(rng)
@@ -166,12 +183,13 @@ def main():
                 for x in check_dup(txt):
                     dup_bads.append((tag, d.dimension, x))
 
-            # 宫位逐宫解读（用于 F 跨盘区分性检测）
+            # 宫位逐宫解读（用于 F/G 跨盘区分性检测）
             for pr in getattr(domains, "palace_readings", []) or []:
                 txt = (pr.conclusion or "").strip()
                 if txt:
-                    palace_text_stars[(pr.palace, txt)].add(
-                        frozenset(pr.stars or []))
+                    star_key = frozenset(pr.stars or [])
+                    palace_text_stars[(pr.palace, txt)].add(star_key)
+                    palace_star_text[pr.palace].setdefault(star_key, txt)
 
             # 领域断语
             for dr in getattr(domains, "domain_readings", []) or []:
@@ -204,12 +222,39 @@ def main():
     )
     print(f"  D 重复句      : {len(dup_bads)}")
     print(f"  E 领域污染    : {len(poll_bads)}")
+    # G 断语雷同：同宫不同星组合的断语相似度 >= 阈值（模板化过度/写死）
+    SIM_THRESH = 0.85
+    near_dup = []
+    for pal, mapping in palace_star_text.items():
+        items = [(s, t) for s, t in mapping.items() if len(t) >= 20]
+        for i in range(len(items)):
+            for j in range(i + 1, len(items)):
+                s1, t1 = items[i]
+                s2, t2 = items[j]
+                if s1 == s2:
+                    continue
+                # 主星相同、仅辅星不同 → 主体文案本就应一致（差异部分正是
+                # 辅星语句），不算「雷同」。只比较主星组合不同的样本。
+                m1 = {x for x in s1 if x in MAIN_STARS}
+                m2 = {x for x in s2 if x in MAIN_STARS}
+                if m1 == m2:
+                    continue
+                sim = similarity(t1, t2)
+                if sim >= SIM_THRESH:
+                    near_dup.append(
+                        (pal, f"sim={sim:.2f}",
+                         "／".join(sorted(s1)), "／".join(sorted(s2)),
+                         t1[:34]))
+    near_dup.sort(key=lambda x: -float(x[1].split("=")[1]))
+
     print(f"  F 跨盘写死    : {len(hardcoded)}")
+    print(f"  G 断语雷同    : {len(near_dup)}  (同宫不同星组合 sim>={SIM_THRESH})")
     print()
 
     for label, rows in (("A 崩溃", crashes), ("B 文实不一致", fact_bads),
                         ("C 借宫失真", borrow_bads), ("D 重复句", dup_bads),
-                        ("E 领域污染", poll_bads), ("F 跨盘写死", hardcoded)):
+                        ("E 领域污染", poll_bads), ("F 跨盘写死", hardcoded),
+                        ("G 断语雷同", near_dup)):
         if not rows:
             continue
         print(f"── {label}（前 10 条）──")
@@ -220,7 +265,7 @@ def main():
         print()
 
     total = (len(crashes) + len(fact_bads) + len(borrow_bads)
-             + len(dup_bads) + len(poll_bads) + len(hardcoded))
+             + len(dup_bads) + len(poll_bads) + len(hardcoded) + len(near_dup))
     print("=" * 72)
     print(f"结论：{'★ 全绿（0 缺陷）' if total == 0 else f'⚠ 共 {total} 条待查'}")
     print("=" * 72)
