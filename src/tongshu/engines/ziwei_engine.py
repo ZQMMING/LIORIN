@@ -967,8 +967,10 @@ class ZiweiEngine:
         return json.loads(proc.stdout)
 
     def full_chart(self, lunar_date, hour, gender, flow_month=0, flow_year=0, flow_day=None):
-        """Z74c: flow_month 可选（1-12 流月应期层入参，默认0不启用）。"""
-        """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）\n
+        """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）
+
+        Z74c: flow_month 可选（1-12 流月应期层入参，默认0不启用）。
+
         倪海厦/《紫微斗数全书》体系核心数据：
         - 五行局（fiveElementsClass，纳音起局：水二木三金四土五火六）
         - 12宫：宫干(heavenlyStem)、宫支(earthlyBranch)、主星/辅星、
@@ -1326,13 +1328,14 @@ class ZiweiEngine:
         """
         from ..engines.bazi_engine import BaziEngine, canonical_bazi_engine
         from ..reasoning.rule_db import DAY_MASTER_ELEMENT
-        # Stub 需要阳历来做八字计算
-        # 将农历日期转换为阳历
+        # Stub 需要阳历来做八字计算（full_chart 入参为农历）。
+        # Z80-F（2026-10-14）：改用 Lunar.fromYmd —— 旧写法
+        # Solar.fromYmd(y,m,d).getLunar().getSolar() 是**恒等变换**
+        # （把农历数字当阳历构造再转回来），从未真正完成农历→阳历换算。
         try:
-            from lunar_python import Solar
-            solar = Solar.fromYmd(lunar_date[0], lunar_date[1], lunar_date[2])
-            lunar = solar.getLunar()
-            solar_back = lunar.getSolar()
+            from lunar_python import Lunar
+            solar_back = Lunar.fromYmd(
+                lunar_date[0], lunar_date[1], lunar_date[2]).getSolar()
             bazi = canonical_bazi_engine.compute(
                 (solar_back.getYear(), solar_back.getMonth(), solar_back.getDay(), hour),
                 gender=gender

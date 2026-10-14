@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
 
 from ...ziwei_engine import FrozenZiweiChart, GAN_SIHUA
 from ...ziwei_method_profile import MethodId, RuleType, ConfidenceLevel, EvidenceRef, RuleSpec, get_profile

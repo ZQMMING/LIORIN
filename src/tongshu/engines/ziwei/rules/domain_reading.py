@@ -989,9 +989,12 @@ def _extract_risk_and_advice(
                 elif star == "铃星" and domain == "健康":
                     risks.append("铃星持续带来隐性焦虑，压力积压容易躯体化")
                     advice.append("固定作息，情绪宣泄，减少熬夜")
-                elif star == "贪狼" and "忌" in full_text and domain == "财运":
-                    risks.append("贪狼忌代表欲望无底洞，冲动消费、投机投资持续破财")
-                    advice.append("强制储蓄，远离股票虚拟币，不与人合伙投资")
+            # Z80-F（2026-10-14）：贪狼是欲望/桃花星，非煞星，须独立判定。
+            # 此前该分支嵌在煞星 if 内，而外层元组不含「贪狼」→ elif 永不可达，
+            # 「贪狼忌破财」风险与建议从不产出。
+            if star == "贪狼" and "忌" in full_text and domain == "财运":
+                risks.append("贪狼忌代表欲望无底洞，冲动消费、投机投资持续破财")
+                advice.append("强制储蓄，远离股票虚拟币，不与人合伙投资")
 
         # 忌化信号
         if "忌" in pr.sihua_interpretation or "忌" in pr.zihua_interpretation:

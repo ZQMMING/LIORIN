@@ -92,7 +92,7 @@ def get_xiangxin_mutagen(chart) -> List[FlyingTransformFact]:
     """
     OPPOSITE_PAIRS = {
         "命": "迁移", "迁移": "命",
-        "兄弟": "交友", "交友": "兄弟",
+        "兄弟": "仆役", "仆役": "兄弟",
         "夫妻": "官禄", "官禄": "夫妻",
         "子女": "田宅", "田宅": "子女",
         "财帛": "福德", "福德": "财帛",
@@ -117,5 +117,17 @@ def get_lixin_mutagen(chart) -> List[FlyingTransformFact]:
         离心自化事实列表（自化中目标非对宫者）
     """
     self_mutagens = get_self_mutagen(chart)
-    xiangxin_ids = {id(ft) for ft in get_xiangxin_mutagen(chart)}
-    return [ft for ft in self_mutagens if id(ft) not in xiangxin_ids]
+    # Z80-F（2026-10-14）：此前用 id(ft) 做集合差，但 get_self_mutagen 与
+    # get_xiangxin_mutagen 各自新建 FlyingTransformFact 对象，两者 id 恒不
+    # 相等 → 过滤永不生效，本函数实际恒等于 get_self_mutagen，与「排除向心」
+    # 的语义矛盾。改为按飞化四要素（值）比对。
+    xiangxin_keys = {
+        (ft.source_palace, ft.source_stem, ft.transformation,
+         ft.target_star, ft.target_palace)
+        for ft in get_xiangxin_mutagen(chart)
+    }
+    return [
+        ft for ft in self_mutagens
+        if (ft.source_palace, ft.source_stem, ft.transformation,
+            ft.target_star, ft.target_palace) not in xiangxin_keys
+    ]

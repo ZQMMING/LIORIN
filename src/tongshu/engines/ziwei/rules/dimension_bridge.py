@@ -44,19 +44,20 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
 # ============================================================================
-# 15 维 → 12 维 映射表（Z80-D：一宫一维后，宫位维 1:1 直连）
+# 12 宫位维 → 12 人生维度 映射表（Z80-E：宫位层 1:1 直连，仅名称翻译）
 # ============================================================================
 #
-# Z80-D 变更：answer_layer 已由 8 维升级为 15 维（12 宫位维 + 3 议题维）。
-#   其中 12 宫位维与 interpretation 的 12 维**同构**（都是一宫一维），
-#   故映射退化为 1:1 直连；3 议题维仍无 12 维对应，进跨维池。
+# Z80-E 变更：answer_layer 改为**分层输出** —— `dimensions` 仅 12 宫位维，
+#   体用项（格局/应期/四化体用）移入独立 `body_use` 字段。12 宫位维与
+#   interpretation 的 12 维**同构**（都是一宫一维），故映射退化为 1:1 直连；
+#   体用项无 12 维对应，进跨维池（cross_dimension）。
 #
 # 命名差异说明（两套体系对同一宫用了不同维名）：
 #   answer_layer 用「宫名」直接作维名（命宫/兄弟/夫妻/…）
 #   interpretation 用「近义维名」（性情禀赋/交游人际/婚姻配偶/…）
 # 二者指向同一宫，此表做名称翻译。
 
-# 键 = answer_layer 15 维名（宫位维），值 = interpretation 12 维名（1:1）
+# 键 = answer_layer 12 宫位维名，值 = interpretation 12 维名（1:1）
 PALACE_DIM_TO_READING: Dict[str, str] = {
     "命宫": "性情禀赋",
     "兄弟": "交游人际",
@@ -72,7 +73,7 @@ PALACE_DIM_TO_READING: Dict[str, str] = {
     "父母": "父母长辈",
 }
 
-# 兼容旧名：Z80-C 及之前的 8 维名 → 15 维宫位维列表
+# 兼容旧名：Z80-C 及之前的 8 维名 → 12 宫位维列表
 # 供下游迁移期使用（旧调用方若仍按 8 维名取数，可经此换算）。
 ANSWER_TO_READING_DIMENSION: Dict[str, List[str]] = {
     "性格": ["性情禀赋", "福德精神"],
@@ -94,7 +95,7 @@ CROSS_DIMENSION_KEYS: List[str] = ["格局", "应期", "四化体用"]
 @dataclass
 class CrossDimensionItem:
     """无法归入单一 12 维的跨维条目（议题维或未声明维）。"""
-    dimension: str        # 15 维名（格局/应期/四化体用等）
+    dimension: str        # 12 宫位维名（命宫/兄弟/夫妻/…）
     source: str           # sanhe / qintian
     rule_id: str
     text: str
@@ -116,7 +117,7 @@ class DimensionAlignment:
 
     Attributes:
         by_dimension: {12维名: [投射来的答案条目 dict]}
-        cross_dimension: 无 12 维对应的 8 维条目池
+        cross_dimension: 无 12 维对应的体用项 / 未归位条目池
         coverage: 映射统计
     """
     by_dimension: Dict[str, List[dict]] = field(default_factory=dict)

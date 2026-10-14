@@ -8,7 +8,7 @@ Z17 收敛（2026-09-14 用户定稿）：
   - 北派由独立子包 qintian/ 承载（make_qintian_rule_graph）
 
 当前状态：
-  - SanheRuleGraph: ✅ 完整（41 格局 + 10 四化 + 12 宫主题，rule_count=63）
+  - SanheRuleGraph: ✅ 完整（40 格局 + 10 四化 + 12 宫主题，rule_count=62）
 
 架构要求：
   - 每个类必须有独立的 __class__.__name__
@@ -35,6 +35,15 @@ from ...ziwei_method_profile import (
 from ...ziwei_palace_resolution import ZiweiPalaceResolver
 
 logger = logging.getLogger(__name__)
+
+
+# ============================================================================
+# 星曜分类常量（宫位规则的煞/吉事实标注，供解层释义判定使用）
+# ============================================================================
+# 六煞（《紫微斗数全书》）：擎羊、陀罗、火星、铃星、地空、地劫
+SHA_STARS = frozenset({"擎羊", "陀罗", "火星", "铃星", "地空", "地劫"})
+# 六吉（三合派）：文昌、文曲、左辅、右弼、天魁、天钺
+JI_STARS = frozenset({"文昌", "文曲", "左辅", "右弼", "天魁", "天钺"})
 
 
 # ============================================================================
@@ -453,10 +462,23 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
             palace = rule.condition.get("palace", "")
             if palace in chart.palaces:
                 from .rule_graph import RuleMatch
+                # Z80-F（2026-10-14）：补全 facts —— 此前仅带 palace/stars，
+                # 导致解层 answer_layer 的四档亮度判定（庙/旺/利/陷 + 煞吉）
+                # 恒因缺字段走 else 分支而失效。此处从盘面取 brightness（由
+                # ZiweiEngine.full_chart 注入）并标注煞/吉存在性。
+                _pdata = chart.palaces[palace] or {}
+                _major = list(_pdata.get("major", []) or [])
+                _minor = list(_pdata.get("minor", []) or [])
+                _all_stars = _major + _minor
                 matches.append(RuleMatch(
                     rule_spec=rule,
-                    facts={"palace": palace,
-                           "stars": chart.palaces[palace].get("major", [])},
+                    facts={
+                        "palace": palace,
+                        "stars": _major,
+                        "brightness": dict(_pdata.get("brightness", {}) or {}),
+                        "has_煞": any(s in SHA_STARS for s in _all_stars),
+                        "has_吉": any(s in JI_STARS for s in _all_stars),
+                    },
                 ))
         return RuleMatchResult(matched_rules=tuple(matches),
                                method_id=self.METHOD_ID)

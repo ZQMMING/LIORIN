@@ -41,6 +41,7 @@ from typing import Any, Dict, List, Optional
 
 from .method_graphs import SanheRuleGraph
 from .qintian import make_qintian_rule_graph
+from .rule_graph import PATTERN_DEFS as _PATTERN_DEFS_SRC
 
 
 @dataclass
@@ -143,17 +144,13 @@ def _wrap_sanhe(graph: SanheRuleGraph, chart) -> MethodBundle:
 
 
 # 格局名索引（用于推导 unmatched 的 SANHE-PATTERN-* 全集）
-_PATTERN_IDS = [  # 与 rule_graph.PATTERN_DEFS 同名同步
-    ("紫微独坐",), ("天府朝垣",), ("极居卯酉",), ("紫杀化权",), ("紫相同宫",),
-    ("武贪格",), ("武杀同宫",), ("武破同宫",), ("武府同宫",), ("日月并明",),
-    ("机月同梁",), ("机梁善谈",), ("机巨同宫",), ("月朗天门",), ("天同天梁",),
-    ("廉贪同宫",), ("廉杀同宫",), ("廉破同宫",), ("府相朝垣",), ("杀破狼",),
-    ("七杀朝斗",), ("破军坐命",), ("巨日同宫",), ("天相坐命",), ("天梁坐命",),
-    ("贪狼坐命",), ("太阴坐命",), ("太阳坐命",), ("天同坐命",), ("武曲坐命",),
-    ("天机坐命",), ("廉贞坐命",), ("巨门坐命",), ("天府坐命",), ("廉府同宫",),
-    ("武相同宫",), ("紫府同宫",), ("阳梁同宫",), ("同梁同宫",), ("杀狼同宫",),
-    ("破狼同宫",),
-]
+#
+# Z80-F（2026-10-14）：**由 rule_graph.PATTERN_DEFS 直接派生**，不再硬编码。
+#   此前硬编码 41 条（自述「与 PATTERN_DEFS 同名同步」），而 PATTERN_DEFS
+#   实为 40 条，多出幻影「杀狼同宫」（DEFS 中只有「破狼同宫」）→
+#   使 SANHE-PATTERN-杀狼同宫 恒被判为 unmatched，污染未匹配统计。
+#   派生写法从根上杜绝此类失配。
+_PATTERN_IDS = [(d[0],) for d in _PATTERN_DEFS_SRC]
 
 
 def _wrap_qintian(graph, chart) -> MethodBundle:

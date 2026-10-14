@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """Ziwei 规则公共层（Z12，P0-2 抽象收敛后）。
 
-本模块承载 RuleGraph 公共层（四派共享，不感知具体流派）：
+本模块承载 RuleGraph 公共层（两派共享，不感知具体流派）：
   - RuleMatch / RuleMatchResult: 匹配结果数据结构
-  - PATTERN_DEFS: 三合派核心格局定义（四派共享数据源）
+  - PATTERN_DEFS: 三合派核心格局定义（两派共享数据源）
   - CHINESE_STAR_TO_KEY: 中文星名 → pinyin key 映射
   - batch_match(chart): 同盘异法批量匹配（一张盘 → 多 MethodId → 各派独立 RuleGraph，不投票）
 
@@ -130,19 +130,20 @@ CHINESE_STAR_TO_KEY = {
 
 
 # ============================================================================
-# 架构说明（P0-2 抽象收敛后）
+# 架构说明（P0-2 抽象收敛 + Z17 两派收敛后）
 # ============================================================================
 # 本模块保留公共层：
-#   - RuleMatch / RuleMatchResult: 匹配结果数据结构（四派共享）
-#   - PATTERN_DEFS / CHINESE_STAR_TO_KEY: 格局数据与星名映射（四派共享）
+#   - RuleMatch / RuleMatchResult: 匹配结果数据结构（两派共享）
+#   - PATTERN_DEFS / CHINESE_STAR_TO_KEY: 格局数据与星名映射（两派共享）
 #
 # 唯一接口：BaseZiweiRuleGraph（method_graphs.py）
-# 四派实现：
-#   - SanheRuleGraph      (method_graphs.py, FULL)
-#   - ZhongzhouRuleGraph  (method_graphs.py, SCAFFOLD)
-#   - QintianRuleGraph    (method_graphs.py, DRAFT)
-#   - FeixingRuleGraph    (feixing_rule_graph.py, FULL, 独立飞化事实层)
+# 两派实现（Z17 收敛，2026-09-14）：
+#   - SanheRuleGraph      (method_graphs.py, FULL, 南派/倪海厦)
+#   - QintianRuleGraph    (qintian/ 子包, make_qintian_rule_graph, 北派/钦天)
 #
+# 已删除：ZhongzhouRuleGraph（中州派）、FeixingRuleGraph（飞星派规则类）；
+# 飞化事实层（PalaceStemFact / FlyingTransformFact）保留于 feixing_rule_graph.py，
+# 供钦天派消费。
 # 历史遗留的通用参数化实现 ZiweiRuleGraph 与平行工厂 create_rule_graph()
 # 已于 P0-2 删除（其三合逻辑已由 SanheRuleGraph 完整承接）。
 

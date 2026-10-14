@@ -12,7 +12,7 @@
 
     解层（Interpretation）
         build_life_reading        — 人生十二维度断语（累积大运/流年/流月/流日）
-        build_answer              — 答案层八维度平行答案（南派+北派规则归位）
+        build_answer              — 答案层分层输出（12 宫位维 + 体用层；南派+北派规则归位）
         build_domain_readings     — 十二宫逐宫综合解读 + 领域聚合
         ZiweiEvidenceProducer     — 证据生产者
 

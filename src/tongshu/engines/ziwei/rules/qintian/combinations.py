@@ -28,6 +28,7 @@ Qintian Combinations — 钦天门组合 detect 函数（Z44 蔡明宏主源版�
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
 
@@ -36,6 +37,8 @@ from .qintian_shihua_readings import TEN_GAN_SIHUA_READINGS
 from .features import (
     get_laiyin_palace, get_self_mutagen, get_xiangxin_mutagen, get_lixin_mutagen,
 )
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -49,14 +52,22 @@ class QintianCombination:
 
 
 # 斗数十二宫固定序（自命宫起 1-12）
+# Z80-F（2026-10-14）：第 8 宫统一用「仆役」（= iztro/引擎盘面命名），
+# 此前用书之「交友」，与 chart.palaces / flying_transforms 的「仆役」
+# 不一致 → _palace_index("仆役") 返回 -1，凡涉及该宫的规则静默漏检
+# （如空宫双忌 L2462、对宫互飞 L1216）。别名经 _palace_index 归一化兼容。
 ZW_PALACES_ORDER = [
     "命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄",
-    "迁移", "交友", "官禄", "田宅", "福德", "父母",
+    "迁移", "仆役", "官禄", "田宅", "福德", "父母",
 ]
+
+# 宫名别名：书之「交友宫」= iztro/引擎「仆役宫」（同一宫）
+_PALACE_NAME_ALIAS = {"交友": "仆役"}
 
 
 def _palace_index(name: str) -> int:
-    """宫位序号（1-12）"""
+    """宫位序号（1-12）。兼容「交友」(书) / 「仆役」(iztro) 两种写法。"""
+    name = _PALACE_NAME_ALIAS.get(name, name)
     try:
         return ZW_PALACES_ORDER.index(name) + 1
     except ValueError:
@@ -1209,12 +1220,13 @@ def detect_qtn_cmb_021_yinyang_biaoli(chart) -> Optional[QintianCombination]:
         return None
 
     # 对宫表（一阴一阳相为表里）
+    # Z80-F: 「交友」→「仆役」以与盘面 ft.source/target_palace 一致（否则该对永不匹配）
     OPPOSITE_PAIRS = [
-        ("命宫", "迁移"), ("兄弟", "交友"), ("夫妻", "官禄"),
+        ("命宫", "迁移"), ("兄弟", "仆役"), ("夫妻", "官禄"),
         ("子女", "田宅"), ("财帛", "福德"), ("疾厄", "父母"),
     ]
     YANG_PALACES = ["命宫", "夫妻", "财帛", "迁移", "官禄", "福德"]
-    YIN_PALACES = ["兄弟", "子女", "疾厄", "交友", "田宅", "父母"]
+    YIN_PALACES = ["兄弟", "子女", "疾厄", "仆役", "田宅", "父母"]
 
     # 检测对宫互飞（任一对宫 A→B 或 B→A 有化忌 → 对宫同断）
     hits = []
@@ -1622,7 +1634,7 @@ def detect_qtn_cmb_026_sanjihua_yinyang(chart) -> Optional[QintianCombination]:
 
     from ....ziwei_engine import GAN_SIHUA
     YANG_PALACES = {"命宫", "夫妻", "财帛", "迁移", "官禄", "福德"}
-    YIN_PALACES = {"兄弟", "子女", "疾厄", "交友", "田宅", "父母"}
+    YIN_PALACES = {"兄弟", "子女", "疾厄", "仆役", "田宅", "父母"}
 
     birth_stem_idx = (chart.birth_year - 4) % 10
     stems_10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
@@ -1831,10 +1843,11 @@ def detect_qtn_cmb_029_daxian_liuqin_chong(chart) -> Optional[QintianCombination
     if i < 0:
         return None
     dec_palaces = [ZW_PALACES_ORDER[(i - 1 + k) % 12] for k in range(12)]
-    dec_liuqin = [p for p in dec_palaces[:7] if p in ("命宫", "兄弟", "夫妻", "子女", "交友", "父母")]
+    # Z80-F: 六亲宫名统一为盘面口径「仆役」（原「交友」与 dec_palaces 不一致致漏检）
+    dec_liuqin = [p for p in dec_palaces[:7] if p in ("命宫", "兄弟", "夫妻", "子女", "仆役", "父母")]
 
-    # 本命六亲对宫表（命↔迁移 非六亲；六亲内部对宫：兄弟↔交友、疾厄↔父母）
-    OPP = {"兄弟": "交友", "交友": "兄弟", "疾厄": "父母", "父母": "疾厄"}
+    # 本命六亲对宫表（命↔迁移 非六亲；六亲内部对宫：兄弟↔仆役、疾厄↔父母）
+    OPP = {"兄弟": "仆役", "仆役": "兄弟", "疾厄": "父母", "父母": "疾厄"}
 
     hits = []
     for p in palace_stems:
@@ -1848,7 +1861,7 @@ def detect_qtn_cmb_029_daxian_liuqin_chong(chart) -> Optional[QintianCombination
             if ji_star not in q.major_stars:
                 continue
             opp = OPP.get(q.palace_name)
-            if opp and opp in ("命宫", "兄弟", "夫妻", "子女", "交友", "父母"):
+            if opp and opp in ("命宫", "兄弟", "夫妻", "子女", "仆役", "父母"):
                 hits.append({
                     "from": "大限" + p.palace_name,
                     "to": "本命" + opp,
@@ -2496,8 +2509,13 @@ def detect_all_production(chart) -> List[QintianCombination]:
             if r is not None:
                 results.append(r)
         except Exception:
-            # fail-closed: 错误不传播, 该规则静默失败
-            pass
+            # fail-closed: 错误不传播, 该规则静默失败。
+            # Z80-F（2026-10-14）：补日志 —— 此前纯 pass 无任何痕迹，
+            # 检测器报错会导致命中数静默减少而无从排查。
+            logger.warning(
+                "qintian detector failed: %s", getattr(detect_fn, "__name__", detect_fn),
+                exc_info=True,
+            )
     return results
 
 
@@ -2510,7 +2528,10 @@ def detect_all_draft(chart) -> List[QintianCombination]:
             if r is not None:
                 results.append(r)
         except Exception:
-            pass
+            logger.debug(
+                "qintian draft detector failed: %s",
+                getattr(detect_fn, "__name__", detect_fn), exc_info=True,
+            )
     return results
 
 
