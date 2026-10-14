@@ -3,7 +3,7 @@
 Qintian Combinations — 钦天门组合 detect 函数（Z44 蔡明宏主源版）
 
 严格工程边界：
-- 8 条 production detect 函数 (grade=1 蔡明宏《悟我十八年》原文支持)
+- 60 条 production detect 函数（grade 1×58 / 3×2，蔡明宏《悟我十八年》原文支持）
 - detect 返回 QintianCombination-style dataclass
 - 所有 detect 失败/缺失返回 None (fail-closed)
 - Z44 主源切换：许铨仁/四余独步规则清除，主源=蔡明宏《悟我十八年》
@@ -89,7 +89,7 @@ def _triple_of(palace: str) -> List[str]:
 
 
 # ============================================================
-# 8 条 production detect (grade=1)
+# 60 条 production detect（grade 1×58 / 3×2）
 # ============================================================
 
 def detect_qtn_cmb_001_laiyin(chart) -> Optional[QintianCombination]:

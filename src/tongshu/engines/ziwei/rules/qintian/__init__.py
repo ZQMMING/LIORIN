@@ -11,7 +11,8 @@ Public API:
     QintianEvidence        — evidence binding
     make_qintian_rule_graph — 工厂函数
 
-证据等级：5 条 production 全部 grade=1 (钦天门一手原文)
+证据等级：production 检测器共 60 条（evidence grade=1×58 / grade=3×2）；
+DRAFT 检测器 0 条（Z80-G 实测校准，原注释「5 条全部 grade=1」为陈旧值）。
 """
 
 from __future__ import annotations

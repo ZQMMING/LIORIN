@@ -6,6 +6,10 @@ Z77b已录16条命宫断语。本文件补：
 - 红鸾天喜（断语）
 
 原典无"辅煞杂曜×12宫"逐宫断语——记录NOT_ESTABLISHED。
+
+Z80-G 审核标注（2026-10-14）：本模块在 src/ 内**零引用**（仅测试/文档提及）。
+  处置建议：证据资产 —— 天伤天使/哭虚/鸾喜补遗，QTN-047~055 部分覆盖
+  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md
 """
 from __future__ import annotations
 

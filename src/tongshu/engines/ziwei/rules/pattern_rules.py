@@ -15,6 +15,10 @@
 3. 破格独立——breaking_conditions 与 formation_conditions 分开
 4. school=CLASSICAL_SOURCE——不混南北派
 5. 12×2逐宫诀做 RULE 不做 PATTERN
+
+Z80-G 审核标注（2026-10-14）：本模块在 src/ 内**零引用**（仅测试/文档提及）。
+  处置建议：应接线 —— 富6/贵27/贫8/杂8 + 12宫得地12/失陷9 逐宫诀；生产 PATTERN_DEFS 仅星组，无此细目
+  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md
 """
 from __future__ import annotations
 
@@ -95,7 +99,7 @@ WEALTH_PATTERN = [
 ]
 
 # ============================================================
-# NOBILITY_PATTERN (贵局) 26条
+# NOBILITY_PATTERN (贵局) 27条（NOB-01~27；Z80-G 实测校准）
 # ============================================================
 NOBILITY_PATTERN = [
     {"pattern_id": "NOB-01", "pattern_name": "日月夹命", "school": "CLASSICAL_SOURCE", "source": SRC, "source_section": "贵局第十七",
@@ -272,7 +276,7 @@ PALACE_FORTUNE_RULE = [
 ]
 
 # ============================================================
-# PALACE_DEPRIVATION_RULE (十二宫失陷破格诀) 12条
+# PALACE_DEPRIVATION_RULE (十二宫失陷破格诀) 9条（PD-01~09；Z80-G 实测校准）
 # ============================================================
 PALACE_DEPRIVATION_RULE = [
     {"rule_id": "PD-01", "palace_branch": "子丑", "verbatim": "子午天机丑巨铃，此星落陷果为真，纵然化吉更为美，任他富贵不清宁。",

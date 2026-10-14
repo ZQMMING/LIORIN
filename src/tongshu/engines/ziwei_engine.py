@@ -201,8 +201,13 @@ def ziwei_natal_stem(chart) -> str:
 class ZiweiChart:
     soul_palace_main_star: str = ""           # 命宫第一主星(向后兼容)
     soul_palace_main_stars: list = field(default_factory=list)  # 命宫全部主星(V2.6: 双主星支持)
+    # Z80-G 注：soul_palace_sihua 生产路径恒为空（compute/full_chart 均传 []，
+    # 仅 stub 填充），而 evidence_producer.py:71 会消费它 → 该分支恒无产出。
+    # 语义待确认（生年四化入命宫？命宫自化？）后再决定填充或移除。
     soul_palace_sihua: list = field(default_factory=list)
     palace_data: dict = field(default_factory=dict)
+    # Z80-G 注：daily_luck_palace 为**恒空死字段**（仅 to_dict/from_dict 出现，
+    # 从无赋值）。保留以兼容历史快照反序列化。
     daily_luck_palace: str = ""
     source: str = "stub"
     # Z11/Z13特性层字段(F-04修复: 补充缺失字段)

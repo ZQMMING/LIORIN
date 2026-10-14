@@ -2,6 +2,10 @@
 
 大部分"X星坐Y宫"断语已在 palace_star_verdicts.py 168条中覆盖。
 本文件只录168条里没有的总论性原则。
+
+Z80-G 审核标注（2026-10-14）：本模块在 src/ 内**零引用**（仅测试/文档提及）。
+  处置建议：证据资产 —— 十二宫总论，部分已被 palace_star_verdicts 覆盖
+  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md
 """
 from __future__ import annotations
 

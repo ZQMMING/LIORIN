@@ -2,6 +2,10 @@
 
 每条遵守：原典出处→原文→适用条件→星曜→宫位→断言。
 status=VERIFIED 表示原文已核对本地《全书》文本。
+
+Z80-G 审核标注（2026-10-14）：本模块在 src/ 内**零引用**（仅测试/文档提及）。
+  处置建议：证据资产 —— 辅煞杂曜断语（诸星问答论），与 palace_star_verdicts/nihai 重叠
+  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md
 """
 from __future__ import annotations
 

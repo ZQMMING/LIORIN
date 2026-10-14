@@ -2,6 +2,10 @@
 
 只录原典明确的星曜五行属性+制化规则。
 school=CLASSICAL_SOURCE，不污染南北派。
+
+Z80-G 审核标注（2026-10-14）：本模块在 src/ 内**零引用**（仅测试/文档提及）。
+  处置建议：证据资产 —— 星曜五行 + 生克制化原典录入
+  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md
 """
 from __future__ import annotations
 

@@ -24,7 +24,9 @@ class QintianJudgment:
     neutral_facts: List[str]
 
 
-# Judgment 映射表（8 条 production，蔡明宏体系）
+# Judgment 映射表（Z80-G 实测 28 键 / 60 条 production，蔡明宏体系）
+# 注：未登记的 rule_id 落 neutral 分支（见 resolve_judgment），
+#     当前 32 条 production 无判定文本 —— 属内容缺口，待补。
 JUDGMENT_MAPPING: Dict[str, Dict] = {
     "QTN-CMB-031": {
         "judgment_strength": "strong",

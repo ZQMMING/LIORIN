@@ -10,6 +10,10 @@
 - THREE_SQUARE_FOUR: 三方四正（= 本宫+对宫+两个三合宫，共4宫）
 
 12地支固定顺序：子丑寅卯辰巳午未申酉戌亥
+
+Z80-G 审核标注（2026-10-14）：本模块在 src/ 内**零引用**（仅测试/文档提及）。
+  处置建议：可删/收敛 —— 三方四正事实层，与 ZiweiPalaceResolver.resolve_sanfang_sizheng 及 combinations._triple_of 重复
+  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md
 """
 from __future__ import annotations
 

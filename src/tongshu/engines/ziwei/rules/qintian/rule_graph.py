@@ -81,7 +81,7 @@ class QintianRuleGraph:
         matched_production = self.match(chart)
         matched_rule_ids = {m.rule_id for m in matched_production}
 
-        all_production_ids = set(EVIDENCE_BINDINGS.keys())  # 9 条 production（Z46 加北派身宫）
+        all_production_ids = set(EVIDENCE_BINDINGS.keys())  # 60 条 production（Z80-G 实测校准）
         unmatched = sorted(all_production_ids - matched_rule_ids)
 
         # Draft 应不触发
