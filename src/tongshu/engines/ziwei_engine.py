@@ -155,6 +155,12 @@ SIHUA_NAMES = ("禄", "权", "科", "忌")
 # 紫微12宫固定顺序（三方四正的宫位索引依据）。
 ZW_PALACES_ORDER = ["命宫", "兄弟", "夫妻", "子女", "财帛", "疾厄", "迁移", "仆役", "官禄", "田宅", "福德", "父母"]
 
+# 地支六冲（对宫）—— 用于空宫借对宫主星（与 compute 口径一致）
+_BRANCH_OPPOSITE = {
+    "子": "午", "午": "子", "丑": "未", "未": "丑", "寅": "申", "申": "寅",
+    "卯": "酉", "酉": "卯", "辰": "戌", "戌": "辰", "巳": "亥", "亥": "巳",
+}
+
 
 def time_index_from_hour(hour: int) -> int:
     """Convert solar hour (24h) to iztro timeIndex.
@@ -403,7 +409,10 @@ class ZiweiEngine:
             return self._compute_via_iztro(lunar_date, hour, gender)
         except ZiweiInputError:
             raise  # 确定性输入拒绝（如小月 30 日）：原样传播，不降级为 unavailable
-        except (OSError, RuntimeError, ValueError, TypeError, json.JSONDecodeError) as exc:
+        except (OSError, RuntimeError, ValueError, TypeError,
+                json.JSONDecodeError, subprocess.TimeoutExpired) as exc:
+            # Z80-G：补 subprocess.TimeoutExpired —— 它是 SubprocessError 的子类，
+            # 不属 OSError/RuntimeError，此前会绕过降级契约原样泄漏。
             logger.exception("ZiweiEngine: iztro computation or parsing failed")
             if os.environ.get("TONGSHU_ALLOW_ZIWEI_STUB") == "1":
                 logger.warning("ZiweiEngine: iztro failed, using stub_with_error fallback")
@@ -983,6 +992,10 @@ class ZiweiEngine:
         This method now applies Shuntian dependency adapter to correct
         iztro 2.6.0 decadal direction bug (palace.js:163).
         """
+        # Z80-G：full_chart 是公开生产入口，必须与 compute 一样 fail-closed。
+        # 此前绕过校验 → hour=25 静默取模成丑时、gender='unknown' 静默出盘
+        # 并触发 dependency_adapter 误报。
+        _validate_inputs(lunar_date, hour, gender)
         year, month, day = lunar_date
         is_leap = month < 0
         month = abs(month)
@@ -1101,9 +1114,27 @@ class ZiweiEngine:
                 _fd_mutagen = _fd.get("mutagen", [])
             except Exception as _e:
                 logger.warning("[ZiweiEngine] flow_day resolve failed: %s", _e)
+        # Z80-G：命宫主星（含空宫借对宫，与 compute 口径一致）。
+        # 此前 full_chart 未填该二字段 → 恒空，而 signal_engine / evidence_producer
+        # 会消费它们（compute 路径正常填充，两路径不一致）。
+        _soul_branch = corrected_chart.get("soulPalaceBranch", "")
+        _soul_majors: list = []
+        for _pd in palaces.values():
+            if _pd.get("branch") == _soul_branch:
+                _soul_majors = list(_pd.get("major", []) or [])
+                break
+        if not _soul_majors:
+            _opp_branch = _BRANCH_OPPOSITE.get(_soul_branch, "")
+            for _pd in palaces.values():
+                if _pd.get("branch") == _opp_branch:
+                    _soul_majors = list(_pd.get("major", []) or [])
+                    break
+        _soul_keys = [CHINESE_STAR_TO_KEY.get(_s, _s) for _s in _soul_majors]
         return ZiweiChart(
             fiveElementsClass=corrected_chart.get("fiveElementsClass", ""),
             soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
+            soul_palace_main_star=(_soul_keys[0] if _soul_keys else ""),
+            soul_palace_main_stars=_soul_keys,
             body_earthly_branch=corrected_chart.get("bodyPalaceBranch", ""),
             palaces=palaces,
             birth_year=year,
