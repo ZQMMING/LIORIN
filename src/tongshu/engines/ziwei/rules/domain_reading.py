@@ -565,8 +565,8 @@ PALACE_EXTRA_SEMANTICS: Dict[str, str] = {
     "父母|天马": "天马代表长辈经常奔波，或者命主长期离家",
     "父母|天机": "天机在父母宫，长辈遇事倾向理性解决，但很难提供强大物质助力，祖业薄弱",
     # 仆役
-    "仆役|无主星": "交友宫无主星，朋友多为利益人脉往来，泛交居多、知己稀少",
-    "仆役|贪狼": "贪狼在交友宫，容易被朋友拖累、人情破财，需谨慎借钱给他人，不宜涉入人情借贷",
+    "仆役|无主星": "仆役宫无主星，朋友多为利益人脉往来，泛交居多、知己稀少",
+    "仆役|贪狼": "贪狼在仆役宫，容易被朋友拖累、人情破财，需谨慎借钱给他人，不宜涉入人情借贷",
     # 疾厄（星→器官映射另由 STAR_BODY_ORGANS 事实驱动，此处仅病程特征）
     # 迁移
     "迁移|文曲": "文曲在迁移，外出注意文书合同出错",
@@ -756,6 +756,27 @@ def _match_star_keys(
     return hits
 
 
+def _push_extra(extras: List[str], text: str) -> None:
+    """把一条补强语义按"；"拆成片段逐条加入 extras。
+
+    Z80-D：整句相等去重拦不住"部分包含"重复（如「子女主见极强…」
+    既在双星组合文案里、又是单星文案的前半句），故拆片段级去重：
+    新片段已被现有 extras 包含则跳过；新片段包含旧片段则以新片段替换旧的。
+    """
+    for frag in (f.strip() for f in text.split("；")):
+        if not frag:
+            continue
+        joined = "；".join(extras)
+        if frag in joined:
+            continue
+        for i, old in enumerate(extras):
+            if old in frag:
+                extras[i] = frag
+                break
+        else:
+            extras.append(frag)
+
+
 def _synthesize_extra(
     pname: str,
     major: List[str],
@@ -799,68 +820,48 @@ def _synthesize_extra(
     if not major:
         flags.append("无主星")
 
-    # 1. 主星组合 / 宫位补强（含状态型键，借宫星与会照星一并参与）
+    # 1. 主星组合 / 宫位补强（含状态型键；Z80-D：组合只认本宫实际星，
+    #    三方会照星不得冒充"同宫"组合，否则虚匹配出重复/错误文案）
     for t in (STAR_PAIR_VERDICTS, PALACE_EXTRA_SEMANTICS):
-        for v in _match_star_keys(t, pname, major, minor, flags,
-                                  borrowed + sanhe_stars):
-            if v not in extras:
-                extras.append(v)
+        for v in _match_star_keys(t, pname, major, minor, flags):
+            _push_extra(extras, v)
 
     # 1.5 Z80-C：借宫语义按本盘实际对宫主星动态生成（不写死案例盘）
     if not major and borrowed:
         opp = OPPOSITE_PALACE.get(pname, "")
         tpl = BORROWED_SEMANTICS.get(opp, "")
         if tpl:
-            dyn = tpl.format(stars="、".join(borrowed))
-            if dyn not in extras:
-                extras.append(dyn)
+            _push_extra(extras, tpl.format(stars="、".join(borrowed)))
 
     # 2. 疾厄宫：星曜 → 身体系统 + 煞星病程
     if pname == "疾厄":
         for s in major:
-            organ = STAR_BODY_ORGANS.get(s, "")
-            if organ and organ not in extras:
-                extras.append(organ)
+            _push_extra(extras, STAR_BODY_ORGANS.get(s, ""))
         for s in minor:
-            trait = SHA_DISEASE_TRAIT.get(s, "")
-            if trait and trait not in extras:
-                extras.append(trait)
+            _push_extra(extras, SHA_DISEASE_TRAIT.get(s, ""))
 
     # 3. 命宫：独座主星的人生底色
     if pname == "命宫":
         for s in major:
-            solo = STAR_SOLO_VERDICTS.get(s, "")
-            if solo and solo not in extras:
-                extras.append(solo)
+            _push_extra(extras, STAR_SOLO_VERDICTS.get(s, ""))
 
     # 4. 官禄/命宫：适配行业赛道
     if pname in ("官禄", "命宫"):
         for s in major:
-            fit = CAREER_FIT.get(s, "")
-            if fit and fit not in extras:
-                extras.append(fit)
+            _push_extra(extras, CAREER_FIT.get(s, ""))
         # 杀破狼格局（命宫三方会齐七杀/破军/贪狼）
         if pname == "命宫" and {"七杀", "破军", "贪狼"} <= (set(major) | set(borrowed) | set(sanhe_stars)):
-            spk = CAREER_FIT.get("杀破狼", "")
-            if spk and spk not in extras:
-                extras.append(spk)
+            _push_extra(extras, CAREER_FIT.get("杀破狼", ""))
 
     # 5. 来因宫（isOriginal 标记）
     pdata = all_palaces.get(pname, {})
     if pdata.get("isOriginal"):
-        li = LAIYIN_SEMANTICS.get(pname, "")
-        if li and li not in extras:
-            extras.append(li)
+        _push_extra(extras, LAIYIN_SEMANTICS.get(pname, ""))
     # 身宫标记
     if pname != "命宫" and pdata.get("isBody"):
-        extras.append(f"{pname}为身宫所在，后天际遇与精神寄托偏向此宫")
+        _push_extra(extras, f"{pname}为身宫所在，后天际遇与精神寄托偏向此宫")
 
     return "；".join(extras)
-
-
-def STAR_SOOL_VERDICTS_SAFE(star: str) -> str:
-    """命宫独座星底色（单星才给底色，双星组合交给 STAR_PAIR_VERDICTS）。"""
-    return STAR_SOLO_VERDICTS.get(star, "")
 
 
 def _build_palace_reading(
@@ -901,6 +902,10 @@ def _build_palace_reading(
         palace_minor_table = MINOR_STAR_BY_PALACE.get("交友", {})
     for star in all_minor:
         interp = palace_minor_table.get(star, "")
+        # Z80-D：仆役宫消费「交友」措辞的表时，宫名措辞随盘面统一，
+        # 避免输出"天姚称入交友"而本盘宫名实为"仆役"的宫名不一致。
+        if interp and pname == "仆役":
+            interp = interp.replace("入交友", "入仆役").replace("交友宫", "仆役宫")
         if interp and interp not in minor_parts:
             minor_parts.append(interp)
     minor_text = "；".join(minor_parts) if minor_parts else ""
@@ -928,6 +933,9 @@ def _build_palace_reading(
                 break
         if zh_type:
             interp = palace_zihua_table.get(zh_type, "")
+            # Z80-D：仆役宫消费「交友」措辞表时统一宫名
+            if interp and pname == "仆役":
+                interp = interp.replace("交友", "仆役")
             if interp:
                 zihua_parts.append(interp)
     zihua_text = "；".join(zihua_parts) if zihua_parts else ""
@@ -1209,7 +1217,7 @@ def _social_synthesis(palaces: List[str], pr_map: dict) -> str:
             parts.append(xiong.zihua_interpretation)
     jiao = pr_map.get("交友") or pr_map.get("仆役")
     if jiao:
-        parts.append(f"交友宫{jiao.major_interpretation}")
+        parts.append(f"{jiao.palace}{jiao.major_interpretation}")
         if jiao.minor_interpretation:
             parts.append(jiao.minor_interpretation)
         if jiao.zihua_interpretation:
