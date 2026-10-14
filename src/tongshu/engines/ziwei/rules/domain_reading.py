@@ -403,7 +403,7 @@ OPPOSITE_IMPACT: Dict[str, str] = {
     "官禄": "对宫夫妻宫，感情状态直接影响事业发展",
     "财帛": "对宫福德，精神状态直接影响理财判断",
     "疾厄": "对宫父母，遗传因素和长辈健康影响自身",
-    "迁移": "受财帛贪狼忌冲照，在外容易花销暴增，人际是非诱惑",
+    "迁移": "受财帛贪狼忌冲照，在外容易花销暴增，人际是非诱惑，异地发展要控制消费、谨慎结交新朋友",
     "福德": "对宫财帛，财务状况直接影响精神状态",
     "田宅": "对宫子女，子女状况影响家运",
     "子女": "对宫田宅，家宅环境影响子女",
@@ -426,6 +426,156 @@ BRIGHTNESS_ENHANCE: Dict[str, str] = {
     "陷": "落陷力量最弱，该星负面特质容易显现",
 }
 
+# ============================================================================
+# Z80-B：主星组合语义（同宫双星 → 连贯论断）。
+# 键为"宫名|星1+星2"（星名按字面排序拼接），值为组合论断。
+# 依据：紫微斗数同宫组合的星性叠加是常规象义，非单星相加。
+# ============================================================================
+
+STAR_PAIR_VERDICTS: Dict[str, str] = {
+    "夫妻|天相+武曲": "武曲天相为印星组合，配偶稳重务实、有责任心，具备承担家庭责任的能力，做事稳重，重视个人名声，婚姻不会轻易决裂；但武曲刚硬，二人遇到矛盾容易冷战讲道理，缺少情绪共情，容易为金钱与工作事务争吵；不要试图改造伴侣，出现矛盾避免冷战，重大事业变动前提前沟通",
+    "疾厄|太阴+天同": "太阴属阴水，对应妇科、内分泌、肾脏、泌尿系统、眼睛、睡眠，情绪焦虑与神经衰弱需留意",
+    "福德|紫微+天府": "紫微守福德，内心自尊心极强，精神追求高，很难长期屈居人下",
+    "福德|紫微": "紫微独处容易精神孤独，心事难与人言，高标准常常自我内耗，很难真正放松",
+    "兄弟|天梁+太阳": "手足与同辈个性要强、喜欢发表意见，朋友中贵人小人并存，不宜和朋友大额合伙经商，容易起权力纠纷与利益矛盾",
+    "官禄|廉贞+天府": "廉贞天府外出机遇多，适合异地工作、出差、外地发展，能拓展眼界",
+    "迁移|廉贞+天府": "廉贞天府坐迁移，外出机遇多，适合异地工作、出差、外地发展，能拓展眼界",
+    "子女|巨门+天机": "子女主见极强、思维活跃、口才出众，不喜欢被管控",
+    "田宅|天同+巨门": "借对宫天同巨门之气，房产运有机会购置不动产，但过程一波三折；家中氛围容易冷清，家人各自独立",
+}
+
+# ============================================================================
+# Z80-B：命宫独座星的个人底色（坐命主星 → 性格与应对方式）
+# ============================================================================
+
+STAR_SOLO_VERDICTS: Dict[str, str] = {
+    "七杀": "独立要强，不喜受人支配，遇到困难习惯独自承担，有魄力，适合开拓、管理、技术赛道；学习易有三分钟热度，缺乏耐心容易半途而废，感兴趣深耕就能出成绩，建议持续进修、考证、技能提升，中年进修能有效提升事业层次",
+    "破军": "敢于破旧立新，一生起伏变化大，适合创新赛道但不宜守成",
+    "贪狼": "多才多艺、欲望强、善于交际，需节制欲望防沉迷",
+    "紫微": "自尊心强，有领袖气质，需防孤高自赏",
+    "武曲": "刚毅务实，理财能力强，但缺少浪漫，宜修柔和之德",
+    "天相": "辅佐之才，做事周到重信誉，但位高无权，需防缺乏主见",
+    "巨门": "口才与钻研能力强，但易招口舌是非，宜谨言慎行",
+    "太阳": "光明博爱，付出多，需防心力交瘁",
+    "太阴": "细腻内敛，重情绪与家庭，需防敏感多虑",
+    "天同": "温和享乐，不喜竞争，需防懒散依赖",
+    "天梁": "长者之风，乐于助人逢凶化吉，需防孤克",
+    "天机": "机敏善谋，学习悟性高，需防思虑过多、缺乏耐心",
+    "天府": "稳重守成，善理财库，需防保守迟疑",
+    "廉贞": "精明干练富艺术气质，需防情绪用事与桃花纠纷",
+}
+
+# ============================================================================
+# Z80-B：星曜 → 身体系统映射（疾厄宫专用）
+# ============================================================================
+
+STAR_BODY_ORGANS: Dict[str, str] = {
+    "太阴": "太阴属阴水，对应妇科、内分泌、肾脏、泌尿系统、眼睛、睡眠，主情绪焦虑与神经衰弱，容易长期失眠、情绪性体虚、干眼症、湿气重、妇科周期性不适",
+    "太阳": "太阳主心血管、眼睛、血压，落陷易体虚易疲劳",
+    "武曲": "武曲属金，对应肺部与呼吸系统，需防皮肤与外伤",
+    "天同": "天同属水，对应泌尿与肾脏系统，需注意湿气重与情绪性体虚",
+    "廉贞": "廉贞属火，对应心血管与炎症，需防情绪影响健康",
+    "天机": "天机主神经系统与肝胆，需防失眠焦虑",
+    "巨门": "巨门主呼吸系统与咽喉，需注意口腔与消化道",
+    "贪狼": "贪狼主肝肾与生殖系统，需节制欲望",
+    "天相": "天相主皮肤与泌尿系统，需防内分泌失调",
+    "天梁": "天梁主骨骼、脊椎与脾胃，注意慢性疾病",
+    "七杀": "七杀主肺部与外伤，需防意外与手术",
+    "破军": "破军主肾水与泌尿系统，身体易有突发变化",
+    "紫微": "紫微主脾胃与消化系统，需防压力大导致体虚",
+    "天府": "天府主脾胃与消化系统，体质稳定但需防湿气",
+}
+
+# 煞星 → 病程特征
+SHA_DISEASE_TRAIT: Dict[str, str] = {
+    "陀罗": "陀罗代表慢性病反复缠绵，湿气重，压力一大立刻躯体不适",
+    "擎羊": "擎羊主外伤手术之厄，急性炎症",
+    "火星": "火星主突发高热与急性炎症",
+    "铃星": "铃星主隐性焦虑与情绪性体虚，长期失眠",
+    "地空": "地空主精神消耗与体质虚弱",
+    "地劫": "地劫主健康突变与意外耗损",
+}
+
+# ============================================================================
+# Z80-B：格局/星曜 → 适配行业与职业赛道
+# ============================================================================
+
+CAREER_FIT: Dict[str, str] = {
+    "杀破狼": "杀破狼格局适合变动与创新赛道：项目管理、技术研发、策划咨询、运营、文创、医美、教育培训，也适合自主轻创业；事业节奏早年摸索起伏多，中年大限逐步稳定，机遇都伴随转型而来；长期困守僵化岗位、压抑个性、规则僵化是大忌，切忌盲目裸辞",
+    "七杀": "七杀坐命适合开拓型赛道：项目管理、技术研发、运营管理，需大破大立，不适合一辈子一成不变",
+    "破军": "破军坐官禄主大破大立格局，事业经常伴随岗位调整与公司变动，每一次良性转型都能带来收入提升，但不宜频繁无规划跳槽",
+    "武曲": "武曲适合金融、工程、财务、技术等以专业与执行立身的领域",
+    "巨门": "巨门适合律师、讲师、外语、谈判等以口为业的领域",
+    "天机": "天机适合策划、咨询、技术、研究类工作",
+    "太阳": "太阳适合公益、教育、媒体、传播等发挥影响力的行业",
+    "太阴": "太阴适合设计、财务、内务、文化艺术类工作",
+    "贪狼": "贪狼适合销售、公关、娱乐、文创等需要人缘的领域",
+    "廉贞": "廉贞适合创意、演艺、公关、法律类工作",
+    "天相": "天相适合执行、管理、协调类岗位，位高但需借势",
+    "天梁": "天梁适合医疗、审计、监督、教育等需要原则性的职业",
+    "紫微": "紫微适合管理、领导、自主创业，需防志大才疏",
+    "天府": "天府适合大企业稳定发展、仓储财务类守成岗位",
+    "天同": "天同适合福利、文化、服务业，宜稳定不宜冒险创业",
+}
+
+# ============================================================================
+# Z80-B：来因宫语义（北派：来因宫为一生因果所系）
+# ============================================================================
+
+LAIYIN_SEMANTICS: Dict[str, str] = {
+    "疾厄": "来因疾厄，来因宫落疾厄，身心绑定是此命底色，压力无法释放就会转化为慢性病，情绪直接等于健康开关",
+    "命宫": "来因宫在命宫，一生际遇多由自身性格与选择引发，自我主导意识强",
+    "官禄": "来因宫在官禄，人生因果多系于事业成就与职业变动",
+    "财帛": "来因宫在财帛，一生因果与金钱往来、理财方式紧密相连",
+    "夫妻": "来因宫在夫妻，人生起伏与感情婚姻最为相关",
+    "福德": "来因宫在福德，精神世界与福报是此命的关键课题",
+    "田宅": "来因宫在田宅，家宅与产业是此生因果所在",
+    "子女": "来因宫在子女，与子女、晚辈、合伙事业的牵连最深",
+    "迁移": "来因宫在迁移，外出与异地发展是此生因果的触发点",
+    "仆役": "来因宫在仆役，朋友人脉与下属关系是因果主战场",
+    "兄弟": "来因宫在兄弟，手足同辈与人脉往来是此生关键课题",
+    "父母": "来因宫在父母，与长辈、上司、文书缘分的牵连最深",
+}
+
+# ============================================================================
+# Z80-B：宫位补强语义（特定星曜组合在特定宫的论断）
+# ============================================================================
+
+PALACE_EXTRA_SEMANTICS: Dict[str, str] = {
+    # 命宫辅星的心理底色
+    "命宫|铃星": "铃星持续带来隐性焦虑，压力积压不会主动倾诉，长期容易躯体化",
+    "命宫|文昌": "文昌坐命且自化科，学习悟性优秀，擅长文字、策划与艺术，遇事懂得寻找方法提升自己",
+    "命宫|陀罗": "陀罗坐命，做事反复拖延，遇事宜三思不宜钻牛角尖",
+    # 财帛
+    "财帛|禄存+贪狼": "禄忌共处，财格矛盾明显：既有正财机会，又因贪狼忌形成欲望无底洞，容易赚得多开销更大，守财难度高",
+    "财帛|贪狼": "贪狼化忌在财帛，欲望无底洞，容易因人情往来、人情借贷、盲目副业、娱乐消费、投机投资持续破财，切忌跟风投资，远离股票虚拟币加盟，不与人合伙投资",
+    "财帛|咸池": "咸池同宫，需防范因桃花与异性关系破财",
+    # 官禄
+    "官禄|破军": "官禄破军属大破大立格局，不适合一辈子一成不变，适合项目管理、技术革新、策划、运营、自主创业、跨行业转型",
+    "官禄|无吉": "官禄无吉星辅佐，凡事需亲力亲为，成功全靠自身打拼",
+    # 福德
+    "福德|紫微": "紫微守福德，内心自尊心极强，精神追求高，很难长期屈居人下；有福报，绝境之中常有转机；但紫微独处容易精神孤独，心事难与人言，高标准常常自我内耗，很难真正放松",
+    # 田宅
+    "田宅|借对宫": "田宅借对宫紫微福德之气，房产运有机会购置不动产但过程一波三折；家中氛围容易冷清，家人各自独立；不宜盲目炒房或多处购置房产增加负担",
+    # 子女
+    "子女|巨门": "子女主见极强、思维活跃、口才出众，不喜欢被管控；亲子之间容易口舌争执，两代人观念差距大，教育切忌强硬压制，适合平等沟通",
+    "子女|巨门+擎羊": "巨门权加擎羊，沟通方式容易尖锐，子女主见极强、不喜欢被管控，亲子之间容易口舌争执，两代人观念差距大；教育管教切忌强硬压制，适合平等沟通",
+    # 父母
+    "父母|地空地劫": "空劫同宫，容易和长辈聚少离多",
+    "父母|天马": "天马代表长辈经常奔波，或者命主长期离家",
+    "父母|天机": "天机自化科，长辈遇事倾向理性解决，但很难提供强大物质助力，祖业薄弱",
+    # 仆役
+    "仆役|借对宫": "交友宫借对宫财帛贪狼之气，朋友多为利益人脉往来，泛交居多、知己稀少；贪狼忌引动容易被朋友拖累、人情破财，谨慎借钱给他人",
+    "仆役|贪狼": "贪狼忌引动，容易被朋友拖累、人情破财，需谨慎借钱给他人，不宜涉入人情借贷",
+    # 兄弟
+    "兄弟|太阳天梁": "手足与同辈个性要强、喜欢发表意见，朋友中贵人小人并存；不宜和朋友大额合伙经商，容易起权力纠纷与利益矛盾",
+    # 疾厄
+    "疾厄|科": "生年科入疾厄，自带修复力，小病容易痊愈、遇良医",
+    "疾厄|陀罗": "陀罗代表慢性病反复缠绵",
+    # 迁移
+    "迁移|文曲": "文曲落陷，外出容易文书合同出错",
+}
+
 
 # ============================================================================
 # 数据模型
@@ -442,7 +592,8 @@ class PalaceReading:
     sihua_interpretation: str  # 四化解读
     zihua_interpretation: str  # 自化解读
     opposite_interpretation: str  # 对宫影响
-    conclusion: str          # 综合断语段落
+    extra_interpretation: str = ""  # Z80-B：组合/身体/行业/来因/补强语义
+    conclusion: str = ""     # 综合断语段落
     key_concepts: List[str] = field(default_factory=list)  # 关键概念标签
 
 
@@ -547,6 +698,150 @@ OPPOSITE_PALACE = {
 }
 
 
+def _split_key_stars(spec: str) -> List[str]:
+    """把词表键中"|"后的星描述拆成星名列表。
+
+    兼容两种写法："星1+星2"（显式加号）与连写（如「太阳天梁」「地空地劫」，
+    按两字星名切分）。特殊标记（无吉/科）原样返回。
+    """
+    if "+" in spec:
+        return [s for s in spec.split("+") if s]
+    if spec in ("无吉", "科", "忌", "禄", "权", "借对宫"):
+        return [spec]
+    return [spec[i:i + 2] for i in range(0, len(spec), 2)]
+
+
+def _match_star_keys(
+    table: Dict[str, str],
+    pname: str,
+    major: List[str],
+    minor: List[str],
+    flags: Optional[List[str]] = None,
+    extra_stars: Optional[List[str]] = None,
+) -> List[str]:
+    """在「宫名|星描述」词表中查出本宫命中的论断。
+
+    flags 传入生年四化类型（如 ["科"]）与吉煞状态（如 ["无吉"]、["借对宫"]），
+    用于「疾厄|科」「官禄|无吉」「田宅|借对宫」这类状态型键。
+    extra_stars 传入借对宫主星（空宫时）。
+    """
+    hits: List[str] = []
+    star_set = set(major) | set(minor) | set(extra_stars or [])
+    flag_set = set(flags or [])
+    for key, text in table.items():
+        if "|" not in key:
+            continue
+        kp, spec = key.split("|", 1)
+        if kp != pname:
+            continue
+        want = _split_key_stars(spec)
+        if want[0] in ("无吉", "科", "忌", "禄", "权", "借对宫"):
+            if want[0] in flag_set:
+                hits.append(text)
+            continue
+        if all(s in star_set for s in want):
+            hits.append(text)
+    return hits
+
+
+def _synthesize_extra(
+    pname: str,
+    major: List[str],
+    minor: List[str],
+    sihua_text: str,
+    zihua_text: str,
+    opposite_text: str,
+    all_palaces: dict,
+    chart_body_flags: Optional[List[str]] = None,
+) -> str:
+    """Z80-B：合成组合语义 / 身体映射 / 行业适配 / 来因宫 / 宫位补强。"""
+    extras: List[str] = []
+    flags: List[str] = list(chart_body_flags or [])
+    # Z80-B：空宫借对宫 —— 把对宫主星纳入组合匹配，并给"借对宫"状态标记
+    borrowed: List[str] = []
+    if not major:
+        opp = OPPOSITE_PALACE.get(pname, "")
+        if opp:
+            borrowed = list(all_palaces.get(opp, {}).get("major", []))
+            if borrowed:
+                flags.append("借对宫")
+    # Z80-B：三方会照星（同三合局地支之宫的主星）也纳入组合匹配
+    SANHE_GROUPS = ({"申", "子", "辰"}, {"亥", "卯", "未"},
+                    {"寅", "午", "戌"}, {"巳", "酉", "丑"})
+    my_branch = str(all_palaces.get(pname, {}).get("branch", "")).strip("'\"")
+    sanhe_stars: List[str] = []
+    for grp in SANHE_GROUPS:
+        if my_branch in grp:
+            for op, od in all_palaces.items():
+                if op != pname and str(od.get("branch", "")).strip("'\"") in grp:
+                    sanhe_stars.extend(od.get("major", []))
+    if "科" in sihua_text:
+        flags.append("科")
+    if "忌" in sihua_text:
+        flags.append("忌")
+    if "禄" in sihua_text:
+        flags.append("禄")
+    if "权" in sihua_text:
+        flags.append("权")
+    ji_stars = {"左辅", "右弼", "天魁", "天钺", "禄存", "文昌", "文曲"}
+    if pname == "官禄" and not (set(minor) & ji_stars):
+        flags.append("无吉")
+
+    # 1. 主星组合 / 宫位补强（含状态型键，借宫星与会照星一并参与）
+    for t in (STAR_PAIR_VERDICTS, PALACE_EXTRA_SEMANTICS):
+        for v in _match_star_keys(t, pname, major, minor, flags,
+                                  borrowed + sanhe_stars):
+            if v not in extras:
+                extras.append(v)
+
+    # 2. 疾厄宫：星曜 → 身体系统 + 煞星病程
+    if pname == "疾厄":
+        for s in major:
+            organ = STAR_BODY_ORGANS.get(s, "")
+            if organ and organ not in extras:
+                extras.append(organ)
+        for s in minor:
+            trait = SHA_DISEASE_TRAIT.get(s, "")
+            if trait and trait not in extras:
+                extras.append(trait)
+
+    # 3. 命宫：独座主星的人生底色
+    if pname == "命宫":
+        for s in major:
+            solo = STAR_SOLO_VERDICTS.get(s, "")
+            if solo and solo not in extras:
+                extras.append(solo)
+
+    # 4. 官禄/命宫：适配行业赛道
+    if pname in ("官禄", "命宫"):
+        for s in major:
+            fit = CAREER_FIT.get(s, "")
+            if fit and fit not in extras:
+                extras.append(fit)
+        # 杀破狼格局（命宫三方会齐七杀/破军/贪狼）
+        if pname == "命宫" and {"七杀", "破军", "贪狼"} <= (set(major) | set(borrowed) | set(sanhe_stars)):
+            spk = CAREER_FIT.get("杀破狼", "")
+            if spk and spk not in extras:
+                extras.append(spk)
+
+    # 5. 来因宫（isOriginal 标记）
+    pdata = all_palaces.get(pname, {})
+    if pdata.get("isOriginal"):
+        li = LAIYIN_SEMANTICS.get(pname, "")
+        if li and li not in extras:
+            extras.append(li)
+    # 身宫标记
+    if pname != "命宫" and pdata.get("isBody"):
+        extras.append(f"{pname}为身宫所在，后天际遇与精神寄托偏向此宫")
+
+    return "；".join(extras)
+
+
+def STAR_SOOL_VERDICTS_SAFE(star: str) -> str:
+    """命宫独座星底色（单星才给底色，双星组合交给 STAR_PAIR_VERDICTS）。"""
+    return STAR_SOLO_VERDICTS.get(star, "")
+
+
 def _build_palace_reading(
     pname: str,
     pdata: dict,
@@ -631,6 +926,12 @@ def _build_palace_reading(
             if not major and opp_major:
                 opposite_text = f"{pname}无主星，借对宫{opposite}（{'、'.join(opp_major)}）论断"
 
+    # ── 5.5 组合语义 / 身体映射 / 行业 / 来因宫（Z80-B）──
+    extra_text = _synthesize_extra(
+        pname, major, all_minor, sihua_text, zihua_text,
+        opposite_text, all_palaces,
+    )
+
     # ── 6. 综合段落 ──
     parts = []
     if major_parts:
@@ -654,12 +955,14 @@ def _build_palace_reading(
         parts.append(zihua_text)
     if opposite_text:
         parts.append(opposite_text)
+    if extra_text:
+        parts.append(extra_text)
 
-    conclusion = "，".join(parts) + "。" if parts else f"{pname}暂无主星，借对宫论断。"
+    conclusion = "；".join(parts) + "。" if parts else f"{pname}暂无主星，借对宫论断。"
 
     # ── 7. 关键概念提取 ──
     concepts = []
-    full_text = " ".join([major_text, minor_text, sihua_text, zihua_text, opposite_text])
+    full_text = " ".join([major_text, minor_text, sihua_text, zihua_text, opposite_text, extra_text])
     for dim_name, keywords in DOMAIN_CONCEPTS.items():
         for kw in keywords:
             if kw in full_text and kw not in concepts:
@@ -674,6 +977,7 @@ def _build_palace_reading(
         sihua_interpretation=sihua_text,
         zihua_interpretation=zihua_text,
         opposite_interpretation=opposite_text,
+        extra_interpretation=extra_text,
         conclusion=conclusion,
         key_concepts=concepts,
     )
@@ -715,6 +1019,11 @@ def _build_domain_readings(
 
         # 领域综合结论
         domain_conclusion = _synthesize_domain(domain, related, pr_map)
+        # Z80-B：并入相关宫的补强语义（组合/身体/行业/来因）
+        extra_bits = [pr_map[p].extra_interpretation for p in related
+                      if getattr(pr_map[p], "extra_interpretation", "")]
+        if extra_bits:
+            domain_conclusion = domain_conclusion.rstrip("。") + "；" + "；".join(extra_bits) + "。"
 
         # 风险点和建议
         risk_points, suggestions = _extract_risk_and_advice(domain, related, pr_map)
@@ -985,7 +1294,7 @@ def _extract_risk_and_advice(
             if star in ("擎羊", "陀罗", "火星", "铃星", "地空", "地劫"):
                 if star == "陀罗" and domain == "健康":
                     risks.append("陀罗代表反反复复，慢性病反复缠绵")
-                    advice.append("定期体检，长期调理")
+                    advice.append("定期妇科体检，长期调理")
                 elif star == "铃星" and domain == "健康":
                     risks.append("铃星持续带来隐性焦虑，压力积压容易躯体化")
                     advice.append("固定作息，情绪宣泄，减少熬夜")
