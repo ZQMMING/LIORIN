@@ -410,5 +410,154 @@ class TestGoldenCaseInvariance:
         assert male.yuantang.yuantang != female.yuantang.yuantang
 
 
+# ═══════════════════════════════════════════════════════════════════
+# E3-8: H17-A 三元年份边界（sanyuan）
+# ═══════════════════════════════════════════════════════════════════
+
+class TestSanYuanBoundary:
+    """三元年份边界（原典锚点：上元1504/中元1384·1564/下元1444，180年循环）"""
+
+    def test_sanyuan_anchor_years(self):
+        """三元锚点年份逐一验证（1864 上元为相位原点）"""
+        from tongshu.engines.heluo_adapter import sanyuan
+        anchors = {
+            1504: "shang", 1564: "zhong", 1624: "xia",
+            1684: "shang", 1744: "zhong", 1804: "xia",
+            1864: "shang", 1924: "zhong", 1984: "xia", 2044: "shang",
+        }
+        for year, exp in anchors.items():
+            assert sanyuan(year) == exp, f"{year} 应属{exp}，实际{sanyuan(year)}"
+
+    def test_sanyuan_last_year_of_era(self):
+        """各元末年反向边界（1503 下元末、1563 上元末、1623 中元末）"""
+        from tongshu.engines.heluo_adapter import sanyuan
+        assert sanyuan(1503) == "xia"   # 1444+60-1：下元之末
+        assert sanyuan(1563) == "shang"  # 1504+60-1：上元之末
+        assert sanyuan(1623) == "zhong"  # 1564+60-1：中元之末
+
+    def test_sanyuan_180_year_period(self):
+        """180 年周期：同元年份相差 180 年"""
+        from tongshu.engines.heluo_adapter import sanyuan
+        assert sanyuan(1504) == sanyuan(1504 + 180)
+        assert sanyuan(1564) == sanyuan(1564 + 180)
+        assert sanyuan(1624) == sanyuan(1624 + 180)
+
+
+class TestMiddlePalaceDirection:
+    """中元寄宫方向（原典：阳男阴女寄艮8、阴男阳女寄坤2）"""
+
+    def test_zhong_yang_male_gen(self):
+        """中元阳年男命 → 寄艮(8)"""
+        t, d = resolve_middle_palace(5, 6, "male", True, "zhong")
+        assert t == 8
+
+    def test_zhong_yin_male_kun(self):
+        """中元阴年男命 → 寄坤(2)"""
+        t, d = resolve_middle_palace(5, 6, "male", False, "zhong")
+        assert t == 2
+
+    def test_zhong_yang_female_kun(self):
+        """中元阳年女命 → 寄坤(2)"""
+        t, d = resolve_middle_palace(5, 6, "female", True, "zhong")
+        assert t == 2
+
+    def test_zhong_yin_female_gen(self):
+        """中元阴年女命 → 寄艮(8)"""
+        t, d = resolve_middle_palace(5, 6, "female", False, "zhong")
+        assert t == 8
+
+    def test_shang_xia_palace_regression(self):
+        """上/下元寄宫不回归：上元男8女2、下元男9女7"""
+        assert resolve_middle_palace(5, 6, "male", True, "shang")[0] == 8
+        assert resolve_middle_palace(5, 6, "female", True, "shang")[0] == 2
+        assert resolve_middle_palace(5, 6, "male", True, "xia")[0] == 9
+        assert resolve_middle_palace(5, 6, "female", True, "xia")[0] == 7
+
+
+# ═══════════════════════════════════════════════════════════════════
+# E3-9: H17-G 大运/流年周期边界
+# ═══════════════════════════════════════════════════════════════════
+
+class TestDayunContinuity:
+    """大运段连续性（原典：段间无间隙、交岁衔接，卷之下"九四九五共十八年交十九"）"""
+
+    def test_qian_dayun_no_gap(self):
+        """乾为天（yt=3 九四）：12 段全阳 9 年、段间无间隙、至 108 岁"""
+        from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao
+        qian = build_six_lines("乾", "乾")
+        d = compute_dayun_liyao(qian, 3, qian, 3)
+        seq = d.sequence
+        assert len(seq) == 12
+        assert seq[0].age_start == 1
+        for i, e in enumerate(seq):
+            if i > 0:
+                assert e.age_start == seq[i - 1].age_end + 1, "段间存在间隙"
+        # 原典（起例卷之下:125）："行乾九四、九五二爻，共十八年，交十九上九"
+        assert seq[0].age_start == 1 and seq[0].age_end == 9
+        assert seq[1].age_start == 10 and seq[1].age_end == 18
+        assert seq[2].age_start == 19  # 交十九
+        assert seq[-1].age_end == 108
+
+    def test_fu_dayun_72(self):
+        """复卦（元堂初九阳9年+五阴爻各6年）：先天1-39、后天40-78"""
+        from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao
+        fu = build_six_lines("坤", "震")
+        d = compute_dayun_liyao(fu, 0, fu, 0)
+        seq = d.sequence
+        assert seq[0].age_end == 9
+        assert seq[5].age_end == 39
+        assert seq[6].age_start == 40  # 后天段接先天无间隙
+        assert seq[-1].age_end == 78
+
+
+class TestLiunianWorkedExample:
+    """流年小象逐岁推演（原典：同人九三阳段案例，起例卷之下:121）"""
+
+    def test_tongren_jiu_san_9_years(self):
+        """天火同人（yt=2 九三）阳段 9 岁流年卦序列与原典逐卦一致"""
+        from tongshu.engines.heluo.timeline_yun import compute_liunian
+        tongren = build_six_lines("乾", "离")  # [1,-1,1,1,1,1]
+        r = compute_liunian(tongren, 2, tongren, 2, birth_year=2024, age_from=1, age_to=9)
+        names = [y.hexagram_name for y in r.years]
+        assert names == ["天火同人", "泽火革", "泽雷随", "水雷屯", "地雷复",
+                         "山雷颐", "山地剥", "山水蒙", "山风蛊"], names
+        # 段首阳年（2024 甲辰）第1年不变元堂
+        assert r.years[0].hexagram_name == "天火同人"
+
+
+# ═══════════════════════════════════════════════════════════════════
+# E3-10: 流月节锚对齐（BUG1 回归：_LUNAR_MONTH_JIE 子月首编号）
+# ═══════════════════════════════════════════════════════════════════
+
+class TestLiuyueJieAnchor:
+    """流月节气锚与流月卦月份编号对齐（month=1=子月→大雪）"""
+
+    @staticmethod
+    def _md(dt_str: str) -> tuple[int, int]:
+        """'YYYY-MM-DD HH:MM' → (月, 日)"""
+        return int(dt_str[5:7]), int(dt_str[8:10])
+
+    def test_month1_anchors_daxue(self):
+        """month=1（子月）节锚=大雪（12月）——修正前错锚立春"""
+        from tongshu.engines.heluo.canonical import _jie_datetime_for_lunar_month
+        dt = _jie_datetime_for_lunar_month(2026, 1)
+        assert self._md(dt) == (12, 7), f"子月应锚大雪(12-07)，实际{dt}"
+
+    def test_month12_anchors_lidong(self):
+        """month=12（亥月）节锚=立冬（11月）——修正前错锚小寒"""
+        from tongshu.engines.heluo.canonical import _jie_datetime_for_lunar_month
+        dt = _jie_datetime_for_lunar_month(2026, 12)
+        assert self._md(dt) == (11, 7), f"亥月应锚立冬(11-07)，实际{dt}"
+
+    def test_all_12_months_aligned(self):
+        """全部 12 个流月节锚按子月起对齐（修正前整体错位一整节对）"""
+        from tongshu.engines.heluo.canonical import _jie_datetime_for_lunar_month
+        expect = {1: (12, 7), 2: (1, 5), 3: (2, 4), 4: (3, 5), 5: (4, 5), 6: (5, 5),
+                  7: (6, 5), 8: (7, 7), 9: (8, 7), 10: (9, 7), 11: (10, 8), 12: (11, 7)}
+        for lm, (em, ed) in expect.items():
+            dt = _jie_datetime_for_lunar_month(2026, lm)
+            assert self._md(dt) == (em, ed), f"month={lm} 应锚({em:02d}-{ed:02d})，实际{dt}"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

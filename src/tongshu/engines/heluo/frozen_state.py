@@ -62,7 +62,7 @@ class FrozenHeluoState:
     qi_phase: Optional[dict]               # 卦气阶段信息
 
     # ── 状态判断层（H6/H7）──────────────────────────────────────
-    hua_gong_state: Optional[str]          # NORMAL / REVERSE / RESCUED / UNRESOLVED
+    hua_gong_state: Optional[str]          # NORMAL / REVERSE / RESCUED / RESTRAINED / UNRESOLVED
     hua_gong_evidence: Optional[list[str]] # 化工证据链
 
     # ── 时间序列（从 canonical._build_timeline 提取）──────────

@@ -243,8 +243,15 @@ class TestHuaGongEndToEnd(unittest.TestCase):
         self.assertFalse(r.has_opposite)
 
     def test_rescued_state_detection(self):
-        """化工有反卦 → RESCUED"""
+        """化工有反卦且受克无救 → RESTRAINED（原典：忌克制，尤凶）"""
         r = compute_huagong("乾", "离", "坎", "兑", "午")
+        self.assertEqual(r.state, HuaGongState.RESTRAINED)
+        self.assertTrue(r.has_huagong)
+        self.assertTrue(r.has_opposite)
+
+    def test_rescued_state_with_rescue(self):
+        """化工有反卦但有相生救应 → RESCUED（原典：相生者则吉）"""
+        r = compute_huagong("震", "坤", "兑", "坎", "寅")
         self.assertEqual(r.state, HuaGongState.RESCUED)
         self.assertTrue(r.has_huagong)
         self.assertTrue(r.has_opposite)

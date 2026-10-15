@@ -1,6 +1,6 @@
 """H6: 化工计算测试
 
-覆盖：NORMAL / REVERSE / RESCUED / UNRESOLVED 四种状态判定
+覆盖：NORMAL / REVERSE / RESCUED / RESTRAINED / UNRESOLVED 五种状态判定
 原典依据：《河洛真数》起例卷下·论化工
 """
 from __future__ import annotations
@@ -42,26 +42,37 @@ class TestHuaGongNormal(unittest.TestCase):
 
 
 class TestHuaGongRescued(unittest.TestCase):
-    """RESCUED: 卦中既有化工卦又有反卦"""
+    """RESCUED / RESTRAINED: 卦中既有化工卦又有反卦，按五行相生/克制分流
+    （原典《化工相反图论》："大象与小象化工虽相反，却又有相生者，则吉。但忌克制，尤凶"）"""
 
-    def test_summer_li_with_kan(self):
-        """夏离卦 + 含坎（反卦）→ RESCUED"""
+    def test_summer_li_with_kan_restrained(self):
+        """夏离卦 + 含坎（反卦，坎水克离火）但乾兑皆金、无生离无克坎 → RESTRAINED（尤凶）"""
         r = compute_huagong("乾", "离", "坎", "兑", "午")
-        self.assertEqual(r.state, HuaGongState.RESCUED)
+        self.assertEqual(r.state, HuaGongState.RESTRAINED)
         self.assertTrue(r.has_huagong)
         self.assertTrue(r.has_opposite)
+
+    def test_spring_zhen_with_dui_restrained(self):
+        """春震卦含兑（反卦，兑金克震木）且乾金助反卦、无生震无克兑 → RESTRAINED（尤凶）"""
+        r = compute_huagong("兑", "震", "乾", "震", "卯")
+        self.assertEqual(r.state, HuaGongState.RESTRAINED)
+        self.assertTrue(r.has_huagong)
+        self.assertTrue(r.has_opposite)
+
+    def test_spring_zhen_rescued_by_kan(self):
+        """春震含兑，另有坎水生震（救应）→ RESCUED（相生则吉）"""
+        r = compute_huagong("震", "坤", "兑", "坎", "寅")
+        self.assertEqual(r.state, HuaGongState.RESCUED)
+
+    def test_summer_li_rescued_by_gen(self):
+        """夏离含坎，另有艮土克坎（救应）→ RESCUED"""
+        r = compute_huagong("离", "艮", "坎", "艮", "午")
+        self.assertEqual(r.state, HuaGongState.RESCUED)
 
     def test_winter_kan_with_li(self):
-        """冬坎卦 + 含离（反卦）→ RESCUED"""
+        """冬坎卦 + 含离（反卦）：坎水克离火，化工得势不为祸 → RESCUED"""
         r = compute_huagong("离", "坎", "乾", "坎", "子")
         self.assertEqual(r.state, HuaGongState.RESCUED)
-
-    def test_spring_zhen_with_dui(self):
-        """春震卦含震化工、含兑（震之反卦，化工相反图兑↔震）→ RESCUED（相生救应）"""
-        r = compute_huagong("兑", "震", "乾", "震", "卯")
-        self.assertEqual(r.state, HuaGongState.RESCUED)
-        self.assertTrue(r.has_huagong)
-        self.assertTrue(r.has_opposite)
 
 
 class TestHuaGongReverse(unittest.TestCase):

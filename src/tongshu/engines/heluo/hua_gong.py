@@ -12,7 +12,7 @@
   2. 正对反对：
      - 坎 ↔ 离（冬夏相反）
      - 震 ↔ 兑（春秋相反）
-  3. 状态枚举：NORMAL / REVERSE / RESCUED / UNRESOLVED
+  3. 状态枚举：NORMAL / REVERSE / RESCUED / RESTRAINED / UNRESOLVED
 """
 from __future__ import annotations
 
@@ -23,10 +23,11 @@ from typing import Literal
 
 class HuaGongState(str, Enum):
     """化工状态。"""
-    NORMAL = "NORMAL"       # 得位：卦中有机气
-    REVERSE = "REVERSE"     # 反位：正对反对，非当令
-    RESCUED = "RESCUED"     # 救应：虽相反但有相生
-    UNRESOLVED = "UNRESOLVED"  # 无据：无法判定
+    NORMAL = "NORMAL"           # 得位：卦中有当令化工卦，无正对反对
+    REVERSE = "REVERSE"         # 反位：正对反对，非当令
+    RESCUED = "RESCUED"         # 救应：虽相反但有相生救应
+    RESTRAINED = "RESTRAINED"   # 受制：虽相反且化工受反卦克制、无相生救应 → 尤凶
+    UNRESOLVED = "UNRESOLVED"   # 无据：无法判定
 
 
 # 四季 → 地支月 → 化工卦
@@ -48,6 +49,22 @@ OPPOSITE_TRIGRAM: dict[str, str] = {
     "坎": "离", "离": "坎",
     "兑": "震", "震": "兑",
 }
+
+# 五行相生 / 相克（《河洛真数》化工论"彼此相生…忌克制"，起例卷之上 L193/L203）
+from .numbers import TRIGRAM_ELEMENT
+
+_SHENG: dict[str, str] = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+_KE: dict[str, str] = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
+
+
+def _is_sheng(a: str, b: str) -> bool:
+    """a 五行生 b 五行（如 水→木）。"""
+    return bool(a and b and _SHENG.get(a) == b)
+
+
+def _is_ke(a: str, b: str) -> bool:
+    """a 五行克 b 五行（如 金→木）。"""
+    return bool(a and b and _KE.get(a) == b)
 
 
 @dataclass(frozen=True)
@@ -106,9 +123,36 @@ def compute_huagong(
         state = HuaGongState.NORMAL
         evidence.append("得位：卦中含当令化工卦，无正反对")
     elif has_huagong and has_opposite:
-        # 虽有化工卦，但亦有反卦 → 需检查相生关系
-        state = HuaGongState.RESCUED
-        evidence.append(f"救应：含化工卦{huagong_trigram}但同时含反卦{opposite_trigram}，需五行相生救应")
+        # 虽有化工卦，但亦有反卦 → 按五行相生/克制分流（原典《化工相反图论》：
+        #   "又有大象与小象化工虽相反，却又有相生者，则吉。但忌克制，尤凶"）
+        # 反卦克化工卦（兑克震 / 坎克离）→ 化工受制；若卦中另有相生救应
+        # （其他卦生化工，或克反卦）则仍为 RESCUED，否则为 RESTRAINED（尤凶）。
+        # 化工卦克反卦（坎克离 / 兑克震）→ 化工得势，维持 RESCUED。
+        h_el = TRIGRAM_ELEMENT.get(huagong_trigram, "")
+        o_el = TRIGRAM_ELEMENT.get(opposite_trigram, "")
+        others = [t for t in (prenatal_upper, prenatal_lower, postnatal_upper, postnatal_lower)
+                  if t not in (huagong_trigram, opposite_trigram)]
+        o_ke_h = _is_ke(o_el, h_el)  # 反卦五行克化工卦五行（化工受制）
+        rescue = any(
+            _is_sheng(TRIGRAM_ELEMENT.get(r, ""), h_el)     # 其他卦生化工
+            or _is_ke(TRIGRAM_ELEMENT.get(r, ""), o_el)     # 或克反卦
+            for r in others
+        )
+        if o_ke_h and not rescue:
+            state = HuaGongState.RESTRAINED
+            evidence.append(
+                f"受制：化工卦{huagong_trigram}被反卦{opposite_trigram}克制"
+                f"（{o_el}克{h_el}）且无相生救应 → 尤凶（原典：但忌克制，尤凶）")
+        else:
+            state = HuaGongState.RESCUED
+            if o_ke_h and rescue:
+                evidence.append(
+                    f"救应：含化工卦{huagong_trigram}与反卦{opposite_trigram}，"
+                    f"有相生救应（他卦生化工或克反卦）")
+            else:
+                evidence.append(
+                    f"救应：含化工卦{huagong_trigram}与反卦{opposite_trigram}，"
+                    f"化工得势不为祸（化工克反卦）")
     elif has_opposite and not has_huagong:
         state = HuaGongState.REVERSE
         evidence.append(f"反位：卦中含反卦{opposite_trigram}，无当令化工卦")

@@ -110,6 +110,7 @@ HUAGONG_DIRECTION: Dict[str, AssertionDirection] = {
     HuaGongState.NORMAL.value:   AssertionDirection.SUPPORTIVE,
     HuaGongState.RESCUED.value:  AssertionDirection.SUPPORTIVE,
     HuaGongState.REVERSE.value:  AssertionDirection.CAUTION,
+    HuaGongState.RESTRAINED.value: AssertionDirection.CAUTION,  # 化工受反卦克制无救（尤凶）
     HuaGongState.UNRESOLVED.value: AssertionDirection.NEUTRAL,
 }
 

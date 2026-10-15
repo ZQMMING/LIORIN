@@ -104,6 +104,7 @@ HUAGONG_ADVICE: dict[str, str] = {
     "NORMAL": "化工得位，根基稳固，行事多有助力。",
     "RESCUED": "虽有波折，但能逢凶化吉，坚持正道可成。",
     "REVERSE": "化工反位，行事多阻，宜守不宜攻。",
+    "RESTRAINED": "化工受反卦克制而尤凶，此际最忌强求冒进，宜谨守蛰伏、广结善缘以避灾咎。",
     "UNRESOLVED": "化工不明，形势未定，需审时度势后再行决断。",
 }
 
@@ -120,6 +121,10 @@ HUAGONG_ACTION_TEMPLATES: dict[str, List[dict]] = {
     "REVERSE": [
         {"title": "保守防守", "desc": "当前形势不利主动出击，宜退守巩固已有成果。", "scope": "year"},
         {"title": "减少开支", "desc": "化工反位，财务宜保守，避免大额投资或借贷。", "scope": "month"},
+    ],
+    "RESTRAINED": [
+        {"title": "谨守蛰伏", "desc": "化工受制尤凶，此际切忌冒进，宜低调行事以避灾咎。", "scope": "year"},
+        {"title": "广结善缘", "desc": "借外力缓克势，多结善缘、避开冲突与争讼之事。", "scope": "month"},
     ],
     "UNRESOLVED": [
         {"title": "观察等待", "desc": "形势不明朗，宜静观其变，等待更清晰的信号再行动。", "scope": "month"},
@@ -315,6 +320,8 @@ class HeluoGuidanceEngine:
             advice.append("全年整体：根基稳固，适合长期规划。")
         elif hua_gong_state == "REVERSE":
             advice.append("全年整体：局势不利，建议保守防守。")
+        elif hua_gong_state == "RESTRAINED":
+            advice.append("全年整体：化工受制尤凶，务必谨守蛰伏、避开冲突。")
         elif hua_gong_state == "RESCUED":
             advice.append("全年整体：先难后易，坚持正道可成。")
 

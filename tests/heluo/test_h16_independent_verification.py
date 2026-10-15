@@ -212,7 +212,9 @@ cu_lines = build_six_lines("兑", "坤")
 check("萃卦六爻", cu_lines, [-1, -1, -1, 1, 1, -1], "泽地萃：下坤(-1,-1,-1)+上兑(1,1,-1)")
 r = find_yuantang(cu_lines, "子", "male", "泽地萃")
 check("萃卦子时男元堂=九四", r.yuantang, "九四",
-      "原典：二阳爻卦子时在四爻——萃卦阳爻候选[3,4]，N=2，子时(t=0)<4→candidates[0]=3(九四)")
+      "原典唯一规则：'凡二阳卦，皆重数，必须两次往复，至后方寄阴爻'（起例卷之上:79）——"
+      "萃卦阳爻候选[3,4]，子时(t=0)<4→candidates[0]=3(九四)。"
+      "注：'二阳爻卦子时在四爻'仅为萃卦个案（落点恰在四爻），非通则——如地泽临阳@[0,1]子时落初九")
 check("萃卦子时男元堂idx=3", r.yuantang_index, 3, "九四对应index=3")
 
 # N=4 连续分支（大过）：build_six_lines('巽','兑') → [1,1,-1,-1,1,1]
@@ -259,10 +261,11 @@ r = compute_huagong("乾", "坤", "乾", "坤", "寅")
 check("春化工乾坤卦→UNRESOLVED", r.state, HuaGongState.UNRESOLVED,
       "卦含乾(金)坤(土)，不含震(化工)也不含兑(反)")
 
-# 卦中含震+兑（正对）
+# 卦中含震+兑（正对）：兑金克震木（化工受制），四卦无生震无克兑 → RESTRAINED（尤凶）
 r = compute_huagong("震", "坤", "兑", "坤", "寅")
-check("春化工含震含兑→RESCUED", r.state, HuaGongState.RESCUED,
-      "卦含化工震，也含反兑 → RESCUED（相生救应）")
+check("春化工含震含兑受制→RESTRAINED", r.state, HuaGongState.RESTRAINED,
+      "原典（化工相反图论）：'虽相反，却又有相生者则吉。但忌克制，尤凶'——"
+      "兑金克震木无救应 → RESTRAINED（尤凶），非 RESCUED")
 
 # 卦中含兑不含震（反位）
 r = compute_huagong("兑", "坤", "兑", "坤", "寅")
