@@ -61,7 +61,7 @@ class FrozenHeluoState:
     seasonal_hexagram: Optional[dict]      # 出生日节候卦信息
     qi_phase: Optional[dict]               # 卦气阶段信息
 
-    # ── 状态判断层（H6）───────────────────────────────────────
+    # ── 状态判断层（H6/H7）──────────────────────────────────────
     hua_gong_state: Optional[str]          # NORMAL / REVERSE / RESCUED / UNRESOLVED
     hua_gong_evidence: Optional[list[str]] # 化工证据链
 
@@ -74,6 +74,10 @@ class FrozenHeluoState:
     gender: str                            # "male" / "female"
     birth_hour: str                        # 出生时辰
     birth_date: str                        # 出生日期 ISO
+    yuan_qi_state: Optional[str] = None   # NORMAL / REVERSE / UNRESOLVED
+    yuan_qi_evidence: Optional[list[str]] = None  # 元气证据链
+    yuan_qi_tian: Optional[str] = None    # 天元气卦（年干纳甲）
+    yuan_qi_di: Optional[str] = None      # 地元气卦（年支后天宫）
 
     def to_dict(self) -> dict:
         """序列化为字典，供 Signal/Assertion 层消费。"""
@@ -112,6 +116,12 @@ class FrozenHeluoState:
             "hua_gong": {
                 "state": self.hua_gong_state,
                 "evidence": self.hua_gong_evidence,
+            },
+            "yuan_qi": {
+                "state": self.yuan_qi_state,
+                "tian": self.yuan_qi_tian,
+                "di": self.yuan_qi_di,
+                "evidence": self.yuan_qi_evidence,
             },
             "seasonal": self.seasonal_hexagram,
             "qi_phase": self.qi_phase,
@@ -159,6 +169,7 @@ def build_frozen_state(result: Any, calculation_policy: Optional[dict] = None) -
 
     hua_gong = getattr(result, 'hua_gong', None)
     seasonal_hex = getattr(result, 'seasonal_hexagram', None)
+    yuan_qi = getattr(result, 'yuan_qi', None)
 
     # 解析出生日期
     birth_date = getattr(getattr(result, 'input', None), 'birth_date', '')
@@ -188,6 +199,10 @@ def build_frozen_state(result: Any, calculation_policy: Optional[dict] = None) -
         qi_phase=qi_phase if timeline else None,
         hua_gong_state=hua_gong.state.value if hua_gong else None,
         hua_gong_evidence=hua_gong.evidence if hua_gong else None,
+        yuan_qi_state=yuan_qi.state.value if yuan_qi else None,
+        yuan_qi_evidence=yuan_qi.evidence if yuan_qi else None,
+        yuan_qi_tian=yuan_qi.tian_yuan_qi if yuan_qi else None,
+        yuan_qi_di=yuan_qi.di_yuan_qi if yuan_qi else None,
         dayun_summary=dayun_summary,
         liunian_count=liunian_count,
         birth_year=birth_year,

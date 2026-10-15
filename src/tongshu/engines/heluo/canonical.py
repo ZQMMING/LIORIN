@@ -146,6 +146,7 @@ def _compute_year_jie(year: int) -> dict[int, str]:
 from .hexagram import analyze_hexagram, HexagramStructure
 from .yi_interpreter import interpret_all_liunian
 from .hua_gong import compute_huagong, HuaGongResult
+from .yuan_qi import compute_yuan_qi, YuanQiResult
 from .jiehhou import get_seasonal_hexagram, get_current_jieqi_info
 
 
@@ -160,6 +161,7 @@ class HeluoResult:
     timeline: Timeline | None
     structure: HexagramStructure | None
     hua_gong: HuaGongResult | None = None          # H6: 化工状态
+    yuan_qi: YuanQiResult | None = None            # H7: 元气状态（天/地元气 + 元反）
     seasonal_hexagram: dict | None = None          # H11: 节候卦（出生日）
     guajie: dict | None = None                     # H8: 解卦层（原典判词，可选挂载）
 
@@ -312,6 +314,21 @@ class HeluoCanonical:
             prenatal, postnatal, birth_date, gender, birth_year
         )
 
+        # Step 8.5: H7 元气（年柱纳甲/后天宫位配先天之气）— 与化工对偶
+        try:
+            from .yuan_qi import compute_yuan_qi as _cyq
+            yr_stem = bazi[0][0] if (bazi and len(bazi) > 0) else ""
+            yr_branch = bazi[0][1] if (bazi and len(bazi) > 0) else ""
+            yuan_qi = None
+            if yr_stem and yr_branch:
+                yuan_qi = _cyq(
+                    yr_stem, yr_branch,
+                    prenatal.upper_gua, prenatal.lower_gua,
+                    postnatal.upper_gua, postnatal.lower_gua,
+                )
+        except Exception:
+            yuan_qi = None
+
         # Step 9: H11 节候卦（出生日所在节气）
         seasonal_hex = self._compute_seasonal_hexagram(birth_date)
 
@@ -324,6 +341,7 @@ class HeluoCanonical:
             timeline=timeline,
             structure=structure,
             hua_gong=hua_gong,
+            yuan_qi=yuan_qi,
             seasonal_hexagram=seasonal_hex,
         )
 
