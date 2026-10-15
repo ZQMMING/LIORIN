@@ -38,12 +38,15 @@ SEASON_BRANCH_TO_HUAGONG: dict[str, str] = {
     "申": "兑", "酉": "兑", "戌": "兑",   # 秋
 }
 
-# 正反对：反卦判断（先天方位对宫，六爻全变）
+# 化工正反对：反卦判断（原典《化工相反图》，起例卷之上）
+#   "坎卦…与离相反"（冬夏）
+#   "兑卦…与震相反" / "震卦…与兑相反"（春秋）
+# 故化工反对 = 坎↔离、兑↔震（季节相对）。
+# 注意：此为化工语境下的反对（四季相反），不同于卦象"错卦/对宫"
+# （乾↔坤、坎↔离、震↔巽、艮↔兑，见 guajie.py）——两者不混用。
 OPPOSITE_TRIGRAM: dict[str, str] = {
     "坎": "离", "离": "坎",
-    "震": "巽", "巽": "震",
-    "艮": "兑", "兑": "艮",
-    "乾": "坤", "坤": "乾",
+    "兑": "震", "震": "兑",
 }
 
 
@@ -121,3 +124,51 @@ def compute_huagong(
         has_opposite=has_opposite,
         evidence=evidence,
     )
+
+
+# 节令月：以十二"节"（立春/惊蛰/清明/立夏/芒种/小暑/立秋/白露/寒露/立冬/大雪/小寒）
+# 为月界，确定出生日所属月支。索引与 jiehhou.SOLAR_TERMS 一致（0=冬至…23=大雪）。
+# 月支对应"节"：立春→寅、惊蛰→卯、清明→辰、立夏→巳、芒种→午、小暑→未、
+#               立秋→申、白露→酉、寒露→戌、立冬→亥、大雪→子、小寒→丑
+JIE_INDEX_TO_BRANCH: dict[int, str] = {
+    3: "寅", 5: "卯", 7: "辰", 9: "巳", 11: "午", 13: "未",
+    15: "申", 17: "酉", 19: "戌", 21: "亥", 23: "子", 1: "丑",
+}
+
+
+def resolve_birth_month_branch(birth_date: str) -> str | None:
+    """
+    按节气节令月精确定出生日所属月支（取代公历月份近似）。
+
+    以出生时刻之前最近的一个"节"（立春/惊蛰/…/小寒）为月界定月支，
+    正确处理跨年冬至与节气边界（如 11-03 立冬前属戌月，而非亥月）。
+
+    Args:
+        birth_date: 公历日期 ISO 格式（YYYY-MM-DD）
+
+    Returns:
+        月支（寅/卯/…/丑），sxtwl 不可用或无法定位时返回 None
+    """
+    try:
+        import sxtwl
+        from datetime import datetime
+        bd = datetime.fromisoformat(birth_date)
+    except Exception:
+        return None
+
+    try:
+        candidates: list[tuple[datetime, str]] = []
+        for yr in (bd.year - 1, bd.year):
+            for info in sxtwl.getJieQiByYear(yr):
+                branch = JIE_INDEX_TO_BRANCH.get(info.jqIndex)
+                if branch is None:
+                    continue
+                dt = sxtwl.JD2DD(info.jd)
+                t = datetime(dt.Y, dt.M, dt.D, int(dt.h), int(dt.m), int(dt.s))
+                candidates.append((t, branch))
+        past = [c for c in candidates if c[0] <= bd]
+        if not past:
+            return None
+        return max(past, key=lambda c: c[0])[1]
+    except Exception:
+        return None

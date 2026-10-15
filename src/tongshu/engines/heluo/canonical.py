@@ -463,18 +463,12 @@ class HeluoCanonical:
     ) -> HuaGongResult | None:
         """H6: 计算化工状态。"""
         try:
-            from datetime import datetime as dt
-            bd = dt.fromisoformat(birth_date)
-            # 用月支确定季节 → 化工卦
-            # 简化：根据月份推断月支（立春后为寅月）
-            month = bd.month
-            # 月份→地支映射（简化：以节气为界，此处用月份近似）
-            month_to_branch = {
-                1: "丑", 2: "寅", 3: "卯", 4: "辰",
-                5: "巳", 6: "午", 7: "未", 8: "申",
-                9: "酉", 10: "戌", 11: "亥", 12: "子",
-            }
-            branch = month_to_branch.get(month, "子")
+            # 月支按节气节令月精确判定（修复：原实现用公历月份近似，
+            # 边界日会错判月支，如 11-03 立冬前实为戌月却被当亥月）。
+            from .hua_gong import compute_huagong, resolve_birth_month_branch
+            branch = resolve_birth_month_branch(birth_date)
+            if branch is None:
+                return None
             return compute_huagong(
                 prenatal.upper_gua, prenatal.lower_gua,
                 postnatal.upper_gua, postnatal.lower_gua,

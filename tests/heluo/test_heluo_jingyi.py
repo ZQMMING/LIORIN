@@ -75,7 +75,8 @@ class TestJingyiOutputLayer:
     """输出层：解卦层 dict 带出 benming + 四层爻断 jingyi/shiyi。"""
 
     @pytest.fixture(scope="class")
-    def guajie_dict(self):
+    @classmethod
+    def guajie_dict(cls):
         r = HeluoAdapter().compute((1980, 6, 22, 10), gender="male")
         return build_guajie_from_result(
             r, target_year=2026, target_month=9, target_day=15, target_hour=10)

@@ -56,10 +56,10 @@ class TestFrozenStateGoldenCase(unittest.TestCase):
         self.assertEqual(self.state.postnatal_lines, (1, 1, 1, 1, -1, -1))
 
     def test_huagong(self):
-        """纪晓岚生于丑月（冬）→ 化工卦为坎，卦中无坎无离 → UNRESOLVED"""
+        """纪晓岚案例（占位 birth_date 1984-01-01→大雪后子月，冬）→ 化工卦为坎，卦中无坎无离 → UNRESOLVED"""
         self.assertEqual(self.state.hua_gong_state, "UNRESOLVED")
         self.assertIsNotNone(self.state.hua_gong_evidence)
-        self.assertTrue(any("丑" in e for e in self.state.hua_gong_evidence))
+        self.assertTrue(any("坎" in e for e in self.state.hua_gong_evidence))
 
     def test_dayun_count(self):
         """先天6爻 + 后天6爻 = 12段大运"""

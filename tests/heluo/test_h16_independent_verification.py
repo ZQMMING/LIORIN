@@ -198,21 +198,22 @@ check("复卦子时男元堂=初九", r.yuantang, "初九",
       "原典：复卦一阳爻@idx=0，子时男命(t=0)→初九(idx=0)")
 check("复卦子时男元堂idx=0", r.yuantang_index, 0, "初九对应index=0")
 
-# 旅卦（火山旅）：build_six_lines('艮','离') → [1,-1,1,-1,-1,1]
-lv_lines = build_six_lines("艮", "离")
-check("旅卦六爻", lv_lines, [1, -1, 1, -1, -1, 1], "火山旅：下艮(-1,-1,1)+上离(1,-1,1)")
-r = find_yuantang(lv_lines, "午", "male", "火山旅")
-check("旅卦午时男元堂=六二", r.yuantang, "六二",
-      "原典：旅卦阳爻候选[0,2,5]，午时(t=4)，N=3→path*2=[0,2,5,0,2,5]，idx=4→2")
-check("旅卦午时男元堂idx=1", r.yuantang_index, 1, "六二对应index=1")
+# 旅卦（火山旅）：上离下艮，正确爻象 [-1,-1,1,1,-1,1]
+lv_lines = build_six_lines("离", "艮")
+check("旅卦六爻", lv_lines, [-1, -1, 1, 1, -1, 1], "火山旅：下艮(-1,-1,1)+上离(1,-1,1)")
+# 原典案例（起例卷之中）：绍兴庚午七月廿二酉时男得火山旅，元堂在初六爻
+r = find_yuantang(lv_lines, "酉", "male", "火山旅")
+check("旅卦酉时男元堂=初六", r.yuantang, "初六",
+      "原典：火山旅阴爻候选[0,1,4]，酉时男命(t=3)，N=3→path*2=[0,1,4,0,1,4]，idx=3→初六(0)")
+check("旅卦酉时男元堂idx=0", r.yuantang_index, 0, "初六对应index=0")
 
-# 萃卦（泽地萃）：build_six_lines('坤','兑') → [1,1,-1,-1,-1,-1]
-cu_lines = build_six_lines("坤", "兑")
-check("萃卦六爻", cu_lines, [1, 1, -1, -1, -1, -1], "泽地萃：下坤(-1,-1,-1)+上兑(1,1,-1)")
+# 萃卦（泽地萃）：上兑下坤，正确爻象 [-1,-1,-1,1,1,-1]
+cu_lines = build_six_lines("兑", "坤")
+check("萃卦六爻", cu_lines, [-1, -1, -1, 1, 1, -1], "泽地萃：下坤(-1,-1,-1)+上兑(1,1,-1)")
 r = find_yuantang(cu_lines, "子", "male", "泽地萃")
-check("萃卦子时男元堂=初九", r.yuantang, "初九",
-      "原典：萃卦阳爻候选[0,1]，N=2，子时(t=0)<2→candidates[0]=0")
-check("萃卦子时男元堂idx=0", r.yuantang_index, 0, "初九对应index=0")
+check("萃卦子时男元堂=九四", r.yuantang, "九四",
+      "原典：二阳爻卦子时在四爻——萃卦阳爻候选[3,4]，N=2，子时(t=0)<4→candidates[0]=3(九四)")
+check("萃卦子时男元堂idx=3", r.yuantang_index, 3, "九四对应index=3")
 
 # N=4 连续分支（大过）：build_six_lines('巽','兑') → [1,1,-1,-1,1,1]
 dg_lines = build_six_lines("巽", "兑")
@@ -406,7 +407,7 @@ check("梅花时间起卦体用为卦名", r.ti in TRIGRAM_LINES and r.yong in T
 
 r = cast_by_numbers(3, 5)
 check("梅花数起(3,5)本卦", r.ben_gua, "火风鼎", "上离(3)下巽(5)→火风鼎")
-check("梅花数起(3,5)动爻1based", r.dong_yao_1based, 3, "(3+5)%6=2, 1-based=2")
+check("梅花数起(3,5)动爻1based", r.dong_yao_1based, 2, "(3+5)%6=2, 1-based=2")
 
 r = cast_by_numbers(1, 1)
 check("梅花乾为天", r.ben_gua, "乾为天", "上下皆乾")
@@ -414,7 +415,7 @@ check("梅花乾错卦=坤", r.cuo_gua, "坤为地", "乾(111,111)错为坤(000,
 check("梅花乾综卦=乾", r.zong_gua, "乾为天", "乾自综")
 
 r = cast_by_numbers(1, 3)
-check("同人动爻=5", r.dong_yao_1based, 5, "(1+3)%6=4, 1-based=4")
+check("同人动爻=4", r.dong_yao_1based, 4, "(1+3)%6=4, 1-based=4")
 
 
 # ═══════════════════════════════════════════════════════════════
