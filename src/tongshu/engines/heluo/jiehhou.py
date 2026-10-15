@@ -209,7 +209,13 @@ def get_current_jieqi_info(year: int, month: int, day: int) -> Optional[Seasonal
     """
     根据公历日期获取当前所在节气的节候卦信息。
 
-    使用 sxtwl 查找最近一个已过节气。
+    返回「出生日（含当天）之前最近一个已过节气」对应的节候卦。
+    若出生当天恰为节气日，则返回当天节气；否则向前回溯最近的上一个节气。
+
+    修复说明（H11 bug）：原实现用 ``sxtwl.Day.getJieQi()`` 直接判断"所在节气"，
+    但该 API 语义是「当天是否为节气日」——仅在节气日返回索引(0-23)，非节气日返回
+    255，导致绝大多数出生日期（非节气当天）被误判为 None，节候卦基本失效。
+    本实现改为回溯最近已过节气，保证任意出生日期均能取到正确的节候卦。
 
     Args:
         year: 公历年
@@ -217,17 +223,25 @@ def get_current_jieqi_info(year: int, month: int, day: int) -> Optional[Seasonal
         day: 公历日
 
     Returns:
-        SeasonalHexagram 或 None（若 sxtwl 不可用）
+        SeasonalHexagram 或 None（sxtwl 不可用或回溯失败时）
     """
     try:
         import sxtwl
-        from datetime import date as date_type
-        d = sxtwl.fromSolar(year, month, day)
-        jq_idx = d.getJieQi()
-        if jq_idx < 0 or jq_idx > 23:
-            return None
-        return get_seasonal_hexagram(jq_idx)
+        from datetime import date, timedelta
     except ImportError:
+        return None
+
+    try:
+        target = date(year, month, day)
+        # 两节气间隔约 15 天，回溯 31 天必然覆盖最近的上一个节气（含跨年冬至）。
+        for back in range(0, 32):
+            cur = target - timedelta(days=back)
+            d = sxtwl.fromSolar(cur.year, cur.month, cur.day)
+            if d.hasJieQi():
+                jq_idx = d.getJieQi()
+                if not (0 <= jq_idx <= 23):
+                    return None
+                return get_seasonal_hexagram(jq_idx)
         return None
     except Exception:
         return None

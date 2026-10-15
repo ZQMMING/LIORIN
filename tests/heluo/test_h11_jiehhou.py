@@ -112,15 +112,56 @@ class TestQiPhase(unittest.TestCase):
 
 
 class TestCurrentJieqiInfo(unittest.TestCase):
-    """当前节气查询测试"""
+    """当前节气查询测试（回归：修复非节气日返回 None 的 bug）"""
 
-    def test_known_date(self):
-        """2026年9月4日应有节候信息（白露附近）"""
+    def test_non_jieqi_date_returns_past_jieqi(self):
+        """非节气日的出生日期必须返回最近的已过节气（修复前为 None）"""
+        info = get_current_jieqi_info(2026, 9, 4)  # 处暑(8/23)之后、白露(9/7)之前
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "处暑")
+        self.assertEqual(info.jq_index, 16)
+
+    def test_1983_11_03_shuangjiang(self):
+        """1983-11-03 立冬前 → 霜降"""
+        info = get_current_jieqi_info(1983, 11, 3)
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "霜降")
+        self.assertEqual(info.jq_index, 20)
+
+    def test_2000_12_25_dongzhi(self):
+        """2000-12-25 冬至后 → 冬至（2000-12-21）"""
+        info = get_current_jieqi_info(2000, 12, 25)
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "冬至")
+        self.assertEqual(info.jq_index, 0)
+
+    def test_jieqi_day_itself(self):
+        """出生当天恰为节气日 → 返回当天节气"""
+        info = get_current_jieqi_info(2026, 12, 7)  # 大雪日
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "大雪")
+        self.assertEqual(info.jq_index, 23)
+
+    def test_cross_year_boundary(self):
+        """跨年边界：2026-02-03 立春前一天 → 大寒（去冬节气周期）"""
+        info = get_current_jieqi_info(2026, 2, 3)
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "大寒")
+        self.assertEqual(info.jq_index, 2)
+
+    def test_january_cross_year(self):
+        """2027-01-15 → 小寒（2027 年初，节气周期仍属去冬）"""
+        info = get_current_jieqi_info(2027, 1, 15)
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "小寒")
+        self.assertEqual(info.jq_index, 1)
+
+    def test_returned_is_seasonal_hexagram(self):
+        """返回类型必须是 SeasonalHexagram 且含原典证据链"""
         info = get_current_jieqi_info(2026, 9, 4)
-        # 可能为None（若sxtwl未加载），不强制断言
-        if info is not None:
-            self.assertIn(info.jq_name, SOLAR_TERMS)
-            self.assertIsInstance(info, SeasonalHexagram)
+        self.assertIsInstance(info, SeasonalHexagram)
+        self.assertTrue(any("河洛真数" in e for e in info.evidence))
+        self.assertIn(info.main_gua, JIEHOU_GUA_NAME.values())
 
 
 class TestJiehhouDataIntegrity(unittest.TestCase):
