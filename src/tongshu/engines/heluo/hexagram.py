@@ -7,49 +7,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from .numbers import SIXTY_FOUR_HEXAGRAMS
-
-# 八卦三画 -> 卦名（自下而上编码，'1'=阳）
-_LINES_TO_TRIGRAM = {
-    '111': '乾', '110': '兑', '101': '离', '100': '震',
-    '011': '巽', '010': '坎', '001': '艮', '000': '坤',
-}
-# 错卦：先天方位对宫 —— 引用单一来源，不再自存一份
-from .hexagram_state import QIANXI_DUKONG as _QIANXI_DUKONG
-
-
-def _lines_to_gua_name(lines: list[int]) -> str:
-    """六爻（自下而上）-> 六十四卦名。"""
-    lo = _LINES_TO_TRIGRAM[''.join('1' if l == 1 else '0' for l in lines[0:3])]
-    up = _LINES_TO_TRIGRAM[''.join('1' if l == 1 else '0' for l in lines[3:6])]
-    return SIXTY_FOUR_HEXAGRAMS.get((up, lo), f'{up}{lo}')
-
-
-def compute_hu_gua(lines: list[int]) -> str:
-    """互体（《河洛真数·起例卷之上·互体伏体论》）。
-
-    原文「以正体内外卦除初上二爻，用中四爻，交互成卦，谓之互体」：
-      下互 = 二三四爻 = lines[1:4]
-      上互 = 三四五爻 = lines[2:5]
-    原典例（渐卦）：「九五六四九三互离，六四九三六二互坎，合之为未济」
-    → 上互离、下互坎、未济。
-    """
-    hu_low = _LINES_TO_TRIGRAM[''.join('1' if l == 1 else '0' for l in lines[1:4])]
-    hu_up = _LINES_TO_TRIGRAM[''.join('1' if l == 1 else '0' for l in lines[2:5])]
-    return SIXTY_FOUR_HEXAGRAMS.get((hu_up, hu_low), f'{hu_up}{hu_low}')
-
-
-def compute_cuo_gua(upper: str, lower: str) -> str:
-    """错卦：上下卦各取对宫（六爻全变）。"""
-    return SIXTY_FOUR_HEXAGRAMS.get(
-        (_QIANXI_DUKONG.get(upper, upper), _QIANXI_DUKONG.get(lower, lower)),
-        '')
-
-
-def compute_zong_gua(upper: str, lower: str) -> str:
-    """综卦：上下卦互换。"""
-    return SIXTY_FOUR_HEXAGRAMS.get((lower, upper), '')
-
 
 @dataclass(frozen=True)
 class HexagramStructure:
@@ -212,7 +169,7 @@ def analyze_hexagram(hexagram_name: str) -> HexagramStructure | None:
         "relation": sheng_ke,
     }
 
-    # 承乘比应（承/乘/比/应四关系，规则见下）
+    # 承乘比应（简化版）
     cheng_cheng = []
     bi = []
     ying = []
@@ -247,9 +204,9 @@ def analyze_hexagram(hexagram_name: str) -> HexagramStructure | None:
         cheng_cheng=cheng_cheng,
         bi=bi,
         ying=ying,
-        hu_gua=compute_hu_gua(lines),   # 互体：除初上，取中四爻交互
-        cuo_gua=compute_cuo_gua(upper, lower),  # 错卦：六爻全变
-        zong_gua=compute_zong_gua(upper, lower),  # 综卦：上下易位
+        hu_gua=None,  # 待实现
+        cuo_gua=None,  # 待实现
+        zong_gua=None,  # 待实现
     )
 
 

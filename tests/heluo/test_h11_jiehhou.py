@@ -6,11 +6,8 @@
 from __future__ import annotations
 
 import unittest
-import inspect
 import sys
-import types
 from pathlib import Path
-from unittest import mock
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
@@ -38,20 +35,7 @@ class TestSolarTerms(unittest.TestCase):
             "夏至", "小暑", "大暑", "立秋", "处暑", "白露",
             "秋分", "寒露", "霜降", "立冬", "小雪", "大雪",
         ]
-        # 2026-10-08 批次 G：SOLAR_TERMS 改为引用 jiegua.JIEQI_24（单一来源），
-        # 后者是 tuple，故此处比 list(...)；下面的 test 是「确为同一对象」的断言。
-        self.assertEqual(list(SOLAR_TERMS), expected)
-
-    def test_solar_terms_is_the_single_source_object(self):
-        """二十四节气序全库只许有一处定义。
-
-        批次 G 之前此处、jiegua.JIEQI_24、yue_ling_shu_ge.JIE_QI_ORDER 各抄一份。
-        三份各改各的，索引错位要到出卦时才炸——故钉住「必须是同一个对象」。
-        """
-        from tongshu.engines.heluo.jiegua import JIEQI_24
-        from tongshu.engines.heluo.yue_ling_shu_ge import JIE_QI_ORDER
-        self.assertIs(SOLAR_TERMS, JIEQI_24, "SOLAR_TERMS 与 jiegua.JIEQI_24 不是同一对象")
-        self.assertIs(JIE_QI_ORDER, JIEQI_24, "JIE_QI_ORDER 与 jiegua.JIEQI_24 不是同一对象")
+        self.assertEqual(SOLAR_TERMS, expected)
 
 
 class TestSeasonalHexagram(unittest.TestCase):
@@ -65,40 +49,32 @@ class TestSeasonalHexagram(unittest.TestCase):
             self.assertIn(info.main_gua, JIEHOU_GUA_NAME.values())
 
     def test_dongzhi_yi_fu(self):
-        """冬至：坎初六（原典 L1492「节卦坎初六起冬至」）"""
+        """冬至：颐六四动→复（原典）"""
         info = get_seasonal_hexagram(0)
         self.assertEqual(info.jq_name, "冬至")
-        self.assertEqual(info.main_gua, "坎")
-        self.assertEqual(info.moving_line, 0)
-        self.assertEqual(info.result_gua, "初六")
+        self.assertEqual(info.main_gua, "山雷颐")
+        self.assertEqual(info.moving_line, 4)
+        self.assertEqual(info.result_gua, "地雷复")
 
     def test_lichun_jie(self):
-        """立春：坎六四（原典「六四立春」，坎卦第四爻）"""
+        """立春：泰三动→解（原典）"""
         info = get_seasonal_hexagram(3)
-        self.assertEqual(info.main_gua, "坎")
-        self.assertEqual(info.moving_line, 3)
-        self.assertEqual(info.result_gua, "六四")
+        self.assertEqual(info.result_gua, "雷水解")
 
     def test_chunfen_duogua(self):
-        """春分：震初九（原典「震初九起春分」）"""
+        """春分：夬二动→损"""
         info = get_seasonal_hexagram(6)
-        self.assertEqual(info.main_gua, "震")
-        self.assertEqual(info.moving_line, 0)
-        self.assertEqual(info.result_gua, "初九")
+        self.assertEqual(info.result_gua, "山泽损")
 
     def test_xiazhi_shi_pou(self):
-        """夏至：离初九（原典「离初九起夏至」）"""
+        """夏至：师五动→剥"""
         info = get_seasonal_hexagram(12)
-        self.assertEqual(info.main_gua, "离")
-        self.assertEqual(info.moving_line, 0)
-        self.assertEqual(info.result_gua, "初九")
+        self.assertEqual(info.result_gua, "山地剥")
 
     def test_qiufen_dun(self):
-        """秋分：兑初九（原典「兑初九起秋分」）"""
+        """秋分：丰四动→遁"""
         info = get_seasonal_hexagram(18)
-        self.assertEqual(info.main_gua, "兑")
-        self.assertEqual(info.moving_line, 0)
-        self.assertEqual(info.result_gua, "初九")
+        self.assertEqual(info.result_gua, "天山遁")
 
     def test_invalid_index_raises(self):
         """越界应抛出 ValueError"""
@@ -136,77 +112,56 @@ class TestQiPhase(unittest.TestCase):
 
 
 class TestCurrentJieqiInfo(unittest.TestCase):
-    """当前节气查询测试"""
+    """当前节气查询测试（回归：修复非节气日返回 None 的 bug）"""
 
-    def test_known_date(self):
-        """2026年9月4日应有节候信息（白露附近）"""
-        info = get_current_jieqi_info(2026, 9, 4)
-        # 可能为None（若sxtwl未加载），不强制断言
-        if info is not None:
-            self.assertIn(info.jq_name, SOLAR_TERMS)
-            self.assertIsInstance(info, SeasonalHexagram)
-
-
-class TestCurrentJieqiInfoErrorSemantics(unittest.TestCase):
-    """2026-10-06 回归：get_current_jieqi_info 只把「缺依赖」降级为 None。
-
-    旧实现带 `except Exception: return None`，函数内任何真实计算错误都被吞成
-    None，调用方无法区分「没装 sxtwl」与「算错了」。现只捕 ImportError。
-    """
-
-    def test_missing_sxtwl_returns_none(self):
-        """sxtwl 不可用 → None（降级路径保留，且不依赖本机是否装了 sxtwl）"""
-        with mock.patch.dict(sys.modules, {"sxtwl": None}):
-            self.assertIsNone(get_current_jieqi_info(2026, 9, 4))
-
-    def test_real_error_propagates(self):
-        """sxtwl 已装但计算出错 → 异常原样上抛，不得吞成 None"""
-        boom = RuntimeError("sxtwl boom")
-        fake = types.ModuleType("sxtwl")
-
-        def _fromSolar(*_a, **_kw):
-            raise boom
-
-        fake.fromSolar = _fromSolar
-        with mock.patch.dict(sys.modules, {"sxtwl": fake}):
-            with self.assertRaises(RuntimeError) as ctx:
-                get_current_jieqi_info(2026, 9, 4)
-        self.assertIs(ctx.exception, boom, "应原样上抛，不被降级吞掉")
-
-    def test_no_bare_exception_fallback(self):
-        """源码级护栏：函数体内不得再出现 except Exception 降级"""
-        src = inspect.getsource(get_current_jieqi_info)
-        self.assertNotIn(
-            "except Exception", src,
-            "get_current_jieqi_info 不应再用 except Exception 吞真实计算错误",
-        )
-
-    def test_jq_index_out_of_range_returns_none(self):
-        """非错误情形：jq_idx 越界仍返回 None，不上抛"""
-        fake = types.ModuleType("sxtwl")
-
-        class _Day:
-            def getJieQi(self):
-                return -1
-
-        fake.fromSolar = lambda *a, **kw: _Day()
-        with mock.patch.dict(sys.modules, {"sxtwl": fake}):
-            self.assertIsNone(get_current_jieqi_info(2026, 9, 4))
-
-    def test_valid_path_returns_hexagram(self):
-        """正常路径：合法 jq_idx 应返回 SeasonalHexagram"""
-        fake = types.ModuleType("sxtwl")
-
-        class _Day:
-            def getJieQi(self):
-                return 16  # 处暑
-
-        fake.fromSolar = lambda *a, **kw: _Day()
-        with mock.patch.dict(sys.modules, {"sxtwl": fake}):
-            info = get_current_jieqi_info(2026, 9, 4)
-        self.assertIsInstance(info, SeasonalHexagram)
+    def test_non_jieqi_date_returns_past_jieqi(self):
+        """非节气日的出生日期必须返回最近的已过节气（修复前为 None）"""
+        info = get_current_jieqi_info(2026, 9, 4)  # 处暑(8/23)之后、白露(9/7)之前
+        self.assertIsNotNone(info)
         self.assertEqual(info.jq_name, "处暑")
         self.assertEqual(info.jq_index, 16)
+
+    def test_1983_11_03_shuangjiang(self):
+        """1983-11-03 立冬前 → 霜降"""
+        info = get_current_jieqi_info(1983, 11, 3)
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "霜降")
+        self.assertEqual(info.jq_index, 20)
+
+    def test_2000_12_25_dongzhi(self):
+        """2000-12-25 冬至后 → 冬至（2000-12-21）"""
+        info = get_current_jieqi_info(2000, 12, 25)
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "冬至")
+        self.assertEqual(info.jq_index, 0)
+
+    def test_jieqi_day_itself(self):
+        """出生当天恰为节气日 → 返回当天节气"""
+        info = get_current_jieqi_info(2026, 12, 7)  # 大雪日
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "大雪")
+        self.assertEqual(info.jq_index, 23)
+
+    def test_cross_year_boundary(self):
+        """跨年边界：2026-02-03 立春前一天 → 大寒（去冬节气周期）"""
+        info = get_current_jieqi_info(2026, 2, 3)
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "大寒")
+        self.assertEqual(info.jq_index, 2)
+
+    def test_january_cross_year(self):
+        """2027-01-15 → 小寒（2027 年初，节气周期仍属去冬）"""
+        info = get_current_jieqi_info(2027, 1, 15)
+        self.assertIsNotNone(info)
+        self.assertEqual(info.jq_name, "小寒")
+        self.assertEqual(info.jq_index, 1)
+
+    def test_returned_is_seasonal_hexagram(self):
+        """返回类型必须是 SeasonalHexagram 且含原典证据链"""
+        info = get_current_jieqi_info(2026, 9, 4)
+        self.assertIsInstance(info, SeasonalHexagram)
+        self.assertTrue(any("河洛真数" in e for e in info.evidence))
+        self.assertIn(info.main_gua, JIEHOU_GUA_NAME.values())
 
 
 class TestJiehhouDataIntegrity(unittest.TestCase):

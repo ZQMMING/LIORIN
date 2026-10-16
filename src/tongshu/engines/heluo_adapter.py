@@ -12,19 +12,21 @@
 4. era 自动推导：原典三元锚点（1864 上元 / 1924 中元 / 1984 下元，
    60 年一轮换、180 年一循环）——实现《河洛理数真正算法确认书 V1》§2.3 缺口
 
-独立入口 compute() 直接吃公历日期排盘（skip_late_zi=False，由 BaziEngine 内部
-处理夜子时换日）；正式链路入口 compute_from_context() 复用 BaziAdapter
+独立入口 compute() 与正式链路一致，内部经 TimeResolver 按出生地真太阳时排盘
+（消除"民用时直排"路径），默认 location="北京" 保证不传时向后兼容；
+正式链路入口 compute_from_context() 复用 BaziAdapter
 （skip_late_zi=True，上游 TimeResolver 已完成 23:00 换日，避免双重换日）。
 """
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, date
 from typing import Optional, Union
 
 from .bazi_adapter import BaziAdapter
 from .bazi_engine import BaziChart, BaziEngine, BRANCH_CN, STEM_CN
 from .heluo.canonical import HeluoCanonical, HeluoResult
+from .time.resolver import TimeResolver
 
 
 # ============================================================================
@@ -59,36 +61,75 @@ class HeluoAdapter:
         self._canonical = canonical or HeluoCanonical()
 
     # ------------------------------------------------------------------
-    # 独立入口：直接公历日期排盘 → 河洛（测试/单用例）
+    # 独立入口：直接公历日期 → 真太阳时排盘 → 河洛（测试/单用例）
     # ------------------------------------------------------------------
     def compute(
         self,
         solar_date: tuple[int, int, int, int],
         gender: str = "male",
         birth_datetime: Optional[datetime] = None,
+        target_year: Optional[int] = None,
+        target_month: Optional[int] = None,
+        target_day: Optional[int] = None,
+        location: str = "北京",
+        timezone: Optional[str] = None,
+        apparent_solar: bool = True,
     ) -> HeluoResult:
-        chart = self._bazi_engine.compute(
-            solar_date,
+        # 与正式链路统一：经 TimeResolver 按出生地真太阳时排盘，
+        # 不再用民用时直排（避免西部晚子时边界时柱错一个时辰）。
+        y, m, d, h = solar_date[0], solar_date[1], solar_date[2], solar_date[3]
+        minute: Optional[int] = None
+        if birth_datetime is not None:
+            minute = birth_datetime.minute
+        if len(solar_date) > 4:
+            minute = solar_date[4]  # 支持 5 元组 (y,m,d,h,minute)
+        ctx = TimeResolver().resolve_context(
+            birth_date=date(y, m, d),
+            hour=h,
+            minute=minute,
+            timezone=timezone,
+            location=location,
+            apparent_solar=apparent_solar,
             gender=gender,
-            skip_late_zi=False,  # 独立入口由 BaziEngine 内部处理夜子时
-            birth_datetime=birth_datetime,
         )
-        return self.compute_from_chart(chart)
+        return self.compute_from_context(
+            ctx,
+            gender=gender,
+            target_year=target_year,
+            target_month=target_month,
+            target_day=target_day,
+        )
 
     # ------------------------------------------------------------------
     # 正式链路：CalculationContext → BaziAdapter → 河洛
     # ------------------------------------------------------------------
     def compute_from_context(
-        self, ctx, gender: Optional[str] = None
+        self,
+        ctx,
+        gender: Optional[str] = None,
+        target_year: Optional[int] = None,
+        target_month: Optional[int] = None,
+        target_day: Optional[int] = None,
     ) -> HeluoResult:
         g = gender or ctx.subject_gender or "male"
         chart = self._bazi_adapter.compute(ctx, gender=g)
-        return self.compute_from_chart(chart)
+        return self.compute_from_chart(
+            chart,
+            target_year=target_year,
+            target_month=target_month,
+            target_day=target_day,
+        )
 
     # ------------------------------------------------------------------
     # BaziChart → 河洛（核心投影转发）
     # ------------------------------------------------------------------
-    def compute_from_chart(self, chart: BaziChart) -> HeluoResult:
+    def compute_from_chart(
+        self,
+        chart: BaziChart,
+        target_year: Optional[int] = None,
+        target_month: Optional[int] = None,
+        target_day: Optional[int] = None,
+    ) -> HeluoResult:
         bazi = [
             (
                 STEM_CN[chart.year_pillar.heavenly_stem],
@@ -130,10 +171,20 @@ class HeluoAdapter:
         )
 
         # H8: 解卦层（原典判词）挂载 — 独立于冻结的 calculate，防御性兜底
+        # 四层爻断：仅接流年/流月/流日（target_year/month/day），
+        # 流时卦（target_hour）剥离不接——按爻管时段逐段展开运算量大，按需另行调用。
         try:
             from dataclasses import replace
             from .heluo.guajie import build_guajie_from_result
-            result = replace(result, guajie=build_guajie_from_result(result, bazi=bazi))
+            result = replace(
+                result,
+                guajie=build_guajie_from_result(
+                    result, bazi=bazi,
+                    target_year=target_year,
+                    target_month=target_month,
+                    target_day=target_day,
+                ),
+            )
         except Exception:
             pass  # 解卦层失败不阻塞主链
         return result

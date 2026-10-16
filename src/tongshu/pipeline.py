@@ -59,9 +59,6 @@ class PipelineResult:
     db_audit_id: str | None = None
     # B-01: 河洛/易经透传（None = 降级未产出）
     heluo_result: Any = None
-    # 2026-10-08 接线：河洛诊断与行动建议（None = 降级未产出）
-    heluo_diagnosis: Any = None
-    heluo_guidance: Any = None
     yi_structure: Any = None
     yi_interpretation: Any = None
     # P1.3 dual-track: CanonicalSignal by layer (empty dict = not enabled)
@@ -320,8 +317,6 @@ class TONGSHUPipeline:
         timezone: str | None = None,
         location: str | None = None,
         birth_minute: int | None = None,
-        heluo_target_date: date | None = None,
-        heluo_target_hour: int | None = None,
     ) -> PipelineResult:
         """执行完整管道。
 
@@ -335,9 +330,6 @@ class TONGSHUPipeline:
             timezone/location/birth_minute: B-02 时间政策输入。
                 提供时构建 CalculationContext，引擎经 BaziAdapter/ZiweiAdapter
                 调用以生效 23:00 日界政策；均为 None 时保留旧直调路径。
-            heluo_target_date/heluo_target_hour: 河洛 H8 解卦应期输入（公历日 +
-                时辰序号 1-12，子=1）。透传给 ComputeStage.run()，由其填
-                HeluoResult.guajie。默认 None = 取 analysis_date 且不解流时应期。
         """
         request_id = f"RR-{uuid.uuid4().hex[:8].upper()}"
         trace_id = trace_id or f"TRACE-{uuid.uuid4().hex[:8].upper()}"
@@ -377,10 +369,6 @@ class TONGSHUPipeline:
             calc_context=calc_context,
             judgment_claims=[],
             judgment_composer=self.judgment_composer,  # Step 4: ON (S1~S6 fail-closed)
-            # 河洛 H8 解卦应期（2026-10-06 接通）。两个参数只在 heluo 分支内被消费，
-            # 不参与 bazi/ziwei/huangli，故与提交线隔离无冲突。
-            heluo_target_date=heluo_target_date,
-            heluo_target_hour=heluo_target_hour,
         )
         canonical = compute.canonical
         signals = compute.signals
@@ -464,8 +452,6 @@ class TONGSHUPipeline:
             db_run_id=db_run_id,
             db_audit_id=db_audit_id,
             heluo_result=compute.heluo_result,
-            heluo_diagnosis=compute.heluo_diagnosis,
-            heluo_guidance=compute.heluo_guidance,
             yi_structure=compute.yi_structure,
             yi_interpretation=compute.yi_interpretation,
             canonical_signals=compute.canonical_signals,

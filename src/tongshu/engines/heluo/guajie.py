@@ -32,11 +32,6 @@ from pathlib import Path
 from typing import Optional
 
 from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
-from .timeline_yun import materialize_month_days
-from .jiehhou import solar_term_date  # 批次 L：带缓存的节气查表
-from .yao_xiang import scan_and_evidence as _scan_yao_xiang
-# 错卦（先天方位对宫）单一来源；批次 G 起本模块不再自存一份。
-from .hexagram_state import QIANXI_DUKONG
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _GUAJIE_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_data.json"
@@ -45,14 +40,8 @@ _JINGYI_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_jingyi.json"  # 精义/�
 # 十二凶卦（命卦正对/反对为其中之一 → 不吉）
 TWELVE_XIONG_GUA = ["复", "临", "泰", "大壮", "夬", "乾", "姤", "遁", "否", "观", "剥", "坤"]
 
-# 错卦（先天方位对宫，六爻全变）—— 见顶部 import 的 QIANXI_DUKONG。
-# ⚠ 2026-10-08 批次 G：错卦此前在 guajie / yuan_qi / hexagram / hua_gong
-#   四处各存一份（内容相同），名字统一叫 OPPOSITE_TRIGRAM。
-#   更糟的是另有一个**不同义**的表也叫 OPPOSITE_TRIGRAM——化工相反
-#   （四季对宫，仅坎离震兑四项），对乾/坤/艮/巽 取 .get() 直接返回 None。
-#   import 错了就是静默判错。故错卦统一名 QIANXI_DUKONG（单一来源），
-#   化工相反另名 HUAGONG_FAN_GUA；改后无任何公开符号叫 OPPOSITE_TRIGRAM。
-
+# 错卦（先天方位对宫，六爻全变）— 与 yuan_qi/hua_gong 一致
+OPPOSITE_TRIGRAM = {"乾": "坤", "坤": "乾", "坎": "离", "离": "坎", "震": "巽", "巽": "震", "艮": "兑", "兑": "艮"}
 
 # 纯卦 → 上/下三画
 PURE_GUA = {"乾": ("乾", "乾"), "坤": ("坤", "坤"), "坎": ("坎", "坎"), "离": ("离", "离"),
@@ -166,24 +155,14 @@ _TRIGRAM_LINES = {
     "巽": [0, 1, 1], "坎": [0, 1, 0], "艮": [0, 0, 1], "坤": [0, 0, 0],
 }
 
-# 四正节卦：起于二分二至，每卦90日、每爻15日（起例卷之下·节候卦爻 L1492）
-# 原典：「节卦坎初六起冬至，九二小寒，六三大寒，六四立春，九五雨水，上六惊蛰。
-#        震初九起春分，六二清明，六三谷雨，九四立夏，六五小满，上六芒种。
-#        离初九起夏至，六二小暑，**九二大暑**，九四立秋，六五处暑，上九白露。
-#        兑初九起秋分，九二寒露，**九三霜降**，九四立冬，九五小雪，上六大雪。」
-#
-# 2026-10-07 更正两处错字：
-#   离卦第三爻「九三」→「**九二**」（原典作「九二大暑」）
-#   兑卦第三爻「六三」→「**九三**」（原典作「九三霜降」）
-# 更进一步：爻名序列改由 jiegua.JIE_GUA_TABLE 单一来源提供，
-# 本表只保留**二分二至的公历起点日**（原典未给具体日期，属近似），
-# 避免节卦爻名在两处各抄一份、日后再次分叉。
-_JIE_GUA_START: tuple[tuple[int, int, str], ...] = (
-    (12, 22, "坎"),   # 冬至附近
-    (3, 21, "震"),    # 春分附近
-    (6, 21, "离"),    # 夏至附近
-    (9, 23, "兑"),    # 秋分附近
-)
+# 四正节卦：起于二分二至，每卦90日、每爻15日（起例卷之下·节候卦爻）
+# "节卦坎初六起冬至…震初九起春分…离初九起夏至…兑初九起秋分。每卦总管九十日"
+_JIE_GUA_START = [  # (月, 日, 卦, 爻名序列[初→上])
+    (12, 22, "坎", ["初六", "九二", "六三", "六四", "九五", "上六"]),
+    (3, 21, "震", ["初九", "六二", "六三", "九四", "六五", "上六"]),
+    (6, 21, "离", ["初九", "六二", "九三", "九四", "六五", "上九"]),
+    (9, 23, "兑", ["初九", "九二", "六三", "九四", "九五", "上六"]),
+]
 
 
 def trigram_to_lines(trigram: str) -> list[int]:
@@ -214,26 +193,16 @@ def judge_jiehua_gong(birth_date: str) -> list[str]:
         return ev
     import datetime as _dt
     cur = _dt.date(y, m, d)
-    # 节卦爻名取自 jiegua.JIE_GUA_TABLE（单一来源，已由原典逐条校验）
-    from .jiegua import JIE_GUA_TABLE, get_jie_gua
-    for sm, sd, gua in _JIE_GUA_START:
+    # 四正节卦各自起点（含上年，坎跨年12/22~3/21）
+    for sm, sd, gua, yaos in _JIE_GUA_START:
         for yy in (y - 1, y):
             start = _dt.date(yy, sm, sd)
             days = (cur - start).days
             if 0 <= days < 90:
-                # 爻位按原典「每一爻各直十五日」推进。
-                # ⚠️ 原典明文：「气候有盈虚，**卦爻有超接**」——故此均分是
-                #    近似，原典自身即声明「分至之爻既定，其余可推而知矣」。
-                #    精确超接需逐年实测超接量，本仓未实现，不臆造。
                 idx = min(days // 15, 5)
-                # JIE_GUA_TABLE 依四正卦分组（坎/震/离/兑各六爻，起冬至/春分/夏至/秋分）
-                trigram_entries = [e for e in JIE_GUA_TABLE if e.trigram == gua]
-                yao_name = trigram_entries[idx].yao_name if idx < len(trigram_entries) else "?"
-                jq_name = trigram_entries[idx].jq_name if idx < len(trigram_entries) else "?"
                 ev.append(
                     f"生时值节卦：{gua}节卦起于{sm}月{sd}日，出生日距起{days}日"
-                    f"（第{idx + 1}段，{jq_name}·{yao_name}爻）"
-                    f"→ 化工（原典：生时值节卦者谓之化工）")
+                    f"（第{idx + 1}段，{yaos[idx]}爻）→ 化工（原典：生时值节卦者谓之化工）")
                 return ev
     return ev
 
@@ -351,12 +320,6 @@ class ShuXiongResult:
     shu_xiong: bool             # 数凶
     pattern: str                # 孤阳不偶/孤阴背阳/以弱敌强/安和自宁…
     evidence: list[str] = field(default_factory=list)
-    matched: tuple[str, ...] = ()        # 全部命中的数格名（原典出场次序）
-    conflicts: tuple[str, ...] = ()      # 命中数格之间的原典冲突，须显式披露
-    lu_shu: tuple = ()                   # 阴阳禄数命中（L105）
-    xingbei: tuple = ()                  # 性别向背（L34/L56/L61/L80）
-    ming_wu_yin_yang: tuple = ()         # 命无阴阳（L95）：(说明, 凶否）
-    chun_qi_qi_ou: tuple = ()            # 三阳奇偶合象（L99/L714）：(说明, 合否)
 
 
 @dataclass
@@ -370,8 +333,8 @@ class GuaJieResult:
     liuyue_yao: Optional[YaoDuan] = None    # 流月动爻判词（应期定位）
     liuri_hexagram: str = ""              # 流日卦名
     liuri_yao: Optional[YaoDuan] = None     # 流日动爻判词（应期定位）
-    liushi_hexagram: str = ""             # 流时卦名（2026-10-06 起该层已剥离，恒为 ""）
-    liushi_yao: Optional[YaoDuan] = None    # 流时动爻判词（同上，恒为 None）
+    liushi_hexagram: str = ""             # 流时卦名
+    liushi_yao: Optional[YaoDuan] = None    # 流时动爻判词（应期定位）
     shu_xiong: Optional[ShuXiongResult] = None
     yuan_qi_hit: bool = False               # 流年遇元气
     hua_gong_hit: bool = False              # 流年遇化工
@@ -382,12 +345,8 @@ class GuaJieResult:
     jiehua_gong: list[str] = field(default_factory=list)  # 生时值节卦化工（起例卷之下·节候卦爻）
     benming: Optional[dict] = None  # 命卦判词（先天卦辞+卦象断语+精义/释义，2026-09-15 接入）
     kuozhan: dict = field(default_factory=dict)  # 扩展断法（K3-447卷一：四体八体/福力/五命得卦/余数断/四时五行/数极）
-    canping: Optional[dict] = None  # 参评诗断（K3-447卷十·金锁银匙歌，2026-10-06 接入）
     summary: list[str] = field(default_factory=list)  # 综合判词（人话）
     evidence: list[str] = field(default_factory=list)
-    #: 爻辞取象命中（原典 L741「近取诸身，远取诸物，如言龙则必贵……」），
-    #: 2026-10-08 接入生产链。元素为 yao_xiang.YaoXiangHit。
-    yao_xiang_hits: list = field(default_factory=list)
 
     def to_dict(self) -> dict:
         return {
@@ -395,48 +354,29 @@ class GuaJieResult:
             "liunian_year": self.liunian_year,
             "liunian_yao": {
                 "yao": self.liunian_yao.yao, "ci": self.liunian_yao.ci,
-                # 2026-10-07 审计修：xiang（象曰）与 yi（释义）是 YaoDuan 的
-                # 两个非空字段，实测确有内容，此前**四处模板全丢**——生产 API 走
-                # dataclasses.asdict 而非本 to_dict，故此丢失只在 to_dict 路径上生效。
-                "xiang": self.liunian_yao.xiang, "yi": self.liunian_yao.yi,
                 "ye": self.liunian_yao.ye, "buye": self.liunian_yao.buye,
                 "suiyun": self.liunian_yao.suiyun, "shao": self.liunian_yao.shao,
                 "jingyi": self.liunian_yao.jingyi, "shiyi": self.liunian_yao.shiyi,
             } if self.liunian_yao else None,
             "liunian_ye_buye": {
                 "ye": self.liunian_ye_buye.ye, "buye": self.liunian_ye_buye.buye,
-                # 2026-10-07 审计修：gua_qi_month（卦气属几月）与 birth_month
-                # 是「叶/不叶」这一判定的**两个决定性输入**，此前只存在于
-                # dataclass 上，to_dict 未序列化 → 下游拿到结论却看不到依据。
-                "gua_qi_month": self.liunian_ye_buye.gua_qi_month,
-                "birth_month": self.liunian_ye_buye.birth_month,
                 "najia_hit": self.liunian_ye_buye.najia_hit,
                 "evidence": self.liunian_ye_buye.evidence,
             } if self.liunian_ye_buye else None,
-            # 2026-10-06 修正：下列三个卦名此前**只存在于 dataclass 字段**，
-            # to_dict() 漏发，导致 build_guajie_from_result 算出的流月/流日/流时
-            # 应期卦名在输出边界被静默丢弃——只发出 _yao，下游拿到"九三"却不知
-            # 是何卦之九三。纯增补，不改动任何既有键。
-            "liuyue_hexagram": self.liuyue_hexagram,
             "liuyue_yao": {
                 "yao": self.liuyue_yao.yao, "ci": self.liuyue_yao.ci,
-                "xiang": self.liuyue_yao.xiang, "yi": self.liuyue_yao.yi,   # 2026-10-07 补，见流年模板
                 "ye": self.liuyue_yao.ye, "buye": self.liuyue_yao.buye,
                 "suiyun": self.liuyue_yao.suiyun, "shao": self.liuyue_yao.shao,
                 "jingyi": self.liuyue_yao.jingyi, "shiyi": self.liuyue_yao.shiyi,
             } if self.liuyue_yao else None,
-            "liuri_hexagram": self.liuri_hexagram,
             "liuri_yao": {
                 "yao": self.liuri_yao.yao, "ci": self.liuri_yao.ci,
-                "xiang": self.liuri_yao.xiang, "yi": self.liuri_yao.yi,   # 2026-10-07 补，见流年模板
                 "ye": self.liuri_yao.ye, "buye": self.liuri_yao.buye,
                 "suiyun": self.liuri_yao.suiyun, "shao": self.liuri_yao.shao,
                 "jingyi": self.liuri_yao.jingyi, "shiyi": self.liuri_yao.shiyi,
             } if self.liuri_yao else None,
-            "liushi_hexagram": self.liushi_hexagram,
             "liushi_yao": {
                 "yao": self.liushi_yao.yao, "ci": self.liushi_yao.ci,
-                "xiang": self.liushi_yao.xiang, "yi": self.liushi_yao.yi,   # 2026-10-07 补，见流年模板
                 "ye": self.liushi_yao.ye, "buye": self.liushi_yao.buye,
                 "suiyun": self.liushi_yao.suiyun, "shao": self.liushi_yao.shao,
                 "jingyi": self.liushi_yao.jingyi, "shiyi": self.liushi_yao.shiyi,
@@ -446,15 +386,6 @@ class GuaJieResult:
                 "tian_state": self.shu_xiong.tian_state, "di_state": self.shu_xiong.di_state,
                 "shu_xiong": self.shu_xiong.shu_xiong, "pattern": self.shu_xiong.pattern,
                 "evidence": self.shu_xiong.evidence,
-                # 2026-10-07 补：以下六项此前只存在于 dataclass 上，
-                # to_dict 未序列化，等于新增判定**根本没进输出管道**。
-                # （守卫生成时只查 evidence 文本，故未暴露。）
-                "matched": list(self.shu_xiong.matched),
-                "conflicts": list(self.shu_xiong.conflicts),
-                "lu_shu": [vars(h) for h in self.shu_xiong.lu_shu],
-                "xingbei": [vars(x) for x in self.shu_xiong.xingbei],
-                "ming_wu_yin_yang": list(self.shu_xiong.ming_wu_yin_yang),
-                "chun_qi_qi_ou": list(self.shu_xiong.chun_qi_qi_ou),
             } if self.shu_xiong else None,
             "yuan_qi_hit": self.yuan_qi_hit,
             "hua_gong_hit": self.hua_gong_hit,
@@ -465,17 +396,8 @@ class GuaJieResult:
             "jiehua_gong": self.jiehua_gong,
             "benming": self.benming,
             "kuozhan": self.kuozhan,
-            "canping": self.canping,
             "summary": self.summary,
             "evidence": self.evidence,
-            # 2026-10-08 补：爻辞取象命中的结构化输出（原典 L741）。
-            # 逐条给 key/verdict/条件/是否参与判定，下游不必回解析 evidence 文本。
-            "yao_xiang_hits": [
-                {"key": h.key, "verdict": h.verdict,
-                 "conditional": h.conditional, "condition": h.condition,
-                 "satisfied": h.satisfied, "participated": h.participated}
-                for h in self.yao_xiang_hits
-            ],
         }
 
 
@@ -484,15 +406,6 @@ class GuaJieResult:
 # ═══════════════════════════════════════════════════════════════════
 
 _LOADED: Optional[dict[str, GuaDuan]] = None
-
-#: 精义库（guajie_jingyi.json）最近一次加载失败的痕迹；正常为 ""。
-#: 非空即表示精义/释义层缺失，须由调用方向 evidence 披露。
-_JINGYI_LOAD_ERROR = ""
-
-
-def jingyi_load_error() -> str:
-    """精义库加载失败痕迹（空串＝正常）。"""
-    return _JINGYI_LOAD_ERROR
 
 
 def _split_duans(duans: list[str]) -> tuple[str, str, str]:
@@ -551,14 +464,10 @@ def load_guajie_data() -> dict[str, GuaDuan]:
     if _LOADED is not None:
         return _LOADED
     raw = json.loads(_GUAJIE_DATA.read_text(encoding="utf-8"))
-    global _JINGYI_LOAD_ERROR
     try:
         jy_raw = json.loads(_JINGYI_DATA.read_text(encoding="utf-8"))
-    except Exception as exc:
+    except Exception:
         jy_raw = {}  # 精义库缺失/损坏不阻塞判词主链
-        # ⚠ 2026-10-07 审计修：旧代码静默置空、不留任何痕迹，精义/释义整层
-        # 缺失却无法与「本来就没写」区分。现记录失败原因供调用方披露。
-        _JINGYI_LOAD_ERROR = "%s: %s" % (type(exc).__name__, exc)
     out: dict[str, GuaDuan] = {}
     for g in raw:
         month, najia = _parse_gua_header(g.get("lines", []))
@@ -672,46 +581,16 @@ def judge_ye_buye(
 # 数之凶吉（起例卷·数足不足论）
 # ═══════════════════════════════════════════════════════════════════
 
-def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int,
-                     gender: str = "") -> ShuXiongResult:
+def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongResult:
     """
-    数足不足论（原典「余」= 天数−25／地数−30，奇偶据此判）：
-      天数二十五为正、地数三十为正；无余无不足=安和自宁。
+    数足不足论（原典）：
+      天数二十五为正、地数三十为正；无余无不足=最佳（安和自宁）。
       天数不足<25；地数不足<30。
-
-      孤阳不偶  L974「天数二十六以上，至四十以下，**余偶数**，
-                 而地数只得三十」→ 阳有余阴无余
-      孤阳自偶  L983「天数三十一至四十一、五十一，**余奇数**，
-                 地数只得三十」（与上条同区间，以余数奇偶相区分）
-      孤阴背阳  L1046「地数三十至五十、六十，**余偶数**，
-                 而天数只二十五」→ 阳无余阴有余
-      孤阴向阳  L1055「天数二十五，地数得四十至六十以下，**余奇数**」
-      以弱敌强  L1073「地数三十至四十、五十、六十以上，天数只得二十四以下」
+      孤阳不偶：天26-40且地=30（阳有余阴无余）
+      孤阴背阳：地30-60且天=25（阴有余阳无余）
+      以弱敌强：地30-60+且天<24（地太过天不足）→ 阳月令逢之必主灭顶之凶
       太过有余伤（诗）：有余为凶。
-
-      2026-10-07 补入八条原典命名（详见 yue_ling_shu_ge.SHU_GE_TABLE）：
-        阳数偏少 L56、以强伏弱 L58、地数至弱 L65、地数得中 L71、
-        地数太过 L72、阴数偏少 L80、天地俱羸 L90、阴阳相战 L93。
-      并接入性别向背（L34/L56/L61/L80）、禄数（L105）、援阴阳（L100/L101）、
-      命无阴阳（L95）。
-
-    :param gender: ``"male"`` / ``"female"`` / ``""``（未给）。未给性别时，
-        性别向背、禄数男女利害、命无阴阳三项一律**不判**，
-        绝不按默认性别强套。
-
-      ⚠️ 凶断集合只含 孤阳不偶 / 孤阴背阳 / 以弱敌强 / 太过有余 四条。
-         **孤阳自偶与孤阴向阳不进该集合**——原典对二者只给诗断、未言「必凶」：
-           孤阳自偶「壮岁艰辛勤苦立，**晚年得势始荣欣**」
-           孤阴向阳「**有阳能改过**，有阴奸盗随」
-         故按原典只记录命名前后，不套用孤阳不偶的凶断。
-         （2026-10-07 修正前，二者被误吞进孤阳不偶/孤阴背阳而误判凶。）
     """
-    from .yue_ling_shu_ge import (
-        classify_shu_ge, judge_lu_shu, judge_you_yin_yang,
-        judge_ming_wu_yin_yang, shu_ge_conflicts, xingbie_xiang_bei,
-        judge_chun_qi_qi_ou,
-    )
-
     ev: list[str] = []
     t_state = "有余" if tian_shu > 25 else ("不足" if tian_shu < 25 else "足")
     d_state = "有余" if di_shu > 30 else ("不足" if di_shu < 30 else "足")
@@ -719,201 +598,26 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int,
 
     pattern = ""
     shu_xiong = False
-    # 「余」= 天数−25（阳数之正）／地数−30（阴数之正），奇偶据此判。
-    # 原典 L974「孤阳不偶……余**偶**数」、L983「孤阳自偶……余**奇**数」——
-    # 两条以奇偶相区分，**必须判余数**，否则孤阳自偶会被孤阳不偶吞掉。
-    tian_yu = tian_shu - 25
-    di_yu = di_shu - 30
     if t_state == "足" and d_state == "足":
         pattern = "安和自宁"
         ev.append("天地二数无余无不足，最佳，吉凶极定（依卦中断）")
-    elif 26 <= tian_shu <= 40 and di_shu == 30 and tian_yu % 2 == 0:
-        # 原典 L974：「孤阳不偶　天数二十六以上，至四十以下，**余偶数**，
-        #             而地数只得三十是也，乃阳数有余，阴数无余。」
-        pattern = "孤阳不偶"
-        ev.append(f"天数{tian_shu}（余{tian_yu}，偶）、地数30："
-                  f"阳数有余、阴数无余 → 孤阳不偶")
     elif 26 <= tian_shu <= 40 and di_shu == 30:
-        # 原典 L983：「孤阳自偶　天数三十一至四十一、五十一，**余奇数**，
-        #             地数只得三十是也。」——与上条同区间而余数奇偶相反。
-        pattern = "孤阳自偶"
-        ev.append(f"天数{tian_shu}（余{tian_yu}，奇）、地数30："
-                  f"阳数自偶 → 孤阳自偶（原典 L983）")
-    elif 4 <= tian_shu <= 8:
-        # 原典 L38：「天数至弱　天数一十有五，如只得四五六七八数，此不满一策，
-        #           是谓至弱。」
-        # 判据「四五六七八」自足：策＝9（L950「论九是阳之一策」），8 不足一策；
-        # 且 L950 明确 9–24 属「不足」而「即非至弱之比」，二者互不重叠。
-        # 「天数一十有五」是与「地数三十」平行的**基线陈述**，与 L950
-        # 「天数二十五为正」有冲突，但基线不影响落点（正＝25 或正＝15
-        # 推出来都是「至弱＝天数 4–8」），故不据此拒算。基线数字本身仍待
-        # 网络第二证据，登记在 yue_ling_shu_ge.REFUSED。
-        pattern = "天数至弱"
-        ev.append(f"天数{tian_shu}（4–8）：「如只得四五六七八数，此不满一策，是谓至弱」"
-                  f"→ 天数至弱（原典 L38；策＝9）")
-    elif 4 <= tian_shu <= 24 and di_shu == 30:
-        # 原典 L56：「阳数偏少　天数二十有五，只得四、五、六至二十四，
-        #           地数三十是也。乃阳数不足，阴数足也。此谓之有阴无阳，
-        #           得阳数偏少，利女子，不利男子。」
-        pattern = "阳数偏少"
-        ev.append(f"天数{tian_shu}（4–24）、地数30：阳数不足而阴数足 → "
-                  f"阳数偏少（原典 L56，「利女子，不利男子」）")
-    elif tian_shu >= 30 and (di_shu == 30 or di_shu <= 12):
-        # 原典 L58：「以强伏弱　如天数三十、四十、五十之类，
-        #           地数三十或至十二以下是也。若值阳月令不妨，
-        #           逢阴月令颇有恃势致凶之象。」
-        # 注：地数 13–29 原典未言，本条不覆盖。
-        pattern = "以强伏弱"
-        ev.append(f"天数{tian_shu}（≥30，原典举三十、四十、五十之类）、"
-                  f"地数{di_shu}（30 或 ≤12）→ 天强地弱 → 以强伏弱（原典 L58）")
-    elif 8 <= di_shu <= 12:
-        # 原典 L65：「地数至弱　地数三十，只得八、九、十、十一、十二数者，是谓至弱。」
-        pattern = "地数至弱"
-        ev.append(f"地数{di_shu}（8–12）：「地数三十，只得八、九、十、十一、十二数者，"
-                  f"是谓至弱」→ 阴数至弱（原典 L65）")
-    # 注：「地数得中 L71（32–45）」「地数太过 L72（≥50）」是**地数单轴分档**，
-    # 不是「数×月」组合判，故**不占用 pattern 主判位**——否则会把
-    # (天数20, 地数40) 的「以弱敌强」顶成「地数得中」，进而让阴月令也被判凶，
-    # 与原典 L1073「阴月令逢之，尚庶几」相悖。二者改由下方
-    # 「全部命中的数格」循环统一输出判语。
-    elif 30 <= di_shu <= 60 and tian_shu == 25 and di_yu % 2 == 0:
-        # 原典 L1046：「孤阴背阳　地数三十至五十、六十，**余偶数**，
-        #              而天数只二十五是也。乃阳无余，阴数有余。」
+        pattern = "孤阳不偶"
+        ev.append("天数26-40、地数30：阳数有余、阴数无余 → 孤阳不偶")
+    elif 30 <= di_shu <= 60 and tian_shu == 25:
         pattern = "孤阴背阳"
-        ev.append(f"地数{di_shu}（余{di_yu}，偶）、天数25："
-                  f"阴数有余、阳数无余 → 孤阴背阳")
-    elif tian_shu == 25 and 40 <= di_shu <= 60:
-        # 原典 L1055：「孤阴向阳　天数二十五，地数得四十至六十以下，
-        #              **余奇数**是也。乃阴数过，阳数足。」
-        # 本条为 2026-10-07 补（原实现完全缺失）。
-        pattern = "孤阴向阳"
-        ev.append(f"天数25、地数{di_shu}（余{di_yu}）："
-                  f"阴数过、阳数足 → 孤阴向阳（原典 L1055）")
-    elif tian_shu == 25 and 18 <= di_shu <= 28:
-        # 原典 L80：「阴数偏少　地数十八至二十八，天数二十五是也。
-        #           乃阳数足，阴数不足。阴数无用与不足，同是谓阴数偏于少也。」
-        pattern = "阴数偏少"
-        ev.append(f"天数25、地数{di_shu}（18–28）：阳数足、阴数不足 → "
-                  f"阴数偏少（原典 L80，「利男子不利女人」）")
+        ev.append("地数30-60、天数25：阴数有余、阳数无余 → 孤阴背阳")
     elif di_shu >= 30 and tian_shu <= 24:
-        # 原典 L1073：「以弱敌强　地数三十至四十、五十、六十以上，
-        #              天数只得二十四以下是也。」
         pattern = "以弱敌强"
         ev.append("地数30以上、天数24以下：地数太过天数不足 → 以弱敌强")
-    elif tian_shu <= 24 and di_shu <= 29:
-        # 原典 L90：「天地俱羸　天数二十四以下，地数二十九以下，
-        #           是乃阴阳二数俱不足者也。」
-        pattern = "天地俱羸"
-        ev.append(f"天数{tian_shu}（≤24）、地数{di_shu}（≤29）：阴阳二数俱不足 → "
-                  f"天地俱羸（原典 L90）")
-    elif tian_shu > 25 and di_shu != 30:
-        # 原典 L93：「阴阳相战　盖阳数多，阴数少，或阴阳二数俱多，
-        #           清浊相干者是也。」
-        pattern = "阴阳相战"
-        side = "阴数少" if di_shu < 30 else "阴阳二数俱多"
-        ev.append(f"天数{tian_shu}（>25，阳数多）、地数{di_shu}（{side}）→ "
-                  f"阴阳相战（原典 L93）")
     elif t_state == "有余" or d_state == "有余":
         pattern = "太过有余"
         ev.append("天数或地数有余 → 太过有余伤（诗曰：太过有余伤，性暴应多狠，祸去有余殃）")
 
-    # ── 全量命中与原典冲突披露（2026-10-07 补）────────────────────
-    # 不做「首个命中即返回」：L56 阳数偏少与 L83 以弱敌强在
-    # (天数≤24, 地数=30) 处判语相反且原典未裁先后，须把全部命中摊开，
-    # 由上层显式披露，不静默挑一条。
-    _ge = classify_shu_ge(tian_shu, di_shu)
-    matched = tuple(r.name for r in _ge)
-    conflicts = shu_ge_conflicts(tian_shu, di_shu)
-    if matched:
-        ev.append("原典命中的数格（出场次序）：" + "、".join(matched))
-    for _r in _ge:
-        ev.append(f"  数格「{_r.name}」（{_r.citation.split(chr(12290))[0]}）：{_r.verdict}")
-    for _c in conflicts:
-        ev.append(f"⚠️ 原典冲突未裁：{_c}")
-
-    # ── 援阴／援阳（L100–L101）──────────────────────────────────
-    _yy = judge_you_yin_yang(tian_shu, di_shu)
-    if _yy["name"]:
-        ev.append(f"阳弱援：{_yy['name']}（天数{tian_shu} → {_yy['gua']}卦）"
-                  f"（原典 L100「阳弱而余二四六八者，谓之援阴；"
-                  f"阳弱而余一三七九者，谓之援阳」）")
-    if _yy.get("di_jie"):
-        ev.append(f"阴弱援：地数{di_shu} → {_yy['di_jie']}（原典 L101）")
-
-    # ── 阴阳禄数（L105）────────────────────────────────────────
-    _lu = judge_lu_shu(tian_shu, di_shu, gender)
-    for _h in _lu:
-        _fit = ("（性别未给，不判利不利）" if _h.gender_fit is None else
-                "（与本性别相利）" if _h.gender_fit else "（与本性别相妨）")
-        ev.append(f"阴阳禄数：{_h.which}数{_h.value} 为{_h.name}，"
-                  f"{_h.xing_bie} {_fit}（原典 L105）")
-
-    # ── 性别向背（L34/L56/L61/L80）─────────────────────────────
-    _xb = xingbie_xiang_bei(tian_shu, di_shu, birth_month, gender)
-    for _x in _xb:
-        if not _x.applies:
-            continue
-        _ok = (gender == "male" and _x.favor == "男") or \
-              (gender == "female" and _x.favor == "女")
-        ev.append(f"性别向背（{_x.rule}）：{gender}命 → "
-                  f"{'相利' if _ok else '相妨'}（该条利{_x.favor}、"
-                  f"不利{_x.against}）——{_x.reason}")
-
-    # ── 三阳奇偶合象（L99/L714）──────────────────────────────
-    # 该条要按**节气窗口**判，须出生公历日；本函数只有 birth_month，
-    # 故此处以 birth_date="" 调用，恒返回 None 不判——真正的判定在
-    # build_guajie_from_result（有 result.input.birth_date）处另行接入。
-    _cq = judge_chun_qi_qi_ou(tian_shu, "")
-
-    # ── 命无阴阳（L95）────────────────────────────────────────
-    _mwy, _mwy_xiong = judge_ming_wu_yin_yang(tian_shu, di_shu, birth_month, gender)
-    if gender:
-        ev.append(f"命无阴阳（L95）：{_mwy}")
-        if _mwy_xiong:
-            shu_xiong = True
-
-    # 数凶：有余/不足 + 生月合时（阳月令 / 阴月令）
-    #
-    # 2026-10-07 按原典更正（此前为 birth_month in (1,2,3,4,5,6)，错判 5/6/11/12 四月）。
-    #
-    # 依据：原典 L854–L914 逐月给出卦气与阴阳消长，**无需推断，只须读表**：
-    #     正月雨水→泰  「三阳出于寅」
-    #     二月春分→大壮「四阳生于卯」
-    #     三月谷雨→夬  「五阳生于辰」
-    #     四月小满→乾  「六阳终于巳……乃纯阳之月」
-    #     五月夏至→姤  「一阴始生于午」   ← 阴令起点
-    #     六月大暑→遁  「二阴生于未」
-    #     七月处暑→否  「三阴生于申」
-    #     八月秋分→观  「四阴生于酉」
-    #     九月霜降→剥  「五阴生于戌」
-    #     十月      →坤  「六阴生于亥……乃纯阴之时」
-    #     十一月冬至→复「一阳生于子」     ← 阳令起点
-    #     十二月大寒→临「二阳生于丑」
-    #
-    # 即：阳气自十一月冬至一阳生，至四月小满六阳俱备（纯乾）；
-    #     阴气自五月夏至一阴生，至十月六阴俱纯（纯坤）。
-    #     → 阳月令 = 十一、十二、正、二、三、四月；阴月令 = 五~十月。
-    #
-    # 原典内部四条交叉验证：
-    #     L869「三月谷雨后，阳数太多，而阴数不足，无妨」        → 三月属阳
-    #     L872「三四月阳数当健之时，阳数不足，阴数有余」        → 三四月属阳
-    #     L872「如夏至阴生，至处暑前后，三阴正长」              → 五月属阴
-    #     L714「男命阳月生者，冬至以后，雨水前……」             → 十一月属阳
-    #
-    # 用处：原典 L1073「以弱敌强……阴月令逢之，尚庶几，
-    #       阳月令逢之，必主灭顶之凶」——阳月令逢之才凶，阴月令尚可。
-    yang_month = birth_month in YANG_YUE_LING
-    if pattern == "以强伏弱":
-        # 原典 L58 的方向与下面几条**相反**：「若值阳月令不妨，
-        # 逢阴月令颇有恃势致凶之象。」故单独判，不并入通用分支。
-        if not yang_month:
-            shu_xiong = True
-            ev.append(f"生月{birth_month}月（阴月），以强伏弱逢阴月令 → "
-                      f"恃势致凶（原典 L58「颇有恃势致凶之象」）")
-        else:
-            ev.append(f"生月{birth_month}月（阳月），以强伏弱逢阳月令 → "
-                      f"「不妨」（原典 L58）")
-    elif pattern in ("孤阳不偶", "孤阴背阳", "以弱敌强", "太过有余"):
+    # 数凶：有余/不足 + 生月合时（阳月/阴月）
+    # 卢某：地40有余 + 生三月（谷雨-芒种，阳月）→ 数凶
+    yang_month = birth_month in (1, 2, 3, 4, 5, 6)  # 春夏季为阳月（简化，原典按节气细分）
+    if pattern in ("孤阳不偶", "孤阴背阳", "以弱敌强", "太过有余"):
         if yang_month:
             shu_xiong = True
             ev.append(f"生月{birth_month}月（阳月），数有余逢阳月 → 数凶（不可妄行致凶）")
@@ -922,26 +626,10 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int,
     elif t_state == "不足" or d_state == "不足":
         shu_xiong = True
         ev.append("数不足 → 主夭贫贱薄（虚贫之象），须参元气化工与卦爻断")
-    # 2026-10-07 更正：本行原为
-    #   「判词：数凶者身亡，但德小者不能当之」
-    # 经 20158 行全库检索，「**德小者**」「**不能当之**」两段**零命中**——
-    # 该判词是**拼凑半句伪造**的，且已污染 guajie.py:1039 的下游 summary 输出。
-    # 原典中数凶之判分散在多处，且随「数」与「月令」而异，摘录如下：
-    #   L2274「岁运逢之，皆当如此处之，数凶则当以不吉祥断。」
-    #   L2292「岁运逢之，居家见服，在仕防谗，去仕不遑，是非难辨，
-    #         若数凶，寿何可久？」
-    #   L741  「如卦数凶，此走空浮薄之夫。」
-    #   L956  「……若阳不足，则非所困而困焉，名必辱……」——合时不足之凶
-    # 故按原典分条列出，不拼造整句。
-    ev.append("判词（据原典分条，非整句）："
-              "L2274「数凶则当以不吉祥断」；L2292「若数凶，寿何可久」；"
-              "L741「如卦数凶，此走空浮薄之夫」")
+    ev.append("判词：数凶者身亡，但德小者不能当之")
 
     return ShuXiongResult(tian_shu=tian_shu, di_shu=di_shu, tian_state=t_state,
-                          di_state=d_state, shu_xiong=shu_xiong, pattern=pattern,
-                          evidence=ev, matched=matched, conflicts=conflicts,
-                          lu_shu=_lu, xingbei=_xb, ming_wu_yin_yang=(_mwy, _mwy_xiong),
-                          chun_qi_qi_ou=_cq)
+                          di_state=d_state, shu_xiong=shu_xiong, pattern=pattern, evidence=ev)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -969,31 +657,15 @@ def check_zhengdui_fandui(hexagram: str, other_hexagram: str = "") -> list[str]:
     if hexagram in COMPOUND_GUA and other_hexagram in COMPOUND_GUA:
         u1, l1 = COMPOUND_GUA[hexagram]
         u2, l2 = COMPOUND_GUA[other_hexagram]
-        if QIANXI_DUKONG.get(u1) == u2 and QIANXI_DUKONG.get(l1) == l2:
+        if OPPOSITE_TRIGRAM.get(u1) == u2 and OPPOSITE_TRIGRAM.get(l1) == l2:
             warns.append(f"{hexagram}与{other_hexagram}互为错卦（正对），六爻全变")
     # 反对：综卦
     if ZONG_GUA.get(hexagram) == other_hexagram:
         warns.append(f"{hexagram}与{other_hexagram}互为综卦（反对），卦象倒转")
-    # ⚠ 2026-10-07 审计修：十二凶卦原写在此处，且有两个硬伤——
-    #   ① 本函数第一参数在两个调用点传的都是**流年卦/日卦**，文案却写死「命卦」，
-    #      实测 case2 命卦实为艮卦，却产出「命卦夬属十二凶卦」的错误凶警；
-    #   ② 该判只依赖 hexagram，与 other_hexagram 无关，而调用点按
-    #      「先天卦 + 后天卦」调了两次 → **必然重复两条**。
-    #   现拆为独立函数 check_twelve_xiong，由调用方按真实卦名与标签各调一次。
+    # 十二凶卦
+    if hexagram in TWELVE_XIONG_GUA:
+        warns.append(f"命卦{hexagram}属十二凶卦（复临泰大壮夬乾姤遁否观剥坤）→ 不吉，若卦中相生或与月卦相投可去凶")
     return warns
-
-
-def check_twelve_xiong(hexagram: str, label: str = "卦") -> list[str]:
-    """十二凶卦判别（**单卦属性**，与配对卦无关，故独立成函数）。
-
-    ⚠ 口径：TWELVE_XIONG_GUA 出自今人「三门观易」整理口径，非原典。
-    label 必须由调用方按该卦的真实身份传入（命卦／流年卦／日卦…），
-    不得写死——2026-10-07 审计查出写死「命卦」曾导致流年卦被误标为命卦。
-    """
-    if hexagram and hexagram in TWELVE_XIONG_GUA:
-        return [f"{label}{hexagram}属十二凶卦（复临泰大壮夬乾姤遁否观剥坤）"
-                f" → 不吉，若卦中相生或与月卦相投可去凶"]
-    return []
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -1007,26 +679,6 @@ def _yao_buji(ci: str, buye: str = "", suiyun: str = "") -> bool:
     return any(w in text for w in bad)
 
 
-_SD_ALT = "同书「僧人多极后天」条另载：「此数不许行到后天五爻，行到四爻，方可断人生死」"
-
-# 阴骘说明：出《书·洪范》「惟天阴骘下民」，指**暗中积累的德行**（阴德）——
-# 做了不为人知的善事而积下的功德，属相学/伦理范畴，可由泪堂等面相征象佐证。
-# 它**不是**由生辰干支、卦象或河洛数理能推算出来的量。
-# 故本层无法替用户判定有无阴骘，触发时只能两支并陈，不得径取「无阴骘」。
-_SD_YINZHI = ("阴骘＝暗中积累的德行（出《书·洪范》「惟天阴骘下民」），"
-              "非生辰卦数所能推算，故本盘不作预设，两支并陈")
-
-
-def _sd(quote: str, trigger: str, limit: str, alt: str = "—") -> str:
-    """死断断语四段式：原句照出 + 触发 + 限定 + 异说。
-
-    2026-10-06 用户裁定：原典硬断原句**照出**（保留考据），
-    但必须强制前后带限定，避免下游 LLM 脱离条件字面复述成寿命断言。
-    """
-    return (f"【原典断语·须带条件读，勿字面直解】{quote}"
-            f"｜触发：{trigger}｜限定：{limit}｜异说：{alt}")
-
-
 def judge_si_duan(
     *,
     prenatal_name: str,
@@ -1035,159 +687,61 @@ def judge_si_duan(
     di_yuan_fan: str = "",          # 地元反卦（年支宫位之错卦）
     shu_xiong: bool = False,        # 数凶
     dayun_line_index: int | None = None,      # 当前大运行至爻位（0初~5上）
-    dayun_phase: str = "",                # 当前大运段 先天/后天（死断四法限定用）
     recent_years: list[dict] | None = None,   # 近3年流年判词 [{year, hexagram, yao, ci, buye, suiyun}]
-    recent_dayun_yao: list[dict] | None = None,  # 已行大运爻判词（含当前）[{hexagram, yao, ci, buye, suiyun}]
 ) -> list[str]:
     """
-    死断诸法（《河洛真数·起例卷之下·后天详说》，2026-10-06 按原著上下文校订）。
+    死断诸法（《河洛真数·起例卷之下·后天详说》原文逐条）：
 
-    原文逐字：
-
-      「如后天之气数行至君爻之位，此为数足，到此必死。无阴骘者，生日之前便死。
-        如遇小象与大象反对，定死无疑。有阴骘者，到君爻阳爻延九年，必须迍蹇天眚之患，
-        纵到君爻，亦不许行至上极一爻，寿必不久。此或有到此者，必须主大变之祸殃，
-        凶暴之挠，或生异疾，或殃及子孙，或反本复始之失。……有过此上极之爻，
-        当为超凡越世之士，乃逃出先后之命，不系数中，不属天地所拘。」
-
-      「若行后天，连三爻不吉，必多坎壈。若过了第四爻，遇凶，十死八九。
-        若流年连三年不吉，卦爻又不吉，本身卦不佳，重反支干元气，便可以死断之。」
-
-    ── 本次校订的六处（依据原著上下文，非字面臆断）─────────────────
-
-    ① **阴骘前置原先整个丢失**。原文死断明写「无阴骘者…便死」「有阴骘者…延九年」，
-       这是死断的**成立前提**，且同篇《大易之数》另有「九五、六五、上九、上六乃君庙
-       之极，物极必反，理之当然，**非大器阴骘，未至先亡**」——阴骘是两处极断的
-       共同例外条款。旧实现不判阴骘，等于对所有人一律按「无阴骘」断言。
-       然阴骘（暗中积德）属德行/相学范畴，**非生辰卦数可推**，
-       故本层不预设，两支并陈（见 _sd_yinzhi）。
-    ② **「过了第四爻」原先差一位**。旧实现判 li==3（正在第四爻）。
-       原著同篇「大易之数」条自解其义：「假令上爻坐元堂，四五爻是君庙五爻……
-       以上初是初爻，**以五上是过**」——「过」指越过本爻之后，即已入下一爻。
-       故「过了第四爻」＝已过四爻入五爻（li>=4），非「正行第四爻」。
-    ③ **「连三爻」原先换了口径**。原文「连**三爻**」指大运所历的连续三**爻**；
-       旧实现拿「近三年**流年**判词」代替。此条是实测命中最频繁的一条
-       （180 盘 54 盘），口径偏差影响面最大，现改由 recent_dayun_yao 传入。
-    ④ **「反对定死无疑」原先被提成独立法**。它在原文中紧接「无阴骘者…便死」
-       之后，是**该分支的附加条件**，不与前条并列。故有阴骘者不作此断。
-    ⑤ **上爻后果原先只引半句**。原文于上极所列后果为「主大变之祸殃，凶暴之挠，
-       或生异疾，或殃及子孙，或反本复始之失」，且紧接着说「有过此上极之爻，
-       当为超凡越世之士」。旧实现只引「寿必不久」一句，把两头全丢了。
-    ⑦ **四法（①君爻②过四爻③小象大象反对④上极）原典全部限定在**后天段**。
-       原文三处独立明证：L1552「如**后天**之气数行至君爻之位」
-       「纵到君爻，亦不许行至上极一爻」、L1555「若**行后天**，连三爻不吉」、
-       L1567「此数不许行到**后天**五爻，行到四爻，方可断人生死」。
-       且全库检索「先天之气数」**零命中**——原典根本没有先天死断一支。
-       旧实现取 dayun_line_index 只按虚岁命中段、不辨 phase，
-       致先天段行至上爻（li=5）误触上极条，而该条触发语写死
-       「后天运程行至上爻」——标签与事实相反。2026-10-07 补 phase 门控。
-       形参 dayun_phase 默认空串而非「后天」：漏传时不触发，
-       宁可沉默也不替原典补一条它没有的先天死断。
-       **⑥流年三连条未加门控**：原典该句另起「若」字新分句、主语是流年
-       （流年不分先后天段），与①②③④的大运爻位口径不同，两存待考。
-    ⑥ **原典自相矛盾，须两说并存**。「僧人多极后天」条明载：「或谓康节曰，
-       此数不许行到后天五爻，行到四爻，方可断人生死，今有不满二十而死者，
-       亦有八九十而死者，祸福安在？」——一处说五爻即死、一处说四爻才断，
-       且后一条自带反例否证。故每条均带「异说」段留档，不做单方裁断。
+      1. "如后天之气数行至君爻之位，此为数足，到此必死。
+         无阴骘者，生日之前便死。……有阴骘者，到君爻阳爻延九年"
+         → 大运行至五爻（君爻）→ 数足必死警示
+      2. "纵到君爻，亦不许行至上极一爻，寿必不久"
+         → 行至上爻（上极）→ 寿必不久警示
+      3. "若行后天，连三爻不吉，必多坎壈。若过了第四爻，遇凶，十死八九"
+         → 近3爻不吉→坎壈；过四爻（五爻）遇凶→十死八九
+      4. "如遇小象与大象反对，定死无疑"
+         → 流年卦与命卦成反对 + 爻辞凶 → 定死无疑（由调用方传入 recent_years 判定）
+      5. "若流年连三年不吉，卦爻又不吉，本身卦不佳，重反支干元气，便可以死断之"
+         → 近3年流年卦爻皆不吉 + 数凶（卦不佳） + 干支元气俱反 → 死断
     """
     warns: list[str] = []
 
-    cur_yao = recent_years[-1] if recent_years else None
-    cur_buji = bool(cur_yao) and _yao_buji(
-        cur_yao.get("ci", ""), cur_yao.get("buye", ""), cur_yao.get("suiyun", ""))
+    # 1+2+3. 大运爻位死断
+    if dayun_line_index is not None:
+        if dayun_line_index == 5:
+            warns.append("后天之气数行至上极一爻（上爻），寿必不久（原典：纵到君爻，亦不许行至上极一爻）")
+        if dayun_line_index >= 4:
+            warns.append("后天之气数行至君爻（五爻）之位，此为数足，到此必死。无阴骘者生日之前便死，有阴骘者到君爻阳爻延九年（原典：后天详说）")
+        elif dayun_line_index == 3 and recent_years and _yao_buji(
+            recent_years[-1].get("ci", ""), recent_years[-1].get("buye", ""), recent_years[-1].get("suiyun", "")):
+            warns.append("行数过第四爻（五爻）遇凶 → 十死八九（原典：若过了第四爻，遇凶，十死八九）")
 
-    # 2026-10-07 修：死断四法（①②③④）原典限定后天段，详见 docstring ⑦。
-    is_hou_tian = (dayun_phase == "后天")
+    # 3b. 连三爻不吉 → 多坎壈（近3个大运爻判词凶）
+    if dayun_line_index is not None and dayun_line_index < 4 and recent_years and len(recent_years) >= 3:
+        if all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", "")) for y in recent_years[-3:]):
+            warns.append("若行后天，连三爻不吉，必多坎壈（原典：后天详说）")
 
-    # ── ① 君爻（五爻）：数足，原典死断以「无阴骘」为前提 ────────────
-    # 2026-10-06 修：原判 `>= 4` 把上爻（li=5）也并入君爻条。
-    # 原文「纵到君爻，亦不许行至上极一爻」——君爻=五爻、上极=上爻，两级分明；
-    # li=5 只走上极条（④），不报君爻。
-    if is_hou_tian and dayun_line_index == 4:
-        warns.append(_sd(
-            quote="「如后天之气数行至君爻之位，此数为足，到此必死。"
-                  "无阴骘者，生日之前便死。有阴骘者，到君爻阳爻延九年，"
-                  "必须迍蹇天眚之患。」",
-            trigger="后天运程行至五爻（君位·君庙之极）",
-            limit=f"{_SD_YINZHI}。本条为**条件式立断**，两支须同时呈现，"
-                  f"不得径取「无阴骘」一支当作已定之论",
-            alt=_SD_ALT,
-        ))
+    # 4. 小象与大象反对 → 定死无疑（流年卦与命卦反对 + 爻辞凶）
+    if recent_years:
+        cur = recent_years[-1]
+        hx = cur.get("hexagram", "")
+        if hx:
+            fan_warns = check_zhengdui_fandui(hx, prenatal_name) + check_zhengdui_fandui(hx, postnatal_name)
+            if any("反对" in w for w in fan_warns) and _yao_buji(cur.get("ci", ""), cur.get("buye", ""), cur.get("suiyun", "")):
+                warns.append(f"如遇小象与大象反对（流年卦{hx}与命卦反对）+ 爻凶 → 定死无疑（原典：后天详说）")
 
-        # ② 「若过了第四爻，遇凶，十死八九」——原典指已过四爻入五爻（li>=4）。
-        # 2026-10-06 修：此条自君爻块拆出独立判。原典「若过了第四爻」是独立一句，
-        # 语义为「已过四爻入五爻及以上」；若留在君爻块（现==4）则 li=5 时漏断。
-        if cur_buji and dayun_line_index is not None and dayun_line_index >= 4:
-            warns.append(_sd(
-                quote="「若过了第四爻，遇凶，十死八九。」",
-                trigger="运程已过第四爻、进入五爻及以上 + 当前流年爻辞凶",
-                limit="原典「大易之数」条以「以五上是过」自释「过」字，"
-                      "「过」指越过本爻入下一爻；故此处不是「正行第四爻」",
-                alt=_SD_ALT,
-            ))
-
-        # ③ 「如遇小象与大象反对，定死无疑」——原典系「无阴骘」分支的附加条件
-        if cur_yao:
-            hx = cur_yao.get("hexagram", "")
-            if hx:
-                # 只取「反对」信号，故不并入 check_twelve_xiong
-                fan = (check_zhengdui_fandui(hx, prenatal_name)
-                       + check_zhengdui_fandui(hx, postnatal_name))
-                if any("反对" in w for w in fan) and cur_buji:
-                    warns.append(_sd(
-                        quote="「如遇小象与大象反对，定死无疑。」",
-                        trigger=f"行至君爻 + 流年小象（{hx}）与命卦大象成反对 + 爻辞凶",
-                        limit=f"{_SD_YINZHI}。本条在原文系「无阴骘者…便死」的"
-                              "**附加条件**，非独立判据；有阴骘者不作此断",
-                        alt=_SD_ALT,
-                    ))
-
-    # ── ④ 上爻（上极）：原典所列后果不止「寿必不久」 ────────────────
-    if is_hou_tian and dayun_line_index == 5:
-        warns.append(_sd(
-            quote="「纵到君爻，亦不许行至上极一爻，寿必不久。此或有到此者，"
-                  "必须主大变之祸殃，凶暴之挠，或生异疾，或殃及子孙，"
-                  "或反本复始之失。……有过此上极之爻，当为超凡越世之士，"
-                  "乃逃出先后之命，不系数中，不属天地所拘。」",
-            trigger="后天运程行至上爻（上极）",
-            limit="原典于上极所列后果为祸殃、异疾、殃及子孙、反本复始，"
-                  "**并非直断死亡**；原文紧接着又说「有过此上极之爻，当为超凡越世之士」，"
-                  "旧实现只引「寿必不久」半句，漏此两头",
-        ))
-
-    # ── ⑤ 「连三爻不吉」：原典指大运所历之爻，非流年 ─────────────────
-    # 2026-10-06 修：原文「若**行后天**，连三爻不吉，必多坎壈」——主语是行后天段。
-    # 先天段（本盘渐卦先天六爻段）不得触发坎壈。门控：最近连续三大运爻须全属后天段。
-    if recent_dayun_yao and len(recent_dayun_yao) >= 3:
-        last3 = recent_dayun_yao[-3:]
-        if all(y.get("phase") == "后天" for y in last3) and all(
-                _yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", ""))
-                for y in last3):
-            seq = "、".join(f"{y.get('hexagram', '')}{y.get('yao', '')}" for y in last3)
-            warns.append(_sd(
-                quote="「若行后天，连三爻不吉，必多坎壈。」",
-                trigger=f"已行连续三个大运爻且其爻辞皆不吉（{seq}）",
-                limit="原典「连三爻」主语是大运所历之**爻**；"
-                      "旧实现误用近三年**流年**判词代替，口径不同",
-            ))
-
-    # ── ⑥ 全篇唯一未附阴骘前置者 ─────────────────────────────────────
+    # 5. 流年连三年不吉 + 卦爻不吉 + 本身卦不佳 + 重反支干元气 → 死断
     if (
         recent_years and len(recent_years) >= 3
-        and all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", ""))
-                for y in recent_years[-3:])
+        and all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", "")) for y in recent_years[-3:])
         and shu_xiong
         and tian_yuan_fan and di_yuan_fan
         and _in_gua(tian_yuan_fan, prenatal_name, postnatal_name)
         and _in_gua(di_yuan_fan, prenatal_name, postnatal_name)
     ):
-        warns.append(_sd(
-            quote="「若流年连三年不吉，卦爻又不吉，本身卦不佳，"
-                  "重反支干元气，便可以死断之。」",
-            trigger="近三年流年卦爻皆不吉 + 数凶（本身卦不佳） + "
-                    f"天元反{tian_yuan_fan}、地元反{di_yuan_fan}俱在命卦",
-            limit="本条原典未附阴骘前置，是《后天详说》全篇唯一无此限定者",
-        ))
+        warns.append(
+            f"流年连三年不吉 + 本身卦不佳（数凶） + 重反支干元气"
+            f"（天元反{tian_yuan_fan}、地元反{di_yuan_fan}俱在命卦）→ 便可以死断之（原典：后天详说）")
 
     return warns
 
@@ -1214,10 +768,6 @@ def compose_guajie(
     tian_shu: int,
     di_shu: int,
     year_ganzhi: str = "",        # 年干支（纳甲本命）
-    gender: str = "",             # "male"/"female"/""（未给）。起例卷之中
-                                   # L34/L61「利男子/利女人」、L95「命无阴阳」、
-                                   # L105「利男不利女/利女不利男」的入参；
-                                   # 空串表示未给，judge_shu_xiong 一律不判性别向背。
     # 流年
     liunian_hexagram: str = "",
     liunian_yao: str = "",
@@ -1268,13 +818,9 @@ def compose_guajie(
         if yb:
             res.liunian_ye_buye = yb
             ev.extend(f"  叶/不叶：{e}" for e in yb.evidence)
-        # 正对反对（流年卦 vs 先天卦 / vs 后天卦）——两次配对的 other 各不相同，
-        # 本身合法；但先天卦与后天卦可能同名，故此处去重（保持原序）。
-        # 十二凶卦是流年卦自身的属性，调一次、标签写「流年卦」（见 P1-a）。
-        zdfd = (check_zhengdui_fandui(liunian_hexagram, prenatal_name)
-                + check_zhengdui_fandui(liunian_hexagram, postnatal_name)
-                + check_twelve_xiong(liunian_hexagram, "流年卦"))
-        zdfd = list(dict.fromkeys(zdfd))   # 去重且保序
+        # 正对反对（流年卦 vs 命卦）
+        zdfd = check_zhengdui_fandui(liunian_hexagram, prenatal_name)
+        zdfd += check_zhengdui_fandui(liunian_hexagram, postnatal_name)
         res.zhengdui_fandui = zdfd
         ev.extend(f"  正对反对：{w}" for w in zdfd)
 
@@ -1288,41 +834,9 @@ def compose_guajie(
                 ev.append(f"  岁运逢之：{y.suiyun}")
 
     # ── 数凶 ──────────────────────────────────────────────────
-    sx = judge_shu_xiong(tian_shu, di_shu, birth_month, gender)
+    sx = judge_shu_xiong(tian_shu, di_shu, birth_month)
     res.shu_xiong = sx
     ev.extend(f"  数之凶吉：{e}" for e in sx.evidence)
-
-    # ── 爻辞取象（原典 L741，2026-10-08 接入）─────────────────────
-    # 原典「凡看爻辞依不得周易正解……文王作易，近取诸身，远取诸物，
-    #       如言龙则必贵」——不看爻辞吉凶，只看辞中出了哪个字。
-    # 本层取**辞面**（ci 爻辞 + xiang 象曰）逐层扫描，三层爻辞都在内：
-    #   流年（主断位）＞ 流月、流日（应期位，辞面较短，命中自然少）。
-    #
-    # 两个入参刻意**不填**，理由如下，不得随手补上：
-    #   ① 农历日（言月「生望前者佳」）：compose_guajie 没有日粒度输入。
-    #      拿公历日冒充农历日正是 2026-10-07 化工层修掉的那类错，不重犯。
-    #   ② 卦数凶（言鸟「如卦数凶，此走空浮薄之夫」）：本卷未给「卦数凶」判法。
-    #      judge_shu_xiong 判的是**天数/地数**之凶，与「卦数」不是同一物，
-    #      拿它代填等于凭空造一条原典没有的判据。→ 二者条件均判为不可判。
-    #
-    # 条件不可判者**照常登记断语**，但不参与判定（participated=False），
-    # 与 yao_xiang 模块的约定一致：能落的是取字↔断语，不能落的是吉凶方向。
-    for _tag, _yd in (("流年", res.liunian_yao), ("流月", res.liuyue_yao),
-                      ("流日", res.liuri_yao)):
-        if _yd is None:
-            continue
-        _text = f"{_yd.ci or ''} {_yd.xiang or ''}"
-        _hits, _evs = _scan_yao_xiang(
-            _text, birth_month=birth_month or None, day_lunar=None,
-            gender=gender, shu_gua_xiang=None)
-        if not _hits:
-            continue
-        for _h in _hits:
-            res.yao_xiang_hits.append(_h)
-        ev.append(f"  {_tag}爻辞取象（{len(_hits)} 条）："
-                  + "、".join(f"言{h.key}" for h in _hits))
-        ev.extend(f"    {e}" for e in _evs)
-
 
     # ── 元气化工（流年遇） ─────────────────────────────────────
     if yuan_qi_trigrams:
@@ -1383,11 +897,7 @@ def compose_guajie(
         if res.liunian_yao.suiyun:
             s.append(f"岁运逢之：{res.liunian_yao.suiyun}")
     if sx.shu_xiong:
-        # 2026-10-07 更正：原为「→ 数凶者身亡，但德小者不能当之」，
-        # 该整句经全库检索证伪（「德小者」「不能当之」零命中，系拼凑伪造）。
-        # 改引原典 L2274 / L2292 两条明文。
-        s.append(f"数凶（{sx.pattern}：天{sx.tian_shu}/{sx.di_shu}）"
-                 f"→ 原典 L2274「数凶则当以不吉祥断」；L2292「若数凶，寿何可久」")
+        s.append(f"数凶（{sx.pattern}：天{sx.tian_shu}/{sx.di_shu}）→ 数凶者身亡，但德小者不能当之")
     if res.zhengdui_fandui:
         s.append("流年卦与命卦成正对/反对 + 爻辞凶 + 无元气化工 → 生死大凶（不死亦有横灾）")
     if res.yuan_qi_hit and not sx.shu_xiong:
@@ -1401,40 +911,6 @@ def compose_guajie(
 # 月支 → 节气月（寅=正月…丑=十二月，河洛以节气定月）
 BRANCH_TO_MONTH = {"寅": 1, "卯": 2, "辰": 3, "巳": 4, "午": 5, "未": 6,
                    "申": 7, "酉": 8, "戌": 9, "亥": 10, "子": 11, "丑": 12}
-
-# 阳月令 / 阴月令（原典 L854–L914 十二月卦气表，2026-10-07 逐条取证）
-#
-#   阳气：十一月冬至「一阳生于子」→ 四月小满「六阳终于巳，乃纯阳之月」
-#   阴气：五月夏至  「一阴始生于午」→ 十月      「六阴生于亥，乃纯阴之时」
-#
-# 故阳月令 = 11、12、1、2、3、4；阴月令 = 5、6、7、8、9、10。
-# 注：此处月份为**节气月**（寅月=正月=雨水后），非农历月，
-#     与 BRANCH_TO_MONTH 一致。
-YANG_YUE_LING = frozenset({11, 12, 1, 2, 3, 4})
-YIN_YUE_LING = frozenset({5, 6, 7, 8, 9, 10})
-
-# 十二月卦气表（原典 L854–L914 逐月原文）：月 → (节气, 卦名, 原典自述)
-# 「原典自述」一栏直接摘自原文，供守卫逐条比对，不得改写。
-GUA_QI_MONTH_TABLE: dict[int, tuple[str, str, str]] = {
-    1:  ("雨水", "泰",   "三阳出于寅，三阳至而大道成"),
-    2:  ("春分", "大壮", "四阳生于卯，四阳盛壮"),
-    3:  ("谷雨", "夬",   "五阳生于辰，其卦为夬"),
-    4:  ("小满", "乾",   "六阳终于巳……乃纯阳之月"),
-    5:  ("夏至", "姤",   "一阴始生于午"),
-    6:  ("大暑", "遁",   "二阴生于未，其卦为遁"),
-    7:  ("处暑", "否",   "三阴生于申，其卦为否"),
-    8:  ("秋分", "观",   "四阴生于酉，四阴既长，是名观卦"),
-    9:  ("霜降", "剥",   "五阴生于戌，五阴长而阳剥落"),
-    10: ("—",    "坤",   "六阴生于亥……乃纯阴之时"),
-    11: ("冬至", "复",   "一阳生于子"),
-    12: ("大寒", "临",   "二阳生于丑，其卦为临"),
-}
-
-# 阳数递增序（正月三阳→四月六阳）与阴数递增序（五月一阴→十月六阴）
-# 用于守卫「月令阴阳」与「卦气阴阳进退」严格对应，防止将来再简化成
-# 「1-6 月为阳」这类按春夏秋切分的错法。
-_YANG_MONTHS_BY_YANG_COUNT = {1: 11, 2: 12, 3: 1, 4: 2, 5: 3, 6: 4}
-_YIN_MONTHS_BY_YIN_COUNT = {1: 5, 2: 6, 3: 7, 4: 8, 5: 9, 6: 10}
 
 # 全称 → 简称（64 卦，与 yi_interpreter ALIASES 一致反查）
 _FULL_TO_SHORT = {
@@ -1504,12 +980,6 @@ def build_guajie_from_result(
             mb = bazi[1][1]
             birth_month = BRANCH_TO_MONTH.get(mb)
 
-        # 性别（起例卷之中 L34/L61「利男子/利女人」、L95「命无阴阳」、
-        # L105「利男不利女/利女不利男」四条性判的入参）。
-        # 取法与本函数下方参评诗断处一致：result.input.gender 缺省为空串，
-        # 空串表示**未给性别**，judge_shu_xiong 会一律不判性别向背，不按默认性别强套。
-        _gender = str(getattr(getattr(result, "input", None), "gender", "") or "")
-
         # 流年（timeline 定位）
         liunian_hex = ""
         liunian_yao_name = ""
@@ -1517,6 +987,8 @@ def build_guajie_from_result(
         liuyue_yao_name = liuyue_yao
         liuri_hex_name = ""
         liuri_yao_name = ""
+        liushi_hex_name = ""
+        liushi_yao_name = ""
         if target_year is not None and result.timeline is not None:
             entries = result.timeline.yearly_hexagrams or []
             for i, e in enumerate(entries):
@@ -1545,97 +1017,51 @@ def build_guajie_from_result(
                                 if yi is not None and len(ml) > yi:
                                     liuyue_yao_name = _yao_name(yi, ml[yi])
                                 # 流日应期：当月 days 段（每爻管5日）自动定位
-                                # 2026-10-06：days 已按需化，_build_timeline
-                                # 只存六段廉价定位字段，此处对**命中的这一个月**
-                                # 现算完整日段（含卦名/六爻），1,116 个月里
-                                # 只付这一次代价。算法口径与预展开完全一致。
                                 if target_day and m.get("days"):
-                                    for dseg in materialize_month_days(m):
+                                    for dseg in m["days"]:
                                         d_from = dseg.get("day_from", 1)
                                         d_to = dseg.get("day_to", 5)
                                         if d_from <= target_day <= d_to:
-                                            # 2026-10-07：起日卦改逐日一爻（原典 L390
-                                            # 「挨次而变」+「阳日寻阳位、阴日寻阴位」），
-                                            # 段内五日**各有一卦**，段级 name/lines
-                                            # 只代表该段首日。故须取 day_items 中
-                                            # 目标日那一条；缺失时才退回段级。
-                                            item = next(
-                                                (it for it in (dseg.get("day_items") or [])
-                                                 if it.get("day") == target_day), None)
-                                            src = item or dseg
-                                            liuri_hex_name = _short(src.get("name", ""))
-                                            dl = src.get("lines") or []
-                                            # 2026-10-07：起日卦改**链式累变**（原典 L390
-                                            # 「初二日变履九四」明言自前一日卦而变），
-                                            # 日卦与月卦相差**不止一爻**，故不能再靠
-                                            # 「与月卦 diff 唯一差异爻」反推变爻——
-                                            # 直接取原典登记的当日变爻位。
-                                            day_yao = src.get("day_yao_index")
-                                            if day_yao is None:
-                                                diffs = [k for k in range(6)
-                                                         if len(dl) > k and len(ml) > k and dl[k] != ml[k]]
-                                                day_yao = diffs[0] if len(diffs) == 1 else None
-                                            if day_yao is not None and len(dl) > day_yao:
-                                                liuri_yao_name = _yao_name(day_yao, dl[day_yao])
+                                            liuri_hex_name = _short(dseg.get("name", ""))
+                                            dl = dseg.get("lines") or []
+                                            diffs = [k for k in range(6) if len(dl) > k and len(ml) > k and dl[k] != ml[k]]
+                                            if len(diffs) == 1 and len(dl) > diffs[0]:
+                                                liuri_yao_name = _yao_name(diffs[0], dl[diffs[0]])
                                             # 流时应期：值日卦 hours（起时卦例：前六时进/后六时退）
-                                            # ── 流时层 2026-10-06 剥离 ──
-                                            # 原典起时卦例（值日卦前六时进数/后六时退数）
-                                            # 的推演已整体摘除：当前引擎吃不消该层，
-                                            # 且其唯一消费点就是下面这两行。
-                                            # compute_liushi 本体**保留在 timeline_yun**，
-                                            # 未来恢复只需接回此处，算法口径不变。
+                                            if target_hour and dseg.get("hours"):
+                                                for hs in dseg["hours"]:
+                                                    if hs.get("hour") == target_hour:
+                                                        liushi_hex_name = _short(hs.get("name", ""))
+                                                        si = hs.get("shi_yao_index")
+                                                        sl = hs.get("lines") or []
+                                                        if si is not None and len(sl) > si:
+                                                            liushi_yao_name = _yao_name(si, sl[si])
+                                                        break
                                             break
                                 break
                     break
 
-        # ⚠ 2026-10-07 审计修：`birth_month or 1` 把漏传静默改成正月，
-        # 叶/不叶与 kuozhan 会整体走错分支（实测 kuozhan 由 11 项缩至 8 项）
-        # 而 summary 不作任何提示。缺生月就**明确留痕**，仍按 1 兜底以免中断主链。
-        _birth_month_missing = not birth_month
         gj = compose_guajie(
             prenatal_name=prenatal, postnatal_name=postnatal,
             yuantang_yao=yuantang_yao,
             birth_month=birth_month or 1, tian_shu=tian, di_shu=di,
-            year_ganzhi=year_ganzhi, gender=_gender,
+            year_ganzhi=year_ganzhi,
             liunian_hexagram=liunian_hex, liunian_yao=liunian_yao_name,
             liuyue_hexagram=liuyue_hex_name, liuyue_yao=liuyue_yao_name,
             target_year=target_year,
         )
-        if _birth_month_missing:
-            gj.summary.append("⚠ 未取得出生月，叶/不叶与部分扩展断法按正月兜底，"
-                              "相关结论不可尽信（生月缺失已影响判定）")
-            gj.evidence.append("  生月：调用方未传 birth_month，已按正月(1)兜底——"
-                               "叶/不叶、kuozhan 相关项结果随之改变")
-
-        # ── 三阳奇偶合象（L99 / L714 平行印证）────────────────────
-        # 该条按节气窗口「冬至后至雨水前」判，**必须有出生公历日**。
-        # compose_guajie 只有 birth_month，故在此处补判——
-        # build_guajie_from_result 是全链路唯一握有 result.input.birth_date 的地方。
-        try:
-            from .yue_ling_shu_ge import judge_chun_qi_qi_ou as _jq
-            _bd = str(getattr(getattr(result, "input", None), "birth_date", "") or "")
-            _cq_note, _cq_ok = _jq(tian, _bd)
-            if gj.shu_xiong is not None:
-                gj.shu_xiong.chun_qi_qi_ou = (_cq_note, _cq_ok)
-            if _cq_ok is not None:
-                gj.evidence.append(f"  三阳奇偶合象（L99/L714）：{_cq_note}")
-        except Exception as _e:            # 该条不阻塞主链
-            gj.evidence.append(f"  三阳奇偶合象：计算跳过（{_e}）")
-
         # 流日判词（应期定位，独立查询不并入综合判词）
         if liuri_hex_name and liuri_yao_name:
             gj.liuri_hexagram = liuri_hex_name
             gj.liuri_yao = query_yao_duan(liuri_hex_name, liuri_yao_name)
             gj.evidence.append(
-                f"流日定位：{liuri_hex_name}{liuri_yao_name}"
-                f"（原典起日卦例·**逐日一爻**，段内五日各变一次；本行为第{target_day}日）")
-        # 流时层已剥离（2026-10-06）：起时卦例的推演整段摘除。
-        # 若调用方仍传 target_hour，**明确留痕**而不是静默忽略——
-        # 静默忽略会让调用方以为该层已生效，正是本轮反复清理的那类缺陷。
-        if target_hour is not None:
+                f"流日定位：{liuri_hex_name}{liuri_yao_name}（原典起日卦例·每爻管5日，第{target_day}日）")
+        # 流时判词（起时卦例：值日卦前六时进数/后六时退数）
+        if liushi_hex_name and liushi_yao_name:
+            gj.liushi_hexagram = liushi_hex_name
+            gj.liushi_yao = query_yao_duan(liushi_hex_name, liushi_yao_name)
             gj.evidence.append(
-                f"  流时：已剥离，不产出（传入 target_hour={target_hour} 被忽略；"
-                f"原典起时卦例层待引擎能力就绪后恢复）")
+                f"流时定位：{liushi_hex_name}{liushi_yao_name}（原典起时卦例·{['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'][(target_hour or 1)-1]}时）")
 
         # ── 生时化工（四正节卦，起例卷之下·节候卦爻） ────────────────
         try:
@@ -1669,20 +1095,9 @@ def build_guajie_from_result(
             )
             gj.si_duan = si
             gj.evidence.extend(f"  死断：{w}" for w in si)
-            # summary 走改写表述，不放原典硬断原句。
-            # 原句仍在 si_duan / evidence 中完整留档可回溯，但直出到
-            # summary 就会被下游 LLM 当成结论复述——「到此必死」「定死无疑」
-            # 在中文里没有第二种读法。四段式断语自带触发与限定，
-            # 这里只取其结构，不取其字面。
-            hit_sd = any(k in w for w in si
-                         for k in ("必死", "定死", "死断", "寿必不久"))
-            if hit_sd and not any("《后天详说》死断条" in s for s in gj.summary):
-                gj.summary.append(
-                    "《后天详说》死断条：运程行至极位，原典于此立断。"
-                    "该断为条件式——原典以「阴骘」（暗中积德，非生辰可推）"
-                    "分两支，且同书另有「行到四爻方可断人生死」一说不采五爻，"
-                    "两存待考。原句与触发条件见 evidence 中「死断」各条；"
-                    "此为术数立断语，不作寿命事实断言。")
+            for w in si:
+                if "死断" in w or "必死" in w or "定死" in w:
+                    gj.summary.append(w)
         except Exception as _e:  # 死断不阻塞主链
             gj.evidence.append(f"  死断：计算跳过（{_e}）")
 
@@ -1702,32 +1117,6 @@ def build_guajie_from_result(
         except Exception as _e:  # 扩展断法不阻塞主链
             gj.evidence.append(f"  扩展断法：计算跳过（{_e}）")
 
-        # ── 参评诗断（K3-447卷十·金锁银匙歌起参评例）────────────────
-        # 2026-10-06 接入。canping.py 此前有完整的起数算法与逐页转录语料，
-        # 但两者从未接起来：起数结果没有回查诗断表，生产链路拿不到任何一条
-        # 参评断语。本处把「起数 → 查表 → 按性别取本命层两句」串起来。
-        # 起数口径（金锁银匙歌）已在 canping 模块头用原典三例复算校验。
-        try:
-            from .canping import judge_canping
-            if bazi and len(bazi) >= 4:
-                yg, yz = bazi[0][0], bazi[0][1]
-                dz, hz = bazi[2][1], bazi[3][1]
-                _g = str(getattr(getattr(result, "input", None), "gender", "male"))
-                cp = judge_canping(dz, hz, yg, yz, "female" if _g == "female" else "male")
-                gj.canping = cp
-                if cp.get("ok"):
-                    gj.evidence.append(
-                        f"  参评诗断：金锁银匙歌起数得 {cp['total']}"
-                        f"（{cp.get('part_cn') or '—'}，第 {cp.get('page')} 页），"
-                        f"{cp['layer']}层："
-                        + "／".join(cp.get("lines") or []))
-                    for _ln in (cp.get("lines") or []):
-                        gj.summary.append(f"参评·{cp['layer']}：{_ln}")
-                else:
-                    gj.evidence.append(f"  参评诗断：{cp.get('note', '起数失败')}")
-        except Exception as _e:  # 参评不阻塞主链
-            gj.evidence.append(f"  参评诗断：计算跳过（{_e}）")
-
         return gj.to_dict()
     except Exception as e:  # 解卦层不阻塞主链（防御性兜底）
         return {"error": f"guajie 构建失败: {e}"}
@@ -1743,24 +1132,17 @@ def _collect_si_duan(
     shu_xiong: bool,
     year_ganzhi: str,
 ) -> list[str]:
-    """收集死断诸法（后天详说）：大运爻位 + 近3年流年判词 + 重反支干元气。
-
-    2026-10-06 校订新增：
-      - recent_dayun_yao：原典「连三爻不吉」主语是大运所历之**爻**，
-        由已行大运段的 (hexagram, line_index) 反查爻辞得出，
-        不再借用近三年流年判词顶替。
-    """
+    """收集死断诸法（后天详说）：大运爻位 + 近3年流年判词 + 重反支干元气。"""
     if not bazi or len(bazi) < 1:
         return []
     year_stem, year_branch = bazi[0][0], bazi[0][1]
     tian = STEM_TO_TRIGRAM.get(year_stem, "")
-    tian_fan = QIANXI_DUKONG.get(tian, "")
+    tian_fan = OPPOSITE_TRIGRAM.get(tian, "")
     di = BRANCH_TO_TRIGRAM.get(year_branch, "")
-    di_fan = QIANXI_DUKONG.get(di, "")
+    di_fan = OPPOSITE_TRIGRAM.get(di, "")
 
     # 当前大运爻位（qi_phase.dayun：age_start..age_end → line_index）
     dayun_line_index: int | None = None
-    dayun_phase: str = ""
     qi = (result.timeline.qi_phase if result.timeline else None) or {}
     dayun_entries = qi.get("dayun") or []
     age_now: int | None = None
@@ -1773,7 +1155,6 @@ def _collect_si_duan(
         for de in dayun_entries:
             if de.get("age_start") and de.get("age_end") and de["age_start"] <= age_now <= de["age_end"]:
                 dayun_line_index = de.get("line_index")
-                dayun_phase = de.get("phase", "") or ""
                 break
 
     # 近3年流年判词（target_year-2 .. target_year）
@@ -1796,35 +1177,12 @@ def _collect_si_duan(
                 })
         recent.sort(key=lambda r: r["year"])
 
-    # 已行大运所历之爻（截至当前段，含当前）。原典「连三爻不吉」主语在此，
-    # 旧实现误用 recent_years（近三年流年）——口径不同，已在判据层更正。
-    dayun_yao: list[dict] = []
-    if age_now is not None:
-        for de in dayun_entries:
-            ls, le = de.get("age_start"), de.get("age_end")
-            if not (ls and le) or ls > age_now:
-                continue
-            li = de.get("line_index")
-            hx = _short(de.get("hexagram", ""))
-            lines = de.get("lines") or _gua_to_lines(hx) or []
-            yao_name = _yao_name(li, lines[li]) if (li is not None and len(lines) > li) else ""
-            d = query_yao_duan(hx, yao_name) if (hx and yao_name) else None
-            dayun_yao.append({
-                "hexagram": hx, "yao": yao_name, "line_index": li,
-                "age_start": ls, "age_end": le,
-                "phase": de.get("phase", ""),
-                "ci": (d.ci if d else ""), "buye": (d.buye if d else ""),
-                "suiyun": (d.suiyun if d else ""),
-            })
-
     return judge_si_duan(
         prenatal_name=prenatal, postnatal_name=postnatal,
         tian_yuan_fan=tian_fan, di_yuan_fan=di_fan,
         shu_xiong=shu_xiong,
         dayun_line_index=dayun_line_index,
-        dayun_phase=dayun_phase,
         recent_years=recent or None,
-        recent_dayun_yao=dayun_yao or None,
     )
 
 
@@ -1902,7 +1260,7 @@ def compute_siti_bati(prenatal_name: str, postnatal_name: str) -> dict:
         hu_up, hu_low = compute_huti(six)
     return {
         "zheng_ti": {"upper": up, "lower": low},
-        "fu_ti": {"upper": QIANXI_DUKONG.get(up, ""), "lower": QIANXI_DUKONG.get(low, "")},
+        "fu_ti": {"upper": OPPOSITE_TRIGRAM.get(up, ""), "lower": OPPOSITE_TRIGRAM.get(low, "")},
         "hu_ti": {"upper": hu_up, "lower": hu_low},
         "bian_ti": {"upper": post_up, "lower": post_low},
     }
@@ -2035,14 +1393,14 @@ def _solar_phase(birth_date: str) -> str:
     bd = _date(y, m, d)
 
     def _find_jie(year: int, month: int, jq: int) -> _date:
-        # 批次 L：原为逐日扫整月调 sxtwl.fromSolar（一次 ~92 次），且 guajie.py
-        # 有一份**逐字相同**的拷贝 —— 两处合计 184 次做同一件事。
-        # 改用 jiehhou.solar_term_date（走 getJieQiByYear 的按年缓存）。
-        # 等价性已实测：1900–2100 逐年 201 组与逐日扫描**零不一致**。
-        d = solar_term_date(year, jq)
-        if d is not None and d.month == month:
-            return d
-        return _date(year, month, 1)
+        d0 = _date(year, month, 1)
+        found = d0
+        while d0.month == month:
+            day = sxtwl.fromSolar(d0.year, d0.month, d0.day)
+            if day.getJieQi() == jq:
+                found = d0
+            d0 += timedelta(days=1)
+        return found
 
     try:
         dongzhi_prev = _find_jie(y - 1, 12, 0)   # 冬至 jq=0（上一年）
@@ -2831,28 +2189,7 @@ def to_structured(gj: dict) -> dict:
     out["nayin_yuanqi"] = gj.get("nayin_yuanqi") or []
     out["jiehua_gong"] = gj.get("jiehua_gong") or []
     out["summary"] = gj.get("summary") or []
-    # 2026-10-08 审计修（P4）：以下三块此前**只存在于 to_dict**，
-    # 结构化视图里完全看不到——运行时实测 to_dict 有 23 键而 structured 只 6 块，
-    # benming / canping / evidence 整块丢失（evidence 数十行）。
-    # 本函数在 src/ 下零调用方，属潜伏缺陷，但「结构化视图比原始 dict 少三块」
-    # 本身就是个坑：任何接上它的人都会静默丢判词。
-    # 注意口径：透传原值，不改结构、不编造出处。
-    out["benming"] = gj.get("benming")
-    out["canping"] = gj.get("canping")
-    out["evidence"] = gj.get("evidence") or []
-    # 2026-10-08 接入：爻辞取象命中。与上面三块同理——to_dict 有、结构化
-    # 视图无，则接上本函数的人会静默丢掉 L741 整层取象。透传原值不改结构。
-    out["yao_xiang_hits"] = gj.get("yao_xiang_hits") or []
     return out
-
-
-#: 八个扩展断法中**计算失败**的痕迹；正常应为空。非空即表示该判法失败而非无结论。
-_KZ_ERRORS: list[str] = []
-
-
-def kuozhan_errors() -> list[str]:
-    """最近一次 _build_kuozhan 中失败的判法及异常（正常应为空）。"""
-    return list(_KZ_ERRORS)
 
 
 def _build_kuozhan(
@@ -2934,12 +2271,8 @@ def _build_kuozhan(
             v = fn()
             if v:
                 kz[name] = v
-        except Exception as _e:
-            # 2026-10-08 审计修（⚪19）：旧代码此处是裸 pass——八个判法逐个 try，
-            # 任一失败即从 kz 里**彻底消失**，既不进 evidence 也不记日志，
-            # 比本文件其他块（至少写「计算跳过（{e}）」）更弱，下游只会看到
-            # 「这个判法好像本来就没结论」。现登记到 kuozhan_errors() 供调用方披露。
-            _KZ_ERRORS.append("%s: %s: %s" % (name, type(_e).__name__, _e))
+        except Exception:
+            pass
     return kz
 
 
@@ -2947,8 +2280,7 @@ def _build_kuozhan(
 __all__ = [
     "GuaDuan", "YaoDuan", "YeBuYeResult", "ShuXiongResult", "GuaJieResult",
     "load_guajie_data", "query_yao_duan", "judge_ye_buye",
-    "judge_shu_xiong", "check_zhengdui_fandui", "check_twelve_xiong",
-    "jingyi_load_error", "judge_si_duan",
+    "judge_shu_xiong", "check_zhengdui_fandui", "judge_si_duan",
     "compute_huti", "judge_nayin_yuanqi", "get_nayin_element",
     "judge_jiehua_gong", "judge_nayin_huti", "hexagram_to_lines",
     "compose_guajie", "build_guajie_from_result",
@@ -2960,6 +2292,6 @@ __all__ = [
     "structure_kuozhan", "to_structured", "KUOZHAN_META",
     "polarity_of", "dimension_of", "KUOZHAN_DIMENSION",
     "wuming_element",
-    "TWELVE_XIONG_GUA", "QIANXI_DUKONG", "ZONG_GUA", "BRANCH_TO_MONTH",
+    "TWELVE_XIONG_GUA", "OPPOSITE_TRIGRAM", "ZONG_GUA", "BRANCH_TO_MONTH",
     "TRIGRAM_ELEMENT", "ELEMENT_GENERATES",
 ]

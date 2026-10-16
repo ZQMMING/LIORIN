@@ -56,17 +56,6 @@ _BRANCH_CN = {
     "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥",
 }
 
-#: 规则 ID 前缀 → 引擎名（用于信号缺 source_engine 时反查归属）。
-#: 只登记**能确证归属**的前缀；未登记的一律沿用原默认 ZI_PING，不做猜测。
-#:   HL-  河洛真数 HL-101~121，条件字段为 heluo_benming_guawuxing /
-#:        heluo_dishu_youyu / heluo_birth_season_unfavorable 等 heluo_* 字段
-#:   ZW-  紫微斗数
-#: 注意 HLT-（健康类，active）与 HL- 是不同前缀，不可互相误判。
-_RULE_PREFIX_ENGINE = {
-    "HL-": "HE_LUO",
-    "ZW-": "ZI_WEI",
-}
-
 
 class ComputeStage:
     """阶段 1-6: 纯计算 + SIR 构造。
@@ -135,8 +124,6 @@ class ComputeStage:
         calc_context: CalculationContext | None = None,
         judgment_claims: list[dict] | None = None,  # BZ-FNDR-15.16 INT-06: Composer 产 claims
         judgment_composer=None,  # BZ-FNDR-15.16 INT-06: Composer 实例 (内部编排)
-        heluo_target_date: date | None = None,  # 河洛解卦应期日（公历），默认 analysis_date
-        heluo_target_hour: int | None = None,   # 时辰序号 1-12（子=1），None=不解流时应期
     ) -> ComputeResult:
         """执行阶段 1-6 全流程：bazi+ziwei+huangli → signals → cross → claims → SIR → schema。"""
 
@@ -149,18 +136,25 @@ class ComputeStage:
             year, month, day, hour = calc_context.bazi_view
             ziwei_chart = self._ziwei_adapter.compute(year, month, day, hour, gender=effective_gender)
         else:
-            bazi_birth = birth_date
-            year, month, day, hour = bazi_birth
-            effective_gender = gender
-            bazi_chart = self.bazi_engine.compute(bazi_birth, gender=effective_gender)
-            # P1-FIX: fallback(无 location) 也需阳历→农历再调 iztro。
-            # 此前把阳历日期当农历直传，农历无 31 日等输入触发 iztro 崩溃（GOLDEN-016）。
-            from lunar_python import Solar as _Solar
-            _lunar = _Solar.fromYmdHms(year, month, day, hour, 0, 0).getLunar()
-            ziwei_chart = self.ziwei_engine.compute(
-                (_lunar.getYear(), _lunar.getMonth(), _lunar.getDay()),
-                hour,
-                gender=effective_gender,
+            # 无 calc_context：为保证排盘恒真太阳时（不再民用时直排），
+            # 用 TimeResolver 按默认 location 构造真太阳时 ctx 兜底。
+            # 调用方应优先显式传 calc_context（真实出生地）；此处默认北京。
+            from datetime import date as _date
+            from ..engines.time.resolver import TimeResolver
+            by, bm, bd, bh = birth_date
+            _default_ctx = TimeResolver().resolve_context(
+                birth_date=_date(by, bm, bd),
+                hour=bh,
+                minute=30,  # 时辰中点（无分钟输入）
+                timezone="Asia/Shanghai",
+                location="北京",
+                gender=gender,
+            )
+            effective_gender = _default_ctx.subject_gender or gender
+            bazi_chart = self._bazi_adapter.compute(_default_ctx, gender=effective_gender)
+            year, month, day, hour = _default_ctx.bazi_view
+            ziwei_chart = self._ziwei_adapter.compute(
+                year, month, day, hour, gender=effective_gender
             )
         huangli_day = self.huangli_engine.get_day(analysis_date)
 
@@ -179,9 +173,7 @@ class ComputeStage:
         # 河洛计算 → YiAdapter 适配为 YiStructure → YiInterpretationEngine 解释。
         # 任何一步失败都降级为 None，不影响既有 bazi/ziwei/huangli 主链路。
         heluo_result, yi_structure, yi_interpretation = self._compute_heluo_yi(
-            bazi_chart, gender, year=year, month=month, day=day,
-            target_date=heluo_target_date or analysis_date,
-            target_hour=heluo_target_hour,
+            bazi_chart, gender
         )
 
         # 1c. 梅花易数引擎（E7 接入）
@@ -195,12 +187,6 @@ class ComputeStage:
         )
         signals = build_result["signals"]
         canonical_signals = build_result.get("canonical_signals", {})
-
-        # 2b. 河洛诊断 + 行动建议（2026-10-08 接线）。
-        #  必须排在 Step 2 **之后**：诊断要吃 canonical_signals 求方向，
-        #  排在 Step 1b 会拿不到信号、全部断言静默落 neutral。
-        diagnosis, guidance = self._compute_heluo_diagnosis(
-            heluo_result, canonical_signals, subject="pipeline")
 
         # 3. Cross-domain orchestration (P1.6)
         # If assertion_library is provided, use CrossDomainOrchestrator to produce
@@ -301,66 +287,14 @@ class ComputeStage:
             yi_structure=yi_structure,
             yi_interpretation=yi_interpretation,
             meihua_result=meihua_result,
-            # 2026-10-08 接线：河洛诊断与行动建议进入 ComputeResult
-            heluo_diagnosis=diagnosis,
-            heluo_guidance=guidance,
             # BZ-FNDR-15: ⑮-0 接入契约 — 装上 canonical_bazi_chart 给下游 Ziping 消费
             canonical_bazi_chart=canonical_bazi_chart,
         )
-
-    @staticmethod
-    def _heluo_lunar_target(target_date: date,
-                            huangli_day=None) -> tuple[int, int, int]:
-        """公历应期日 → 河洛解卦口径 (流年公历年, 农历月, 农历日)。
-
-        河洛流月/流日以**农历**月日与月令"节"对齐（见 canonical._LUNAR_MONTH_JIE
-        与 compute_liuri 的 jie_datetime），直接传公历月日会错位一整个月。
-
-        ⚠ 2026-10-09 批次 P（用户口径「时间上接黄历引擎」）：
-          原实现用 **lunar_python** 自行换算，于是仓库里并存**三套历法实现**
-          （sxtwl 底层 / lunar_python 专用 / HuangliEngine 黄历层），
-          同一件事算两遍且可能漂移。
-          现**优先取黄历引擎的权威值**（HuangliDay.lunar_month / lunar_day），
-          黄历不可用才回退 lunar_python，再不行回退公历口径。降级链不丢。
-        """
-        hd = huangli_day
-        if hd is not None:
-            try:
-                m = int(str(hd.lunar_month).strip() or 0)
-                d = int(str(hd.lunar_day).strip() or 0)
-                if m > 0 and d > 0:
-                    return target_date.year, m, d
-            except Exception:  # noqa: BLE001 — 字段异常，走回退
-                pass
-        try:
-            from lunar_python import Solar as _Solar
-            lun = _Solar.fromYmd(target_date.year, target_date.month,
-                                 target_date.day).getLunar()
-            return target_date.year, int(lun.getMonth()), int(lun.getDay())
-        except Exception:  # noqa: BLE001 — 换算失败不阻断，回退公历口径
-            return target_date.year, target_date.month, target_date.day
-
-    def _huangli_for_heluo(self, day: date):
-        """取该日的黄历对象（供河洛消费）；不可用时返回 None，不抛。
-
-        黄历引擎是**引擎的时间系统**，河洛的农历/节气一律以它为准
-        （用户口径「时间上接黄历引擎」）。取不到就返回 None，
-        由 _heluo_lunar_target 走既有回退链。
-        """
-        try:
-            return self.huangli_engine.get_day(day)
-        except Exception:  # noqa: BLE001 — 黄历不可用不阻断河洛
-            return None
 
     def _compute_heluo_yi(
         self,
         bazi_chart,
         gender: str,
-        year: int | None = None,
-        month: int | None = None,
-        day: int | None = None,
-        target_date: date | None = None,
-        target_hour: int | None = None,
     ) -> tuple:
         """河洛理数计算 + 易经解释（BUG-P0-03）。
 
@@ -372,58 +306,20 @@ class ComputeStage:
 
         返回三元组 (heluo_result, yi_structure, yi_interpretation)。
         任一步失败都返回 (None, None, None)，绝不让河洛/易经错误中断既有主链路。
-
-        2026-10-06 修正接通断点：本方法原先只传 bazi/gender/birth_hour/era，
-        **不传 birth_year / birth_date**。而 HeluoCanonical.calculate() 在二者
-        皆缺时会：
-          - _build_timeline: birth_year 兜底成 1984 → 大运/流年/流月/流日/流时
-            整条四层时间轴跑在**占位年份**上，与实际出生年无关；
-          - solar_phase: 因无 birth_date 而跳过 _solar_phase_for_date →
-            纯卦元堂半年相分支拿不到冬至/夏至判定。
-        现由 run() 把真实出生年月日透传下来（calc_context 与直调两条路径都已覆盖）。
-
-        2026-10-06 接入 H8 解卦层：target_date 给出时（run() 默认传 analysis_date），
-        额外产出 HeluoResult.guajie。target_date 为公历，内部换算成农历月日——
-        河洛流月/流日按农历月与月令"节"对齐，传公历月日会整体错位一个月。
-        target_hour 为时辰序号 1-12（子=1），None 时不解流时应期。
         """
         heluo_result = None
         yi_structure = None
         yi_interpretation = None
-        # 2026-10-10 批次 P 第二步：把"应期公历日→农历月日"提到 try 顶部，让
-        # canonical.calculate(target_year/target_month) 与下游
-        # build_guajie_from_result 用同一组农历口径。target_date=None 时两者
-        # 都置 None，fast-path 不启用，旧全量路径完整保留。
-        t_year: int | None = None
-        t_month: int | None = None
-        t_day: int | None = None
-        if target_date is not None:
-            try:
-                t_year, t_month, t_day = self._heluo_lunar_target(
-                    target_date, self._huangli_for_heluo(target_date))
-            except Exception:  # noqa: BLE001 — 兜底不阻断主链
-                pass
         try:
             bazi_cn = self._bazi_to_heluo_pillars(bazi_chart)
             birth_hour_cn = _BRANCH_CN.get(
                 bazi_chart.hour_pillar.earthly_branch, "子"
-            )
-            birth_date_iso = (
-                f"{year:04d}-{month:02d}-{day:02d}"
-                if year and month and day else None
             )
             heluo_result = self.heluo_canonical.calculate(
                 bazi=bazi_cn,
                 gender=gender,
                 birth_hour=birth_hour_cn,
                 era="zhong",
-                birth_year=year,
-                birth_date=birth_date_iso,
-                # 2026-10-10 批次 P 第二步：目标年/月透传给 _build_timeline 启用
-                # fast-path。与下方 build_guajie_from_result 同一农历口径。
-                # target_date 未给 → 两者都 None → 旧全量路径完整保留。
-                target_year=t_year,
-                target_month=t_month,
             )
             # 将河洛结果传入 YiAdapter（只消费 Contract 化字段，不重新计算河洛）
             yi_input = YiAdapterInput(
@@ -434,82 +330,9 @@ class ComputeStage:
             )
             yi_structure = YiAdapter.adapt(yi_input)
             yi_interpretation = self.yi_engine.interpret(yi_structure)
-
-            # ── H8 卦象解析层（2026-10-06 接入）──────────────────────────
-            # 此前排盘只到「算卦」为止：guajie.build_guajie_from_result 全仓唯一
-            # 生产调用点在 heluo_adapter，而 compute_stage 走的是 heluo_canonical
-            # 直调、绕过 adapter，导致 HeluoResult.guajie 恒为 None——2,310 行解卦
-            # 判词 + guidance/metrics_v2/diagnosis 等 4,000+ 行解析层在排盘里从不执行。
-            #
-            # 接法：填 HeluoResult.guajie。api._yi_block 用 dataclasses.asdict 序列化
-            # 整个 HeluoResult，故 API 层自动带上，无需改 ComputeResult/PipelineResult。
-            #
-            # 按需单点：build_guajie_from_result 是 target_* 单目标设计，实测约 1 ms。
-            # 绝不对 93 个流年全量跑（按 1 ms/次外推即 +93 ms，会吃掉算卦的全部优化）。
-            #
-            # 独立 try：日志能区分「H8 解卦降级」与「河洛/Yi 整体降级」，
-            # 且不依赖「外层 except 恰好不重置已赋值局部变量」这一实现细节——
-            # 现状下即使合入外层 try，结果其实同样保住（实测验证过），故此处是
-            # 可观测性收益，不是正确性依赖。
-            if target_date is not None:
-                try:
-                    from dataclasses import replace as _replace
-                    from ..engines.heluo.guajie import build_guajie_from_result
-                    heluo_result = _replace(
-                        heluo_result,
-                        guajie=build_guajie_from_result(
-                            heluo_result, bazi=bazi_cn,
-                            target_year=t_year, target_month=t_month,
-                            target_day=t_day, target_hour=target_hour,
-                        ),
-                    )
-                except Exception as exc:  # noqa: BLE001 — 解卦降级，算卦结果保留
-                    log.warning("Heluo H8 解卦降级 (guajie=None, 河洛计算结果保留): %s", exc)
         except Exception as exc:  # noqa: BLE001 — 河洛/易经降级，不中断主管道
             log.warning("Heluo/Yi integration failed (degraded, 不影响主链路): %s", exc)
         return heluo_result, yi_structure, yi_interpretation
-
-    def _compute_heluo_diagnosis(self, heluo_result, canonical_signals,
-                                  subject="unknown"):
-        """河洛诊断图 + 行动建议 → ``(diagnosis, guidance)``；失败降级为 None。
-
-        ⚠ 这两层此前**生产调用方为零**：只在单元测试里被手动调过，
-          真实排盘从来看不到它们的输出 —— 单元测试全绿也照样漏。
-
-        降级口径与本类其余河洛接线一致：单层失败不中断主链路，
-        但失败留 warning，不静默。
-        """
-        diagnosis = guidance = None
-        if heluo_result is None:
-            return None, None
-        try:
-            from ..engines.heluo.evidence_producer import HeLuoEvidenceProducer
-            from ..engines.heluo.frozen_state import build_frozen_state
-            from ..engines.heluo.diagnosis_rule_graph import build_diagnosis_graph
-
-            evidences = HeLuoEvidenceProducer().produce(heluo_result)
-            frozen = build_frozen_state(heluo_result)
-            sigs = [x for v in (canonical_signals or {}).values() for x in v]
-            diagnosis = build_diagnosis_graph(
-                evidences=list(evidences), signals=sigs,
-                frozen_state=frozen, subject=subject)
-        except Exception as exc:  # noqa: BLE001 — 诊断降级，不中断主链路
-            log.warning("Heluo H12 诊断降级 (diagnosis=None): %s", exc)
-            return None, None
-        try:
-            from ..engines.heluo.guidance import generate_guidance
-            hg = getattr(heluo_result, "hua_gong", None)
-            guidance = generate_guidance(
-                assertions=list(diagnosis.assertions),
-                judgment=diagnosis.judgment,
-                source_gua=getattr(heluo_result.prenatal, "hexagram_name", ""),
-                target_gua=getattr(heluo_result.postnatal, "hexagram_name", ""),
-                yuan_tang=getattr(heluo_result.yuantang, "yuantang", "") or "",
-                hua_gong_state=(hg.state.value if hg is not None else None),
-                subject=subject)
-        except Exception as exc:  # noqa: BLE001 — 建议降级，不中断主链路
-            log.warning("Heluo H12 建议降级 (guidance=None): %s", exc)
-        return diagnosis, guidance
 
     def _compute_meihua(
         self,
@@ -646,18 +469,9 @@ class ComputeStage:
                 # 优先用 signal 自带的 engine 字段；其次根据 rule_refs 前缀判断
                 raw_eng = getattr(sig, "source_engine", None) or getattr(sig, "engine", None)
                 if raw_eng is None:
-                    # 从 rule_refs 前缀推断引擎。2026-10-06 起补全前缀表：
-                    # 原实现只认 ZW-，其余一律归 ZI_PING，一旦 HL-（河洛）或
-                    # BLIND-（盲派）规则命中就会被错记到子平名下，污染
-                    # CrossDomainResult.by_engine 的归属与 coverage 统计。
-                    # 当前 HL-* 规则全为 draft（EXECUTABLE_STATUSES 门禁），
-                    # 故本修正对现网输出零影响，属消除潜在缺陷。
-                    rule_refs = [str(r) for r in (getattr(sig, "rule_refs", []) or [])]
-                    raw_eng = "ZI_PING"
-                    for prefix, eng in _RULE_PREFIX_ENGINE.items():
-                        if any(r.startswith(prefix) for r in rule_refs):
-                            raw_eng = eng
-                            break
+                    # 从 rule_refs 前缀推断: ZW-* → ZI_WEI, 其余 ZI_PING
+                    rule_refs = getattr(sig, "rule_refs", []) or []
+                    raw_eng = "ZI_WEI" if any(str(r).startswith("ZW-") for r in rule_refs) else "ZI_PING"
                 engine_name = str(raw_eng)
                 if engine_name not in engine_evidences:
                     engine_evidences[engine_name] = []

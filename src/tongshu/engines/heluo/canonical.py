@@ -26,18 +26,23 @@ from .temporal import compute_timeline, Timeline
 from .timeline_yun import (
     compute_dayun_liyao,
     compute_liunian,
-    compute_liuri_stub,
+    compute_liuri,
+    compute_liushi,
     compute_liuyue,
 )
 
 
-# 农历月 → 月令"节"（sxtwl 节气索引，奇数=节）
-# 正月=立春(3)、二月=惊蛰(5)、三月=清明(7)、四月=立夏(9)、五月=芒种(11)、
-# 六月=小暑(13)、七月=立秋(15)、八月=白露(17)、九月=寒露(19)、十月=立冬(21)、
-# 十一月=大雪(23)、十二月=小寒(1)
+# 节气月（子月起）→ 月令"节"（sxtwl 节气索引，奇数=节）
+# 编号语义与 timeline_yun.compute_liuyue 的流月编号一致：month=1=子月、2=丑月 … 12=亥月。
+# （河洛流月卦自子月起，见《起例卷之上·起月卦例》"月卦之法悉从二十四气，非从朔望"；
+#   H16 观卦上九元堂子月=风雷益为证。原表按农历"正月=寅月"建号，与流月编号错位
+#   一整节对——流日卦节气锚整体错位，2026-10-15 收敛性审计修正。）
+# 子月=大雪(23)、丑月=小寒(1)、寅月=立春(3)、卯月=惊蛰(5)、辰月=清明(7)、
+# 巳月=立夏(9)、午月=芒种(11)、未月=小暑(13)、申月=立秋(15)、酉月=白露(17)、
+# 戌月=寒露(19)、亥月=立冬(21)
 _LUNAR_MONTH_JIE = {
-    1: 3, 2: 5, 3: 7, 4: 9, 5: 11, 6: 13,
-    7: 15, 8: 17, 9: 19, 10: 21, 11: 23, 12: 1,
+    1: 23, 2: 1, 3: 3, 4: 5, 5: 7, 6: 9,
+    7: 11, 8: 13, 9: 15, 10: 17, 11: 19, 12: 21,
 }
 
 
@@ -78,14 +83,14 @@ def _solar_phase_for_date(birth_date: str) -> str | None:
     bd = _date(y, m, d)
 
     def _find_jie(year: int, month: int, jq: int) -> _date:
-        # 批次 L：原为逐日扫整月调 sxtwl.fromSolar（一次 ~92 次），且 guajie.py
-        # 有一份**逐字相同**的拷贝 —— 两处合计 184 次做同一件事。
-        # 改用 jiehhou.solar_term_date（走 getJieQiByYear 的按年缓存）。
-        # 等价性已实测：1900–2100 逐年 201 组与逐日扫描**零不一致**。
-        d = solar_term_date(year, jq)
-        if d is not None and d.month == month:
-            return d
-        return _date(year, month, 1)
+        d0 = _date(year, month, 1)
+        found = d0
+        while d0.month == month:
+            day = sxtwl.fromSolar(d0.year, d0.month, d0.day)
+            if day.getJieQi() == jq:
+                found = d0
+            d0 += timedelta(days=1)
+        return found
 
     dongzhi_prev = _find_jie(y - 1, 12, 0)   # 冬至 jq=0（上一年）
     dongzhi_cur = _find_jie(y, 12, 0)        # 冬至 jq=0（当年）
@@ -98,32 +103,7 @@ def _solar_phase_for_date(birth_date: str) -> str | None:
     if xiazhi_cur <= bd < dongzhi_cur:
         return "summer"
     return None
-#: 节气→农历月 映射缓存，2026-10-06 加容量上限。
-#: 原为无界 dict：实测跑到 124 年 / 1,488 条（出生年跨度可达数百年），
-#: 长期服务会缓慢涨内存且永不回收。超出即按插入顺序丢最旧的（FIFO）。
-#: 刻意用普通 dict 而非 OrderedDict —— Python 3.7+ dict 保序，FIFO 已够，
-#: 且不影响任何外部对 _jie_cache 注入普通 dict 的用法。
 _jie_cache: dict[int, dict[int, str]] = {}
-_JIE_CACHE_MAX = 256
-
-#: sxtwl 惰性单例：_SXTWL 为已解析模块，_SXTWL_FAILED=True 表示本进程不可用。
-#: 2026-10-06：旧实现把 `import sxtwl` 写在 _compute_year_jie 体内，缺依赖时
-#: 每调用一次就重走一遍 import 机制并抛 ImportError（一盘 1,116 次 ≈ 206 ms），
-#: 且异常穿透使 _jie_cache 永远写不进去，缓存完全失效。此处改为进程级解析一次。
-_SXTWL = None
-_SXTWL_FAILED = False
-
-
-def _get_sxtwl():
-    """惰性解析 sxtwl，进程内至多解析一次；不可用时返回 None 并记住失败。"""
-    global _SXTWL, _SXTWL_FAILED
-    if _SXTWL is None and not _SXTWL_FAILED:
-        try:
-            import sxtwl as _m
-            _SXTWL = _m
-        except ImportError:
-            _SXTWL_FAILED = True
-    return _SXTWL
 
 
 def _jie_datetime_for_lunar_month(year: int, lunar_month: int) -> str | None:
@@ -131,96 +111,47 @@ def _jie_datetime_for_lunar_month(year: int, lunar_month: int) -> str | None:
 
     一次遍历拿到该公历年的全部12个"节"并缓存，后续查表（避免逐月重复遍历）。
     用于流日卦节气对齐（《河洛理数》卷二下）。
-    sxtwl 不可用时缓存空表并返回 None，不重复试探 import。
     """
     global _jie_cache
     if year not in _jie_cache:
-        sxtwl = _get_sxtwl()
-        _jie_cache[year] = _compute_year_jie(year, sxtwl) if sxtwl is not None else {}
-        if len(_jie_cache) > _JIE_CACHE_MAX:
-            for stale in list(_jie_cache)[:len(_jie_cache) - _JIE_CACHE_MAX]:
-                _jie_cache.pop(stale, None)
+        _jie_cache[year] = _compute_year_jie(year)
     return _jie_cache[year].get(lunar_month)
 
 
-def _jie_by_batch(sxtwl, year: int) -> dict[int, tuple] | None:
-    """用 sxtwl.getJieQiByYear 批量取 year-1~year+1 的 12 个"节"。
-
-    返回 {农历月: (gap, "YYYY-MM-DD HH:MM")}；批量接口不可用时返回 None，
-    由调用方回退到逐日扫描。取窗与取月口径与旧逐日实现完全一致。
-
-    ⚠ API 形态（2026-10-06 实机核正）：sxtwl 有两个不同的返回类，方法名不能混用——
-      - ``sxtwl.fromSolar(...)``      → ``Day``，有**方法** getJieQi() / getJieQiJD()
-      - ``sxtwl.getJieQiByYear(y)``  → ``JieQiInfo`` 元组（25 项，含跨年小寒/大寒），
-        只有**属性** .jd / .jqIndex，**没有** getJieQi() / getJieQiJD()
-    本函数初版误按方法取，抛 AttributeError 被兜底吞掉，静默退回慢路径（空转）。
-    此处按 bazi_engine._compute_with_sxtwl 的既有形态取属性，并保留 tuple 兼容分支。
-    """
-    jie_to_lm = {idx: m for m, idx in _LUNAR_MONTH_JIE.items()}
-    best: dict[int, tuple] = {}
-    try:
-        for target in (year - 1, year, year + 1):
-            # 批次 L：原为直调 sxtwl.getJieQiByYear（**绕过缓存**），
-            # 而本函数在一条流年时间轴上按年被调约 93 次 → 93×3=279 次 sxtwl。
-            # 改经 jiehhou.jieqi_timeline（带按年缓存），语义不变。
-            for y_, m_, d_, hh_, mm_, idx in jieqi_timeline(target):
-                lm = jie_to_lm.get(idx)
-                if lm is None:
-                    continue
-                if not (0 < y_ <= 2200):
-                    continue
-                gap = abs(y_ - year)
-                if lm not in best or gap < best[lm][0]:
-                    best[lm] = (gap, f"{y_:04d}-{m_:02d}-{d_:02d} "
-                                       f"{hh_:02d}:{mm_:02d}")
-    except Exception:
-        return None
-    return best or None
-
-
-def _jie_by_dayscan(sxtwl, year: int) -> dict[int, tuple]:
-    """回退路径：逐日遍历公历 year-1~year+1 找齐 12 个"节"（1,095 天）。"""
+def _compute_year_jie(year: int) -> dict[int, str]:
+    """遍历公历 year-1~year+1，找齐 12 个"节"，按农历月 1-12 建映射。"""
+    import sxtwl
     from datetime import date, timedelta
-    jie_to_lm = {idx: m for m, idx in _LUNAR_MONTH_JIE.items()}
+    result: dict[int, str] = {}
     best: dict[int, tuple] = {}
     d = date(year - 1, 1, 1)
     end = date(year + 1, 12, 31)
     while d <= end:
         day_obj = sxtwl.fromSolar(d.year, d.month, d.day)
         jq = day_obj.getJieQi()
-        lm = jie_to_lm.get(jq)
-        if lm is not None:
-            t = sxtwl.JD2DD(day_obj.getJieQiJD())
-            if 0 < t.Y <= 2200:
-                gap = abs(d.year - year)
-                if lm not in best or gap < best[lm][0]:
-                    best[lm] = (gap, f"{t.Y:04d}-{t.M:02d}-{t.D:02d} "
-                                       f"{int(t.h):02d}:{int(t.m):02d}")
+        if jq in _LUNAR_MONTH_JIE.values():
+            jd = day_obj.getJieQiJD()
+            t = sxtwl.JD2DD(jd)
+            if not (0 < t.Y <= 2200):
+                d += timedelta(days=1)
+                continue
+            # 该节对应的农历月
+            lm = next((m for m, idx in _LUNAR_MONTH_JIE.items() if idx == jq), None)
+            if lm is None:
+                d += timedelta(days=1)
+                continue
+            gap = abs(d.year - year)
+            if lm not in best or gap < best[lm][0]:
+                best[lm] = (gap, f"{t.Y:04d}-{t.M:02d}-{t.D:02d} {int(t.h):02d}:{int(t.m):02d}")
         d += timedelta(days=1)
-    return best
-
-
-def _compute_year_jie(year: int, sxtwl=None) -> dict[int, str]:
-    """找齐该公历年对应农历 1-12 月的 12 个"节"，返回 {农历月: 时刻字符串}。
-
-    2026-10-06：主路径改用 sxtwl.getJieQiByYear 批量取节气。旧实现自 year-1-01-01
-    逐日扫到 year+1-12-31（1,095 天 × 1 次 fromSolar），一盘 93 个流年即约 10 万次
-    天文推算；批量接口 3 次调用覆盖同一取窗。取窗、取月、同月择优口径均不变。
-    批量接口不可用时自动回退逐日扫描，保证结果不劣于旧实现。
-    """
-    if sxtwl is None:
-        sxtwl = _get_sxtwl()
-    if sxtwl is None:
-        return {}
-    best = _jie_by_batch(sxtwl, year)
-    if best is None:
-        best = _jie_by_dayscan(sxtwl, year)
-    return {lm: dt for lm, (_, dt) in best.items()}
+    for lm, (_, dtstr) in best.items():
+        result[lm] = dtstr
+    return result
 from .hexagram import analyze_hexagram, HexagramStructure
 from .yi_interpreter import interpret_all_liunian
 from .hua_gong import compute_huagong, HuaGongResult
-from .jiehhou import (get_seasonal_hexagram, get_current_jieqi_info,
-                      solar_term_date, jieqi_timeline)
+from .yuan_qi import compute_yuan_qi, YuanQiResult
+from .jiehhou import get_seasonal_hexagram, get_current_jieqi_info
 
 
 @dataclass(frozen=True)
@@ -234,10 +165,7 @@ class HeluoResult:
     timeline: Timeline | None
     structure: HexagramStructure | None
     hua_gong: HuaGongResult | None = None          # H6: 化工状态
-    # 2026-10-07 审计修：era（shang/zhong/xia 上中下元）此前只是 calculate() 的
-    # 入参，算完即丢。下游 frozen_state 拿不到，只能去读 result.input.timezone
-    # （恒为 "Asia/Shanghai"）冒充 era——**世代出处彻底丢失且被写成时区**。
-    era: str = "zhong"
+    yuan_qi: YuanQiResult | None = None            # H7: 元气状态（天/地元气 + 元反）
     seasonal_hexagram: dict | None = None          # H11: 节候卦（出生日）
     guajie: dict | None = None                     # H8: 解卦层（原典判词，可选挂载）
 
@@ -296,8 +224,6 @@ class HeluoCanonical:
         birth_date: str | None = None,
         true_solar_datetime: str | None = None,
         solar_phase: str | None = None,
-        target_year: int | None = None,
-        target_month: int | None = None,
     ) -> HeluoResult:
         """
         完整计算链：
@@ -312,11 +238,6 @@ class HeluoCanonical:
         true_solar_datetime: 真太阳时 ISO 格式。可选，默认取 birth_date。
         solar_phase: "winter"（冬至后至夏至前）/ "summer"（夏至后至冬至前）。
                       纯卦（女乾/男坤）元堂上下行向分支；未传且 birth_date 有效时自动推算。
-        target_year: 公历年（int，可选）。批次 P 第二步（2026-10-10）新增 fast-path 门控：
-                     传值时启用算力裁剪（见 _build_timeline 头部注释）；None 退回全量
-                     （保留旧契约，避免冻结回归）。
-        target_month: 农历月（int，可选；1-12）。仅在 target_year 非 None 时生效。
-                     命中则顶层 daily_hexagram 填目标月 6 日段字典。
         """
         # Step 1: 计算天数地数
         numbers = compute_tian_di_shu(bazi, gender)
@@ -369,8 +290,7 @@ class HeluoCanonical:
 
         # Step 6: 时间序列（大运爻位值运 + 流年卦 + 流月卦）
         timeline = self._build_timeline(
-            prenatal, yuantang, postnatal, postnatal_yuantang, birth_year,
-            target_year=target_year, target_month=target_month,
+            prenatal, yuantang, postnatal, postnatal_yuantang, birth_year
         )
 
         # Step 7: 卦象结构分析
@@ -378,12 +298,6 @@ class HeluoCanonical:
 
         # 构建 HeluoInput（DISPUTE-HL-03：落真实出生日期，不再用误导占位）
         from datetime import date
-        # ⚠ 2026-10-08：下方会把缺失的 birth_date 补成 f"{yr}-01-01" 喂 HeluoInput。
-        #   那个占位日期**只许喂 HeluoInput**，不得流进节气链路：
-        #   节气窗口（L558–L567）按节气切，补出来的 1 月 1 日会算成「冬至 jq=0」，
-        #   化工据此给出一个凭空造出的当令卦，且 evidence 不再标兜底——
-        #   **缺失输入被当成真实输入，比答错更坏**。故此处先留住真值。
-        _real_birth_date = birth_date
         if birth_date is None:
             yr = birth_year if birth_year is not None else 1984
             birth_date = f"{yr}-01-01"
@@ -399,20 +313,28 @@ class HeluoCanonical:
             day_boundary="23:00",
         )
 
-        # Step 8: H11 节候卦（出生日所在节气）—— **提前到化工之前**。
-        # 2026-10-08：原先它在 Step 9、排在化工之后，于是化工要自己再调一次
-        # sxtwl 求同一个 jq_index——同一份结果算两遍。jq 只依赖 birth_date、
-        # 与盘面无关，提前算不影响任何东西，故改为算一次、两处共用。
-        # 只用**真值**。为 None/空串时返回 None（不判），
-        #        化工随之拿不到 jq_index，自会走兜底并在 evidence 里自曝。
-        seasonal_hex = (self._compute_seasonal_hexagram(_real_birth_date)
-                        if _real_birth_date else None)
-
-        # Step 9: H6 化工计算（复用上面已算好的 jq_index，不再重复求节气）
+        # Step 8: H6 化工计算
         hua_gong = self._compute_huagong(
-            prenatal, postnatal, bazi, birth_date, gender, birth_year,
-            jieqi_index=(seasonal_hex or {}).get("jq_index"),
+            prenatal, postnatal, birth_date, gender, birth_year
         )
+
+        # Step 8.5: H7 元气（年柱纳甲/后天宫位配先天之气）— 与化工对偶
+        try:
+            from .yuan_qi import compute_yuan_qi as _cyq
+            yr_stem = bazi[0][0] if (bazi and len(bazi) > 0) else ""
+            yr_branch = bazi[0][1] if (bazi and len(bazi) > 0) else ""
+            yuan_qi = None
+            if yr_stem and yr_branch:
+                yuan_qi = _cyq(
+                    yr_stem, yr_branch,
+                    prenatal.upper_gua, prenatal.lower_gua,
+                    postnatal.upper_gua, postnatal.lower_gua,
+                )
+        except Exception:
+            yuan_qi = None
+
+        # Step 9: H11 节候卦（出生日所在节气）
+        seasonal_hex = self._compute_seasonal_hexagram(birth_date)
 
         return HeluoResult(
             input=input_obj,
@@ -423,8 +345,8 @@ class HeluoCanonical:
             timeline=timeline,
             structure=structure,
             hua_gong=hua_gong,
+            yuan_qi=yuan_qi,
             seasonal_hexagram=seasonal_hex,
-            era=era,
         )
 
     def _build_timeline(
@@ -434,29 +356,10 @@ class HeluoCanonical:
         postnatal: PostnatalHexagram,
         postnatal_yuantang: YuanTang,
         birth_year: int | None,
-        target_year: int | None = None,
-        target_month: int | None = None,
     ) -> Timeline:
         """构建时间序列：大运（爻位值运）+ 流年卦 + 流月卦。
 
         基于 timeline_yun 模块（《河洛理数·卷之四/五》论大运/流年/流月）。
-
-        算力裁剪（2026-10-10 批次 P 第二步）：
-          当 ``target_year`` 非 None 时启用 fast-path：
-            · 大运仍全量算（依赖大运段判定）
-            · 流年 99 段骨架全量算（compute_liunian 本身依赖大运段，年段顺序定先后）
-            · **目标流年 + 上一年 2 段**才嵌入 12 流月 + 6 流日子树
-            · 其余 97 段只保留元数据（年份/虚岁/干支/卦名/六爻/元堂）
-            · 不再调 interpret_all_liunian（yearly[].yi_signal / yi_interpretation
-              全仓零消费方，是 dead-write）
-            · 顶层 monthly_hexagrams 填目标年 12 月（建立扁平路径）
-            · 顶层 daily_hexagram 填目标年目标月 6 日段（链式累变）
-            · dayun_summary 沿用 qi_phase.dayun（本就是元数据，guajie 判运反用）
-
-          ``target_year is None`` → 退回全量（保留旧契约）。
-
-          target_year 必传顶层；target_month 可选（不传时顶层 daily_hexagram 留空骨架，
-          真正的日段由 guajie 命中目标年那一段现算）。
         """
         if birth_year is None:
             birth_year = 1984  # 未提供时占位（甲子年），后续需由调用方传入真实年份
@@ -484,41 +387,13 @@ class HeluoCanonical:
             age_to=100,
         )
 
-        fast_path = target_year is not None
-        # fast-path 仅在 (target_year-1, target_year) 两段嵌入月/日子树
-        material_years: set[int] = set()
-        if fast_path:
-            material_years = {target_year - 1, target_year}
-
         # 流月卦（以流年卦为本，元堂取该流年所属大运段元堂）+ 流日卦
-        yearly: list[dict] = []
-        target_months: list[dict] = []   # fast-path: 目标年 12 月字典（顶层用）
-        target_days: list[dict] = []     # fast-path: 目标年目标月 6 日段（顶层用）
+        yearly = []
         for y in liunian.years:
             # 流年卦元堂：大运分段后取该年所属大运段元堂；无则回退先天元堂
             yyt = y.yuantang_index if y.yuantang_index >= 0 else yuantang.yuantang_index
             # 流年卦元堂爻性（H8 解卦层：流年卦断爻=流年卦元堂，规格书"流月以流年卦元堂为本"）
             yyt_nature = y.lines[yyt] if y.lines and 0 <= yyt < len(y.lines) else None
-
-            entry: dict = {
-                "age": y.age,
-                "year": y.year,
-                "ganzhi": y.ganzhi,
-                "yang_year": y.yang_year,
-                "hexagram": y.hexagram_name,
-                "upper": y.upper,
-                "lower": y.lower,
-                "lines": y.lines,
-                "yuantang_index": yyt,
-                "yuantang_nature": yyt_nature,
-            }
-
-            if fast_path and y.year not in material_years:
-                # 非目标流年：只元数据。months/days/yi_* 全部不带。
-                yearly.append(entry)
-                continue
-
-            # 全量模式 或 目标/上一年：嵌入 12 月 + 6 日（廉价字段，不换卦名）
             liuyue = compute_liuyue(y.lines, yyt)
             months = []
             for m in liuyue.months:
@@ -529,23 +404,17 @@ class HeluoCanonical:
                     jie_dt = _jie_datetime_for_lunar_month(y.year, m["month"])
                 except Exception:
                     jie_dt = None
-                # 流日 / 流时均改按需（2026-10-06）：
-                #   · 流时：旧实现在此把 93 流年 × 12 月 × 6 日全部展开为流时卦，
-                #     共 6,696 次 compute_liushi / 80,352 条小时记录，占四层载荷 91%、
-                #     卦名换算 92%——而消费方（guajie）按 target_hour 点查，每次只需 1 条。
-                #     只记动爻 flip_index，hours 由 guajie 命中该日段时现算。
-                #   · 流日：更进一步，只记 6 段的廉价定位字段（segment/day_from/
-                #     day_to/flip_index），**不做卦名换算**。原先每月一次
-                #     compute_liuri（内含 6 次 _lines_to_hexagram），1,116 个月
-                #     合计 6,696 次，是流时之外最大的一笔开销。
-                #     flip_index 改用闭式 (yue_yao_index + 1 + k) % 6，
-                #     与原「逐爻 diff 求唯一差异爻」在 20,592 个日段上实测全等。
-                #
-                # tests/test_heluo_context.py::test_timeline_structure 只断言
-                # `len(months[0]["days"]) == 6`（引原典「六爻俱变毕，则满三十日》），
-                # **不检查日段内容**，故本改造不触碰其断言。
-                # 需要完整日段时走 materialize_month_days（仅命中月）。
-                month_entry = {
+                liuri = compute_liuri(m["lines"], m["yue_yao_index"], jie_dt)
+                # 流时卦（《河洛真数·起例卷之上·起时卦例》）：以值日卦为本，
+                # 前六时(子~巳)进数变/后六时(午~亥)退数变，阳时变爻阴时取应
+                for dseg in liuri.days:
+                    diffs = [k for k in range(6) if len(dseg["lines"]) > k and len(m["lines"]) > k
+                             and dseg["lines"][k] != m["lines"][k]]
+                    if len(diffs) == 1:
+                        liushi = compute_liushi(dseg["lines"], diffs[0])
+                        dseg["flip_index"] = diffs[0]
+                        dseg["hours"] = liushi.hours
+                months.append({
                     "month": m["month"],
                     "name": m["name"],
                     "upper": m["upper"],
@@ -554,31 +423,28 @@ class HeluoCanonical:
                     "kind": m["kind"],
                     "yue_yao_index": m["yue_yao_index"],
                     "jie_datetime": jie_dt,
-                    "days": compute_liuri_stub(m["lines"], m["yue_yao_index"]),
-                }
-                months.append(month_entry)
-
-                # fast-path：仅对目标年那段抽月卦进顶层
-                if fast_path and y.year == target_year:
-                    target_months.append(month_entry)
-                    if target_month is not None and m["month"] == target_month:
-                        target_days = month_entry["days"]
-
-            entry["months"] = months
-            yearly.append(entry)
+                    "days": liuri.days,
+                })
+            yearly.append({
+                "age": y.age,
+                "year": y.year,
+                "ganzhi": y.ganzhi,
+                "yang_year": y.yang_year,
+                "hexagram": y.hexagram_name,
+                "upper": y.upper,
+                "lower": y.lower,
+                "lines": y.lines,
+                "yuantang_index": yyt,
+                "yuantang_nature": yyt_nature,
+                "months": months,
+            })
 
         # P1：易经解卦层 — 为每个流年卦附加 EVENT_SIGNAL
-        # fast-path 不调（yearly[].yi_signal / yi_interpretation 全仓零消费方，是
-        # dead-write——guajie 唯一读 yearly 的字段是 hexagram/lines/yuantang_index/
-        # yuantang_nature/age/year/ganzhi，以及目标那一段的 months[]）。这是
-        # 99 段里最大的开销：每次 interpret_liunian_year 要查相邻年上下卦+动爻+
-        # EVENT_SIGNAL 构造 + EVENT_SIGNAL.to_dict()，99 次都丢。
-        if not fast_path:
-            yearly = interpret_all_liunian(
-                yearly,
-                yuan_tang_index=yuantang.yuantang_index,
-                yuan_tang_nature=yuantang.yao_nature,
-            )
+        yearly = interpret_all_liunian(
+            yearly,
+            yuan_tang_index=yuantang.yuantang_index,
+            yuan_tang_nature=yuantang.yao_nature,
+        )
 
         dayun_entries = [
             {
@@ -587,27 +453,19 @@ class HeluoCanonical:
                 "hexagram": e.hexagram_name,
                 "line_index": e.line_index,
                 "line_nature": e.line_nature,
-                "phase": e.phase,
             }
             for e in dayun.sequence
         ]
 
         return Timeline(
             yearly_hexagrams=yearly,
-            # ── 2026-10-10 批次 P 第二步：flat 化月/日 ────────────────
-            # 旧实现 monthly_hexagrams 恒 [] / daily_hexagram 恒 {} 是名不副实
-            # 占位（注释自承），下游必须 yearly[].months[].days[] 嵌套定位。
-            # fast-path 下扁平到顶层：monthly_hexagrams=目标年 12 月，
-            # daily_hexagram=目标年目标月 6 日段。target_month 未传则置空骨架，
-            # guajie 由 yearly[目标年].months[] 现取。
-            monthly_hexagrams=target_months if fast_path else [],
-            # daily_hexagram 在 fast-path 且 target_month 命中时填 6 段字典
-            # （每段 segment/day_from/day_to/flip_index）；未命中时 {}。
+            monthly_hexagrams=[],
             daily_hexagram={
-                "year": target_year,
-                "month": target_month,
-                "segments": target_days,
-            } if fast_path and target_month is not None else {},
+                "date": str(birth_year),
+                "hexagram": prenatal.hexagram_name,
+                "upper": prenatal.upper_gua,
+                "lower": prenatal.lower_gua,
+            },
             hourly_hexagram=None,
             seasonal_hexagram=None,
             qi_phase={
@@ -621,45 +479,22 @@ class HeluoCanonical:
         self,
         prenatal: PrenatalHexagram,
         postnatal: PostnatalHexagram,
-        bazi: list[tuple[str, str]],
         birth_date: str,
         gender: str,
         birth_year: int | None,
-        jieqi_index: int | None = None,
     ) -> HuaGongResult | None:
-        """H6: 计算化工状态。
-
-        2026-10-07 修：原先**拿公历月份硬凑月支**（{1:丑, 2:寅, …, 12:子}），
-        而月令以**节气**为界（立春起寅、大雪起子）。公历 1 月实为戌/亥月
-        而非丑月 —— 立春至大雪之间的出生**全部判错化工卦**。
-        例：1983-11-03 生，公历 11 月 → 亥 → 坎；实为霜降后戌月 → 兑。
-
-        `calculate()` 手上有 bazi，月柱地支即真实月令，现直接取用；
-        年干支一并下传，供 L576 的纳音第三级回退使用。
-        公历月近似映射整个删除。
-        """
+        """H6: 计算化工状态。"""
         try:
-            if not bazi or len(bazi) < 2:
+            # 月支按节气节令月精确判定（修复：原实现用公历月份近似，
+            # 边界日会错判月支，如 11-03 立冬前实为戌月却被当亥月）。
+            from .hua_gong import compute_huagong, resolve_birth_month_branch
+            branch = resolve_birth_month_branch(birth_date)
+            if branch is None:
                 return None
-            month_branch = bazi[1][1]     # 月柱地支＝节气月令
-            year_gan, year_zhi = bazi[0][0], bazi[0][1]
-            # ⚠ 2026-10-08（F-3）：**未**下传 birth_date，即生产链当前仍走
-            #   月支近似表 SEASON_BRANCH_TO_HUAGONG，而非已落码并自校验通过的
-            #   原典 L558–L567 节气窗口（hua_gong.huagong_by_birth_date）。
-            #   实测二者差异：寅/巳/申/亥 四个月支**整月**不同，卯/午/酉 跨窗口。
-            #   例 1724-05-22：节气窗口判「震」(L561 五月正在震窗口内)，
-            #   近似表判「离」；下游 state 由 WEAK 变 UNRESOLVED。
-            #   翻转会让 tests/heluo/test_h2_frozen_state.py::test_huagong 与
-            #   tests/heluo/test_audit_batch_20261007.py::test_weak_case_..._reach_frozen_state
-            #   两个 **Golden** 用例翻盘。AGENTS.md 禁擅改 Golden 期望值，
-            #   故此处保持原样，待显式批准后再改这两条 + 打开本行。
-            #   登记见 hua_gong.HUAGONG_PENDING_BRANCH_SWITCH。
             return compute_huagong(
                 prenatal.upper_gua, prenatal.lower_gua,
                 postnatal.upper_gua, postnatal.lower_gua,
-                month_branch,
-                year_gan=year_gan, year_zhi=year_zhi,
-                jieqi_index=jieqi_index,
+                branch,
             )
         except Exception:
             return None
@@ -720,13 +555,10 @@ class HeluoCanonical:
         all_pass = True
         for name, actual, expected_val in checks:
             if actual != expected_val:
-                # 2026-10-06: 原用 ❌/✅ 打印，在 GBK 控制台（非 UTF-8 stdout）
-                # 会抛 UnicodeEncodeError —— 而本方法是返回 bool 的公开校验入口，
-                # 一旦打印失败就变成抛异常，调用方拿不到结论。改用 ASCII 标记。
-                print(f"  FAIL {name}: expected {expected_val!r}, got {actual!r}")
+                print(f"  ❌ {name}: expected {expected_val!r}, got {actual!r}")
                 all_pass = False
             else:
-                print(f"  OK   {name}: {actual!r}")
+                print(f"  ✅ {name}: {actual!r}")
 
         return all_pass
 

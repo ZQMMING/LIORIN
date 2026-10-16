@@ -61,8 +61,8 @@ class FrozenHeluoState:
     seasonal_hexagram: Optional[dict]      # 出生日节候卦信息
     qi_phase: Optional[dict]               # 卦气阶段信息
 
-    # ── 状态判断层（H6）───────────────────────────────────────
-    hua_gong_state: Optional[str]          # NORMAL / REVERSE / RESCUED / KEZHI / WEAK / UNRESOLVED
+    # ── 状态判断层（H6/H7）──────────────────────────────────────
+    hua_gong_state: Optional[str]          # NORMAL / REVERSE / RESCUED / RESTRAINED / UNRESOLVED
     hua_gong_evidence: Optional[list[str]] # 化工证据链
 
     # ── 时间序列（从 canonical._build_timeline 提取）──────────
@@ -74,13 +74,10 @@ class FrozenHeluoState:
     gender: str                            # "male" / "female"
     birth_hour: str                        # 出生时辰
     birth_date: str                        # 出生日期 ISO
-
-    # 2026-10-07 审计修：L576 三级回退的两个决定性标志此前不在冻结态内，
-    # 导致「正体得位」与「仅得纳音、福寿减半」在下游只剩同一个 state 值可看。
-    # 必须追加在末尾——dataclass 里带默认值的字段不能后接非默认值，
-    # 插在 hua_gong_state 之后会连累 dayun_summary 等后续字段全部报错。
-    hua_gong_level: Optional[str] = None   # 正体 / 互体 / 纳音 / 无
-    hua_gong_reduced: Optional[bool] = None  # 末级减半（L576「终是浅薄，福寿减半」）
+    yuan_qi_state: Optional[str] = None   # NORMAL / REVERSE / UNRESOLVED
+    yuan_qi_evidence: Optional[list[str]] = None  # 元气证据链
+    yuan_qi_tian: Optional[str] = None    # 天元气卦（年干纳甲）
+    yuan_qi_di: Optional[str] = None      # 地元气卦（年支后天宫）
 
     def to_dict(self) -> dict:
         """序列化为字典，供 Signal/Assertion 层消费。"""
@@ -118,9 +115,13 @@ class FrozenHeluoState:
             },
             "hua_gong": {
                 "state": self.hua_gong_state,
-                "level": self.hua_gong_level,
-                "reduced": self.hua_gong_reduced,
                 "evidence": self.hua_gong_evidence,
+            },
+            "yuan_qi": {
+                "state": self.yuan_qi_state,
+                "tian": self.yuan_qi_tian,
+                "di": self.yuan_qi_di,
+                "evidence": self.yuan_qi_evidence,
             },
             "seasonal": self.seasonal_hexagram,
             "qi_phase": self.qi_phase,
@@ -144,13 +145,9 @@ def build_frozen_state(result: Any, calculation_policy: Optional[dict] = None) -
     """
     from .numbers import TRIGRAM_LINES
 
-    # ⚠ 2026-10-07 审计修：era 此前取的是 result.input.timezone（恒为
-    # "Asia/Shanghai"）——把**时区**填进了**世代**字段，上中下元出处彻底丢失。
-    # 现从 result.era 读真值；旧结果对象无该字段时记 "unknown"，不再拿时区顶替。
-    _era = getattr(result, "era", None) or "unknown"
     policy = calculation_policy or {
         "stem_method": "河图",
-        "era": _era,
+        "era": getattr(getattr(result, 'input', None), 'timezone', "zhong"),
         "calc_version": "v2.0",
     }
 
@@ -172,6 +169,7 @@ def build_frozen_state(result: Any, calculation_policy: Optional[dict] = None) -
 
     hua_gong = getattr(result, 'hua_gong', None)
     seasonal_hex = getattr(result, 'seasonal_hexagram', None)
+    yuan_qi = getattr(result, 'yuan_qi', None)
 
     # 解析出生日期
     birth_date = getattr(getattr(result, 'input', None), 'birth_date', '')
@@ -200,9 +198,11 @@ def build_frozen_state(result: Any, calculation_policy: Optional[dict] = None) -
         seasonal_hexagram=seasonal_hex,
         qi_phase=qi_phase if timeline else None,
         hua_gong_state=hua_gong.state.value if hua_gong else None,
-        hua_gong_level=getattr(hua_gong, "level", None) if hua_gong else None,
-        hua_gong_reduced=getattr(hua_gong, "reduced", None) if hua_gong else None,
         hua_gong_evidence=hua_gong.evidence if hua_gong else None,
+        yuan_qi_state=yuan_qi.state.value if yuan_qi else None,
+        yuan_qi_evidence=yuan_qi.evidence if yuan_qi else None,
+        yuan_qi_tian=yuan_qi.tian_yuan_qi if yuan_qi else None,
+        yuan_qi_di=yuan_qi.di_yuan_qi if yuan_qi else None,
         dayun_summary=dayun_summary,
         liunian_count=liunian_count,
         birth_year=birth_year,
