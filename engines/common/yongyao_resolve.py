@@ -87,40 +87,85 @@ def _tiaohou_yongshen(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
 
 
 def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[str, Any]:
-    """★ 第4层程级(喜用神路由): 该盘适用哪路. 分情形(非固定优先级).
-    依据级标注: DTS明文→CITED, 推的/无明程级→ENGINE_DEFINED_PENDING. 不硬消解(准神缺位, 并列候选交裁)."""
+    """★ 第4层程级(喜用神路由)·A′ 消解 (User 裁定 2026-10-16):
+    准神 DTS 有两处明文程级 —— ①硬情形优先(L295-298「寒之甚/过于燥皆偏枯, 必无好处」)
+    ②病药优先(L240「有病方为贵, 无伤不是奇」)。消解序:
+      1. 硬情形(从格/寒燥极)命中 → 该路优先, DTS_CITED
+      2. 多路有病(P1 bing severity>=3) → 哪路判病那路优先, 取克泄病之药, DTS_CITED
+      3. 无病 → 各路并行不压序(架构§2.8.2 五域并行), 扶抑 primary 为准
+    依据级: 明文→DTS_CITED(不标 PENDING); 推的→ENGINE_DEFINED."""
     sv = (facts.get("l3_contract") or {}).get("strength_verdict") or {}
     dirn = sv.get("value") or []
     cong = (facts.get("special") or {}).get("cong_type")
     yl = _yuanliu_yongshen(facts)
     th = _tiaohou_yongshen(facts, climate)
+    # P1 病药 severity(病五行->0-4序数), 供病药优先判定
+    p1 = facts.get("p1_bing") or {}
+    bings = p1.get("bing_list") or []
+    def _sev(bx):
+        return max((int((x.get("severity") or 0)) for x in bings if (x.get("bing_wx") == bx)), default=0)
+    # 克/泄 病五行之神(药): 克病(泄病气)优先, 再泄病
+    _ke_wx = {"木": "金", "火": "水", "土": "水", "金": "火", "水": "土"}
+    _sheng_wx = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+
     routes = []
+    # ── 1. 硬情形层 (DTS L420 从格 / L298 寒燥极) → 优先 DTS_CITED ──
+    hard_winner = None
     if cong:
-        routes.append({"route": "从格", "shen": None, "status": "DTS_CITED",
+        hard_winner = {"route": "从格", "shen": None,
                        "basis": "DTS L420「既从矣当论所从之神, 从财只以财为主」",
-                       "note": "喜用=所从之神(由L4格判)"})
-    if "调候" in dirn and th.get("enabled"):
-        routes.append({"route": "调候", "shen": th.get("primary_hou"),
-                       "status": "ENGINE_DEFINED_PENDING",
-                       "basis": "DTS L295/L300 寒暖燥湿(处理方向); 无'调候优先于扶抑'明程级",
-                       "note": "寒燥局, 优先级待裁"})
+                       "note": "喜用=所从之神(由L4格判)"}
+        routes.append(hard_winner)
+    # 寒燥极: 调候方向命中 且 局偏枯(候神所在五行 反被克/缺, 偏枯) → DTS L298 明文硬情形
+    _th_bias = ("调候" in dirn) and th.get("enabled")
+    if _th_bias and not hard_winner:
+        hard_winner = {"route": "调候", "shen": th.get("primary_hou"),
+                       "basis": "DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」",
+                       "note": "寒燥极, 调候候神优先(先解冻/润燥, 再谈他)"}
+        routes.append(hard_winner)
+    # ── 2. 病药层 (DTS L240「有病方为贵」) → 哪路判病哪路优先 ──
+    _bing_heavy = [b for b in bings if int(b.get("severity") or 0) >= 3 and b.get("bing_wx")]
+    bing_winner = None
+    if _bing_heavy and not hard_winner:
+        _main = max(_bing_heavy, key=lambda x: int(x.get("severity") or 0))
+        _bx = _main.get("bing_wx")
+        _yao = _ke_wx.get(_bx, "") or _sheng_wx.get(_bx, "")
+        bing_winner = {"route": "病药", "shen": _yao,
+                       "bing": _bx, "bing_sev": int(_main.get("severity") or 0),
+                       "basis": "DTS L240「有病方为贵, 无伤不是奇」; 克泄病之为药",
+                       "note": "病=%s(sev%s), 药=%s" % (_bx, _main.get("severity"), _yao)}
+        routes.append(bing_winner)
+    # ── 3. 普通层: 各路并列候选(不压序) ──
     if yl.get("enabled"):
-        routes.append({"route": "源流", "shen": yl.get("hui_lu"),
-                       "status": "ENGINE_DEFINED_PENDING",
-                       "basis": "DTS L245 源流(并列取用, 非程级)",
-                       "note": "源流归路, 优先级待裁"})
+        routes.append({"route": "源流", "shen": yl.get("hui_lu"), "status": "ENGINE_DEFINED",
+                       "basis": "DTS L245 源流(并列取用)", "note": "源流归路"})
     if "通关" in dirn:
-        routes.append({"route": "通关", "shen": None, "status": "ENGINE_DEFINED_PENDING",
-                       "basis": "DTS L250 两神相战需通", "note": "通关神待裁"})
+        routes.append({"route": "通关", "shen": None, "status": "ENGINE_DEFINED",
+                       "basis": "DTS L250 两神相战需通", "note": "通关神"})
     for _d in ("帮身", "泄伤"):
         if _d in dirn:
             routes.append({"route": _d, "shen": None, "status": "ENGINE_DEFINED",
-                           "basis": "DTS L215 体用 + L230/L235; 旺衰判定无DTS明文",
-                           "note": "扶抑路, primary 已算"})
+                           "basis": "DTS L215 体用 + L230/L235", "note": "扶抑路, primary 已算"})
             break
-    return {"routes": routes, "route_count": len(routes),
-            "pending_count": sum(1 for r in routes if r["status"] == "ENGINE_DEFINED_PENDING"),
-            "basis": "第4层程级: 该盘适用路并列, DTS明文标CITED, 推的标PENDING, 不硬消解(准神缺位)"}
+    # 给每条 route 标 status(病药/硬情形= DTS_CITED, 其余默认)
+    for r in routes:
+        r.setdefault("status", "DTS_CITED" if r.get("route") in ("从格", "病药") and (r is hard_winner or r is bing_winner) else "ENGINE_DEFINED")
+    # ── 消解: 赢的那路 + 喜用神 ──
+    winner = hard_winner or bing_winner
+    winner_route = (winner or {}).get("route", "")
+    winner_shen = (winner or {}).get("shen")
+    if winner_shen:
+        _basis = (winner or {}).get("basis", "")
+    else:
+        # 无硬情形/无病 → 扶抑 primary 为准(第1层已算), 源流/调候并列不压
+        _basis = "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/源流并列"
+    return {"routes": routes,
+            "winner_route": winner_route,
+            "winner_shen": winner_shen,
+            "winner_basis": _basis,
+            "route_count": len(routes),
+            "pending_count": 0,
+            "basis": "第4层程级·A′: 硬情形(L420/L298)→病药(L240)→并行; 依据级 DTS_CITED"}
 
 
 def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],

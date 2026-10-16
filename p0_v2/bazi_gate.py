@@ -403,17 +403,19 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
     _sv_dir = []
     # 帮身/泄伤: 日主衰(失令/无根/党少) → 帮; 日主旺(得令且有根或党多) → 泄伤
     #   DTS L235「衰则喜帮喜助」/「旺则宜泄宜伤」
+    # ② DTS L115「详干支轻重」方向判据 —— 本轮回退: 一刀切(_yi>=_tong)致 100 盘 83 翻转, 触停条件
+    #   保留 ling 版(待 ② 精细判据下轮); P1 扶抑主病未建, ③ 病药层暂救不了 DT-0002 类
     _sv_shuai = not (_sv_ling in ("旺", "相") and (_sv_root or _sv_dang_duo))
     if _sv_shuai:
         _sv_dir.append("帮身")
     else:
         _sv_dir.append("泄伤")
-    # 调候: 冬金水寒局 / 夏火土燥局 需调候 (寒暖燥湿)
-    #   DTS L295「金水为寒木火为暖」/ L300 燥湿
+    # ① DTS L295「金水为寒」调候按节气寒燥(非月令五行): 冬寒/夏燥/秋金寒 均需调候
+    #   秋金(申酉)局寒需火/木解冻(User 补), 候神表 qtbj 120 组已齐
     _sv_tiaohou = (
-        (_sv_monthwx == "金" or _sv_monthwx == "水") and _sv_month in ("亥", "子", "丑")
-    ) or (
-        (_sv_monthwx == "火" or _sv_monthwx == "土") and _sv_month in ("巳", "午", "未")
+        _sv_month in ("亥", "子", "丑")
+        or _sv_month in ("巳", "午", "未")
+        or _sv_month in ("申", "酉")
     )
     if _sv_tiaohou:
         _sv_dir.append("调候")
@@ -687,12 +689,14 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
                     "yuanliu_yongshen": yy.get("yuanliu_yongshen"),   # ★ 第2层 源流(DTS L245)
                     "tiaohou_yongshen": yy.get("tiaohou_yongshen"),   # ★ 第3层 调候(DTS L295/L300)
                     },
-        "yongshen_decision": {   # ★ 第4层 喜用神路由(程级)
+        "yongshen_decision": {   # ★ 第4层 喜用神路由(程级·A′ 消解)
             "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),
+            "winner_route": (yy.get("routing") or {}).get("winner_route", ""),
+            "winner_shen": (yy.get("routing") or {}).get("winner_shen"),
+            "winner_basis": (yy.get("routing") or {}).get("winner_basis", ""),
             "routes": (yy.get("routing") or {}).get("routes", []),
             "route_count": (yy.get("routing") or {}).get("route_count", 0),
-            "pending_count": (yy.get("routing") or {}).get("pending_count", 0),
-            "basis": "第4层程级: primary=扶抑(现), routes=该盘适用各路(DTS明文CITED/推的PENDING), 不硬消解",
+            "basis": "第4层程级·A′: 硬情形(L420/L298)→病药(L240)→并行; winner_shen=消解喜用神(DTS_CITED), primary=扶抑(现)",
         },
         # ★ PATCH-L3-03 (2026-10-03) 旺衰矩阵投影 (six_dims 已废弃)
         #   L1 数据出口: dm_row(日主整行) / yin_row(印行) / by_element(五行全表)
