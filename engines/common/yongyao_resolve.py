@@ -86,11 +86,49 @@ def _tiaohou_yongshen(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
             "note": "候神按 QTBJ 原文次序; 精化/程级归第4层"}
 
 
+def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[str, Any]:
+    """★ 第4层程级(喜用神路由): 该盘适用哪路. 分情形(非固定优先级).
+    依据级标注: DTS明文→CITED, 推的/无明程级→ENGINE_DEFINED_PENDING. 不硬消解(准神缺位, 并列候选交裁)."""
+    sv = (facts.get("l3_contract") or {}).get("strength_verdict") or {}
+    dirn = sv.get("value") or []
+    cong = (facts.get("special") or {}).get("cong_type")
+    yl = _yuanliu_yongshen(facts)
+    th = _tiaohou_yongshen(facts, climate)
+    routes = []
+    if cong:
+        routes.append({"route": "从格", "shen": None, "status": "DTS_CITED",
+                       "basis": "DTS L420「既从矣当论所从之神, 从财只以财为主」",
+                       "note": "喜用=所从之神(由L4格判)"})
+    if "调候" in dirn and th.get("enabled"):
+        routes.append({"route": "调候", "shen": th.get("primary_hou"),
+                       "status": "ENGINE_DEFINED_PENDING",
+                       "basis": "DTS L295/L300 寒暖燥湿(处理方向); 无'调候优先于扶抑'明程级",
+                       "note": "寒燥局, 优先级待裁"})
+    if yl.get("enabled"):
+        routes.append({"route": "源流", "shen": yl.get("hui_lu"),
+                       "status": "ENGINE_DEFINED_PENDING",
+                       "basis": "DTS L245 源流(并列取用, 非程级)",
+                       "note": "源流归路, 优先级待裁"})
+    if "通关" in dirn:
+        routes.append({"route": "通关", "shen": None, "status": "ENGINE_DEFINED_PENDING",
+                       "basis": "DTS L250 两神相战需通", "note": "通关神待裁"})
+    for _d in ("帮身", "泄伤"):
+        if _d in dirn:
+            routes.append({"route": _d, "shen": None, "status": "ENGINE_DEFINED",
+                           "basis": "DTS L215 体用 + L230/L235; 旺衰判定无DTS明文",
+                           "note": "扶抑路, primary 已算"})
+            break
+    return {"routes": routes, "route_count": len(routes),
+            "pending_count": sum(1 for r in routes if r["status"] == "ENGINE_DEFINED_PENDING"),
+            "basis": "第4层程级: 该盘适用路并列, DTS明文标CITED, 推的标PENDING, 不硬消解(准神缺位)"}
+
+
 def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     climate: Dict[str, Any] = None) -> Dict[str, Any]:
     primary = debate.get('primary_bing') or {}
     _yl = _yuanliu_yongshen(facts)   # ★ 第2层 源流(不动 primary)
     _th = _tiaohou_yongshen(facts, climate)   # ★ 第3层 调候(不动 primary)
+    _rt = _yongshen_routing(facts, climate)   # ★ 第4层 程级路由(该盘适用哪路)
     bw = primary.get('bing_wx', '')
     bid = primary.get('bing_id', '')
     _sec_wx = {s2.get('bing_wx') for s2 in (debate.get('secondary_bing') or []) if s2.get('bing_wx')}
@@ -150,6 +188,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     'ge_fallback_source': _source,
                     'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
                     'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
+                    'routing': _rt,   # ★ 第4层 程级路由
                     'boundary_note': '源1无主病, 走格体喜神/救应神 fallback(架构§2.9 五源)'
                     }
         return {'layer': 'YONGYAO_RESOLVE', 'state': 'NO_BING',
@@ -157,6 +196,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                 'ji_shen': [], 'rejected_climate': rejected_climate,
                 'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
                 'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
+                'routing': _rt,   # ★ 第4层 程级路由
                 'boundary_note': '无主病且无格体喜神/救应神, 不裁决用药'}
 
     edges = []   # 每条: 五行/gan/边类型/功能/是否采纳/剔除理由
@@ -264,4 +304,5 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         'evidence_refs': ['DTS PATHOLOGY_QI_HOU.008', 'DTS FAN_JU.001'],
         'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
         'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
+        'routing': _rt,   # ★ 第4层 程级路由
     }

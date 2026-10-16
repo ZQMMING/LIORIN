@@ -687,6 +687,13 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
                     "yuanliu_yongshen": yy.get("yuanliu_yongshen"),   # ★ 第2层 源流(DTS L245)
                     "tiaohou_yongshen": yy.get("tiaohou_yongshen"),   # ★ 第3层 调候(DTS L295/L300)
                     },
+        "yongshen_decision": {   # ★ 第4层 喜用神路由(程级)
+            "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),
+            "routes": (yy.get("routing") or {}).get("routes", []),
+            "route_count": (yy.get("routing") or {}).get("route_count", 0),
+            "pending_count": (yy.get("routing") or {}).get("pending_count", 0),
+            "basis": "第4层程级: primary=扶抑(现), routes=该盘适用各路(DTS明文CITED/推的PENDING), 不硬消解",
+        },
         # ★ PATCH-L3-03 (2026-10-03) 旺衰矩阵投影 (six_dims 已废弃)
         #   L1 数据出口: dm_row(日主整行) / yin_row(印行) / by_element(五行全表)
         #   L3 判定出口: l3_contract (13 字段, 契约见 p0_v2/l3_contract_spec.md v1.1)
