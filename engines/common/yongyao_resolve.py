@@ -43,9 +43,54 @@ def _safe(wx: str, bw: str) -> bool:
     return True
 
 
+def _yuanliu_yongshen(facts: Dict[str, Any]) -> Dict[str, Any]:
+    """★ 第2层 yuanliu_yongshen (DTS L245 源流, 不动 primary).
+    取满局最旺为源头, 源头所生之归路为喜. 多步流通精化归第4层程级.
+    basis=DTS_CITED L245."""
+    wpd = (facts.get("wuxing_power") or {}).get("wuxing_power", {}) or {}
+    wxs = ["木", "火", "土", "金", "水"]
+
+    def _mass(wx):
+        v = wpd.get(wx, {})
+        return (int(v.get("ben_n", 0) or 0) + int(v.get("zhong_n", 0) or 0)
+                + int(v.get("yu_n", 0) or 0) + int(v.get("stem_n", 0) or 0))
+
+    masses = {w: _mass(w) for w in wxs}
+    total = sum(masses.values())
+    if total <= 0:
+        return {"enabled": False, "source": None, "hui_lu": None,
+                "basis": "DTS L245", "note": "无五行量, 源流不出"}
+    source = max(wxs, key=lambda w: masses[w])
+    hui_lu = SHENG.get(source, "")
+    return {"enabled": bool(hui_lu), "source": source, "hui_lu": hui_lu,
+            "masses": masses,
+            "basis": "DTS L245「取最多最旺为源头, 流去之处是所喜之神」",
+            "note": "归路=源头直接所生; 多步流通(如火→土→金)精化归第4层程级"}
+
+
+def _tiaohou_yongshen(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[str, Any]:
+    """★ 第3层 tiaohou_yongshen (DTS L295/L300 寒暖燥湿).
+    候神取 cli=climate.candidates(QTBJ build_climate_candidates, 已建≥12条, 字段 stem). 不动 primary."""
+    cands = (climate or {}).get("climate_candidates", []) or []
+    stems = [c.get("stem", "") for c in cands if c.get("stem")]
+    wux = [GAN_WX.get(s, "") for s in stems]
+    wux = [w for w in wux if w]
+    mb = facts.get("month_branch", "")
+    mw = facts.get("month_qi_element", "")
+    cold = mw in ("金", "水") and mb in ("亥", "子", "丑")
+    dry = mw in ("火", "土") and mb in ("巳", "午", "未")
+    return {"enabled": bool(stems), "hou_stems": stems, "hou_wuxing": sorted(set(wux)),
+            "primary_hou": wux[0] if wux else None,
+            "climate_state": ("寒" if cold else ("燥" if dry else "中")),
+            "basis": "DTS L295/L300 寒暖燥湿; 候神=QTBJ climate candidates(build_climate_candidates)",
+            "note": "候神按 QTBJ 原文次序; 精化/程级归第4层"}
+
+
 def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     climate: Dict[str, Any] = None) -> Dict[str, Any]:
     primary = debate.get('primary_bing') or {}
+    _yl = _yuanliu_yongshen(facts)   # ★ 第2层 源流(不动 primary)
+    _th = _tiaohou_yongshen(facts, climate)   # ★ 第3层 调候(不动 primary)
     bw = primary.get('bing_wx', '')
     bid = primary.get('bing_id', '')
     _sec_wx = {s2.get('bing_wx') for s2 in (debate.get('secondary_bing') or []) if s2.get('bing_wx')}
@@ -103,11 +148,15 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     'ji_shen': [bm for bm in (_gc.get('ti_wx') or []) if bm != _w],
                     'rejected_climate': rejected_climate,
                     'ge_fallback_source': _source,
+                    'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
+                    'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
                     'boundary_note': '源1无主病, 走格体喜神/救应神 fallback(架构§2.9 五源)'
                     }
         return {'layer': 'YONGYAO_RESOLVE', 'state': 'NO_BING',
                 'primary_medicine': None, 'auxiliary_medicine': [],
                 'ji_shen': [], 'rejected_climate': rejected_climate,
+                'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
+                'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
                 'boundary_note': '无主病且无格体喜神/救应神, 不裁决用药'}
 
     edges = []   # 每条: 五行/gan/边类型/功能/是否采纳/剔除理由
@@ -213,4 +262,6 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         'rule': '制=克病; 化=泄病(克身则剔); 帮=比劫印帮身(是病则剔); 水泛加火暖',
         'boundary_note': '离散三边全列按主辅; 只裁用药方向不判吉凶; 化/帮为原典通例, 须看命局分寸',
         'evidence_refs': ['DTS PATHOLOGY_QI_HOU.008', 'DTS FAN_JU.001'],
+        'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
+        'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
     }

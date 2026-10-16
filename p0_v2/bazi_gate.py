@@ -380,15 +380,62 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
     # ★ PATCH-L3-SV-口径统一 (2026-10-09, 裁1甲): f 有根口径改用 root_grade(含中余气), 与 de_di 统一
     #   原 f 用 dm_ben_eff(本气严口径) 与 de_di(方案甲含中余气) 口径分裂 → 统一为 root_grade!=\"无\"
     #   依据 PZZQ L201「长生禄旺根之重/墓库余气根之轻」: 原典"根"含中余气, f 判有根应同口径
+    # ★ PATCH-L3-DIRECTION (2026-10-15, 第1层 L3收权)
+    #   User 裁定: strength_verdict 不出 {STRONG,WEAK,EXTREME_WEAK} 枚举, 出取用方向
+    #   {帮身, 泄伤, 调候, 通关, 从格}, basis 标 DTS_CITED (DTS 明文教"往哪走", 不判强弱)。
+    #   旧枚举降为 meta (strength_verdict_enum), 供 L4/P1 旧消费点临时读, 新代码一律读方向。
     _sv_ling = _dmp.get("ling_state", "")
     _sv_root = (_root_grade != "无")        # 有根=含中余气(root_grade), 与 de_di 统一 (裁1甲)
     _sv_dang_duo = (_support_state == "SHENG_FU_CHENG_SHI")
+    _sv_dmwx = f.get("daymaster_element", "") or _dmwx
+    _sv_monthwx = _monthwx
+    _sv_month = f.get("month_branch", "") or ""
+
+    # 旧枚举 (降级 meta, 保留供旧消费点; DTS 无判定标准, 非权威)
     if _sv_ling in ("囚", "死") and not _sv_root and not _sv_dang_duo:
-        _sv_value = "EXTREME_WEAK"          # 失令 + 无根(含中余气) + 党少: 三弱 → 衰极
+        _sv_enum = "EXTREME_WEAK"
     elif _sv_ling in ("旺", "相") and (_sv_root or _sv_dang_duo):
-        _sv_value = "STRONG"                # 得令(主) + (有根 或 党多 程级辅) → 强
+        _sv_enum = "STRONG"
     else:
-        _sv_value = "WEAK"
+        _sv_enum = "WEAK"
+
+    # ★ 取用方向集合 (basis=DTS_CITED, 多向并集, 非程级排序 —— 程级属第4层)
+    _sv_dir = []
+    # 帮身/泄伤: 日主衰(失令/无根/党少) → 帮; 日主旺(得令且有根或党多) → 泄伤
+    #   DTS L235「衰则喜帮喜助」/「旺则宜泄宜伤」
+    _sv_shuai = not (_sv_ling in ("旺", "相") and (_sv_root or _sv_dang_duo))
+    if _sv_shuai:
+        _sv_dir.append("帮身")
+    else:
+        _sv_dir.append("泄伤")
+    # 调候: 冬金水寒局 / 夏火土燥局 需调候 (寒暖燥湿)
+    #   DTS L295「金水为寒木火为暖」/ L300 燥湿
+    _sv_tiaohou = (
+        (_sv_monthwx == "金" or _sv_monthwx == "水") and _sv_month in ("亥", "子", "丑")
+    ) or (
+        (_sv_monthwx == "火" or _sv_monthwx == "土") and _sv_month in ("巳", "午", "未")
+    )
+    if _sv_tiaohou:
+        _sv_dir.append("调候")
+    # 通关: 日主所属五行的"克我者"与"我克者"两党同局相战, 需中间通关之神
+    #   DTS L250「木土而要火, 火金而要土, 土水而要金, 金水而要水」
+    _sv_ke = _ke.get(_sv_dmwx, "")   # 日主克谁(我克者)
+    _sv_kewo = ""
+    for _k, _v in _ke.items():
+        if _v == _sv_dmwx:
+            _sv_kewo = _k
+            break
+    _sv_war = (
+        _sv_ke and _sv_kewo
+        and int((_wpd.get(_sv_ke) or {}).get("ben_n", 0) or 0) >= 1
+        and int((_wpd.get(_sv_kewo) or {}).get("ben_n", 0) or 0) >= 1
+    )
+    if _sv_war:
+        _sv_dir.append("通关")
+    # 从格: special.cong_type 有值 (日主孤立无气, 财官强)
+    #   DTS L420「日主孤立无气, 无地人元, 绝无一毫生扶之意, 财官强甚, 乃为真从」
+    if special.get("cong_type"):
+        _sv_dir.append("从格")
 
     f["l3_contract"] = {
         "dm_ben_eff": int(special.get("dm_ben_eff", 0) or 0),
@@ -412,10 +459,21 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         #     "STRONG"/"WEAK"/"EXTREME_WEAK"  映射已落但仍 predictive=False
         #     恒不出 "EXTREME_STRONG"(§2.4 已否决, 三源语义冲突)
         "strength_verdict": {
-            "value": _sv_value,
-            "status": "ENGINE_DEFINED",
+            "value": _sv_dir,
+            "status": "DTS_CITED",
             "predictive": False,
-            "basis": "L110/L230 散句方向 + ENGINE_DEFINED 合成规则(非 DTS 判据, 非案例反推); 阈值=工程边界(日主月令位/根/党); L240(源流章源头) 归源流层, 不进 L3",
+            "basis": (
+                "取用方向集合(非强弱判定): "
+                "帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; "
+                "调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。"
+                "多向并集, 非程级排序(程级属第4层)"
+            ),
+            "strength_verdict_enum": {
+                "value": _sv_enum,
+                "status": "ENGINE_DEFINED",
+                "predictive": False,
+                "basis": "L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction",
+            },
         },
         # ★ PATCH-L3-01 (2026-10-03) L3 契约补 5 冲激字段
         #   契约: p0_v2/l3_contract_spec.md v1.0 §1 字段 6~10
@@ -625,7 +683,10 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
                     "medicine_blocked": yy.get("medicine_blocked"),
                     "rejected_climate": yy.get("rejected_climate"),
                     "rule": yy.get("rule"),
-                    "evidence_refs": yy.get("evidence_refs")},
+                    "evidence_refs": yy.get("evidence_refs"),
+                    "yuanliu_yongshen": yy.get("yuanliu_yongshen"),   # ★ 第2层 源流(DTS L245)
+                    "tiaohou_yongshen": yy.get("tiaohou_yongshen"),   # ★ 第3层 调候(DTS L295/L300)
+                    },
         # ★ PATCH-L3-03 (2026-10-03) 旺衰矩阵投影 (six_dims 已废弃)
         #   L1 数据出口: dm_row(日主整行) / yin_row(印行) / by_element(五行全表)
         #   L3 判定出口: l3_contract (13 字段, 契约见 p0_v2/l3_contract_spec.md v1.1)
