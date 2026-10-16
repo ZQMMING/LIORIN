@@ -1,1 +1,0 @@
-"""Golden（Phase 8）。"""

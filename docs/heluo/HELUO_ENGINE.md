@@ -1,5 +1,13 @@
 # 河洛引擎（Heluo Engine）— 接线与契约
 
+> **独立包边界（2026-10-16 提纯）**：本包为独立河洛引擎，仅含
+> `src/tongshu/engines/heluo/`、`heluo_adapter.py`，以及运行必需的上游
+> `bazi_engine`/`bazi_adapter`（排四柱）、`time/`（真太阳时）、`yi/`（易经卦爻辞结构）、
+> `facts/`、`reasoning/`、`spec/`。入口为 `heluo_adapter.HeluoAdapter`；
+> 完整 `pipeline`/`compute_stage` 属集成层，不在本包。流时卦剥离，大运/流年/流月引擎自算。
+> 以下历史文档中「compute_stage / 黄历引擎接线 / YiAdapter 跨模块不含」等描述为提纯前口径，
+> 实际边界以仓库根 `README.md` 与本说明为准。
+
 **状态**：v2 frozen（2026-10-10 批次 P 完成算力裁剪）
 **位置**：`src/tongshu/engines/heluo/`
 **数据**：`data/heluo/`（原典 + 取证 + 多源校对）

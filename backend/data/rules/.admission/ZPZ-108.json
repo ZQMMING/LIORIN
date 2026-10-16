@@ -1,9 +1,0 @@
-{
-  "rule_id": "ZPZ-108",
-  "linked_rule_path": "backend/data/rules/ZPZ-108.json",
-  "admission_scope": "SOURCE_VERIFIED",
-  "verified_by": "BOT-MASTER/admission_metadata_collector_v1",
-  "credential_hash": "777454b6b5a7f6a5",
-  "admission_timestamp": "2026-09-11T00:00:00Z",
-  "admission_notes": "classical_source 完整 (book_id=ZIPING-ZHENQUAN, passage_id=P-ZPZ-YONGSHEN). evidence_refs 存在. rule status='active' 维持不变. verified_by=BOT-MASTER (仅 metadata 收集记录, 非 P2.1-F GPT adjudicator)."
-}

@@ -1,7 +1,7 @@
 [project]
-name = "tongshu"
+name = "heluo-engine"
 version = "1.0.0"
-description = "TONGSHU reasoning pipeline v1.0"
+description = "河洛真数推命引擎：基于《河洛真数》的卦象/化工/元气/大运流年/断语引擎"
 requires-python = ">=3.11"
 dependencies = [
     "sxtwl>=1.0.0",
@@ -9,13 +9,7 @@ dependencies = [
     "chinese-calendar>=1.10.0",
     "pyyaml>=6.0",
     "jsonschema>=4.0",
-    "fastapi>=0.100",
     "pydantic>=2.0",
-    "psycopg2-binary>=2.9.0",
-    "openai>=1.0.0",
-    # B-09 STAGE-A: required for TimestampSigner-signed access tokens
-    # in tongshu.services.identity_gateway.
-    "itsdangerous>=2.0",
 ]
 
 [build-system]

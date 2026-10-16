@@ -1,8 +1,0 @@
-{
-  "rollback_date": "2026-09-01T22:44:49.786456",
-  "total_rolled_back": 0,
-  "total_kept_empty": 74,
-  "rolled_back_items": [],
-  "reason": "Inferred provenance fields cleared per arbiter ruling",
-  "principle": "No inference-based author/chapter/locator without original text verification"
-}

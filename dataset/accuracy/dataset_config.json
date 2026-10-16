@@ -1,7 +1,0 @@
-{
-  "schema_version": "1.0",
-  "created_at": "2026-08-22",
-  "dataset_phase": "A2-Pilot",
-  "target": {"persons": 30, "events": "100-150"},
-  "quality_rule": "If final qualified < target, use qualified count only. Never lower standards."
-}

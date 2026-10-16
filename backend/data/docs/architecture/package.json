@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "iztro": "^2.6.0",
-    "lunar-javascript": "^1.7.7",
-    "playwright": "^1.62.1"
-  }
-}
