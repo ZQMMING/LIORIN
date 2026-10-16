@@ -559,5 +559,38 @@ class TestLiuyueJieAnchor:
             assert self._md(dt) == (em, ed), f"month={lm} 应锚({em:02d}-{ed:02d})，实际{dt}"
 
 
+class TestIndependentEntryTrueSolarTime:
+    """独立入口 compute() 恒走真太阳时（消除民用时直排），并与正式链路一致。"""
+
+    def test_east_default_keeps_result(self):
+        """东部不传 location（默认北京）：1980-06-22 10 时真太阳时仍巳时，结果保持"""
+        from tongshu.engines.heluo_adapter import HeluoAdapter
+        r = HeluoAdapter().compute((1980, 6, 22, 10), gender="male")
+        assert (r.prenatal.hexagram_name, r.yuantang.yuantang,
+                r.postnatal.hexagram_name) == ("风地观", "六二", "水风井")
+
+    def test_west_late_zi_matches_formal_chain(self):
+        """乌鲁木齐 23:30（西部晚子时）：独立入口与正式链路一致（真太阳时亥时）"""
+        from datetime import date
+        from tongshu.engines.heluo_adapter import HeluoAdapter
+        from tongshu.engines.time.resolver import TimeResolver
+        adapter = HeluoAdapter()
+        r_indep = adapter.compute((2026, 10, 15, 23), gender="male", location="乌鲁木齐")
+        ctx = TimeResolver().resolve_context(
+            birth_date=date(2026, 10, 15), hour=23, minute=30,
+            timezone="Asia/Shanghai", location="乌鲁木齐", gender="male")
+        r_formal = adapter.compute_from_context(ctx, gender="male")
+        assert (r_indep.prenatal.hexagram_name, r_indep.yuantang.yuantang) == (
+            r_formal.prenatal.hexagram_name, r_formal.yuantang.yuantang)
+        # 真太阳时 21:20 亥时，先天卦应为火天大有（非民用时子时卦）
+        assert r_indep.prenatal.hexagram_name == "火天大有"
+
+    def test_zhongshan_late_zi_still_zi(self):
+        """中山 23:30 真太阳时仍落子时（子时档）"""
+        from tongshu.engines.heluo_adapter import HeluoAdapter
+        r = HeluoAdapter().compute((2026, 10, 15, 23), gender="male", location="中山")
+        assert r.prenatal.hexagram_name == "火山旅"
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

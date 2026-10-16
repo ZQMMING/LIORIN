@@ -136,18 +136,25 @@ class ComputeStage:
             year, month, day, hour = calc_context.bazi_view
             ziwei_chart = self._ziwei_adapter.compute(year, month, day, hour, gender=effective_gender)
         else:
-            bazi_birth = birth_date
-            year, month, day, hour = bazi_birth
-            effective_gender = gender
-            bazi_chart = self.bazi_engine.compute(bazi_birth, gender=effective_gender)
-            # P1-FIX: fallback(无 location) 也需阳历→农历再调 iztro。
-            # 此前把阳历日期当农历直传，农历无 31 日等输入触发 iztro 崩溃（GOLDEN-016）。
-            from lunar_python import Solar as _Solar
-            _lunar = _Solar.fromYmdHms(year, month, day, hour, 0, 0).getLunar()
-            ziwei_chart = self.ziwei_engine.compute(
-                (_lunar.getYear(), _lunar.getMonth(), _lunar.getDay()),
-                hour,
-                gender=effective_gender,
+            # 无 calc_context：为保证排盘恒真太阳时（不再民用时直排），
+            # 用 TimeResolver 按默认 location 构造真太阳时 ctx 兜底。
+            # 调用方应优先显式传 calc_context（真实出生地）；此处默认北京。
+            from datetime import date as _date
+            from ..engines.time.resolver import TimeResolver
+            by, bm, bd, bh = birth_date
+            _default_ctx = TimeResolver().resolve_context(
+                birth_date=_date(by, bm, bd),
+                hour=bh,
+                minute=30,  # 时辰中点（无分钟输入）
+                timezone="Asia/Shanghai",
+                location="北京",
+                gender=gender,
+            )
+            effective_gender = _default_ctx.subject_gender or gender
+            bazi_chart = self._bazi_adapter.compute(_default_ctx, gender=effective_gender)
+            year, month, day, hour = _default_ctx.bazi_view
+            ziwei_chart = self._ziwei_adapter.compute(
+                year, month, day, hour, gender=effective_gender
             )
         huangli_day = self.huangli_engine.get_day(analysis_date)
 
