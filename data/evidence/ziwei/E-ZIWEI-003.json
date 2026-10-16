@@ -1,0 +1,42 @@
+{
+  "evidence_id": "E-ZIWEI-003",
+  "rule_refs": ["ZW-SIHUA-MEANING", "ZW-SIHUA-LU", "ZW-SIHUA-QUAN", "ZW-SIHUA-KE", "ZW-SIHUA-JI"],
+  "citation": {
+    "original_text": "我们斗数里面有四化。这个四化星是我们的主力星，所以要从四化星开始介绍。所谓四化星有科权禄忌。这四颗星代表的意义是什么，它的性，星性最重要。这个科，科本身，第一个，科名，比如说我们参加考试金榜题名，这是一个科。还有我们文章写的很好，文笔写的很好也是科。它代表的是官印。当官的时候我们有个印盖一下，那个就是官印。第二个它代表的是性刚，个性很刚。如果你的夫妻宫化权，代表你的那一半在个性上面领导力很强，主见很强的一个人。这种人命里面有化权的人，先天上面来说，这种人天生的就是一个领导者。很多将领，很多总经理，很多银行的经理，很多厂长，就是命中他就有权的人。禄就是财，钱财。禄是性守，性比较守。所以生下来的话，权禄这是豪门，巨富啊，生在家里面一定很有钱。那这个禄如果在父母宫，顾名思义父母亲一定从商的，亦是做生意的。有的人禄在财帛宫他自己会做生意。有的人禄在命宫，先天就会有祖业到他身上去。这个忌我们意思就是说有凶星在兄弟宫。这忌是一个杀星。化忌代表劫杀。第二个化忌代表想不开。",
+    "language": "modern_chinese",
+    "verification_status": "VERIFIED",
+    "excerpt_length": 520
+  },
+  "source_verification": {
+    "author": "倪海厦",
+    "work": "天纪",
+    "chapter": "四化册·总论+四化各论",
+    "locator": "D:/顺天系统资料/倪海厦天纪-断言资料精选集.md 第192-216行",
+    "verification_status": "VERIFIED",
+    "verified_at": "2026-09-05T23:10:00+08:00",
+    "verifier": "BOT-ZIWEI (T-BOT-ZIWEI-002)"
+  },
+  "modern_paraphrase": "紫微四化为命盘核心：化科主名声考试（SUPPORT/recognition），化权主官印领导（ACTION/activation），化禄主财禄家业（RESOURCE/inflow），化忌主劫杀不圆满（CONSTRAINT/restriction）。四化落宫固定不变（倪师立场），不随流年移动。大限四化须按大限宫干查四化表，不得按本命年干。",
+  "evidence_strength": "primary",
+  "version": "2.0.0",
+  "created_at": "2026-09-05T23:10:00+08:00",
+  "source_layer": "classical_authority",
+  "provenance_note": "M4-A级：倪海厦《天纪》四化册原文，已授权。五个化星定义来自同一出处，相互印证构成四化语义基准。四化固定位置原则为倪师独特立场（二、四化是否会动）。",
+  "source_locator": {
+    "work": "倪海厦天纪",
+    "section": "四化册",
+    "chapters": ["一、四化总论", "二、四化是否会动", "三、化科", "四、化权", "五、化禄", "六、化忌"],
+    "line_range": "192-216",
+    "corpus_path": "D:/顺天系统资料/倪海厦天纪-断言资料精选集.md"
+  },
+  "testable_claim": {
+    "claim": "四化表(GAN_SIHUA)中每个天干映射的四个化星，对应上述四种语义方向；四化落宫固定不随流年移动",
+    "validation_method": "通过test_ziwei_engine.py::TestSihuaTable验证四化表完整性；通过test_ziwei_phase_a0_extended.py验证四化链条正确性"
+  },
+  "classification": "PRIMARY_RULE",
+  "authority_type": "AUTHORIZED_SOURCE",
+  "semantic_category": "SIHUA_MEANING",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-05",
+  "integrity_verified": true
+}

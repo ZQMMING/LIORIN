@@ -1,0 +1,222 @@
+{
+  "meta": {
+    "purpose": "紫微断事规则草案（四体系交叉验证的紫微侧，当前紫微规则 0 条）",
+    "status": "draft",
+    "engine_dependency": "需引擎扩展 ziwei_palace_huaji/ziwei_palace_hualu/ziwei_shars_in_palace 字段后启用",
+    "created_at": "2026-08-26T00:00:00Z",
+    "source": "K2G_ZIWEI_四化与十二宫职_资料汇编 / 紫微斗数全书 / 斗数骨髓赋"
+  },
+  "rules": [
+    {
+      "rule_id": "ZW-101",
+      "title": "化忌入财帛宫 → 财运风险",
+      "rule_type": "紫微断事·财运",
+      "source": { "work": "紫微斗数全书", "chapter": "四化论", "location": "化忌入财帛" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_palace_huaji", "op": "eq", "value": "CAIBAI" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "化忌入财帛宫，财运受损，易破财。",
+        "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "topic": "财运" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "WEALTH_RISK",
+      "forbidden_inferences": [],
+      "evidence_refs": ["E-K2G-ZIWEI-004"],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    },
+    {
+      "rule_id": "ZW-102",
+      "title": "化忌入疾厄宫 → 健康风险",
+      "rule_type": "紫微断事·健康",
+      "source": { "work": "紫微斗数全书", "chapter": "四化论", "location": "化忌入疾厄" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_palace_huaji", "op": "eq", "value": "JI_E" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "化忌入疾厄宫，健康不佳，易患病。",
+        "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "topic": "健康" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "HEALTH_RISK",
+      "forbidden_inferences": [],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    },
+    {
+      "rule_id": "ZW-103",
+      "title": "化忌入夫妻宫 → 婚姻风险",
+      "rule_type": "紫微断事·婚姻",
+      "source": { "work": "紫微斗数全书", "chapter": "四化论", "location": "化忌入夫妻" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_palace_huaji", "op": "eq", "value": "FUQI" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "化忌入夫妻宫，婚姻波折，感情纠葛。",
+        "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "topic": "婚姻" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "MARRIAGE_RISK",
+      "forbidden_inferences": [],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    },
+    {
+      "rule_id": "ZW-104",
+      "title": "化忌入迁移宫 → 灾劫/外出风险",
+      "rule_type": "紫微断事·灾劫",
+      "source": { "work": "斗数骨髓赋", "chapter": "迁移", "location": "化忌入迁移" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_palace_huaji", "op": "eq", "value": "QIANYI" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "化忌入迁移宫，外出受阻，易招是非灾劫。",
+        "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "topic": "灾劫" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "CATASTROPHE_RISK",
+      "forbidden_inferences": [],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    },
+    {
+      "rule_id": "ZW-105",
+      "title": "化忌入官禄宫 → 事业风险",
+      "rule_type": "紫微断事·事业",
+      "source": { "work": "紫微斗数全书", "chapter": "四化论", "location": "化忌入官禄" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_palace_huaji", "op": "eq", "value": "GUANLU" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "化忌入官禄宫，事业受阻，官运不佳。",
+        "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "topic": "事业" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "CAREER_RISK",
+      "forbidden_inferences": [],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    },
+    {
+      "rule_id": "ZW-106",
+      "title": "煞星入夫妻宫 → 婚姻波折",
+      "rule_type": "紫微断事·婚姻",
+      "source": { "work": "紫微斗数全书", "chapter": "星曜入宫", "location": "煞星入夫妻" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_shars_in_palace", "op": "has", "value": "FUQI" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "煞星入夫妻宫，婚姻波折，配偶多磨。",
+        "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "topic": "婚姻" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "MARRIAGE_RISK",
+      "forbidden_inferences": [],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    },
+    {
+      "rule_id": "ZW-107",
+      "title": "煞星入财帛宫 → 财运风险",
+      "rule_type": "紫微断事·财运",
+      "source": { "work": "紫微斗数全书", "chapter": "星曜入宫", "location": "煞星入财帛" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_shars_in_palace", "op": "has", "value": "CAIBAI" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "煞星入财帛宫，财运不佳，易破财。",
+        "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "topic": "财运" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "WEALTH_RISK",
+      "forbidden_inferences": [],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    },
+    {
+      "rule_id": "ZW-108",
+      "title": "煞星入疾厄宫 → 健康风险",
+      "rule_type": "紫微断事·健康",
+      "source": { "work": "紫微斗数全书", "chapter": "星曜入宫", "location": "煞星入疾厄" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_shars_in_palace", "op": "has", "value": "JI_E" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "煞星入疾厄宫，健康不佳，易患病。",
+        "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "topic": "健康" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "HEALTH_RISK",
+      "forbidden_inferences": [],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    },
+    {
+      "rule_id": "ZW-109",
+      "title": "化禄入财帛宫 → 财运机会",
+      "rule_type": "紫微断事·财运",
+      "source": { "work": "紫微斗数全书", "chapter": "四化论", "location": "化禄入财帛" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_palace_hualu", "op": "eq", "value": "CAIBAI" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "化禄入财帛宫，财运亨通，收入丰厚。",
+        "produces_layer_output_template": { "direction": "INCREASE", "polarity": "active", "topic": "财运" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "WEALTH_OPPORTUNITY",
+      "forbidden_inferences": [],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    },
+    {
+      "rule_id": "ZW-110",
+      "title": "化禄入官禄宫 → 事业机会",
+      "rule_type": "紫微断事·事业",
+      "source": { "work": "紫微斗数全书", "chapter": "四化论", "location": "化禄入官禄" },
+      "conditions": {
+        "all": [
+          { "field": "ziwei_palace_hualu", "op": "eq", "value": "GUANLU" }
+        ]
+      },
+      "conclusion": {
+        "rationale_classical": "化禄入官禄宫，事业有成，地位提升。",
+        "produces_layer_output_template": { "direction": "INCREASE", "polarity": "active", "topic": "事业" }
+      },
+      "applies_to_layers": ["EVENT_TOPIC"],
+      "produces_signal_type": "CAREER_OPPORTUNITY",
+      "forbidden_inferences": [],
+      "status": "draft",
+      "version": "0.1.0",
+      "book_id": "ZIWEI-DOUSHU"
+    }
+  ]
+}

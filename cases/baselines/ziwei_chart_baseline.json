@@ -1,0 +1,50 @@
+{
+ "description": "紫微命盘基准案例 (STD_BIRTH) - 用于跨引擎污染检测",
+ "std_birth": {
+  "year": 1990,
+  "month": 5,
+  "day": 15,
+  "hour": 10,
+  "gender": "male"
+ },
+ "computed_at": "2026-09-05T23:15:00+08:00",
+ "lunar_date": [
+  1990,
+  5,
+  15
+ ],
+ "soul_palace_main_star": "TIANJI",
+ "soul_palace_main_stars": [
+  "TIANJI"
+ ],
+ "soul_earthly_branch": "丑",
+ "body_earthly_branch": "亥",
+ "source": "engine_actual (ZiweiAdapter.compute实测, 修正自iztro参考值)",
+ "decadal_mutagen": [
+  "太阳",
+  "武曲",
+  "太阴",
+  "天同"
+ ],
+ "yearly_mutagen": [
+  "天同",
+  "天机",
+  "文昌",
+  "廉贞"
+ ],
+ "monthly_mutagen": [
+  "天同",
+  "天机",
+  "文昌",
+  "廉贞"
+ ],
+ "daily_mutagen": [
+  "天机",
+  "天梁",
+  "紫微",
+  "太阴"
+ ],
+ "engine_hash": "4cc614b0db4ee1c8",
+ "notes": "hash统一为Phase5污染检测权威算法(先按canon排序规范化再sha256[:16]); 与cross_engine_baseline.json的ziwei条目同源. 命宫主星TIANJI为引擎实测(修正自iztro参考值ZIWEI).",
+ "hash_algorithm": "scripts/cross_engine_baseline.py _canon+_hash (Phase5权威算法, 与cross_engine_baseline.json一致)"
+}

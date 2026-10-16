@@ -1,0 +1,174 @@
+{
+  "rule_item": [
+    {
+      "item": "命宫定位",
+      "source": "iztro palace.getSoulAndBody()",
+      "formula": "寅起正月，顺数至生月，逆数生时为命宫",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 白盒可验证",
+      "notes": ""
+    },
+    {
+      "item": "身宫定位",
+      "source": "iztro palace.getSoulAndBody()",
+      "formula": "寅起正月，顺数至生月，顺数生时为身宫",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 白盒可验证",
+      "notes": ""
+    },
+    {
+      "item": "五行局",
+      "source": "iztro palace.getFiveElementsClass()",
+      "formula": "纳音五行，干支相加取余 (木1金2水3火4土5)",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 白盒可验证",
+      "notes": "命宫干支起局"
+    },
+    {
+      "item": "紫微星安星法",
+      "source": "iztro star.location.getStartIndex()",
+      "formula": "六五四三二，酉午亥辰丑...",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 白盒可验证",
+      "notes": "命宫干支起局"
+    },
+    {
+      "item": "十四主星分布",
+      "source": "iztro star.location (大循环)",
+      "formula": "依紫微星位置循环安星",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 与顺天一致",
+      "notes": "白盒验证通过"
+    },
+    {
+      "item": "辅星/煞星安星法",
+      "source": "iztro star.location.*Index()",
+      "formula": "按年干支、月日等规则安星",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 白盒可验证",
+      "notes": "禄存、擎羊、陀罗、天马等"
+    },
+    {
+      "item": "大限起运年龄",
+      "source": "iztro palace.getHoroscope()",
+      "formula": "传统规则: 男顺女逆，起运2岁",
+      "traditional_source": "传统规则",
+      "iztro_algorithm": "default (ageDivide=normal)",
+      "verification": "⚠️ 需验证传统",
+      "notes": "案例显示3岁起，需确认是否符合传统"
+    },
+    {
+      "item": "大限顺逆行",
+      "source": "iztro palace.getHoroscope()",
+      "formula": "阳男阴女顺行，阴男阳女逆行",
+      "traditional_source": "传统规则",
+      "iztro_algorithm": "default",
+      "verification": "⚠️ 需验证传统",
+      "notes": "源码中有阴阳判断逻辑"
+    },
+    {
+      "item": "流年四化",
+      "source": "iztro horoscope('YYYY-6-15')",
+      "formula": "以农历六月十五为基准",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 与顺天一致",
+      "notes": "使用顺天GAN_SIHUA覆盖"
+    },
+    {
+      "item": "流月四化",
+      "source": "iztro horoscope('YYYY-M-15')",
+      "formula": "以每月十五为基准",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 与顺天一致",
+      "notes": "使用顺天GAN_SIHUA覆盖"
+    },
+    {
+      "item": "流日四化",
+      "source": "iztro horoscope('YYYY-M-D')",
+      "formula": "以当日为基准",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 与顺天一致",
+      "notes": "使用顺天GAN_SIHUA覆盖"
+    },
+    {
+      "item": "三方四正",
+      "source": "顺天 get_sanfang_sizheng()",
+      "formula": "本宫 + 对宫(idx+6) + 三合(idx+4, idx+8)",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "N/A (顺天实现)",
+      "verification": "✅ 白盒可验证",
+      "notes": "纯拓扑计算"
+    },
+    {
+      "item": "真太阳时",
+      "source": "顺天 corrected_hour_index()",
+      "formula": "北京时间 + 经度差 + 均时差",
+      "traditional_source": "传统规则",
+      "iztro_algorithm": "N/A (iztro不支持)",
+      "verification": "✅ 白盒可验证",
+      "notes": "存在但未自动调用"
+    },
+    {
+      "item": "四化表",
+      "source": "顺天 GAN_SIHUA",
+      "formula": "注释声明为中州派/王亭之",
+      "traditional_source": "中州派",
+      "iztro_algorithm": "可配置 (config.mutagens)",
+      "verification": "✅ 白盒可验证",
+      "notes": "与iztro默认表一致"
+    },
+    {
+      "item": "子时/晚子时",
+      "source": "iztro dayDivide配置",
+      "formula": "forward: 晚子时算次日; current: 晚子时算当日",
+      "traditional_source": "通行规则: 晚子时算次日",
+      "iztro_algorithm": "default (dayDivide=forward)",
+      "verification": "✅ 可配置",
+      "notes": "顺天默认使用index 12表示晚子时"
+    },
+    {
+      "item": "闰月处理",
+      "source": "iztro fixLeap参数",
+      "formula": "fixLeap=true: 前半月算上月，后半月算下月",
+      "traditional_source": "通行规则",
+      "iztro_algorithm": "default (fixLeap=true)",
+      "verification": "✅ 可配置",
+      "notes": "顺天通过lunar_python负月表示闰月"
+    },
+    {
+      "item": "命主/身主",
+      "source": "iztro algorithm配置",
+      "formula": "default: 命宫地支找命主; zhongzhou: 年支找命主",
+      "traditional_source": "中州派用年支，通行派用命宫",
+      "iztro_algorithm": "default (非中州)",
+      "verification": "✅ 可配置",
+      "notes": "源码第212行有明确注释"
+    },
+    {
+      "item": "流年岁前12神",
+      "source": "iztro star.getYearly12()",
+      "formula": "安岁前12神规则",
+      "traditional_source": "《紫微斗数全书》",
+      "iztro_algorithm": "default",
+      "verification": "✅ 白盒可验证",
+      "notes": "岁前12神包括：岁建、晦气、丧门等"
+    }
+  ],
+  "summary": {
+    "total_items": 18,
+    "whitebox_verified": 16,
+    "needs_verification": 2,
+    "iztro_default_algorithm": "default",
+    "iztro_zhongzhou_available": true,
+    "sihua_table_consistent": true
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "evidence_id": "E-ZIWEI-005",
+  "rule_refs": ["ZW-DAXIAN-ALGO", "ZW-LAIYIN-GONG", "C-13"],
+  "citation": {
+    "original_text": "我们教诸位排的方式，排出来以后，就永远固定在那个宫上面不要动了。比如说武曲星里头有武曲化禄，这个固定好我们就不要动。你不需要每年的时候科、权、禄都在不同的位置，这个都不对的。一般来说大限到了，如果是我们来改，三年前一定有办法化解。",
+    "language": "modern_chinese",
+    "verification_status": "VERIFIED",
+    "excerpt_length": 103
+  },
+  "source_verification": {
+    "author": "倪海厦",
+    "work": "天纪 + 体系约束",
+    "chapter": "四化册·四化是否会动 / 方法论册·大限推演",
+    "locator": "D:/顺天系统资料/倪海厦天纪-断言资料精选集.md 第196-199行 + 第246-249行",
+    "verification_status": "VERIFIED",
+    "verified_at": "2026-09-05T23:10:00+08:00",
+    "verifier": "BOT-ZIWEI (T-BOT-ZIWEI-002)"
+  },
+  "modern_paraphrase": "四化落宫固定不变：命盘排出后，四化星固定在其宫位，不随流年移动。大限四化必须按大限宫的宫干查四化表，不得按本命年干（硬约束C-13）。大运推演遵循时间先后顺序，流年→流月→流日依次叠加，每层以对应宫干查四化。来因宫（出生年干落宫）用于追溯问题根源。",
+  "evidence_strength": "primary",
+  "version": "2.0.0",
+  "created_at": "2026-09-05T23:10:00+08:00",
+  "source_layer": "classical_authority",
+  "provenance_note": "M4-A级：倪海厦《天纪》四化固定原则 + 体系约束C-13（大限四化硬约束）。双重独立来源相互印证。",
+  "source_locator": {
+    "work": "倪海厦天纪 + 体系约束",
+    "sections": ["四化册·四化是否会动", "方法论册·大限推演"],
+    "constraint_refs": ["C-13: 大限四化必须按大限宫的宫干查四化表"],
+    "line_range": "196-199, 246-249",
+    "corpus_path": "D:/顺天系统资料/倪海厦天纪-断言资料精选集.md"
+  },
+  "testable_claim": {
+    "claim": "大限四化计算使用大限宫天干查GAN_SIHUA表，不使用出生年干；来因宫字段须在命盘中保留",
+    "validation_method": "通过test_ziwei_phase_a0_extended.py::TestDaxian和TestDailyMutagen中的'大限流年流月流日链条完整'用例验证"
+  },
+  "classification": "PRIMARY_RULE",
+  "authority_type": "AUTHORIZED_SOURCE",
+  "semantic_category": "DAXIAN_ALGO",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-05",
+  "integrity_verified": true
+}

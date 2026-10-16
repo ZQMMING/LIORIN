@@ -1,0 +1,28 @@
+{
+  "evidence_id": "E-ZIWEI-001",
+  "rule_refs": [
+    "ZIWEI-MAIN-STAR-MAP"
+  ],
+  "citation": {
+    "original_text": "signal_ontology.md §5.4 紫微主星→USO 映射:紫微/天府→SUPPORT,贪狼→ACTION,巨门→CONSTRAINT。",
+    "language": "modern_chinese",
+    "verification_status": "not_applicable"
+  },
+  "modern_paraphrase": "命宫主星经 iztro 实测取值,按 spec §5.4 映射表定 USO 基线信号。映射表为冻结规格,非本证据新增语义。",
+  "evidence_strength": "secondary",
+  "version": "1.0.0",
+  "created_at": "2026-08-17T00:00:00Z",
+  "source_layer": "engineering_seed",
+  "provenance_note": "M2-B:工程种子/spec 引文(source_layer=engineering_seed),非经典版本核验;citation.verification_status 维持 not_applicable;不进核验域;审查记录见 data/evidence_meta/evidence_review_queue.json",
+  "source_locator": {
+    "work": "工程种子",
+    "chapter": "spec §5.4",
+    "page": "docs/signal_ontology.md"
+  },
+  "classification": "CONTEXTUAL",
+  "authority_type": "CONTEXTUAL",
+  "semantic_category": "CONTEXTUAL",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-02",
+  "normalization_commit": "final-fix-006"
+}

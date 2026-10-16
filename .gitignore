@@ -1,0 +1,40 @@
+# Secrets
+.env
+*.key
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary scripts and outputs
+_temp_*.py
+_tmp_*.py
+phase*_output.txt
+*.tmp
+*.bak
+
+# Large data files (optional - uncomment if needed)
+# audit/*.jsonl
+# data/*.json
+
+# OS
+Thumbs.db
+.DS_Store
+node_modules/

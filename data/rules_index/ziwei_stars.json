@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "Ziwei Stars (紫微星曜) rule index — 指向 data/rules/ZW-405~408.json",
+    "status": "index",
+    "created": "2026-09-01",
+    "verification_status": "unverified",
+    "admission_status": "candidate"
+  },
+  "rules": [
+    {
+      "rule_id": "ZW_MAIN_STAR",
+      "ref": "data/rules/ZW-405.json",
+      "field": "soul_palace_main_stars",
+      "note": "命宫主星参考ZW-405(化禄)",
+      "canonical_rule_id": "ZW-405"
+    },
+    {
+      "rule_id": "ZW_SIHUA",
+      "ref": "data/rules/ZW-405.json",
+      "field": "soul_palace_sihua",
+      "note": "命宫四化参考ZW-405~408",
+      "canonical_rule_id": "ZW-405"
+    },
+    {
+      "rule_id": "ZW_PALACE_STAR",
+      "ref": "data/rules/ZW-405.json",
+      "field": "palace_stars",
+      "note": "宫位主星参考ZW-405(化禄)",
+      "canonical_rule_id": "ZW-405"
+    },
+    {
+      "rule_id": "ZW_PALACE_SIHUA",
+      "ref": "data/rules/ZW-405.json",
+      "field": "palace_sihua",
+      "note": "宫位四化参考ZW-405~408",
+      "canonical_rule_id": "ZW-405"
+    }
+  ]
+}

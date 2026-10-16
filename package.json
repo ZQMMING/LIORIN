@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "iztro": "^2.6.0",
+    "lunar-typescript": "1.8.6",
+    "lunar-lite": "^1.0.0"
+  }
+}

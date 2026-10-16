@@ -1,0 +1,42 @@
+{
+  "evidence_id": "E-ZIWEI-006",
+  "rule_refs": ["ZW-PATTERN-RECOGNITION", "ZW-MAINSTAR-USEO", "E"],
+  "citation": {
+    "original_text": "紫微星主的是官，官带。所以有紫微星出现的时候，它代表的是官印，官的命。武曲星这颗星第一个它代表的是武官。第二个它也代表财星。而且它是财星的王。武曲星的人个性跟太阳一样很火爆。但是这种一发就过去了，随发随走。它武曲星也代表贵人。像紫微太阳武曲这种通通是贵人星。我们看命宫的时候一定要同时兼看另外三个宫。一个叫做财帛，一个叫做官禄，一个叫做迁移。看命宫的时候一定兼看这三个宫。我们斗数看的时候一定是看三方四正。",
+    "language": "modern_chinese",
+    "verification_status": "VERIFIED",
+    "excerpt_length": 178
+  },
+  "source_verification": {
+    "author": "倪海厦",
+    "work": "天纪",
+    "chapter": "主星册·紫微/武曲 + 十二宫册·三方四正",
+    "locator": "D:/顺天系统资料/倪海厦天纪-断言资料精选集.md 第36-38行 + 第128-130行",
+    "verification_status": "VERIFIED",
+    "verified_at": "2026-09-05T23:10:00+08:00",
+    "verifier": "BOT-ZIWEI (T-BOT-ZIWEI-002)"
+  },
+  "modern_paraphrase": "十四主星各有确定星义：紫微→官印贵气(SUPPORT)，武曲→武官+财星(RESOURCE)，太阳→武官贵气(SUPPORT)，天府→文官辅佐(SUPPORT)，太阴→富星(FINANCE)，天机→文官谋略(REFLECTION)，天同→福星(FORTUNE)，廉贞→桃花官符(CONSTRAINT)，贪狼→桃花财气(ACTION)，巨门→口舌暗星(CONSTRAINT)，天相→印星佐才(SUPPORT)，天梁→阴贵星(RESOLVE)，七杀→将星杀星(ACTION)，破军→耗星变化(CHANGE)。格局识别须覆盖全部22个标准格局（硬约束E），不得缺漏。",
+  "evidence_strength": "primary",
+  "version": "2.0.0",
+  "created_at": "2026-09-05T23:10:00+08:00",
+  "source_layer": "classical_authority",
+  "provenance_note": "M4-A级：倪海厦《天纪》主星册原文验证星义映射；体系约束硬约束E验证格局清单完整性。三重独立来源相互印证。",
+  "source_locator": {
+    "work": "倪海厦天纪 + 体系约束",
+    "sections": ["主星册·紫微", "主星册·武曲", "十二宫册·三方四正"],
+    "constraint_refs": ["E: 格局层22个格局清单不得缺漏"],
+    "line_range": "36-38, 128-130",
+    "corpus_path": "D:/顺天系统资料/倪海厦天纪-断言资料精选集.md"
+  },
+  "testable_claim": {
+    "claim": "ziwei_engine.py中的MAIN_STAR_USO映射与main_star定义与天纪主星册星义一致；ziwei_pattern.py中的22格局清单完整覆盖",
+    "validation_method": "通过test_iztro_validation.py::test_main_star_uso_mapping验证USO映射完整性；通过test_ziwei_pattern.py验证22格局识别"
+  },
+  "classification": "PRIMARY_RULE",
+  "authority_type": "AUTHORIZED_SOURCE",
+  "semantic_category": "PATTERN_RECOGNITION",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-05",
+  "integrity_verified": true
+}

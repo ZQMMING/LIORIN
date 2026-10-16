@@ -1,0 +1,42 @@
+{
+  "evidence_id": "E-ZIWEI-004",
+  "rule_refs": ["ZW-SANGFANG-SI-ZHENG", "ZW-PALACE-MAPPING"],
+  "citation": {
+    "original_text": "我们看命宫的时候一定要同时兼看另外三个宫。一个叫做财帛，一个叫做官禄，一个叫做迁移。看命宫的时候一定兼看这三个宫。我们斗数看的时候一定是看三方四正。命宫在这边对会出来的宫，这三个宫叫三方，这叫四正。把本宫算进去就是四正。",
+    "language": "modern_chinese",
+    "verification_status": "VERIFIED",
+    "excerpt_length": 98
+  },
+  "source_verification": {
+    "author": "倪海厦",
+    "work": "天纪",
+    "chapter": "十二宫册·三方四正与对宫借星",
+    "locator": "D:/顺天系统资料/倪海厦天纪-断言资料精选集.md 第128-131行",
+    "verification_status": "VERIFIED",
+    "verified_at": "2026-09-05T23:10:00+08:00",
+    "verifier": "BOT-ZIWEI (T-BOT-ZIWEI-002)"
+  },
+  "modern_paraphrase": "三方四正是紫微斗数核心宫位分析法则：命宫（或任一宫）的对宫、财帛宫、官禄宫构成三方，加上本宫共四宫为四正。格局识别和星曜力量评估必须基于三方四正综合判断，非单一宫位孤立论断。借星原则：命宫空宫时借对宫主星论事。",
+  "evidence_strength": "primary",
+  "version": "2.0.0",
+  "created_at": "2026-09-05T23:10:00+08:00",
+  "source_layer": "classical_authority",
+  "provenance_note": "M4-A级：倪海厦《天纪》三方四正定义原文。这是宫位分析的基础法则，非工程推断，直接可用于证据溯源。",
+  "source_locator": {
+    "work": "倪海厦天纪",
+    "section": "十二宫册",
+    "chapter": "三方四正与对宫借星",
+    "line_range": "128-131",
+    "corpus_path": "D:/顺天系统资料/倪海厦天纪-断言资料精选集.md"
+  },
+  "testable_claim": {
+    "claim": "格局识别算法须对命宫三方四正的所有宫位进行综合星曜分析，非单一宫位孤立判断",
+    "validation_method": "通过test_ziwei_pattern.py验证格局识别覆盖三方四正宫位"
+  },
+  "classification": "PRIMARY_RULE",
+  "authority_type": "AUTHORIZED_SOURCE",
+  "semantic_category": "PALACE_MAPPING",
+  "normalization_version": "2.0",
+  "normalization_date": "2026-09-05",
+  "integrity_verified": true
+}
