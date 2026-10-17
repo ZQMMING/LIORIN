@@ -852,6 +852,12 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             #   原文仍断「庚枭夺食而无财为救应…斯乃无财之病也」(印坐禄夺食, 煞反生印助夺)。
             #   原文未言就煞印免夺食; 就煞印贵格反例标 PENDING 待核(威权显赫案例, 食弃当否另论)。
             _ss_xi = sorted(set(GAN_WX[g] for g in _qs_def_xi + _yin_def_xi))
+            # ★ PZZQ L1047「食喜身旺以相生」: 身弱(L3 帮身)食神格需比劫帮身方能担食, 喜神含比劫
+            #   DT-0437(辛金冬休, 身弱): 原 xi=七杀火(忌), 该含比劫金(帮身成食格)
+            _l3_dir437 = ((facts.get('l3_contract') or {}).get('strength_verdict') or {}).get('value') or []
+            if '帮身' in _l3_dir437:
+                _dmx = GAN_WX[dg]
+                _ss_xi = [_dmx] + [x for x in sorted(set(_ss_xi)) if x != _dmx]   # 比劫帮身置首(身弱食神格喜比劫担食), 余候选其后
             _ss_po = [{'type': '组合', 'match': 'ANY', 'required': ['偏印']}]
         elif _ti_gang_tai_wang and _yin_def_xi:
             # DTS L215「提纲食伤财官太旺, 则取年月时上印比为喜神」(准神primary)
