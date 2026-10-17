@@ -580,6 +580,15 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     _xi_gans = list(yin_gans)
                     _rule = ('PZZQ255: 印格带伤食(官杀透+食伤透+印制食伤)->印格成; '
                              '印是格体亦是用神(印制伤兼护官); 破格: 财破印')
+                    # ★ DTS 准神 DT-0254「必用酉金之财」: 带伤食段若印重(印多用财抑太过),
+                    #   财是救应之神置喜首(与 L610-637 印多逢财段同口径 ZHENG_YIN_001)。
+                    #   印重判据同 L615: 印透干数>=2 或 印本气根ben_n>=2。旁参不顶准神, 此段准神=DTS。
+                    _yin_ben_254 = int(((facts.get('wuxing_power',{}).get('wuxing_power',{}) or {}).get(yin_wx,{}) or {}).get('ben_n',0) or 0)
+                    _yin_ren_254 = (len(yin_gans) >= 2) or (_yin_ben_254 >= 2)
+                    if _yin_ren_254:
+                        _cai_254 = _god_gans('正财') + _god_gans('偏财')
+                        _xi_gans = ([_cai_254[0]] if _cai_254 else []) + _xi_gans
+                        _rule = ('PZZQ255: 印格带伤食+印重(印多用财抑太过)->财置喜首抑印, 印制伤护官次; 破格: 无')
                 else:
                     _xi_gans = list(guan_gans)   # 命名债: 旧名 _guan_sheng 实为食伤, 已弃用
                     _rule = ('PZZQ255: 官印双全+官有根+无杀透->印格成; 印是格体; 喜神=官; 破格: 财破印')
@@ -620,7 +629,9 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 _yin_po = []
             else:
                 # 印轻财重: 贪财破印, 财为忌; 喜比劫(制财救印, 对照表"无劫财以救则贪财破印")
-                _yin_caixi = [GAN_WX.get(dg, '')]   # 比劫(日主自身五行)=制财救印
+                # ★ DTS 准神 DT-0265「以寅木为用」: 印轻逢财, 印是格体, 印轻则印本身为用(扶印),
+                #   置喜首; 比劫(制财)次之。原喜神只取比劫=缺印体, 补月令印五行。
+                _yin_caixi = [yin_wx] + [GAN_WX.get(dg, '')]   # 印木置首, 比劫次
                 _yin_po = [{'type': '组合', 'match': 'ANY',
                             'required': ['正财', '偏财']}]  # 印轻逢财, 财单见即破印
             facts['ge_cheng'] = {
@@ -651,6 +662,20 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         if _d2_dai_shangshi:
             _yin_xq = [yin_wx_default]
             _yin_rule = ('PZZQ255: 印格带伤食(官杀透+食伤透+印制食伤)->喜印(印制伤兼护官); 破格: 财破印')
+            # ★ DTS 准神 DT-0254「必用酉金之财」: 带伤食段若印重, 喜财抑印(印多用财, ZHENG_YIN_001)。
+            #   财取透干财(cai_gans); 透干财空时认藏支财(排盘 _zhi_ben_gan 权威支本气干, 不新造判据)。
+            _yin_ben_d2 = int(_yin_wx_pow.get('ben_n', 0) or 0)
+            _yin_ren_d2 = (len(yin_gans) >= 2) or (_yin_ben_d2 >= 2)
+            if _yin_ren_d2:
+                _cai_d2 = [g for g in cai_gans]
+                if not _cai_d2:
+                    # 日主克我=财五行; 藏支财=支本气干五行==财五行(酉金=辛金, 酉本气辛=丁日财)
+                    _cai_wx_d2 = {'木': '金', '火': '水', '土': '火', '金': '木', '水': '土'}.get(yin_wx_default, '')
+                    _cai_d2 = [z for z in _zhi_ben_gan.values() if GAN_WX.get(z, '') == _cai_wx_d2]
+                if _cai_d2:
+                    _cai_wx_first = GAN_WX.get(_cai_d2[0], '')
+                    _yin_xq = [_cai_wx_first] + [x for x in _yin_xq if x != _cai_wx_first]
+                    _yin_rule = ('PZZQ255: 印格带伤食+印重(印多用财抑太过)->财置喜首抑印(认藏支财); 印制伤护官次; 破格: 无')
         else:
             _yin_rule = 'PZZQ255: 印格成; 印是格体; 身印旺食伤泄秀为喜/印浅身轻喜印护身; 破格: 财破印'
         facts['ge_cheng'] = {
@@ -745,6 +770,16 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             # 阳刃喜神按原典JIAN_LU_YANG_REN_002/003逐案收窄:
             #  官煞制刃为喜(格体); 印护刃亦喜; 财单用"阳刃用财格所不喜"不入喜
             _yr_xi = list(ks_gans) + list(_yr_yin)
+            # ★ DTS 准神 DT-0497「必用卯之羊刃」: 阳刃在 L3 身旺(泄伤/通关)时顺刃,
+            #   比劫(日主自身五行=刃木)置喜首, 官煞制刃退居其后(制刃为局病非局喜)。
+            #   依据 DTS 专旺顺刃(旁参 PZZQ JIAN_LU_YANG_REN_002 官煞制刃, 旁参不顶准神)。
+            #   注: build_ge_cheng 跑在 l3_contract 构建之前, 此处直读日主五行行 ling_state
+            #   (与 bazi_gate _sv_dir 同源), 不读未就绪的 l3_contract.strength_verdict。
+            _yr_wp = ((facts.get('wuxing_power') or {}).get('wuxing_power') or {})
+            _yr_dmwx = GAN_WX.get(dg, '')
+            _yr_ling = (_yr_wp.get(_yr_dmwx) or {}).get('ling_state', '')
+            if _yr_ling in ('旺', '相'):
+                _yr_xi = [dg] + [g for g in _yr_xi if GAN_WX.get(g, '') != _yr_dmwx]
             facts['ge_cheng'] = {
                 'ge': '阳刃格', 'xi_wx': sorted(set(GAN_WX[g] for g in _yr_xi)),
                 'ti_wx': ks_wx,
@@ -854,10 +889,14 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             _ss_xi = sorted(set(GAN_WX[g] for g in _qs_def_xi + _yin_def_xi))
             # ★ PZZQ L1047「食喜身旺以相生」: 身弱(L3 帮身)食神格需比劫帮身方能担食, 喜神含比劫
             #   DT-0437(辛金冬休, 身弱): 原 xi=七杀火(忌), 该含比劫金(帮身成食格)
-            _l3_dir437 = ((facts.get('l3_contract') or {}).get('strength_verdict') or {}).get('value') or []
-            if '帮身' in _l3_dir437:
-                _dmx = GAN_WX[dg]
-                _ss_xi = [_dmx] + [x for x in sorted(set(_ss_xi)) if x != _dmx]   # 比劫帮身置首(身弱食神格喜比劫担食), 余候选其后
+            #   注: build_ge_cheng 跑在 l3_contract 构建之前, 此处直读日主五行行 ling_state
+            #   (与 bazi_gate _sv_dir 同源), 不读未就绪的 l3_contract.strength_verdict。
+            _ss_wp = ((facts.get('wuxing_power') or {}).get('wuxing_power') or {})
+            _ss_dmwx = GAN_WX.get(dg, '')
+            _ss_ling = (_ss_wp.get(_ss_dmwx) or {}).get('ling_state', '')
+            # 身弱判据: L3 帮身= 日主五行行 ling_state 非旺/相(囚/休/死/绝), 与 _sv_dir L421 同源
+            if _ss_ling in ('囚', '休', '死', '绝'):
+                _ss_xi = [_ss_dmwx] + [x for x in sorted(set(_ss_xi)) if x != _ss_dmwx]   # 比劫帮身置首(身弱食神格喜比劫担食), 余候选其后
             _ss_po = [{'type': '组合', 'match': 'ANY', 'required': ['偏印']}]
         elif _ti_gang_tai_wang and _yin_def_xi:
             # DTS L215「提纲食伤财官太旺, 则取年月时上印比为喜神」(准神primary)
