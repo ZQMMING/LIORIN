@@ -80,6 +80,7 @@ class ComputeStage:
         yi_engine: YiInterpretationEngine | None = None,
         assertion_library=None,  # ProductionRuleLibrary | None (P1.6)
         temporal_convergence_engine: TemporalConvergenceEngine | None = None,  # P1.7
+        blind_engine=None,  # BZ-BLIND-001: BlindBaziEngine | None（可注入测试；None=懒加载）
     ) -> None:
         self.bazi_engine = bazi_engine
         self.ziwei_engine = ziwei_engine
@@ -105,6 +106,12 @@ class ComputeStage:
         self._meihua_adapter = MeiHuaFeatureAdapter(self._meihua_feature_registry)
         self._meihua_compute_fn = None  # set externally or use defaults
         self._meihua_question = ""
+        # BZ-BLIND-001: 盲派 Adapter（可选，None = 未启用/降级）。
+        # 消费主链 BaziChart（S0 契约 compute_from_chart，禁止重排盘）。
+        self._blind_feature_registry = FeatureRegistry()
+        from ..feature_registry.adapters.blind_school_adapter import BlindSchoolFeatureAdapter
+        self._blind_adapter = BlindSchoolFeatureAdapter(self._blind_feature_registry)
+        self._blind_engine = blind_engine  # BlindBaziEngine | None（懒加载）
         # P1.6: CrossDomainOrchestrator（可选，None = 降级为旧信号路径）
         self._assertion_library = assertion_library
         self._orchestrator = None
@@ -180,6 +187,12 @@ class ComputeStage:
         # 支持两种模式: Mode A(时间起卦) / Mode B(数字起卦)
         # 计算结果经 Adapter 转换为 FeatureMapResult
         meihua_result = self._compute_meihua(year, month, day, hour, gender)
+
+        # 1d. 盲派引擎（BZ-BLIND-001 接入）
+        # 数据流: BaziChart（主链八字排盘结果）→ BlindBaziEngine.compute_from_chart()
+        #     → BlindBaziResult → BlindSchoolFeatureAdapter.adapt() → FeatureMapResult
+        # 任何失败降级为 None，不影响既有主链路。
+        blind_result = self._compute_blind(bazi_chart, gender)
 
         # 2. 信号提取（Bazi only - P1-C fix keeps Ziwei separate）
         build_result = self.signal_engine.build(
@@ -287,6 +300,7 @@ class ComputeStage:
             yi_structure=yi_structure,
             yi_interpretation=yi_interpretation,
             meihua_result=meihua_result,
+            blind_result=blind_result,  # BZ-BLIND-001: 盲派 FeatureMapResult | None
             # BZ-FNDR-15: ⑮-0 接入契约 — 装上 canonical_bazi_chart 给下游 Ziping 消费
             canonical_bazi_chart=canonical_bazi_chart,
         )
@@ -353,6 +367,30 @@ class ComputeStage:
             return self._meihua_adapter.adapt(meihua_raw)
         except Exception as exc:  # noqa: BLE001 — 梅花降级，不中断主管道
             log.warning("MeiHua integration failed (degraded, 不影响主链路): %s", exc)
+            return None
+
+    def _compute_blind(
+        self,
+        bazi_chart,
+        gender: str,
+    ) -> Any:
+        """盲派引擎（BZ-BLIND-001 接入主 Pipeline）。
+
+        数据流：BaziChart（主链八字排盘结果）→ BlindBaziEngine.compute_from_chart()
+            → BlindBaziResult → BlindSchoolFeatureAdapter.adapt() → FeatureMapResult
+
+        约束（盲派架构铁律 §70/§90）：盲派唯一共同消费层 = 八字排盘引擎输出的
+        基础事实；compute_from_chart 吃外部 BaziChart、禁止重排盘。
+        任何失败降级为 None，绝不让盲派错误中断既有主链路。
+        """
+        try:
+            if self._blind_engine is None:
+                from ..engines.blind_bazi_engine import BlindBaziEngine
+                self._blind_engine = BlindBaziEngine()
+            blind = self._blind_engine.compute_from_chart(bazi_chart, gender=gender)
+            return self._blind_adapter.adapt(blind)
+        except Exception as exc:  # noqa: BLE001 — 盲派降级，不中断主管道
+            log.warning("Blind integration failed (degraded, 不影响主链路): %s", exc)
             return None
 
     @staticmethod

@@ -125,6 +125,8 @@ class ComputeResult:
     temporal_convergence: Any = None  # TemporalConvergence | None
     # E7: 梅花易数引擎输出（可选项，None = 未启用）
     meihua_result: Any = None         # MeihuaResult | FeatureMapResult | None
+    # BZ-BLIND-001: 盲派引擎输出（可选项，None = 未启用/降级）
+    blind_result: Any = None          # FeatureMapResult | None
 
     # BZ-FNDR-15 (⑮-0 接入契约): CanonicalBaziChart 字段.
     # 由 compute_stage 内部通过 CanonicalBaziChart.from_bazi_chart(bazi_chart) 构造,
