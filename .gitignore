@@ -34,6 +34,15 @@ phase*_output.txt
 _backup_*/
 _blind_clean_wt/
 _triage_*/
+_m2b_backup/
+
+# 前端构建/下载缓存（可由 npm install / npm run build 重建）
+.tmp-dl/
+.tmp_cases/
+*.tsbuildinfo
+
+# 孤儿二进制（BSP 地图文件，与本项目无关）
+*.bsp
 
 # Git 输出转储（可由 git diff/status 随时重建，非业务资产）
 docs/audit/ZIWEI_CLEANUP_FINAL_DIFF_STAT_*.txt
