@@ -43,6 +43,9 @@ def _dm_no_heavy(facts: Dict[str, Any]) -> bool:
 HOOKS = {
     "combo_ge4": lambda facts, wx: _combo(facts, wx) >= 4,
     "dm_no_heavy": lambda facts, wx: _dm_no_heavy(facts),
+    # 2026-10-17 BIJIE_DUO_CAI 触发对齐 bingyao L617 "财明(透干或本气根, 非仅藏中气)":
+    #   病五行=财(dm 所克), 明=财干透>=1 或 财本气根ben_n>=1
+    "cai_visible": lambda facts, wx: _cai_visible(facts, _dm(facts)),
 }
 
 # 占位: {wx}=病五行(来自 bing_wx), {dm}=日主五行
@@ -51,6 +54,25 @@ _WX = "{wx}"
 
 def _dm(facts: Dict[str, Any]) -> str:
     return facts.get("daymaster_element") or ""
+
+# 十神五行动作表: 我克=财
+_KE_WO = {"木": "土", "火": "金", "土": "水", "金": "木", "水": "火"}
+
+def _cai_visible(facts: Dict[str, Any], dm: str) -> bool:
+    """财明: 财干透>=1 或 财本气根ben_n>=1 (与 bingyao_layer L617-621 触发同判).
+    透干读 facts['pillars'] 年/月/时干(不含日干, 日主非财), 本气根读四支本气.
+    GAN_WX/ZHI_BEN_WX 与 bingyao_layer/bing_debate 同源本地表(引擎惯例: 各层自带)."""
+    cai_wx = _KE_WO.get(dm, "")
+    if not cai_wx:
+        return False
+    _GAN_WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+    _ZHI_BEN_WX = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}
+    pillars = facts.get("pillars") or {}
+    tou = sum(1 for pos in ("year", "month", "hour")
+              if _GAN_WX.get((pillars.get(pos) or [None, None])[0]) == cai_wx)
+    ben = sum(1 for pos in ("year", "month", "day", "hour")
+              if _ZHI_BEN_WX.get((pillars.get(pos) or [None, None])[1]) == cai_wx)
+    return tou >= 1 or ben >= 1
 
 
 # ---------------------------------------------------------------- 注册表
@@ -125,6 +147,16 @@ BID_CONDITIONS: Dict[str, Dict[str, Any]] = {
             {"logic": "AND", "conditions": [
                 {"fact": "day_stem", "op": "exists"},
             ], "hooks": ["combo_ge4", "dm_no_heavy"]},
+        ],
+    },
+    "BIJIE_DUO_CAI": {
+        "slice_id": "PATHOLOGY.QIANG_RUO.001",  # DTS 三十二、众寡「强众而敌寡者, 势在去其寡」准
+        "status": "触发切片·2026-10-17准神探针: 众寡章强众敌寡=比劫成众夺财孤寡; 旁参SFTK劫财羊刃辅证",
+        "groups": [
+            # 组A 比劫成党(combo>=4) + 财明(透干或本气根, 非仅藏中气) + 日主无重根
+            {"logic": "AND", "conditions": [
+                {"fact": "day_stem", "op": "exists"},
+            ], "hooks": ["combo_ge4", "cai_visible"]},
         ],
     },
     "ZHI_SHA_TAI_GUO": {

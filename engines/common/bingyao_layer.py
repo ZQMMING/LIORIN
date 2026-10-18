@@ -143,11 +143,14 @@ BING_TYPES = {
     },
     'BIJIE_DUO_CAI': {
         'name': '比劫夺财',
-        'classic': 'SFTK-008-001 用财见比肩为病',
-        'slice_id': None,                        # UNVERIFIED: MD文库未定位对口切片
-        'slice_support': [],
+        'classic': 'SFTK-008-001 用财见比肩为病(旁参) + DTS 三十二、众寡 准',
+        # 2026-10-17 准神探针命中: DTS 众寡章「强众而敌寡者, 势在去其寡」
+        #   = 比劫成众(强) 夺 财星孤寡(寡), 病源准神明文; 旧 UNVERIFIED 解除.
+        'slice_id': 'PATHOLOGY.QIANG_RUO.001',     # DTS 三十二、众寡(强众敌寡) 准
+        'slice_support': ['SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.004',  # SFTK 劫财羊刃 分争财禄(旁参辅证)
+                         'LIU_QIN.REN_SHI.LIU_QIN.009'],                  # 渊海 兄弟争财(旁参辅证)
         'domain': 'GEJU',
-        'desc': '比劫透干成党, 财星被夺',
+        'desc': '比劫透干成党, 财星被夺; 药=官杀制劫护财',
     },
     'BIJIE_CHENG_DANG': {
         'name': '比劫成党',
