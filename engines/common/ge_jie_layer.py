@@ -131,6 +131,20 @@ def _attach_ge_evidence(facts):
         'rule_text': str(gc.get('rule') or ''),
         'mapped': bool(base),
     }
+    # G1 (2026-10-17 对照表 c07-正官 G1 / DTS 冲合集.005 准神):
+    #   「支神只以冲为重, 刑与穿兮动不动; 刑穿之间又有相生相合者存, 有动不动之异」
+    #   -> 冲=破格阻断(已在 po_ge 求值); 刑/破/害=动不动未授权, 只登记 UNKNOWN 不升级 BLOCKED.
+    #   对齐 guange_rule_contract.blocked_unknown['刑','破','害'] (PATCH-175).
+    #   纯透明字段, 不动 cheng_bai / po_ge_hits 判定.
+    _cf_ = facts.get('combination_facts') or {}
+    ev['xing_po_hai'] = {
+        'xing': bool(_cf_.get('sanxing')),
+        'po': bool(_cf_.get('liupo')),
+        'hai': bool(_cf_.get('liuhai')),
+        'chong': bool((_cf_.get('resolved') or {}).get('chong_survive')),
+    }
+    ev['xing_po_hai_basis'] = ('DTS冲合集.005(准神): 刑与穿兮动不动 -> UNKNOWN, 不升级破格'
+                               ' (对齐 guange_rule_contract.blocked_unknown)')
     gc['ge_evidence'] = ev
     return facts
 
@@ -422,19 +436,44 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
 
     # 1.5) 伤官佩印格: 月令伤官 + 印透. PZZQ255: "伤官佩印而伤官旺,印有根".
     # 伤官是格体, 不报泄气病(UNVERIFIED: 伤官旺/印有根判据).
+    # ★ H1/H3 (2026-10-17 准神 DTS 原注, 对照表 c07-伤官 H1/H3):
+    #   DTS「身弱而伤官旺者,见印而可见官;身旺而伤官旺者,见财而不见官」
+    #       → 伤官身强身弱分路: 身弱取印(护身), 身旺取财(泄秀生财).
+    #   DTS「伤官用印,无财不宜见财;伤官用财,无印不宜见印」
+    #       → 互斥破格: 用印(佩印)路径, 财是破格忌(财去印制伤); 用财路径, 印是破格忌.
+    #   引擎此前佩印路径只判"印透+伤透"(UNVERIFIED 旺/根), 且无"用印无财不宜见财"po_ge;
+    #   身旺伤旺见财路径整条缺失. 按准神补齐(不顶旁参, 准神优先).
     sg_entry0 = facts.get('shangguan_entry', {}) or {}
     if sg_entry0.get('is_entry'):
         yin_gans0 = [g for g in gans if ten_god(dg, g) in ('正印', '偏印')]
+        cai_gans0 = [g for g in gans if ten_god(dg, g) in CAI]
         shangguan_gans0 = [g for g in gans if ten_god(dg, g) == '伤官']
+        # H1 身强身弱判据: 日主五行行 ling_state (与 L3 帮身同源, 读 wuxing_power)
+        _sg0_dmwx = GAN_WX.get(dg, '')
+        _sg0_wp = ((facts.get('wuxing_power') or {}).get('wuxing_power') or {})
+        _sg0_ling = (_sg0_wp.get(_sg0_dmwx) or {}).get('ling_state', '')
+        _sg0_shen_wang = _sg0_ling in ('旺', '相')
         if yin_gans0 and shangguan_gans0:
             sg_wx0 = facts.get('month_qi_element', '') or ''
+            if _sg0_shen_wang and cai_gans0:
+                # H1: 身旺伤官旺见财 -> 伤官用财, 喜财(泄秀生财)
+                _sg0_xi = sorted(set(GAN_WX[g] for g in cai_gans0))
+                _sg0_po = [{'type': '组合', 'match': 'ANY', 'required': ['正印', '偏印']}]  # H3: 伤官用财, 无印不宜见印
+                _sg0_rule = ('H1/H3 DTS原注(准神): 身旺伤官旺见财->伤官用财, 喜财泄秀; '
+                             '伤官用财无印不宜见印, 印透=破格')
+            else:
+                # 身弱(或身旺无财)取印护身 -> 伤官用印
+                _sg0_xi = sorted(set(GAN_WX[g] for g in yin_gans0))
+                _sg0_po = [{'type': '组合', 'match': 'ANY', 'required': ['正财', '偏财']}]  # H3: 伤官用印, 无财不宜见财(财去印制伤)
+                _sg0_rule = ('H1/H3 DTS原注(准神): 身弱伤官旺见印->伤官用印护身; '
+                             '伤官用印无财不宜见财, 财透=破格(财去印制伤)')
             facts['ge_cheng'] = {
-                'ge': '伤官格(佩印)', 'xi_wx': sorted(set(GAN_WX[g] for g in yin_gans0)),
+                'ge': '伤官格(佩印)', 'xi_wx': _sg0_xi,
                 'ti_wx': [sg_wx0],
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
-                'po_ge': [{'type':'组合','match':'ALL','required':['正财','偏财','七杀']}],  # PZZQ258: 伤官生财带煞(财且煞, 财非单忌)
-                'rule': 'PZZQ255: 伤官佩印伤旺印根->伤官格成; 伤官是格体不报泄气(UNVERIFIED: 伤官旺/印有根判据); 破格: 生财带煞',
+                'po_ge': _sg0_po,
+                'rule': _sg0_rule,
             }
             return _attach_ge_evidence(facts)
 
