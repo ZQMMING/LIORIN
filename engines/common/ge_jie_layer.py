@@ -26,6 +26,114 @@ _YIN_YANG_JIEGEN = {('乙','寅'): True}
 ZHI_BEN_GAN = {'子':'癸','丑':'己','寅':'甲','卯':'乙','辰':'戊','巳':'丙',
                '午':'丁','未':'己','申':'庚','酉':'辛','戌':'戊','亥':'壬'}
 
+# ======================================================================
+# 证据链: 准神(DTS)主条 + 旁参(PZZQ)辅证 映射 (2026-10-17)
+# SOUL 铁律: 准神唯一=DTS(刘基原注), PZZQ/QTBJ/SFTK/SMTH/YHZP=旁参, 旁参不顶准神。
+# 本表只做证据链挂载(不新增/不改任何判定值), 把 build_ge_cheng 各路径的
+# rule 字符串(PZZQ 行号)反查到 准神切片 + 旁参切片, 摊到 facts['ge_cheng']['ge_evidence']。
+# 行号对应关系已核(2026-10-17): PZZQ L255->行255(CHENG_BAI.007), L258->行258(CHENG_BAI.008)。
+# 未命中映射的路径 = ge_evidence 只带原 rule 文本, 不硬造映射。
+# ======================================================================
+_GE_EVIDENCE_MAP = {
+  '阳刃格': {
+    'zhun': ['FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.001'],   # DTS 八格原注(建禄月劫羊刃看人元透干)
+    'zhu':  ['STRUCTURE.GE_JU.CHENG_BAI.001'],                 # DTS 八格"格之真者月支透干"
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007', 'STRUCTURE.GE_JU.CHENG_BAI.008'],  # PZZQ L255/L258
+  },
+  '建禄月劫格': {
+    'zhun': ['FOUNDATION.TOU_CANG.CANG_GAN_TOU_CHU.005', 'FOUNDATION.TOU_CANG.TOU_GAN.002'],
+    'zhu':  ['STRUCTURE.GE_JU.CHENG_BAI.001'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '食神格': {
+    'zhun': ['STRUCTURE.GE_JU.CHENG_BAI.001'],
+    'pang': ['STRUCTURE.GE_JU.SHENG_CAI.001', 'STRUCTURE.GE_JU.SHENG_CAI.002'],
+  },
+  '食神格(带煞无财)': {
+    'zhun': ['STRUCTURE.GE_JU.CHENG_BAI.001'],
+    'pang': ['STRUCTURE.GE_JU.SHENG_CAI.002', 'STRUCTURE.GE_JU.SHENG_CAI.003'],
+  },
+  '伤官格': {
+    'zhun': ['STRUCTURE.GE_JU.JIU_YING.003'],                  # DTS 二十二、伤官
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.004', 'STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '伤官格(佩印)': {
+    'zhun': ['STRUCTURE.GE_JU.JIU_YING.003'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.004'],
+  },
+  '伤官格(带煞无财)': {
+    'zhun': ['STRUCTURE.GE_JU.JIU_YING.003'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.004'],
+  },
+  '正官格': {
+    'zhun': ['STRUCTURE.GE_JU.CHENG_BAI.001'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.004', 'STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '七煞格': {
+    'zhun': ['STRUCTURE.GE_JU.JIU_YING.002'],                  # DTS 二十一、官杀
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.004', 'STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '七煞格(逢制)': {
+    'zhun': ['STRUCTURE.GE_JU.JIU_YING.002'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '食神制杀格': {
+    'zhun': ['STRUCTURE.GE_JU.JIU_YING.002'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '印格': {
+    'zhun': ['STRUCTURE.GE_JU.CHENG_BAI.001'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '印格(官印双全)': {
+    'zhun': ['STRUCTURE.GE_JU.CHENG_BAI.001'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '印格(印轻逢财)': {
+    'zhun': ['STRUCTURE.GE_JU.CHENG_BAI.001'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '印格(印多逢财)': {
+    'zhun': ['STRUCTURE.GE_JU.CHENG_BAI.001'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '印格(印轻逢财)·贪财破印': {
+    'zhun': ['STRUCTURE.GE_JU.CHENG_BAI.001'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '财格': {
+    'zhun': ['STRUCTURE.GE_JU.PI_CAI.001'],                    # DTS 八格/子平真诠论财
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.004', 'STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+  '财格(官)': {
+    'zhun': ['STRUCTURE.GE_JU.PI_CAI.001'],
+    'pang': ['STRUCTURE.GE_JU.CHENG_BAI.007'],
+  },
+}
+
+def _attach_ge_evidence(facts):
+    """把 准神/旁参 证据链挂到 facts['ge_cheng']['ge_evidence'](不新增判定值)。
+    准神主条优先; 映射未命中时仅保留 rule 原文文本, 不硬造。"""
+    gc = facts.get('ge_cheng')
+    if not isinstance(gc, dict) or not gc.get('ge'):
+        return facts
+    ge = str(gc.get('ge'))
+    base = _GE_EVIDENCE_MAP.get(ge) or {}
+    if not base:
+        for k in _GE_EVIDENCE_MAP:
+            if ge.startswith(k):
+                base = _GE_EVIDENCE_MAP[k]
+                break
+    ev = {
+        'zhun': base.get('zhun', []),
+        'zhu':  base.get('zhu',  []),
+        'pang': base.get('pang', []),
+        'rule_text': str(gc.get('rule') or ''),
+        'mapped': bool(base),
+    }
+    gc['ge_evidence'] = ev
+    return facts
+
 def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None, facts=None):
     """日主视角旺衰tier: 冲拔拓扑后再判element_power_tier.
     根气判据(PZZQ L800「长生、禄、帝旺为重根, 墓库余气为轻根」;
@@ -191,7 +299,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'rule': ('PZZQ L565: 日干与紧邻干五合+化神得月令+原神透出->化气格; '
                              '化神是格体; 喜神=化神(L1034化神喜行旺地); 化神极旺喜泄(食伤)登记待专案'),
                 }
-                return facts
+                return _attach_ge_evidence(facts)
         if _sp0.get('cong_type') and _sp0.get('cong_state') == 'CONFIRMED':
             _cwx_map = {'从杀格': None, '从官格': None, '从财格': None, '从儿格': None}
             _gs_wx = (facts.get('wuxing_power', {}) or {}).get('wuxing_power', {})
@@ -268,7 +376,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                              if _po else
                              '从格CONFIRMED优先(覆盖正格): 日主无根+印比虚浮无根+临绝->从格; ti_wx=所从之神'),
                 }
-                return facts
+                return _attach_ge_evidence(facts)
     except Exception:
         pass
 
@@ -293,7 +401,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'组合','match':'ANY','required':['偏印']}, {'type':'组合','match':'ALL','required':['正财','偏财','七杀']}],  # PZZQ258: 食神逢枭(枭见即夺)/生财露煞(财且煞)
                 'rule': 'PZZQ255: 食神生财+身旺 -> 食格成; 成格之神(食神)为喜, 财(生财)亦喜; 破格: 枭夺食/生财露煞',
             }
-            return facts
+            return _attach_ge_evidence(facts)
         # 路径二: 食带煞无财弃食就煞透印. PZZQ255: "或食带煞而无财, 弃食就煞而透印, 食格成也"
         sha_gans = [g for g in gans if ten_god(dg, g) == '七杀']
         yin_gans = [g for g in gans if ten_god(dg, g) in ('正印', '偏印')]
@@ -310,7 +418,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'组合','match':'ALL','required':['正财','偏财','七杀']}],  # PZZQ258: 生财露煞(财且煞, 财非单忌)
                 'rule': 'PZZQ255: 食带煞无财弃食就煞透印 -> 食格成; 格体=煞+印; 喜神=印(弃食就煞); 破格: 生财露煞',
             }
-            return facts
+            return _attach_ge_evidence(facts)
 
     # 1.5) 伤官佩印格: 月令伤官 + 印透. PZZQ255: "伤官佩印而伤官旺,印有根".
     # 伤官是格体, 不报泄气病(UNVERIFIED: 伤官旺/印有根判据).
@@ -328,7 +436,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'组合','match':'ALL','required':['正财','偏财','七杀']}],  # PZZQ258: 伤官生财带煞(财且煞, 财非单忌)
                 'rule': 'PZZQ255: 伤官佩印伤旺印根->伤官格成; 伤官是格体不报泄气(UNVERIFIED: 伤官旺/印有根判据); 破格: 生财带煞',
             }
-            return facts
+            return _attach_ge_evidence(facts)
 
     # 2) 伤官带煞无财格: 月令伤官entry + 七杀透 + 无财透. 只标格体, 不动病药层.
     sg_entry = facts.get('shangguan_entry', {}) or {}
@@ -349,7 +457,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财露(本路径已含带煞, 财单见即破)
                 'rule': 'PZZQ255: 伤官带煞无财 -> 伤官格成; 杀是格体非破格; 身弱用印; 破格: 财露',
             }
-            return facts
+            return _attach_ge_evidence(facts)
 
     # 3) 六格扩写: PZZQ255原文, 只定格体, 病药层不消费.
     #    纪律: ti_wx=[] 不触发格体过滤, 仅记录格名; 制化关系待格局层扩全后通用落.
@@ -396,7 +504,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'po_ge': [{'type':'组合','match':'ANY','required':['伤官']}, {'type':'地支','match':'ANY','branch_cond':'刑冲'}],
                     'rule': 'ZHENG_GUAN_001/DTS官杀章: 官杀并见成杀气,食伤透->食伤制官; 喜神=食伤',
                 }
-                return facts
+                return _attach_ge_evidence(facts)
             if (cai_gans or yin_gans) and not shangguan and not guan_chong:
                 # 喜神按成格路径取(原典ZHENG_GUAN_002逐案, 非财印全并):
                 #  官格喜生之护之: 财生官(财护官)/印护官; 官是格体不列喜
@@ -413,7 +521,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'po_ge': _guan_po,
                     'rule': 'PZZQ255: 官逢财印又无刑冲破害->官格成; 官是格体非杀病; 喜神=财印; 破格: 伤官克/刑冲/官杀混杂(PZZQ258)',
                 }
-                return facts
+                return _attach_ge_evidence(facts)
             # 默认输出：月令正官+官透，但不满足成格条件（无财印辅助）
             # 败格条件：伤官克/刑冲——败格时不默认输出
             if not shangguan and not guan_chong:
@@ -434,7 +542,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'po_ge': _guan_po_default,
                     'rule': 'PZZQ255: 正官格; 官是格体; 破格: 伤官克/刑冲/官杀混杂(PZZQ258)',
                 }
-                return facts
+                return _attach_ge_evidence(facts)
         # 食神制杀格：月令正官+无正官透+透干七杀+食伤透
         # PZZQ255: 身强七煞逢制(食制)->煞格成; 食伤是制杀格体
         sha_gans_zhi = _god_gans('七杀')
@@ -450,7 +558,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财透无制(食制已立, 财单见即破)
                 'rule': 'PZZQ255: 月令官+透杀+食伤透->食神制杀格成; 食伤+煞是格体; 破格: 财透无制',
             }
-            return facts
+            return _attach_ge_evidence(facts)
 
     # 财格: 财生官旺/财逢食生身强带比/财格透印. 财透 + (官透|食透+身旺|印透)
     # 格体过滤前提: 身强(日主禄旺根). 身弱财格不成, 财病照报.
@@ -517,7 +625,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'po_ge': [{'type':'组合','match':'ANY','required':['七杀']}],  # PZZQ258: 财透七煞
                     'rule': 'PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)',
                 }
-                return facts
+                return _attach_ge_evidence(facts)
         # 默认输出：月令财，但不满足成格条件
         # 败格条件：财轻比重/财透七煞——败格时不默认输出
         sha_gans_def = _god_gans('七杀')
@@ -533,7 +641,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'组合','match':'ANY','required':['七杀']}],  # PATCH-POGE-1 同源, 见上
                 'rule': 'PZZQ255: 财格; 财是格体; 喜食伤(财不忌伤, 伤官制比劫护财); 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)',
             }
-            return facts
+            return _attach_ge_evidence(facts)
 
     # 印格: 印轻逢煞/官印双全/身印两旺用食伤泄气/印多逢财财透根轻
     # 先落官印双全路径: 月令印+官透+印透+官有根+无杀透.
@@ -600,7 +708,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 印轻逢财(财破印, 财单见即忌)
                     'rule': _rule,
                 }
-                return facts
+                return _attach_ge_evidence(facts)
         # PZZQ1113: 印轻逢煞=月令印+煞透+印不透. 印是格体(UNVERIFIED: 印轻判据=印不透)
         if sha_gans and not yin_gans:
             yin_wx = facts.get('month_qi_element','') or ''
@@ -613,7 +721,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 印轻逢财(财破印, 财单见即忌)
                 'rule': 'PZZQ255: 印轻逢煞+印不透->印格成; 印是格体; 喜神=煞(生印)+印(生身); 破格: 财破印',
             }
-            return facts
+            return _attach_ge_evidence(facts)
         # PZZQ1113: 印多逢财财透根轻=月令印+财透. 印是格体, 不报印多埋子(UNVERIFIED: 财透根轻判据)
         # 喜神按印轻重分: 印重(财抑太过)=喜财; 印轻(财重无劫救)=贪财破印, 财为忌
         if cai_gans:
@@ -645,7 +753,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                          if _yin_ren else
                          'PZZQ255: 印轻财重无劫救->贪财破印, 喜比劫制财救印; 破格: 财破印'),
             }
-            return facts
+            return _attach_ge_evidence(facts)
         yin_wx_default = GAN_WX[yin_gans[0]] if yin_gans else (facts.get('month_qi_element','') or '')
         # 喜神按身印强弱分(原典ZHENG_YIN_001):
         #  身印两旺->食伤泄秀为喜; 印浅身轻->伤食层层泄身寒贫(伤食不入喜, 喜印护身)
@@ -685,7 +793,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],
             'rule': _yin_rule,
         }
-        return facts
+        return _attach_ge_evidence(facts)
 
 
     # 七煞格: 身强七煞逢制. 破格: 七煞逢财无制.
@@ -717,7 +825,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],
                     'rule': 'PZZQ258: 七煞逢财无制->破格; 杀病照报',
                 }
-                return facts
+                return _attach_ge_evidence(facts)
             # 成格: 身强+制
             if has_zhi:
                 _mz = pillars.get('month', ['',''])[1] if 'month' in pillars else ''
@@ -742,7 +850,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                         'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财透无制(印化已立, 财单见即破)
                         'rule': 'PZZQ255: 身强七煞逢制(食制/印化)->煞格成; 煞是格体不报杀重病; 破格: 财透无制',
                     }
-                    return facts
+                    return _attach_ge_evidence(facts)
             # 不成格: 哑巴标签
             # 喜神按原典PI_GUAN_002逐案收窄: 食制喜食(不并财印, 对照表"煞用食制不要露财透印");
             # 无食时印化喜印; 财是破格忌(七煞逢财无制), 不入喜
@@ -755,7 +863,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财透无制(财单见即忌)
                 'rule': 'PZZQ255: 七煞格; 煞是格体; 喜神=食(制)/印(化); 财是破格忌不入喜; 破格: 财透无制',
             }
-            return facts
+            return _attach_ge_evidence(facts)
 
     # 阳刃格: 阳刃透官煞而露财印, 不见伤官. 刃entry + 官杀透
     # 配合神(官煞)入ti_wx: 官煞制刃是喜神不报杀重病. 比劫不入ti_wx, 比劫夺财病照报.
@@ -789,7 +897,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'缺失','match':'ANY','forbidden':['正官','七杀']}],  # PZZQ258: 阳刃无官煞(缺失才破, 非忌神)
                 'rule': 'PZZQ255: 阳刃透官煞露财印不见伤官->刃格成; 官煞制刃是喜神, 印护刃亦喜, 财单用所不喜; 破格: 无官煞',
             }
-            return facts
+            return _attach_ge_evidence(facts)
 
     # 建禄月劫格: 透官逢财印/透财逢食伤/透煞遇制伏.
     # 配合神(官/财食伤/煞)入ti_wx: 配合神是喜神不报病. 比劫不入ti_wx.
@@ -829,7 +937,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': [{'type':'缺失','match':'ANY','forbidden':['正官','正财','偏财']}],  # PZZQ258: 无财官/透煞印(缺失才破, 非忌神)
                 'rule': 'PZZQ255: 建禄月劫透官逢财印/透财逢食伤/透煞遇制伏/无财官用伤食泄秀->成; 配合神入ti_wx; 破格: 无财官',
             }
-            return facts
+            return _attach_ge_evidence(facts)
 
     # 食神格默认: 月令食神entry但没生财/没带煞 -> 食神格成, 食神是格体
     # 喜神按原典SHI_SHEN_002"单用食神,有财运则富"取透干财; 财不透则喜空(食神自身是格体, 不列喜)
@@ -856,7 +964,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             # 仅"杀根被六冲(制尽)"判格不成; "杀无根"仍论格成(虚杀/中余气, 层次问题非原局病)
             if _sha_root_chong:
                 facts['ge_cheng'] = None
-                return facts
+                return _attach_ge_evidence(facts)
         # 喜神按原典逐案取:
         #  食带煞无财->就煞印, 喜煞+印(SHI_SHEN_002"不用财而就煞印, 最为威权显赫")
         #  有财->喜财(SHI_SHEN_002"有财运则富"); 兼官(护食/合煞存财)->喜官
@@ -920,7 +1028,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             'po_ge': _ss_po,  # 枭夺食: 偏印见即夺(就煞印路径除外, 食已弃)
             'rule': 'PZZQ255: 食神格成; 食神是格体; 喜神=财(有财则富)/煞印(带煞就煞印)/官(护食); 破格: 枭夺食',
         }
-        return facts
+        return _attach_ge_evidence(facts)
 
     # 伤官格默认: 月令伤官entry但没佩印/没带煞 -> 伤官格成, 伤官是格体
     # 喜神按原典SHANG_GUAN_005"伤官用财"取透干财; 伤官见官(非金水)原断无喜忌时跳过
@@ -957,7 +1065,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             'po_ge': _sg_po,  # 破格: 伤官见官(非金水)/生财带煞
             'rule': 'PZZQ255: 伤官格成; 伤官是格体; 喜神=财(用财)/官(金水见官)/印(身弱)/煞印(伤多用煞印); 破格: 伤官见官(非金水)/生财带煞',
         }
-        return facts
+        return _attach_ge_evidence(facts)
 
 
     # ---- 以下为原行 443-501「专旺/从格兜底段」，PATCH-GAP11 已移至函数末尾（所有正格分支之后、最终 None 兜底之前）----
@@ -980,7 +1088,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'po_ge': [],
                     'rule': '专旺/从格兜底(P0): 正格不成->专旺格; ti_wx=[日主五行]; hua_wx=日主所生(食伤泄秀, 独象喜行化地)',
                 }
-                return facts
+                return _attach_ge_evidence(facts)
             # PATCH-GAP11 (2026-09-30): 从格兜底原读 sp['cong_type']/sp['cong_state']，
             # 但 build_special_patterns 只把结果放进 out['patterns'] 数组(每项含 name/state)，
             # 从未写顶层 cong_type/cong_state —— 恒为 None，致本段永不执行、ge_cheng 落 None。
@@ -1029,7 +1137,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                         'po_ge': [],
                         'rule': '从旺格(独象喜行化地, PZZQ L170): 日主旺极顺泄, 喜=日主所生(食伤泄秀)',
                     }
-                    return facts
+                    return _attach_ge_evidence(facts)
                 _cong_key = _cong_wx_map.get(sp['cong_type'], '')
                 _cong_wx = ''
                 if _cong_key == 'gs_wx':
@@ -1065,11 +1173,11 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'po_ge': [],
                     'rule': '专旺/从格兜底(P0): 正格不成->从格; ti_wx=所从之神五行; 喜神=从财食伤/从杀从官从儿财(PZZQ4943/4960)',
                 }
-                return facts
+                return _attach_ge_evidence(facts)
         except Exception:
             pass
     facts['ge_cheng'] = None
-    return facts
+    return _attach_ge_evidence(facts)
 
 def apply_he_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     """规则2(冲解合破格): 月令支被"存活的相邻六冲"所冲, 且月令五行∈ti_wx∪xi_wx(格体/喜)
