@@ -1,0 +1,1935 @@
+{
+ "book": "DTS",
+ "entry": "tools/gate.py",
+ "note": "切片维读 ge_cheng.ge_evidence (准神DTS主条+旁参PZZQ辅证, 2026-10-17 新增证据链)",
+ "cases": [
+  {
+   "cid": "DT-0002",
+   "bazi": "庚申 庚辰 戊辰 戊午",
+   "ans": [
+    "火"
+   ],
+   "verdict": "判错(否定)",
+   "slices": {
+    "zhun": [
+     "FOUNDATION.TOU_CANG.CANG_GAN_TOU_CHU.005",
+     "FOUNDATION.TOU_CANG.TOU_GAN.002"
+    ],
+    "zhu": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 建禄月劫透官逢财印/透财逢食伤/透煞遇制伏/无财官用伤食泄秀-",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "建禄月劫格",
+    "strength": [
+     "泄伤"
+    ],
+    "root_class": [
+     "LIGHT",
+     "HEAVY",
+     "HEAVY",
+     "HEAVY"
+    ],
+    "xi_wx": [
+     "金"
+    ],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "泄伤"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "month",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0054",
+   "bazi": "甲子 丙寅 己巳 辛未",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.004",
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "ZHENG_GUAN_001/DTS官杀章: 官杀并见成杀气,食伤透->食伤制官",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [
+    "组合"
+   ],
+   "enums": {
+    "ge": "正官格",
+    "strength": [
+     "帮身",
+     "通关"
+    ],
+    "root_class": [
+     "NONE",
+     "LIGHT",
+     "HEAVY",
+     "HEAVY"
+    ],
+    "xi_wx": [
+     "金"
+    ],
+    "cheng_bai": "CHENG_ZHONG_YOU_PO"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "通关",
+     "帮身"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0062",
+   "bazi": "戊寅 乙卯 甲辰 辛未",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.001"
+    ],
+    "zhu": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.007",
+     "STRUCTURE.GE_JU.CHENG_BAI.008"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 阳刃透官煞露财印不见伤官->刃格成; 官煞制刃是喜神, 印护刃",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "阳刃格",
+    "strength": [
+     "泄伤"
+    ],
+    "root_class": [
+     "HEAVY",
+     "HEAVY",
+     "LIGHT",
+     "LIGHT"
+    ],
+    "xi_wx": [
+     "木",
+     "金"
+    ],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "泄伤"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0117",
+   "bazi": "己亥 丁卯 庚寅 丙子",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.PI_CAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.004",
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [
+    "组合"
+   ],
+   "enums": {
+    "ge": "财格",
+    "strength": [
+     "帮身"
+    ],
+    "root_class": [
+     "NONE",
+     "NONE",
+     "NONE",
+     "NONE"
+    ],
+    "xi_wx": [
+     "土"
+    ],
+    "cheng_bai": "CHENG_ZHONG_YOU_PO"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "帮身"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": "SPAN_ONE",
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 1
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0125",
+   "bazi": "辛丑 癸巳 戊申 丙辰",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 印轻财重无劫救->贪财破印, 喜比劫制财救印; 破格: 财破印",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [
+    "组合"
+   ],
+   "enums": {
+    "ge": "印格(印轻逢财)",
+    "strength": [
+     "泄伤",
+     "调候"
+    ],
+    "root_class": [
+     "HEAVY",
+     "HEAVY",
+     "LIGHT",
+     "HEAVY"
+    ],
+    "xi_wx": [
+     "火",
+     "土"
+    ],
+    "cheng_bai": "CHENG_ZHONG_YOU_PO"
+   },
+   "stage": {
+    "routes": [
+     "调候",
+     "源流",
+     "泄伤"
+    ],
+    "winner": "木",
+    "basis": "DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0166",
+   "bazi": "癸亥 乙卯 壬申 乙巳",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.JIU_YING.003"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.004",
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 伤官格成; 伤官是格体; 喜神=财(用财)/官(金水见官)/印",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "伤官格",
+    "strength": [
+     "帮身"
+    ],
+    "root_class": [
+     "HEAVY",
+     "NONE",
+     "HEAVY",
+     "NONE"
+    ],
+    "xi_wx": [],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "帮身"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": "SPAN_ONE",
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 1
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0218",
+   "bazi": "戊辰 乙丑 戊戌 辛酉",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [],
+    "zhu": [],
+    "pang": [],
+    "mapped": false,
+    "rule_text": "",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": null,
+    "strength": [
+     "泄伤",
+     "调候"
+    ],
+    "root_class": [
+     "HEAVY",
+     "HEAVY",
+     "LIGHT",
+     "NONE"
+    ],
+    "xi_wx": null,
+    "cheng_bai": null
+   },
+   "stage": {
+    "routes": [
+     "调候",
+     "源流",
+     "泄伤"
+    ],
+    "winner": "火",
+    "basis": "DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": "SPAN_ONE",
+      "blocked": true,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 1
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0228",
+   "bazi": "丙子 丙申 丙子 丙申",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.PI_CAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.004",
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 财格; 财是格体; 喜食伤(财不忌伤, 伤官制比劫护财); 破",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [
+    "组合"
+   ],
+   "enums": {
+    "ge": "财格",
+    "strength": [
+     "帮身",
+     "调候",
+     "通关"
+    ],
+    "root_class": [
+     "NONE",
+     "NONE",
+     "NONE",
+     "NONE"
+    ],
+    "xi_wx": [],
+    "cheng_bai": "PO"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "通关",
+     "帮身"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0254",
+   "bazi": "癸卯 甲寅 丁巳 己酉",
+   "ans": [
+    "金"
+   ],
+   "verdict": "判错",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 印格带伤食+印重(印多用财抑太过)->财置喜首抑印(认藏支财)",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [
+    "组合"
+   ],
+   "enums": {
+    "ge": "印格",
+    "strength": [
+     "泄伤"
+    ],
+    "root_class": [
+     "NONE",
+     "LIGHT",
+     "HEAVY",
+     "LIGHT"
+    ],
+    "xi_wx": [
+     "金",
+     "木"
+    ],
+    "cheng_bai": "CHENG_ZHONG_YOU_PO"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "泄伤"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0260",
+   "bazi": "丙辰 庚寅 丙午 壬辰",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 印轻逢煞+印不透->印格成; 印是格体; 喜神=煞(生印)+印",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [
+    "组合"
+   ],
+   "enums": {
+    "ge": "印格(印轻逢煞)",
+    "strength": [
+     "泄伤"
+    ],
+    "root_class": [
+     "NONE",
+     "HEAVY",
+     "HEAVY",
+     "NONE"
+    ],
+    "xi_wx": [
+     "木",
+     "水"
+    ],
+    "cheng_bai": "CHENG_ZHONG_YOU_PO"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "泄伤"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "hour"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0265",
+   "bazi": "辛巳 庚寅 丙辰 己丑",
+   "ans": [
+    "木"
+   ],
+   "verdict": "判错",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 印轻财重无劫救->贪财破印, 喜比劫制财救印; 破格: 财破印",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [
+    "组合"
+   ],
+   "enums": {
+    "ge": "印格(印轻逢财)",
+    "strength": [
+     "泄伤"
+    ],
+    "root_class": [
+     "HEAVY",
+     "HEAVY",
+     "NONE",
+     "NONE"
+    ],
+    "xi_wx": [
+     "木",
+     "火"
+    ],
+    "cheng_bai": "CHENG_ZHONG_YOU_PO"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "泄伤"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0283",
+   "bazi": "丁丑 癸丑 庚子 乙酉",
+   "ans": [
+    "火"
+   ],
+   "verdict": "轴不同",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 印多重(印多用财抑太过, 无防财破)->喜财, 财不作破格忌",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "印格(印多逢财)",
+    "strength": [
+     "泄伤",
+     "调候"
+    ],
+    "root_class": [
+     "LIGHT",
+     "LIGHT",
+     "NONE",
+     "HEAVY"
+    ],
+    "xi_wx": [
+     "木"
+    ],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "调候",
+     "源流",
+     "泄伤"
+    ],
+    "winner": "火",
+    "basis": "DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": "SPAN_ONE",
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 1
+       },
+       {
+        "pos": [
+         "day",
+         "month"
+        ],
+        "count": 1
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0310",
+   "bazi": "壬申 甲辰 壬申 戊申",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.JIU_YING.002"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.004",
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 七煞格; 煞是格体; 喜神=食(制)/印(化); 财是破格忌不",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "七煞格",
+    "strength": [
+     "帮身"
+    ],
+    "root_class": [
+     "HEAVY",
+     "LIGHT",
+     "HEAVY",
+     "HEAVY"
+    ],
+    "xi_wx": [
+     "木"
+    ],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "帮身"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "hour",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "hour"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "hour",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "hour"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0321",
+   "bazi": "丁酉 乙巳 丁丑 丙午",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [],
+    "zhu": [],
+    "pang": [],
+    "mapped": false,
+    "rule_text": "从旺格(独象喜行化地, PZZQ L170): 日主旺极顺泄, 喜=日主所生(食",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "从格(从旺格)",
+    "strength": [
+     "泄伤",
+     "调候"
+    ],
+    "root_class": [
+     "LIGHT",
+     "HEAVY",
+     "NONE",
+     "HEAVY"
+    ],
+    "xi_wx": [
+     "土"
+    ],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "调候",
+     "源流",
+     "泄伤"
+    ],
+    "winner": "金",
+    "basis": "DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": "SPAN_ONE",
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 1
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0379",
+   "bazi": "癸亥 癸亥 戊午 甲寅",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.PI_CAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.004",
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [
+    "组合"
+   ],
+   "enums": {
+    "ge": "财格",
+    "strength": [
+     "帮身",
+     "调候",
+     "通关"
+    ],
+    "root_class": [
+     "NONE",
+     "NONE",
+     "HEAVY",
+     "HEAVY"
+    ],
+    "xi_wx": [],
+    "cheng_bai": "PO"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "通关",
+     "帮身"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "month"
+        ],
+        "count": 1
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0389",
+   "bazi": "己亥 甲戌 戊寅 丙辰",
+   "ans": [
+    "土",
+    "金"
+   ],
+   "verdict": "未出",
+   "slices": {
+    "zhun": [],
+    "zhu": [],
+    "pang": [],
+    "mapped": false,
+    "rule_text": "",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": null,
+    "strength": [
+     "泄伤",
+     "通关"
+    ],
+    "root_class": [
+     "NONE",
+     "LIGHT",
+     "HEAVY",
+     "HEAVY"
+    ],
+    "xi_wx": null,
+    "cheng_bai": null
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "通关",
+     "泄伤"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": "SPAN_ONE",
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 1
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0399",
+   "bazi": "戊午 甲寅 乙卯 己卯",
+   "ans": [
+    "火",
+    "土"
+   ],
+   "verdict": "未出",
+   "slices": {
+    "zhun": [],
+    "zhu": [],
+    "pang": [],
+    "mapped": false,
+    "rule_text": "",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": null,
+    "strength": [
+     "泄伤"
+    ],
+    "root_class": [
+     "LIGHT",
+     "HEAVY",
+     "HEAVY",
+     "HEAVY"
+    ],
+    "xi_wx": null,
+    "cheng_bai": null
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "泄伤"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "hour",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0403",
+   "bazi": "己丑 丙寅 甲子 戊辰",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "FOUNDATION.TOU_CANG.CANG_GAN_TOU_CHU.005",
+     "FOUNDATION.TOU_CANG.TOU_GAN.002"
+    ],
+    "zhu": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 建禄月劫透官逢财印/透财逢食伤/透煞遇制伏/无财官用伤食泄秀-",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "建禄月劫格",
+    "strength": [
+     "泄伤"
+    ],
+    "root_class": [
+     "NONE",
+     "HEAVY",
+     "LIGHT",
+     "LIGHT"
+    ],
+    "xi_wx": [
+     "土",
+     "火"
+    ],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "泄伤"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": "SPAN_ONE",
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 1
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0407",
+   "bazi": "辛巳 甲午 丙子 甲午",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [],
+    "zhu": [],
+    "pang": [],
+    "mapped": false,
+    "rule_text": "",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": null,
+    "strength": [
+     "泄伤",
+     "调候"
+    ],
+    "root_class": [
+     "HEAVY",
+     "HEAVY",
+     "NONE",
+     "HEAVY"
+    ],
+    "xi_wx": null,
+    "cheng_bai": null
+   },
+   "stage": {
+    "routes": [
+     "调候",
+     "源流",
+     "泄伤"
+    ],
+    "winner": "水",
+    "basis": "DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0437",
+   "bazi": "丁巳 壬子 辛巳 丁酉",
+   "ans": [
+    "金"
+   ],
+   "verdict": "判错(否定)",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.SHENG_CAI.001",
+     "STRUCTURE.GE_JU.SHENG_CAI.002"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 食神格成; 食神是格体; 喜神=财(有财则富)/煞印(带煞就煞",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "食神格",
+    "strength": [
+     "帮身",
+     "调候"
+    ],
+    "root_class": [
+     "LIGHT",
+     "LIGHT",
+     "LIGHT",
+     "HEAVY"
+    ],
+    "xi_wx": [
+     "金",
+     "火"
+    ],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "帮身"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0458",
+   "bazi": "己丑 丁丑 己亥 乙丑",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [],
+    "zhu": [],
+    "pang": [],
+    "mapped": false,
+    "rule_text": "从旺格(独象喜行化地, PZZQ L170): 日主旺极顺泄, 喜=日主所生(食",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "从格(从旺格)",
+    "strength": [
+     "泄伤",
+     "调候"
+    ],
+    "root_class": [
+     "LIGHT",
+     "LIGHT",
+     "NONE",
+     "LIGHT"
+    ],
+    "xi_wx": [
+     "金"
+    ],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "调候",
+     "源流",
+     "泄伤"
+    ],
+    "winner": "火",
+    "basis": "DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "month"
+        ],
+        "count": 0
+       },
+       {
+        "pos": [
+         "day",
+         "hour"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0464",
+   "bazi": "甲寅 丁丑 丁卯 庚戌",
+   "ans": null,
+   "verdict": "",
+   "slices": {
+    "zhun": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.SHENG_CAI.001",
+     "STRUCTURE.GE_JU.SHENG_CAI.002"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 食神格成; 食神是格体; 喜神=财(有财则富)/煞印(带煞就煞",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [
+    "组合"
+   ],
+   "enums": {
+    "ge": "食神格",
+    "strength": [
+     "帮身",
+     "调候"
+    ],
+    "root_class": [
+     "LIGHT",
+     "NONE",
+     "NONE",
+     "LIGHT"
+    ],
+    "xi_wx": [
+     "木"
+    ],
+    "cheng_bai": "CHENG_ZHONG_YOU_PO"
+   },
+   "stage": {
+    "routes": [
+     "调候",
+     "源流",
+     "帮身"
+    ],
+    "winner": "木",
+    "basis": "DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  },
+  {
+   "cid": "DT-0497",
+   "bazi": "丙辰 辛卯 甲申 庚午",
+   "ans": [
+    "木"
+   ],
+   "verdict": "判错(否定)",
+   "slices": {
+    "zhun": [
+     "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.001"
+    ],
+    "zhu": [
+     "STRUCTURE.GE_JU.CHENG_BAI.001"
+    ],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.007",
+     "STRUCTURE.GE_JU.CHENG_BAI.008"
+    ],
+    "mapped": true,
+    "rule_text": "PZZQ255: 阳刃透官煞露财印不见伤官->刃格成; 官煞制刃是喜神, 印护刃",
+    "bing_refs": []
+   },
+   "booleans": [],
+   "po_ge": [],
+   "enums": {
+    "ge": "阳刃格",
+    "strength": [
+     "泄伤",
+     "通关"
+    ],
+    "root_class": [
+     "LIGHT",
+     "HEAVY",
+     "NONE",
+     "NONE"
+    ],
+    "xi_wx": [
+     "木",
+     "金"
+    ],
+    "cheng_bai": "CHENG"
+   },
+   "stage": {
+    "routes": [
+     "源流",
+     "通关",
+     "泄伤"
+    ],
+    "winner": null,
+    "basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/"
+   },
+   "topology": {
+    "yuan_liu": null,
+    "fang_ju": "JIA_SAME_WUXING",
+    "tong_guan": 4,
+    "guan_topo": {
+     "topo_ok": null,
+     "conditions": {
+      "distance": null,
+      "blocked": false,
+      "jie_zhan": null
+     },
+     "verdict": "INCOMPLETE",
+     "pending": [
+      "distance",
+      "jie_zhan"
+     ],
+     "detail": {
+      "pairs": [
+       {
+        "pos": [
+         "day",
+         "year"
+        ],
+        "count": 0
+       }
+      ],
+      "pos_of_missing": false
+     },
+     "evidence": "DTS_CITED",
+     "note": "distance/blocked 已落(需 pos_of 柱位映射); jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。裁决链见契约 §4.6。",
+     "line": "L250"
+    }
+   }
+  }
+ ],
+ "stat": {
+  "n": 23,
+  "with_answer": 8,
+  "with_evidence": 17,
+  "with_bing_refs": 0,
+  "verdict_dist": {
+   "": 15,
+   "判错": 2,
+   "判错(否定)": 3,
+   "未出": 2,
+   "轴不同": 1
+  }
+ }
+}
