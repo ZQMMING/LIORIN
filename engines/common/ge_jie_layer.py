@@ -601,7 +601,40 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
 
     # 财格: 财生官旺/财逢食生身强带比/财格透印. 财透 + (官透|食透+身旺|印透)
     # 格体过滤前提: 身强(日主禄旺根). 身弱财格不成, 财病照报.
+    # V7.34 无根日主须印(原著 PZZQ L4882"若四柱无可扶抑, 则其气势必属于偏旺"/L4936 弃命保财; DTS 体用章):
+    #   日主失令(休囚死) 且 原局四柱支 全无日主本气根(禄/刃不在支) 时, 财格不成 ——
+    #   财(月令)反成病(财滋弱身不能任), 须以印(生我)扶身为药. 财格入口前拦截, 走病药层(主病=财, 候神=印).
     if mqi_god in ('正财', '偏财'):
+        _mqi_pos = facts.get('month_qi_element', '') or ''
+        _WXX = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+        _XW = {v: k for k, v in _WXX.items()}
+        _dm_wx_l = facts.get('daymaster_element', '') or ''
+        # 失令查表(五行×月支 -> 旺相休囚死)
+        _WX_SHI = {
+            '木': {'巳': '休', '午': '休', '申': '囚', '酉': '囚', '辰': '死', '戌': '死', '丑': '死', '未': '死'},
+            '火': {'申': '休', '酉': '休', '戌': '囚', '亥': '囚', '丑': '死', '辰': '死', '未': '死', '子': '死'},
+            '土': {'寅': '休', '卯': '休', '子': '囚', '亥': '囚', '申': '死', '酉': '死'},
+            '金': {'丑': '囚', '辰': '囚', '寅': '死', '卯': '死', '戌': '死', '未': '死'},
+            '水': {'辰': '囚', '戌': '囚', '丑': '死', '未': '死', '寅': '死', '卯': '死'}}
+        _mb_l = pillars['month'][1]
+        _shi_ling_l = _WX_SHI.get(_dm_wx_l, {}).get(_mb_l, '') in ('休', '囚', '死')
+        # 无根=原局四柱支 全无 日主五行 的根气(本气/中气/余气), 查 wuxing_power.root_detail
+        _wp_l = (facts.get('wuxing_power') or {}).get('wuxing_power') or {}
+        _dm_wp = _wp_l.get(_dm_wx_l) or {}
+        _no_root_l = (not _dm_wp.get('root_detail')) and _dm_wp.get('ben_n', 0) == 0 \
+                     and _dm_wp.get('zhong_n', 0) == 0 and _dm_wp.get('yu_n', 0) == 0
+        if _shi_ling_l and _no_root_l:
+            # 无根日主失令, 财格不成: 财=主病(月令当旺), 印=候神(扶身)
+            _yin_wx_l = _XW.get(_dm_wx_l, '')
+            facts['ge_cheng'] = {
+                'ge': '无根须印(财不成格)', 'xi_wx': [_yin_wx_l], 'ti_wx': [_mqi_pos],
+                'overpower_combo': 6,
+                'zhi_wx': [], 'hua_wx': [],
+                'po_ge': [],
+                'rule': ('V7.34 无根日主失令(休囚死), 财格不成: 财(月令)=主病, 印(生我)=候神扶身. '
+                          'PZZQ L4882"若四柱无可扶抑"; DTS 体用章"日主无气须印扶"'),
+            }
+            return _attach_ge_evidence(facts)
         cai_gans = _god_gans('正财') + _god_gans('偏财')
         guan_gans = _god_gans('正官')
         shi_gans = _god_gans('食神')
