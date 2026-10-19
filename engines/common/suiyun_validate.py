@@ -300,6 +300,38 @@ def verdict_step(pillars, base, step, extra, base_tier):
     if _shang_wx and _guan_wx and _guan_in_natal and _shang_wx in transit_wx:
         bad.append('伤官见官(%s伤官克%s官)' % (_shang_wx, _guan_wx))
 
+    # --- V7.33 无根日主印为药(原著 PZZQ L4882/4936 无根日主须印比扶身; DTS 体用章):
+    #   日主失令(ling_state=囚/死/休) 且 原局四柱全无根(root_detail空) 时, 印(生我)=药(扶身+化病),
+    #   岁运 克伐日主/冲月令提纲/三刑 被印化抵消(药力); 印运升吉.
+    #   真值 DTS 丙子丙申丙子丙申(四柱无根丙火, 须木运和之): 寅卯甲辰(印木)=吉发财,
+    #   己亥庚子辛丑(金水)=凶. 查表派生: 失令+全无根 -> 印运豁免克伐/冲提纲, 非case.
+    #   (预计算标记, 实际裁决在 verdict_arbitrate 之后)
+    # 日主失令 + 无根: 直接查原局支 (查表派生, 非case)
+    #   失令: 日主五行 在 月令支 的 旺相休囚死 = 休/囚/死
+    #   无根: 原局四柱支 都无 日主五行 的本气/中气根
+    _ZHI_WX = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+               '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'}
+    _month_b = pillars['month'][1]
+    # 失令查表: 五行×月支 -> 旺相休囚死
+    _WANG_XIANG_XIU = {
+        '木': {'寅': '旺', '卯': '旺', '亥': '相', '子': '相', '巳': '休', '午': '休',
+               '申': '囚', '酉': '囚', '辰': '死', '戌': '死', '丑': '死', '未': '死'},
+        '火': {'午': '旺', '巳': '旺', '寅': '相', '卯': '相', '申': '休', '酉': '休',
+               '戌': '囚', '亥': '囚', '丑': '死', '辰': '死', '未': '死', '子': '死'},
+        '土': {'辰': '旺', '戌': '旺', '丑': '旺', '未': '旺', '午': '相', '巳': '相',
+               '寅': '休', '卯': '休', '子': '囚', '亥': '囚', '申': '死', '酉': '死'},
+        '金': {'申': '旺', '酉': '旺', '巳': '相', '午': '相', '子': '休', '亥': '休',
+               '丑': '囚', '辰': '囚', '寅': '死', '卯': '死', '戌': '死', '未': '死'},
+        '水': {'子': '旺', '亥': '旺', '申': '相', '酉': '相', '巳': '休', '午': '休',
+               '辰': '囚', '戌': '囚', '丑': '死', '未': '死', '寅': '死', '卯': '死'}}
+    _pos = _WANG_XIANG_XIU.get(dm_wx, {}).get(_month_b, '')
+    _shi_ling = _pos in ('囚', '死', '休')
+    # 无根: 原局四柱支 都无 日主五行 的本气
+    _natal_branches = [pillars[pos][1] for pos in ('year', 'month', 'day', 'hour')]
+    _no_root = all(_ZHI_WX.get(b, '') != dm_wx for b in _natal_branches)
+    _yin_wx = SHENG_BACK.get(dm_wx, '')        # 印 = 生我 (火日主=木, 金日主=土, ...)
+    _wugenyin_mark = _shi_ling and _no_root and bool(_yin_wx) and (_yin_wx in transit_wx)
+
     # --- 毒药·格局破格: 原局成格 + 岁运触发 po_ge 路径 ---
     # match 语义(ge_jie_layer 落盘): ANY=required 任一神即破格(该神本身是忌);
     #                               ALL=required 全部神齐备才破格(组合条件, 单神非忌, 不可作忌神用);
@@ -359,6 +391,66 @@ def verdict_step(pillars, base, step, extra, base_tier):
     from engines.common import evil_offset
     _v = evil_offset.verdict_arbitrate(good, bad)
     level, shorthand = _v['level'], _v['shorthand']
+
+    # V7.33 无根日主印为药(原著 PZZQ L4882/4936 无根日主须印比扶身; DTS 体用章):
+    #   日主失令(ling_state=囚/死/休) 且 原局四柱全无根(root_detail空) 时, 印(生我)=药(扶身+化病),
+    #   岁运 克伐日主/冲月令提纲/三刑 被印化抵消(药力); 印运升吉.
+    #   真值 DTS 丙子丙申丙子丙申(四柱无根丙火, 须木运和之): 寅卯甲辰(印木)=吉发财,
+    #   己亥庚子辛丑(金水)=凶. 查表派生: 失令+全无根 -> 印运豁免克伐/冲提纲, 非case.
+    if _wugenyin_mark:
+        bad = [b for b in bad if not (b.startswith('克伐日主') or b.startswith('冲月令') or '三刑' in b
+                                      or b.startswith('助主病') or b.startswith('交战') or b.startswith('格局破格'))]
+        good.append('无根日主印运扶身化病(%s)' % _yin_wx)
+        _v2 = evil_offset.verdict_arbitrate(good, bad)
+        level = _v2['level']; shorthand = _v2['shorthand']
+        _v['note'] = '无根日主失令, 印运扶身化病(药)'
+        if level < 2:
+            level = 2
+            shorthand = '良药'
+
+    # V7.32 专旺格喜忌接 verdict (原著 PZZQ L4888-4894 专旺格论, 全五行查表派生, 非case):
+    #   "气纯势强, 可顺而不可逆. 运以食伤泄其秀气为最美, 原局有食伤则财运亦美.
+    #    印比之运, 从其旺神, 固为适宜. 官煞逆其旺势, 最犯格局之忌, 若无印生化, 则为祸非轻."
+    #   喜序: 食伤(我生,泄秀) > 财(原局有食伤时) > 印比(顺旺神); 忌: 官杀(克我,逆旺势).
+    #   特例: "原局露食伤泄秀, 则印运为忌"(印克食伤); "比劫透而无食伤, 则财运亦忌"(财坏比劫顺势).
+    gc = step['facts'].get('ge_cheng') or {}
+    ge = gc.get('ge') or ''
+    cheng = gc.get('cheng_bai') or ''
+    _zhuanwang = any(k in ge for k in ('炎上', '曲直', '稼穑', '从革', '润下'))
+    _congs = any(k in ge for k in ('从财', '从杀', '从官', '从儿', '从势'))
+    if (_zhuanwang or _congs) and cheng == 'CHENG' and level in (0, 1):
+        _ti_wx = (gc.get('ti_wx') or [''])[0] or dm_wx
+        if _ti_wx:
+            _shi = SHENG.get(_ti_wx, '')          # 食伤=我生(泄秀, 最美)
+            _cai = KE.get(_ti_wx, '')             # 财=我克
+            _yin = SHENG_BACK.get(_ti_wx, '')      # 印=生我(顺旺神)
+            _guan = KE_BACK.get(_ti_wx, '')        # 官杀=克我(逆旺势, 忌)
+            # 原局是否已有食伤(决定财运/印运喜忌切换)
+            _shi_in_natal = any(WUXING.get(p[0], '') == _shi for p in pillars.values() if p[0])
+            _hit_shi = _shi in transit_wx          # 食伤运=最美
+            _hit_cai = _cai in transit_wx          # 财运
+            _hit_yin_bi = (_yin in transit_wx) or (_ti_wx in transit_wx)  # 印/比劫运
+            _hit_guan = _guan in transit_wx        # 官杀运=忌
+            if _hit_guan:
+                # 官煞逆旺势(最犯格局忌); 有印生化=祸轻, 无印=祸重
+                _has_yin_save = _hit_yin_bi or _shi_in_natal
+                level = -1 if _has_yin_save else -2
+                shorthand = '平战' if _has_yin_save else '毒药'
+                _v['note'] = '专旺格官煞逆旺势%s' % ('(有印生化, 祸轻)' if _has_yin_save else '(无印生化, 祸重)')
+            elif _hit_shi:
+                level = 2; shorthand = '良药'; _v['note'] = '专旺格食伤泄秀(最美), 升吉'
+            elif _hit_cai:
+                # 原局有食伤则财运亦美; 比劫透而无食伤则财运亦忌
+                if _shi_in_natal:
+                    level = 2; shorthand = '良药'; _v['note'] = '专旺格财运(原局有食伤, 财亦美), 升吉'
+                else:
+                    level = -2; shorthand = '毒药'; _v['note'] = '专旺格财运(原局无食伤, 财坏顺势), 忌'
+            elif _hit_yin_bi:
+                # 印比顺旺神固为适宜; 原局露食伤泄秀则印运为忌
+                if _shi_in_natal:
+                    level = -2; shorthand = '毒药'; _v['note'] = '专旺格印运(原局食伤泄秀, 印克食伤为忌)'
+                else:
+                    level = 2; shorthand = '良药'; _v['note'] = '专旺格印比顺旺神, 升吉'
 
     # V7.30 候神升格: 岁运命中候神(药)且力级精算(坐旺/原局得根/该运冲合状态) -> 升吉(level=2).
     #   候神职能表×力级精算集中算理, 替换 case-by-case 级别微调.
