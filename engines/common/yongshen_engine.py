@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """160-D 用神病机收敛引擎 V2.4(布尔+多态枚举决策树, 非 score/非黑盒裁决)。
 
 primary 主用神(1行)+secondary 喜神/相神+avoid 忌神。
@@ -595,7 +595,14 @@ def build_yongshen_engine(pillars, facts, wuxing_power, spectrum, special, clima
                 # 官杀虚透无根不重: 不印化杀, primary保持None继续走后面路径(案例5丙申己亥庚辰戊寅官杀虚透+印旺用财破印)
                 if primary!=t['cai'] and not _zhuan_shi: A(t['cai'])  # 财滋弱杀以财为用不忌财; 制杀专食伤/伤官去官则食伤生财喜财; 余制化忌财坏印生杀
         # B4 印重成病(官杀不透)→财破印(优先于通关: 印重为病, 通关官杀生印反助病)
-        if primary is None and cs(t['yin']) and stem(t['guan'])==0 and cai_usable:
+        # V7.24 调候硬情形前置(真值对照 坤造癸亥壬戌乙未壬午): 冬夏月 + 午火食神泄秀
+        #   (ben>=1 或 cs, 食神坐旺/根) 时, 食伤调候暖局压过财破印 —— DTS L295"寒之甚暖之至必无好处",
+        #   候神食伤=泄秀+调候双职能(秋木寒喜火), 第一用神; 财降为 secondary。
+        _shishang_xiuxiu = (ben(t['shi'])>=1 or cs(t['shi']))
+        _dongxia_mz = mz in ('亥','子','丑','巳','午','未')
+        if primary is None and cs(t['yin']) and stem(t['guan'])==0 and _dongxia_mz and _shishang_xiuxiu:
+            P(t['shi'],'QIHOU','冬夏月印重成病、食神坐根泄秀调候暖局(秋木寒喜火), 食伤为第一用神(调候优先于财破印)'); S(t['cai'],'财破印(次)'); A(t['yin'],'印重为病')
+        elif primary is None and cs(t['yin']) and stem(t['guan'])==0 and cai_usable:
             P(t['cai'],'BINGYAO','印重成势官杀不透而财有本气根，财破印去壅塞'); S(t['shi']); A(t['yin'])
         # 印重无官杀、财不透而食伤有本气根: 食伤生财、就财破印(财待运透), 同党顺泄
         # 排除: 印星当令且日主有气(原文"印星当令，金亦有气，用神在水"), 此时应用食伤泄秀而非财破印
