@@ -23,11 +23,13 @@ from typing import List, Dict, Any, Optional
 # 恶神前缀表: 命中即入 evil_no_offset(刑/冲药根/破格), 不抵消制化之功 -> 判毒药主凶.
 #   冲月令提纲/冲日主重根 = 提纲伤(交战性, 非刑伤), 走平战(吉凶交战), 不入毒药.
 #   原典: 刑(恃势/无恩/无礼)主凶伤; 冲提纲=提纲伤交战(平战), 冲药根=药根拔(毒药).
-_EVIL_PREFIX = ('三刑', '格局破格', '伤官见官')
+_EVIL_PREFIX = ('三刑', '格局破格', '伤官见官', '冲拔主药根', '合走主药根')
 # 交战性前缀: 命中即入 hard_bad(凶), 但不抵消制化之功(平战, 非毒药)
-_CONFLICT_PREFIX = ('冲月令', '冲日主重根', '交战')
-# 冲药根专属前缀: 命中则抵消该岁运支本气的"化泄"(冲药假象)
-_MED_PULLED_PREFIX = '冲拔主药根'
+#   合月令提纲/合日主重根 = 提纲/重根被合走(交战性, 合去=失用非刑伤), 走平战(吉凶交战), 不入毒药.
+#   原典: 冲提纲=提纲伤交战(平战), 合提纲/合重根=根被合走交战(平战), 冲药根/合走主药根=药根拔(毒药).
+_CONFLICT_PREFIX = ('冲月令', '冲日主重根', '合月令', '合日主重根', '交战')
+# 冲药根专属前缀: 命中则抵消该岁运支本气的"化泄"(冲药假象); 含"冲拔主药根"+"合走主药根"(药根拔/药被合走=毒药)
+_MED_PULLED_PREFIX = ('冲拔主药根', '合走主药根')
 # 合绊前缀: 药被合去失制力(抵消制, 走 hard_bad)
 _BLOCK_PREFIX = '主药被合绊'
 
@@ -193,7 +195,7 @@ def houchou_verdict(transit_wx, branch_z, dm_wx, bing_wx, bad_items,
 def evil_no_offset(bad_items: List[str]) -> bool:
     """bad 列表中有无恶神(刑/冲药根/破格). 有 -> 不抵消制化之功 -> 判毒药主凶.
     全布尔, 禁浮点."""
-    return any(any(k in b for k in (_EVIL_PREFIX + (_MED_PULLED_PREFIX,))) for b in (bad_items or []))
+    return any(any(k in b for k in _EVIL_PREFIX) for b in (bad_items or []))
 
 
 def conflict_no_offset(bad_items: List[str]) -> bool:
@@ -203,8 +205,8 @@ def conflict_no_offset(bad_items: List[str]) -> bool:
 
 
 def medicine_pulled(bad_items: List[str]) -> bool:
-    """bad 中是否含冲药根 -> 该岁运支本气的化泄为冲药假象, 抵消化泄."""
-    return any(_MED_PULLED_PREFIX in b for b in (bad_items or []))
+    """bad 中是否含冲药根/合走主药根 -> 该岁运支本气的化泄为冲药/合药假象, 抵消."""
+    return any(any(k in b for k in _MED_PULLED_PREFIX) for b in (bad_items or []))
 
 
 def medicine_blocked(bad_items: List[str]) -> bool:
