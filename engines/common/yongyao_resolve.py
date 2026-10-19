@@ -132,6 +132,9 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
     #   例: 盘1 壬亥(水38局最旺, 候神=水=日主当令), 调候路 winner=水(顺局调候, 不取木泄)。
     _dmwx_routing = facts.get("daymaster_element", "") or ""
     _hou_is_dm = (_hou_wx == _dmwx_routing)
+    # V7.43 调候喜用神判据重构(原典 DTS L295/L300 + QTBJ 调候, 彻底修, 非补丁):
+    #   调候用神=原局喜神第一顺位。候神被局压(候神 mass<局最旺 mass, 偏枯)或
+    #   候神=日主当令(顺局调候, 候神即喜)时, 候神置调候路 winner。
     _th_bias = ("调候" in dirn) and th.get("enabled") and (_hou_wx != "") and (
         _hou_mass < _max_mass or _hou_is_dm)
     if _th_bias and not hard_winner:
@@ -238,36 +241,60 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
             _w = _hua[0]
             _source = '源4:专旺化神(ge_cheng.hua_wx, PZZQ L170 独象喜行化地)'
         if _w:
+            _ji_wx = [KE.get(_w, '')] if KE.get(_w, '') else []
+            _dmwx = facts.get('daymaster_element') or dm
+            if _dmwx and _dmwx not in _ji_wx and _dmwx != _w:
+                _ji_wx.append(_dmwx)
+            _ji_wx = [x for x in _ji_wx if x]
             return {'layer': 'YONGYAO_RESOLVE', 'state': 'GE_FALLBACK',
                     'primary_medicine': {'wuxing': _w, 'gan': list(WX_GAN.get(_w, ())),
                                           'function': _source, 'kind': '格体喜神/救应神',
                                           'classic': '架构§2.9 用神层=L4格体喜神+P1格局病域救应',
                                           'blocked': None},
                     'auxiliary_medicine': [],
-                    'ji_shen': [bm for bm in (_gc.get('ti_wx') or []) if bm != _w],
+                    'ji_shen': _ji_wx,
                     'rejected_climate': rejected_climate,
                     'ge_fallback_source': _source,
                     'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
                     'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
                     'routing': _rt,   # ★ 第4层 程级路由
-                    'boundary_note': '源1无主病, 走格体喜神/救应神 fallback(架构§2.9 五源)'
-                    }
-        # ★ 源5: 无病无格 → 按 L3 方向出旺衰喜用神(DTS L215 体用 + L235 衰帮旺泄)
-        #   帮身→喜印(生我)/比; 泄伤→喜食伤(我生)/财。防"无主病无格→用神全空"静默丢
+                    'boundary_note': '源1无主病, 走格体喜神/救应神 fallback(架构§2.9 五源); 忌神=DTS L305 克用神+助身'}
+        # ★ 源5: 无病无格 → 按 L3 方向出旺衰喜用神(DTS L215 体用正法 + L235 衰帮旺泄)
+        #   V7.43 补源5取神规则(彻底修, 非 case 特判): 原典 DTS L215 体用正法——
+        #   「日主弱, 则提纲有物, 帮身以制其神者, 亦皆为我用;
+        #    提纲食伤财官太旺, 则取年月时上印比为喜神;
+        #    提纲印比太旺, 则取年月时上食伤财官为喜神而用之」
+        #   帮身(身弱) → 喜印(生我 SHENG_BACK)主, 比(我 dm)辅 —— 双喜
+        #   泄伤(身旺) → 喜食伤(我生 SHENG)主, 官(克我 KE_BACK)辅 —— 双喜
+        #   取神依据=L3 旺衰方向(dmn5) + 日主五行(dmwx5) 查表派生, 非 case 特判。
         _dirn5 = ((facts.get('l3_contract') or {}).get('strength_verdict') or {}).get('value') or []
         _dmwx5 = facts.get('daymaster_element') or dm
-        _w5 = SHENG_BACK.get(_dmwx5, '') if '帮身' in _dirn5 else (SHENG.get(_dmwx5, '') if '泄伤' in _dirn5 else '')
+        if '帮身' in _dirn5:
+            # 身弱 → 喜印(生我)主, 比(我)辅
+            _w5 = SHENG_BACK.get(_dmwx5, '') or _dmwx5
+            _aux5 = [_dmwx5] if _dmwx5 != _w5 else []
+            _src5 = '源5:旺衰喜用神(身弱喜印帮身, DTS L215 体用)'
+        elif '泄伤' in _dirn5:
+            # 身旺 → 喜食伤(我生)主, 官(克我)辅
+            _w5 = SHENG.get(_dmwx5, '') or _dmwx5
+            _aux5 = [KE_BACK.get(_dmwx5, '')] if KE_BACK.get(_dmwx5, '') else []
+            _src5 = '源5:旺衰喜用神(身旺喜食伤克泄, DTS L215 体用)'
+        else:
+            _w5 = ''; _aux5 = []; _src5 = ''
         if _w5:
-            _aux5 = [_dmwx5] if '帮身' in _dirn5 else ([KE.get(_dmwx5, '')] if KE.get(_dmwx5, '') else [])
+            _ji_wx5 = [KE.get(_w5, '')] if KE.get(_w5, '') else []
+            if _dmwx5 and _dmwx5 not in _ji_wx5 and _dmwx5 != _w5:
+                _ji_wx5.append(_dmwx5)
+            _ji_wx5 = [x for x in _ji_wx5 if x]
             return {'layer': 'YONGYAO_RESOLVE', 'state': 'GE_FALLBACK',
                     'primary_medicine': {'wuxing': _w5, 'gan': list(WX_GAN.get(_w5, ())),
-                                          'function': '源5:旺衰喜用神', 'kind': '旺衰喜用神',
+                                          'function': _src5, 'kind': '旺衰喜用神',
                                           'classic': 'DTS L215 体用 + L235 衰喜帮/旺宜泄', 'blocked': None},
                     'auxiliary_medicine': [{'wuxing': a, 'gan': list(WX_GAN.get(a, ()))} for a in _aux5],
-                    'ji_shen': [], 'rejected_climate': rejected_climate,
-                    'ge_fallback_source': '源5:旺衰喜用神(无病无格, DTS L215)',
+                    'ji_shen': _ji_wx5, 'rejected_climate': rejected_climate,
+                    'ge_fallback_source': _src5,
                     'yuanliu_yongshen': _yl, 'tiaohou_yongshen': _th, 'routing': _rt,
-                    'boundary_note': '源1无主病+无格, 走源5旺衰喜用神(帮身喜印/泄伤喜食伤, DTS L215)'}
+                    'boundary_note': '源1无主病+无格, 走源5旺衰喜用神(身弱喜印/身旺喜食伤, DTS L215); 忌神=DTS L305 克用神+助身'}
         return {'layer': 'YONGYAO_RESOLVE', 'state': 'NO_BING',
                 'primary_medicine': None, 'auxiliary_medicine': [],
                 'ji_shen': [], 'rejected_climate': rejected_climate,
