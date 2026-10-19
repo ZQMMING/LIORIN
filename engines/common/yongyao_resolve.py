@@ -126,7 +126,14 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
         return sum(int(_h.get(k, 0) or 0) for k in ("ben_n", "zhong_n", "yu_n", "stem_n"))
     _hou_mass = _wx_mass(_hou_wx) if _hou_wx else -1
     _max_mass = max((_wx_mass(_w) for _w in ("金", "木", "水", "火", "土")), default=0)
-    _th_bias = ("调候" in dirn) and th.get("enabled") and (_hou_wx != "") and (_hou_mass < _max_mass)
+    # V7.42 调候路线判定扩展(原典 QTBJ 十干逐月调候 + DTS L295/L300 寒暖燥湿):
+    #   候神(调候用神)=原局喜神第一顺位。候神被局压制(候神 mass 小于局最旺五行)
+    #   且日主当令者(候神=日主五行, 调候即顺局), 候神虽被局最旺者压仍为喜(身旺顺调候)。
+    #   例: 盘1 壬亥(水38局最旺, 候神=水=日主当令), 调候路 winner=水(顺局调候, 不取木泄)。
+    _dmwx_routing = facts.get("daymaster_element", "") or ""
+    _hou_is_dm = (_hou_wx == _dmwx_routing)
+    _th_bias = ("调候" in dirn) and th.get("enabled") and (_hou_wx != "") and (
+        _hou_mass < _max_mass or _hou_is_dm)
     if _th_bias and not hard_winner:
         hard_winner = {"route": "调候", "shen": th.get("primary_hou"),
                        "basis": "DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」",
