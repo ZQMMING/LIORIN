@@ -342,44 +342,22 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         zhu = uniq[0]
     fu = [e for e in uniq if e is not zhu]
 
-    # V7.25 T3 (对照表 §6 T3 "身印两旺透食则贵, 调候为急"): 印星成病(多印埋子, bing_wx=生我)
-    #   + 局内食伤透干或坐旺(午/旺地本气根) → 食伤泄秀+调候暖局+通关(印→身→食伤→财),
-    #   压过财制印为 primary(财降辅药)。原典: PZZQ L24 "身印两旺透食则贵——调候为急"
-    #   + DTS L295 寒之甚暖之至; 真值 坤造癸亥壬戌乙未壬午(多印水病, 午火食神坐旺=第一用神, 土财次之)。
-    #   反例(不触发): 印旺而局内食伤不透无旺根 → 财破印仍优先(案例5 丙申己亥庚辰戊寅 印旺用木破印, 无水伤根)。
-    if zhu and zhu.get('kind') == '制' and SHENG_BACK.get(dm, '') == bw:
-        _shi_wx = SHENG.get(dm, '')
-        _brs4 = [p[1] for p in _pl.values()] if _pl else []
-        _shi_pen = any(GAN_WX.get(_pl[pos][0]) == _shi_wx for pos in ('year', 'month', 'hour') if _pl)
-        _shi_wang = any(b in ('午', '巳') and ZHI_BEN_WX.get(b) == _shi_wx for b in _brs4)
-        if (_shi_pen or _shi_wang) and bw == '水':
-            _shi_edge = next((e for e in uniq if e['wuxing'] == _shi_wx), None)
-            if _shi_edge and _shi_edge['accepted']:
-                zhu = {'wuxing': _shi_wx, 'gan': list(WX_GAN.get(_shi_wx, ())),
-                       'function': '食伤泄秀调候(多印局内食神坐旺, 泄秀+暖局+通关生财)',
-                       'kind': '调候',
-                       'classic': 'PZZQ L24 "身印两旺透食则贵——调候为急" + DTS L295',
-                       'blocked': None}
-                fu = [e for e in uniq if e['wuxing'] != _shi_wx]
-
-    # 调候候神 primary 消解 (2026-10 真值对照): 候神在候干里(未合绊)
-    #   + 候神是食伤(我生, 泄秀暖局) 或 是制药(克主病) 时, 候神升 primary。
-    #   原典: DTS L295/L298 寒燥极偏枯候神优先; 真值 坤造癸亥壬戌乙未壬午
-    #   主病=印水, 候神=火(食伤), 泄秀+调候暖局双职能 -> primary=火(非土)。
-    if zhu:
-        _th = (facts.get('climate') or {}).get('tiaohou_yongshen') or _tiaohou_yongshen(facts, climate)
-        _hou_wx = _th.get('primary_hou') or ''
-        _is_shishang = SHENG.get(dm, '') == _hou_wx
-        _is_zhi = KE_BACK.get(bw, '') == _hou_wx
-        if _hou_wx and (_is_shishang or _is_zhi):
-            _he_ban = any(m.get('wuxing') == _hou_wx and m.get('state', '').startswith('合绊')
-                          for m in medicine_blocked)
-            if not _he_ban:
-                zhu = {'wuxing': _hou_wx, 'gan': list(WX_GAN.get(_hou_wx, ())),
-                       'function': '调候候神(泄秀暖局/制病)', 'kind': '调候',
-                       'classic': 'DTS L295/L298 寒燥极偏枯候神优先',
-                       'blocked': None}
-                fu = [e for e in uniq if e['wuxing'] != _hou_wx]
+    # V7.25 候神集中裁决源(tiaohou_rank): 候干查表(职能=食伤泄秀/制药 且 有气且未刑)
+    #   -> 候干升 primary; 候干=生我(印=主病源) 或 职能不中 -> 让位寒燥交互候食伤
+    #   (寒燥月令 × 局内食伤有气, DTS L295/L300). 替换 case-by-case if(原 T3/候神消解 分支).
+    from engines.common import tiaohou_rank
+    _rank = tiaohou_rank._tiaohou_primary_rank(climate or {}, bw, dm, _pl)
+    if zhu and _rank['rank'] == 'PROMOTE':
+        _sh_wx = _rank['wx']
+        _he_ban = any(m.get('wuxing') == _sh_wx and m.get('state', '').startswith('合绊')
+                      for m in medicine_blocked)
+        if not _he_ban:
+            zhu = {'wuxing': _sh_wx, 'gan': list(WX_GAN.get(_sh_wx, ())),
+                   'function': '调候候神(%s)' % '/'.join(_rank['reason']),
+                   'kind': '调候',
+                   'classic': '+ '.join(_rank['refs']),
+                   'blocked': None}
+            fu = [e for e in uniq if e['wuxing'] != _sh_wx]
 
     ji = [bw]
     sb = SHENG_BACK.get(bw, '')
@@ -390,9 +368,11 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     if zhu:
         _zb = [b for b in medicine_blocked if b['wuxing'] == zhu['wuxing']
                and b['state'].startswith('合绊')]
+        # kind/classic 取自 zhu 边(候神升 primary 时 kind=调候/classic=候神原典; 默认=制/相克)
         primary_medicine = {'wuxing': zhu['wuxing'], 'gan': zhu['gan'],
-                            'function': zhu['function'], 'kind': '制',
-                            'classic': '五行相克为基础关系; DTS FAN_JU.001',
+                            'function': zhu['function'],
+                            'kind': zhu.get('kind', '制'),
+                            'classic': zhu.get('classic', '五行相克为基础关系; DTS FAN_JU.001'),
                             'blocked': _zb[0] if _zb else None}
     aux = [{'wuxing': e['wuxing'], 'gan': e['gan'], 'kind': e['kind'],
             'function': e['function'],

@@ -291,21 +291,13 @@ def verdict_step(pillars, base, step, extra, base_tier):
                 continue
             break
 
-    # 裁决
-    hard_good = any(('制主病' in x or '化泄' in x or '暖化' in x) for x in good)
-    hard_bad = bool(bad)
-    if hard_good and hard_bad:
-        level, shorthand = 0, '平战'
-    elif hard_bad:
-        level, shorthand = -2, '毒药'
-    elif hard_good:
-        level, shorthand = 2, '良药'
-    elif good:
-        level, shorthand = 1, '良药'
-    else:
-        level, shorthand = 0, '平'
+    # 裁决 (V7.25 恶神抵消表 evil_offset: 刑/冲提纲/冲药根/破格 不抵消制化之功)
+    from engines.common import evil_offset
+    _v = evil_offset.verdict_arbitrate(good, bad)
+    level, shorthand = _v['level'], _v['shorthand']
 
-    if shorthand == '良药' and hard_good:
+    if shorthand == '良药' and evil_offset.verdict_arbitrate(good, bad)['level'] == 2 \
+            and any(('制主病' in x or '化泄' in x or '暖化' in x) for x in good):
         direction = '病得制化/暖解, 可顺势进取'
     elif shorthand == '良药':
         direction = '身得帮, 宜稳守蓄力'
@@ -317,7 +309,8 @@ def verdict_step(pillars, base, step, extra, base_tier):
         direction = '平淡无大关目, 常守'
 
     return {'level': level, 'shorthand': shorthand,
-            'good': good, 'bad': bad, 'direction': direction}
+            'good': good, 'bad': bad, 'direction': direction,
+            'arbitration_note': _v.get('note', '')}
 
 
 # =============================================================
