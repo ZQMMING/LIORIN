@@ -181,13 +181,29 @@ def verdict_step(pillars, base, step, extra, base_tier):
             good.append('帮身(%s)' % '/'.join(hb))
 
     # --- 毒药·助病: 同病 / 生病 ---
+    #   V7.28 候神/炼金豁免: 候神(食伤泄秀/制药)与炼金官火(金日主土重局, 丁火正官坐巳=候)是药非助病之源,
+    #   不入助病/克伐. 真值 丁卯庚戌庚戌庚辰: 丁巳/戊午运火=炼金候神(用神), 旧口径"火生土助主病"误判毒药.
+    from engines.common import tiaohou_rank
+    _cli_s = {}
+    _hou_th = (base.get('yongyao') or {}).get('tiaohou_yongshen') or {}
+    if _hou_th.get('hou_stems'):
+        _cli_s['climate_candidates'] = [
+            {'stem': s, 'order': i} for i, s in enumerate(_hou_th['hou_stems'])]
+    _rank_step = tiaohou_rank._tiaohou_primary_rank(_cli_s, bw, dm_wx, pillars)
+    _houshen_wx = _rank_step['wx'] if _rank_step['rank'] == 'PROMOTE' else ''
+    # 炼金候: 金日主+土主病+岁运有火 -> 火=炼金药(候干表120格已录丁, 金土局炼金). 候干表未候火时兜底.
+    _lianjin_wx = ''
+    if dm_wx == '金' and bw == '土' and '火' in transit_wx:
+        _lianjin_wx = '火'
     if bw:
-        z = sorted(x for x in transit_wx if x in (bw, SHENG_BACK.get(bw)))
+        z = sorted(x for x in transit_wx
+                   if x in (bw, SHENG_BACK.get(bw)) and x not in (_houshen_wx, _lianjin_wx))
         if z:
             bad.append('助主病%s(%s)' % (bw, '/'.join(z)))
     # --- 毒药·克伐弱主 ---
+    #   V7.28 候神/炼金豁免: 炼金官火克日主是炼金非克伐, 不入 bad.
     ke_dm = KE_BACK.get(dm_wx)
-    if need_help and ke_dm in transit_wx:
+    if need_help and ke_dm in transit_wx and ke_dm not in (_houshen_wx, _lianjin_wx):
         bad.append('克伐日主(%s)' % ke_dm)
     # --- 毒药·新合绊主药 ---
     d = diff_chain(base, step)
@@ -215,13 +231,20 @@ def verdict_step(pillars, base, step, extra, base_tier):
         elif other in heavy_br:
             bad.append('冲日主重根(%s冲%s)' % (cur_z, other))
 
-    # --- 毒药·三刑(岁运支参与成刑; 原典寅巳申/丑戌未/子卯).
+    # --- 毒药·三刑(岁运支参与成刑; 原典寅巳申/丑戌未须三支俱全, 子卯两支即成).
     #     自刑(辰午酉亥同支再见)非战克、主小自扰, 不入毒药 hard_bad ---
     for _x in step['tp'].get('combination_facts', {}).get('sanxing', []):
         _label = _x.get('type', '')
         _brs = _x.get('branches') or []
         if cur_z in _brs and not _label.endswith('自刑'):
             bad.append('三刑(%s)' % _label)
+
+    # --- V7.27 刑不入抵消: 岁运食伤(我生)泄秀功 抵消刑伤(原典"泄秀暖局为用") ---
+    #     食伤=我生(dm_wx所生), 主病=印(生我)时食伤泄秀暖局是药, 刑伤不抵消药之功 -> 剔三刑.
+    #     真值 丁卯庚戌庚戌庚辰: 壬子(壬水食神=金生之水, 子水伤官=食伤泄秀)被"子卯刑"误杀 -> 食伤泄秀抵消刑.
+    _shishang_wx = SHENG.get(dm_wx, '')
+    if _shishang_wx and (_shishang_wx in transit_wx) and any('三刑' in x for x in bad):
+        bad = [b for b in bad if '三刑' not in b]
 
     # 冲拔主药根时, 该岁运支本气的"化泄"为冲药假象, 剔除(不抵冲药之凶)
     if medicine_pulled:

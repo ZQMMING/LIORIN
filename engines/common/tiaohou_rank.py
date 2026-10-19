@@ -155,7 +155,7 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
     (寒燥月令 × 局内食伤有气). 全布尔, 禁浮点.
     """
     mb = (climate or {}).get('month_branch', '') or ''
-    # ① 候干查表: 候干序1 有气 + 职能中(食伤泄秀/制药) -> 升.
+    # ① 候干查表: 候干序1 有气 + 职能中(食伤泄秀/制药/炼金) -> 升.
     #   候干=生我(印) 时是主病之源(印多成病), 不升候干(让位寒燥交互候食伤).
     cands = _hou_candidates(climate)
     if cands:
@@ -165,13 +165,18 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
         _is_shishang = SHENG.get(dm_wx, '') == wx     # 候干=食伤(我生)=泄秀
         _is_zhi = KE_BACK.get(bing_wx, '') == wx     # 候干=制药(克主病)
         _is_yin = SHENG_BACK.get(dm_wx, '') == wx     # 候干=生我(印)=主病源
+        # V7.26 炼金职能: 金日主 主病印(土)重埋金时, 官火=炼金(制比劫+成器)为候神(原典"土重金埋需火炼金").
+        #   候火不入忌(炼金是药), 同食伤泄秀.
+        _is_lianjin = (dm_wx == '金' and bing_wx == SHENG_BACK.get(dm_wx, '') and wx == KE.get(dm_wx, ''))
         _reason = ['候干序1=%s 有气: 透干%d/坐旺%s' % (top.get('stem', ''), _stem_present(wx, pillars), _ben_wang(wx, pillars))]
-        if _in_chu and not _in_xing(wx, pillars) and (_is_shishang or _is_zhi):
+        if _in_chu and not _in_xing(wx, pillars) and (_is_shishang or _is_zhi or _is_lianjin):
             _role = []
             if _is_shishang:
                 _role.append('食伤泄秀')
             if _is_zhi:
                 _role.append('制药')
+            if _is_lianjin:
+                _role.append('炼金(制比劫+成器)')
             _reason.append('候干职能: %s' % '+'.join(_role))
             _reason.append('候干有气+职能中+未刑 -> 升 primary')
             return {'rank': 'PROMOTE', 'wx': wx, 'reason': _reason,

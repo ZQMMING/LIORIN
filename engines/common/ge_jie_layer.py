@@ -736,15 +736,23 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                         _cai_254 = _god_gans('正财') + _god_gans('偏财')
                         _xi_gans = ([_cai_254[0]] if _cai_254 else []) + _xi_gans
                         _rule = ('PZZQ255: 印格带伤食+印重(印多用财抑太过)->财置喜首抑印, 印制伤护官次; 破格: 无')
+                        _yin_heavy_254 = True
+                    else:
+                        _yin_heavy_254 = False
                 else:
                     _xi_gans = list(guan_gans)   # 命名债: 旧名 _guan_sheng 实为食伤, 已弃用
                     _rule = ('PZZQ255: 官印双全+官有根+无杀透->印格成; 印是格体; 喜神=官; 破格: 财破印')
+                    _yin_ben_254 = int(((facts.get('wuxing_power',{}).get('wuxing_power',{}) or {}).get(yin_wx,{}) or {}).get('ben_n',0) or 0)
+                    _yin_heavy_254 = (len(yin_gans) >= 2) or (_yin_ben_254 >= 2)   # V7.26 印重(印多用财抑太过, 无防财破)
                 facts['ge_cheng'] = {
                     'ge': '印格(官印双全)', 'xi_wx': sorted(set(GAN_WX[g] for g in _xi_gans)),
                     'ti_wx': [yin_wx],
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
-                    'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 印轻逢财(财破印, 财单见即忌)
+                    'po_ge': (
+                        [] if _yin_heavy_254
+                        else [{'type':'组合','match':'ANY','required':['正财','偏财']}]   # PZZQ258: 印轻逢财(财破印, 财单见即忌)
+                    ),  # V7.26: 印重(印多用财抑太过)财置喜首抑印 -> 财不作破格忌(原典"无防财破"); 印轻才破
                     'rule': _rule,
                 }
                 return _attach_ge_evidence(facts)
@@ -825,11 +833,20 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     _yin_rule = ('PZZQ255: 印格带伤食+印重(印多用财抑太过)->财置喜首抑印(认藏支财); 印制伤护官次; 破格: 无')
         else:
             _yin_rule = 'PZZQ255: 印格成; 印是格体; 身印旺食伤泄秀为喜/印浅身轻喜印护身; 破格: 财破印'
+        # V7.25 印格重分档: 印重(印多成病/土重金埋)时财是疏病之药(破格误杀修复).
+        #   原典 ZHENG_YIN_001"印多用财以抑太过, 无防财破": 印重(印透>=2 或 印ben>=2) -> 财破格豁免;
+        #   印轻(单印/印浅) -> 财破印照破. 真值 丁卯庚戌庚戌庚辰(土重金埋, 印土多, 甲寅/乙卯木疏土=大吉)
+        #   引擎旧口径"印格财破格"误杀甲寅/乙卯(制主病土反判毒药) -> 按印轻重分档, 印重不认财破格.
+        _yin_ben_n_po = int(((facts.get('wuxing_power', {}).get('wuxing_power', {}) or {}).get(yin_wx_default, {}) or {}).get('ben_n', 0) or 0)
+        _yin_heavy_po = (len(yin_gans) >= 2) or (_yin_ben_n_po >= 2)
+        _yin_po = [] if _yin_heavy_po else [{'type': '组合', 'match': 'ANY', 'required': ['正财', '偏财']}]
+        if _yin_heavy_po:
+            _yin_rule = 'PZZQ255: 印格重(印多成病/土重金埋)->财是疏病之药(印多用财以抑太过), 财不作破格忌; 破格: 无'
         facts['ge_cheng'] = {
             'ge': '印格', 'xi_wx': _yin_xq, 'ti_wx': [yin_wx_default] if yin_wx_default else [],
             'overpower_combo': 6,
             'zhi_wx': [], 'hua_wx': [],
-            'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],
+            'po_ge': _yin_po,
             'rule': _yin_rule,
         }
         return _attach_ge_evidence(facts)
@@ -1232,7 +1249,15 @@ def apply_he_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     mwx = facts.get('month_qi_element', '')
     ti = set(gc.get('ti_wx') or [])
     xi = set(gc.get('xi_wx') or [])
-    if mwx in (ti | xi) and any(mz in p for p in rs.get('chong_survive', [])):
+    # V7.26 位置精确: 冲月令破格 须【月令位置(位置1)的地支】被相邻六冲冲住且 survive.
+    #   旧口径 `any(mz in p for p in chong_survive)` 只看"戌字在冲对中"不辨位置:
+    #   真值 丁卯庚戌庚戌庚辰(年卯月戌日戌时辰), 月令戌(位置1)被年卯合住无冲, 被冲的是
+    #   日支戌(位置2)被时支辰(位置3)冲 —— 非月令, 不破格(原典 PZ-0034/PZ-0279"月令未被真正冲, 不破").
+    #   改用 chong_actions(带 positions): 月令位置=1, 找 resolved=survive 且 positions 含 1 的冲对.
+    _month_pos_clashed = any(
+        act.get('resolved') == 'survive' and 1 in (act.get('positions') or [])
+        for act in (rs.get('chong_actions') or []))
+    if mwx in (ti | xi) and _month_pos_clashed:
         gc['ti_wx'] = []
         gc['xi_wx'] = []
         gc.setdefault('po_ge', []).append({'type': '冲月令破格', 'match': 'ANY', 'required': [mwx]})
@@ -1396,7 +1421,11 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
             ok = len(forb) > 0 and all(x not in present_all for x in forb)
             hit_gods = [x for x in forb]
         elif t == '冲月令破格':
-            ok = True
+            # V7.26 冲月令破格须 chong_survive 真冲(月令支被六冲冲住且冲不被解).
+            #   原典 DTS CHONG_HE_JI.005「刑与穿兮动不动」: 刑穿冲动静未授权 -> 不升级破格.
+            #   此前无条件 ok=True, 把 apply_he_po_ge 登记的「冲月令破格」模板当成永远命中(误杀):
+            #   真值 丁卯庚戌庚戌庚辰(印格, 辰冲戌=冲月令), 但印格重时木疏土是药, 冲月令非真格败.
+            ok = bool(chong_survive)
             hit_gods = tpl.get('required') or []
         if ok:
             hits.append({

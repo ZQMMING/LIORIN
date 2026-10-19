@@ -363,6 +363,26 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     sb = SHENG_BACK.get(bw, '')
     if sb:
         ji.append(sb)
+    # V7.25 比劫争财入忌神表: 财主病(主病=日主所克=财) 且 比劫成众(透>=2 或 坐旺) ->
+    #   比劫入忌(争财破官, 原典"群比争财" L1808). 真值 丁卯庚戌庚戌庚辰: 忌金(三庚比劫争财), 不只忌土(主病).
+    _KE = {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}
+    _bi_wx = dm
+    _cai_wx = _KE.get(dm, '')
+    if bw == _cai_wx and _bi_wx not in ji:
+        _bi_brs = [p[1] for p in _pl.values()] if _pl else []
+        _bi_pen = any(GAN_WX.get(_pl[pos][0]) == _bi_wx for pos in ('year', 'month', 'hour') if _pl)
+        _bi_wang = any(ZHI_BEN_WX.get(b) == _bi_wx and b in
+                       ({'木': ('寅', '卯'), '火': ('巳', '午'), '土': ('辰', '戌', '丑', '未'),
+                          '金': ('申', '酉'), '水': ('亥', '子')}.get(_bi_wx, ())) for b in _bi_brs)
+        if _bi_pen or _bi_wang:
+            ji.append(_bi_wx)
+    # V7.26 候神剔除忌神: 候神(炼金/泄秀/制药)是药不是忌. 土重金埋=候火炼金, 火不入忌.
+    from engines.common import tiaohou_rank
+    _rank_ji = tiaohou_rank._tiaohou_primary_rank(climate or {}, bw, dm, _pl)
+    if _rank_ji['rank'] == 'PROMOTE':
+        _promote_wx = _rank_ji['wx']
+        if _promote_wx in ji:
+            ji.remove(_promote_wx)
 
     primary_medicine = None
     if zhu:
