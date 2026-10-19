@@ -32,6 +32,37 @@ _MED_PULLED_PREFIX = '冲拔主药根'
 _BLOCK_PREFIX = '主药被合绊'
 
 # ======================================================================
+# V7.30 抵消规则统一表: 交战/合绊/冲开 三类抵消规则收敛为一张集中表,
+#   suiyun_validate verdict 单一消费, 不再散落 case 补丁. 全布尔, 禁浮点.
+# 抵消类型:
+#   '交战'   : 主病与候神药同运交战(主病被药制, 吉凶交战 -> 平战, 非毒药). 查表判据:
+#     岁运同时带 主病(bw) + 候神药(炼金/疏病, 非泄秀) -> 交战. 原典"药病交战, 吉凶参半".
+#   '合绊'   : 候神药被合去失制力(走 hard_bad, 抵消制). 查表判据: 岁运干支与候神药成六合/三合合走.
+#   '冲开'   : 候神药被冲开失制力(走 hard_bad, 抵消制). 查表判据: 岁运支冲开候神药之根/提纲.
+_OFFSET_KINDS = ('交战', '合绊', '冲开')
+# 抵消 -> 级别映射(查表): 交战=平战(0, 吉凶交战非毒药), 合绊/冲开=毒药(-2, 药失制力)
+_OFFSET_LEVEL = {'交战': 0, '合绊': -2, '冲开': -2}
+
+
+def offset_kind(dm_wx: str, bing_wx: str, transit_wx, transit_blocked: bool = False) -> List[str]:
+    """V7.30 抵消规则统一表(查表): 给定主病/日主/岁运 -> 命中的抵消类型列表.
+    交战: 岁运带主病(bw) + 炼金/疏病候神药(泄秀不抵) -> 主病被药制, 交战(平战).
+    合绊: 岁运干支与候神药成合走(调用方传 transit_blocked=True) -> 药失制力.
+    冲开: 岁运支冲开候神药之根/提纲(调用方传 transit_blocked=True) -> 药失制力.
+    全布尔/枚举, 禁浮点. 返回 ['交战','合绊','冲开'] 子集(无命中=空)."""
+    kinds = []
+    if not bing_wx or bing_wx not in transit_wx:
+        return kinds
+    roles = houchou_roles(dm_wx, bing_wx)
+    # 交战: 主病(bw) 在运 + 炼金/疏病候神药在运(泄秀不抵助病)
+    if any(wx in transit_wx and ('炼金' in r or '疏病' in r) for wx, r in roles.items()):
+        kinds.append('交战')
+    if transit_blocked:
+        # 合绊/冲开: 候神药被合走/冲开 -> 失制力(调用方已判合冲存在, 此处登记抵消类型)
+        kinds.append('合绊' if '合' in str(transit_blocked) else '冲开')
+    return kinds
+
+# ======================================================================
 # V7.28 候神职能表 × 坐旺力级 (集中算理, 替换 case-by-case 级别微调)
 # 方法论: 岁运命中候神(药)时, 按"职能×力级"定级别 —— 候神坐旺=2力升吉/大吉,
 #   平支=1力(平), 恶神(刑/伤官见官)压倒弱力=凶. 级别由算理出, 不按案例调.
@@ -106,35 +137,41 @@ def houchou_roles(dm_wx: str, bing_wx: str) -> Dict[str, str]:
 
 
 def houchou_conflict(dm_wx: str, bing_wx: str, transit_wx) -> bool:
-    """V7.28 交战判据: 岁运同时带主病(bw)+【能抵消助病的候神药】(炼金/疏病, 非泄秀)
-    -> 主病与药同运交战(如 戊午: 戊土主病+午火炼金候, 午戌半合抵消助病 -> 平战非毒药).
-    泄秀(食伤)不抵消助病(它泄的是日主非主病), 故不入交战. 查表, 全布尔."""
-    if not bing_wx or bing_wx not in transit_wx:
-        return False
-    roles = houchou_roles(dm_wx, bing_wx)
-    # 仅炼金/疏病候神能抵消助病; 泄秀不抵
-    return any(wx in transit_wx and ('炼金' in r or '疏病' in r) for wx, r in roles.items())
+    """[deprecated V7.30] 已被 offset_kind 取代(交战/合绊/冲开统一表). 保留兼容:
+    交战判据 = 岁运同时带主病(bw)+【炼金/疏病】候神药(泄秀不抵助病) -> 主病被药制交战(平战)."""
+    return '交战' in offset_kind(dm_wx, bing_wx, transit_wx)
 
 
-def houchou_force(transit_wx, branch_z, roles):
-    """候神力级: 岁运命中候神 -> [(wx, 职能, 力级)]. 坐旺=2力, 平支=1力. 查表 _WANG_BR.
-    岁运干+支(本气)都算候神在运."""
+def houchou_force(transit_wx, branch_z, roles, natal_has_root=None, transit_blocked=False):
+    """V7.30 候神力级精算: 岁运命中候神 -> [(wx, 职能, 力级)].
+    力级(全查表/布尔, 禁浮点):
+      - 该运候神坐旺(_WANG_BR) = 2力(基础)
+      - 原局候神得根(natal_has_root=该候神五行在原局有根) -> 加1力(3力, 得地更实)
+      - 该运候神被冲开/合绊(transit_blocked=True) -> 降1力(坐旺2->1, 得地3->2)
+    力级枚举: 坐旺=2 / 平支=1; 得根+1(上限3); 被冲合-1(下限1). 调用方传 natal_has_root(dict wx->bool)."""
     out = []
     for wx in (transit_wx or set()):
         if wx in roles:
             force = 2 if branch_z in _WANG_BR.get(wx, ()) else 1
-            out.append({'wx': wx, 'role': roles[wx], 'force': force})
+            if natal_has_root and natal_has_root.get(wx, False):
+                force += 1   # 原局候神得根, 力级+1
+            if transit_blocked:
+                force = max(1, force - 1)   # 该运候神被冲开/合绊, 力级-1
+            out.append({'wx': wx, 'role': roles[wx], 'force': force,
+                        'root': bool(natal_has_root and natal_has_root.get(wx, False)),
+                        'blocked': bool(transit_blocked)})
     return out
 
 
-def houchou_verdict(transit_wx, branch_z, dm_wx, bing_wx, bad_items):
-    """V7.28 候神升格: 岁运命中候神(药) -> 按"职能×力级"定级别.
-    坐旺2力+无恶神 -> level=2(吉/大吉); 恶神(刑/伤官见官)压倒 -> level=-2(凶);
-    平支1力无恶神 -> 0(平). 全布尔/序数, 禁浮点. 恶神压倒判定须由调用方在 bad 非空时触发."""
+def houchou_verdict(transit_wx, branch_z, dm_wx, bing_wx, bad_items,
+                   natal_has_root=None, transit_blocked=False):
+    """V7.30 候神升格: 岁运命中候神(药) -> 按"职能×力级精算"定级别.
+    力级>=2(坐旺 或 平支得根)且无恶神 -> level=2(吉/大吉); 恶神(刑/伤官见官)压倒 -> -2(凶);
+    力级==1(平支且无根)无恶神 -> 0(平). 全布尔/序数, 禁浮点. 恶神压倒由调用方在 bad 非空时触发."""
     roles = houchou_roles(dm_wx, bing_wx)
     if not roles:
         return {'promote': False, 'level': 0, 'reason': '候神职能表未命中(主病×日主无候神)'}
-    hits = houchou_force(transit_wx, branch_z, roles)
+    hits = houchou_force(transit_wx, branch_z, roles, natal_has_root, transit_blocked)
     if not hits:
         return {'promote': False, 'level': 0, 'reason': '岁运未命中候神(药)'}
     top = max(hits, key=lambda h: h['force'])
@@ -143,9 +180,14 @@ def houchou_verdict(transit_wx, branch_z, dm_wx, bing_wx, bad_items):
         return {'promote': False, 'level': -2,
                 'reason': '恶神(刑/伤官见官)压倒候神力级(%d力), 判凶' % top['force']}
     if top['force'] >= 2:
+        _det = []
+        if branch_z in _WANG_BR.get(top['wx'], ()):
+            _det.append('坐旺')
+        if top['root']:
+            _det.append('原局得根')
         return {'promote': True, 'level': 2,
-                'reason': '候神%s(%s)坐旺2力 -> 升吉' % (top['wx'], top['role'])}
-    return {'promote': False, 'level': 0, 'reason': '候神%s平支1力, 无恶神, 平' % top['wx']}
+                'reason': '候神%s(%s)%s%d力 -> 升吉' % (top['wx'], top['role'], '+'.join(_det) or '平支', top['force'])}
+    return {'promote': False, 'level': 0, 'reason': '候神%s平支1力无根, 无恶神, 平' % top['wx']}
 
 
 def evil_no_offset(bad_items: List[str]) -> bool:

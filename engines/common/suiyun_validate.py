@@ -189,12 +189,12 @@ def verdict_step(pillars, base, step, extra, base_tier):
     if bw:
         z = sorted(x for x in transit_wx
                    if x in (bw, SHENG_BACK.get(bw)) and x not in _houshen_exempt)
-        # V7.28 交战判据: 岁运同时带主病(bw)+能抵消助病的候神药(炼金/疏病, 非泄秀) -> 交战性(平战).
-        #   真值 丁卯庚戌庚戌庚辰 戊午(戊土主病+午火炼金候, 午戌半合抵消助病) = 交战平, 非毒药.
-        _conflict_with_houshen = evil_offset.houchou_conflict(dm_wx, bw, transit_wx)
+        # V7.30 抵消规则统一表: 交战(主病+候神药同运被制)/合绊/冲开 收敛为 offset_kind 查表,
+        #   替换 case 补丁. 交战=平战(0), 合绊/冲开=毒药(-2, 药失制力).
+        _offsets = evil_offset.offset_kind(dm_wx, bw, transit_wx)
         if z:
-            if _conflict_with_houshen:
-                bad.append('交战(主病%s+候神%s同运, 半合抵消助病)' % (bw, '/'.join(sorted(_houshen_exempt & transit_wx))))
+            if '交战' in _offsets:
+                bad.append('交战(主病%s+候神%s同运, 药制主病吉凶交战)' % (bw, '/'.join(sorted(_houshen_exempt & transit_wx))))
             else:
                 bad.append('助主病%s(%s)' % (bw, '/'.join(z)))
     # --- 毒药·克伐弱主 ---
@@ -326,15 +326,24 @@ def verdict_step(pillars, base, step, extra, base_tier):
     _v = evil_offset.verdict_arbitrate(good, bad)
     level, shorthand = _v['level'], _v['shorthand']
 
-    # V7.28 候神升格: 岁运命中候神(药)坐旺2力且无恶神 -> 升吉(level=2).
-    #   候神职能表×坐旺力级集中算理(炼金/泄秀/疏病), 替换 case-by-case 级别微调.
-    #   真值 丁卯庚戌庚戌庚辰: 丁巳(炼金2力)吉, 甲寅/乙卯(疏病2力)大吉, 辛亥/壬子(泄秀2力)吉.
-    #   仅在当前 level==0 且 good 里无候神职能时补升; 恶神(刑/伤官见官)压倒候神力级时保持原判.
-    #   交战性 bad(主病+候神同运半合抵消) 不走候神升格, 保持平战(level0, 真值戊午=平).
+    # V7.30 候神升格: 岁运命中候神(药)且力级精算(坐旺/原局得根/该运冲合状态) -> 升吉(level=2).
+    #   候神职能表×力级精算集中算理, 替换 case-by-case 级别微调.
+    #   力级=坐旺2力 + 原局候神得根+1(3力) - 该运候神被冲开/合绊-1; 力级>=2 且无恶神 -> 升吉.
+    #   交战性 bad(主病+候神同运被药制) 不走候神升格, 保持平战(level0, 真值戊午=平).
     _bw = (bp.get('bing_wx') or '')
     _has_conflict_bad = any('交战' in x for x in bad)
+    # 力级精算入参: 原局候神得根(候神五行在原局支有本气/中气根) + 该运候神被冲开/合绊
+    _roles_ex2 = evil_offset.houchou_roles(dm_wx, _bw)
+    _zhi_brs = [pillars[pos][1] for pos in ('year', 'month', 'hour')] if pillars else []
+    _zhi_ben_wx = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+                   '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'}
+    _natal_root = {wx: any(_zhi_ben_wx.get(b, '') == wx for b in _zhi_brs)
+                   for wx in _roles_ex2}
+    # 该运候神被冲开/合绊: 岁运支冲开候神坐旺根, 或岁运干支与候神药成合走
+    _lc_blocked = bool(medicine_pulled) or d.get('new_block', False)
     if level == 0 and not bad and _bw:
-        _hc = evil_offset.houchou_verdict(transit_wx, cur_z, dm_wx, _bw, bad)
+        _hc = evil_offset.houchou_verdict(transit_wx, cur_z, dm_wx, _bw, bad,
+                                          natal_has_root=_natal_root, transit_blocked=_lc_blocked)
         if _hc['promote']:
             level = _hc['level']
             shorthand = '良药'
