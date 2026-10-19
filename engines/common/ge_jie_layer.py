@@ -764,7 +764,10 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     #   财是救应之神置喜首(与 L610-637 印多逢财段同口径 ZHENG_YIN_001)。
                     #   印重判据同 L615: 印透干数>=2 或 印本气根ben_n>=2。旁参不顶准神, 此段准神=DTS。
                     _yin_ben_254 = int(((facts.get('wuxing_power',{}).get('wuxing_power',{}) or {}).get(yin_wx,{}) or {}).get('ben_n',0) or 0)
-                    _yin_ren_254 = (len(yin_gans) >= 2) or (_yin_ben_254 >= 2)
+                    # V7.38 印当令(月令=印) 或 印地支成局(亥子申水局等) = 印重(原典 SFTK L7770 乙木死于亥水泛则浮):
+                    #   印不透干/印本气根少, 但 印当令成局 -> 印重(水泛木浮), 财置喜首抑印.
+                    _yin_dangling = (facts.get('month_qi_element','') == yin_wx)
+                    _yin_ren_254 = (len(yin_gans) >= 2) or (_yin_ben_254 >= 2) or _yin_dangling
                     if _yin_ren_254:
                         _cai_254 = _god_gans('正财') + _god_gans('偏财')
                         _xi_gans = ([_cai_254[0]] if _cai_254 else []) + _xi_gans
@@ -776,7 +779,8 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     _xi_gans = list(guan_gans)   # 命名债: 旧名 _guan_sheng 实为食伤, 已弃用
                     _rule = ('PZZQ255: 官印双全+官有根+无杀透->印格成; 印是格体; 喜神=官; 破格: 财破印')
                     _yin_ben_254 = int(((facts.get('wuxing_power',{}).get('wuxing_power',{}) or {}).get(yin_wx,{}) or {}).get('ben_n',0) or 0)
-                    _yin_heavy_254 = (len(yin_gans) >= 2) or (_yin_ben_254 >= 2)   # V7.26 印重(印多用财抑太过, 无防财破)
+                    _yin_dangling_254 = (facts.get('month_qi_element','') == yin_wx)   # V7.38 印当令=印重
+                    _yin_heavy_254 = (len(yin_gans) >= 2) or (_yin_ben_254 >= 2) or _yin_dangling_254
                 facts['ge_cheng'] = {
                     'ge': '印格(官印双全)', 'xi_wx': sorted(set(GAN_WX[g] for g in _xi_gans)),
                     'ti_wx': [yin_wx],
@@ -806,10 +810,12 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         # 喜神按印轻重分: 印重(财抑太过)=喜财; 印轻(财重无劫救)=贪财破印, 财为忌
         if cai_gans:
             yin_wx = GAN_WX[yin_gans[0]] if yin_gans else (facts.get('month_qi_element','') or '')
-            # 印轻重判据: 印透干数>=2 或 印本气根(印五行ben_n)>=2 为印重; 否则印轻
+            # 印轻重判据: 印透干数>=2 或 印本气根(印五行ben_n)>=2 或 印当令(月令=印五行) 为印重;
+            #   V7.38 印当令(月令=印) 亦入印重(原典 SFTK L7770 乙木死于亥, 水泛则浮=印重).
             _yin_ben_n = int(((facts.get('wuxing_power',{}).get('wuxing_power',{}) or {}).get(yin_wx,{}) or {}).get('ben_n',0) or 0)
             _yin_shu = len(yin_gans)
-            _yin_ren = (_yin_shu >= 2) or (_yin_ben_n >= 2)
+            _yin_dangling = (facts.get('month_qi_element','') == yin_wx)
+            _yin_ren = (_yin_shu >= 2) or (_yin_ben_n >= 2) or _yin_dangling
             if _yin_ren:
                 # 印重: 喜财(抑印太过). 对照表ZHENG_YIN_001"印多用财, 透财以抑太过, 只要根深, 无防财破"
                 #   -> 财在此路径是救应之神, 不是破格忌, 不可列入 po_ge
@@ -853,7 +859,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             # ★ DTS 准神 DT-0254「必用酉金之财」: 带伤食段若印重, 喜财抑印(印多用财, ZHENG_YIN_001)。
             #   财取透干财(cai_gans); 透干财空时认藏支财(排盘 _zhi_ben_gan 权威支本气干, 不新造判据)。
             _yin_ben_d2 = int(_yin_wx_pow.get('ben_n', 0) or 0)
-            _yin_ren_d2 = (len(yin_gans) >= 2) or (_yin_ben_d2 >= 2)
+            _yin_ren_d2 = (len(yin_gans) >= 2) or (_yin_ben_d2 >= 2) or (facts.get('month_qi_element','') == yin_wx_default)
             if _yin_ren_d2:
                 _cai_d2 = [g for g in cai_gans]
                 if not _cai_d2:

@@ -236,10 +236,16 @@ def verdict_step(pillars, base, step, extra, base_tier):
 
     # --- 凶·三刑(岁运支参与成刑; 原典寅巳申/丑戌未须三支俱全, 子卯两支即成).
     #     自刑(辰午酉亥同支再见)非战克、主小自扰, 不入凶 hard_bad ---
+    #   V7.37 子卯刑降级(原典 水泛木浮/印重 盘 "行卯运合局·身旺为福"): 子卯"无礼之刑"
+    #     两支即成, 但当 主病=印(生我, 水泛木浮/印多) 时, 卯=印之禄/帮身支, 子卯刑=印党自刑,
+    #     主小自扰(失礼/口舌), 不入 hard_bad. 查表派生: 主病=印(生我)时 子卯刑 降为小凶(不入 hard_bad).
+    _bing_is_yin = bool(bw) and SHENG.get(bw, '') == dm_wx
     for _x in step['tp'].get('combination_facts', {}).get('sanxing', []):
         _label = _x.get('type', '')
         _brs = _x.get('branches') or []
         if cur_z in _brs and not _label.endswith('自刑'):
+            if _bing_is_yin and '子卯' in _label:
+                continue   # 印重(水泛木浮)盘 子卯刑=印党自刑, 主小自扰不入 hard_bad
             bad.append('三刑(%s)' % _label)
 
     # --- 凶·合: 岁运支与原局支 六合(查表, 原局L0已备组合事实).
@@ -283,6 +289,23 @@ def verdict_step(pillars, base, step, extra, base_tier):
                 if not (g.startswith('化泄') and g.endswith('(%s)' % zw))]
 
     # --- 引动原局另一固有病机: 须岁运【生助】新病(岁运为其印, 滋养原局潜伏病).
+    #   V7.37 三合局接 verdict(原典 SFTK L7770 水泛木浮 甲辰运+丁亥年 申子辰三合水局不禄):
+    #     岁运支+原局支 成三合局, 局神=主病(或主病之印/比党) -> 助病成局(凶);
+    #     局神=主病之克(制病) -> 制病成局(吉). 查表: 三合局支->化神表, 派生非case.
+    # 三合局(支组合 -> 化神): 申子辰水 / 寅午戌火 / 亥卯未木 / 巳酉丑金
+    _SANHE_GROUPS = {'水': ('申', '子', '辰'), '火': ('寅', '午', '戌'),
+                     '木': ('亥', '卯', '未'), '金': ('巳', '酉', '丑')}
+    for _lwx, _grp in _SANHE_GROUPS.items():
+        _in_natal = [pillars[pos][1] for pos in ('year', 'month', 'day', 'hour') if pillars[pos][1] in _grp]
+        if cur_z in _grp and len(_in_natal) >= 2:
+            # 三合局成(岁运支+原局>=2支): 局神=该运支所成局化神
+            if _lwx == bw:
+                bad.append('三合局成%s(岁运%s+原局%s·助主病成局)' % (_lwx, cur_z, '/'.join(_in_natal)))
+            elif _lwx in _houshen_exempt:
+                good.append('三合局成%s候神(%s合%s·药成局, 吉)' % (_lwx, cur_z, '/'.join(_in_natal)))
+            elif KE_BACK.get(_lwx) == bw:
+                good.append('三合局成%s制主病(%s合%s·局制病, 吉)' % (_lwx, cur_z, '/'.join(_in_natal)))
+
     #     岁运克新病=反制(非引动); 同气/岁运自身被计入不记坏; 主病None=病解(吉) ---
     sp = step['debate'].get('primary_bing') or {}
     sp_id, sp_wx = sp.get('bing_id'), sp.get('bing_wx')
