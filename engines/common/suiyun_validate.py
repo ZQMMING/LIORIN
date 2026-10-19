@@ -330,7 +330,9 @@ def verdict_step(pillars, base, step, extra, base_tier):
     _natal_branches = [pillars[pos][1] for pos in ('year', 'month', 'day', 'hour')]
     _no_root = all(_ZHI_WX.get(b, '') != dm_wx for b in _natal_branches)
     _yin_wx = SHENG_BACK.get(dm_wx, '')        # 印 = 生我 (火日主=木, 金日主=土, ...)
-    _wugenyin_mark = _shi_ling and _no_root and bool(_yin_wx) and (_yin_wx in transit_wx)
+    # 主病锚定印(生我, 印重主病)时, 印运=助病非扶身药, 不豁免
+    _bing_gen_me = bw and SHENG.get(bw, '') == dm_wx
+    _wugenyin_mark = _shi_ling and _no_root and bool(_yin_wx) and (_yin_wx in transit_wx) and not _bing_gen_me
 
     # --- 毒药·格局破格: 原局成格 + 岁运触发 po_ge 路径 ---
     # match 语义(ge_jie_layer 落盘): ANY=required 任一神即破格(该神本身是忌);
