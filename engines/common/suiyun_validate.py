@@ -181,29 +181,26 @@ def verdict_step(pillars, base, step, extra, base_tier):
             good.append('帮身(%s)' % '/'.join(hb))
 
     # --- 毒药·助病: 同病 / 生病 ---
-    #   V7.28 候神/炼金豁免: 候神(食伤泄秀/制药)与炼金官火(金日主土重局, 丁火正官坐巳=候)是药非助病之源,
+    #   V7.28 候神/炼金豁免: 候神职能表(evil_offset.houchou_roles)命中的岁运五行是药非助病之源,
     #   不入助病/克伐. 真值 丁卯庚戌庚戌庚辰: 丁巳/戊午运火=炼金候神(用神), 旧口径"火生土助主病"误判毒药.
-    from engines.common import tiaohou_rank
-    _cli_s = {}
-    _hou_th = (base.get('yongyao') or {}).get('tiaohou_yongshen') or {}
-    if _hou_th.get('hou_stems'):
-        _cli_s['climate_candidates'] = [
-            {'stem': s, 'order': i} for i, s in enumerate(_hou_th['hou_stems'])]
-    _rank_step = tiaohou_rank._tiaohou_primary_rank(_cli_s, bw, dm_wx, pillars)
-    _houshen_wx = _rank_step['wx'] if _rank_step['rank'] == 'PROMOTE' else ''
-    # 炼金候: 金日主+土主病+岁运有火 -> 火=炼金药(候干表120格已录丁, 金土局炼金). 候干表未候火时兜底.
-    _lianjin_wx = ''
-    if dm_wx == '金' and bw == '土' and '火' in transit_wx:
-        _lianjin_wx = '火'
+    from engines.common import evil_offset
+    _roles_ex = evil_offset.houchou_roles(dm_wx, bw)
+    _houshen_exempt = set(_roles_ex.keys())
     if bw:
         z = sorted(x for x in transit_wx
-                   if x in (bw, SHENG_BACK.get(bw)) and x not in (_houshen_wx, _lianjin_wx))
+                   if x in (bw, SHENG_BACK.get(bw)) and x not in _houshen_exempt)
+        # V7.28 交战判据: 岁运同时带主病(bw)+能抵消助病的候神药(炼金/疏病, 非泄秀) -> 交战性(平战).
+        #   真值 丁卯庚戌庚戌庚辰 戊午(戊土主病+午火炼金候, 午戌半合抵消助病) = 交战平, 非毒药.
+        _conflict_with_houshen = evil_offset.houchou_conflict(dm_wx, bw, transit_wx)
         if z:
-            bad.append('助主病%s(%s)' % (bw, '/'.join(z)))
+            if _conflict_with_houshen:
+                bad.append('交战(主病%s+候神%s同运, 半合抵消助病)' % (bw, '/'.join(sorted(_houshen_exempt & transit_wx))))
+            else:
+                bad.append('助主病%s(%s)' % (bw, '/'.join(z)))
     # --- 毒药·克伐弱主 ---
     #   V7.28 候神/炼金豁免: 炼金官火克日主是炼金非克伐, 不入 bad.
     ke_dm = KE_BACK.get(dm_wx)
-    if need_help and ke_dm in transit_wx and ke_dm not in (_houshen_wx, _lianjin_wx):
+    if need_help and ke_dm in transit_wx and ke_dm not in _houshen_exempt:
         bad.append('克伐日主(%s)' % ke_dm)
     # --- 毒药·新合绊主药 ---
     d = diff_chain(base, step)
@@ -258,6 +255,16 @@ def verdict_step(pillars, base, step, extra, base_tier):
     if sp_id and sp_id != bid and sp_wx and any(
             SHENG.get(x) == sp_wx for x in transit_wx):
         bad.append('引动另一病机(%s·岁运生助)' % sp_id)
+
+    # --- V7.28 伤官见官: 岁运伤官(我生克官)见原局官星 -> 恶神(官非/失用), 压倒候神力级.
+    #     原典"伤官见官为祸"(PZZQ). 真值 丁卯庚戌庚戌庚辰: 癸丑运(癸=伤官, 丑=印土)见
+    #     原局丁火正官 -> 伤官见官+丑戌刑 -> 凶. 伤官(我生)=SHENG[dm_wx], 官星=KE[dm_wx]在局.
+    _shang_wx = SHENG.get(dm_wx, '')
+    _guan_wx = KE.get(dm_wx, '')
+    _guan_in_natal = any(
+        (WUXING.get(p[0]) == _guan_wx) for p in pillars.values() if p[0])
+    if _shang_wx and _guan_wx and _guan_in_natal and _shang_wx in transit_wx:
+        bad.append('伤官见官(%s伤官克%s官)' % (_shang_wx, _guan_wx))
 
     # --- 毒药·格局破格: 原局成格 + 岁运触发 po_ge 路径 ---
     # match 语义(ge_jie_layer 落盘): ANY=required 任一神即破格(该神本身是忌);
@@ -318,6 +325,25 @@ def verdict_step(pillars, base, step, extra, base_tier):
     from engines.common import evil_offset
     _v = evil_offset.verdict_arbitrate(good, bad)
     level, shorthand = _v['level'], _v['shorthand']
+
+    # V7.28 候神升格: 岁运命中候神(药)坐旺2力且无恶神 -> 升吉(level=2).
+    #   候神职能表×坐旺力级集中算理(炼金/泄秀/疏病), 替换 case-by-case 级别微调.
+    #   真值 丁卯庚戌庚戌庚辰: 丁巳(炼金2力)吉, 甲寅/乙卯(疏病2力)大吉, 辛亥/壬子(泄秀2力)吉.
+    #   仅在当前 level==0 且 good 里无候神职能时补升; 恶神(刑/伤官见官)压倒候神力级时保持原判.
+    #   交战性 bad(主病+候神同运半合抵消) 不走候神升格, 保持平战(level0, 真值戊午=平).
+    _bw = (bp.get('bing_wx') or '')
+    _has_conflict_bad = any('交战' in x for x in bad)
+    if level == 0 and not bad and _bw:
+        _hc = evil_offset.houchou_verdict(transit_wx, cur_z, dm_wx, _bw, bad)
+        if _hc['promote']:
+            level = _hc['level']
+            shorthand = '良药'
+            _v['note'] = _hc['reason']
+    elif level == 0 and not good and _has_conflict_bad and evil_offset.evil_no_offset(bad):
+        # 恶神(刑/伤官见官)压倒候神力级 -> 毒药
+        level = -2
+        shorthand = '毒药'
+        _v['note'] = '恶神压倒候神力级, 判主凶'
 
     if shorthand == '良药' and evil_offset.verdict_arbitrate(good, bad)['level'] == 2 \
             and any(('制主病' in x or '化泄' in x or '暖化' in x) for x in good):

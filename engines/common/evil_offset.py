@@ -16,19 +16,97 @@ suiyun_validate verdict / yongshen_engine 多轨 B4 两处消费, 不再各补 i
   冲月令提纲 -> 提纲伤(原典"提纲为月令, 冲提纲主凶")
   冲主药根 -> 药根拔失用(冲药假象抵消化泄)
   破格 -> 格破(原典"破格则凶")
+  伤官见官 -> 官非(原典"伤官见官为祸")
 """
 from typing import List, Dict, Any, Optional
 
 # 恶神前缀表: 命中即入 evil_no_offset(刑/冲药根/破格), 不抵消制化之功 -> 判毒药主凶.
 #   冲月令提纲/冲日主重根 = 提纲伤(交战性, 非刑伤), 走平战(吉凶交战), 不入毒药.
 #   原典: 刑(恃势/无恩/无礼)主凶伤; 冲提纲=提纲伤交战(平战), 冲药根=药根拔(毒药).
-_EVIL_PREFIX = ('三刑', '格局破格')
+_EVIL_PREFIX = ('三刑', '格局破格', '伤官见官')
 # 交战性前缀: 命中即入 hard_bad(凶), 但不抵消制化之功(平战, 非毒药)
-_CONFLICT_PREFIX = ('冲月令', '冲日主重根')
+_CONFLICT_PREFIX = ('冲月令', '冲日主重根', '交战')
 # 冲药根专属前缀: 命中则抵消该岁运支本气的"化泄"(冲药假象)
 _MED_PULLED_PREFIX = '冲拔主药根'
 # 合绊前缀: 药被合去失制力(抵消制, 走 hard_bad)
 _BLOCK_PREFIX = '主药被合绊'
+
+# ======================================================================
+# V7.28 候神职能表 × 坐旺力级 (集中算理, 替换 case-by-case 级别微调)
+# 方法论: 岁运命中候神(药)时, 按"职能×力级"定级别 —— 候神坐旺=2力升吉/大吉,
+#   平支=1力(平), 恶神(刑/伤官见官)压倒弱力=凶. 级别由算理出, 不按案例调.
+# 候神职能表(查表): 日主五行 × 主病五行 -> {候神五行: 职能}, 全枚举, 禁浮点
+#   炼金: 金日主+土主病(印重埋金) -> 火=炼金(制比劫+成器, 原典"土重金埋需火炼金")
+#   泄秀: 主病=印(生我) -> 食伤(我生)=泄秀(原典"食伤泄秀暖局")
+#   疏病: 主病=印(生我) -> 财(我克)=疏病(原典"财疏印重")
+_SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+_KE = {'木': '土', '土': '水', '水': '火', '火': '金', '金': '木'}
+_SHENG_BACK = {v: k for k, v in _SHENG.items()}   # 生我=印
+# 候神坐旺支(帝旺/禄): 岁运支坐该旺地=2力
+_WANG_BR = {'木': ('寅', '卯'), '火': ('巳', '午'), '土': ('辰', '戌', '丑', '未'),
+            '金': ('申', '酉'), '水': ('亥', '子')}
+
+
+def houchou_roles(dm_wx: str, bing_wx: str) -> Dict[str, str]:
+    """候神职能表(查表): 主病×日主 -> {候神五行: 职能}. 全枚举, 禁浮点.
+    主病=印(生我)时: 食伤(我生)=泄秀, 财(我克)=疏病; 金日主+土主病=炼金(官火).
+    只列【药】候神(炼金/泄秀/疏病), 不列助病之源; 交战判据用本表."""
+    roles = {}
+    if not dm_wx or not bing_wx:
+        return roles
+    if dm_wx == '金' and bing_wx == '土':
+        roles['火'] = '炼金(制比劫+成器)'
+    if bing_wx == _SHENG_BACK.get(dm_wx, ''):
+        _shi = _SHENG.get(dm_wx, '')
+        _cai = _KE.get(dm_wx, '')
+        if _shi:
+            roles[_shi] = '食伤泄秀'
+        if _cai:
+            roles[_cai] = '疏病(克主病)'
+    return roles
+
+
+def houchou_conflict(dm_wx: str, bing_wx: str, transit_wx) -> bool:
+    """V7.28 交战判据: 岁运同时带主病(bw)+【能抵消助病的候神药】(炼金/疏病, 非泄秀)
+    -> 主病与药同运交战(如 戊午: 戊土主病+午火炼金候, 午戌半合抵消助病 -> 平战非毒药).
+    泄秀(食伤)不抵消助病(它泄的是日主非主病), 故不入交战. 查表, 全布尔."""
+    if not bing_wx or bing_wx not in transit_wx:
+        return False
+    roles = houchou_roles(dm_wx, bing_wx)
+    # 仅炼金/疏病候神能抵消助病; 泄秀不抵
+    return any(wx in transit_wx and ('炼金' in r or '疏病' in r) for wx, r in roles.items())
+
+
+def houchou_force(transit_wx, branch_z, roles):
+    """候神力级: 岁运命中候神 -> [(wx, 职能, 力级)]. 坐旺=2力, 平支=1力. 查表 _WANG_BR.
+    岁运干+支(本气)都算候神在运."""
+    out = []
+    for wx in (transit_wx or set()):
+        if wx in roles:
+            force = 2 if branch_z in _WANG_BR.get(wx, ()) else 1
+            out.append({'wx': wx, 'role': roles[wx], 'force': force})
+    return out
+
+
+def houchou_verdict(transit_wx, branch_z, dm_wx, bing_wx, bad_items):
+    """V7.28 候神升格: 岁运命中候神(药) -> 按"职能×力级"定级别.
+    坐旺2力+无恶神 -> level=2(吉/大吉); 恶神(刑/伤官见官)压倒 -> level=-2(凶);
+    平支1力无恶神 -> 0(平). 全布尔/序数, 禁浮点. 恶神压倒判定须由调用方在 bad 非空时触发."""
+    roles = houchou_roles(dm_wx, bing_wx)
+    if not roles:
+        return {'promote': False, 'level': 0, 'reason': '候神职能表未命中(主病×日主无候神)'}
+    hits = houchou_force(transit_wx, branch_z, roles)
+    if not hits:
+        return {'promote': False, 'level': 0, 'reason': '岁运未命中候神(药)'}
+    top = max(hits, key=lambda h: h['force'])
+    evil = evil_no_offset(bad_items)
+    if evil:
+        return {'promote': False, 'level': -2,
+                'reason': '恶神(刑/伤官见官)压倒候神力级(%d力), 判凶' % top['force']}
+    if top['force'] >= 2:
+        return {'promote': True, 'level': 2,
+                'reason': '候神%s(%s)坐旺2力 -> 升吉' % (top['wx'], top['role'])}
+    return {'promote': False, 'level': 0, 'reason': '候神%s平支1力, 无恶神, 平' % top['wx']}
 
 
 def evil_no_offset(bad_items: List[str]) -> bool:
