@@ -437,7 +437,7 @@ def verdict_step(pillars, base, step, extra, base_tier):
                 # 官煞逆旺势(最犯格局忌); 有印生化=祸轻, 无印=祸重
                 _has_yin_save = _hit_yin_bi or _shi_in_natal
                 level = -1 if _has_yin_save else -2
-                shorthand = '平' if _has_yin_save else '凶'
+                shorthand = '平偏凶' if _has_yin_save else '凶'
                 _v['note'] = '专旺格官煞逆旺势%s' % ('(有印生化, 祸轻)' if _has_yin_save else '(无印生化, 祸重)')
             elif _hit_shi:
                 level = 2; shorthand = '吉'; _v['note'] = '专旺格食伤泄秀(最美), 升吉'
@@ -494,6 +494,10 @@ def verdict_step(pillars, base, step, extra, base_tier):
         direction = '忌妄动, 防%s, 宜守待时' % ';'.join(bad)
     elif shorthand == '平' and _has_conflict_bad:
         direction = '吉凶交战(干%s支%s), 大事缓图' % (cur_g, cur_z)
+    elif shorthand == '平偏吉':
+        direction = '身得帮(非主药), 小吉, 宜稳守'
+    elif shorthand == '平偏凶':
+        direction = '小凶, 宜守待时, 防%s' % ';'.join(bad)
     else:
         direction = '平淡无大关目, 常守'
 

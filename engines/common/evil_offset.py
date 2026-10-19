@@ -220,9 +220,9 @@ def verdict_arbitrate(good: List[str], bad: List[str]) -> Dict[str, Any]:
 
     裁决序:
       - 恶神(刑/冲药根/破格) -> 凶(level-2), 不抵消制化之功
-      - 交战(冲提纲/重根) + hard_good -> 平(level0, 吉凶交战), 提綱伤非刑伤
+      - 交战(冲提纲/重根) + hard_good -> 平偏凶(level-1, 吉凶交战偏凶)
       - hard_good(无恶神/交战) -> 吉(level2)
-      - 纯 good(非 hard_good) -> 平(level1)
+      - 纯 good(非 hard_good) -> 平偏吉(level1)
       - 纯 bad(无 hard_good) -> 凶(level-2)
       - else -> 平(level0)
     """
@@ -231,12 +231,12 @@ def verdict_arbitrate(good: List[str], bad: List[str]) -> Dict[str, Any]:
         return {'level': -2, 'shorthand': '凶',
                 'note': '恶神(刑/冲药根/破格)不抵消制化之功, 判主凶'}
     if bad and conflict_no_offset(bad or []):
-        return {'level': 0, 'shorthand': '平',
-                'note': '交战(冲提纲/重根)+制化之功, 吉凶交战不平'}
+        return {'level': -1, 'shorthand': '平偏凶',
+                'note': '交战(冲提纲/重根)+制化之功, 吉凶交战偏凶'}
     if bad:
         return {'level': -2, 'shorthand': '凶', 'note': '药受制(凶)'}
     if hard_good:
         return {'level': 2, 'shorthand': '吉', 'note': '病得制化/暖解, 可顺势进取'}
     if good:
-        return {'level': 1, 'shorthand': '平', 'note': '身得帮, 宜稳守蓄力'}
+        return {'level': 1, 'shorthand': '平偏吉', 'note': '身得帮, 宜稳守蓄力'}
     return {'level': 0, 'shorthand': '平', 'note': '平淡无大关目, 常守'}
