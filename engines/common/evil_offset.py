@@ -220,17 +220,24 @@ def verdict_arbitrate(good: List[str], bad: List[str]) -> Dict[str, Any]:
 
     裁决序:
       - 恶神(刑/冲药根/破格) -> 凶(level-2), 不抵消制化之功
-      - 交战(冲提纲/重根) + hard_good -> 平偏凶(level-1, 吉凶交战偏凶)
+      - 交战(冲提纲/重根) + 非药成局/非hard_good -> 平偏凶(level-1, 吉凶交战偏凶)
+      - 交战 + (药成局或hard_good) -> 平(level0, 药制主病为制化之功, 交战仅参半不降档)
       - hard_good(无恶神/交战) -> 吉(level2)
       - 纯 good(非 hard_good) -> 平偏吉(level1)
       - 纯 bad(无 hard_good) -> 凶(level-2)
       - else -> 平(level0)
     """
     hard_good = any(('制主病' in x or '化泄' in x or '暖化' in x) for x in (good or []))
+    # 药成局吉项: 三合/六合 候神药剂局 (原典 药制主病为制化之功, 交战仅吉凶参半不降档)
+    _houchou_good = any(('候神' in x and '吉' in x) or ('三合局成' in x) or ('合提纲化' in x) for x in (good or []))
     if bad and evil_no_offset(bad or []):
         return {'level': -2, 'shorthand': '凶',
                 'note': '恶神(刑/冲药根/破格)不抵消制化之功, 判主凶'}
     if bad and conflict_no_offset(bad or []):
+        if _houchou_good or hard_good:
+            # V7.39 交战不降档: 药成局/制主病=制化之功(吉), 交战仅"吉凶参半"(平), 不压平偏凶
+            return {'level': 0, 'shorthand': '平',
+                    'note': '交战(冲提纲/重根)+药成局/制化之功, 吉凶参半为平'}
         return {'level': -1, 'shorthand': '平偏凶',
                 'note': '交战(冲提纲/重根)+制化之功, 吉凶交战偏凶'}
     if bad:
