@@ -6,7 +6,7 @@
    五行计数 / 根 / 天干合(解绊·新合) / 地支冲合.
 2. 在复合局上重跑 算→辩→转归→解, 与原局链对比:
    主病是否变化 / 病机增减 / 主药变化 / 药是否解合或新受制.
-3. 裁决该步岁运对日主为【良药 / 毒药 / 平战 / 平】并给方向.
+3. 裁决该步岁运对日主为【吉 / 凶 / 平 / 平】并给方向.
 
 岁运药理(锚定原局主病 bw, 与原局药方严格一致):
 - 制: 岁运克 bw(KE_BACK[bw]), 克病恒正向不看量.
@@ -140,7 +140,7 @@ def diff_chain(base, step):
 
 
 # =============================================================
-# 裁决: 良药 / 毒药 / 平战 / 平
+# 裁决: 吉 / 凶 / 平
 # =============================================================
 def _heavy_root_branches(some_facts):
     rw = some_facts.get('root_weight_class_facts', {})
@@ -161,18 +161,18 @@ def verdict_step(pillars, base, step, extra, base_tier):
 
     good, bad = [], []
 
-    # --- 良药·制: 克主病(恒正向, 不看量) ---
+    # --- 吉·制: 克主病(恒正向, 不看量) ---
     zhi = KE_BACK.get(bw)
     if bw and zhi in transit_wx:
         good.append('制主病%s(%s)' % (bw, zhi))
-    # --- 良药·化: 病所生, 泄病/通关(化出不反克日主) ---
+    # --- 吉·化: 病所生, 泄病/通关(化出不反克日主) ---
     hua = SHENG.get(bw)
     if bw and hua in transit_wx and KE_BACK.get(dm_wx) != hua:
         good.append('化泄主病%s(%s)' % (bw, hua))
-    # --- 良药·暖: 水病火暖寒湿 ---
+    # --- 吉·暖: 水病火暖寒湿 ---
     if bw == '水' and '火' in transit_wx:
         good.append('暖化寒湿(火)')
-    # --- 良药·帮: 比劫/印帮身(日主需帮, 且不助病) ---
+    # --- 吉·帮: 比劫/印帮身(日主需帮, 且不助病) ---
     #   V7.31 得势(党众)接帮身: 原局日主透干成党(同类干>=3)=得势帮身(帮身力+),
     #   庚盘"三庚透干=得势"由此体现; 岁运帮身(比劫/印)叠加成党更助日主.
     help_wx = {dm_wx, SHENG_BACK.get(dm_wx)}
@@ -186,9 +186,9 @@ def verdict_step(pillars, base, step, extra, base_tier):
             good.append(('帮身(得势党众%d干)' % _dm_same_stems if _dashe else '帮身') +
                         ('(%s)' % '/'.join(hb)))
 
-    # --- 毒药·助病: 同病 / 生病 ---
+    # --- 凶·助病: 同病 / 生病 ---
     #   V7.28 候神/炼金豁免: 候神职能表(evil_offset.houchou_roles)命中的岁运五行是药非助病之源,
-    #   不入助病/克伐. 真值 丁卯庚戌庚戌庚辰: 丁巳/戊午运火=炼金候神(用神), 旧口径"火生土助主病"误判毒药.
+    #   不入助病/克伐. 真值 丁卯庚戌庚戌庚辰: 丁巳/戊午运火=炼金候神(用神), 旧口径"火生土助主病"误判凶.
     from engines.common import evil_offset
     _roles_ex = evil_offset.houchou_roles(dm_wx, bw)
     _houshen_exempt = set(_roles_ex.keys())
@@ -196,23 +196,23 @@ def verdict_step(pillars, base, step, extra, base_tier):
         z = sorted(x for x in transit_wx
                    if x in (bw, SHENG_BACK.get(bw)) and x not in _houshen_exempt)
         # V7.30 抵消规则统一表: 交战(主病+候神药同运被制)/合绊/冲开 收敛为 offset_kind 查表,
-        #   替换 case 补丁. 交战=平战(0), 合绊/冲开=毒药(-2, 药失制力).
+        #   替换 case 补丁. 交战=平(0), 合绊/冲开=凶(-2, 药失制力).
         _offsets = evil_offset.offset_kind(dm_wx, bw, transit_wx)
         if z:
             if '交战' in _offsets:
                 bad.append('交战(主病%s+候神%s同运, 药制主病吉凶交战)' % (bw, '/'.join(sorted(_houshen_exempt & transit_wx))))
             else:
                 bad.append('助主病%s(%s)' % (bw, '/'.join(z)))
-    # --- 毒药·克伐弱主 ---
+    # --- 凶·克伐弱主 ---
     #   V7.28 候神/炼金豁免: 炼金官火克日主是炼金非克伐, 不入 bad.
     ke_dm = KE_BACK.get(dm_wx)
     if need_help and ke_dm in transit_wx and ke_dm not in _houshen_exempt:
         bad.append('克伐日主(%s)' % ke_dm)
-    # --- 毒药·新合绊主药 ---
+    # --- 凶·新合绊主药 ---
     d = diff_chain(base, step)
     if d['new_block']:
         bad.append('主药被合绊(%s)' % d['step_medicine_blocked'])
-    # --- 毒药·冲: 岁运支冲主药根 / 月令提纲 / 日主重根 ---
+    # --- 凶·冲: 岁运支冲主药根 / 月令提纲 / 日主重根 ---
     month_z = pillars['month'][1]
     heavy_br = _heavy_root_branches(step['facts'])
     base_med = base['yongyao'].get('primary_medicine') or {}
@@ -234,16 +234,16 @@ def verdict_step(pillars, base, step, extra, base_tier):
         elif other in heavy_br:
             bad.append('冲日主重根(%s冲%s)' % (cur_z, other))
 
-    # --- 毒药·三刑(岁运支参与成刑; 原典寅巳申/丑戌未须三支俱全, 子卯两支即成).
-    #     自刑(辰午酉亥同支再见)非战克、主小自扰, 不入毒药 hard_bad ---
+    # --- 凶·三刑(岁运支参与成刑; 原典寅巳申/丑戌未须三支俱全, 子卯两支即成).
+    #     自刑(辰午酉亥同支再见)非战克、主小自扰, 不入凶 hard_bad ---
     for _x in step['tp'].get('combination_facts', {}).get('sanxing', []):
         _label = _x.get('type', '')
         _brs = _x.get('branches') or []
         if cur_z in _brs and not _label.endswith('自刑'):
             bad.append('三刑(%s)' % _label)
 
-    # --- 毒药·合: 岁运支与原局支 六合(查表, 原局L0已备组合事实).
-    #     合走主药根=药根拔(凶); 合走日主重根=根被合走失力(凶); 合月令提纲=提纲被合走(交战性, 平战);
+    # --- 凶·合: 岁运支与原局支 六合(查表, 原局L0已备组合事实).
+    #     合走主药根=药根拔(凶); 合走日主重根=根被合走失力(凶); 合月令提纲=提纲被合走(交战性, 平);
     #     合走闲神=该运支本气"化泄"为合假象(不记吉). 冲已消费(liuchong), 合(新缺口)补齐 -> 大运基于原局地支.
     #     V7.31 例外: 合走月令但合支【化神是候神药】(炼金/泄秀/疏病) -> 合提纲非提纲伤, 提纲反被药化 -> 不记凶(吉).
     #       真值: 丁卯运卯戌合化火(癸盘候神=火,食伤泄秀)/乙卯运卯戌合化火(庚盘候神=火,炼金), 真值皆吉.
@@ -334,7 +334,7 @@ def verdict_step(pillars, base, step, extra, base_tier):
     _bing_gen_me = bw and SHENG.get(bw, '') == dm_wx
     _wugenyin_mark = _shi_ling and _no_root and bool(_yin_wx) and (_yin_wx in transit_wx) and not _bing_gen_me
 
-    # --- 毒药·格局破格: 原局成格 + 岁运触发 po_ge 路径 ---
+    # --- 凶·格局破格: 原局成格 + 岁运触发 po_ge 路径 ---
     # match 语义(ge_jie_layer 落盘): ANY=required 任一神即破格(该神本身是忌);
     #                               ALL=required 全部神齐备才破格(组合条件, 单神非忌, 不可作忌神用);
     #                               缺失类(forbidden)=缺失才破格, 不参与十神触发.
@@ -408,7 +408,7 @@ def verdict_step(pillars, base, step, extra, base_tier):
         _v['note'] = '无根日主失令, 印运扶身化病(药)'
         if level < 2:
             level = 2
-            shorthand = '良药'
+            shorthand = '吉'
 
     # V7.32 专旺格喜忌接 verdict (原著 PZZQ L4888-4894 专旺格论, 全五行查表派生, 非case):
     #   "气纯势强, 可顺而不可逆. 运以食伤泄其秀气为最美, 原局有食伤则财运亦美.
@@ -437,27 +437,27 @@ def verdict_step(pillars, base, step, extra, base_tier):
                 # 官煞逆旺势(最犯格局忌); 有印生化=祸轻, 无印=祸重
                 _has_yin_save = _hit_yin_bi or _shi_in_natal
                 level = -1 if _has_yin_save else -2
-                shorthand = '平战' if _has_yin_save else '毒药'
+                shorthand = '平' if _has_yin_save else '凶'
                 _v['note'] = '专旺格官煞逆旺势%s' % ('(有印生化, 祸轻)' if _has_yin_save else '(无印生化, 祸重)')
             elif _hit_shi:
-                level = 2; shorthand = '良药'; _v['note'] = '专旺格食伤泄秀(最美), 升吉'
+                level = 2; shorthand = '吉'; _v['note'] = '专旺格食伤泄秀(最美), 升吉'
             elif _hit_cai:
                 # 原局有食伤则财运亦美; 比劫透而无食伤则财运亦忌
                 if _shi_in_natal:
-                    level = 2; shorthand = '良药'; _v['note'] = '专旺格财运(原局有食伤, 财亦美), 升吉'
+                    level = 2; shorthand = '吉'; _v['note'] = '专旺格财运(原局有食伤, 财亦美), 升吉'
                 else:
-                    level = -2; shorthand = '毒药'; _v['note'] = '专旺格财运(原局无食伤, 财坏顺势), 忌'
+                    level = -2; shorthand = '凶'; _v['note'] = '专旺格财运(原局无食伤, 财坏顺势), 忌'
             elif _hit_yin_bi:
                 # 印比顺旺神固为适宜; 原局露食伤泄秀则印运为忌
                 if _shi_in_natal:
-                    level = -2; shorthand = '毒药'; _v['note'] = '专旺格印运(原局食伤泄秀, 印克食伤为忌)'
+                    level = -2; shorthand = '凶'; _v['note'] = '专旺格印运(原局食伤泄秀, 印克食伤为忌)'
                 else:
-                    level = 2; shorthand = '良药'; _v['note'] = '专旺格印比顺旺神, 升吉'
+                    level = 2; shorthand = '吉'; _v['note'] = '专旺格印比顺旺神, 升吉'
 
     # V7.30 候神升格: 岁运命中候神(药)且力级精算(坐旺/原局得根/该运冲合状态) -> 升吉(level=2).
     #   候神职能表×力级精算集中算理, 替换 case-by-case 级别微调.
     #   力级=坐旺2力 + 原局候神得根+1(3力) - 该运候神被冲开/合绊-1; 力级>=2 且无恶神 -> 升吉.
-    #   交战性 bad(主病+候神同运被药制) 不走候神升格, 保持平战(level0, 真值戊午=平).
+    #   交战性 bad(主病+候神同运被药制) 不走候神升格, 保持平(level0, 真值戊午=平).
     _bw = (bp.get('bing_wx') or '')
     _has_conflict_bad = any('交战' in x for x in bad)
     # 力级精算入参: 原局候神得根(候神五行在原局支有本气/中气根) + 该运候神被冲开/合绊
@@ -474,25 +474,25 @@ def verdict_step(pillars, base, step, extra, base_tier):
                                           natal_has_root=_natal_root, transit_blocked=_lc_blocked)
         if _hc['promote']:
             level = _hc['level']
-            shorthand = '良药'
+            shorthand = '吉'
             _v['note'] = _hc['reason']
     elif level == 0 and not good and _has_conflict_bad and evil_offset.evil_no_offset(bad):
-        # 恶神(刑/伤官见官)压倒候神力级 -> 毒药
+        # 恶神(刑/伤官见官)压倒候神力级 -> 凶
         level = -2
-        shorthand = '毒药'
+        shorthand = '凶'
         _v['note'] = '恶神压倒候神力级, 判主凶'
 
-    if shorthand == '良药' and evil_offset.verdict_arbitrate(good, bad)['level'] == 2 \
+    if shorthand == '吉' and evil_offset.verdict_arbitrate(good, bad)['level'] == 2 \
             and any(('制主病' in x or '化泄' in x or '暖化' in x) for x in good):
         direction = '病得制化/暖解, 可顺势进取'
-    elif shorthand == '良药' and _dashe:
+    elif shorthand == '吉' and _dashe:
         # V7.31 身强弱(得势)接方向: 日主透干成党=得势帮身 -> 身强宜克泄
         direction = '身强(得势党众%d干), 岁运帮身更盛, 宜克泄不宜再扶' % _dm_same_stems
-    elif shorthand == '良药':
+    elif shorthand == '吉':
         direction = '身得帮, 宜稳守蓄力'
-    elif shorthand == '毒药':
+    elif shorthand == '凶':
         direction = '忌妄动, 防%s, 宜守待时' % ';'.join(bad)
-    elif shorthand == '平战':
+    elif shorthand == '平' and _has_conflict_bad:
         direction = '吉凶交战(干%s支%s), 大事缓图' % (cur_g, cur_z)
     else:
         direction = '平淡无大关目, 常守'

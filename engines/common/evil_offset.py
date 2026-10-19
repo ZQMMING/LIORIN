@@ -20,15 +20,15 @@ suiyun_validate verdict / yongshen_engine 多轨 B4 两处消费, 不再各补 i
 """
 from typing import List, Dict, Any, Optional
 
-# 恶神前缀表: 命中即入 evil_no_offset(刑/冲药根/破格), 不抵消制化之功 -> 判毒药主凶.
-#   冲月令提纲/冲日主重根 = 提纲伤(交战性, 非刑伤), 走平战(吉凶交战), 不入毒药.
-#   原典: 刑(恃势/无恩/无礼)主凶伤; 冲提纲=提纲伤交战(平战), 冲药根=药根拔(毒药).
+# 恶神前缀表: 命中即入 evil_no_offset(刑/冲药根/破格), 不抵消制化之功 -> 判凶主凶.
+#   冲月令提纲/冲日主重根 = 提纲伤(交战性, 非刑伤), 走平(吉凶交战), 不入凶.
+#   原典: 刑(恃势/无恩/无礼)主凶伤; 冲提纲=提纲伤交战(平), 冲药根=药根拔(凶).
 _EVIL_PREFIX = ('三刑', '格局破格', '伤官见官', '冲拔主药根', '合走主药根')
-# 交战性前缀: 命中即入 hard_bad(凶), 但不抵消制化之功(平战, 非毒药)
-#   合月令提纲/合日主重根 = 提纲/重根被合走(交战性, 合去=失用非刑伤), 走平战(吉凶交战), 不入毒药.
-#   原典: 冲提纲=提纲伤交战(平战), 合提纲/合重根=根被合走交战(平战), 冲药根/合走主药根=药根拔(毒药).
+# 交战性前缀: 命中即入 hard_bad(凶), 但不抵消制化之功(平, 非凶)
+#   合月令提纲/合日主重根 = 提纲/重根被合走(交战性, 合去=失用非刑伤), 走平(吉凶交战), 不入凶.
+#   原典: 冲提纲=提纲伤交战(平), 合提纲/合重根=根被合走交战(平), 冲药根/合走主药根=药根拔(凶).
 _CONFLICT_PREFIX = ('冲月令', '冲日主重根', '合月令', '合日主重根', '交战')
-# 冲药根专属前缀: 命中则抵消该岁运支本气的"化泄"(冲药假象); 含"冲拔主药根"+"合走主药根"(药根拔/药被合走=毒药)
+# 冲药根专属前缀: 命中则抵消该岁运支本气的"化泄"(冲药假象); 含"冲拔主药根"+"合走主药根"(药根拔/药被合走=凶)
 _MED_PULLED_PREFIX = ('冲拔主药根', '合走主药根')
 # 合绊前缀: 药被合去失制力(抵消制, 走 hard_bad)
 _BLOCK_PREFIX = '主药被合绊'
@@ -37,18 +37,18 @@ _BLOCK_PREFIX = '主药被合绊'
 # V7.30 抵消规则统一表: 交战/合绊/冲开 三类抵消规则收敛为一张集中表,
 #   suiyun_validate verdict 单一消费, 不再散落 case 补丁. 全布尔, 禁浮点.
 # 抵消类型:
-#   '交战'   : 主病与候神药同运交战(主病被药制, 吉凶交战 -> 平战, 非毒药). 查表判据:
+#   '交战'   : 主病与候神药同运交战(主病被药制, 吉凶交战 -> 平, 非凶). 查表判据:
 #     岁运同时带 主病(bw) + 候神药(炼金/疏病, 非泄秀) -> 交战. 原典"药病交战, 吉凶参半".
 #   '合绊'   : 候神药被合去失制力(走 hard_bad, 抵消制). 查表判据: 岁运干支与候神药成六合/三合合走.
 #   '冲开'   : 候神药被冲开失制力(走 hard_bad, 抵消制). 查表判据: 岁运支冲开候神药之根/提纲.
 _OFFSET_KINDS = ('交战', '合绊', '冲开')
-# 抵消 -> 级别映射(查表): 交战=平战(0, 吉凶交战非毒药), 合绊/冲开=毒药(-2, 药失制力)
+# 抵消 -> 级别映射(查表): 交战=平(0, 吉凶交战非凶), 合绊/冲开=凶(-2, 药失制力)
 _OFFSET_LEVEL = {'交战': 0, '合绊': -2, '冲开': -2}
 
 
 def offset_kind(dm_wx: str, bing_wx: str, transit_wx, transit_blocked: bool = False) -> List[str]:
     """V7.30 抵消规则统一表(查表): 给定主病/日主/岁运 -> 命中的抵消类型列表.
-    交战: 岁运带主病(bw) + 炼金/疏病候神药(泄秀不抵) -> 主病被药制, 交战(平战).
+    交战: 岁运带主病(bw) + 炼金/疏病候神药(泄秀不抵) -> 主病被药制, 交战(平).
     合绊: 岁运干支与候神药成合走(调用方传 transit_blocked=True) -> 药失制力.
     冲开: 岁运支冲开候神药之根/提纲(调用方传 transit_blocked=True) -> 药失制力.
     全布尔/枚举, 禁浮点. 返回 ['交战','合绊','冲开'] 子集(无命中=空)."""
@@ -140,7 +140,7 @@ def houchou_roles(dm_wx: str, bing_wx: str) -> Dict[str, str]:
 
 def houchou_conflict(dm_wx: str, bing_wx: str, transit_wx) -> bool:
     """[deprecated V7.30] 已被 offset_kind 取代(交战/合绊/冲开统一表). 保留兼容:
-    交战判据 = 岁运同时带主病(bw)+【炼金/疏病】候神药(泄秀不抵助病) -> 主病被药制交战(平战)."""
+    交战判据 = 岁运同时带主病(bw)+【炼金/疏病】候神药(泄秀不抵助病) -> 主病被药制交战(平)."""
     return '交战' in offset_kind(dm_wx, bing_wx, transit_wx)
 
 
@@ -193,14 +193,14 @@ def houchou_verdict(transit_wx, branch_z, dm_wx, bing_wx, bad_items,
 
 
 def evil_no_offset(bad_items: List[str]) -> bool:
-    """bad 列表中有无恶神(刑/冲药根/破格). 有 -> 不抵消制化之功 -> 判毒药主凶.
+    """bad 列表中有无恶神(刑/冲药根/破格). 有 -> 不抵消制化之功 -> 判凶主凶.
     全布尔, 禁浮点."""
     return any(any(k in b for k in _EVIL_PREFIX) for b in (bad_items or []))
 
 
 def conflict_no_offset(bad_items: List[str]) -> bool:
-    """bad 列表中有无交战性恶神(冲提纲/冲重根). 有 -> 走平战(吉凶交战), 非毒药.
-    原典: 冲提纲=提纲伤交战, 不抵消化/制之功(平战), 但记凶. 全布尔."""
+    """bad 列表中有无交战性恶神(冲提纲/冲重根). 有 -> 走平(吉凶交战), 非凶.
+    原典: 冲提纲=提纲伤交战, 不抵消化/制之功(平), 但记凶. 全布尔."""
     return any(any(k in b for k in _CONFLICT_PREFIX) for b in (bad_items or []))
 
 
@@ -219,24 +219,24 @@ def verdict_arbitrate(good: List[str], bad: List[str]) -> Dict[str, Any]:
     全为布尔, 禁浮点。
 
     裁决序:
-      - 恶神(刑/冲药根/破格) -> 毒药(level-2), 不抵消制化之功
-      - 交战(冲提纲/重根) + hard_good -> 平战(level0, 吉凶交战), 提綱伤非刑伤
-      - hard_good(无恶神/交战) -> 良药(level2)
-      - 纯 good(非 hard_good) -> 平药(level1)
-      - 纯 bad(无 hard_good) -> 毒药(level-2)
+      - 恶神(刑/冲药根/破格) -> 凶(level-2), 不抵消制化之功
+      - 交战(冲提纲/重根) + hard_good -> 平(level0, 吉凶交战), 提綱伤非刑伤
+      - hard_good(无恶神/交战) -> 吉(level2)
+      - 纯 good(非 hard_good) -> 平(level1)
+      - 纯 bad(无 hard_good) -> 凶(level-2)
       - else -> 平(level0)
     """
     hard_good = any(('制主病' in x or '化泄' in x or '暖化' in x) for x in (good or []))
     if bad and evil_no_offset(bad or []):
-        return {'level': -2, 'shorthand': '毒药',
+        return {'level': -2, 'shorthand': '凶',
                 'note': '恶神(刑/冲药根/破格)不抵消制化之功, 判主凶'}
     if bad and conflict_no_offset(bad or []):
-        return {'level': 0, 'shorthand': '平战',
+        return {'level': 0, 'shorthand': '平',
                 'note': '交战(冲提纲/重根)+制化之功, 吉凶交战不平'}
     if bad:
-        return {'level': -2, 'shorthand': '毒药', 'note': '药受制(凶)'}
+        return {'level': -2, 'shorthand': '凶', 'note': '药受制(凶)'}
     if hard_good:
-        return {'level': 2, 'shorthand': '良药', 'note': '病得制化/暖解, 可顺势进取'}
+        return {'level': 2, 'shorthand': '吉', 'note': '病得制化/暖解, 可顺势进取'}
     if good:
-        return {'level': 1, 'shorthand': '良药', 'note': '身得帮, 宜稳守蓄力'}
+        return {'level': 1, 'shorthand': '平', 'note': '身得帮, 宜稳守蓄力'}
     return {'level': 0, 'shorthand': '平', 'note': '平淡无大关目, 常守'}

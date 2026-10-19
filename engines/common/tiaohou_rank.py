@@ -17,7 +17,7 @@ yongyao_resolve / yongshen_engine / suiyun_validate 三处消费, 不再各补 i
         × 局内食伤有气(透干>=1 或坐旺) → 食伤升 primary(泄秀暖局/润燥, DTS L295/L300).
      候神不刑不害(未入三刑丑戌未/寅巳申/子卯 且 未被合绊), 否则让位.
   2) 恶神抵消表: 刑/冲月令/冲主药根/破格 = 恶神(刑伤/提纲伤/药根拔/格破),
-     不抵消制化之功(hard_good+恶神 -> 仍判主凶, 不平战); 合绊 = 抵消(药被绊失制力).
+     不抵消制化之功(hard_good+恶神 -> 仍判主凶, 不平); 合绊 = 抵消(药被绊失制力).
      verdict 查表裁决, 不散落.
 
 原典锚点:
@@ -193,7 +193,7 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
 # ------------------------------------------------------------------ 恶神抵消表
 def _evil_no_offset(bad_items: List[str]) -> bool:
     """恶神抵消表: 刑/冲月令/冲主药根/破格 = 恶神(刑伤/提纲伤/药根拔/格破),
-    不抵消制化之功 -> verdict 仍判主凶(不平战). 合绊 = 抵消(药被绊失制力, 走 hard_bad).
+    不抵消制化之功 -> verdict 仍判主凶(不平). 合绊 = 抵消(药被绊失制力, 走 hard_bad).
     全为布尔(字符串前缀判定), 禁浮点."""
     _EVIL = ('三刑', '冲月令', '冲日主重根', '格局破格')
     return any(any(k in b for k in _EVIL) for b in (bad_items or []))

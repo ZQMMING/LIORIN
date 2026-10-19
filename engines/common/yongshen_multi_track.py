@@ -619,7 +619,7 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
             candidates.append(l2_yin_cand)
         elif yin_L1:
             # L1印星偏旺(临界状态): 印星降级但不排除, 首选印星(标注需注意), 第二候选财星(制印)
-            # 原典: 此局是"水偏旺但未成灾", 不是"水泛木浮"; 癸水润燥是良药, 壬水泛滥才是病
+            # 原典: 此局是"水偏旺但未成灾", 不是"水泛木浮"; 癸水润燥是吉, 壬水泛滥才是病
             l1_yin_cand = _candidate(
                 yin_wx, 1,
                 evidence=f'滴天髓: 衰则扶之，{legacy_tier}用印星({yin_wx})生身。印星偏旺(L1: 透干{yin_stem_count}个/本气中气{yin_ben_zhong}个)，需注意印星壅塞，但未成灾。{yin_stem_desc}',

@@ -869,7 +869,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         # V7.25 印格重分档: 印重(印多成病/土重金埋)时财是疏病之药(破格误杀修复).
         #   原典 ZHENG_YIN_001"印多用财以抑太过, 无防财破": 印重(印透>=2 或 印ben>=2) -> 财破格豁免;
         #   印轻(单印/印浅) -> 财破印照破. 真值 丁卯庚戌庚戌庚辰(土重金埋, 印土多, 甲寅/乙卯木疏土=大吉)
-        #   引擎旧口径"印格财破格"误杀甲寅/乙卯(制主病土反判毒药) -> 按印轻重分档, 印重不认财破格.
+        #   引擎旧口径"印格财破格"误杀甲寅/乙卯(制主病土反判凶) -> 按印轻重分档, 印重不认财破格.
         _yin_ben_n_po = int(((facts.get('wuxing_power', {}).get('wuxing_power', {}) or {}).get(yin_wx_default, {}) or {}).get('ben_n', 0) or 0)
         _yin_heavy_po = (len(yin_gans) >= 2) or (_yin_ben_n_po >= 2)
         _yin_po = [] if _yin_heavy_po else [{'type': '组合', 'match': 'ANY', 'required': ['正财', '偏财']}]
