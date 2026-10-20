@@ -96,8 +96,11 @@ _POS = ("year", "month", "day", "hour")
 
 # ==================== ① 八字排盘临时接口 ====================
 
-def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] = None) -> Dict[str, Any]:
-    """四柱字符串进真实引擎, 返回全部层事实。只排盘, 不下任何结论。"""
+def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] = None,
+            gender: str = None) -> Dict[str, Any]:
+    """四柱字符串进真实引擎, 返回全部层事实。只排盘, 不下任何结论。
+    gender: '男'/'女' —— 大运顺逆与起运岁数依性别(原典 SMTH L923「阳男阴女顺行, 阴男阳女逆行」),
+      不传则大运方向标 UNKNOWN(不默认男, 免女命被排反)。"""
     bz = "".join(str(bazi).split())
     if len(bz) != 8:
         raise ValueError("四柱须 8 字(4干4支), 收到 %r" % bazi)
@@ -618,6 +621,23 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
                    'dayun_steps': [],
                    'boundary_note': '未喂 dayun_list, 岁运层空; 传 dayun_list 才逐步重跑'}
 
+    # ★ V7.74 大运顺逆/起运派生(原典 SMTH L923/L13424: 阳男阴女顺行, 阴男阳女逆行).
+    #   性别缺失时方向标 UNKNOWN(不默认男) —— 方向错则整条岁运层吉凶全反.
+    _dayun_meta = {"direction": "UNKNOWN", "gender": gender or "UNKNOWN",
+                   "basis": "SMTH L923「阳男阴女, 大运以生日后未来节气日时为数, 顺而行之; 阴男阳女...逆而行之」/ L13424「阳男阴女从生月顺行」",
+                   "note": "未传 gender, 大运顺逆不可定; 不得默认按男命排"}
+    try:
+        _yg = p['year'][0]
+        if gender:
+            _yang_year = _yg in ('甲', '丙', '戊', '庚', '壬')
+            _male = (gender == '男')
+            _shun = (_yang_year and _male) or ((not _yang_year) and (not _male))
+            _dayun_meta = {"direction": "順" if _shun else "逆", "gender": gender,
+                           "basis": "SMTH L923/L13424 阳男阴女顺行/阴男阳女逆行",
+                           "note": ""}
+    except Exception as _e:
+        _dayun_meta["note"] = "排运方向派生异常: %s" % _e
+
     return {
         "bazi": bz,
         "pillars": p,
@@ -687,6 +707,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         "zhuangui": zg,
         "climate": cli,
         "suiyun": _suiyun,
+        "dayun_meta": _dayun_meta,
         # STEP-DBG-11 (2026-10-03) 用神层投影补全 (GAP-7)
         #   yongyao_resolve 内部【已算好】all_edges / auxiliary_medicine /
         #   medicine_blocked 三项, 但顶层只投影 primary/ji_shen 两个键,
