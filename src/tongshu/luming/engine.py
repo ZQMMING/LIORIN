@@ -791,10 +791,14 @@ def _build_shen_sha(chart: Any, lookup_mode: str = "year") -> Dict[str, Any]:
     _mb = chart.month_pillar.earthly_branch
     _sang = BRANCH_SANHE_GROUP.get(_mb, frozenset())
     _st4s = set(chart.four_stems())
-    # 天德 (L2026 月查支)
-    _td_b = TIAN_DE_BY_MONTH.get(_mb, "")
-    out["tian_de"] = {"branch": _td_b, "present": _td_b in four,
-                      "at_day": _td_b == chart.day_pillar.earthly_branch}
+    # 天德 (五行精纪 L1921-1965 月令天德干/卦: 正月丁 二月申(坤) 三月壬 四月辛
+    #   五月亥 六月甲 七月癸 八月寅(艮) 九月丙 十月乙 十一月巳(巽) 十二月庚;
+    #   三命通会论天月德 L1491/L3075/L3084 同源 — 天德为干神, 非禄支;
+    #   2026-10-21 修正: 原表误作"天德干之禄支"(申月癸→子等), 改回干表)
+    _td_g = TIAN_DE_BY_MONTH.get(_mb, "")
+    _st4 = set(chart.four_stems())
+    out["tian_de"] = {"branch": _td_g, "present": _td_g in _st4,
+                      "at_day": _td_g == chart.day_pillar.heavenly_stem}
     # 月德 (L2038 三合月查干)
     _yd_g = YUE_DE_GAN_BY_SANHE.get(_sang, "")
     out["yue_de"] = {"gan": _yd_g, "present": bool(_yd_g and _yd_g in _st4s),
@@ -3097,7 +3101,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     #   太岁=天月德 → 太岁是有情之神, 灾轻反获 (珞琭子"太岁为造化之主, 贵神
     #   为福之基"; 李虚中"吉神在岁则岁吉").
     _mb2 = chart.month_pillar.earthly_branch
-    _td_b = TIAN_DE_BY_MONTH.get(_mb2, "")
+    _td_g = TIAN_DE_BY_MONTH.get(_mb2, "")          # 天德=干 (五行精纪 L1921-1965)
     _yd_g = YUE_DE_GAN_BY_SANHE.get(BRANCH_SANHE_GROUP.get(_mb2, frozenset()), "")
     _sanghe_branches = frozenset({chart.year_pillar.earthly_branch,
                                   chart.month_pillar.earthly_branch,
@@ -3107,12 +3111,12 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
                                chart.month_pillar.heavenly_stem,
                                chart.day_pillar.heavenly_stem,
                                chart.hour_pillar.heavenly_stem})
-    _four_td = bool(_td_b and _td_b in _sanghe_branches)
+    _four_td = bool(_td_g and _td_g in _sanghe_stems)   # 四柱干见天德 = 有情
     _four_yd = bool(_yd_g and _yd_g in _sanghe_stems)
     de_jiu = bool(_four_td or _four_yd)                 # 四柱带天月德 = 有情
-    _tai_td = bool(_td_b and tb == _td_b)                 # 太岁=天德(月支查支)
-    _tai_yd = bool(_yd_g and ts == _yd_g)                 # 太岁=月德(三合月查干)
-    tai_tian_yue_de = bool(_tai_td or _tai_yd)            # 太岁=天月德 (有情之神)
+    _tai_td = bool(_td_g and ts == _td_g)               # 太岁干=天德
+    _tai_yd = bool(_yd_g and ts == _yd_g)               # 太岁干=月德
+    tai_tian_yue_de = bool(_tai_td or _tai_yd)          # 太岁=天月德 (有情之神)
     tai_de_desc = ("天月德" if (_tai_td and _tai_yd) else
                    ("天德" if _tai_td else ("月德" if _tai_yd else "")))
     day_fan_saved = bool(_day_jiu or de_jiu)            # 有制 或 天月德有情 → 凶为吉兆
