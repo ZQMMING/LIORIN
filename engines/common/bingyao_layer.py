@@ -659,16 +659,25 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             })
 
     # 7. 比劫成党 (收紧: 他干+本根 combo>=4; 日主同类本旺, 不设无重根条件)
+    # ★ V7.62 补「用财(有财可夺)」要件(原典 SFTK L1095「若用财之人, 日干旺, 比肩兄弟多, 则此比劫
+    #   又分夺我之财也」/ L1215「偏财本是众人财, 最忌支中比劫来」/ L1931「身旺比劫重, 损财又伤妻」/
+    #   L5419「格用财神, 比劫重逢于不利」/ L7362「有财则争, 无财则祸」):
+    #   比劫重为病在【有财可夺】时; 无财之比劫重, 其"重"属格局层(用神退气/方局专旺), 非病机层.
     if (bj_tou + bj_ben + _ju_piao(daymaster_element)) >= DANG_COMBO and _dm_self_ling_ok():
-        b = BING_TYPES['BIJIE_CHENG_DANG']
-        bing_list.append({
-            'bing_id': 'BIJIE_CHENG_DANG',
-            'name': b['name'],
-            'desc': b['desc'],
-            'classic': b['classic'],
-            'evidence': [b['classic']],
-            'matched_facts': ['比劫成党(他干%d/本根%d=%d)' % (bj_tou, bj_ben, bj_tou + bj_ben)],
-        })
+        _cai_t_bj, _cai_b_bj = _tou_ben(cai_wx)
+        # (V7.62f 撤方局排除: DTS 实例「辛未辛卯乙未丁亥」原文明判「强众而敌寡, 势在去其寡」——
+        #   亥卯未全而干头不纯者, 强众仍是"势"(药=官杀去寡)而非方局成格; 局层强众态势归格局层, 不在此排除.)
+        if (_cai_t_bj >= 1 or _cai_b_bj >= 1):
+            b = BING_TYPES['BIJIE_CHENG_DANG']
+            bing_list.append({
+                'bing_id': 'BIJIE_CHENG_DANG',
+                'name': b['name'],
+                'desc': b['desc'],
+                'classic': b['classic'],
+                'evidence': [b['classic']],
+                'matched_facts': ['比劫成党(他干%d/本根%d=%d)' % (bj_tou, bj_ben, bj_tou + bj_ben),
+                                  '夺财有财(透干%d/本根%d)' % (_cai_t_bj, _cai_b_bj)],
+            })
 
     # 8. 印多埋子/母多灭子 (统一触发: 当令或成党, 无重根)
     # ★ V7.61 补两要件(原典 DTS L445「土重金埋」/ PZZQ L896「印多用财, 透财以抑太过」/
