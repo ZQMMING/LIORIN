@@ -574,6 +574,9 @@ def _build_san_yuan(chart: Any) -> Dict[str, Dict[str, Any]]:
         "element": ming_branch_el,
         "season": _season_of(month_branch),
         "month_wang_shuai": _month_wang_shuai(ming_branch_el, month_branch),
+        # 三元十二宫 (V02 禄命身死绝 用十二宫, 非月令旺相休囚死:
+        #  金书命诀"禄命身值死绝"=三元皆落长生十二宫死绝位, 非五行在月令之死)
+        "growth_stage": _growth_stage(ming_branch_el, year_branch),
     }
 
     shen = {
@@ -581,6 +584,7 @@ def _build_san_yuan(chart: Any) -> Dict[str, Dict[str, Any]]:
         "element": year_nayin_el,
         "season": _season_of(month_branch),
         "month_wang_shuai": _month_wang_shuai(year_nayin_el, month_branch),
+        "growth_stage": _growth_stage(year_nayin_el, year_branch),
     }
 
     return {"lu": lu, "ming": ming, "shen": shen}
@@ -1936,6 +1940,10 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         # 三元/禄马/贵人/神煞
         "ming_wang": ming_w, "shen_wang": shen_w,
         "lu_present": lu_present, "lu_branch": lu_branch,
+        # 三元十二宫 (V02 禄命身死绝: 年干对年支/支命五行/纳音身五行 之长生十二宫)
+        "lu_growth_year": sy["lu"].get("growth", {}).get("year", ""),
+        "ming_growth": sy["ming"].get("growth_stage", ""),
+        "shen_growth": sy["shen"].get("growth_stage", ""),
         "ma_branch": ma_branch, "lu_ma_same": same, "lu_ma_both": both,
         "gy_present": gy_present, "gy_branch": gy_branch,
         "gy_any_present": gy_any_present,
@@ -2826,16 +2834,15 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     counts = {"吉": 0, "动": 0, "平": 0, "滞": 0, "凶": 0}
     for v in verdicts:
         counts[v["tone"]] = counts.get(v["tone"], 0) + 1
-    # 净分制 (2026-10-20 原著核对 L4416/L4269): 吉+1/动+0.5/滞-0.5/凶-1
-    # 2026-10-20 流年系统性偏凶根治: 加死区 |score|<=1 → 吉凶相当 (score=-1 的
-    #   "吉1平2凶2" 不再偏凶); 仅 score<=-2 判偏凶 (1989 案例 16年15凶 → 修复后分布正常)
-    score = counts["吉"] + 0.5 * counts["动"] - 0.5 * counts["滞"] - counts["凶"]
-    if score >= 2:
-        year_tone = "偏吉"
-    elif score <= -2:
-        year_tone = "偏凶"
-    else:
-        year_tone = "吉凶相当"
+    # 2026-10-20 原著吉凶聚合重构 (L4276 论祸福): 基地福力 × 岁运恶力 查表判定,
+    #   非逐条±1计数对冲 — 强度分级(YEAR_XI/YEAR_XIONG) × 福力(厚/中/薄) 查表.
+    #   措辞对齐原著: 吉 / 吉凶相杂 (L4276 浮灾细累 / L11702 凶中带贵) / 凶.
+    from .strength import base_fortune, year_power, aggregate, dim_hits_of
+    _base = base_fortune(lm) if lm is not None else {"score": 0.5, "level": "中"}
+    _power = year_power(verdicts)
+    _dims = dim_hits_of(verdicts)
+    _agg = aggregate(_base, _power, _dims)
+    year_tone = _agg["verdict"]
 
     # combined: 大运柱吉凶 (含 risk) + 流年凶 → 该年最终方向
     combined = None
@@ -2845,27 +2852,28 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         if info:
             lc = info["counts"]
             risk_n = len(info.get("risk") or [])
-            # 2026-10-20 流年系统性偏凶根治: 大运为十年环境基调, 权重 0.5
-            # (luck_counts×0.5 + year_counts×1) — 避免大运凶被逐条直接叠加
-            # (壬申运4凶+3risk 曾令 2029 流年自身全0仍 final 凶5.5);
-            # risk(六害/三刑/宫位绝) 亦按 0.5 权重计入
-            f = {"吉": 0.5 * lc.get("吉", 0) + counts["吉"],
-                 "动": 0.5 * lc.get("动", 0) + counts["动"],
-                 "平": 0.5 * lc.get("平", 0) + counts["平"],
-                 "滞": 0.5 * lc.get("滞", 0) + counts["滞"],
-                 "凶": 0.5 * lc.get("凶", 0) + 0.5 * risk_n + counts["凶"]}
-            fs = f["吉"] + 0.5 * f["动"] - 0.5 * f["滞"] - f["凶"]
-            if fs >= 2:
-                fv = "偏吉"
-            elif fs <= -2:
-                fv = "偏凶"
-            else:
-                fv = "吉凶相当"
+            # 2026-10-20 原著聚合重构: L4273 运主年辅 — 大运为十年基调,
+            #   吉运中遇太岁刑害 = 细累浮灾(恶力降级) / 凶运中遇刑冲 = 发祸(升级)
+            #   凶祸之运判定: 运层含重灾级信号 (天罗V124/大小耗V125/元辰犯运V49-YC/
+            #   凶煞临V49-XS) 即 L4273"屯蹇凶祸之运", 不论其计数对冲结果 —
+            #   (喻求清1951 辛亥运计数"相当"但带天罗 → 1951 卯年刑压+空亡 在凶祸运中
+            #    方可发祸 → 重灾; 若按计数"相当"则判轻为相杂, 与处决事实不符)
+            _luck_rules = {v["rule_id"] for v in lm.verdicts
+                           if v.get("scope") == "运" and v.get("target") == yctx["luck_pillar"]}
+            _lv = "平"
+            if _luck_rules & {"LM-V124", "LM-V125", "LM-V49-YC", "LM-V49-XS"}:
+                _lv = "凶"      # L4273 凶祸之运 (屯蹇), 年上刑冲即可发祸
+            elif info["verdict"] in ("偏吉", "吉"):
+                _lv = "吉"
+            elif info["verdict"] in ("偏凶", "凶"):
+                _lv = "凶"
+            _agg2 = aggregate(_base, _power, _dims, luck_level=_lv)
+            fv = _agg2["verdict"]
             combined = {"luck_pillar": yctx["luck_pillar"],
                         "luck_verdict": info["verdict"], "luck_counts": lc,
                         "luck_risk": list(info.get("risk") or []),
-                        "year_counts": counts, "final_counts": f,
-                        "final_verdict": fv}
+                        "year_counts": counts,
+                        "final_verdict": fv, "l4276": _agg2}
 
     return {"year": year, "tai_sui": yctx["tai_sui"], "age": round(yctx["age"], 2),
             "luck_pillar": yctx["luck_pillar"], "verdicts": verdicts,

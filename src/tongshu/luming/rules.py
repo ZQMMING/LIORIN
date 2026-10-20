@@ -179,11 +179,11 @@ LUMING_RULES = [
      "scope": "原局", "target": "",
      "tone": "凶",
      "when": {"op": "and", "conds": [
-         {"op": "eq", "k": "ming_wang", "v": "死"},
-         {"op": "eq", "k": "shen_wang", "v": "死"},
-         {"op": "eq", "k": "lu_present", "v": False}]},
+         {"op": "in", "k": "lu_growth_year", "v": ["死", "绝"]},
+         {"op": "in", "k": "ming_growth", "v": ["死", "绝"]},
+         {"op": "in", "k": "shen_growth", "v": ["死", "绝"]}]},
      "out": "禄命身值死绝，三才无气，主困窘",
-     "detail_tpl": "支命死/纳音身死/干禄不临"},
+     "detail_tpl": "干禄{lu_growth_year}/支命{ming_growth}/纳音身{shen_growth}皆死绝"},
 
     # ================= 原局: 禄马 (LM-V03/V04) =================
     {"id": "LM-V03", "evidence": "E-WXJ-016-001", "mode": "scalar",

@@ -795,7 +795,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         lm = from_bazi_chart(chart, _dt.datetime(2026, 10, 19, 12))
         ts = lm.tone_scope
         orig = ts["layers"]["原局"]
-        self.assertEqual((orig["吉"], orig["凶"], orig["平"]), (3, 2, 12))  # 2026-10-20: (2,2,6)+V85子星得力吉+1、V81火受亏平、V82水太过平、V84夫星不现平、V106时冲年平、V108时带煞平、V110狡害平 (健康/性情/六亲/婚育维度不扰方向)
+        self.assertEqual((orig["吉"], orig["凶"], orig["平"]), (3, 1, 12))  # 2026-10-20: (2,2,6)+V85子星得力吉+1、V81火受亏平、V82水太过平、V84夫星不现平、V106时冲年平、V108时带煞平、V110狡害平 (健康/性情/六亲/婚育维度不扰方向); V02三元十二宫修正(癸亥三元皆旺) 凶-1
         # 当前运 (2026 时 43 虚岁 → 丁卯运): 偏吉
         cur = ts["current"]
         self.assertEqual(cur["pillar"], "DINGMAO")
@@ -803,9 +803,10 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertEqual(cur["counts"]["凶"], 1)   # V44 运支卯=大海水之死乡(凶)
         # overall (2026-10-20 限运切片: V126运到羊刃平+1、V124天罗壬戌癸亥凶+2、V125大小耗丙辰凶+1;
         #   喜忌覆盖: 癸亥运 V42 比和吉 → 犯忌降平 → 吉-1平+1;
-        #   贵人年干口径: 甲子/壬申两运日干贵人(乙贵子申/庚贵)误判移除 → 吉-2)
+        #   贵人年干口径: 甲子/壬申两运日干贵人(乙贵子申/庚贵)误判移除 → 吉-2;
+        #   V02 三元十二宫口径: 癸亥禄(子)临官/命(亥)帝旺/身(癸亥)临官 皆不死绝 → 原局凶-1)
         self.assertEqual(ts["overall"]["counts"],
-                         {"吉": 23, "动": 0, "平": 32, "滞": 2, "凶": 18})
+                         {"吉": 23, "动": 0, "平": 32, "滞": 2, "凶": 17})
         self.assertEqual(ts["overall"]["verdict"], "偏吉")
         # 乙丑运偏凶
         yichou = next(p for p in ts["pillars"] if p["target"] == "YICHOU")
@@ -1076,10 +1077,10 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertEqual(hz["current_counts"]["吉"], 4)
         self.assertEqual(hz["current_counts"]["凶"], 1)
         self.assertEqual(hz["overall_counts"],
-                         {"吉": 23, "动": 0, "平": 32, "滞": 2, "凶": 18})  # 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径(甲子/壬申日贵移除)
+                         {"吉": 23, "动": 0, "平": 32, "滞": 2, "凶": 17})  # 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径+V02三元十二宫修正
         self.assertEqual(hz["overall_verdict"], "偏吉")
         self.assertIn("当前大运: 丁卯", md)
-        self.assertIn("总体: 吉 23 · 凶 18 · 平 32 · 滞 2 → 偏吉", md)
+        self.assertIn("总体: 吉 23 · 凶 17 · 平 32 · 滞 2 → 吉", md)  # 2026-10-20 原著措辞: 偏吉→吉
 
     # ============ 根治层: 古籍命例 oracle (独立于案例批文与自裁定) ============
     def _mk_gu_chart(self, yb):

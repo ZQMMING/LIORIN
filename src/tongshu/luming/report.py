@@ -300,10 +300,14 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
     lines.append("")
     cc = hz["current_counts"]
     oc = hz["overall_counts"]
+    # 2026-10-20 原著措辞统一 (L4276): 偏吉→吉 / 吉凶相当→吉凶相杂 / 偏凶→凶
+    _gx = {"偏吉": "吉", "吉凶相当": "吉凶相杂", "偏凶": "凶"}
+    _cv = _gx.get(hz["current_verdict"], hz["current_verdict"])
+    _ov = _gx.get(hz["overall_verdict"], hz["overall_verdict"])
     lines.append(f"当前大运: {_zh(hz['current_pillar'])}"
                  f"（吉 {cc.get('吉', 0)} · 凶 {cc.get('凶', 0)}"
-                 f" · 平 {cc.get('平', 0)} · 滞 {cc.get('滞', 0)} → {hz['current_verdict']}）")
+                 f" · 平 {cc.get('平', 0)} · 滞 {cc.get('滞', 0)} → {_cv}）")
     lines.append(f"总体: 吉 {oc.get('吉', 0)} · 凶 {oc.get('凶', 0)}"
-                 f" · 平 {oc.get('平', 0)} · 滞 {oc.get('滞', 0)} → {hz['overall_verdict']}")
+                 f" · 平 {oc.get('平', 0)} · 滞 {oc.get('滞', 0)} → {_ov}")
     lines.append("")
     return "\n".join(lines)
