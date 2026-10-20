@@ -35,18 +35,52 @@ _ZHI_WX = {'正财': '财', '偏财': '财', '财': '财',
            '比肩': '比劫', '劫财': '比劫', '比劫': '比劫'}
 # PZZQ L3208 十神相对格喜忌查表(接 daymaster_power_queries._geju_xiji_map 同表):
 #   月令十神 → (喜神十神, 忌神十神). 喜=生助用神/制忌者, 忌=克破用神/助病者.
-_GEJU_XIJI = {
-    '正官': (['财', '印'], ['伤官']),
-    '七杀': (['食伤', '印'], ['财']),
-    '正印': (['官杀'], ['财']),
-    '偏印': (['官杀'], ['财']),
-    '正财': (['官杀', '食伤'], ['比劫']),
-    '偏财': (['官杀', '食伤'], ['比劫']),
-    '食神': (['财'], ['枭']),
-    '伤官': (['印', '财'], ['官']),
-    '比肩': (['官杀', '食伤', '财'], ['印比']),
-    '劫财': (['官杀', '食伤', '财'], ['印比']),
+# ★ V7.47 喜忌二维表(格局 × 旺衰): 十神相对格局的喜忌还须接旺衰维度.
+#   原典: DTS L215 体用正法(旺→食伤财官为我用; 弱→帮身制神者为用)
+#   + PZZQ L2319「财多身弱, 须以比劫分财为美」(身弱财格: 比劫=喜, 财=忌)
+#   + PZZQ L3318「财旺身弱, 用比劫分财为美」.
+#   key=格局十神, value={weak:(喜,忌), strong:(喜,忌)}. 撤旧静态表(财格忌比劫写死).
+_GEJU_XIJI_WS = {
+    '正官': {'weak':  (['印', '比劫'], ['官杀']),
+             'strong': (['财', '印'], ['伤官'])},
+    '七杀': {'weak':  (['印', '食伤'], ['财']),
+             'strong': (['食伤'], ['财'])},
+    '正印': {'weak':  (['印', '比劫'], ['财']),
+             'strong': (['财', '食伤'], ['印'])},
+    '偏印': {'weak':  (['印', '比劫'], ['财']),
+             'strong': (['财', '食伤'], ['印'])},
+    '正财': {'weak':  (['比劫', '印'], ['财']),
+             'strong': (['官杀', '食伤'], ['比劫'])},
+    '偏财': {'weak':  (['比劫', '印'], ['财']),
+             'strong': (['官杀', '食伤'], ['比劫'])},
+    '食神': {'weak':  (['印', '比劫'], ['食伤']),
+             'strong': (['财'], ['枭'])},
+    '伤官': {'weak':  (['印', '比劫'], ['官']),
+             'strong': (['财'], ['印'])},
+    '比肩': {'weak':  (['印'], ['官杀']),
+             'strong': (['官杀', '食伤', '财'], ['印比'])},
+    '劫财': {'weak':  (['印'], ['官杀']),
+             'strong': (['官杀', '食伤', '财'], ['印比'])},
 }
+_GEJU_XIJI = {}  # 旧静态表已撤(V7.47), 兼容别名置空; 喜忌查表走 _geju_xiji_ws
+
+
+def _ws_dirn(facts):
+    """旺衰方向: 身弱=weak(帮身), 身旺=strong(泄伤). 读 l3 strength_verdict."""
+    sv = ((facts.get('l3_contract') or {}).get('strength_verdict') or {}).get('value') or []
+    if '帮身' in sv and '泄伤' not in sv:
+        return 'weak'
+    return 'strong'  # 身旺(含泄伤)/两向皆有/中性→strong优先(DTS L235 旺宜泄)
+
+
+def _geju_xiji_ws(facts, tg):
+    """V7.47 格局×旺衰二维喜忌查表. 返回 (喜十神列表, 忌十神列表)."""
+    row = _GEJU_XIJI_WS.get(tg)
+    if not row:
+        return ([], [])
+    d = _ws_dirn(facts)
+    return row.get(d, row.get('weak', ([], [])))
+
 # 十神名 → 日主相对五行: 财=KE[日主], 官杀=KE_BACK[日主], 印=SHENG_BACK[日主],
 #   食伤=SHENG[日主], 比劫=日主本身, 枭=印(偏印), 印比=印+比劫. 查表依据全在既有五行表.
 #   十神名键须覆盖 _GEJU_XIJI 全部喜/忌值(正官/七杀/正印/偏印/正财/偏财/食神/伤官/比肩/劫财),
@@ -155,23 +189,8 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
     #   十神名 → 日主五行相对: 财=日主所克, 官杀=克日主者, 印=生日主者, 食伤=日主所生, 比劫=日主。
     _dmwx_r = facts.get("daymaster_element", "") or ""
     _tg = facts.get("month_qi_ten_god", "") or ""
-    _tg_cat = ("正官", "七杀") if _tg in ("正官", "七杀") else _tg
-    if _tg_cat == "正官":
-        _x_tg, _j_tg = ["财", "印"], ["伤官"]
-    elif _tg_cat == "七杀":
-        _x_tg, _j_tg = ["食伤", "印"], ["财"]
-    elif _tg_cat in ("正印", "偏印"):
-        _x_tg, _j_tg = ["官杀"], ["财"]
-    elif _tg_cat in ("正财", "偏财"):
-        _x_tg, _j_tg = ["官杀", "食伤"], ["比劫"]
-    elif _tg_cat == "食神":
-        _x_tg, _j_tg = ["财"], ["枭"]
-    elif _tg_cat == "伤官":
-        _x_tg, _j_tg = ["印", "财"], ["官"]
-    elif _tg_cat in ("比肩", "劫财"):
-        _x_tg, _j_tg = ["官杀", "食伤", "财"], ["印比"]
-    else:
-        _x_tg, _j_tg = [], []
+    # V7.47: 格局×旺衰二维查表 (撤静态八格写死)
+    _x_tg, _j_tg = _geju_xiji_ws(facts, _tg)
     def _cat_wx(cat):
         if cat in ("财",): return [KE.get(_dmwx_r, "")]
         if cat in ("官杀", "官", "枭"): return [KE_BACK.get(_dmwx_r, "")]
@@ -331,7 +350,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         #   喜桶 = 查表喜十神→五行 + 格喜(xi_wx) + 用神(_w); 忌桶 = 查表忌十神→五行 + 破格忌(po_ge)
         _dmwx_fb = facts.get('daymaster_element') or dm
         _tg_fb = facts.get('month_qi_ten_god', '') or ''
-        _x_tg_fb, _j_tg_fb = _GEJU_XIJI.get(_tg_fb, ([], []))
+        _x_tg_fb, _j_tg_fb = _geju_xiji_ws(facts, _tg_fb)
         _ji_bkt_fb = []
         for _c_fb in _j_tg_fb:
             for _gw_fb in _tg_wx(_c_fb, _dmwx_fb):
@@ -373,7 +392,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     'auxiliary_medicine': [],
                     'ji_shen': _ji_bkt_fb,
                     'xiji_xian': {'xi_wx': _xi_bkt_fb, 'ji_wx': _ji_bkt_fb, 'xian_wx': _xian_bkt_fb,
-                                  'basis': 'PZZQ L3208 十神喜忌查表(_GEJU_XIJI)+破格忌; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
+                                  'basis': 'PZZQ L3208/L2319 格局×旺衰喜忌查表(_GEJU_XIJI_WS)+破格忌; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
                     'rejected_climate': rejected_climate,
                     'ge_fallback_source': _source,
                     'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
@@ -386,7 +405,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     'primary_medicine': None, 'auxiliary_medicine': [],
                     'ji_shen': _ji_bkt_fb,
                     'xiji_xian': {'xi_wx': _xi_bkt_fb, 'ji_wx': _ji_bkt_fb, 'xian_wx': _xian_bkt_fb,
-                                  'basis': 'PZZQ L3208 十神喜忌查表(_GEJU_XIJI)+破格忌; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
+                                  'basis': 'PZZQ L3208/L2319 格局×旺衰喜忌查表(_GEJU_XIJI_WS)+破格忌; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
                     'rejected_climate': rejected_climate,
                     'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
                     'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
@@ -439,7 +458,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     'auxiliary_medicine': [{'wuxing': a, 'gan': list(WX_GAN.get(a, ()))} for a in _aux5],
                     'ji_shen': _ji_bkt5,
                     'xiji_xian': {'xi_wx': _xi_bkt5, 'ji_wx': _ji_bkt5, 'xian_wx': _xan_bkt5,
-                                  'basis': 'PZZQ L3208 十神喜忌查表(_GEJU_XIJI); DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
+                                  'basis': 'PZZQ L3208/L2319 格局×旺衰喜忌查表(_GEJU_XIJI_WS); DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
                     'rejected_climate': rejected_climate,
                     'ge_fallback_source': _src5,
                     'yuanliu_yongshen': _yl, 'tiaohou_yongshen': _th, 'routing': _rt,
@@ -577,7 +596,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     #   喜忌查表依据: month_qi_ten_god(PZZQ L3208 十神相对格) → 喜忌十神名 → 日主相对五行(_tg_wx)
     _dmwx_r = dm
     _tg = facts.get("month_qi_ten_god", "") or ""
-    _x_tg, _j_tg = _GEJU_XIJI.get(_tg, ([], []))
+    _x_tg, _j_tg = _geju_xiji_ws(facts, _tg)
     _x_cat_wx = []
     for _c in _x_tg:
         for _cw in _tg_wx(_c, _dmwx_r):
