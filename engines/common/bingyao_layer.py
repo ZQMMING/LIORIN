@@ -431,12 +431,17 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         #   (如亥月辰戌土, 囚死之地有根而无力)。故:
         #   - 财当令(旺) + 日主无重根  -> 财旺身弱, 报
         #   - 财有本气根(非当令) + 日主无重根 -> 须财相对压过日主(_x_overpowers)才算旺, 否则不报
-        if _no_heavy and _cai_dangling:
-            ok = _shen_ruo  # 前提闸门: 财当令+身弱才报财多身弱
-            matched = ['财当令(旺)+日主无HEAVY根' + ('' if _shen_ruo else ' -> 身强, 不触发(%s)' % _shen_ruo_note)]
-        elif _no_heavy and _cai_benshi and _x_overpowers(cai_wx):
+        # ★ V7.58b 「财多」量要件(原典 SFTK L1113「柱中支干重重, 三合财多」/ YHZP L3493「财多身弱」):
+        #   财当令=【旺】非【多】; 孤财一柱(透干+本气根<2)不作"财多身弱"(身弱可任有限之财).
+        _cai_duo = (_caiT + _caiB) >= 2
+        if _no_heavy and _cai_dangling and _cai_duo:
+            ok = _shen_ruo  # 前提闸门: 财当令+财多+身弱才报财多身弱
+            matched = ['财当令(旺)+财多(支干%d)+日主无HEAVY根' % (_caiT + _caiB) + ('' if _shen_ruo else ' -> 身强, 不触发(%s)' % _shen_ruo_note)]
+        elif _no_heavy and _cai_benshi and _cai_duo and _x_overpowers(cai_wx):
             ok = _shen_ruo  # 前提闸门
-            matched = ['财有本气根且压过日主(旺), 日主无HEAVY根' + ('' if _shen_ruo else ' -> 身强, 不触发(%s)' % _shen_ruo_note)]
+            matched = ['财有本气根且成多(支干%d)压过日主(旺), 日主无HEAVY根' % (_caiT + _caiB) + ('' if _shen_ruo else ' -> 身强, 不触发(%s)' % _shen_ruo_note)]
+        elif _no_heavy and not _cai_duo:
+            matched = ['财孤(透干%d+本根%d=1, 不成多) -> 非「财多」, 不报财多身弱(PZZQ SFTK L1113/YHZP L3493)' % (_caiT, _caiB)]
         if ok:
             matched = matched + ['财(他干%d+本根%d+局票%d=%d, 当令=%s)' % (_caiT, _caiB, _ju_piao(cai_wx), _cai_combo, _cai_dangling)]
     else:

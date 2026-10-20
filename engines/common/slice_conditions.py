@@ -46,6 +46,10 @@ HOOKS = {
     # 2026-10-17 BIJIE_DUO_CAI 触发对齐 bingyao L617 "财明(透干或本气根, 非仅藏中气)":
     #   病五行=财(dm 所克), 明=财干透>=1 或 财本气根ben_n>=1
     "cai_visible": lambda facts, wx: _cai_visible(facts, _dm(facts)),
+    # ★ V7.58 财多(量)要件: 原典 SFTK L1113「柱中支干重重, 三合财多」/ YHZP L3493「财多身弱,
+    #   正为富屋贫人」/ L2915「最忌财星过多」——「多」是量词(不止一财), 财当令≠财多.
+    #   判据: 财(透干+本气根)合计>=2 (财不孤) 才算"多"; 孤财一柱不作财多.
+    "cai_multi": lambda facts, wx: _cai_multi(facts, _dm(facts)),
 }
 
 # 占位: {wx}=病五行(来自 bing_wx), {dm}=日主五行
@@ -57,6 +61,21 @@ def _dm(facts: Dict[str, Any]) -> str:
 
 # 十神五行动作表: 我克=财
 _KE_WO = {"木": "土", "火": "金", "土": "水", "金": "木", "水": "火"}
+
+def _cai_multi(facts: Dict[str, Any], dm: str) -> bool:
+    """财多(量): 财(透干 + 本气根) 合计 >= 2 (不孤). 原典 SFTK L1113「柱中支干重重, 三合财多」."""
+    cai_wx = _KE_WO.get(dm, "")
+    if not cai_wx:
+        return False
+    _GAN_WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
+    _ZHI_BEN_WX = {'子':'水','丑':'土','寅':'木','卯':'木','辰':'土','巳':'火','午':'火','未':'土','申':'金','酉':'金','戌':'土','亥':'水'}
+    pillars = facts.get("pillars") or {}
+    tou = sum(1 for pos in ("year", "month", "hour")
+              if _GAN_WX.get((pillars.get(pos) or [None, None])[0]) == cai_wx)
+    ben = sum(1 for pos in ("year", "month", "day", "hour")
+              if _ZHI_BEN_WX.get((pillars.get(pos) or [None, None])[1]) == cai_wx)
+    return (tou + ben) >= 2
+
 
 def _cai_visible(facts: Dict[str, Any], dm: str) -> bool:
     """财明: 财干透>=1 或 财本气根ben_n>=1 (与 bingyao_layer L617-621 触发同判).
@@ -85,9 +104,11 @@ BID_CONDITIONS: Dict[str, Dict[str, Any]] = {
         "status": "触发切片·已校准L7-1",
         "groups": [
             # 组A 财当令+日主无重根(effective_rwc!=HEAVY): 不要求combo
+            #   ★ V7.58 增 hook cai_multi: 原典「财多」是量词(SFTK L1113「柱中支干重重, 三合财多」;
+            #     YHZP L2915「最忌财星过多」), 财当令≠财多; 孤财一柱不作财多身弱.
             {"logic": "AND", "conditions": [
                 {"fact": "month_qi_element", "op": "eq", "value": _WX},
-            ], "hooks": ["dm_no_heavy"]},
+            ], "hooks": ["dm_no_heavy", "cai_multi"]},
             # 组B 财成党(combo>=4)+日主无重根
             {"logic": "AND", "conditions": [
                 {"fact": "day_stem", "op": "exists"},
