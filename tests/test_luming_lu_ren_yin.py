@@ -160,15 +160,40 @@ def test_lury04_blocked_by_jie_cai():
 
 
 # ---------------------------------------------------------------------------
-# 5. query_year 挂载: 独立 key 返回, 不并入吉凶聚合
+# 5. query_year 挂载: LURY 为流年吉凶主判 (用户定案) — 触发即定案, 重恶不覆盖
 # ---------------------------------------------------------------------------
-def test_query_year_exposes_lury_independent():
-    """query_year 返回含 lury 独立列表; lury 规则不混入 verdicts (体系分界)."""
+def test_query_year_lury_master_judgment():
+    """禄刃印母法主判: LURY-01/02 触发 → 流年 tone=凶; LURY-04(无重恶) → 吉."""
+    from tongshu.luming.engine import query_year
+    # LURY-02: 1975-1-1 丁未日 (禄午+印甲 占二) 流年乙巳凑刃无制 → 凶
+    ch2 = _chart(1975, 1, 1, 12)
+    out2 = query_year(ch2, 2025)
+    assert any(h["rule_id"] == "LURY-02" for h in out2["lury"])
+    assert out2["tone"] == "凶"
+    # LURY-04: 1975-5-6 壬子日 (刃子+印辛 无劫财) 2024 甲辰 (甲=食神, 无重恶) → 吉
+    ch4 = _chart(1975, 5, 6, 12)
+    out4 = query_year(ch4, 2024)
+    assert any(h["rule_id"] == "LURY-04" for h in out4["lury"])
+    assert out4["tone"] == "吉"
+
+
+def test_query_year_lury04_blocked_by_heavy_evil():
+    """LURY-04 食伤吉面需无重灾凶信号 (L14184 忌官刑冲羊刃 / L4409 无冲害刑克):
+    毛泽东 1976 丁日(刃巳+印甲) 丙辰年辰中戊=伤官, 但岁运并临+6凶齐集=重恶 → 仍凶."""
+    from tongshu.luming.engine import from_bazi_chart, query_year
+    ch = _chart(1893, 12, 26, 20)
+    lm = from_bazi_chart(ch)
+    out = query_year(ch, 1976, lm=lm)
+    assert any(h["rule_id"] == "LURY-04" for h in out["lury"])   # 母法触发
+    assert out["tone"] == "凶"                                    # 重恶 → 不覆盖
+    assert out["combined"]["l4273"]["mode"] == "无"
+
+
+def test_query_year_lury03_no_override():
+    """LURY-03 (占二凑齐·有制不凶) 交原层, 不覆盖流年判定."""
     from tongshu.luming.engine import query_year
     ch = _chart(1989, 12, 26, 22)
     out = query_year(ch, 2029)
-    assert isinstance(out.get("lury"), list)
-    assert out["lury"], "2029 己酉 应触发 LURY-03"
-    assert out["lury"][0]["rule_id"] == "LURY-03"
-    # 独立层: lury 不进 verdicts
-    assert all(v["rule_id"].startswith("V") or v["rule_id"].startswith("LM") for v in out["verdicts"])
+    assert any(h["rule_id"] == "LURY-03" for h in out["lury"])
+    # 流年自身判定保留 (不因 LURY-03 变吉变凶)
+    assert out["tone"] in ("吉", "吉凶相杂", "凶")

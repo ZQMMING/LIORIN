@@ -2872,6 +2872,20 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     from .lu_ren_yin import check_year_lury
     _lury = check_year_lury(chart, yctx["tai_s"], yctx["tai_b"])
 
+    # 2026-10-20 用户定案: 禄刃印母法为**流年吉凶主判** — 母法触发即定案:
+    #   LURY-01 命局禄刃印全·无制无泄 = 凶兆 (L3379 已极而将反) → 凶
+    #   LURY-02 命局占二·流年凑齐·无制无泄 = 不利 (L3379) → 凶
+    #   LURY-04 刃印齐不透劫财·流年食伤 = 吉 (L14184 印绶最好行伤官食神) → 吉
+    #     但 L14184"忌官刑冲羊刃" + L4409"无冲害刑克始吉" — 流年自身带重灾凶信号
+    #     (恶力=重: 晦气/天罗/元辰/冲运/冲年/死绝会集等) 时, 食伤吉面不立, 不覆盖
+    #     (毛1976: 丁日刃巳印甲 + 丙辰年辰中戊伤官, 但岁运并临+6凶齐集=重恶 → 仍凶)
+    #   LURY-03/05 (有制不凶 / 贵格不凶) = 交原层, 不覆盖 (L3287/L3382 制化)
+    _lury_tones = {h["rule_id"]: h["tone"] for h in _lury}
+    if "LURY-01" in _lury_tones or "LURY-02" in _lury_tones:
+        year_tone = "凶"
+    elif "LURY-04" in _lury_tones and _power["level"] != "重":
+        year_tone = "吉"
+
     return {"year": year, "tai_sui": yctx["tai_sui"], "age": round(yctx["age"], 2),
             "luck_pillar": yctx["luck_pillar"], "verdicts": verdicts,
             "tone": year_tone, "counts": counts, "combined": combined,
