@@ -35,34 +35,184 @@ _ZHI_WX = {'正财': '财', '偏财': '财', '财': '财',
            '比肩': '比劫', '劫财': '比劫', '比劫': '比劫'}
 # PZZQ L3208 十神相对格喜忌查表(接 daymaster_power_queries._geju_xiji_map 同表):
 #   月令十神 → (喜神十神, 忌神十神). 喜=生助用神/制忌者, 忌=克破用神/助病者.
-# ★ V7.47 喜忌二维表(格局 × 旺衰): 十神相对格局的喜忌还须接旺衰维度.
-#   原典: DTS L215 体用正法(旺→食伤财官为我用; 弱→帮身制神者为用)
-#   + PZZQ L2319「财多身弱, 须以比劫分财为美」(身弱财格: 比劫=喜, 财=忌)
-#   + PZZQ L3318「财旺身弱, 用比劫分财为美」.
-#   key=格局十神, value={weak:(喜,忌), strong:(喜,忌)}. 撤旧静态表(财格忌比劫写死).
-_GEJU_XIJI_WS = {
-    '正官': {'weak':  (['印', '比劫'], ['官杀']),
-             'strong': (['财', '印'], ['伤官'])},
-    '七杀': {'weak':  (['印', '食伤'], ['财']),
-             'strong': (['食伤'], ['财'])},
-    '正印': {'weak':  (['印', '比劫'], ['财']),
-             'strong': (['财', '食伤'], ['印'])},
-    '偏印': {'weak':  (['印', '比劫'], ['财']),
-             'strong': (['财', '食伤'], ['印'])},
-    '正财': {'weak':  (['比劫', '印'], ['财']),
-             'strong': (['官杀', '食伤'], ['比劫'])},
-    '偏财': {'weak':  (['比劫', '印'], ['财']),
-             'strong': (['官杀', '食伤'], ['比劫'])},
-    '食神': {'weak':  (['印', '比劫'], ['食伤']),
-             'strong': (['财'], ['枭'])},
-    '伤官': {'weak':  (['印', '比劫'], ['官']),
-             'strong': (['财'], ['印'])},
-    '比肩': {'weak':  (['印'], ['官杀']),
-             'strong': (['官杀', '食伤', '财'], ['印比'])},
-    '劫财': {'weak':  (['印'], ['官杀']),
-             'strong': (['官杀', '食伤', '财'], ['印比'])},
+# ★ V7.51 喜忌查表重建: 按 PZZQ 各格「取运」章原典口径.
+#   原典结构: 「以某格所成之局, 分而配之」—— 先分【格局形态】(用神结构), 再分【身轻身重】.
+#   不可用"十神×旺衰"二元表代替(那是自造, 非原典). 各形态出处见下表行号.
+#   表值: (喜十神名列表, 忌十神名列表) —— 十神名相对日主, 转为五行后即"运之喜忌".
+#   形态判别由 _geju_shape() 依 ge_cheng 格名 + 天干十神配置派生(表驱动).
+_GEJU_XIJI_SHAPE = {
+    # ── 正官格 (PZZQ L3212-3260) ──
+    '正官格': {
+        '用财印': {  # L3212-3217 正官兼用财印: 身稍轻取助身, 官稍轻取助官
+            'weak':  (['印', '比劫'], ['官杀']),      # 身稍轻->取助身(印比); 忌混杂煞
+            'strong': (['财', '印'], ['伤官']),        # 官稍轻->取助官(财印)
+        },
+        '用财': {    # L3231-3232 正官用财: 身弱喜印绶身旺, 切忌食伤
+            'weak':  (['印', '比劫'], ['食伤']),        # 身弱: 喜印绶身旺, 忌食伤
+            'strong': (['财', '官杀'], ['食伤']),      # 身旺财轻官弱: 仍行财官运, 忌食伤
+        },
+        '佩印': {    # L3235-3237 正官佩印: 身旺印重喜财损印, 官重身轻喜比劫印绶
+            'weak':  (['比劫', '印'], ['财']),        # 官重身轻: 喜比劫印绶, 财运破印为忌
+            'strong': (['财', '食伤'], []),            # 身旺印重: 喜财运损印, 伤食亦吉
+        },
+        '带伤食': {  # L3244-3247 正官带伤食而用印: 喜官旺印旺, 伤食为害
+            'weak':  (['官杀', '印'], ['食伤']),
+            'strong': (['官杀', '印'], ['食伤']),
+        },
+        '带煞': {    # L3254-3260 正官带煞: 伤食不忌(取其制煞), 唯复露七煞不宜
+            'weak':  (['财', '食伤', '印'], ['官杀']),
+            'strong': (['财', '食伤', '印'], ['官杀']),
+        },
+    },
+    # ── 财格 (PZZQ L3425-3459) ──
+    '财格': {
+        '旺生官': {  # L3425-3428 财旺生官: 财官旺身轻喜身旺印绶, 不利七煞伤官
+            'weak':  (['印', '比劫'], ['官杀', '食伤']),
+            'strong': (['财', '官杀'], ['官杀', '食伤']),
+        },
+        '用食生': {  # L3438-3440 财用食生: 财食重身轻喜助身, 财食轻身重行财食
+            'weak':  (['比劫', '印'], ['官杀', '印']),
+            'strong': (['财', '食伤'], ['官杀', '印']),
+        },
+        '佩印': {    # L3447-3452 财格佩印: 最喜印旺; 财印相碍则以劫为用
+            'weak':  (['印'], ['财']),
+            'strong': (['印', '比劫'], ['财']),
+        },
+        '用食印': {  # L3459 财用食印: 财轻喜财食, 身轻喜比印, 官运有碍
+            'weak':  (['比劫', '印'], ['官杀']),
+            'strong': (['财', '食伤'], ['官杀']),
+        },
+    },
+    # ── 印格 (PZZQ L3658-3671) ──
+    '印格': {
+        '用官': {    # L3658-3665 印绶用官: 官露印重, 财运反吉, 伤食之方亦为最利
+            'weak':  (['印', '比劫'], ['财']),
+            'strong': (['财', '食伤'], []),
+        },
+        '用官带伤食': {  # L3667-3671 用官而带伤食: 喜官旺印绶, 伤食为害, 逢煞不忌
+            'weak':  (['官杀', '印'], ['食伤']),
+            'strong': (['官杀', '印'], ['食伤']),
+        },
+        '用食伤': {  # L1927/L3751 印格以食伤为用(身旺印旺泄秀), 财运反吉
+            'weak':  (['印'], ['财']),
+            'strong': (['食伤', '财'], []),
+        },
+    },
+    # ── 食神格 (PZZQ L3910-3912) ──
+    '食神格': {
+        '生财': {    # L3910-3912 食神生财: 财食轻身重行财食, 财食重身轻喜帮身, 官煞俱不美
+            'weak':  (['比劫', '印'], ['官杀']),
+            'strong': (['财', '食伤'], ['官杀']),
+        },
+    },
+    # ── 伤官格 (PZZQ L4374-4397) ──
+    '伤官格': {
+        '用财': {    # L4374-4376 伤官用财: 财旺身轻利印比, 身强财浅喜财运, 伤官亦宜
+            'weak':  (['印', '比劫'], []),
+            'strong': (['财', '食伤'], []),
+        },
+        '佩印': {    # L4395-4397 伤官佩印: 官煞为宜, 印运亦吉, 伤食不碍, 财地则凶
+            'weak':  (['官杀', '印', '食伤'], ['财']),
+            'strong': (['官杀', '印', '食伤'], ['财']),
+        },
+    },
+    # ── 七煞格 (PZZQ L4148-4153) ──
+    '七煞格': {
+        '食制': {    # L4148-4153 煞用食制: 身强第一; 煞重食轻喜食伤, 忌官混杂/畏印夺食/忌财生煞
+            'weak':  (['印'], ['食伤']),               # 身弱: 非用印以制食化煞不可
+            'strong': (['食伤'], ['官杀', '印', '财']), # 身强: 喜食伤制煞, 忌混杂/畏印夺食/忌财生煞
+        },
+    },
+    # ── 建禄月劫/阳刃 (PZZQ L1142-1143): 透官逢财印即同官格, 透财逢食伤即同财格, 透煞遇制伏即同煞格
+    '建禄月劫格': {
+        '同官格': {'weak': (['印', '比劫'], ['官杀']), 'strong': (['财', '印'], ['伤官'])},
+    },
+    '阳刃格': {
+        '同官格': {'weak': (['印', '比劫'], ['官杀']), 'strong': (['财', '印'], ['伤官'])},
+    },
 }
-_GEJU_XIJI = {}  # 旧静态表已撤(V7.47), 兼容别名置空; 喜忌查表走 _geju_xiji_ws
+# 兼容别名: 格名带后缀档(印格(印多逢财) 等) 先剥后缀再查
+_GEJU_XIJI_WS = _GEJU_XIJI_SHAPE  # 旧名保留(外部引用)
+_GEJU_XIJI = {}  # 旧静态表已撤(V7.47), 兼容别名置空
+
+
+def _geju_base_name(ge):
+    """格名归基名: 印格(印多逢财)->印格; 正官格->正官格; 七煞格(逢制)->七煞格."""
+    g = (ge or '').strip()
+    for sep in ('(', '（', '[', '·'):
+        if sep in g:
+            g = g.split(sep)[0]
+            break
+    return g.strip()
+
+
+def _geju_shape(facts):
+    """格局形态判别(表驱动): 返回 (基名, 形态名) 或 (基名, None).
+    形态依 ge_cheng 格名 + 天干十神配置派生, 各形态对应 PZZQ 取运章分档."""
+    ge = (facts.get('ge_cheng') or {}).get('ge') or ''
+    base = _geju_base_name(ge)
+    tg = facts.get('month_qi_ten_god', '') or ''
+    pl = facts.get('pillars') or {}
+    gans = []
+    for pos in ('year', 'month', 'hour'):
+        g = (pl.get(pos) or ['', ''])[0]
+        if g:
+            gans.append(g)
+    from engines.common.l0_fact_builder import ten_god as _tg
+    dm = (pl.get('day') or ['', ''])[0]
+    tgs = set()
+    for g in gans:
+        try:
+            tgs.add(_tg(dm, g))
+        except Exception:
+            pass
+    has_guan = ('正官' in tgs) or ('七杀' in tgs)
+    has_yin = ('正印' in tgs) or ('偏印' in tgs)
+    has_cai = ('正财' in tgs) or ('偏财' in tgs)
+    has_shishang = ('食神' in tgs) or ('伤官' in tgs)
+    has_sha = '七杀' in tgs
+    has_guan_only = ('正官' in tgs) and ('七杀' not in tgs)
+    # 形态判别(依 PZZQ 取运章各形态的构成要件)
+    shape = None
+    if base == '正官格':
+        if has_sha:
+            shape = '带煞'
+        elif has_shishang:
+            shape = '带伤食'
+        elif has_yin:
+            shape = '佩印'
+        elif has_cai:
+            shape = '用财'
+        else:
+            shape = '用财印'
+    elif base == '财格':
+        if has_shishang and has_yin:
+            shape = '用食印'
+        elif has_shishang:
+            shape = '用食生'
+        elif has_yin:
+            shape = '佩印'
+        else:
+            shape = '旺生官'
+    elif base == '印格':
+        if has_guan and has_shishang:
+            shape = '用官带伤食'
+        elif has_guan:
+            shape = '用官'
+        else:
+            shape = '用食伤'
+    elif base == '食神格':
+        shape = '生财'
+    elif base == '伤官格':
+        if has_yin:
+            shape = '佩印'
+        else:
+            shape = '用财'
+    elif base == '七煞格':
+        shape = '食制'
+    elif base in ('建禄月劫格', '阳刃格'):
+        shape = '同官格'
+    return base, shape
 
 
 def _ws_dirn(facts):
@@ -74,12 +224,18 @@ def _ws_dirn(facts):
 
 
 def _geju_xiji_ws(facts, tg):
-    """V7.47 格局×旺衰二维喜忌查表. 返回 (喜十神列表, 忌十神列表)."""
-    row = _GEJU_XIJI_WS.get(tg)
+    """V7.51 格局形态×身轻身重 二维喜忌查表(按 PZZQ 取运章). 返回 (喜十神列表, 忌十神列表)."""
+    base, shape = _geju_shape(facts)
+    row = _GEJU_XIJI_SHAPE.get(base)
     if not row:
         return ([], [])
+    if shape is None or shape not in row:
+        # 形态未判出: 取该格第一条形态的 weak 行作保守回退(表驱动, 不自造)
+        shape = sorted(row.keys())[0]
+    sub = row.get(shape) or {}
     d = _ws_dirn(facts)
-    return row.get(d, row.get('weak', ([], [])))
+    return sub.get(d, sub.get('weak', ([], [])))
+
 
 # 十神名 → 日主相对五行: 财=KE[日主], 官杀=KE_BACK[日主], 印=SHENG_BACK[日主],
 #   食伤=SHENG[日主], 比劫=日主本身, 枭=印(偏印), 印比=印+比劫. 查表依据全在既有五行表.
@@ -381,14 +537,19 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                 _xi_bkt_fb.append(_wgb)
         if _w and _w not in _xi_bkt_fb:
             _xi_bkt_fb.append(_w)
-        # 互斥(DTS L404「自喜忌之外皆闲神」: 同一五行不可既喜又忌, 冲突则归闲=中性).
-        # ★ V7.50 病根优先(同主病层): 病根为原典主病, 明确为忌, 不降级归闲.
+        # 互斥裁决优先级(同主病层 V7.51): 病根->忌, 药->喜, 其余->闲.
+        #   GE_FALLBACK 无主病(bw空), 该层用药=_w(格体喜神/救应神) -> 视作药, 优先留喜桶.
+        _yao_wx_fb = set([_w] if _w else [])
         _conflict_fb = [w for w in _ji_bkt_fb if w in _xi_bkt_fb]
-        if bw and bw in _xi_bkt_fb:
-            _xi_bkt_fb = [w for w in _xi_bkt_fb if w != bw]
-            _conflict_fb = [w for w in _conflict_fb if w != bw]
-        _xi_bkt_fb = [w for w in _xi_bkt_fb if w not in _conflict_fb]
-        _ji_bkt_fb = [w for w in _ji_bkt_fb if w not in _conflict_fb]
+        for _w in list(_conflict_fb):
+            if bw and _w == bw:
+                _xi_bkt_fb = [x for x in _xi_bkt_fb if x != _w]
+            elif _w in _yao_wx_fb:
+                _ji_bkt_fb = [x for x in _ji_bkt_fb if x != _w]
+            else:
+                _xi_bkt_fb = [x for x in _xi_bkt_fb if x != _w]
+                _ji_bkt_fb = [x for x in _ji_bkt_fb if x != _w]
+        _conflict_fb = [w for w in _ji_bkt_fb if w in _xi_bkt_fb]
         _xian_bkt_fb = list(_conflict_fb)
         _wp_el_fb = (facts.get('wuxing_power') or {}).get('wuxing_power') or {}
         _present_fb = [w for w in ("木", "火", "土", "金", "水") if (_wp_el_fb.get(w) or {}).get('stem_n', 0) or (_wp_el_fb.get(w) or {}).get('ben_n', 0) or (_wp_el_fb.get(w) or {}).get('zhong_n', 0) or (_wp_el_fb.get(w) or {}).get('yu_n', 0)]
@@ -664,18 +825,27 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     _hou_wx_bkt = (zhu or {}).get('wuxing', '') if (zhu or {}).get('kind') == '调候' else ''
     if _hou_wx_bkt and _hou_wx_bkt in _ji_bkt:
         _ji_bkt.remove(_hou_wx_bkt)
-    # ★ V7.46 互斥(DTS L404「自喜忌之外皆闲神」: 同一五行不可既喜又忌, 冲突则归闲=中性):
-    #   喜∩忌 的五行从两桶各剔除, 落入闲桶(既非明确喜亦非明确忌, 岁运引动才定).
-    # ★ V7.50 病根优先: 病根(bw)=原典主病, 明确为忌, 非"不足以为忌"的闲神.
-    #   病根与查表喜(相对格一般倾向)同五行时: 病根留忌桶, 查表喜项剔除(不降级归闲).
-    #   例: 癸亥壬戌乙未壬午 印多埋子(bw=水) vs 财格身弱查表喜印(水) -> 水属忌, 不入闲桶.
+    # ★ V7.51 互斥裁决优先级(病/药优先于查表喜忌):
+    #   DTS L404「自喜忌之外, 不足以为喜, 不足以为忌, 皆闲神也」—— 闲神=兼有喜忌作用者(中性).
+    #   ① 病根(bw)=原典主病 -> 忌(V7.50: 病明确为忌, 不降级归闲)
+    #   ② 药(制/化/帮/暖 accepted)=原典病药层用药 -> 喜, 优先于查表喜忌
+    #      (PZZQ L3717-3718「财轻印多, 用财损印, 喜财乡」: 财(药)与印(病)轻重决, 非一刀切互斥)
+    #   ③ 查表喜忌(PZZQ 取运章)/破格忌: 与①②冲突时让位
+    #   ④ 其余冲突五行 -> 闲(DTS L404 中性)
+    _yao_wx = set(m.get('wuxing') for m in uniq if m.get('wuxing'))
     _conflict = [w for w in _ji_bkt if w in _xi_bkt]
-    if bw and bw in _xi_bkt:
-        # 病根优先: 该五行按病论, 从喜桶剔除; 不进闲桶(病非闲神)
-        _xi_bkt = [w for w in _xi_bkt if w != bw]
-        _conflict = [w for w in _conflict if w != bw]
-    _xi_bkt = [w for w in _xi_bkt if w not in _conflict]
-    _ji_bkt = [w for w in _ji_bkt if w not in _conflict]
+    for _w in list(_conflict):
+        if bw and _w == bw:
+            # ① 病根: 留忌桶, 喜桶剔除(不归闲)
+            _xi_bkt = [x for x in _xi_bkt if x != _w]
+        elif _w in _yao_wx:
+            # ② 药: 留喜桶, 忌桶剔除(药优先于查表喜忌)
+            _ji_bkt = [x for x in _ji_bkt if x != _w]
+        else:
+            # ④ 无病药归属: 归闲(DTS L404 中性)
+            _xi_bkt = [x for x in _xi_bkt if x != _w]
+            _ji_bkt = [x for x in _ji_bkt if x != _w]
+    _conflict = [w for w in _ji_bkt if w in _xi_bkt]
     _pm_wx = (zhu or {}).get('wuxing', '')
     _wp_el = (facts.get('wuxing_power') or {}).get('wuxing_power') or {}
     _present = [w for w in ("木", "火", "土", "金", "水") if (_wp_el.get(w) or {}).get('stem_n', 0) or (_wp_el.get(w) or {}).get('ben_n', 0) or (_wp_el.get(w) or {}).get('zhong_n', 0) or (_wp_el.get(w) or {}).get('yu_n', 0)]
