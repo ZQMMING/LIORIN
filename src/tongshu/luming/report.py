@@ -134,12 +134,16 @@ def build_report(lm: Any) -> Dict[str, Any]:
     tao_present = bool(ss.get("tao_hua", {}).get("present"))
     ming_w = san_yuan.get("ming", {}).get("month_wang_shuai", "")
     shen_w = san_yuan.get("shen", {}).get("month_wang_shuai", "")
+    ming_g = san_yuan.get("ming", {}).get("growth_stage", "")
+    shen_g = san_yuan.get("shen", {}).get("growth_stage", "")
     san_xing_cn = [f"{s['type']}({'、'.join(BRANCH_CN.get(b, b) for b in s['branches'])})"
                    for s in d.get("san_xing", [])]
     liu_hai_cn = [f"{BRANCH_CN.get(h[0], h[0])}害{BRANCH_CN.get(h[1], h[1])}"
                   for h in d.get("liu_hai", [])]
     shen_sha = {
-        "三元旺衰": f"命{ming_w}/身{shen_w}",
+        # 2026-10-21 双坐标标注: 月令旺衰 vs 十二宫, 消除"命死/身死 vs 临官"歧义
+        "三元旺衰": f"月令[命{ming_w}/身{shen_w}]；十二宫[命{ming_g}/身{shen_g}]"
+                    if (ming_w or shen_w) else "",
         "干禄": f"{lu_branch_cn}（{'临支' if lu_present else '不临'}）" if lu_branch_cn else "",
         "驿马": BRANCH_CN.get(lu_ma.get("ma", {}).get("branch", ""), ""),
         "贵人": BRANCH_CN.get(gui_ren.get("gui_ren_branch", ""), "") if gui_ren.get("present") else "",
@@ -170,8 +174,8 @@ def build_report(lm: Any) -> Dict[str, Any]:
             if flag:
                 sees.append(name)
         tones = [v["tone"] for v in p_verdicts]
-        # 吉凶列: 固定顺序 吉→凶→平 (含空=无断语)
-        tone_summary = "、".join(f"{t}{tones.count(t)}" for t in ("吉", "凶", "平")
+        # 吉凶列: 固定顺序 吉→凶→平→滞 (含空=无断语; 滞=十二宫败衰病/沐浴等迟滞信号)
+        tone_summary = "、".join(f"{t}{tones.count(t)}" for t in ("吉", "凶", "平", "滞")
                                  if tones.count(t)) or "—"
         luck_rows.append({
             "gz": _gz(_p[0], _p[1]),
@@ -196,7 +200,7 @@ def build_report(lm: Any) -> Dict[str, Any]:
     cur = ts.get("current", {})
     ov = ts.get("overall", {})
     hui_zong = {
-        "layers": {k: {"吉": v["吉"], "凶": v["凶"], "平": v["平"]}
+        "layers": {k: {"吉": v["吉"], "凶": v["凶"], "平": v["平"], "滞": v["滞"]}
                    for k, v in ts.get("layers", {}).items()},
         "current_pillar": cur.get("pillar", ""),
         "current_counts": cur.get("counts", {}),
@@ -298,19 +302,20 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
         lines.append("")
         for v in report["er_yun"]:
             lines.append(f"- [{v['tone']}] {_clip(_zh(v['out']))}"
-                         f"（{_clip(_zh(v['detail']))}）")
+                         f"（{_clip(_zh(v['detail']))}；按流年逐年见报告末流年表）")
         lines.append("")
 
     # 吉凶汇总
     lines.append(f"## {'六' if report['er_yun'] else '五'}、吉凶汇总")
     lines.append("")
     hz = report["hui_zong"]
-    lines.append("| 层 | 吉 | 凶 | 平 |")
-    lines.append("| --- | --- | --- | --- |")
+    lines.append("| 层 | 吉 | 凶 | 平 | 滞 |")
+    lines.append("| --- | --- | --- | --- | --- |")
     for k in ("原局", "运", "太岁"):
-        c = hz["layers"].get(k, {"吉": 0, "凶": 0, "平": 0})
-        lines.append(f"| {k} | {c['吉']} | {c['凶']} | {c['平']} |")
+        c = hz["layers"].get(k, {"吉": 0, "凶": 0, "平": 0, "滞": 0})
+        lines.append(f"| {k} | {c['吉']} | {c['凶']} | {c['平']} | {c['滞']} |")
     lines.append("")
+    lines.append("> 注：运层计数含二运视角断语（大运×小运厄会，不入单柱行）与十二宫滞信号；逐柱行已按同口径列出滞数。")
     cc = hz["current_counts"]
     oc = hz["overall_counts"]
     # 2026-10-20 原著措辞统一 (L4276): 偏吉→吉 / 吉凶相当→吉凶相杂 / 偏凶→凶

@@ -127,8 +127,13 @@ def _build_zong_gang(lm) -> list[str]:
     sy = getattr(lm, "san_yuan", {}) or {}
     ming_w = sy.get("ming", {}).get("month_wang_shuai", "")
     shen_w = sy.get("shen", {}).get("month_wang_shuai", "")
+    ming_g = sy.get("ming", {}).get("growth_stage", "")
+    shen_g = sy.get("shen", {}).get("growth_stage", "")
     if ming_w or shen_w:
-        lines.append(f"禄命三元：命临{_zh(ming_w) or '—'}、身临{_zh(shen_w) or '—'}〔推导〕")
+        lines.append(
+            f"三元旺衰：月令[命{_zh(ming_w) or '—'}、身{_zh(shen_w) or '—'}]"
+            f"（五行在月令旺相休囚死）；十二宫[命{_zh(ming_g) or '—'}、身{_zh(shen_g) or '—'}]"
+            f"（五行在支长生十二宫）〔推导〕")
     sx = getattr(lm, "san_xing", ()) or ()
     lh = getattr(lm, "liu_hai", ()) or ()
     for s in sx:

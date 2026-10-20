@@ -1508,6 +1508,9 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
                           "WU": "WU", "JI": "WEI", "GENG": "YOU", "XIN": "SHEN",
                           "REN": "ZI", "GUI": "CHOU"}.get(year_stem, "")
         _p["yun_yang_ren"] = bool(_yr_yang_ren_b and _pb == _yr_yang_ren_b)
+        _p["y_yr_yang_ren_desc"] = (f"本命年干{_STEM_CN_LOCAL.get(year_stem, year_stem)}羊刃在"
+                                    f"{BRANCH_CN.get(_yr_yang_ren_b, '')}（禄前一辰，L3349）"
+                                    if _yr_yang_ren_b else "")
         # 波浪限 L4307: 金人到亥子岁运, 飘泛如舟
         _p["bo_lang_xian"] = bool((chart.nayin_five_element or {}).get("year") == "METAL" and _pb in ("HAI", "ZI"))
         dayun_pillars.append(_p)
@@ -2163,7 +2166,11 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         "fei_lian_present": _fei_lian_present,
         # ---- 五行精纪卷廿九 论夫妇/论子息 (L3960-4008) ----
         "fang_fu_qi": _fang_fu_qi,
+        "fang_fu_qi_by": "、".join(BRANCH_CN.get(b, b) for b in
+                                   (_FANG_FU_QI.get(_nayin_el, set()) & set(_fb))),
         "wang_xiang": _wang_xiang,
+        "wang_xiang_by": "、".join(BRANCH_CN.get(b, b) for b in
+                                   (_WANG_XIANG.get(_nayin_el, set()) & set(_fb))),
         "jue_fang": _jue_fang,
         "shi_chong_nian": _shi_chong_nian,
         "shi_xing_nian": _shi_xing_nian,
@@ -2640,6 +2647,67 @@ class LumingEngine:
         return query_year(chart, year)
 
 
+_STEM_CN_LOCAL = {"JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU": "戊",
+                  "JI": "己", "GENG": "庚", "XIN": "辛", "REN": "壬", "GUI": "癸"}
+
+
+def _er_yun_hits_calc(chart: Any, D: str, X: str) -> list:
+    """二运厄会九式 (五行精纪 L4343; ①-⑧ 独立可同出, ⑨天罗/地网互斥).
+
+    D=大运支, X=小运支. 返回触发式中文列表 (空=无).
+    原局/当前视角 (_build_luck_scope) 与流年视角 (_build_year_scope) 共用, 保证同口径.
+    """
+    if not (D and X):
+        return []
+    hits = []
+    year_branch = chart.year_pillar.earthly_branch
+    year_stem = chart.year_pillar.heavenly_stem
+    lu_el = STEM_ELEMENT.get(year_stem, "")
+    ming_el = BRANCH_ELEMENT.get(year_branch, "")
+    lu_jue = _stage_branch_stem(year_stem, "绝")
+    lu_bai = _stage_branch_stem(year_stem, "沐浴")
+    ming_jue = _stage_branch(ming_el, "绝")
+    ming_bai = _stage_branch(ming_el, "沐浴")
+    wq = {_stage_branch(ming_el, s) for s in ("沐浴", "衰", "病", "死", "墓", "绝")}
+    kong = _kong_wang_branches(chart)
+    zai_sha_b = ZAI_SHA_BY_SANHE.get(BRANCH_SANHE_GROUP.get(year_branch, frozenset()), "")
+    _ss = getattr(chart, "shensha", None) or {}
+    jie_sha_b = (getattr(_ss, "jie_sha", None) or {}).get("branch", "") \
+        if hasattr(_ss, "jie_sha") else ""
+    if not jie_sha_b:
+        # chart.shensha 可能是 dict (新旧口径兼容)
+        jie_sha_b = (_ss.get("jie_sha") or {}).get("branch", "") if isinstance(_ss, dict) else ""
+    _ty = getattr(chart, "tai_yuan", None) or {}
+    tai_unit_zhi = (_ty.get("branch") or _ty.get("zhi") or "") if isinstance(_ty, dict) else ""
+    if D in (lu_jue, ming_jue) and X in (lu_bai, ming_bai):
+        hits.append("厄会①大运至禄命绝+小运至败")
+    if D in wq and X in wq:
+        hits.append("厄会②大小运并在禄命无气之乡")
+    if _is_clash(D, X):
+        hits.append("厄会③大运小运相冲")
+    if D == year_branch and _is_clash(X, year_branch):
+        hits.append("厄会④大运在本命+小运冲破")
+    if D == chart.month_pillar.earthly_branch and tai_unit_zhi and X == tai_unit_zhi:
+        hits.append("厄会⑤大运至生月+小运至胎月")
+    if _is_xing(D, X) or _is_harm(D, X):
+        hits.append("厄会⑥大小运并在三刑六害")
+    if jie_sha_b and zai_sha_b and D in (jie_sha_b, zai_sha_b) \
+            and X in (jie_sha_b, zai_sha_b) and D != X:
+        hits.append("厄会⑦大小运至灾劫二杀")
+    if D in kong and X in kong:
+        hits.append("厄会⑧大小运并在空亡")
+    _gender = getattr(chart, "gender", "")
+    _tian_wei = ("HAI" if (_gender == "male" and year_branch == "XU")
+                 else ("XU" if (_gender == "female" and year_branch == "HAI") else ""))
+    _di_wei = ("SI" if (_gender == "male" and year_branch == "CHEN")
+               else ("CHEN" if (_gender == "female" and year_branch == "SI") else ""))
+    if _tian_wei and _tian_wei in (D, X):
+        hits.append("厄会⑨正天罗（戌生男遇亥/亥生女遇戌）")
+    elif _di_wei and _di_wei in (D, X):
+        hits.append("厄会⑨正地网（辰生男遇巳/巳生女遇辰）")
+    return hits
+
+
 def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     """流年应期事实 (任意公历年太岁 vs 命局四柱/大运). 依据见 YEAR_RULES 头注释."""
     from datetime import datetime as _dt
@@ -3058,7 +3126,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_wu_gui": tai_wu_gui, "tai_wu_gui_stage": _tai_wu_gui_stage,
         "tai_si_sha": tai_si_sha, "tai_si_sha_chong": tai_si_sha_chong,
         # 小运 (排盘引擎产出, 本层消费): 干支/纳音/十二宫/刑害/贵马
-        "xiao_yun": _xy_gz, "xiao_yun_nayin": xy_nayin,
+        "xiao_yun": _xy_gz, "xiao_yun_branch": _xy_branch, "xiao_yun_nayin": xy_nayin,
         "xiao_yun_growth": xy_growth, "xy_dead_jue": xy_dead_jue,
         "xy_sheng_wang": xy_sheng_wang, "xy_xing_hai": _xy_xing_hai,
         "xy_gui_ma": _xy_gui_ma, "xy_fu_hui": _xy_fu_hui,
@@ -3195,6 +3263,8 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "luck_pillar": yctx["luck_pillar"], "verdicts": verdicts,
             "tone": year_tone, "counts": counts, "combined": combined,
             "lury": _lury,
+            "er_yun_hits": _er_yun_hits_calc(chart, yctx.get("dayun_branch", ""),
+                                             yctx.get("xiao_yun_branch", "")),
             "jiao_yun": yctx.get("jiao_yun", False),
             "jiao_yun_from": yctx.get("jiao_yun_from", ""),
             "jiao_yun_to": yctx.get("jiao_yun_to", ""),

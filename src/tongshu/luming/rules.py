@@ -251,13 +251,13 @@ LUMING_RULES = [
      "tone": "平",
      "when": {"op": "eq", "k": "hua_gai_present", "v": True},
      "out": "华盖临，主多能博识，立性聪明",
-     "detail_tpl": "华盖{hua_gai_branch}临"},
+     "detail_tpl": "华盖临于{hua_gai_branch}支"},
     {"id": "LM-V14", "evidence": "E-SMTH-014-001", "mode": "scalar",
      "scope": "原局", "target": "",
      "tone": "凶",
      "when": {"op": "eq", "k": "hua_gai_present", "v": True},
      "out": "华盖临，多主孤寡，总贵亦不免孤独",
-     "detail_tpl": "华盖{hua_gai_branch}临（孤寡面）"},
+     "detail_tpl": "华盖临于{hua_gai_branch}支（孤寡面）"},
     {"id": "LM-V11", "evidence": "E-WXJ-026-001", "mode": "scalar",
      "scope": "原局", "target": "",
      "tone": "凶",
@@ -910,7 +910,7 @@ LUMING_RULES = [
      "tone": "平",
      "when": {"op": "not_empty", "k": "shou_kui_list"},
      "out": "五行受亏主疾，五脏不调",
-     "detail_tpl": "{shou_kui_str}受克太过（L3341: 甲乙见庚辛申酉多者主肝胆惊悸类）"},
+     "detail_tpl": "{shou_kui_str}受克太过（L3340: 甲乙见庚辛申酉多者主肝胆惊悸、丙丁见壬癸亥子多者主心气疼痛、戊己见甲乙寅卯多者主脾胃不和、庚辛见丙丁巳午多者主肠风痔漏、壬癸见戊己辰戌丑未多者主遗精盗汗）"},
     # 论性情 L3315/3321/3324: "火太过则声焦面赤摇膝好动；金太过则好勇无谋贪欲不仁；
     #   水太过则是非好动飘荡贪淫；木旺相主博爱；土太过执一古朴愚拙" — 性之偏, 非命凶 → 平
     {"id": "LM-V82", "evidence": "E-SMTH-012-002", "mode": "scalar",
@@ -1098,14 +1098,14 @@ LUMING_RULES = [
      "tone": "平",
      "when": {"op": "eq", "k": "fang_fu_qi", "v": True},
      "out": "妨夫妇（本命纳音忌支临柱，防头胎损丧）",
-     "detail_tpl": "妨夫妇临（L3966: 木命逢牛鼠，金人忌马羊，水土逢鸡狗，龙蛇火命当）"},
+     "detail_tpl": "妨夫妇临，年命纳音忌支{fang_fu_qi_by}临柱（L3966: 木命逢牛鼠，金人忌马羊，水土逢鸡狗，龙蛇火命当）"},
     # 望乡杀 L3968: 金命鸡猴是, 火人蛇马乡, 水土生猪鼠, 木虎兔难当
     {"id": "LM-V104", "evidence": "E-WXJ-029-001~008", "mode": "scalar",
      "scope": "原局", "target": "",
      "tone": "平",
      "when": {"op": "eq", "k": "wang_xiang", "v": True},
      "out": "望乡杀（男三度作新郎，女三度作花娘）",
-     "detail_tpl": "望乡杀临（L3968: 金命鸡猴是，火人蛇马乡，水土生猪鼠，木虎兔难当；按年命纳音取，命中则临四柱支）"},
+     "detail_tpl": "望乡杀临，年命纳音忌支{wang_xiang_by}临柱（L3968: 金命鸡猴是，火人蛇马乡，水土生猪鼠，木虎兔难当；按年命纳音取）"},
     # 绝房杀 L3973: 寅申巳亥七月生, 子午卯酉十二神, 辰戌丑未仲春月
     {"id": "LM-V105", "evidence": "E-WXJ-029-001~008", "mode": "scalar",
      "scope": "原局", "target": "",
@@ -1136,7 +1136,7 @@ LUMING_RULES = [
      "tone": "平",
      "when": {"op": "eq", "k": "shi_dai_sha", "v": True},
      "out": "时带刃/劫/元辰/空亡，子息有妨（重者绝子）",
-     "detail_tpl": "时支坐{shi_dai_sha_by}（L4000-4002: 时带年刃/劫/元辰/空亡，克子，重者绝子）"},
+     "detail_tpl": "时支坐{shi_dai_sha_by}（L4000-4002: 时带年刃/劫/元辰/空亡，克子，重者绝子；元辰取法: 阳男阴女冲前一位，阴男阳女冲后一位，L1711）"},
     # 时坐华盖克子 L4003: 时坐华盖，克子
     {"id": "LM-V109", "evidence": "E-WXJ-029-001~008", "mode": "scalar",
      "scope": "原局", "target": "",
@@ -1265,7 +1265,7 @@ LUMING_RULES = [
      "tone": "平",
      "when": {"op": "eq", "k": "yun_yang_ren", "v": True},
      "out": "行运到羊刃（主财物聚散）",
-     "detail_tpl": "运到{stem}{branch}羊刃（L4328: 凡行运到羊刃上，主财物聚散）"},
+     "detail_tpl": "运到{stem}{branch}羊刃（L4328: 凡行运到羊刃上，主财物聚散；羊刃取法: 禄前一辰（五行精纪 L3349），年干羊刃——{y_yr_yang_ren_desc}）"},
     # 波浪限 L4307: 金人到亥子岁运, 木人在此大厄
     {"id": "LM-V127", "evidence": "E-WXJ-033-001~004", "mode": "per_pillar",
      "scope": "运", "target": "{stem}{branch}",
@@ -1429,7 +1429,7 @@ LUMING_RULES = [
      "tone": "凶",
      "when": {"op": "eq", "k": "yuan_chen_fan_yun", "v": True},
      "out": "元辰犯运，灾祸倚伏（如物当风，动摇颠倒）",
-     "detail_tpl": "大运{stem}{branch}=元辰（大运逢之十年可畏，纵有吉神扶持不免灾祸倚伏）"},
+     "detail_tpl": "大运{stem}{branch}=元辰（取法: 阳男阴女冲前一位/阴男阳女冲后一位，L1711；大运逢之十年可畏，纵有吉神扶持不免灾祸倚伏）"},
 ]
 
 # ============================================================
