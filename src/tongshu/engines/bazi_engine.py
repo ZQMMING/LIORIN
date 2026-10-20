@@ -2059,22 +2059,22 @@ class BaziEngine:
 
     def _compute_xiao_yun_pillars(self, hour_pillar: Pillar, gender: str,
                                   n_years: int = 120) -> list:
-        """醉醒子小运 (三命通会论小运 L933-943).
+        """古法小运 (三命通会论小运 L933-943).
 
         原文: "夫大运司十年之休咎, 小运掌一岁之灾祥, 是小运者补大运之不足而立名也.
-              古人以男起丙寅顺行, 女起壬申逆行.
-              醉醒子以为男女小运皆由时生而行之, 逆顺亦以年定. 如阳命阳年甲子时生,
-              堕地即行乙丑, 二岁丙寅, 一位一年, 周而复始, 阴命阳年逆行亦然.
-              童限未交大运, 专用此法."
+              古人以男起丙寅顺行, 女起壬申逆行, 一定而不可易也. 解者谓男之阳火,
+              元气起戊子, 三十丁已, 十月至丙寅, 此木生火; 女之阴水, 元气起庚子,
+              二十辛已, 十月至壬申, 为金生水, 此其数也.
+              醉醒子以为男女小运皆由时生而行之…童限未交大运, 专用此法."
 
-        口径 (取醉醒子"由时生而行之" + 古法男顺女逆同向):
-          小运从时柱干支起, 1岁 = 时柱后一位(男顺) / 前一位(女逆),
-          逐年进退一位, 60甲子循环.
+        口径 (2026-10-21 用户定夺取古法): **男起丙寅顺行, 女起壬申逆行**,
+          一位一年, 60甲子循环. 醉醒子"由时生而行之"为备查口径 (未采用).
 
         Returns: [{"age", "pillar", "stem", "branch", "nayin"}, ...]
         """
-        seq0 = _get_jiazi_index(hour_pillar.heavenly_stem,
-                                hour_pillar.earthly_branch)
+        # 古法固定起: 男=丙寅(序号2)顺行; 女=壬申(序号8)逆行
+        seq0 = _get_jiazi_index("BING", "YIN") if gender == "male" \
+            else _get_jiazi_index("REN", "SHEN")
         step = 1 if gender == "male" else -1
         out = []
         for age in range(1, n_years + 1):

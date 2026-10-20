@@ -2855,11 +2855,39 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         if _s and _s != day_stem and _GAN_KE.get(_s) == day_stem:
             _day_jiu = True
             break
-    day_fan_saved = bool(_day_jiu)
+    # 天月德有情 (2026-10-21 补全 L951 救应第二径 + 珞琭子"尊吉卑凶逢灾自愈"):
+    #   四柱天干/地支 见天德(月支查支)或月德(三合月查干) → 四柱有情, 凶为吉兆;
+    #   太岁=天月德 → 太岁是有情之神, 灾轻反获 (珞琭子"太岁为造化之主, 贵神
+    #   为福之基"; 李虚中"吉神在岁则岁吉").
+    _mb2 = chart.month_pillar.earthly_branch
+    _td_b = TIAN_DE_BY_MONTH.get(_mb2, "")
+    _yd_g = YUE_DE_GAN_BY_SANHE.get(BRANCH_SANHE_GROUP.get(_mb2, frozenset()), "")
+    _sanghe_branches = frozenset({chart.year_pillar.earthly_branch,
+                                  chart.month_pillar.earthly_branch,
+                                  chart.day_pillar.earthly_branch,
+                                  chart.hour_pillar.earthly_branch})
+    _sanghe_stems = frozenset({chart.year_pillar.heavenly_stem,
+                               chart.month_pillar.heavenly_stem,
+                               chart.day_pillar.heavenly_stem,
+                               chart.hour_pillar.heavenly_stem})
+    _four_td = bool(_td_b and _td_b in _sanghe_branches)
+    _four_yd = bool(_yd_g and _yd_g in _sanghe_stems)
+    de_jiu = bool(_four_td or _four_yd)                 # 四柱带天月德 = 有情
+    tai_tian_yue_de = bool((_td_b and tb == _td_b) or (_yd_g and ts == _yd_g))  # 太岁=天月德
+    day_fan_saved = bool(_day_jiu or de_jiu)            # 有制 或 天月德有情 → 凶为吉兆
     day_fan_weight = "重" if (day_stem in _YANG_GAN) else "轻"
     tai_zheng = bool((tai_day_fan_sui and _is_clash(tb, day_branch))
                      or (tai_ke_day_stem and _is_clash(tb, day_branch))
                      or (dl_stem and _GAN_KE.get(dl_stem) == ts and _is_clash(dl_branch, tb)))
+    # 干推两重 (李虚中命书: "干推两重, 防灾於元首之间. 如壬寅人逢戊为太岁, 戊为
+    #   月建者, 两戊克壬则为干推两重, 遇之者为元首头目之灾") — 太岁干+月建干双克日干
+    _mb_s = chart.month_pillar.heavenly_stem
+    tai_gan_tui_liang_chong = bool(
+        tai_ke_day_stem and _mb_s and _GAN_KE.get(_mb_s) == day_stem)
+    # 宅墓受杀 (珞琭子赋注: "宅墓受杀, 落梁尘以呻吟" — 岁命前后五辰为宅墓, 日时与
+    #   岁运不宜逢之受杀; 命前五辰=宅(L4411 已有 V26), 命后五辰=墓 → 太岁临墓)
+    _mu_b = EARTHLY_BRANCHES[(_yb_i - 5) % 12] if _yb_i is not None else ""
+    tai_mu = bool(_mu_b and tb == _mu_b)
 
     # ---- 小运消费 (2026-10-21 三命通会论小运 L933-943; 小运干支由排盘引擎
     #      BaziEngine 计算 chart.xiao_yun_pillars, 此处仅消费做禄命判定) ----
@@ -2887,9 +2915,19 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         _xy_gui_ma = bool(
             (_xy_branch in _gui_set) or (_yi_ma and _xy_branch == _yi_ma))
         xy_nayin = (_xy_hit or {}).get("nayin", "")
+        # 行年福会 (五行精纪 L748-750 八字金书福运/三命指掌福会): "福会者取十干
+        #   所生及所克, 如甲木生丙火克戊土…大小运行年至此, 亦有迁官进财之喜"
+        #   → 小运(行年)天干 = 日干所生 或 日干所克 → 福会吉
+        _GAN_SHENG = {"JIA": "BING", "YI": "DING", "BING": "WU", "DING": "JI",
+                      "WU": "GENG", "JI": "XIN", "GENG": "REN", "XIN": "GUI",
+                      "REN": "JIA", "GUI": "YI"}
+        _xy_stem2 = _xy_gz[0] if len(_xy_gz) == 2 else ""
+        _xy_fu_hui = bool(
+            day_stem and _xy_stem2 and
+            (_GAN_SHENG.get(day_stem) == _xy_stem2 or _GAN_KE.get(day_stem) == _xy_stem2))
     else:
         xy_growth = ""; xy_dead_jue = False; xy_sheng_wang = False
-        _xy_xing_hai = False; _xy_gui_ma = False; xy_nayin = ""
+        _xy_xing_hai = False; _xy_gui_ma = False; xy_nayin = ""; _xy_fu_hui = False
 
     return {
         "tai_s": ts, "tai_b": tb, "tai_sui": ts + tb, "tai_nayin": tai_nayin,
@@ -2930,11 +2968,14 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_ke_day_stem": tai_ke_day_stem, "tai_day_fan_sui": tai_day_fan_sui,
         "day_fan_saved": day_fan_saved, "day_fan_weight": day_fan_weight,
         "tai_zheng": tai_zheng,
+        "de_jiu": de_jiu, "tai_tian_yue_de": tai_tian_yue_de,
+        "tai_gan_tui_liang_chong": tai_gan_tui_liang_chong,
+        "tai_mu": tai_mu,
         # 小运 (排盘引擎产出, 本层消费): 干支/纳音/十二宫/刑害/贵马
         "xiao_yun": _xy_gz, "xiao_yun_nayin": xy_nayin,
         "xiao_yun_growth": xy_growth, "xy_dead_jue": xy_dead_jue,
         "xy_sheng_wang": xy_sheng_wang, "xy_xing_hai": _xy_xing_hai,
-        "xy_gui_ma": _xy_gui_ma,
+        "xy_gui_ma": _xy_gui_ma, "xy_fu_hui": _xy_fu_hui,
     }
 
 
@@ -3080,4 +3121,8 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "xy_dead_jue": yctx.get("xy_dead_jue", False),
             "xy_sheng_wang": yctx.get("xy_sheng_wang", False),
             "xy_xing_hai": yctx.get("xy_xing_hai", False),
-            "xy_gui_ma": yctx.get("xy_gui_ma", False)}
+            "xy_gui_ma": yctx.get("xy_gui_ma", False),
+            "xy_fu_hui": yctx.get("xy_fu_hui", False),
+            "tai_tian_yue_de": yctx.get("tai_tian_yue_de", False),
+            "tai_gan_tui_liang_chong": yctx.get("tai_gan_tui_liang_chong", False),
+            "tai_mu": yctx.get("tai_mu", False)}

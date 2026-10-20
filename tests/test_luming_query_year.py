@@ -310,16 +310,35 @@ class TestYearDistributionSystemic:
     def test_135_xiao_yun_layer(self, be):
         """2026-10-21 小运层接通 (排盘引擎 xiao_yun_pillars + 禄命法消费):
         三命通会 L933-943 '小运掌一岁之灾祥…行死绝煞旺之宫必有危难'.
-        1983 坤造 (时柱壬午, 女逆): 37岁小运乙巳(覆灯火) 行绝宫+刑害 →
-        V79 死绝凶 + V80 细累凶; 且小运字段随 query_year 输出."""
+        2026-10-21 用户定夺取古法: 男起丙寅顺行, 女起壬申逆行."""
         r = _qy(be, 1983, 11, 3, 12, 2020, gender="female")
-        outs = {v["rule_id"]: v for v in r["verdicts"]}
-        assert r.get("xiao_yun") == "YISI"     # 37岁 = 时柱壬午逆排 → 乙巳
-        assert outs.get("LM-V79")              # 乙巳 覆灯火 行绝宫 → 必有危难
-        assert outs.get("LM-V79")["tone"] == "凶"
-        assert outs.get("LM-V80")              # 小运刑害命柱 → 细累浮灾
-        # 排盘引擎小运: 男顺女逆, 1岁=时柱后一位/前一位
+        # 古法女逆: 壬申(1岁) → 37岁 = 乙未(养) — 非死绝, V79 不触发
+        assert r.get("xiao_yun") == "YIWEI"
+        assert not r.get("xy_dead_jue")
+        # 排盘引擎小运: 古法 男丙寅顺 / 女壬申逆
         ch = _chart(be, 1983, 11, 3, 12, gender="female")
-        assert ch.xiao_yun_pillars[0]["pillar"] == "XINSI"   # 壬午逆 → 辛巳(1岁)
+        assert ch.xiao_yun_pillars[0]["pillar"] == "XINWEI"   # 壬申逆 → 辛未(1岁)
+        assert ch.xiao_yun_pillars[2]["pillar"] == "JISI"     # 己巳(3岁, 水绝宫)
         ch2 = _chart(be, 1989, 12, 26, 22, gender="male")
-        assert ch2.xiao_yun_pillars[0]["pillar"] == "WUZI"  # 时柱丁亥顺 → 戊子(1岁)
+        assert ch2.xiao_yun_pillars[0]["pillar"] == "DINGMAO"  # 丙寅顺 → 丁卯(1岁)
+        # 3岁小运己巳(水绝) → V79 死绝凶 (1983坤 1986丙寅年)
+        r3 = _qy(be, 1983, 11, 3, 12, 1986, gender="female")
+        outs3 = {v["rule_id"]: v for v in r3["verdicts"]}
+        assert outs3.get("LM-V79")     # 小运行绝宫必有危难
+        assert outs3.get("LM-V79")["tone"] == "凶"
+
+    def test_136_de_jiu_mu_gan_tui(self, be):
+        """2026-10-21 救应/重灾补全:
+        V82 太岁天月德吉 (珞琭子尊吉卑凶逢灾自愈) / V84 宅墓受杀凶 (珞琭子赋注) /
+        V83 干推两重凶 (李虚中命书干推两重防灾於元首之间)."""
+        # 1983 坤造 2026 丙午: 午=命后五辰之墓(V84) + 丙=月德(V82) → 吉凶并存
+        r = _qy(be, 1983, 11, 3, 12, 2026, gender="female")
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert outs.get("LM-V82")      # 太岁丙=月德(寅午戌月德丙)
+        assert outs.get("LM-V84")      # 午=命后五辰之墓
+        assert r.get("tai_mu") is True
+        assert r.get("tai_tian_yue_de") is True
+        # 干推两重 (李虚中"干推两重防灾於元首之间") 需要太岁干+月建干双克日干,
+        # 现成案例难以命中; 保留结构断言: 规则已注册于 YEAR_RULES 且权重可查
+        from tongshu.luming.rules import YEAR_RULES
+        assert any(v["id"] == "LM-V83" for v in YEAR_RULES)
