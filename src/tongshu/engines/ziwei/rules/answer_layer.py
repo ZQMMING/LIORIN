@@ -137,14 +137,17 @@ SANHE_TREND_DIMENSION = {
     "福/寿": "疾厄", "荫/寿": "疾厄",
     # ── 命宫维（性格/智类） ──
     "智": "命宫",
-    # ── Z80-F 审计备注（2026-10-14，**未补键**）──
-    #   STAR_JUDGMENTS 尚有 5 个 trend 未登记：善/智(天机)、财/刚(武曲)、
-    #   桃花/欲(贪狼)、印/福(天相)、杀/成败(七杀)。
-    #   经评估**保持现状**：坐命断语(JUDG)缺键兜底「命宫」、格局(PATTERN)
-    #   缺键兜底「格局」，两者语义均合理（坐命断语本就讲命宫；格局本属
-    #   体用层）。补键会把这些断语改判到宫位维，属**行为变更**且与既有
-    #   测试断言（test_ziwei_answer_layer_p12.TestAnswerLayerZ74f）冲突，
-    #   需设计裁决后再定，故不在本次审计中擅自修改。
+    # ── Z80-H 裁决备注（2026-10-15，**保持现状**）──
+    #   STAR_JUDGMENTS 有 5 个「星曜特质类」trend 未登记：
+    #     善/智(天机)、财/刚(武曲)、桃花/欲(贪狼)、印/福(天相)、杀/成败(七杀)。
+    #   曾试补键（JUDG→各宫位维）并实测：**破坏既有契约**
+    #   —— test_ziwei_answer_layer_p12.TestAnswerLayerZ74f
+    #   `test_sanfang_kept_out_of_main_dim` 明确要求「坐命断语在命宫维度」
+    #   （#38 盘 武曲坐命 必须落 命宫），补键后武曲坐命改判 财帛 → 断言失败。
+    #   经核，兜底值语义合理：坐命断语(JUDG)缺键→「命宫」（坐命断语本就讲命宫）、
+    #   格局(PATTERN)缺键→「格局」（格局属体用层）。二者皆非缺陷，
+    #   属**机制设计选择**。故 Z80-H 决定：**保留兜底，不补键**，并在此显式记录，
+    #   以免后续审计重复提出。
 }
 
 
@@ -211,6 +214,9 @@ def _build_sanhe_items(sanhe_result) -> list[AnswerItem]:
                     _dim_hint="格局",
                 ))
             else:
+                # Z80-H：保持兜底「格局」——星曜特质 trend 未登记时，
+                # 坐命断语归「命宫」、坐命格局归「格局」（见 SANHE_TREND_DIMENSION
+                # 裁决备注：补键会破坏 TestAnswerLayerZ74f 契约）。
                 dim = SANHE_TREND_DIMENSION.get(trend, "格局")
                 items.append(AnswerItem(
                     source="sanhe", rule_id=rid, text=text,
@@ -421,6 +427,10 @@ def build_answer(chart) -> dict:
         "dimensions": PALACE_DIMENSIONS,
         "answer": answer,
         "body_use": body_use,
+        # Z80-H 经典细则层（独立通道）：古籍原文资产接线（十二宫得地失陷诀 /
+        # 富富贵贫杂格局候选 / 女命专条 / 童限 / 限运进阶 / 太岁小限 / 时间层Fact）。
+        # 不并入 12 宫位维与体用层（不融合、不污染）；详见 classical_detail.py。
+        "classical_detail": _build_classical_detail_safe(chart),
         "summary": {
             "sanhe_total": len(sanhe_result.matched_rules),
             "qintian_total": len(qtn_hits),
@@ -428,6 +438,26 @@ def build_answer(chart) -> dict:
             "body_use_counts": {k: len(body_use[k]) for k in BODY_USE_KEYS},
         },
     }
+
+
+def _build_classical_detail_safe(chart) -> dict:
+    """经典细则层兜底包装：任何异常返回空结构，不阻断 build_answer。"""
+    empty = {
+        "palace_jue": [], "classical_patterns": [], "nvming": [],
+        "child_limit": [], "limit_advanced": [], "temporal_rules": [],
+        "aux_verdicts": [], "temporal_facts": {},
+        "summary": {"palace_jue": 0, "classical_patterns": 0, "nvming": 0,
+                    "child_limit": 0, "limit_advanced": 0, "temporal_rules": 0,
+                    "aux_verdicts": 0},
+    }
+    try:
+        from .classical_detail import build_classical_detail
+        return build_classical_detail(chart)
+    except Exception:  # noqa: BLE001 — 接线层异常不得影响主答案
+        import logging
+        logging.getLogger(__name__).warning(
+            "classical_detail 构建失败，降级为空结构", exc_info=True)
+        return empty
 
 
 # 格局名 → PATTERN_INTERPRETATION key 反向索引
@@ -698,6 +728,11 @@ PATTERN_INTERPRETATION = {
         "shadow": "别等运，要努力。"},
 }
 
+# 宫位×星曜 原文断语表（270 键 = 主星 168 + 辅煞杂曜/斗君 102）。
+# Z80-H 注：``get_interpretation`` 仅以「宫位主星」调用（facts["stars"] 只含
+#   主星），故其中 102 个辅助星/斗君键在 ANSWER 层**不可达**。这 102 键已改由
+#   经典细则层接入（``classical_detail._match_aux_verdicts``，以「本盘实际存在
+#   的辅煞星 + 斗君落宫」为条件），故本表全部键**均已可达**（分属两条通道）。
 VERDICT_INTERPRETATION = {
     ("仆役", "七杀"): {"classic": "七杀在仆役宫，欺主有刚强之仆多盗家财；武曲同背主；廉贞欠力；加羊陀火铃空劫全难招。", "vernacular": "欺主有刚强之仆多盗家财；武曲同背主；廉贞欠力；加羊陀火铃空劫全难招。", "positive": "", "shadow": "武曲同背主；廉贞欠力"},
     ("仆役", "右弼"): {"classic": "右弼在仆役宫，得力；加吉星有忠仆；加羊陀火铃空劫逃走。", "vernacular": "得力；加吉星有忠仆；加羊陀火铃空劫逃走。", "positive": "得力；加吉星有忠仆", "shadow": "加羊陀火铃空劫逃走。"},

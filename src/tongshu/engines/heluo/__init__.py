@@ -1,8 +1,8 @@
 """HL Engine - Phase 2 重构（8模块拆分）。
 
 依据：SHUNTIAN §10 架构冻结 + Architecture Freeze V1.0 §2.3
-旧版 hetu_luoshu.py（豹书/河图双背法草稿）已归档至 archive/heluo_legacy/，
-生产代码统一使用 numbers.py 中的单一映射表（河图版，经原典核实）。
+旧版 hetu_luoshu.py（豹书/河图双背法草稿）及其 archive/heluo_legacy 归档副本
+已于 2026-10-20 清理，生产代码统一使用 numbers.py 中的单一映射表（河图版，经原典核实）。
 """
 
 from .canonical import HeluoCanonical, HeluoResult, heluo_calculate

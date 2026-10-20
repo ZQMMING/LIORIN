@@ -27,6 +27,23 @@ ARCHITECTURE:
 
 UPSTREAM ISSUE:
     See docs/audit/upstream-issue-template.md
+
+--------------------------------------------------------------------------
+Z80-H 复核结论（2026-10-15）——本适配器为**防御性审计层（实测 no-op）**：
+
+    Z80-G 全面审核实测 1950–2000 共 100 盘，iztro 原始大限方向与
+    「年干阴阳」判定的**差异为 0**。原因（数学必然）：
+        六十甲子中天干序与地支序**奇偶恒同**（甲子/乙丑/丙寅…），
+        故「阳干」⟺「阳支」，iztro 的 `GENDER===earthlyBranch.yinYang`
+        与传统的「阳男阴女顺，阴男阳女逆」**本就等价**。
+    实测 1950–2000 共 51 年，干/支阴阳不一致年数 = **0**。
+
+    因此本模块的 `_apply_correction` 在生产中**不会改变任何结果**——
+    它保留为「上游一旦改动阴阳口径即可自动纠偏」的**防御性审计层**，
+    并在 `enable_audit=True` 时记录 discrepancy 观测。
+
+    注意：该适配器仅在 `full_chart` 路径接入；生产 `ZiweiSolarAdapter`
+    路径未接（因其无需纠正）。此处如实标注，避免被误读为「已修正上游 bug」。
 """
 
 from __future__ import annotations

@@ -107,6 +107,33 @@ _CLIMATE_2D_STATE = {
 }
 
 
+def _attach_qtbj(_j, _qtbj_row):
+    """[2026-10-01 接入] 把 QTBJ 120 格调候干序挂到 judgment 上 (纯附加, 不改 state).
+
+    铁律:
+      - 只挂事实 (日干×月令 → 干序 + 出处), 不改判定结果;
+      - 不判透出/得用/成败/富贵/吉凶;
+      - order 为原文语序, 非评分/权重;
+      - 未命中 → 字段留空, fail-closed, 不编造。
+    注: run_ziping 经 to_dict() 组装输出, 只序列化 dataclass 声明字段,
+        故必须写进 __dict__ 才不会在 §28 统一输出里丢失。
+    """
+    try:
+        if _qtbj_row is not None:
+            _j.__dict__["qtbj_climate_candidates"] = list(_qtbj_row.get("py") or [])
+            _j.__dict__["qtbj_climate_candidates_cn"] = list(_qtbj_row.get("stems") or [])
+            _j.__dict__["qtbj_climate_provenance"] = _qtbj_row.get("provenance", "")
+            _j.__dict__["qtbj_climate_table_source"] = "QTBJ_120_FINAL_20261001"
+        else:
+            _j.__dict__["qtbj_climate_candidates"] = []
+            _j.__dict__["qtbj_climate_candidates_cn"] = []
+            _j.__dict__["qtbj_climate_provenance"] = ""
+            _j.__dict__["qtbj_climate_table_source"] = ""
+    except Exception:
+        pass
+    return _j
+
+
 def judge_climate(ctx: EngineContext, derived: ZiPingDerivedFact,
                   climate_table: Optional[Dict] = None) -> ZiPingJudgment:
     """§38 CLIMATE-FACT + §19 调候: 寒暖燥湿二维矩阵 + 调候需求.
@@ -122,6 +149,42 @@ def judge_climate(ctx: EngineContext, derived: ZiPingDerivedFact,
     dry_wet = _get_dry_wet_state(ctx.fact, ctx)
     state = _CLIMATE_2D_STATE.get((cold_hot, dry_wet), "MIXED")
 
+    # ------------------------------------------------------------------
+    # [2026-10-01 接入] QTBJ 120 格调候用神表 (日干×月令 → 干序).
+    # 粒度说明: 本表是 日干×月令, 与上方 二维气候态(COLD/HOT/...) 不同粒度.
+    # 因此不臆造 气候态→干 的映射(那需另一层裁决, 保持 fail-closed);
+    # 本层只做: 由 facts 取日干/月支 → 查表 → 把 干序 挂到 judgment 上,
+    # 不改变 state 判定, 不判透出/得用/成败/吉凶(那是下游 CLIMATE 消费方的事).
+    # ------------------------------------------------------------------
+    _day_stem = None
+    _month_branch = None
+    try:
+        # EngineContext.fact 可能是 FrozenBaziFact 本体, 也可能包一层 .fact
+        _p = getattr(ctx, "fact", None)
+        if _p is None or not hasattr(_p, "day_master"):
+            _p = ctx
+        _dm = getattr(_p, "day_master", None) or getattr(_p, "day_stem", None)
+        _mb = getattr(_p, "month_branch", None) or getattr(_p, "month_pillar_branch", None)
+        _day_stem = str(_dm).upper() if _dm else None
+        _month_branch = str(_mb).upper() if _mb else None
+    except Exception:
+        _day_stem = _month_branch = None
+
+    _qtbj_row = None
+    if _day_stem and _month_branch and climate_table is None:
+        try:
+            from .climate_table_qtbj import lookup as _qtbj_lookup
+            _qtbj_row = _qtbj_lookup(_day_stem, _month_branch)
+        except Exception:
+            _qtbj_row = None
+    elif _day_stem and _month_branch and climate_table is not None:
+        # 外部传入的表优先; 但本仓 120 格表为唯一权威, 若外部表无 120 格键则回退
+        try:
+            from .climate_table_qtbj import lookup as _qtbj_lookup
+            _qtbj_row = _qtbj_lookup(_day_stem, _month_branch)
+        except Exception:
+            _qtbj_row = None
+
     # 调候需求 (需表, pluggable). 穷通宝鉴: 春金/秋土亦有调候需求, 不应仅冬夏才查表.
     # 当 dry_wet 有值 或 cold_hot 有值 且 表存在 → 允许查表; 缺表则 fail-closed.
     if climate_table is not None:
@@ -134,19 +197,21 @@ def judge_climate(ctx: EngineContext, derived: ZiPingDerivedFact,
                       result_state=state)
             _r.evidence_refs = ["E-QTBJ-YONG-003"]
             _r.method_scope = [MethodScope.QIONG_TONG_BAO_JIAN]
-            return JudgmentBuilder.from_hits("CLIMATE", state, _r)
+            return _attach_qtbj(JudgmentBuilder.from_hits("CLIMATE", state, _r), _qtbj_row)
         if state in ("COLD", "HOT"):
-            return JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.RULE_MISSING,
-                                                f"调候表缺 {state} 需求格 (fail-closed)")
+            return _attach_qtbj(JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.RULE_MISSING,
+                                                f"调候表缺 {state} 需求格 (fail-closed)"), _qtbj_row)
 
     if cold_hot is None and dry_wet is None and not climate_table:
-        return JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.FACT_MISSING,
-                                            "无寒暖燥湿结构且无调候表")
+        return _attach_qtbj(JudgmentBuilder.undetermined("CLIMATE", UndeterminedReason.FACT_MISSING,
+                                            "无寒暖燥湿结构且无调候表"), _qtbj_row)
 
     _r = Rule(rule_id=f"CLIMATE-{state}", domain="CLIMATE", result_state=state)
     _r.evidence_refs = [f"E-DT-CLIMATE-{state}"]
     _r.method_scope = [MethodScope.DI_TIAN_SUI]
-    return JudgmentBuilder.from_hits("CLIMATE", state, _r)
+    _j = JudgmentBuilder.from_hits("CLIMATE", state, _r)
+
+    return _attach_qtbj(_j, _qtbj_row)
 
 
 # ---------------------------------------------------------------------------

@@ -53,14 +53,22 @@ def run_ziping(
     month_command: Optional[Dict[str, Any]] = None,
     climate_table: Optional[Dict[str, Any]] = None,
     temporal_inputs: Optional[Dict[str, Any]] = None,
+    enable_pattern: bool = False,
 ) -> Dict[str, Any]:
     """BaziChart → §28 统一输出 (已实现域判断 + 未实现域 fail-closed 清单).
 
     Args:
         chart: BaziEngine.compute() 产出 (排盘层事实).
         month_command: 月令司令表数据 (pluggable); 缺 → 透干/调候 fail-closed.
-        climate_table: 调候用神表数据 (pluggable, 子代理核证产出); 缺 → 调候 fail-closed.
+        climate_table: 调候用神表数据 (pluggable); 缺 → 调候用 120 格表兜底.
         temporal_inputs: 流年/流月/流日 (调用方注入; §25 子平只 overlay).
+        enable_pattern: [2026-10-01 用户裁决] 格局(PATTERN)输出开关, **默认 False**.
+            False → 不跑 judge_pattern, 不输出 pattern / pattern_routes /
+            pattern_quality, 格局相关 judgment 一律 fail-closed 占位。
+            原因: 格局层正在子平线独立调教/对标, 未封板, 不并入主仓输出。
+            保留开关而非删代码: 待格局层 golden 全 PASS 后置 True 即可恢复。
+            副作用: 病药域(judge_disease)依赖主格, 关闭后病药亦 fail-closed
+            (符合预期, 病药需主格前置)。
 
     Returns:
         §28 契约 dict: engine/version/judgments/undetermined/status.
@@ -114,24 +122,48 @@ def run_ziping(
     judgments.append(qi)
 
     # ---- 建格 (依赖 月令+根+身强弱) ----
-    from .pattern import judge_pattern
-    pattern = judge_pattern(ctx, derived, strength=strength)
-    judgments.append(pattern)
+    # [2026-10-01 用户裁决] enable_pattern=False → 格局停输出, 走 fail-closed 占位。
+    # 格局层正在子平线独立调教/对标, 未封板, 不并入主仓输出。
+    # 连带: 清浊/真假/相神 依赖格局, 一并 fail-closed; 病药需主格, 同样 fail-closed。
+    if enable_pattern:
+        from .pattern import judge_pattern
+        pattern = judge_pattern(ctx, derived, strength=strength)
+        judgments.append(pattern)
 
-    # ---- 清浊/真假/相神 (依赖 格局) ----
-    trufalse = JudgmentBuilder.from_hits(
-        "TRUE", "DETERMINED",
-        [Rule("TRUE", "TRUE-001", f"主格={pattern.state}, 格局已定")]
-    )
-    xiang = JudgmentBuilder.from_hits(
-        "XIANG", "DETERMINED",
-        [Rule("XIANG", "XIANG-001", f"格神={pattern.state}时的相神已判")]
-    )
-    judgments += [trufalse, xiang]
+        # ---- 清浊/真假/相神 (依赖 格局) ----
+        trufalse = JudgmentBuilder.from_hits(
+            "TRUE", "DETERMINED",
+            [Rule("TRUE", "TRUE-001", f"主格={pattern.state}, 格局已定")]
+        )
+        xiang = JudgmentBuilder.from_hits(
+            "XIANG", "DETERMINED",
+            [Rule("XIANG", "XIANG-001", f"格神={pattern.state}时的相神已判")]
+        )
+        judgments += [trufalse, xiang]
 
-    # ---- 病药 (需主格; 主格已实现 → 可判定) ----
-    disease = judge_disease(ctx, derived, pattern_judgment=pattern)
-    judgments.append(disease)
+        # ---- 病药 (需主格; 主格已实现 → 可判定) ----
+        disease = judge_disease(ctx, derived, pattern_judgment=pattern)
+        judgments.append(disease)
+    else:
+        # 格局停输出: 不跑 judge_pattern, 全部 fail-closed 占位 (不臆测, §0.3/§82)
+        pattern = JudgmentBuilder.undetermined(
+            "PATTERN", UndeterminedReason.RULE_MISSING,
+            "格局层未封板, 正在子平线独立调教; 主仓暂不输出格局 (enable_pattern=False)",
+        )
+        judgments.append(pattern)
+        judgments.append(JudgmentBuilder.undetermined(
+            "TRUE", UndeterminedReason.DEPENDENCY_UNRESOLVED,
+            "依赖主格, 格局未封板 → fail-closed",
+        ))
+        judgments.append(JudgmentBuilder.undetermined(
+            "XIANG", UndeterminedReason.DEPENDENCY_UNRESOLVED,
+            "依赖格神, 格局未封板 → fail-closed",
+        ))
+        disease = JudgmentBuilder.undetermined(
+            "DISEASE", UndeterminedReason.DEPENDENCY_UNRESOLVED,
+            "病药需主格前置, 格局未封板 → fail-closed",
+        )
+        judgments.append(disease)
 
     # ---- 用神分方法 (§57 隔离, 不合并; 各方法按上游 fail-closed) ----
     yong = judge_yong(ctx, derived,
@@ -173,8 +205,11 @@ def run_ziping(
         "tongguan": [d.__dict__ for d in getattr(interpretation, 'tongguan', [])],
         "disease": [d.__dict__ for d in getattr(interpretation, 'disease', [])],
         "qi": [d.__dict__ for d in getattr(interpretation, 'qi', [])],
-        "pattern": [d.__dict__ for d in getattr(interpretation, 'pattern', [])],
-        "pattern_quality": [d.__dict__ for d in getattr(interpretation, 'pattern_quality', [])],
+        # [2026-10-01 用户裁决] enable_pattern=False → 格局解读停输出, 置空列表。
+        "pattern": ([d.__dict__ for d in getattr(interpretation, 'pattern', [])]
+                    if enable_pattern else []),
+        "pattern_quality": ([d.__dict__ for d in getattr(interpretation, 'pattern_quality', [])]
+                            if enable_pattern else []),
         "true": [d.__dict__ for d in getattr(interpretation, 'true', [])],
         "special": [d.__dict__ for d in getattr(interpretation, 'special', [])],
         "yong": [d.__dict__ for d in getattr(interpretation, 'yong', [])],
@@ -210,16 +245,23 @@ def run_ziping(
     result["yongshen"] = YongShenEngine.to_dict(yong_verdict)
 
     # ---- P5 格局路线召回 (八族25路线, 纯布尔候选召回, 不代替 PATTERN 域定格) ----
-    from .pattern_routes import PatternRouteRecaller
-    pc = dict(chart_info)
-    pc["hidden_stems"] = getattr(chart, "hidden_stems", {})
-    pc["hour_known"] = True
-    recaller = PatternRouteRecaller()
-    recalls = recaller.recall(pc)
-    result["pattern_routes"] = {
-        "triggered": [r.to_dict() for r in recalls],
-        "note": "候选召回层: CANDIDATE=布尔条件全过, PENDING_REVIEW=含待核条件, 不代替 PATTERN 域定格裁定",
-    }
+    # [2026-10-01 用户裁决] enable_pattern=False → 格局路线一并停输出。
+    if enable_pattern:
+        from .pattern_routes import PatternRouteRecaller
+        pc = dict(chart_info)
+        pc["hidden_stems"] = getattr(chart, "hidden_stems", {})
+        pc["hour_known"] = True
+        recaller = PatternRouteRecaller()
+        recalls = recaller.recall(pc)
+        result["pattern_routes"] = {
+            "triggered": [r.to_dict() for r in recalls],
+            "note": "候选召回层: CANDIDATE=布尔条件全过, PENDING_REVIEW=含待核条件, 不代替 PATTERN 域定格裁定",
+        }
+    else:
+        result["pattern_routes"] = {
+            "triggered": [],
+            "note": "格局层未封板, 正在子平线独立调教; 主仓暂不输出格局路线 (enable_pattern=False)",
+        }
 
     # ---- 大运 (从八字引擎获取) ----
     if hasattr(chart, 'luck_pillars') and chart.luck_pillars:
@@ -273,10 +315,19 @@ def run_ziping(
 
     # ---- 规范输出格式 (扁平化, 符合子平规则修正.txt) ----
     # judgments 是 ZiPingJudgment dataclass, 需先转dict
+    # [2026-10-01 接入] to_dict() 只序列化 dataclass 声明字段, 会丢掉
+    #   judge_climate 挂上的 qtbj_* 动态字段; 故合并 __dict__ 兜底.
     jmap = {}
     for j in judgments:
         if hasattr(j, 'to_dict'):
-            jmap[j.domain] = j.to_dict()
+            _d = dict(j.to_dict())
+            try:
+                for _k, _v in getattr(j, "__dict__", {}).items():
+                    if _k not in _d:
+                        _d[_k] = _v
+            except Exception:
+                pass
+            jmap[j.domain] = _d
         else:
             jmap[j["domain"]] = j
 
@@ -326,13 +377,23 @@ def run_ziping(
     }
 
     # pattern
+    # [2026-10-01 用户裁决] enable_pattern=False → 格局输出停, 置 fail-closed 占位。
     pat = jmap.get("PATTERN", {})
-    result["pattern"] = {
-        "name": pat.get("state", "UNKNOWN").replace("_FORMED", "").replace("_FAILED", "").replace("_CANDIDATE", ""),
-        "status": pat.get("state", "UNKNOWN"),
-        "rules": pat.get("matched_rule_ids", []),
-        "evidence": pat.get("evidence_refs", []),
-    }
+    if enable_pattern:
+        result["pattern"] = {
+            "name": pat.get("state", "UNKNOWN").replace("_FORMED", "").replace("_FAILED", "").replace("_CANDIDATE", ""),
+            "status": pat.get("state", "UNKNOWN"),
+            "rules": pat.get("matched_rule_ids", []),
+            "evidence": pat.get("evidence_refs", []),
+        }
+    else:
+        result["pattern"] = {
+            "name": "",
+            "status": "NOT_EMITTED",
+            "rules": [],
+            "evidence": [],
+            "note": "格局层未封板, 正在子平线独立调教; 主仓暂不输出格局 (enable_pattern=False)",
+        }
 
     # climate
     c = jmap.get("CLIMATE", {})
@@ -341,6 +402,11 @@ def run_ziping(
         "need": ys_dict.get("primary_yong", ""),
         "rules": c.get("matched_rule_ids", []),
         "evidence": c.get("evidence_refs", []),
+        # [2026-10-01 接入] QTBJ 120 格调候候选干 + 出处 (只读事实, 不裁决)
+        "qtbj_candidates": c.get("qtbj_climate_candidates", []),
+        "qtbj_candidates_cn": c.get("qtbj_climate_candidates_cn", []),
+        "qtbj_provenance": c.get("qtbj_climate_provenance", ""),
+        "qtbj_table_source": c.get("qtbj_climate_table_source", ""),
     }
 
     # disease

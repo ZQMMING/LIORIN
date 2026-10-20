@@ -42,6 +42,7 @@ from .rules.answer_layer import PALACE_DIMENSIONS as ANSWER_DIMENSIONS
 from .rules.answer_layer import BODY_USE_KEYS as ANSWER_BODY_USE_KEYS
 from .rules.answer_layer import DIMENSIONS as LEGACY_ANSWER_DIMENSIONS
 from .rules.answer_layer import build_answer
+from .rules.classical_detail import build_classical_detail
 from .rules.domain_reading import build_domain_readings
 from .rules.interpretation import build_life_reading
 from .rules.multi_method import compute_multi_method_signals
@@ -55,6 +56,7 @@ __all__ = [
     "build_life_reading",
     "build_answer",
     "build_domain_readings",
+    "build_classical_detail",
     "ANSWER_DIMENSIONS",
     "ANSWER_BODY_USE_KEYS",
     "LEGACY_ANSWER_DIMENSIONS",

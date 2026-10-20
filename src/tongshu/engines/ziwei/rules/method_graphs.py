@@ -45,6 +45,24 @@ SHA_STARS = frozenset({"擎羊", "陀罗", "火星", "铃星", "地空", "地劫
 # 六吉（三合派）：文昌、文曲、左辅、右弼、天魁、天钺
 JI_STARS = frozenset({"文昌", "文曲", "左辅", "右弼", "天魁", "天钺"})
 
+# 十二宫主题（《紫微斗数全书》十二宫）：宫名 -> (主题, 领域标签)
+# Z80-H：提取为模块级常量，供 _build_palace_rules 与证据注册表共用
+# （此前内联于方法体，证据链无法据此回查 ZW-PALACE-* 出处）。
+PALACE_THEMES: dict[str, tuple[str, str]] = {
+    "命宫": ("自我/性格/先天格局", "DECISION"),
+    "兄弟": ("兄弟关系/合伙人", "RELATIONSHIP"),
+    "夫妻": ("婚姻/感情状态", "RELATIONSHIP"),
+    "子女": ("子女缘分/下属关系", "CREATION"),
+    "财帛": ("财运来源/收入方式", "FINANCE"),
+    "疾厄": ("身体健康/意外", "HEALTH"),
+    "迁移": ("外出机遇/人际格局", "SOCIAL"),
+    "仆役": ("朋友圈/贵人与小人", "SOCIAL"),
+    "官禄": ("事业成就/社会地位", "CAREER"),
+    "田宅": ("不动产/家庭环境", "FAMILY"),
+    "福德": ("精神享受/内心福分", "SPIRITUAL"),
+    "父母": ("父母关系/文书契约", "DOCUMENTS"),
+}
+
 
 # ============================================================================
 # 抽象基类：定义四派 RuleGraph 的统一接口
@@ -527,21 +545,7 @@ class SanheRuleGraph(BaseZiweiRuleGraph):
 
     def _build_palace_rules(self) -> list[RuleSpec]:
         rules = []
-        palace_themes = {
-            "命宫": ("自我/性格/先天格局", "DECISION"),
-            "兄弟": ("兄弟关系/合伙人", "RELATIONSHIP"),
-            "夫妻": ("婚姻/感情状态", "RELATIONSHIP"),
-            "子女": ("子女缘分/下属关系", "CREATION"),
-            "财帛": ("财运来源/收入方式", "FINANCE"),
-            "疾厄": ("身体健康/意外", "HEALTH"),
-            "迁移": ("外出机遇/人际格局", "SOCIAL"),
-            "仆役": ("朋友圈/贵人与小人", "SOCIAL"),
-            "官禄": ("事业成就/社会地位", "CAREER"),
-            "田宅": ("不动产/家庭环境", "FAMILY"),
-            "福德": ("精神享受/内心福分", "SPIRITUAL"),
-            "父母": ("父母关系/文书契约", "DOCUMENTS"),
-        }
-        for palace, (theme, domain) in palace_themes.items():
+        for palace, (theme, domain) in PALACE_THEMES.items():
             rules.append(RuleSpec(
                 rule_id=f"SANHE-PALACE-{palace}",
                 method_id=MethodId.SANHE,

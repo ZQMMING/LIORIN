@@ -4,9 +4,9 @@
 不复制男女通用规则，不强行扩展"女命十二宫完整体系"。
 school=CLASSICAL_SOURCE。
 
-Z80-G 审核标注（2026-10-14）：本模块在 src/ 内**零引用**（仅测试/文档提及）。
-  处置建议：应接线 —— 女命体系（女命骨髓赋），production 无女命专条
-  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md
+Z80-H 接线（2026-10-15）：本模块资产已接入生产 —— 落点 classical_detail.nvming（build_answer 顶层键 classical_detail，独立通道，
+  不并入 12 宫位维/体用层）。
+  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md（Z80-H 收口）
 """
 from __future__ import annotations
 

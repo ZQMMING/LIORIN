@@ -37,6 +37,7 @@ os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
 
 from tongshu.engines.ziwei_engine import ZiweiEngine  # noqa: E402
 from tongshu.engines.ziwei.rules.interpretation import build_life_reading  # noqa: E402
+from tongshu.engines.ziwei.rules.answer_layer import build_answer  # noqa: E402
 from tongshu.engines.ziwei.rules.multi_method import (  # noqa: E402
     compute_multi_method_signals,
 )
@@ -169,7 +170,24 @@ def main():
             sig = compute_multi_method_signals(chart)
             reading = build_life_reading(chart, sig, target_year=2026)
             domains = build_domain_readings(chart, eng.get_all_zihua(chart))
+            ans = build_answer(chart)
             ok_charts += 1
+
+            # 经典细则层（Z80-H 新通道）：核验「命中星」确在本盘存在。
+            # 注意：verbatim 是原典条文（列举该宫位所有可能星曜），非本盘断言，
+            #       故不做文实一致性检查；只检查 hit_stars / supporting_stars
+            #       这类**本盘命中项**——它们必须真实存在于本盘（否则即硬编造）。
+            cd = ans.get("classical_detail", {}) or {}
+            for sec in ("palace_jue", "classical_patterns", "nvming",
+                        "child_limit", "limit_advanced", "temporal_rules",
+                        "aux_verdicts"):
+                for ent in cd.get(sec, []) or []:
+                    claimed = list(ent.get("hit_stars") or []) + \
+                        list(ent.get("supporting_stars") or []) + \
+                        [s for s in (ent.get("hit") or []) if s != "斗君"]
+                    for s in claimed:
+                        if s in ALL_STARS and s not in present:
+                            fact_bads.append((tag, f"细则-{sec}", s))
 
             # 12 维断语
             for d in reading.dimensions:

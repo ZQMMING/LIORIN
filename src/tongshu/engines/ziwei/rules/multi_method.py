@@ -75,6 +75,10 @@ class MultiMethodSignal:
     """多派别聚合信号 - 上游"辨"层的输入"""
     chart_id: str
     bundles: Dict[str, MethodBundle] = field(default_factory=dict)
+    # 跨派别「一致事实」观测（Z80-H 改名：原 cross_method_consensus）。
+    # 语义澄清：本字段是**观测性**的——只列出两派 facts 中 key/value 完全
+    # 相同的项，**不做任何加权、投票或融合**（与「不融合」铁律无冲突）。
+    # 字段名保留以兼容既有消费者；其性质由 detect 函数名显式表达。
     cross_method_consensus: List[str] = field(default_factory=list)
     total_matched_rules: int = 0
     total_unmatched_production: int = 0
@@ -224,8 +228,8 @@ def compute_multi_method_signals(
     # 北派（钦天）
     bundles["QINTIAN"] = _wrap_qintian(make_qintian_rule_graph(), chart)
 
-    # 跨派别共识检测
-    consensus = _detect_cross_method_consensus(bundles)
+    # 跨派别一致事实观测（观测性，非投票/融合）
+    consensus = _observe_cross_method_agreement(bundles)
 
     # 聚合
     total_matched = sum(len(b.matched_rules) for b in bundles.values())
@@ -249,9 +253,17 @@ def compute_multi_method_signals(
     )
 
 
-def _detect_cross_method_consensus(bundles: Dict[str, MethodBundle]) -> List[str]:
-    """检测跨派别共识: 同一 fact 字段在 ≥2 派命中且值一致"""
-    consensus = []
+def _observe_cross_method_agreement(bundles: Dict[str, MethodBundle]) -> List[str]:
+    """观测两派「完全一致」的事实项（**非**共识判定，不加权、不融合）。
+
+    Z80-H 改名（原 ``_detect_cross_method_consensus``）：原函数名「共识
+    (consensus)」易被误读为跨派投票/加权，与「不融合」铁律有表述张力。
+    实际行为只是：取两派 facts 中 key/value 完全相同的项，原样列出，供人
+    工观察。故更名为 observe/agreement，明确其**观测性质**。
+
+    判定逻辑（不变）：同一 fact 字段在 ≥2 派命中且**值完全一致** → 列出。
+    """
+    agreement = []
     fact_key_values_by_method: Dict[str, Dict[str, set]] = {}
     for mid, b in bundles.items():
         fact_key_values_by_method[mid] = {}
@@ -260,12 +272,16 @@ def _detect_cross_method_consensus(bundles: Dict[str, MethodBundle]) -> List[str
                 if isinstance(v, (str, int, float, bool)):
                     fact_key_values_by_method[mid].setdefault(k, set()).add(v)
     if len(fact_key_values_by_method) < 2:
-        return consensus
+        return agreement
     method_ids = list(fact_key_values_by_method.keys())
     first, second = method_ids[0], method_ids[1]
     for key in fact_key_values_by_method[first]:
         if key in fact_key_values_by_method[second]:
             common = fact_key_values_by_method[first][key] & fact_key_values_by_method[second][key]
             if common:
-                consensus.append(f"{key}={sorted(common)[0]}")
-    return consensus
+                agreement.append(f"{key}={sorted(common)[0]}")
+    return agreement
+
+
+# 向后兼容别名（旧名，保留以免外部导入断裂）
+_detect_cross_method_consensus = _observe_cross_method_agreement

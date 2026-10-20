@@ -895,7 +895,15 @@ def _build_palace_reading(
     # ── 2. 辅星解读 ──
     minor_parts = []
     # 合并 minor + adjective 中的煞曜
-    all_minor = list(minor) + [a for a in adjective if a in MINOR_STAR_BY_PALACE.get(pname, {})]
+    # Z80-I：去重保序 —— iztro 同一星可能同时出现在 minor 与 adjective
+    # （实测「天姚」在兄弟宫 minor 与 adjective 各一次），此前直接拼接
+    # 导致 PalaceReading.stars 出现重复项（如「天姚、天姚」）。
+    _seen_minor: set = set()
+    all_minor: list = []
+    for _s in list(minor) + [a for a in adjective if a in MINOR_STAR_BY_PALACE.get(pname, {})]:
+        if _s not in _seen_minor:
+            _seen_minor.add(_s)
+            all_minor.append(_s)
     palace_minor_table = MINOR_STAR_BY_PALACE.get(pname, {})
     # 如果该宫位没有专门的辅星表，尝试仆役表（兼容）
     if not palace_minor_table and pname == "仆役":

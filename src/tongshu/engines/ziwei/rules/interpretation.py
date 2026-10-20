@@ -129,16 +129,64 @@ class ZiweiEvidenceLoader:
     def _load_sanhe(self) -> Dict[str, Any]:
         if not self._sanhe_cache:
             try:
-                # 南派（三合）证据：格局定义 + 四化 + 宫主题 全部源自《紫微斗数全书》
+                # 南派（三合）证据：格局 + 主星断语 + 四化表 + 十二宫主题，
+                # 全部源自《紫微斗数全书》。
+                # Z80-H：此前仅注册 SANHE-PATTERN-*，SIHUA / PALACE / JUDG
+                # 三族查无 → 恒落 UNDETERMINED，证据链断裂。现按各族 ZW-*
+                # 注册表出处（evidence_registry）补齐，消除悬空引用。
                 from .rule_graph import PATTERN_DEFS
-                self._sanhe_cache = {
-                    f"SANHE-PATTERN-{name}": {
+                from .sanhe_judgments import STAR_JUDGMENTS, JUDG_RULE_PREFIX
+                from .method_graphs import PALACE_THEMES
+                from ...ziwei_engine import GAN_SIHUA
+
+                table: Dict[str, Any] = {}
+
+                # 1) 格局（SANHE-PATTERN-{name}）→ ZW-PATTERN-{name}
+                for name, _stars, desc in PATTERN_DEFS:
+                    table[f"SANHE-PATTERN-{name}"] = {
                         "source": "紫微斗数全书",
                         "source_location": "格局篇",
                         "original_text": desc,
                     }
-                    for name, _, desc in PATTERN_DEFS
-                }
+
+                # 2) 主星断语（SANHE-JUDG-{star}）→ ZW-STAR-{star}
+                for star, j in STAR_JUDGMENTS.items():
+                    table[f"{JUDG_RULE_PREFIX}-{star}"] = {
+                        "source": "紫微斗数全书",
+                        "source_location": f"星曜论·{star}所主若何",
+                        "original_text": (
+                            j.get("verbatim", "") or j.get("character", "")
+                        ),
+                    }
+
+                # 3) 四化表（SANHE-SIHUA-{stem} / SANHE-SIHUA-{stem}-{化名}）
+                #    → ZW-SIHUA-{stem}
+                for stem, (lu, quan, ke, ji) in GAN_SIHUA.items():
+                    table[f"SANHE-SIHUA-{stem}"] = {
+                        "source": "紫微斗数全书",
+                        "source_location": "四化篇",
+                        "original_text": (
+                            f"{stem}干四化：化禄{lu}、化权{quan}、化科{ke}、化忌{ji}"
+                        ),
+                    }
+                    for sihua_name, star in zip(
+                        ("化禄", "化权", "化科", "化忌"), (lu, quan, ke, ji)
+                    ):
+                        table[f"SANHE-SIHUA-{stem}-{sihua_name}"] = {
+                            "source": "紫微斗数全书",
+                            "source_location": "四化篇",
+                            "original_text": f"{stem}干{sihua_name}{star}",
+                        }
+
+                # 4) 十二宫主题（SANHE-PALACE-{palace}）→ ZW-PALACE-{palace}
+                for palace, (theme, _domain) in PALACE_THEMES.items():
+                    table[f"SANHE-PALACE-{palace}"] = {
+                        "source": "紫微斗数全书",
+                        "source_location": "十二宫",
+                        "original_text": f"{palace}宫主{theme}",
+                    }
+
+                self._sanhe_cache = table
             except ImportError:
                 pass
         return self._sanhe_cache
@@ -189,6 +237,23 @@ class ZiweiEvidenceLoader:
             )
 
         return None
+
+    def resolve_zw_ref(self, ref_id: str) -> Optional[EvidenceRef]:
+        """按 ZW-* 原始引用 id 回查（证据注册表，Z80-H 新增）。
+
+        背景：RuleSpec.evidence_refs 内嵌 ZW-{SIHUA,STAR,PATTERN,PALACE}-*
+        引用，此前无注册表 → 无法回查。现经 evidence_registry 解析为
+        可读的 EvidenceRef（出处 + 章节 + 校验状态）。
+        """
+        from .evidence_registry import resolve_zw_evidence_ref
+        rec = resolve_zw_evidence_ref(ref_id)
+        if rec is None:
+            return None
+        return EvidenceRef(
+            classic=rec.source_work,
+            source=f"{rec.source_chapter}（{rec.verification_status}）",
+            text_preview=ref_id,
+        )
 
 
 # ===========================================================================

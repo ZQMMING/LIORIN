@@ -16,9 +16,9 @@
 4. school=CLASSICAL_SOURCE——不混南北派
 5. 12×2逐宫诀做 RULE 不做 PATTERN
 
-Z80-G 审核标注（2026-10-14）：本模块在 src/ 内**零引用**（仅测试/文档提及）。
-  处置建议：应接线 —— 富6/贵27/贫8/杂8 + 12宫得地12/失陷9 逐宫诀；生产 PATTERN_DEFS 仅星组，无此细目
-  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md
+Z80-H 接线（2026-10-15）：本模块资产已接入生产 —— 落点 classical_detail.palace_jue + classical_detail.classical_patterns（build_answer 顶层键 classical_detail，独立通道，
+  不并入 12 宫位维/体用层）。
+  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md（Z80-H 收口）
 """
 from __future__ import annotations
 

@@ -118,13 +118,22 @@ def test_shensha(d):
 
 # ---------------------------------------------------------------- 胎元/胎息
 def test_tai_yuan(d):
-    """胎元 = 月柱壬午 → 天干进1 癸 + 地支进3 酉 = 癸酉."""
-    assert d["tai_yuan"] == {"stem": "GUI", "branch": "YOU", "chinese": "癸酉"}
+    """胎元 = 月柱壬午 → 天干进1 癸 + 地支进3 酉 = 癸酉.
+    (排盘补齐后带 nayin/nayin_element, 断言包含式.)"""
+    assert d["tai_yuan"]["stem"] == "GUI"
+    assert d["tai_yuan"]["branch"] == "YOU"
+    assert d["tai_yuan"]["chinese"] == "癸酉"
+    assert d["tai_yuan"]["nayin"] == "剑锋金"
+    assert d["tai_yuan"]["nayin_element"] == "METAL"
 
 
 def test_tai_xi(d):
-    """胎息 = 日柱丙寅 → 丁巳."""
-    assert d["tai_xi"] == {"stem": "DING", "branch": "SI", "chinese": "丁巳"}
+    """胎息 = 日柱丙寅 → 丁巳. (带 nayin/nayin_element.)"""
+    assert d["tai_xi"]["stem"] == "DING"
+    assert d["tai_xi"]["branch"] == "SI"
+    assert d["tai_xi"]["chinese"] == "丁巳"
+    assert d["tai_xi"]["nayin"] == "沙中土"
+    assert d["tai_xi"]["nayin_element"] == "EARTH"
 
 
 # ---------------------------------------------------------------- 命宫/身宫

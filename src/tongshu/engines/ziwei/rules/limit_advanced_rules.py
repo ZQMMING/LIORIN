@@ -5,9 +5,9 @@
   本命Fact + 大限Fact + 流年/小限/太岁Fact + 限运叠加 → Rule → Assertion
 school=CLASSICAL_SOURCE。
 
-Z80-G 审核标注（2026-10-14）：本模块在 src/ 内**零引用**（仅测试/文档提及）。
-  处置建议：应接线 —— 限运进阶（羊陀迭并/七杀重逢），与 QTN-059/060 概念近但规则不同
-  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md
+Z80-H 接线（2026-10-15）：本模块资产已接入生产 —— 落点 classical_detail.limit_advanced（build_answer 顶层键 classical_detail，独立通道，
+  不并入 12 宫位维/体用层）。
+  依据：docs/audit/ZIWEI_ENGINE_FULL_AUDIT_20261014.md（Z80-H 收口）
 """
 from __future__ import annotations
 

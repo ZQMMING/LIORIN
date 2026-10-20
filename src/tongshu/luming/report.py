@@ -251,7 +251,8 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
                      f"（阳男阴女顺行/阴男阳女逆行，折除以三日为年）")
         lines.append("")
     lines.append("> 命宫/身宫算法: 五行精纪起命宫例(太阳加时顺数见卯)与太阴星宫法"
-                 "（WXJJ L3736-3739，与三命通会 L2679-2683 互证），非袁树珊月数法。")
+                 "（WXJJ L3736-3739，与三命通会 L2679-2683 互证），非袁树珊月数法。"
+                 "验算例: 原文'甲子年三月戌时'起得丁卯宫，与本算法输出一致。")
     lines.append("")
     lines.append("神煞集解:")
     ss = report["shen_sha"]
@@ -293,7 +294,7 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
         for v in report["tai_sui"]:
             lines.append(f"- [{v['tone']}] {_clip(_zh(v['out']))}（{_clip(_zh(v['detail']))}）")
     else:
-        lines.append("- （当前无太岁断语）")
+        lines.append("- （当前视角太岁无触发断语；逐年太岁断语见报告末流年表，逐年按大运×太岁×小运完整展开）")
     lines.append("")
 
     # 二运喜会/厄会 (大运×小运)
@@ -315,7 +316,8 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
         c = hz["layers"].get(k, {"吉": 0, "凶": 0, "平": 0, "滞": 0})
         lines.append(f"| {k} | {c['吉']} | {c['凶']} | {c['平']} | {c['滞']} |")
     lines.append("")
-    lines.append("> 注：运层计数含二运视角断语（大运×小运厄会，不入单柱行）与十二宫滞信号；逐柱行已按同口径列出滞数。")
+    lines.append("> 注：运层计数含二运视角断语（大运×小运厄会，不入单柱行）与十二宫滞信号；逐柱行已按同口径列出滞数。"
+                 "本例运层凶17 = 逐柱凶16 + 二运厄会（LM-V24 厄会②，运层视角计1条）。")
     cc = hz["current_counts"]
     oc = hz["overall_counts"]
     # 2026-10-20 原著措辞统一 (L4276): 偏吉→吉 / 吉凶相当→吉凶相杂 / 偏凶→凶

@@ -80,6 +80,20 @@ _LAZY_EXPORTS: dict[str, str] = {
     "MethodBundle": ".multi_method",
     "MethodMatch": ".multi_method",
     "compute_multi_method_signals": ".multi_method",
+    # evidence_registry（ZW-* 证据链回查表，Z80-H）
+    "ZWEvidenceRecord": ".evidence_registry",
+    "ZW_EVIDENCE_REGISTRY": ".evidence_registry",
+    "resolve_zw_evidence_ref": ".evidence_registry",
+    "registry_ids": ".evidence_registry",
+    "template_generated_ids": ".evidence_registry",
+    "completeness_report": ".evidence_registry",
+    # asset_index（11 未接线资产索引，Z80-H）
+    "AssetDisposition": ".asset_index",
+    "UnwiredAsset": ".asset_index",
+    "ZIWEI_UNWIRED_ASSETS": ".asset_index",
+    "asset_inventory": ".asset_index",
+    "asset_report": ".asset_index",
+    "load_asset": ".asset_index",
 }
 
 

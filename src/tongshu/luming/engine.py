@@ -2831,19 +2831,48 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     # 生日与太岁干合 → 晦气 (五行精纪 L4419: 生日与逐年太岁天元干合者谓之晦气, 必主阴灾)
     tai_he_day_gui = bool(ts and day_stem and frozenset((ts, day_stem)) in HE_PAIR)
 
-    # 死绝会集定死 (烛神经 L4113): 大运支临年命死绝 + 太岁冲刑命/运
+    # 死绝会集定死 (烛神经 L4113: "二运太岁会集死绝衰息之乡, 更太岁刑克, 灾限相应
+    #   定死") — "二运"=大运+小运, 须 大运死绝 + 小运衰息 + 太岁刑克 三者会集才立
+    #   (2026-10-21 用户第三轮核验: 仅大运死绝+太岁刑克是简化, "定死"力度偏重)
+    #   → 拆两档: 全会集=会集定死; 未全会集=大凶需防
     dl_growth = _growth_stage(year_nayin_el, dl_branch) if (year_nayin_el and dl_branch) else ""
+    _xy_age2 = year - chart.birth_datetime.year + 1 if getattr(chart, "birth_datetime", None) else 0
+    _xy_hit2 = next((p for p in (getattr(chart, "xiao_yun_pillars", None) or [])
+                     if (p.get("age", 0) or 0) == _xy_age2), None)
+    _xy_branch2 = (_xy_hit2 or {}).get("branch", "")
+    _xy_growth2 = _growth_stage(year_nayin_el, _xy_branch2) \
+        if (year_nayin_el and _xy_branch2) else ""
+    # 衰息之乡 = 沐浴(败)/衰/病/死/绝 五处 (墓为库非衰息; 生旺胎养不在此列)
+    _xy_shuai_xi = _xy_growth2 in ("沐浴", "衰", "病", "死", "绝")
+    _tai_ke_chong = (tai_chong_dayun or tai_xing_dayun
+                     or any(r["tai_relation"] in ("冲", "刑") for r in tai_pillar_relations))
     tai_death_meeting = bool(
-        dl_growth in ("死", "绝")
-        and (tai_chong_dayun or tai_xing_dayun
-             or any(r["tai_relation"] in ("冲", "刑") for r in tai_pillar_relations)))
+        dl_growth in ("死", "绝") and _xy_shuai_xi and _tai_ke_chong)
+    tai_death_part = bool(
+        dl_growth in ("死", "绝") and _tai_ke_chong and not _xy_shuai_xi)
 
-    # 空亡
+    # 空亡 (取法双轨: 五行精纪 L3483 林开五命"论空亡止以年日所在"; L3458 神白经
+    #   "生日旬极紧" — 年柱旬/日柱旬分轨标注, 消除"混用"观感, 均符合古法)
     kong = _kong_wang_branches(chart)
     # 2026-10-20 流年系统性偏凶根治: 原局空亡支若被原局冲破 (V49-KWC"冲破不为祸,
     #   反为福也"), 流年填实该支应事而不判凶 — 与"太岁至空亡年失脱破财"互证
     _kong_chong_po = _kong_po_by_clash(chart)
     tai_kong_wang = bool(tb in kong and tb not in _kong_chong_po)
+    _kw_year = set()
+    _p_y = chart.year_pillar
+    _kw_year |= set(KONG_WANG_BY_XUN.get(JIAZI_INDEX.get((_p_y.heavenly_stem,
+                                                          _p_y.earthly_branch), 0) // 10, ()))
+    _kw_day = set()
+    _p_d = chart.day_pillar
+    _kw_day |= set(KONG_WANG_BY_XUN.get(JIAZI_INDEX.get((_p_d.heavenly_stem,
+                                                         _p_d.earthly_branch), 0) // 10, ()))
+    _kw_in_year = bool(tb in _kw_year)
+    _kw_in_day = bool(tb in _kw_day)
+    tai_kw_year = "、".join(BRANCH_CN.get(b, b) for b in sorted(_kw_year)) or "无"
+    tai_kw_day = "、".join(BRANCH_CN.get(b, b) for b in sorted(_kw_day)) or "无"
+    kong_wang_track = "年柱旬" if (_kw_in_year and not _kw_in_day) \
+        else ("日柱旬" if (_kw_in_day and not _kw_in_year)
+              else ("年柱旬+日柱旬" if (_kw_in_year and _kw_in_day) else "—"))
 
     # 犯命: 太岁干克年干 (L4409 三才刑克)
     # 2026-10-20 流年系统性偏凶根治: 天干五合者不论克 (2024甲辰 甲己合土 错判犯命已修)
@@ -3108,7 +3137,9 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_he_ju": tai_he_ju, "tai_he_ju_str": _he_ju_str(tb, _fb4),
         "zhen_tai_sui": zhen_tai_sui, "tai_fan_shi_gan": tai_fan_shi_gan,
         "shi_rel": shi_rel, "tai_he_day_gui": tai_he_day_gui,
-        "tai_death_meeting": tai_death_meeting, "tai_kong_wang": tai_kong_wang,
+        "tai_death_meeting": tai_death_meeting, "tai_death_part": tai_death_part,
+        "tai_kong_wang": tai_kong_wang, "tai_kw_year": tai_kw_year,
+        "tai_kw_day": tai_kw_day, "kong_wang_track": kong_wang_track,
         "kong_wang_str": "、".join(sorted(kong)) if kong else "",
         "tai_fan_ming": tai_fan_ming, "tai_xian_chi": tai_xian_chi,
         "tai_ya_benming": tai_ya_benming, "tai_glm": tai_glm,

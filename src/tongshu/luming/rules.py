@@ -1136,7 +1136,7 @@ LUMING_RULES = [
      "tone": "平",
      "when": {"op": "eq", "k": "shi_dai_sha", "v": True},
      "out": "时带刃/劫/元辰/空亡，子息有妨（重者绝子）",
-     "detail_tpl": "时支坐{shi_dai_sha_by}（L4000-4002: 时带年刃/劫/元辰/空亡，克子，重者绝子；元辰取法: 阳男阴女冲前一位，阴男阳女冲后一位，L1711）"},
+     "detail_tpl": "时支坐{shi_dai_sha_by}（L4000-4002: 时带年刃/劫/元辰/空亡，克子，重者绝子；元辰取法: 阳男阴女冲前一位/阴男阳女冲后一位（L1711），癸亥阴女属'阳男阴女'类→冲前一位=午）"},
     # 时坐华盖克子 L4003: 时坐华盖，克子
     {"id": "LM-V109", "evidence": "E-WXJ-029-001~008", "mode": "scalar",
      "scope": "原局", "target": "",
@@ -1265,7 +1265,7 @@ LUMING_RULES = [
      "tone": "平",
      "when": {"op": "eq", "k": "yun_yang_ren", "v": True},
      "out": "行运到羊刃（主财物聚散）",
-     "detail_tpl": "运到{stem}{branch}羊刃（L4328: 凡行运到羊刃上，主财物聚散；羊刃取法: 禄前一辰（五行精纪 L3349），年干羊刃——{y_yr_yang_ren_desc}）"},
+     "detail_tpl": "运到{stem}{branch}羊刃（L4328: 凡行运到羊刃上，主财物聚散；羊刃取法: 禄前一辰（五行精纪 L3349），年干羊刃——{y_yr_yang_ren_desc}；注: 禄命法阴干亦取禄前一辰为刃，与子平系'阴干不立阳刃'口径不同，体系分界）"},
     # 波浪限 L4307: 金人到亥子岁运, 木人在此大厄
     {"id": "LM-V127", "evidence": "E-WXJ-033-001~004", "mode": "per_pillar",
      "scope": "运", "target": "{stem}{branch}",
@@ -1429,7 +1429,7 @@ LUMING_RULES = [
      "tone": "凶",
      "when": {"op": "eq", "k": "yuan_chen_fan_yun", "v": True},
      "out": "元辰犯运，灾祸倚伏（如物当风，动摇颠倒）",
-     "detail_tpl": "大运{stem}{branch}=元辰（取法: 阳男阴女冲前一位/阴男阳女冲后一位，L1711；大运逢之十年可畏，纵有吉神扶持不免灾祸倚伏）"},
+     "detail_tpl": "大运{stem}{branch}=元辰（取法: 阳男阴女冲前一位/阴男阳女冲后一位（L1711），癸亥阴女属'阳男阴女'类→冲前一位=午；大运逢之十年可畏，纵有吉神扶持不免灾祸倚伏）"},
 ]
 
 # ============================================================
@@ -1580,19 +1580,27 @@ YEAR_RULES = [
      "out": "生日与太岁天元干合，晦气煞，主阴灾",
      "detail_tpl": "太岁干{tai_s}合日干{day_stem}（五行精纪 L4419: 生日与逐年太岁干合，谓之晦气，必主阴灾）"},
     # ---- 死绝会集定死 (烛神经 L4113: 二运太岁会集死绝衰息之乡更刑克, 灾限相应定死) ----
+    #   2026-10-21 第三轮核验拆分: "二运"=大运+小运, 须大运死绝+小运衰息+太岁刑克
+    #   三者会集才立"定死"; 仅大运死绝+太岁刑克(小运不在衰息)降为 V60B 大凶需防.
     {"id": "LM-V60", "evidence": "E-WXJ-031-001~006", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}会大运{DL}",
      "tone": "凶",
      "when": {"op": "eq", "k": "tai_death_meeting", "v": True},
-     "out": "二运太岁会集死绝衰息之乡，更太岁刑克，灾限相应定死（大凶之岁）",
-     "detail_tpl": "大运{DL}临年命死绝之{DL_growth}地+太岁{tai_b}刑克（烛神经定死论）"},
+     "out": "二运太岁会集死绝衰息之乡，更太岁刑克，灾限相应，大凶之岁",
+     "detail_tpl": "大运{DL}临年命{DL_growth}地+小运{xiao_yun}临{xiao_yun_growth}（衰息）+太岁{tai_b}刑克——三者会集（烛神经 L4113 二运太岁会集死绝衰息之乡更刑克灾限相应定死）"},
+    {"id": "LM-V60B", "evidence": "E-WXJ-031-001~006", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}会大运{DL}",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_death_part", "v": True},
+     "out": "大运临死绝+太岁刑克，大凶需防（未全会集死绝衰息）",
+     "detail_tpl": "大运{DL}临年命{DL_growth}地+太岁{tai_b}刑克，但小运{xiao_yun}临{xiao_yun_growth}不在衰息之乡——未成'二运会集'，凶而防之（烛神经 L4113 简化适用）"},
     # ---- 空亡失脱 (L4411: 太岁至空亡年失脱破财) ----
     {"id": "LM-V61", "evidence": "E-WXJ-034-012", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}至空亡",
      "tone": "凶",
      "when": {"op": "eq", "k": "tai_kong_wang", "v": True},
      "out": "太岁至空亡年，失脱破财",
-     "detail_tpl": "太岁{tai_b}在空亡（{kong_wang_str}）"},
+     "detail_tpl": "太岁{tai_b}临{kong_wang_track}空亡（取法: 五行精纪 L3483 论空亡止以年日所在——年柱旬空{tai_kw_year}、日柱旬空{tai_kw_day}；神白经 L3458 生日旬极紧）"},
     # ---- 太岁犯命 (L4409: 在本命支干纳音三才刑克一切凶杀之地则主疾病官灾破财死丧) ----
     {"id": "LM-V62", "evidence": "E-WXJ-034-013", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_s}犯年干{year_stem}",
@@ -1714,7 +1722,7 @@ YEAR_RULES = [
      "tone": "凶",
      "when": {"op": "eq", "k": "tai_gou_jiao", "v": True},
      "out": "太岁临勾绞，主口舌刑狱、非灾横祸（狂横起於勾绞）",
-     "detail_tpl": "太岁{tai_b}临{gou_jiao_which}（L1743 勾绞牵连羁绊；珞琭子：狂横起於勾绞）"},
+     "detail_tpl": "太岁{tai_b}临{gou_jiao_which}（取法: 阳男阴女命前三辰为勾后三辰为绞/阴男阳女反之（L1743），癸亥阴女属'阳男阴女'类→亥前三辰=寅为勾、后三辰=申为绞；珞琭子：狂横起於勾绞）"},
     # ---- 岁伤日干 (三命通会 L951: "岁伤日干, 有祸必轻" — 岁君克日主, 上治其下顺也) ----
     # 2026-10-21 三命通会论太岁章深挖补齐 (此前只按年干犯命, 缺日干轴主判)
     {"id": "LM-V76", "evidence": "E-SMTH-015-001", "mode": "scalar",

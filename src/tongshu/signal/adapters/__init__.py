@@ -459,6 +459,12 @@ class KnowledgeAdapter(BaseAdapter):
 
 
 # ─── Adapter Registry ──────────────────────────────────────────────────────────
+# V2.1 切片 S0 洞2：BLIND 注册。BlindAdapter 定义在 engines.blind_bazi_engine，
+# 顶层 import 会触发 signal.adapters → engines.blind_bazi_engine → signal.adapters
+# (BaseAdapter) 循环。用运行时懒加载破环。
+def _load_blind_adapter():
+    from tongshu.engines.blind_bazi_engine import BlindAdapter
+    return BlindAdapter
 
 ADAPTER_REGISTRY: Dict[str, type] = {
     'BAZI': BaziAdapter,
@@ -472,6 +478,9 @@ ADAPTER_REGISTRY: Dict[str, type] = {
 def get_adapter(engine_name: str) -> type:
     """Get adapter class by engine name."""
     engine = engine_name.upper()
+    # 洞2：BLIND 懒加载（破循环依赖）
+    if engine == 'BLIND':
+        return _load_blind_adapter()
     if engine not in ADAPTER_REGISTRY:
         raise ValueError(f"Unknown engine: {engine_name}")
     return ADAPTER_REGISTRY[engine]

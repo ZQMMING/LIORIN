@@ -16,6 +16,13 @@ dependencies = [
     # B-09 STAGE-A: required for TimestampSigner-signed access tokens
     # in tongshu.services.identity_gateway.
     "itsdangerous>=2.0",
+    # P0-14 TimeResolver 全球经纬度入口: "经度,纬度" 输入走 timezonefinder 解析 IANA 时区。
+    # 缺包时 resolver._resolve_location 抛 LocationError，全球任意经纬度入口不可用
+    # (城市名 registry 路径不受影响)。
+    "timezonefinder>=6.0",
+    # zoneinfo on Windows: 系统无 /usr/share/zoneinfo，必须显式 tzdata 包，
+    # 否则 ZoneInfo('Asia/Shanghai') 报 ZoneInfoNotFoundError，全部 IANA 时区入口断。
+    "tzdata>=2024.1; platform_system == 'Windows'",
 ]
 
 [build-system]

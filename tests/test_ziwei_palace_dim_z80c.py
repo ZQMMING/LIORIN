@@ -154,9 +154,16 @@ class TestLayeredOutput:
         return build_answer(chart)
 
     def test_output_top_level_keys(self):
-        """输出须含 dimensions / answer / body_use / summary。"""
+        """输出须含 dimensions / answer / body_use / summary / classical_detail。
+
+        Z80-H：新增 classical_detail（经典细则层独立通道）——古籍原文资产
+        接线（十二宫得地失陷诀/格局候选/女命/童限/限运进阶/太岁小限/时间层Fact），
+        不并入 12 宫位维与体用层（不融合、不污染）。
+        """
         ans = self._build()
-        assert set(ans.keys()) == {"dimensions", "answer", "body_use", "summary"}
+        assert set(ans.keys()) == {
+            "dimensions", "answer", "body_use", "summary", "classical_detail",
+        }
 
     def test_dimensions_is_twelve_palaces(self):
         """dimensions 仅 12 宫位维（不含体用项）。"""

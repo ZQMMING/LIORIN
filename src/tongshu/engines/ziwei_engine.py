@@ -201,13 +201,14 @@ def ziwei_natal_stem(chart) -> str:
 class ZiweiChart:
     soul_palace_main_star: str = ""           # 命宫第一主星(向后兼容)
     soul_palace_main_stars: list = field(default_factory=list)  # 命宫全部主星(V2.6: 双主星支持)
-    # Z80-G 注：soul_palace_sihua 生产路径恒为空（compute/full_chart 均传 []，
-    # 仅 stub 填充），而 evidence_producer.py:71 会消费它 → 该分支恒无产出。
-    # 语义待确认（生年四化入命宫？命宫自化？）后再决定填充或移除。
+    # Z80-H 注：soul_palace_sihua 语义已裁定为「**生年四化入命宫**」，
+    # 编码 HUA_LU/HUA_QUAN/HUA_KE/HUA_JI；full_chart 路径已填充，
+    # evidence_producer.py:71 消费该字段的分支恢复产出（Z80-G P3-7 收口）。
     soul_palace_sihua: list = field(default_factory=list)
     palace_data: dict = field(default_factory=dict)
-    # Z80-G 注：daily_luck_palace 为**恒空死字段**（仅 to_dict/from_dict 出现，
-    # 从无赋值）。保留以兼容历史快照反序列化。
+    # Z80-H 注：daily_luck_palace = **流日命宫**（本命宫名）；由 iztro
+    # daily.palaceNames 定位流日命宫地支后映射。仅在传入 flow_day 时非空
+    # （此前为恒空死字段，Z80-G P3-7 收口）。
     daily_luck_palace: str = ""
     source: str = "stub"
     # Z11/Z13特性层字段(F-04修复: 补充缺失字段)
@@ -357,28 +358,29 @@ class ZiweiChart:
             if not stem or stem not in GAN_SIHUA:
                 continue
             sihua = GAN_SIHUA[stem]
-            all_stars = set(pdata.get("major", [])) | set(pdata.get("minor", []))
             for i, star in enumerate(sihua):
                 if not star:
                     continue
-                if star not in all_stars:
-                    # 找该星所在宫
-                    target_palace = ""
-                    for _pn, _pd in self.palaces.items():
-                        if star in _pd.get("major", []) or star in _pd.get("minor", []):
-                            target_palace = _pn
-                            break
-                    if not target_palace:
-                        continue
-                    direction = "self" if target_palace == pname else "out"
-                    result.append(FlyingTransformFact(
-                        source_palace=pname,
-                        source_stem=stem,
-                        transformation=sihua_names[i],
-                        target_star=star,
-                        target_palace=target_palace,
-                        direction=direction,
-                    ))
+                # Z80-H：宫干四化 → 找化星所在宫。星在本宫 = 自化(self)，
+                # 在他宫 = 飞化(out)。此前外层有 `if star not in all_stars`
+                # 条件，已把「星在本宫」排除，导致 direction="self" 分支
+                # **永不可达**（钦天 QTN-004/007/018 依赖自化方向）。
+                target_palace = ""
+                for _pn, _pd in self.palaces.items():
+                    if star in _pd.get("major", []) or star in _pd.get("minor", []):
+                        target_palace = _pn
+                        break
+                if not target_palace:
+                    continue
+                direction = "self" if target_palace == pname else "out"
+                result.append(FlyingTransformFact(
+                    source_palace=pname,
+                    source_stem=stem,
+                    transformation=sihua_names[i],
+                    target_star=star,
+                    target_palace=target_palace,
+                    direction=direction,
+                ))
         return result
 
 
@@ -1111,14 +1113,25 @@ class ZiweiEngine:
         _fd_gan = ""
         _fd_zhi = ""
         _fd_mutagen = []
+        _fd_luck_branch = ""
         if flow_day is not None:
             try:
                 _fd = self._resolve_flow_day(lunar_date, hour, gender, flow_day)
                 _fd_gan = _fd.get("gan", "")
                 _fd_zhi = _fd.get("zhi", "")
                 _fd_mutagen = _fd.get("mutagen", [])
+                _fd_luck_branch = _fd.get("luck_branch", "")
             except Exception as _e:
                 logger.warning("[ZiweiEngine] flow_day resolve failed: %s", _e)
+        # Z80-H：流日命宫（daily_luck_palace）——此前为**恒空死字段**
+        # （仅 to_dict/from_dict 出现，从无赋值；Z80-G P3-7）。现由 iztro
+        # daily.palaceNames 定位流日命宫地支，再映射为本命宫名。
+        _daily_luck_palace = ""
+        if _fd_luck_branch:
+            for _pn, _pd in palaces.items():
+                if _pd.get("branch") == _fd_luck_branch:
+                    _daily_luck_palace = _pn
+                    break
         # Z80-G：命宫主星（含空宫借对宫，与 compute 口径一致）。
         # 此前 full_chart 未填该二字段 → 恒空，而 signal_engine / evidence_producer
         # 会消费它们（compute 路径正常填充，两路径不一致）。
@@ -1135,11 +1148,32 @@ class ZiweiEngine:
                     _soul_majors = list(_pd.get("major", []) or [])
                     break
         _soul_keys = [CHINESE_STAR_TO_KEY.get(_s, _s) for _s in _soul_majors]
+        # Z80-H：生年四化入命宫（soul_palace_sihua）——此前生产路径恒传 []，
+        # 而 evidence_producer.py:71 消费它 → 该分支恒无产出（Z80-G P3-7）。
+        # 语义（本次裁定）：生年天干四化（禄权科忌）中，化星落入命宫者，
+        # 编码为 HUA_LU/HUA_QUAN/HUA_KE/HUA_JI（与 _stub 及
+        # tests/spec/test_vertical_slice_ziwei 的既有格式一致）。
+        _natal_stem = corrected_chart.get("natalYearStem", "")
+        _soul_palace_name = ""
+        for _pn, _pd in palaces.items():
+            if _pd.get("branch") == _soul_branch:
+                _soul_palace_name = _pn
+                break
+        _soul_sihua: list = []
+        _sihua_stars = GAN_SIHUA.get(_natal_stem, ())
+        if _soul_palace_name and _sihua_stars:
+            _sp = palaces.get(_soul_palace_name) or {}
+            _sp_stars = set(_sp.get("major", []) or []) | set(
+                _sp.get("minor", []) or [])
+            _codes = ("HUA_LU", "HUA_QUAN", "HUA_KE", "HUA_JI")
+            _soul_sihua = [_codes[i] for i, _st in enumerate(_sihua_stars[:4])
+                           if _st in _sp_stars]
         return ZiweiChart(
             fiveElementsClass=corrected_chart.get("fiveElementsClass", ""),
             soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
             soul_palace_main_star=(_soul_keys[0] if _soul_keys else ""),
             soul_palace_main_stars=_soul_keys,
+            soul_palace_sihua=_soul_sihua,
             body_earthly_branch=corrected_chart.get("bodyPalaceBranch", ""),
             palaces=palaces,
             birth_year=year,
@@ -1151,6 +1185,7 @@ class ZiweiEngine:
             flow_day_gan=_fd_gan,
             flow_day_zhi=_fd_zhi,
             flow_day_mutagen=_fd_mutagen,
+            daily_luck_palace=_daily_luck_palace,
             natal_year_stem=corrected_chart.get("natalYearStem", ""),
             soul_star=corrected_chart.get("soulStar", ""), body_star=corrected_chart.get("bodyStar", ""),
             solar_date=corrected_chart.get("solarDate", ""), lunar_date_text=corrected_chart.get("lunarDateText", ""),
@@ -1228,13 +1263,19 @@ class ZiweiEngine:
         fy, fmo, fd = flow_day
         script = """
         const { byLunar } = require('iztro').astro;
+        const B = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
         const a = byLunar('%s-%s-%s', %d, '%s', %s);
         const h = a.horoscope('%s-%s-%s');
         const dd = h.daily || {};
+        // Z80-H：流日命宫地支——iztro daily.palaceNames 按地支序（起子）列出
+        // 流日十二宫名，取「命宫」所在下标即流日命宫地支。
+        const pn = dd.palaceNames || [];
+        const li = pn.indexOf('命宫');
         process.stdout.write(JSON.stringify({
             gan: dd.heavenlyStem || '',
             zhi: dd.earthlyBranch || '',
-            mutagen: dd.mutagen || []
+            mutagen: dd.mutagen || [],
+            luck_branch: li >= 0 ? B[li] : ''
         }));
         """ % (y, abs(mo), d, ti, gender_n, str(is_leap).lower(), fy, fmo, fd)
         proc = subprocess.run(
@@ -1283,17 +1324,19 @@ class ZiweiEngine:
 
         于流年太岁宫（生年地支宫）起正月逆至本生月，又从本生月起子顺数至本生时安斗君。
         算法：month_branch = (生年地支 - 生月 + 1) % 12；斗君 = (month_branch + 时辰地支) % 12。
+
+        Z80-H 收敛（2026-10-15）：安法公式**复用** temporal_facts.doujun_branch
+        （单一事实源），本方法只保留「地支 → 宫名」的盘面映射，消除重复实现。
         """
         year, month, day = lunar_date
         month = abs(month)
         if month < 1 or month > 12:
             return ""
+        from .ziwei.rules.temporal_facts import doujun_branch
         branch_names = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-        year_branch_idx = (year - 4) % 12
+        year_branch = branch_names[(year - 4) % 12]
         hour_branch_idx = time_index_from_hour(hour) % 12
-        month_branch_idx = (year_branch_idx - (month - 1)) % 12
-        doujun_branch_idx = (month_branch_idx + hour_branch_idx) % 12
-        doujun_branch = branch_names[doujun_branch_idx]
+        doujun_branch = doujun_branch(year_branch, month, hour_branch_idx)
         for _name, _p in palaces.items():
             if _p.get("branch", "") == doujun_branch:
                 return _name

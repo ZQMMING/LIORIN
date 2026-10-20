@@ -14,6 +14,8 @@ class Rule:
     invalidates: List[str]  # 反例排除：其他规则的 ID
     relations: List[str] = field(default_factory=list)  # 关联规则ID
     judgment: str = ""  # 判断结论
+    classic: str = ""  # 原著出处
+    source_verified: bool = False  # 是否已核验原著
     evidence_refs: List[str] = field(default_factory=list)
 
     @property
@@ -36,3 +38,4 @@ class MatchContext:
     yong_branches: Set[str] = field(default_factory=set)
     ti_stems: List[str] = field(default_factory=list)
     yong_stems: List[str] = field(default_factory=list)
+    zuo_gong_methods: List[str] = field(default_factory=list)  # 做功方式列表
