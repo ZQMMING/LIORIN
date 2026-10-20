@@ -43,7 +43,8 @@ class TestQueryYearStructure:
         assert isinstance(r["verdicts"], list)
         for v in r["verdicts"]:
             # 2026-10-20 流年修复: 允许 LM-V5x/LM-V6x 岁运规则 + LM-Y71 太岁合局吉
-            assert v["rule_id"].startswith(("LM-V5", "LM-V6", "LM-Y"))
+            # 2026-10-21: 新增 LM-V7x(丧吊/勾绞/日干轴/征太岁) + LM-V8x(小运)
+            assert v["rule_id"].startswith(("LM-V5", "LM-V6", "LM-V7", "LM-V8", "LM-Y"))
             assert v["evidence"]
             assert v["tone"] in ("吉", "动", "平", "滞", "凶")
 
@@ -254,7 +255,7 @@ class TestYearDistributionSystemic:
     """
 
     def test_132_1983_kun_years_not_all_xiong(self, be):
-        ch = _chart(be, 1983, 11, 3, 12)
+        ch = _chart(be, 1983, 11, 3, 12, gender="female")
         lm = _lm(be, 1983, 11, 3, 12)
         dist = {}
         for yr in range(2020, 2031):
@@ -272,7 +273,7 @@ class TestYearDistributionSystemic:
 
     def test_133_1983_kun_2020_signal_grounded(self, be):
         """凶年必须信号可回指 (重灾4分: 晦气/死绝/元辰/冲运/克身)."""
-        ch = _chart(be, 1983, 11, 3, 12)
+        ch = _chart(be, 1983, 11, 3, 12, gender="female")
         lm = _lm(be, 1983, 11, 3, 12)
         for yr in range(2020, 2031):
             r = query_year(ch, yr, lm=lm)
@@ -305,3 +306,20 @@ class TestYearDistributionSystemic:
         r4 = _qy(be, 1983, 11, 3, 12, 2029, gender="female")
         outs4 = {v["rule_id"]: v for v in r4["verdicts"]}
         assert outs4.get("LM-V77")    # 乙日犯己岁君 → 灾殃必重
+
+    def test_135_xiao_yun_layer(self, be):
+        """2026-10-21 小运层接通 (排盘引擎 xiao_yun_pillars + 禄命法消费):
+        三命通会 L933-943 '小运掌一岁之灾祥…行死绝煞旺之宫必有危难'.
+        1983 坤造 (时柱壬午, 女逆): 37岁小运乙巳(覆灯火) 行绝宫+刑害 →
+        V79 死绝凶 + V80 细累凶; 且小运字段随 query_year 输出."""
+        r = _qy(be, 1983, 11, 3, 12, 2020, gender="female")
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert r.get("xiao_yun") == "YISI"     # 37岁 = 时柱壬午逆排 → 乙巳
+        assert outs.get("LM-V79")              # 乙巳 覆灯火 行绝宫 → 必有危难
+        assert outs.get("LM-V79")["tone"] == "凶"
+        assert outs.get("LM-V80")              # 小运刑害命柱 → 细累浮灾
+        # 排盘引擎小运: 男顺女逆, 1岁=时柱后一位/前一位
+        ch = _chart(be, 1983, 11, 3, 12, gender="female")
+        assert ch.xiao_yun_pillars[0]["pillar"] == "XINSI"   # 壬午逆 → 辛巳(1岁)
+        ch2 = _chart(be, 1989, 12, 26, 22, gender="male")
+        assert ch2.xiao_yun_pillars[0]["pillar"] == "WUZI"  # 时柱丁亥顺 → 戊子(1岁)

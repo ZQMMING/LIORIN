@@ -65,6 +65,9 @@ from ..facts.bazi_facts import (  # noqa: F401
     STEM_NEXT,
     BRANCH_NEXT3,
     NAYIN_60,
+    # 禄命法基础事实: 十干禄元 + 纳音五行
+    LU_BY_STEM,
+    NAYIN_FIVE_ELEMENT,
 )
 
 # ============================================================================
@@ -296,6 +299,10 @@ class BaziChart:
     day_master: str
     luck_pillars: list  # Decade luck pillars (大运)
 
+    # 小运 (三命通会论小运: 醉醒子"由时生而行之", 男顺女逆, 一位一年, 60甲子循环)
+    # [{age, pillar, stem, branch, nayin}, ...]  — 排盘层产出, 下游禄命法消费
+    xiao_yun_pillars: list = field(default_factory=list)
+
     # P4: 起运岁数(传统算法: 顺排=出生日到下一节气天数÷3, 逆排=出生日到上一节气天数÷3)
     start_age: float = 0.0
 
@@ -396,6 +403,16 @@ class BaziChart:
     # 四柱纳音 (六十甲子纳音表, E-SMTH-003-001; 黄历引擎同源, 八字独立建表)
     nayin: dict = field(default_factory=dict)
 
+    # === 禄命法基础事实 (确定性查表, 零吉凶) ===
+    # 十干禄元: 四干各查禄支 + 是否临支 (E-SMTH-004-001, 三命通会·论十干禄)
+    lu: dict = field(default_factory=dict)
+    # 四柱纳音五行 (三元之"身", 与 nayin 同源, E-SMTH-003-001)
+    nayin_five_element: dict = field(default_factory=dict)
+    # 年本立极: 以年干为太极, 四柱天干相对年干的十神 (禄命法年本三元之干禄立极)
+    year_stem_ten_gods: dict = field(default_factory=dict)
+    # 年本立极: 年干对四支的十二长生 (干禄旺衰, 与日主十二长生同表同体系)
+    year_growth: dict = field(default_factory=dict)
+
     # 引擎/计算版本 (Provenance: 架构 §14/§16)
     engine_version: str = BAZI_ENGINE_VERSION
     calculation_version: str = BAZI_CALCULATION_VERSION
@@ -411,6 +428,7 @@ class BaziChart:
             "gender": self.gender,
             "start_age": self.start_age,
             "luck_pillars": [p.to_dict() for p in self.luck_pillars],
+            "xiao_yun_pillars": [dict(p) for p in self.xiao_yun_pillars],
             "spouse_star": dict(self.spouse_star),
             "spouse_star_attack": self.spouse_star_attack,
             "officer_mixed": self.officer_mixed,
@@ -441,6 +459,11 @@ class BaziChart:
             "ming_gong": dict(self.ming_gong),
             "shen_gong": dict(self.shen_gong),
             "nayin": dict(self.nayin),
+            # 禄命法基础事实
+            "lu": {k: dict(v) for k, v in self.lu.items()},
+            "nayin_five_element": dict(self.nayin_five_element),
+            "year_stem_ten_gods": dict(self.year_stem_ten_gods),
+            "year_growth": dict(self.year_growth),
             "engine_version": self.engine_version,
             "calculation_version": self.calculation_version,
         }
@@ -496,10 +519,13 @@ def calc_spouse_star(chart: BaziChart) -> dict:
     男命: 正财=正妻, 偏财=偏妻, 兼看日主所克之五行在地支的根气.
     女命: 正官=正夫, 七杀=偏夫, 兼看日主所克之五行在地支的根气.
 
-    P0-FNDR-10 (R-15 ⑭ 契约纯度): 本函数输出是 **工程启发评分** (0.5/0.2 权重),
+    P0-FNDR-10 (R-15 ⑭ 契约纯度): 本函数输出是 **工程启发评分** (十分制: 干透 5 分/支根 2 分),
     属子平辨层 AUXILIARY_SIGNAL, 不是 Bazi Calculation Core 的确定性基础事实.
     CanonicalBaziChart (下游接口) 已主动剥离本字段; 本字段仅留在 BaziChart 内部,
     供后续子平引擎接入时消费. 详见 calc_spouse_star_authority_status.
+
+    V11 (2026-10-19): 评分弃用浮点 — 权重 0.5/0.2 放大 10 倍为整数 5/2 (十分制),
+    语义等价旧量纲, 阈值档位同步 ×10 (见 calc_spouse_star_strength: 10/3).
     """
     dm = chart.day_master
     stems = chart.four_stems()
@@ -514,9 +540,9 @@ def calc_spouse_star(chart: BaziChart) -> dict:
             if _ten_god(dm, hidden_main_stem(b)) in ("正财", "偏财")
         )
         return {
-            "正财": zheng_cai * 0.5,
-            "偏财": pian_cai * 0.5,
-            "branch_root": cai_branch * 0.2,
+            "正财": zheng_cai * 5,
+            "偏财": pian_cai * 5,
+            "branch_root": cai_branch * 2,
         }
     else:  # female
         zheng_guan = sum(1 for s in stems if _ten_god(dm, s) == "正官")
@@ -526,9 +552,9 @@ def calc_spouse_star(chart: BaziChart) -> dict:
             if _ten_god(dm, hidden_main_stem(b)) in ("正官", "七杀")
         )
         return {
-            "正官": zheng_guan * 0.5,
-            "七杀": qi_sha * 0.5,
-            "branch_root": guan_branch * 0.2,
+            "正官": zheng_guan * 5,
+            "七杀": qi_sha * 5,
+            "branch_root": guan_branch * 2,
         }
 
 
@@ -609,9 +635,9 @@ def calc_spouse_star_strength(chart: BaziChart) -> str:
     else:
         score = ss.get("正官", 0) + ss.get("七杀", 0) + ss.get("branch_root", 0)
 
-    if score >= 1.0:
+    if score >= 10:   # V11: 阈值 1.0 ×10 (十分制)
         return "strong"
-    if score >= 0.3:
+    if score >= 3:    # V11: 阈值 0.3 ×10
         return "weak"
     return "rootless"
 
@@ -897,13 +923,19 @@ def calc_shensha(chart: BaziChart) -> dict:
 
 
 def _tai_unit(stem: str, branch: str) -> dict:
-    """胎元/胎息单位: 天干进1位 + 地支进3位 (《三命通会·论胎元胎息》)."""
+    """胎元/胎息单位: 天干进1位 + 地支进3位 (《三命通会·论胎元胎息》).
+
+    禄命法扩展: 胎元为一柱, 补三元之"身" — nayin (纳音名) + nayin_element (五行).
+    """
     s2 = STEM_NEXT[stem]
     b2 = BRANCH_NEXT3[branch]
+    nayin_name = NAYIN_60.get((s2, b2), "")
     return {
         "stem": s2,
         "branch": b2,
         "chinese": f"{STEM_CN.get(s2, s2)}{BRANCH_CN.get(b2, b2)}",
+        "nayin": nayin_name,
+        "nayin_element": NAYIN_FIVE_ELEMENT.get(nayin_name, ""),
     }
 
 
@@ -1031,6 +1063,69 @@ def calc_nayin(chart: BaziChart) -> dict:
     return out
 
 
+def calc_lu(chart: BaziChart) -> dict:
+    """十干禄元 (干禄): 四柱天干各查禄支 + 是否临支.
+
+    依据: 《三命通会·论十干禄》 (E-SMTH-004-001):
+          甲禄在寅, 乙禄在卯, 丙戊禄在巳, 丁己禄在午, 庚禄在申, 辛禄在酉,
+          壬禄在亥, 癸禄在子。
+    present=True 表示该禄支在四支中出现 (得禄); 只算事实, 不产断语.
+    """
+    branches = chart.four_branches()
+    out = {}
+    for pos, stem in zip(("year", "month", "day", "hour"), chart.four_stems()):
+        lu_branch = LU_BY_STEM.get(stem, "")
+        out[pos] = {
+            "stem": stem,
+            "lu_branch": lu_branch,
+            "present": lu_branch in branches,
+        }
+    return out
+
+
+def calc_nayin_five_element(nayin: dict) -> dict:
+    """四柱纳音五行 (三元之"身"): 由四柱纳音名查五行.
+
+    依据: 《三命通会·论纳音》 (E-SMTH-003-001), 与 NAYIN_60 同源同值.
+    只算事实, 不产断语.
+    """
+    out = {}
+    for pos, name in nayin.items():
+        out[pos] = NAYIN_FIVE_ELEMENT.get(name, "")
+    return out
+
+
+def calc_year_stem_ten_gods(chart: BaziChart) -> dict:
+    """年本立极: 以年干为太极, 四柱天干相对年干的十神.
+
+    禄命法年本三元之"干禄"立极 (年干=我): 用于论四柱各干与年干的生克关系.
+    year 位置标 DAY_MASTER (年干对自身). 只算事实, 不产断语.
+    """
+    year_stem = chart.year_pillar.heavenly_stem
+    out = {}
+    for pos, stem in zip(("year", "month", "day", "hour"), chart.four_stems()):
+        out[pos] = "DAY_MASTER" if stem == year_stem else _ten_god(year_stem, stem)
+    return out
+
+
+def calc_year_growth(chart: BaziChart) -> dict:
+    """年本立极: 年干对四支的十二长生 (干禄旺衰, 中文值).
+
+    查表复用 _load_twelve_growth_table (与日主十二长生同表同体系:
+    阳顺阴逆火土同生; 己土 PARTIAL/UNRESOLVED, 只查表不修正).
+    """
+    table = _load_twelve_growth_table()
+    if not table:
+        return {}
+    y_cn = STEM_CN.get(chart.year_pillar.heavenly_stem, chart.year_pillar.heavenly_stem)
+    row = table.get(y_cn, {})
+    out = {}
+    for pos, branch in zip(("year", "month", "day", "hour"), chart.four_branches()):
+        b_cn = BRANCH_CN.get(branch, branch)
+        out[pos] = row.get(b_cn, "")
+    return out
+
+
 def evaluate_he_transformation(chart: BaziChart, month_branch: str | None = None) -> dict:
     """六合化气判定 (辨层).
 
@@ -1140,18 +1235,23 @@ def calc_five_element_balance(chart: BaziChart) -> dict:
     - 本函数: 仅确定性 lookup 8 字符五行 + 归一化 (sum = 1.0).
     - 失衡判定 (imbalance) 由 detect_five_element_imbalance 独立判定, 标注启发式.
 
+    V11 (2026-10-19): 输出改用 fractions.Fraction (有理数) — 弃用浮点.
+      8 字符五行计数 → 归一化为精确分数 (如 WATER = Fraction(4, 8) = "1/2"),
+      语义等同旧浮点占比, 但输出零浮点误差; to_dict/JSON 经 default=str 呈现为 "1/2".
+
     Authority Status:
       - AUTHORITY_STATUS = NOT_AUTHORIZED (代码本身标注, 非算法授权)
       - 但本函数纯 lookup + 计数 + 归一化, 算法层确定
       - 失衡阈值 (0.40/0.05) 是工程约定, 由 detect_five_element_imbalance 独立判定
     """
+    from fractions import Fraction
     counts = {"WOOD": 0, "FIRE": 0, "EARTH": 0, "METAL": 0, "WATER": 0}
     for s in chart.four_stems():
         counts[STEM_ELEMENT[s]] += 1
     for b in chart.four_branches():
         counts[BRANCH_ELEMENT[b]] += 1
     total = sum(counts.values()) or 1   # 4 stems + 4 branches = 8 (除非非法输入)
-    return {k: v / total for k, v in counts.items()}
+    return {k: Fraction(v, total) for k, v in counts.items()}
 
 
 # P0-FNDR-07: 失衡判定独立函数 (启发式, NOT_AUTHORIZED)
@@ -1234,6 +1334,11 @@ def attach_p2_fields(chart: BaziChart) -> BaziChart:
     ming_gong = calc_ming_gong(chart)
     shen_gong = calc_shen_gong(chart)
     nayin = calc_nayin(chart)
+    # 禄命法基础事实 (确定性查表, 零吉凶)
+    lu = calc_lu(chart)
+    nayin_five_element = calc_nayin_five_element(nayin)
+    year_stem_ten_gods = calc_year_stem_ten_gods(chart)
+    year_growth = calc_year_growth(chart)
 
     return replace(
         chart_with_ss,
@@ -1266,6 +1371,11 @@ def attach_p2_fields(chart: BaziChart) -> BaziChart:
         ming_gong=ming_gong,
         shen_gong=shen_gong,
         nayin=nayin,
+        # 禄命法基础事实
+        lu=lu,
+        nayin_five_element=nayin_five_element,
+        year_stem_ten_gods=year_stem_ten_gods,
+        year_growth=year_growth,
     )
 
 
@@ -1344,7 +1454,15 @@ class BaziEngine:
         # H18: 如果没有提供完整 datetime，从 solar_date 构造
         if birth_datetime is None:
             from datetime import datetime as _dt
-            birth_datetime = _dt(year, month, day, hour, 0, 0)
+            # V3.6.9㉑ fail-closed 日期守卫: 非法日期(如 2月31日/4月31日/6月31日)
+            # 不得静默构造崩溃 datetime, 必须显式抛 ValueError(规范 §55/E4)。
+            try:
+                birth_datetime = _dt(year, month, day, hour, 0, 0)
+            except ValueError as exc:
+                raise ValueError(
+                    f"fail-closed: 出生日期非法 (year={year}, month={month}, day={day}, "
+                    f"hour={hour}): {exc}。上游排盘输入必须为合法公历日期。"
+                ) from exc
             minute = 0
             second = 0.0
         else:
@@ -1374,9 +1492,10 @@ class BaziEngine:
         else:
             four_pillars = self._compute_simple(year, month, day, hour)
 
-        # P4: 夜子时处理 (2026-09-14 子正换日裁决) — 23:00-23:59:59:
-        #   日柱 = 当天 (保持不动, 不再换次日); 时柱 = 子时, 天干按次日日干五鼠遁起.
-        #   (与 sxtwl getHourGZ(_, True) 结果一致, 双保险; skip_late_zi=True 时上游已保证 day_idx=当天)
+        # P4: 夜子时处理 — 23:00-23:59:59:
+        #   2026-10-20 口径修正 (用户裁决): 晚子时 = 次日完整子时 → 日柱随子时换次日
+        #   (辛酉+戊子), 替代原"日柱当天、时柱次日遁"半换口径 (庚申+戊子 同日混搭).
+        #   skip_late_zi=True 时上游 TimeResolver 已保证 day=次日, 本分支跳过.
         if hour == 23 and not skip_late_zi:
             from datetime import date, timedelta
             next_day = date(year, month, day) + timedelta(days=1)
@@ -1384,13 +1503,16 @@ class BaziEngine:
                 import sxtwl
                 day_obj = sxtwl.fromSolar(next_day.year, next_day.month, next_day.day)
                 new_day_stem = HEAVENLY_STEMS[day_obj.getDayGZ().tg]
+                new_day_branch = EARTHLY_BRANCHES[day_obj.getDayGZ().dz]
             else:
                 ref = date(1900, 1, 1)
                 days_diff = (next_day - ref).days
                 new_day_stem = HEAVENLY_STEMS[days_diff % 10]
+                new_day_branch = EARTHLY_BRANCHES[days_diff % 12]
             new_day_stem_idx = HEAVENLY_STEMS.index(new_day_stem)
             new_hour_stem_idx = hour_stem_from_day_stem(new_day_stem_idx, 0)  # 0=子时
-            # 日柱保持当天; 时柱按次日日干
+            # 日柱随子时换次日整柱; 时柱按次日日干起子
+            four_pillars["day"] = Pillar(new_day_stem, new_day_branch)
             four_pillars["hour"] = Pillar(HEAVENLY_STEMS[new_hour_stem_idx], "ZI")
 
         # 计算四柱十神（P0-1-C: BAZI owns deterministic Ten-God relation）
@@ -1421,6 +1543,9 @@ class BaziEngine:
             four_pillars, gender, year, (year, month, day, hour),
             birth_datetime=birth_datetime,
         )
+        # 小运 (三命通会论小运 L933-943 醉醒子法: 由时生而行之, 男顺女逆, 一位一年)
+        xiao_yun_pillars = self._compute_xiao_yun_pillars(
+            four_pillars["hour"], gender)
 
         # H18-FIX: 使用传入的 birth_datetime，保留 minute/second
         birth_dt = birth_datetime if birth_datetime is not None else _dt(year, month, day, hour, 0, 0)
@@ -1435,6 +1560,7 @@ class BaziEngine:
             gender=gender,
             start_age=start_age,
             birth_datetime=birth_dt,
+            xiao_yun_pillars=xiao_yun_pillars,
         )
 
         # P2: attach 9 marriage/health fields (immutable copy)
@@ -1930,6 +2056,37 @@ class BaziEngine:
             luck_pillars.append(lp)
 
         return luck_pillars, start_age
+
+    def _compute_xiao_yun_pillars(self, hour_pillar: Pillar, gender: str,
+                                  n_years: int = 120) -> list:
+        """醉醒子小运 (三命通会论小运 L933-943).
+
+        原文: "夫大运司十年之休咎, 小运掌一岁之灾祥, 是小运者补大运之不足而立名也.
+              古人以男起丙寅顺行, 女起壬申逆行.
+              醉醒子以为男女小运皆由时生而行之, 逆顺亦以年定. 如阳命阳年甲子时生,
+              堕地即行乙丑, 二岁丙寅, 一位一年, 周而复始, 阴命阳年逆行亦然.
+              童限未交大运, 专用此法."
+
+        口径 (取醉醒子"由时生而行之" + 古法男顺女逆同向):
+          小运从时柱干支起, 1岁 = 时柱后一位(男顺) / 前一位(女逆),
+          逐年进退一位, 60甲子循环.
+
+        Returns: [{"age", "pillar", "stem", "branch", "nayin"}, ...]
+        """
+        seq0 = _get_jiazi_index(hour_pillar.heavenly_stem,
+                                hour_pillar.earthly_branch)
+        step = 1 if gender == "male" else -1
+        out = []
+        for age in range(1, n_years + 1):
+            seq = (seq0 + step * age) % 60
+            _pair = next(((s, b) for (s, b), i in JIAZI_INDEX.items()
+                          if i == seq), None)
+            if not _pair:
+                continue
+            s2, b2 = _pair
+            out.append({"age": age, "pillar": s2 + b2, "stem": s2, "branch": b2,
+                        "nayin": NAYIN_60.get(_pair, "")})
+        return out
 
 
 # B7: Canonical Bazi State Ownership

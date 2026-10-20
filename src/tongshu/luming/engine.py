@@ -2861,6 +2861,36 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
                      or (tai_ke_day_stem and _is_clash(tb, day_branch))
                      or (dl_stem and _GAN_KE.get(dl_stem) == ts and _is_clash(dl_branch, tb)))
 
+    # ---- 小运消费 (2026-10-21 三命通会论小运 L933-943; 小运干支由排盘引擎
+    #      BaziEngine 计算 chart.xiao_yun_pillars, 此处仅消费做禄命判定) ----
+    #   原文: "夫大运司十年之休咎, 小运掌一岁之灾祥, 是小运者补大运之不足而立名也"
+    #        "醉醒子以为男女小运皆由时生而行之, 逆顺亦以年定…一位一年, 周而复始"
+    #   口径: 小运从时柱起(1岁=时柱后一位), 男顺女逆, 60甲子循环 (见 bazi_engine).
+    _xy_hit = next((p for p in (getattr(chart, "xiao_yun_pillars", None) or [])
+                    if (p.get("age", 0) or 0) == int(round(age))), None)
+    _xy_gz = (_xy_hit or {}).get("pillar", "")
+    _xy_branch = (_xy_hit or {}).get("branch", "")
+    if _xy_branch and year_nayin_el:
+        xy_growth = _growth_stage(year_nayin_el, _xy_branch)
+        xy_dead_jue = xy_growth in ("死", "绝")
+        xy_sheng_wang = xy_growth in ("长生", "临官", "帝旺", "建禄", "冠带", "胎", "库")
+        # 小运到刑害之乡: 小运支 刑/害 年支或日支 (L4273"太岁小运到刑害之乡"细累浮灾)
+        _xy_xing_hai = any(
+            _pbr and (_is_clash(_pbr, _xy_branch) or _is_harm(_pbr, _xy_branch)
+                      or _is_xing(_pbr, _xy_branch))
+            for _pbr in (year_branch, day_branch))
+        # 小运值贵人/驿马 (以年干/年支查, 与太岁同口径): 生旺+贵/马 → 小庆
+        _gui_set = {TIAN_YI_GUI_REN_DAY.get(year_stem, ""),
+                    TIAN_YI_GUI_REN_NIGHT.get(year_stem, "")} - {""}
+        _yi_ma = SHEN_SHA_BY_SANHE.get(
+            BRANCH_SANHE_GROUP.get(year_branch, frozenset()), {}).get("YI_MA", "")
+        _xy_gui_ma = bool(
+            (_xy_branch in _gui_set) or (_yi_ma and _xy_branch == _yi_ma))
+        xy_nayin = (_xy_hit or {}).get("nayin", "")
+    else:
+        xy_growth = ""; xy_dead_jue = False; xy_sheng_wang = False
+        _xy_xing_hai = False; _xy_gui_ma = False; xy_nayin = ""
+
     return {
         "tai_s": ts, "tai_b": tb, "tai_sui": ts + tb, "tai_nayin": tai_nayin,
         "tai_nayin_el": NAYIN_FIVE_ELEMENT.get(tai_nayin, ""),
@@ -2900,6 +2930,11 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_ke_day_stem": tai_ke_day_stem, "tai_day_fan_sui": tai_day_fan_sui,
         "day_fan_saved": day_fan_saved, "day_fan_weight": day_fan_weight,
         "tai_zheng": tai_zheng,
+        # 小运 (排盘引擎产出, 本层消费): 干支/纳音/十二宫/刑害/贵马
+        "xiao_yun": _xy_gz, "xiao_yun_nayin": xy_nayin,
+        "xiao_yun_growth": xy_growth, "xy_dead_jue": xy_dead_jue,
+        "xy_sheng_wang": xy_sheng_wang, "xy_xing_hai": _xy_xing_hai,
+        "xy_gui_ma": _xy_gui_ma,
     }
 
 
@@ -3037,4 +3072,12 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "jiao_yun_from": yctx.get("jiao_yun_from", ""),
             "jiao_yun_to": yctx.get("jiao_yun_to", ""),
             "yuan_chen": yctx.get("yuan_chen", ""),
-            "tai_yuan_chen": yctx.get("tai_yuan_chen", False)}
+            "tai_yuan_chen": yctx.get("tai_yuan_chen", False),
+            # 小运 (2026-10-21 接通排盘引擎 xiao_yun_pillars)
+            "xiao_yun": yctx.get("xiao_yun", ""),
+            "xiao_yun_nayin": yctx.get("xiao_yun_nayin", ""),
+            "xiao_yun_growth": yctx.get("xiao_yun_growth", ""),
+            "xy_dead_jue": yctx.get("xy_dead_jue", False),
+            "xy_sheng_wang": yctx.get("xy_sheng_wang", False),
+            "xy_xing_hai": yctx.get("xy_xing_hai", False),
+            "xy_gui_ma": yctx.get("xy_gui_ma", False)}

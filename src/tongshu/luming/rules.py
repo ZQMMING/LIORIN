@@ -1719,4 +1719,30 @@ YEAR_RULES = [
      "when": {"op": "eq", "k": "tai_zheng", "v": True},
      "out": "征太岁（日干支冲克太岁/运干支伤冲太岁），其年则凶，灾祸未免",
      "detail_tpl": "日柱{day_stem}{day_branch}与太岁{tai_s}{tai_b}冲克（L954 征太岁）"},
+    # ---- 小运层 (2026-10-21 三命通会论小运 L933-943 接通; 小运干支由排盘引擎算) ----
+    #   "夫大运司十年之休咎, 小运掌一岁之灾祥, 是小运者补大运之不足而立名也"
+    #   "行死绝煞旺之宫, 必有危难" (醉醒子段) — 小运行死绝宫 → 危难
+    {"id": "LM-V79", "evidence": "E-SMTH-014-003", "mode": "scalar",
+     "scope": "流年", "target": "小运{xiao_yun}值{xiao_yun_growth}宫",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "xy_dead_jue", "v": True},
+     "out": "小运行死绝之宫，必有危难（童限未交大运尤重）",
+     "detail_tpl": "小运{xiao_yun}({xiao_yun_nayin})行至{xiao_yun_growth}宫（L943 行死绝煞旺之宫必有危难）"},
+    #   L4273"大运至吉乡, 却遇逐年太岁小运到刑害之乡, 亦主细累浮灾, 但不为重害也"
+    #   — 小运与命柱刑害 → 细累浮灾 (轻)
+    {"id": "LM-V80", "evidence": "E-WXJ-033-001", "mode": "scalar",
+     "scope": "流年", "target": "小运{xiao_yun}到刑害之乡",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "xy_xing_hai", "v": True},
+     "out": "小运与命柱刑冲害，细累浮灾，不为重害",
+     "detail_tpl": "小运{xiao_yun}冲刑害命柱（L4273 太岁小运到刑害之乡亦主细累浮灾）"},
+    #   "若小运与太岁到生旺禄马贵人一切吉神, 其年却有小庆, 过去则否" — 小庆(吉,轻)
+    {"id": "LM-V81", "evidence": "E-SMTH-014-003", "mode": "scalar",
+     "scope": "流年", "target": "小运{xiao_yun}临生旺禄马贵人",
+     "tone": "吉",
+     "when": {"op": "and", "conds": [
+         {"op": "eq", "k": "xy_sheng_wang", "v": True},
+         {"op": "eq", "k": "xy_gui_ma", "v": True}]},
+     "out": "小运至生旺禄马贵人，其年有小庆（小运补大运之不足）",
+     "detail_tpl": "小运{xiao_yun}生旺宫{xiao_yun_growth}值贵人驿马（L943 小运与太岁到生旺禄马贵人一切吉神其年却有小庆）"},
 ]
