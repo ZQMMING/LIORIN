@@ -656,7 +656,7 @@ LUMING_RULES = [
      "tone": "吉",
      "when": {"op": "eq", "k": "wen_chang_present", "v": True},
      "out": "文昌临支，主科名文章",
-     "detail_tpl": "{wen_chang_lookup_cn}文昌临{wen_chang_branch_cn}（主科名文章）"},
+     "detail_tpl": "{wen_chang_lookup_cn}文昌临{wen_chang_branch_cn}（{wen_chang_lookup_cn}表{wen_chang_stem_cn}→{wen_chang_branch_cn}，五行精纪 L2010{wen_chang_note}）"},
 
     # ================= 原局: 拱 (LM-V36, per_list 2条) =================
     {"id": "LM-V36", "evidence": "E-WXJ-015-002", "mode": "per_list",
@@ -1775,7 +1775,7 @@ YEAR_RULES = [
          {"op": "eq", "k": "xy_sheng_wang", "v": True},
          {"op": "eq", "k": "xy_gui_ma", "v": True}]},
      "out": "小运至生旺禄马贵人，其年有小庆（小运补大运之不足）",
-     "detail_tpl": "小运{xiao_yun}生旺宫{xiao_yun_growth}值贵人驿马（L943 小运与太岁到生旺禄马贵人一切吉神其年却有小庆）"},
+     "detail_tpl": "小运{xiao_yun}生旺宫{xiao_yun_growth}值{xy_gui_ma_desc}（L943 小运与太岁到生旺禄马贵人一切吉神其年却有小庆；贵/马按年干年支查）"},
     # ---- 救应/吉会/重灾补全 (2026-10-21 珞琭子赋注+李虚中命书深挖) ----
     #   V82 太岁=天月德 → 太岁是有情之神 (珞琭子"尊吉卑凶逢灾自愈"; 李虚中
     #     "吉神在岁则岁吉"); 三命通会 L951 天月德为救神之一
@@ -1784,7 +1784,7 @@ YEAR_RULES = [
      "tone": "吉",
      "when": {"op": "eq", "k": "tai_tian_yue_de", "v": True},
      "out": "太岁值天月德，尊吉卑凶，逢灾自愈（有情之神主岁则岁吉）",
-     "detail_tpl": "太岁{tai_s}{tai_b}=天月德（L951 五行有救四柱有情凶为吉兆；珞琭子尊吉卑凶逢灾自愈）"},
+     "detail_tpl": "太岁{tai_s}{tai_b}=临{tai_de_desc}（天德按生月查支、月德按三合月查干；L951 五行有救四柱有情凶为吉兆；珞琭子尊吉卑凶逢灾自愈）"},
     #   V83 干推两重 (李虚中命书: "干推两重, 防灾於元首之间. 如壬寅人逢戊为太岁,
     #     戊为月建者, 两戊克壬则为干推两重, 遇之者为元首头目之灾")
     {"id": "LM-V83", "evidence": "E-LXZ-001-002", "mode": "scalar",

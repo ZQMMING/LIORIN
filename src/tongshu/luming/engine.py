@@ -2123,6 +2123,20 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         "wen_chang_branch_cn": BRANCH_CN.get((wen_chang or {}).get("branch", ""),
                                              (wen_chang or {}).get("branch", "")),
         "wen_chang_lookup_cn": (wen_chang or {}).get("lookup_cn", "年干"),
+        # 文昌双口径并存注 (年干表=五行精纪 L2010 / 日干表=渊海子平系): 本层取年干表时
+        #   附日干表并存说明, 消术语混用
+        "wen_chang_stem_cn": _STEM_CN_LOCAL.get(
+            (chart.year_pillar.heavenly_stem if (wen_chang or {}).get("lookup_cn", "年干") == "年干"
+             else chart.day_pillar.heavenly_stem), ""),
+        "wen_chang_day_cn": _STEM_CN_LOCAL.get(chart.day_pillar.heavenly_stem, ""),
+        "wen_chang_day_branch_cn": BRANCH_CN.get(
+            WEN_CHANG_BY_DAY.get(chart.day_pillar.heavenly_stem, ""),
+            WEN_CHANG_BY_DAY.get(chart.day_pillar.heavenly_stem, "")),
+        "wen_chang_note": (("；日干表（渊海子平系）" +
+                            _STEM_CN_LOCAL.get(chart.day_pillar.heavenly_stem, "") + "→" +
+                            BRANCH_CN.get(WEN_CHANG_BY_DAY.get(chart.day_pillar.heavenly_stem, ""),
+                                          WEN_CHANG_BY_DAY.get(chart.day_pillar.heavenly_stem, "")))
+                           if (wen_chang or {}).get("lookup_cn", "年干") == "年干" else ""),
         "kui_gang_days": kui_gang_days,
         "kui_gang_str": "、".join(kui_gang_days),
         # 原局空亡 (L3483 年日两旬并查; L3484 冲破反为福/同类冲最毒;
@@ -3096,7 +3110,11 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     _four_td = bool(_td_b and _td_b in _sanghe_branches)
     _four_yd = bool(_yd_g and _yd_g in _sanghe_stems)
     de_jiu = bool(_four_td or _four_yd)                 # 四柱带天月德 = 有情
-    tai_tian_yue_de = bool((_td_b and tb == _td_b) or (_yd_g and ts == _yd_g))  # 太岁=天月德
+    _tai_td = bool(_td_b and tb == _td_b)                 # 太岁=天德(月支查支)
+    _tai_yd = bool(_yd_g and ts == _yd_g)                 # 太岁=月德(三合月查干)
+    tai_tian_yue_de = bool(_tai_td or _tai_yd)            # 太岁=天月德 (有情之神)
+    tai_de_desc = ("天月德" if (_tai_td and _tai_yd) else
+                   ("天德" if _tai_td else ("月德" if _tai_yd else "")))
     day_fan_saved = bool(_day_jiu or de_jiu)            # 有制 或 天月德有情 → 凶为吉兆
     day_fan_weight = "重" if (day_stem in _YANG_GAN) else "轻"
     tai_zheng = bool((tai_day_fan_sui and _is_clash(tb, day_branch))
@@ -3139,8 +3157,11 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
                     TIAN_YI_GUI_REN_NIGHT.get(year_stem, "")} - {""}
         _yi_ma = SHEN_SHA_BY_SANHE.get(
             BRANCH_SANHE_GROUP.get(year_branch, frozenset()), {}).get("YI_MA", "")
-        _xy_gui_ma = bool(
-            (_xy_branch in _gui_set) or (_yi_ma and _xy_branch == _yi_ma))
+        _xy_gui = _xy_branch in _gui_set
+        _xy_ma = bool(_yi_ma and _xy_branch == _yi_ma)
+        _xy_gui_ma = bool(_xy_gui or _xy_ma)
+        xy_gui_ma_desc = ("贵人驿马" if (_xy_gui and _xy_ma) else
+                          ("贵人" if _xy_gui else ("驿马" if _xy_ma else "")))
         xy_nayin = (_xy_hit or {}).get("nayin", "")
         # 行年福会 (五行精纪 L748-750 八字金书福运/三命指掌福会): "福会者取十干
         #   所生及所克, 如甲木生丙火克戊土…大小运行年至此, 亦有迁官进财之喜"
@@ -3199,7 +3220,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_ke_day_stem": tai_ke_day_stem, "tai_day_fan_sui": tai_day_fan_sui,
         "day_fan_saved": day_fan_saved, "day_fan_weight": day_fan_weight,
         "tai_zheng": tai_zheng,
-        "de_jiu": de_jiu, "tai_tian_yue_de": tai_tian_yue_de,
+        "de_jiu": de_jiu, "tai_tian_yue_de": tai_tian_yue_de, "tai_de_desc": tai_de_desc,
         "tai_gan_tui_liang_chong": tai_gan_tui_liang_chong,
         "tai_mu": tai_mu, "tai_mu_branch": tai_mu_branch,
         "tai_wu_gui": tai_wu_gui, "tai_wu_gui_stage": _tai_wu_gui_stage,
@@ -3208,7 +3229,8 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "xiao_yun": _xy_gz, "xiao_yun_branch": _xy_branch, "xiao_yun_nayin": xy_nayin,
         "xiao_yun_growth": xy_growth, "xy_dead_jue": xy_dead_jue,
         "xy_sheng_wang": xy_sheng_wang, "xy_xing_hai": _xy_xing_hai,
-        "xy_gui_ma": _xy_gui_ma, "xy_fu_hui": _xy_fu_hui,
+        "xy_gui_ma": _xy_gui_ma, "xy_gui_ma_desc": xy_gui_ma_desc,
+        "xy_fu_hui": _xy_fu_hui,
     }
 
 
