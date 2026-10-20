@@ -798,6 +798,24 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         cai_gans = _god_gans('正财') + _god_gans('偏财')
         guan_gans = _god_gans('正官')
         sha_gans = _god_gans('七杀')
+        # ★ V7.53b 财破印判据(原典 PZZQ L1130/L1237/L3590/L2178): 财有根 且 无劫解 方破格.
+        #   财无根气 -> 不能用财破印(L1130); 有比劫制财护印 -> 劫解不破(L1237);
+        #   "印轻财重"(印不重则不贪财坏印, L2178).
+        #   劫解=【日主之外】的比劫(劫财/他干比肩); 日主自身不能自护(原码误把日干计入比肩).
+        def _cai_po_ge_po():
+            _cwx = KE.get(GAN_WX.get(dg, ''), '')      # 财五行=日主所克
+            _croot = 0
+            for _z_v, _v in ((facts.get('wuxing_power', {}) or {}).get('wuxing_power') or {}).items():
+                if _z_v == _cwx:
+                    _croot = max(_croot, int(_v.get('ben_n', 0) or 0))
+            _c_tou = len(cai_gans)
+            _c_rooted = (_croot >= 1) or (_c_tou >= 1)   # 财有根(本气根或透干)
+            _jie = [g for g in (gans) if g != dg and ten_god(dg, g) in ('比肩', '劫财')]
+            _jie_jie = bool(_jie)
+            if _c_rooted and not _jie_jie:
+                return [{'type': '组合', 'match': 'ANY', 'required': ['正财', '偏财']}]
+            return []
+        _CAI_PO = _cai_po_ge_po()
 
         # [2026-10-01 PATCH-3d] 段2「带伤食」路径判定(沈孝瞻 论印绶 + 徐注分野)。
         #   段2 原文: 「然亦有带伤食而贵者, 则如朱尚书命 丙戌戊戌辛未壬辰, 壬为戊制, 不伤官也。
@@ -863,7 +881,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'zhi_wx': [], 'hua_wx': [],
                     'po_ge': (
                         [] if _yin_heavy_254
-                        else [{'type':'组合','match':'ANY','required':['正财','偏财']}]   # PZZQ258: 印轻逢财(财破印, 财单见即忌)
+                        else _CAI_PO   # V7.53b: 印轻逢财(财破印)须财有根且无劫解(PZZQ L1130/L1237/L3590)
                     ),  # V7.26: 印重(印多用财抑太过)财置喜首抑印 -> 财不作破格忌(原典"无防财破"); 印轻才破
                     'rule': _rule,
                 }
@@ -877,8 +895,8 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'ti_wx': [yin_wx],
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
-                'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 印轻逢财(财破印, 财单见即忌)
-                'rule': 'PZZQ255: 印轻逢煞+印不透->印格成; 印是格体; 喜神=煞(生印)+印(生身); 破格: 财破印',
+                'po_ge': _CAI_PO,  # V7.53b: 印轻逢财(财破印)须财有根且无劫解(PZZQ L1130/L1237/L3590)
+                'rule': 'PZZQ255: 印轻逢煞+印不透->印格成; 印是格体; 喜神=煞(生印)+印(生身); 破格: 财破印(须财有根且无劫解)',
             }
             return _attach_ge_evidence(facts)
         # PZZQ1113: 印多逢财财透根轻=月令印+财透. 印是格体, 不报印多埋子(UNVERIFIED: 财透根轻判据)
@@ -902,8 +920,9 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 # ★ DTS 准神 DT-0265「以寅木为用」: 印轻逢财, 印是格体, 印轻则印本身为用(扶印),
                 #   置喜首; 比劫(制财)次之。原喜神只取比劫=缺印体, 补月令印五行。
                 _yin_caixi = [yin_wx] + [GAN_WX.get(dg, '')]   # 印木置首, 比劫次
-                _yin_po = [{'type': '组合', 'match': 'ANY',
-                            'required': ['正财', '偏财']}]  # 印轻逢财, 财单见即破印
+                # ★ V7.53b 破格判据见 _CAI_PO(财有根 且 无劫解, 原典 PZZQ L1130/L1237/L3590)
+                _yin_po = _CAI_PO
+                _yin_po_note = ('(财有根且无比劫救 -> 财破印; 财无根/有劫解 -> 不破格, PZZQ L1130/L1237/L3590)')
             facts['ge_cheng'] = {
                 'ge': '印格(印多逢财)' if _yin_ren else '印格(印轻逢财)',
                 'xi_wx': _yin_caixi,
@@ -913,7 +932,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'po_ge': _yin_po,
                 'rule': ('PZZQ255: 印多重(印多用财抑太过, 无防财破)->喜财, 财不作破格忌'
                          if _yin_ren else
-                         'PZZQ255: 印轻财重无劫救->贪财破印, 喜比劫制财救印; 破格: 财破印'),
+                         'PZZQ255: 印轻财重无劫救->贪财破印, 喜比劫制财救印; 破格: 财破印' + _yin_po_note),
             }
             return _attach_ge_evidence(facts)
         yin_wx_default = GAN_WX[yin_gans[0]] if yin_gans else (facts.get('month_qi_element','') or '')
