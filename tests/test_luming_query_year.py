@@ -64,9 +64,12 @@ class TestMao1976:
         assert outs.get("LM-V59")       # 太岁克时干 (丙克庚)
         assert outs.get("LM-V61")       # 太岁至空亡 (日柱丁酉甲午旬空辰巳)
         assert outs.get("LM-V52") or outs.get("LM-V53") or outs.get("LM-V54")  # 刑/压大运
-        # 2026-10-20 原著聚合重构 (L4276): 厚福+重恶(七分) → 凶; 档位措辞 凶 (替代 偏凶)
+        # 2026-10-20 第二版 (原著核实, 大运归大运/流年归流年): 流年自身 厚福+重恶(七分)
+        #   = 凶 (L4276 方有重灾); 大运丙辰"相当"非吉泰非凶祸 → L4273 无互动
         assert r["tone"] == "凶"
-        assert r["combined"]["final_verdict"] == "凶"
+        assert r["combined"]["l4273"]["mode"] == "无"
+        assert r["combined"]["year_tone"] == "凶"
+        assert "final_verdict" not in r["combined"]   # 无运年算术聚合
 
     def test_123_year_blank_wang_checks_both_xun(self, be):
         # 年柱癸巳(甲申旬空午未) + 日柱丁酉(甲午旬空辰巳) → 辰巳午未
@@ -89,8 +92,10 @@ class TestZhou1976:
         assert v51
         assert outs.get("LM-V56") is None     # 卯不被辰冲 → 不误触发返吟
         assert r["combined"]["luck_verdict"] == "偏吉"   # 运柱本身偏吉
-        # 2026-10-20 原著聚合重构 (L4276/L4273): 重恶(冲年+害日+冲运+空亡=重灾级) 不因运吉降级 → 凶
-        assert r["combined"]["final_verdict"] == "凶"  # 流年修正
+        # 2026-10-20 第二版 (原著核实): 流年自身 重恶(冲年+害日+冲运+空亡=重灾级) → 凶
+        #   (L4276 重灾); 大运壬戌带天罗(LM-V124)= 屯蹇凶祸之运, 太岁辰冲运戌 → L4273 发祸
+        assert r["tone"] == "凶"  # 流年修正
+        assert r["combined"]["l4273"]["mode"] == "发祸"
 
 
 class TestYu1951:
@@ -103,11 +108,11 @@ class TestYu1951:
         assert outs.get("LM-V51")       # 压月柱
         # 2026-10-20 严谨复核 (L4409 组合吉面): 太岁卯压月柱 → 不满足"无冲害刑压",
         #   LM-Y71 合局吉不立 (原泛合拉平口径废弃) → 空亡+压月柱 2凶
-        # 2026-10-20 原著聚合重构 (L4276/L4273): 流年自身 厚福+中恶 = 吉凶相杂(浮灾细累,
-        #   L4276 八分福行五六分恶只浮灾细累); 综合判定 辛亥运带天罗(V124) = 凶祸之运,
-        #   太岁卯刑压月柱 → 方可发祸 (L4273) → final 凶 (喻求清 1951 年被处决)
-        assert r["tone"] == "吉凶相杂"
-        assert r["combined"]["final_verdict"] == "凶"
+        # 2026-10-20 第二版 (原著核实): 流年自身 厚福+中恶 = 吉凶相杂(浮灾细累,
+        #   L4276 八分福行五六分恶只浮灾细累); L4273: 辛亥运带天罗(LM-V124) = 屯蹇
+        #   凶祸之运, 太岁卯刑压月柱 → 方可发祸 → 流年 tone 升凶 (喻求清 1951 年被处决)
+        assert r["tone"] == "凶"
+        assert r["combined"]["l4273"]["mode"] == "发祸"
 
 
 class TestCai1916:
@@ -123,11 +128,11 @@ class TestCai1916:
         outs = {v["rule_id"]: v for v in r["verdicts"]}
         assert outs.get("LM-V59B")     # 丙辛合日干 → 晦气
         assert outs.get("LM-V61") is None   # 辰非空亡(辛卯=甲申旬空午未)
-        # 2026-10-20 原著聚合重构 (L4276): 重恶(晦气4+害日3+犯忌3=10=七分恶运) → 凶
-        #   (蔡锷 1916 卒于日本; 档位措辞 凶 替代 偏凶)
+        # 2026-10-20 第二版 (原著核实): 流年自身 重恶(晦气4+害日3+犯忌3=10=七分恶运) → 凶
+        #   (L4276 方有重灾; 蔡锷 1916 卒于日本); 大运乙卯吉泰+太岁辰害日支卯 → L4273
+        #   浮灾标注(不为重害) — 流年自身已凶, 浮灾不加重不减轻
         assert r["tone"] == "凶"
-        # combined: 重恶不因偏吉大运降级 (L4273 细累浮灾仅限刑害级, 重灾级仍报凶)
-        assert r["combined"]["final_verdict"] == "凶"
+        assert r["combined"]["l4273"]["mode"] == "浮灾"
 
 
 class TestGLMGood:
@@ -146,8 +151,9 @@ class TestGLMGood:
         assert outs.get("LM-V67") is None
         assert outs.get("LM-V68") is None
         # 2026-10-20 严谨复核 (L4409 组合吉面): 太岁卯压月柱 → V65 贵禄马吉不立(凶占先),
-        #   Y71 合局吉亦不立 → 空亡+压月柱 2凶 → 偏凶 (喻求清 1951 年被处决)
-        assert r["tone"] == "吉凶相杂"
+        #   Y71 合局吉亦不立 → 空亡+压月柱 2凶; L4273: 辛亥运天罗=凶祸之运+太岁卯刑压
+        #   → 发祸 → tone 凶 (喻求清 1951 年被处决)
+        assert r["tone"] == "凶"
         assert outs.get("LM-V61")      # 太岁卯年旬空亡仍在
 
     def test_128_glm_clean_year_positive(self, be):

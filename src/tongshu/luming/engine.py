@@ -2834,17 +2834,23 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     counts = {"吉": 0, "动": 0, "平": 0, "滞": 0, "凶": 0}
     for v in verdicts:
         counts[v["tone"]] = counts.get(v["tone"], 0) + 1
-    # 2026-10-20 原著吉凶聚合重构 (L4276 论祸福): 基地福力 × 岁运恶力 查表判定,
-    #   非逐条±1计数对冲 — 强度分级(YEAR_XI/YEAR_XIONG) × 福力(厚/中/薄) 查表.
-    #   措辞对齐原著: 吉 / 吉凶相杂 (L4276 浮灾细累 / L11702 凶中带贵) / 凶.
-    from .strength import base_fortune, year_power, aggregate, dim_hits_of
+    # 2026-10-20 第二版 (原著核实): 大运归大运、流年归流年 — 原著无运年算术聚合
+    #   (三命通会 L943: 大运虽吉小运不通未可便言吉利; 大运虽凶小运却吉未可便作凶推).
+    #   → 流年自身判定 = L4276 基地福力 × 流年恶力 查表 (非逐条±1对冲);
+    #     唯一互动 = L4273 条件标注 (凶祸之运+太岁刑冲→发祸 / 吉泰之运+太岁刑害→浮灾).
+    from .strength import base_fortune, year_power, aggregate, dim_hits_of, l4273_interaction
     _base = base_fortune(lm) if lm is not None else {"score": 0.5, "level": "中"}
     _power = year_power(verdicts)
     _dims = dim_hits_of(verdicts)
     _agg = aggregate(_base, _power, _dims)
     year_tone = _agg["verdict"]
 
-    # combined: 大运柱吉凶 (含 risk) + 流年凶 → 该年最终方向
+    # L4273 条件互动 (原著唯一运年互动, 标注非合成)
+    _i4273 = l4273_interaction(lm, year_tone, yctx) if lm is not None else {
+        "mode": "无", "year_tone": year_tone, "detail": "", "luck_verdict": ""}
+    year_tone = _i4273["year_tone"]
+
+    # combined: 大运吉凶(独立展示) + L4273 条件互动标注 — 不再做运年算术聚合
     combined = None
     if lm is not None and yctx["luck_pillar"]:
         pillars = (lm.tone_scope or {}).get("pillars", [])
@@ -2852,28 +2858,12 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         if info:
             lc = info["counts"]
             risk_n = len(info.get("risk") or [])
-            # 2026-10-20 原著聚合重构: L4273 运主年辅 — 大运为十年基调,
-            #   吉运中遇太岁刑害 = 细累浮灾(恶力降级) / 凶运中遇刑冲 = 发祸(升级)
-            #   凶祸之运判定: 运层含重灾级信号 (天罗V124/大小耗V125/元辰犯运V49-YC/
-            #   凶煞临V49-XS) 即 L4273"屯蹇凶祸之运", 不论其计数对冲结果 —
-            #   (喻求清1951 辛亥运计数"相当"但带天罗 → 1951 卯年刑压+空亡 在凶祸运中
-            #    方可发祸 → 重灾; 若按计数"相当"则判轻为相杂, 与处决事实不符)
-            _luck_rules = {v["rule_id"] for v in lm.verdicts
-                           if v.get("scope") == "运" and v.get("target") == yctx["luck_pillar"]}
-            _lv = "平"
-            if _luck_rules & {"LM-V124", "LM-V125", "LM-V49-YC", "LM-V49-XS"}:
-                _lv = "凶"      # L4273 凶祸之运 (屯蹇), 年上刑冲即可发祸
-            elif info["verdict"] in ("偏吉", "吉"):
-                _lv = "吉"
-            elif info["verdict"] in ("偏凶", "凶"):
-                _lv = "凶"
-            _agg2 = aggregate(_base, _power, _dims, luck_level=_lv)
-            fv = _agg2["verdict"]
             combined = {"luck_pillar": yctx["luck_pillar"],
                         "luck_verdict": info["verdict"], "luck_counts": lc,
                         "luck_risk": list(info.get("risk") or []),
                         "year_counts": counts,
-                        "final_verdict": fv, "l4276": _agg2}
+                        "year_tone": year_tone, "l4276": _agg,
+                        "l4273": _i4273}
 
     # 禄刃印母法 (子平轴独立校验层, 不并入禄命吉凶聚合 — 体系分界)
     # 2026-10-20: 用户提供流年细批母法, 按原著核实后落层 —
