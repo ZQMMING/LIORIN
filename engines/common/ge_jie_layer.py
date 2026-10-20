@@ -1061,8 +1061,11 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                         'overpower_combo': 6,
                         'zhi_wx': [GAN_WX[shi_gans[0]]] if shi_gans else [],
                         'hua_wx': [GAN_WX[yin_gans[0]]] if yin_gans else [],
-                        'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财透无制(印化已立, 财单见即破)
-                        'rule': 'PZZQ255: 身强七煞逢制(食制/印化)->煞格成; 煞是格体不报杀重病; 破格: 财透无制',
+                        # ★ V7.55 破格要件=「有财而无制」(原典 PZZQ L1146/L1155); 成格已逢制 -> 财党煞受制, 不破格.
+                        #   「忌财生煞」为行运之忌(L4152), 非原局破格.
+                        'po_ge': ([{'type':'组合','match':'ANY','required':['正财','偏财']}]
+                                  if (cai_gans and not has_zhi) else []),
+                        'rule': 'PZZQ255: 身强七煞逢制(食制/印化)->煞格成; 煞是格体不报杀重病; 破格: 财透而无制(PZZQ L1146/L1155)',
                     }
                     return _attach_ge_evidence(facts)
             # 不成格: 哑巴标签
