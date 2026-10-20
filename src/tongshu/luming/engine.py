@@ -2790,6 +2790,22 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     tai_wu_gui = bool(
         tai_nayin_rel == "克我" and
         _tai_wu_gui_stage in ("长生", "沐浴", "帝旺", "死", "绝"))
+    # 四煞 (珞琭子三命消息赋: "四煞轻, 五鬼重…运逢之轻, 岁遇之重"; 双取法互证:
+    #   莹和尚/徐子平/三命通会 L14009: "辰戌丑未谓之四煞, 亦云三丘之地, 各以
+    #     五行五墓" — 墓库之煞;
+    #   王廷光/渊海子平 L9163: "命前四辰曰四煞, 乃寅申巳亥四冲之劫煞也" — 四孟劫;
+    #   四煞冲身命应事: SMTH L18752/YHZP L13224 "四煞若冲身命, 定应游走他乡";
+    #   徐子平注 L78: "元命犯辰戌丑未在四柱中, 或大运又行到其上者谓之四煞")
+    #   → 取墓库派(莹和尚/徐子平)落岁遇轻凶; 冲身命(年/日支)落游走他乡
+    _si_sha_branches = {"CHEN", "XU", "CHOU", "WEI"}
+    _yuan_ju_sha = bool(_si_sha_branches & frozenset(
+        {chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
+         chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch}))
+    tai_si_sha = bool(tb in _si_sha_branches and _yuan_ju_sha)
+    tai_si_sha_chong = bool(
+        tb in _si_sha_branches and
+        (_is_clash(tb, chart.year_pillar.earthly_branch)
+         or _is_clash(tb, chart.day_pillar.earthly_branch)))
 
     # 天罗地网 (SMTH L9724): 大运支+太岁支 = 戌亥 / 辰巳
     tldw = ""
@@ -2993,6 +3009,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_gan_tui_liang_chong": tai_gan_tui_liang_chong,
         "tai_mu": tai_mu,
         "tai_wu_gui": tai_wu_gui, "tai_wu_gui_stage": _tai_wu_gui_stage,
+        "tai_si_sha": tai_si_sha, "tai_si_sha_chong": tai_si_sha_chong,
         # 小运 (排盘引擎产出, 本层消费): 干支/纳音/十二宫/刑害/贵马
         "xiao_yun": _xy_gz, "xiao_yun_nayin": xy_nayin,
         "xiao_yun_growth": xy_growth, "xy_dead_jue": xy_dead_jue,
@@ -3150,4 +3167,6 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "tai_mu": yctx.get("tai_mu", False),
             "tai_wu_gui": yctx.get("tai_wu_gui", False),
             "tai_wu_gui_stage": yctx.get("tai_wu_gui_stage", ""),
+            "tai_si_sha": yctx.get("tai_si_sha", False),
+            "tai_si_sha_chong": yctx.get("tai_si_sha_chong", False),
             "dl_guan_di_wang": yctx.get("dl_guan_di_wang", False)}

@@ -376,3 +376,22 @@ class TestYearDistributionSystemic:
         # 非克我之年不触发: 2023 癸卯(金箔金? 癸卯金生水?) — 金生水非克我
         r2 = _qy(be, 1983, 11, 3, 12, 2023, gender="female")
         assert not r2.get("tai_wu_gui")
+
+    def test_139_si_sha(self, be):
+        """2026-10-21 四煞 (珞琭子三命消息赋'四煞轻五鬼重'四煞侧;
+        双取法互证: 莹和尚/徐子平/三命通会=辰戌丑未三丘五墓, 王廷光=寅申巳亥
+        四冲之劫; 徐子平注'元命犯辰戌丑未在四柱中或大运又行到其上谓之四煞';
+        冲身命: '四煞若冲身命定应游走他乡')."""
+        # 1983 坤造 月戌日未 原局犯辰戌丑未: 2021 辛丑 太岁丑=四煞+冲日支未
+        r = _qy(be, 1983, 11, 3, 12, 2021, gender="female")
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert r.get("tai_si_sha") is True
+        assert r.get("tai_si_sha_chong") is True    # 丑冲未(日支/身)
+        assert outs.get("LM-V88")
+        assert outs.get("LM-V89")
+        # 原局无辰戌丑未者不触发: 1989 乾造(日庚子?) 查 2021 辛丑
+        r2 = _qy(be, 1989, 12, 26, 22, 2021, gender="male")
+        assert not r2.get("tai_si_sha")
+        # 非四煞年不触发: 2023 癸卯
+        r3 = _qy(be, 1983, 11, 3, 12, 2023, gender="female")
+        assert not r3.get("tai_si_sha")
