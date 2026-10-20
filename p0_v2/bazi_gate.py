@@ -691,6 +691,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
                     "evidence_refs": yy.get("evidence_refs"),
                     "yuanliu_yongshen": yy.get("yuanliu_yongshen"),   # ★ 第2层 源流(DTS L245)
                     "tiaohou_yongshen": yy.get("tiaohou_yongshen"),   # ★ 第3层 调候(DTS L295/L300)
+                    "xiji_xian": yy.get("xiji_xian"),   # ★ V7.46 喜忌闲三桶(DTS L404 + PZZQ L3208 十神查表)
                     },
         "yongshen_decision": {   # ★ 第4层 喜用神路由(程级·A′ 消解)
             "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),

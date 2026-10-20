@@ -49,10 +49,17 @@ _GEJU_XIJI = {
 }
 # 十神名 → 日主相对五行: 财=KE[日主], 官杀=KE_BACK[日主], 印=SHENG_BACK[日主],
 #   食伤=SHENG[日主], 比劫=日主本身, 枭=印(偏印), 印比=印+比劫. 查表依据全在既有五行表.
+#   十神名键须覆盖 _GEJU_XIJI 全部喜/忌值(正官/七杀/正印/偏印/正财/偏财/食神/伤官/比肩/劫财),
+#   否则该格查表忌/喜失算(如正官格忌=伤官, 漏键则盘9 忌桶空).
 _TEN_GOD_WX = {'财': lambda d: KE.get(d, ''), '官杀': lambda d: KE_BACK.get(d, ''),
-               '官': lambda d: KE_BACK.get(d, ''), '印': lambda d: SHENG_BACK.get(d, ''),
-               '枭': lambda d: SHENG_BACK.get(d, ''), '食伤': lambda d: SHENG.get(d, ''),
-               '比劫': lambda d: d, '印比': lambda d: [SHENG_BACK.get(d, ''), d]}
+               '官': lambda d: KE_BACK.get(d, ''), '正官': lambda d: KE_BACK.get(d, ''),
+               '七杀': lambda d: KE_BACK.get(d, ''), '杀': lambda d: KE_BACK.get(d, ''),
+               '印': lambda d: SHENG_BACK.get(d, ''), '正印': lambda d: SHENG_BACK.get(d, ''),
+               '偏印': lambda d: SHENG_BACK.get(d, ''), '枭': lambda d: SHENG_BACK.get(d, ''),
+               '食神': lambda d: SHENG.get(d, ''), '伤官': lambda d: SHENG.get(d, ''),
+               '食伤': lambda d: SHENG.get(d, ''),
+               '比劫': lambda d: d, '比肩': lambda d: d, '劫财': lambda d: d,
+               '印比': lambda d: [SHENG_BACK.get(d, ''), d]}
 
 
 def _tg_wx(cat, dmwx):
@@ -319,20 +326,45 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         elif _hua:
             _w = _hua[0]
             _source = '源4:专旺化神(ge_cheng.hua_wx, PZZQ L170 独象喜行化地)'
+        # ★ V7.46 忌桶撤 V7.45 机械派生(KE[用神]+日主), 改十神查表+破格忌(DTS L404/PZZQ L3208)
+        #   按 month_qi_ten_god + _GEJU_XIJI 查表派生喜忌(独立于 _w 是否非空):
+        #   喜桶 = 查表喜十神→五行 + 格喜(xi_wx) + 用神(_w); 忌桶 = 查表忌十神→五行 + 破格忌(po_ge)
+        _dmwx_fb = facts.get('daymaster_element') or dm
+        _tg_fb = facts.get('month_qi_ten_god', '') or ''
+        _x_tg_fb, _j_tg_fb = _GEJU_XIJI.get(_tg_fb, ([], []))
+        _ji_bkt_fb = []
+        for _c_fb in _j_tg_fb:
+            for _gw_fb in _tg_wx(_c_fb, _dmwx_fb):
+                if _gw_fb and _gw_fb not in _ji_bkt_fb:
+                    _ji_bkt_fb.append(_gw_fb)
+        for _p_fb in (_gc.get('po_ge') or []):
+            for _g_fb in (_p_fb.get('required') or []):
+                for _gw_fb in _tg_wx(_g_fb, _dmwx_fb):
+                    if _gw_fb and _gw_fb not in _ji_bkt_fb:
+                        _ji_bkt_fb.append(_gw_fb)
+        _xi_bkt_fb = []
+        for _c_fb in _x_tg_fb:
+            for _gw_fb in _tg_wx(_c_fb, _dmwx_fb):
+                if _gw_fb and _gw_fb not in _xi_bkt_fb:
+                    _xi_bkt_fb.append(_gw_fb)
+        for _wgb in (_gc.get('xi_wx') or []):
+            if _wgb and _wgb not in _xi_bkt_fb:
+                _xi_bkt_fb.append(_wgb)
+        if _w and _w not in _xi_bkt_fb:
+            _xi_bkt_fb.append(_w)
+        # 互斥(DTS L404「自喜忌之外皆闲神」: 同一五行不可既喜又忌, 冲突则归闲=中性):
+        #   喜∩忌 的五行从两桶各剔除, 落入闲桶(既非明确喜亦非明确忌, 岁运引动才定).
+        _conflict_fb = [w for w in _ji_bkt_fb if w in _xi_bkt_fb]
+        _xi_bkt_fb = [w for w in _xi_bkt_fb if w not in _conflict_fb]
+        _ji_bkt_fb = [w for w in _ji_bkt_fb if w not in _conflict_fb]
+        _xian_bkt_fb = list(_conflict_fb)
+        _wp_el_fb = (facts.get('wuxing_power') or {}).get('wuxing_power') or {}
+        _present_fb = [w for w in ("木", "火", "土", "金", "水") if (_wp_el_fb.get(w) or {}).get('stem_n', 0) or (_wp_el_fb.get(w) or {}).get('ben_n', 0) or (_wp_el_fb.get(w) or {}).get('zhong_n', 0) or (_wp_el_fb.get(w) or {}).get('yu_n', 0)]
+        for w in _present_fb:
+            if w in _xi_bkt_fb or w in _ji_bkt_fb or w in _xian_bkt_fb or w == _w:
+                continue
+            _xian_bkt_fb.append(w)
         if _w:
-            # ★ V7.46 忌桶撤 V7.45 机械派生(KE[用神]+日主, 单五行生克), 改十神查表+破格忌(DTS L404/PZZQ L3208)
-            _xjj = _rt.get("xiji_xian") or {}
-            _xi_bkt_fb = [w for w in (_xjj.get("xi_wx") or []) if w]
-            if _w and _w not in _xi_bkt_fb:
-                _xi_bkt_fb.append(_w)
-            _ji_bkt_fb = [w for w in (_xjj.get("ji_wx") or []) if w]
-            _xian_bkt_fb = []
-            _wp_el_fb = (facts.get("wuxing_power") or {}).get("wuxing_power") or {}
-            _present_fb = [w for w in ("木", "火", "土", "金", "水") if (_wp_el_fb.get(w) or {}).get('stem_n', 0) or (_wp_el_fb.get(w) or {}).get('ben_n', 0) or (_wp_el_fb.get(w) or {}).get('zhong_n', 0) or (_wp_el_fb.get(w) or {}).get('yu_n', 0)]
-            for w in _present_fb:
-                if w in _xi_bkt_fb or w in _ji_bkt_fb or w == _w:
-                    continue
-                _xian_bkt_fb.append(w)
             return {'layer': 'YONGYAO_RESOLVE', 'state': 'GE_FALLBACK',
                     'primary_medicine': {'wuxing': _w, 'gan': list(WX_GAN.get(_w, ())),
                                           'function': _source, 'kind': '格体喜神/救应神',
@@ -348,6 +380,18 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
                     'routing': _rt,   # ★ 第4层 程级路由
                     'boundary_note': '源1无主病, 走格体喜神/救应神 fallback(架构§2.9 五源); 喜忌闲=DTS L404 + PZZQ L3208 十神查表(撤 V7.45 机械 KE[用神]+日主)'}
+        # ★ 无格 fallback: 有查表喜忌但无用神(无格体喜神/救应神) → 仍出喜忌闲三桶
+        if _xi_bkt_fb or _ji_bkt_fb:
+            return {'layer': 'YONGYAO_RESOLVE', 'state': 'NO_BING_GE_XIJI',
+                    'primary_medicine': None, 'auxiliary_medicine': [],
+                    'ji_shen': _ji_bkt_fb,
+                    'xiji_xian': {'xi_wx': _xi_bkt_fb, 'ji_wx': _ji_bkt_fb, 'xian_wx': _xian_bkt_fb,
+                                  'basis': 'PZZQ L3208 十神喜忌查表(_GEJU_XIJI)+破格忌; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
+                    'rejected_climate': rejected_climate,
+                    'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
+                    'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
+                    'routing': _rt,   # ★ 第4层 程级路由
+                    'boundary_note': '源1无主病+无格体喜神/救应神, 但十神查表有喜忌(PZZQ L3208), 仍出喜忌闲三桶; 不裁决用神'}
         # ★ 源5: 无病无格 → 按 L3 方向出旺衰喜用神(DTS L215 体用正法 + L235 衰帮旺泄)
         #   V7.43 补源5取神规则(彻底修, 非 case 特判): 原典 DTS L215 体用正法——
         #   「日主弱, 则提纲有物, 帮身以制其神者, 亦皆为我用;
@@ -377,20 +421,24 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
             if _w5 and _w5 not in _xi_bkt5:
                 _xi_bkt5.append(_w5)
             _ji_bkt5 = [w for w in (_xjj5.get("ji_wx") or []) if w]
-            _xian_bkt5 = []
+            # 互斥(DTS L404): 喜∩忌 冲突五行归闲桶(既非明确喜亦非明确忌)
+            _conflict5 = [w for w in _ji_bkt5 if w in _xi_bkt5]
+            _xi_bkt5 = [w for w in _xi_bkt5 if w not in _conflict5]
+            _ji_bkt5 = [w for w in _ji_bkt5 if w not in _conflict5]
+            _xan_bkt5 = list(_conflict5)
             _wp_el5 = (facts.get("wuxing_power") or {}).get("wuxing_power") or {}
             _present5 = [w for w in ("木", "火", "土", "金", "水") if (_wp_el5.get(w) or {}).get('stem_n', 0) or (_wp_el5.get(w) or {}).get('ben_n', 0) or (_wp_el5.get(w) or {}).get('zhong_n', 0) or (_wp_el5.get(w) or {}).get('yu_n', 0)]
             for w in _present5:
-                if w in _xi_bkt5 or w in _ji_bkt5 or w == _w5:
+                if w in _xi_bkt5 or w in _ji_bkt5 or w in _xan_bkt5 or w == _w5:
                     continue
-                _xian_bkt5.append(w)
+                _xan_bkt5.append(w)
             return {'layer': 'YONGYAO_RESOLVE', 'state': 'GE_FALLBACK',
                     'primary_medicine': {'wuxing': _w5, 'gan': list(WX_GAN.get(_w5, ())),
                                           'function': _src5, 'kind': '旺衰喜用神',
                                           'classic': 'DTS L215 体用 + L235 衰喜帮/旺宜泄', 'blocked': None},
                     'auxiliary_medicine': [{'wuxing': a, 'gan': list(WX_GAN.get(a, ()))} for a in _aux5],
                     'ji_shen': _ji_bkt5,
-                    'xiji_xian': {'xi_wx': _xi_bkt5, 'ji_wx': _ji_bkt5, 'xian_wx': _xian_bkt5,
+                    'xiji_xian': {'xi_wx': _xi_bkt5, 'ji_wx': _ji_bkt5, 'xian_wx': _xan_bkt5,
                                   'basis': 'PZZQ L3208 十神喜忌查表(_GEJU_XIJI); DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
                     'rejected_climate': rejected_climate,
                     'ge_fallback_source': _src5,
@@ -566,11 +614,17 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     _sb_bw = SHENG_BACK.get(bw, '')
     if _sb_bw and _sb_bw not in _ji_bkt:
         _ji_bkt.append(_sb_bw)
+    # ★ V7.46 互斥(DTS L404「自喜忌之外皆闲神」: 同一五行不可既喜又忌, 冲突则归闲=中性):
+    #   喜∩忌 的五行从两桶各剔除, 落入闲桶(既非明确喜亦非明确忌, 岁运引动才定).
+    _conflict = [w for w in _ji_bkt if w in _xi_bkt]
+    _xi_bkt = [w for w in _xi_bkt if w not in _conflict]
+    _ji_bkt = [w for w in _ji_bkt if w not in _conflict]
     _pm_wx = (zhu or {}).get('wuxing', '')
     _wp_el = (facts.get('wuxing_power') or {}).get('wuxing_power') or {}
     _present = [w for w in ("木", "火", "土", "金", "水") if (_wp_el.get(w) or {}).get('stem_n', 0) or (_wp_el.get(w) or {}).get('ben_n', 0) or (_wp_el.get(w) or {}).get('zhong_n', 0) or (_wp_el.get(w) or {}).get('yu_n', 0)]
+    _xian_wx = list(_conflict)
     for w in _present:
-        if w in _xi_bkt or w in _ji_bkt or w == _pm_wx:
+        if w in _xi_bkt or w in _ji_bkt or w in _xian_wx or w == _pm_wx:
             continue
         _xian_wx.append(w)
 
