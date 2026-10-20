@@ -291,13 +291,13 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
     lines.append("")
 
     # 四、太岁
-    lines.append("## 四、太岁断语")
+    lines.append("## 四、太岁断语（仅当前视角太岁；逐年太岁断语见报告末流年表，逐年按大运×太岁×小运完整展开）")
     lines.append("")
     if report["tai_sui"]:
         for v in report["tai_sui"]:
             lines.append(f"- [{v['tone']}] {_clip(_zh(v['out']))}（{_clip(_zh(v['detail']))}）")
     else:
-        lines.append("- （当前视角太岁无触发断语；逐年太岁断语见报告末流年表，逐年按大运×太岁×小运完整展开）")
+        lines.append("- （当前视角太岁无触发断语）")
     lines.append("")
 
     # 二运喜会/厄会 (大运×小运)
@@ -325,8 +325,12 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
         c = hz["layers"].get(k, {"吉": 0, "凶": 0, "平": 0, "滞": 0})
         lines.append(f"| {k} | {c['吉']} | {c['凶']} | {c['平']} | {c['滞']} |")
     lines.append("")
+    # 2026-10-21 运层注动态化: 凶数=逐柱凶+二运厄会条数 (不再硬编码前例数字)
+    _ly_x = hz["layers"].get("运", {}).get("凶", 0)
+    _er_n = len(report["er_yun"])
     lines.append("> 注：运层计数含二运视角断语（大运×小运厄会，不入单柱行）与十二宫滞信号；逐柱行已按同口径列出滞数。"
-                 "本例运层凶17 = 逐柱凶16 + 二运厄会（LM-V24 厄会②，运层视角计1条）。")
+                 f"本例运层凶{_ly_x} = 逐柱凶{_ly_x - _er_n} + 二运厄会{_er_n}条"
+                 "（LM-V24 运层视角计；具体条目见上节'二运喜会/厄会'，已按年份/大运×小运视角落条目）。")
     cc = hz["current_counts"]
     oc = hz["overall_counts"]
     # 2026-10-20 原著措辞统一 (L4276): 偏吉→吉 / 吉凶相当→吉凶相杂 / 偏凶→凶

@@ -1471,6 +1471,21 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
     # 元辰 (L3345/L1711: 阳男阴女冲前一位/阴男阳女冲后一辰; 岁运临之如物当风)
     yuan_chen = _calc_yuan_chen(chart)
     yuan_chen_cn = BRANCH_CN.get(yuan_chen, yuan_chen) if yuan_chen else ""
+    # 动态取法注 (2026-10-21 用户核验: detail 不得硬编码前例文本, 按本命年支算)
+    _yc_note = ""
+    if yuan_chen:
+        _yb_c = chart.year_pillar.earthly_branch
+        _is_yang = chart.year_pillar.heavenly_stem in _YANG_STEMS
+        _yc_shun = (_is_yang and chart.gender == "male") or \
+            (not _is_yang and chart.gender == "female")
+        _yc_chong = next((x for _pair2 in BRANCH_CLASH_PAIRS if _yb_c in _pair2
+                          for x in _pair2 if x != _yb_c), "")
+        if _yc_chong:
+            _yc_note = (f"{_STEM_CN_LOCAL.get(chart.year_pillar.heavenly_stem, '')}"
+                        f"{BRANCH_CN.get(_yb_c, _yb_c)}{'男' if chart.gender == 'male' else '女'}，"
+                        f"{BRANCH_CN.get(_yb_c, _yb_c)}冲{BRANCH_CN.get(_yc_chong, _yc_chong)}，"
+                        f"冲{'前' if _yc_shun else '后'}一位为{BRANCH_CN.get(yuan_chen, yuan_chen)}")
+    yuan_chen_note = _yc_note
 
     # 大运柱 (浅拷贝, 补 shier_gong_desc 文案; 不污染调用方)
     dayun_pillars = []
@@ -2119,6 +2134,7 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         "zang_tou_kong_wang": "、".join(_ZANG_TOU_CN.get(g, g) for g in zang_tou_hits),
         "yuan_chen": yuan_chen,
         "yuan_chen_cn": yuan_chen_cn,
+        "yuan_chen_note": yuan_chen_note,
         "year_nayin": (nayin_chain or {}).get("year_nayin", ""),
         "dayun_pillars": dayun_pillars,
         # ---- 原局凶格组合 (2026-10-20 五行精纪命例方向 oracle) ----
@@ -2276,7 +2292,9 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
             _emit(rule, ctx)
         elif mode == "per_pillar":
             for _pv in ctx["dayun_pillars"]:
-                _emit(rule, _pv)
+                # 2026-10-21: 合并 ctx 顶层 (yuan_chen_note 等动态取法注),
+                #   每柱字段优先 (与 per_list 同构)
+                _emit(rule, {**ctx, **_pv})
         elif mode == "per_list":
             for _it in ctx.get(rule.get("list_key", ""), []):
                 _emit(rule, {**ctx, **_it})
@@ -2436,18 +2454,9 @@ def _build_tone_scope(verdicts: tuple, luck_view: Dict | None = None,
         # 亲缘凶仍计入 layers 计数, 与断语列表同源; 方向净分权重见 _verdict 的 LUCK_XIONG)
         if sc == "原局" and rid in ("LM-V32", "LM-V14"):
             pass
-        # 生我吉信息去重 (2026-10-20 命例方向 oracle 根因):
-        # V33 纳音生克逐柱生我吉 + V34 命宫身宫生我吉 为同一"印绶有气"事实,
-        # 重复计数致吉信号系统性虚高 (韩球/老庚辰/玉黼 吉5-7 的来源)
-        # → 生我吉净分只计1条, 逐柱明细仍输出 (映射层保留多柱印绶说明)
-        if sc == "原局" and rid == "LM-V33" and tone == "吉":
-            if _v33_sheng_done:
-                continue
-            _v33_sheng_done = True
-        if sc == "原局" and rid == "LM-V34" and tone == "吉":
-            if _v34_sheng_done:
-                continue
-            _v34_sheng_done = True
+        # 2026-10-21 用户核验(1986乾造): 汇总必须与断语列表逐项同源 —
+        # 撤除 V33/V34"生我吉去重"(旧 2026-10-20 oracle 收紧产物):
+        # 命宫/身宫/多柱生我吉均逐条计数, 与断语列表一致, 不再静默少计
         # 重大凶格 (2026-10-20 命例方向 oracle): 按原文强度分级 —
         # 三合临官"必主极刑"(L3342) = 极凶级 ×4, 贵格不抵 (戚世显"虽贵终被极刑");
         # 仇雠"逢之灾咎及其身"(L1245, 韩球/老庚辰作过恶) = 极凶级 ×4;
@@ -3016,6 +3025,15 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     tai_gou_jiao = bool(tb in (_gou, _jiao))
     sang_diao_which = "丧门" if tb == _men_gate else ("吊客" if tb == _diao_ke else "")
     gou_jiao_which = "勾煞" if tb == _gou else ("绞煞" if tb == _jiao else "")
+    # 动态取法注 (2026-10-21 用户核验: 不得硬编码前例文本; 按本命年支算前三/后三辰)
+    _gj_note = ""
+    if tai_gou_jiao:
+        _cls = "阳男阴女" if (_yang_male or _yin_female) else "阴男阳女"
+        _gj_note = (f"{_STEM_CN_LOCAL.get(year_stem, '')}{BRANCH_CN.get(year_branch, year_branch)}"
+                    f"{'男' if chart.gender == 'male' else '女'}属{_cls}类，"
+                    f"命前三辰{BRANCH_CN.get(_gou, _gou)}为勾、后三辰"
+                    f"{BRANCH_CN.get(_jiao, _jiao)}为绞")
+    gou_jiao_note = _gj_note
 
     # 交运年 (五行精纪 L4267-4268 珞琭子: "阴男阳女时观出入之年, 有吉凶之变";
     #         L4269 三命指掌: "凡阳男阳女, 至交运时, 主有灾滞")
@@ -3174,6 +3192,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "gu_chen_su": gu_chen_su, "tao_hua_branch": tao_hua_branch,
         "tai_sang_diao": tai_sang_diao, "sang_diao_which": sang_diao_which,
         "tai_gou_jiao": tai_gou_jiao, "gou_jiao_which": gou_jiao_which,
+        "gou_jiao_note": gou_jiao_note,
         "tai_ke_day_stem": tai_ke_day_stem, "tai_day_fan_sui": tai_day_fan_sui,
         "day_fan_saved": day_fan_saved, "day_fan_weight": day_fan_weight,
         "tai_zheng": tai_zheng,
