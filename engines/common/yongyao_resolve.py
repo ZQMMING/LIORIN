@@ -381,9 +381,12 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                 _xi_bkt_fb.append(_wgb)
         if _w and _w not in _xi_bkt_fb:
             _xi_bkt_fb.append(_w)
-        # 互斥(DTS L404「自喜忌之外皆闲神」: 同一五行不可既喜又忌, 冲突则归闲=中性):
-        #   喜∩忌 的五行从两桶各剔除, 落入闲桶(既非明确喜亦非明确忌, 岁运引动才定).
+        # 互斥(DTS L404「自喜忌之外皆闲神」: 同一五行不可既喜又忌, 冲突则归闲=中性).
+        # ★ V7.50 病根优先(同主病层): 病根为原典主病, 明确为忌, 不降级归闲.
         _conflict_fb = [w for w in _ji_bkt_fb if w in _xi_bkt_fb]
+        if bw and bw in _xi_bkt_fb:
+            _xi_bkt_fb = [w for w in _xi_bkt_fb if w != bw]
+            _conflict_fb = [w for w in _conflict_fb if w != bw]
         _xi_bkt_fb = [w for w in _xi_bkt_fb if w not in _conflict_fb]
         _ji_bkt_fb = [w for w in _ji_bkt_fb if w not in _conflict_fb]
         _xian_bkt_fb = list(_conflict_fb)
@@ -663,7 +666,14 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         _ji_bkt.remove(_hou_wx_bkt)
     # ★ V7.46 互斥(DTS L404「自喜忌之外皆闲神」: 同一五行不可既喜又忌, 冲突则归闲=中性):
     #   喜∩忌 的五行从两桶各剔除, 落入闲桶(既非明确喜亦非明确忌, 岁运引动才定).
+    # ★ V7.50 病根优先: 病根(bw)=原典主病, 明确为忌, 非"不足以为忌"的闲神.
+    #   病根与查表喜(相对格一般倾向)同五行时: 病根留忌桶, 查表喜项剔除(不降级归闲).
+    #   例: 癸亥壬戌乙未壬午 印多埋子(bw=水) vs 财格身弱查表喜印(水) -> 水属忌, 不入闲桶.
     _conflict = [w for w in _ji_bkt if w in _xi_bkt]
+    if bw and bw in _xi_bkt:
+        # 病根优先: 该五行按病论, 从喜桶剔除; 不进闲桶(病非闲神)
+        _xi_bkt = [w for w in _xi_bkt if w != bw]
+        _conflict = [w for w in _conflict if w != bw]
     _xi_bkt = [w for w in _xi_bkt if w not in _conflict]
     _ji_bkt = [w for w in _ji_bkt if w not in _conflict]
     _pm_wx = (zhu or {}).get('wuxing', '')
