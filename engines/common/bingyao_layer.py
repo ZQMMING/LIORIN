@@ -562,15 +562,37 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         })
 
     # 4. 伤官见官 (收紧: 伤官与官杀皆须【透干】, 藏干共现不触发)
+    # ★ V7.63 增「金水伤官(冬令)例外」要件(原典 PZZQ L1156「惟金水伤官, 金寒水冷, 调候为急, 可以见官」/
+    #   L3840「金水不忌, 即金水伤官可见官之谓」/ L3843「金水伤官, 喜见官煞」/
+    #   L4352「唯金水伤官(冬令金命)是例外」):
+    #   冬令(亥子丑) 且 日主金水 -> 伤官见官不忌(调候为急, 官为用), 不报此病.
     sg_tou = _has_tengod(ten_god_members, ['伤官'], 'stem')
     gs_tou = _has_tengod(ten_god_members, ['正官', '七杀'], 'stem')
-    if sg_tou and gs_tou:
+    _winter = pillars.get('month', ['', ''])[1] in ('亥', '子', '丑')
+    _dm_jinshui = daymaster_element in ('金', '水')
+    _sg_wx = SHENG.get(daymaster_element, '')
+    _sg_dangling = (month_qi_element == _sg_wx)
+    # 金水伤官=伤官当令金水(申酉亥子月)或日主金水而伤官为金水; 本引擎取【冬令+日主金水+伤官当令金水】明文交集
+    _is_jinshui_sg = _winter and _dm_jinshui and (_sg_dangling or _sg_wx in ('金', '水'))
+    # ★ V7.64 须【月令伤官(伤官为格体)】且【非佩印(印制伤则官非其忌)】:
+    #   PZZQ L1145「伤官非金水而见官...伤官格败也」前提为月令伤官; L1157-1158「身旺用伤, 本无需佩印;
+    #   伤轻见印, 则伤为印所制...故为格之败也」—— 佩印时以印制伤, 官星非所忌.
+    _sg_ge = facts.get('ge_cheng') or {}
+    _sg_ge_name = _sg_ge.get('ge') or ''
+    _sg_is_ge = _sg_ge_name.startswith('伤官格')
+    _sg_peiyin = ('佩印' in _sg_ge_name)
+    # ★ V7.64b 官杀【有根】方为"见官"(能战): DTS 实例「官煞虽透无根, 势在去官」—— 虚透无根之官
+    #   不与伤官相战, 反可为用(去官为用), 不属伤官格败.
+    _gs_t2, _gs_b2 = _tou_ben(KE_WO.get(daymaster_element, ''))
+    _gs_has_root = _gs_b2 >= 1
+    if (sg_tou and gs_tou and _gs_has_root and not _is_jinshui_sg
+            and _sg_is_ge and not _sg_peiyin):
         b = BING_TYPES['SHANGGUAN_JIAN_GUAN']
         bing_list.append({
             'bing_id': 'SHANGGUAN_JIAN_GUAN',
             'name': b['name'], 'desc': b['desc'], 'classic': b['classic'],
             'evidence': [b['classic']],
-            'matched_facts': ['伤官透干', '官杀透干'],
+            'matched_facts': ['伤官透干', '官杀透干且有本气根%d' % _gs_b2],
         })
 
     # 5. 枭神夺食 (力量闸门, 非字面共现):
