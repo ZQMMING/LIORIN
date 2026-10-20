@@ -477,6 +477,11 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
 
     edges = []   # 每条: 五行/gan/边类型/功能/是否采纳/剔除理由
 
+    # V7.48 旺衰方向(帮/泄 取舍据 DTS L235「衰则喜帮喜助/旺则宜泄宜伤」):
+    #   身旺(strength_verdict 含'泄伤')→"帮"边(比劫助身)剔除, 助旺非疏病;
+    #   身弱(含'帮身')→"帮"边保留. 读 l3_contract, 非 case 特判.
+    _sv_val = ((facts.get('l3_contract') or {}).get('strength_verdict') or {}).get('value') or []
+    _shen_wang = '泄伤' in _sv_val
     def add(wx, kind, func):
         gan = list(WX_GAN.get(wx, ()))
         ok = _safe(wx, bw)
@@ -493,6 +498,14 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         elif kind == '化' and KE.get(dm) == wx and dm_ben == 0:
             ok = False
             note = '化财而日主无本气根, 任不起财反成财多身弱, 剔除'
+        elif kind == '帮' and _shen_wang:
+            # DTS L235 旺则宜泄宜伤: 身旺时比劫帮身=助旺非疏病, 剔除(印生身同类, 见下)
+            ok = False
+            note = '身旺帮边剔除(DTS L235 旺宜泄, 比劫助身非疏病)'
+        elif kind == '帮' and wx == SHENG_BACK.get(dm, '') and _shen_wang:
+            # 身旺时印生身(印=SHENG_BACK[dm])亦助旺, 剔除
+            ok = False
+            note = '身旺印生身剔除(DTS L235 旺宜泄)'
         edges.append({'wuxing': wx, 'gan': gan, 'kind': kind,
                       'function': func, 'accepted': ok, 'reject_reason': note})
 

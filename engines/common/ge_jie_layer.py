@@ -1024,16 +1024,10 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         # 无财官无煞: 原典"无财官而用伤食泄其太过亦为秀气(春木秋金)"-- 喜食伤(泄秀)
         if not guan and not cai and not sha and shi:
             _jl_xi.extend(shi)
-        # ★ V7.47 DTS L210 主成格路径: 建禄月劫"月令中人元透于天干者取格".
-        #   人元=月令本气十神(比肩/劫财). 人元透干即成格, 无需官财配合.
-        #   原典「至于建禄月劫羊刃, 亦当看月令中人元透于天干者取格」.
-        #   透干判据: 月令本气干(HIDDEN[月支][0])出现在四柱天干.
-        _renyuan_gan = HIDDEN.get(pillars.get('month', ['',''])[1], [''])[0] if pillars else ''
-        _renyuan_tou = _renyuan_gan and _renyuan_gan in gans
-        if _renyuan_tou:
-            ti_wx.append(GAN_WX.get(_renyuan_gan, ''))
-            # 人元透干成格, 喜神按 DTS L215 体用: 身弱喜印比(人元), 身旺喜食伤泄秀
-            _jl_xi.extend([_renyuan_gan])
+        # V7.48 撤 V7.47 的"人元透干成格"主路径: 实测把曲直格/从旺格/财格误判成建禄月劫格
+        #   (100盘 ge_diff 4->13). DTS L210「人元透干取格」须有气象形局配合, 无官财食伤配合时
+        #   仍"无格"(原路径 ti_wx/_jl_xi 空则不出格). 人元透干只在有配合神(官/财/食伤/煞)时生效,
+        #   已由上方 4 条配合路径覆盖. 撤独立主路径.
         if ti_wx or _jl_xi:
             facts['ge_cheng'] = {
                 'ge': '建禄月劫格', 'xi_wx': sorted(set(GAN_WX[g] for g in _jl_xi)),
