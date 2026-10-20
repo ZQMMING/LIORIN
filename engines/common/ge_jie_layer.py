@@ -113,10 +113,19 @@ _GE_EVIDENCE_MAP = {
 
 def _attach_ge_evidence(facts):
     """把 准神/旁参 证据链挂到 facts['ge_cheng']['ge_evidence'](不新增判定值)。
-    准神主条优先; 映射未命中时仅保留 rule 原文文本, 不硬造。"""
+    准神主条优先; 映射未命中时仅保留 rule 原文文本, 不硬造。
+    ★ V7.52 兼挂 ge_cheng.shape(格局形态, PZZQ 取运章口径): 喜忌层只读此字段。"""
     gc = facts.get('ge_cheng')
     if not isinstance(gc, dict) or not gc.get('ge'):
         return facts
+    # V7.52 格局形态(单一数据源): 由本层派生并落盘, 供 yongyao_resolve 读, 避免两层各自反推
+    try:
+        _b, _sh = derive_ge_shape(facts)
+        if _sh:
+            gc['shape'] = _sh
+            gc['shape_base'] = _b
+    except Exception:
+        pass
     ge = str(gc.get('ge'))
     base = _GE_EVIDENCE_MAP.get(ge) or {}
     if not base:
@@ -147,6 +156,72 @@ def _attach_ge_evidence(facts):
                                ' (对齐 guange_rule_contract.blocked_unknown)')
     gc['ge_evidence'] = ev
     return facts
+
+# ★ V7.52 格局形态派生(原典: PZZQ 各格「取运」章「以某格所成之局, 分而配之」).
+#   形态=该格的实际用神结构; 喜忌随形态+身轻身重而异(同一格不同形态喜忌不同).
+#   本函数是形态的唯一判定处; yongyao_resolve 只读 ge_cheng.shape, 不再自行反推(消两层口径漂移).
+_GEJU_SHAPE_SPEC = {
+    # 基名 -> [(形态名, 构成要件说明)]
+    '正官格': [('带煞', '七杀透'), ('带伤食', '食伤透'), ('佩印', '印透'),
+               ('用财', '财透'), ('用财印', '默认')],
+    '财格':   [('用食印', '食伤透+印透'), ('用食生', '食伤透'), ('佩印', '印透'),
+               ('旺生官', '官杀透'), ('用财', '默认')],
+    '印格':   [('用官带伤食', '官杀透+食伤透'), ('用官', '官杀透'),
+               ('用食伤', '食伤透'), ('印绶', '默认')],
+    '食神格': [('生财', '默认')],
+    '伤官格': [('佩印', '印透'), ('用财', '默认')],
+    '七煞格': [('食制', '默认')],
+    '建禄月劫格': [('同官格', '默认')],
+    '阳刃格': [('同官格', '默认')],
+}
+
+
+def _geju_base_name(ge):
+    """格名归基名: 印格(印多逢财)->印格; 七煞格(逢制)->七煞格."""
+    g = (ge or '').strip()
+    for sep in ('(', '（', '[', '·'):
+        if sep in g:
+            g = g.split(sep)[0]
+            break
+    return g.strip()
+
+
+def derive_ge_shape(facts):
+    """派生格局形态. 返回 (基名, 形态名). 形态要件依各格天干十神透出配置."""
+    ge = (facts.get('ge_cheng') or {}).get('ge') or ''
+    base = _geju_base_name(ge)
+    spec = _GEJU_SHAPE_SPEC.get(base)
+    if not spec:
+        return base, None
+    pl = facts.get('pillars') or {}
+    dg = (pl.get('day') or ['', ''])[0]
+    if not dg:
+        return base, None
+    tgs = set()
+    for pos in ('year', 'month', 'hour'):
+        g = (pl.get(pos) or ['', ''])[0]
+        if g:
+            tgs.add(ten_god(dg, g))
+    has_guan = ('正官' in tgs) or ('七杀' in tgs)
+    has_sha = '七杀' in tgs
+    has_yin = ('正印' in tgs) or ('偏印' in tgs)
+    has_cai = ('正财' in tgs) or ('偏财' in tgs)
+    has_ss = ('食神' in tgs) or ('伤官' in tgs)
+    # 要件判别(表驱动; 顺序=优先序, 先命中先取)
+    def _match(cond):
+        if cond == '七杀透': return has_sha
+        if cond == '食伤透': return has_ss
+        if cond == '印透': return has_yin
+        if cond == '财透': return has_cai
+        if cond == '官杀透': return has_guan
+        if cond == '食伤透+印透': return has_ss and has_yin
+        if cond == '官杀透+食伤透': return has_guan and has_ss
+        return True   # 默认
+    for name, cond in spec:
+        if _match(cond):
+            return base, name
+    return base, None
+
 
 def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None, facts=None):
     """日主视角旺衰tier: 冲拔拓扑后再判element_power_tier.

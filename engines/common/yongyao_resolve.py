@@ -147,72 +147,19 @@ def _geju_base_name(ge):
 
 
 def _geju_shape(facts):
-    """格局形态判别(表驱动): 返回 (基名, 形态名) 或 (基名, None).
-    形态依 ge_cheng 格名 + 天干十神配置派生, 各形态对应 PZZQ 取运章分档."""
-    ge = (facts.get('ge_cheng') or {}).get('ge') or ''
-    base = _geju_base_name(ge)
-    tg = facts.get('month_qi_ten_god', '') or ''
-    pl = facts.get('pillars') or {}
-    gans = []
-    for pos in ('year', 'month', 'hour'):
-        g = (pl.get(pos) or ['', ''])[0]
-        if g:
-            gans.append(g)
-    from engines.common.l0_fact_builder import ten_god as _tg
-    dm = (pl.get('day') or ['', ''])[0]
-    tgs = set()
-    for g in gans:
-        try:
-            tgs.add(_tg(dm, g))
-        except Exception:
-            pass
-    has_guan = ('正官' in tgs) or ('七杀' in tgs)
-    has_yin = ('正印' in tgs) or ('偏印' in tgs)
-    has_cai = ('正财' in tgs) or ('偏财' in tgs)
-    has_shishang = ('食神' in tgs) or ('伤官' in tgs)
-    has_sha = '七杀' in tgs
-    has_guan_only = ('正官' in tgs) and ('七杀' not in tgs)
-    # 形态判别(依 PZZQ 取运章各形态的构成要件)
-    shape = None
-    if base == '正官格':
-        if has_sha:
-            shape = '带煞'
-        elif has_shishang:
-            shape = '带伤食'
-        elif has_yin:
-            shape = '佩印'
-        elif has_cai:
-            shape = '用财'
-        else:
-            shape = '用财印'
-    elif base == '财格':
-        if has_shishang and has_yin:
-            shape = '用食印'
-        elif has_shishang:
-            shape = '用食生'
-        elif has_yin:
-            shape = '佩印'
-        else:
-            shape = '旺生官'
-    elif base == '印格':
-        if has_guan and has_shishang:
-            shape = '用官带伤食'
-        elif has_guan:
-            shape = '用官'
-        else:
-            shape = '用食伤'
-    elif base == '食神格':
-        shape = '生财'
-    elif base == '伤官格':
-        if has_yin:
-            shape = '佩印'
-        else:
-            shape = '用财'
-    elif base == '七煞格':
-        shape = '食制'
-    elif base in ('建禄月劫格', '阳刃格'):
-        shape = '同官格'
-    return base, shape
+    """格局形态读取(单一数据源): 读格局层产出的 ge_cheng.shape.
+    ★ V7.52: 形态由 ge_jie_layer.derive_ge_shape 统一派生并落盘, 本层不再自行反推
+      (原两处各自判形态, 口径可能漂移). 缺字段时回退调用格局层派生(不重复实现规则)."""
+    gc = facts.get('ge_cheng') or {}
+    base = gc.get('shape_base') or _geju_base_name(gc.get('ge') or '')
+    shape = gc.get('shape')
+    if shape:
+        return base, shape
+    try:
+        from engines.common.ge_jie_layer import derive_ge_shape
+        return derive_ge_shape(facts)
+    except Exception:
+        return base, None
 
 
 def _ws_dirn(facts):
