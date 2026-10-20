@@ -1446,6 +1446,10 @@ YEAR_RULES = [
      "out": "太岁冲年而不克本命（珞琭子：掩冲岁临尚不为灾，相生则吉；若为财反主得财），主变动破旧立新，不为大凶",
      "detail_tpl": "太岁{tai_b}冲年支{year_branch}，太岁{tai_nayin}与{year_nayin}{tai_nayin_rel}（L4416 不为灾忒，癸亥生乙巳岁例）"},
     # ---- 太岁刑冲压害分柱 (广信集 L4423: 生年父母/生月兄弟僚友/生日妻妾己身/生时子孙) ----
+    # 2026-10-20 流年系统性偏凶根治: ① 刑冲压害对四柱均按原著断"灾"(分应亲/己/子),
+    #   保持凶 — 系统性偏凶的根因是聚合(死区/大运全量叠加/吉源缺失/重复计数), 非 V51 本身;
+    #   ② 修复后靠 死区±2 + 大运权重0.5 + 合局吉(V65/V67/LM-Y71) 把普通"应期年"拉回
+    #   吉凶相当, 重凶年(岁运并临+压运+返吟+空亡+犯命)仍判偏凶 (毛1976/蔡1916 回归偏凶)
     {"id": "LM-V51", "evidence": "E-WXJ-034-010", "mode": "per_pillar",
      "scope": "流年", "target": "太岁{tai_b}刑冲压害{pos}柱",
      "tone": "凶",
@@ -1504,13 +1508,25 @@ YEAR_RULES = [
      "when": {"op": "eq", "k": "zhen_tai_sui", "v": True},
      "out": "真太岁（转趾煞），要大运日主与太岁相和相顺则吉，值刑冲破害战克则凶",
      "detail_tpl": "太岁{tai_s}{tai_b}=命柱（真太岁/转趾煞，{zhen_tai_sui_mode}）"},
-    # ---- 太岁克生时 (神白经 L4421: 若太岁克生时亦身灾) ----
+    # ---- 太岁克/合生时 (神白经 L4421 克时身灾 / 五行精纪 L4419 晦气: 生时与太岁干合为晦气, 主阴灾) ----
+    # 2026-10-20 严谨复核: "五合不论克" 仅适用于犯命(年干)判定; 生时与太岁干合按
+    # L4419 为晦气煞(凶) — 克与合均凶, 明细区分 (壬丁合 2022 案例回归晦气凶)
     {"id": "LM-V59", "evidence": "E-WXJ-034-011", "mode": "scalar",
-     "scope": "流年", "target": "太岁{tai_s}克时干{hour_stem}",
+     "scope": "流年", "target": "太岁{tai_s}克/合时干{hour_stem}",
      "tone": "凶",
-     "when": {"op": "eq", "k": "tai_ke_shi_gan", "v": True},
-     "out": "太岁克生时，主身灾",
-     "detail_tpl": "太岁干{tai_s}克时干{hour_stem}（神白经：太岁克生时亦身灾）"},
+     "when": {"op": "eq", "k": "tai_fan_shi_gan", "v": True},
+     "out_map": {"克": "太岁克生时，主身灾",
+                 "合": "生时与太岁天元干合，晦气入门，主阴灾（重者死亡，轻者灾挠）"},
+     "out_map_key": "shi_rel",
+     "out": "太岁{tai_s}与时干{hour_stem}克/合（身灾/晦气）",
+     "detail_tpl": "太岁干{tai_s}与时干{hour_stem}相{shi_rel}（神白经L4421 克时身灾 / 五行精纪L4419 晦气阴灾）"},
+    # ---- 生日与太岁干合 → 晦气 (五行精纪 L4419: 生日与太岁天元干合者谓之晦气) ----
+    {"id": "LM-V59B", "evidence": "E-WXJ-034-011", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_s}合日干{day_stem}",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_he_day_gui", "v": True},
+     "out": "生日与太岁天元干合，晦气煞，主阴灾",
+     "detail_tpl": "太岁干{tai_s}合日干{day_stem}（五行精纪 L4419: 生日与逐年太岁干合，谓之晦气，必主阴灾）"},
     # ---- 死绝会集定死 (烛神经 L4113: 二运太岁会集死绝衰息之乡更刑克, 灾限相应定死) ----
     {"id": "LM-V60", "evidence": "E-WXJ-031-001~006", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}会大运{DL}",
@@ -1546,14 +1562,46 @@ YEAR_RULES = [
      "when": {"op": "eq", "k": "tai_ya_benming", "v": True},
      "out": "岁压本命年，主动为稽滞不快",
      "detail_tpl": "太岁{tai_b}=年支{year_branch}（岁压本命年）"},
-    # ---- 太岁见贵禄马 (L4409: 无冲害刑克, 仍加贵人禄马福神之地则吉) ----
-    # tai_glm_clean 由 query_year 注入: 贵禄马命中 且 太岁与四柱无冲刑害压
+    # ---- 太岁见贵禄马 (L4409: 与本命相合、无冲害刑克, 仍加贵人禄马福神之地则吉) ----
+    # tai_glm_clean 由 query_year 注入: 贵禄马命中 且 太岁与四柱无冲害刑压
+    # (2026-10-20 严谨复核: 冲害恢复为阻断 — L4409 原文"无冲害、刑克"四者并列)
     {"id": "LM-V65", "evidence": "E-WXJ-034-016", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}见贵禄马",
      "tone": "吉",
      "when": {"op": "eq", "k": "tai_glm_clean", "v": True},
      "out": "太岁临本命贵人禄马福神之地，其年迁官得财、成名进身",
-     "detail_tpl": "太岁{tai_b}到贵/禄/马位（福神之地，无冲刑害压）"},
+     "detail_tpl": "太岁{tai_b}到贵/禄/马位（福神之地，无冲害刑压）"},
+    # ---- 太岁与命局合局 (五行精纪 L4409: "欲常与本命支干纳音相合，无冲害、刑克…
+    #      则其年有迁官得财、成名进身、婚姻生子、利见大人之福" — 2026-10-20 严谨复核:
+    #      合局吉须与"无冲害刑压"组合成立 (tai_he_ju_clean), 证据 E-WXJ-034-016;
+    #      原误挂 E-SMTH-015-002(冲运凶) 已正) ----
+    {"id": "LM-Y71", "evidence": "E-WXJ-034-016", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}合命局",
+     "tone": "吉",
+     "when": {"op": "eq", "k": "tai_he_ju_clean", "v": True},
+     "out": "太岁与命局相合、无冲害刑克，其年有迁官得财、婚姻生子之福（L4409）",
+     "detail_tpl": "{tai_he_ju_str}"},
+    # ---- L4410 纳音生克分类 (五行精纪卷卅四): 太岁与本命纳音生克定年之吉凶 ----
+    # 2026-10-20 严谨复核: V46/V47(克我凶/生我吉) 为原局 scope=太岁 规则, 流年层未执行 —
+    #   L4410 显性三条补入流年: 太岁生本命(遂心吉)/本命生太岁(破财凶)/相克(防上人怒责凶)
+    {"id": "LM-Y72", "evidence": "E-WXJ-034-009", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}生年命",
+     "tone": "吉",
+     "when": {"op": "eq", "k": "tai_nayin_rel", "v": "生我"},
+     "out": "太岁生本命年，事多遂心（L4410）",
+     "detail_tpl": "太岁{tai_b}纳音{tai_nayin}生年命{year_nayin}"},
+    {"id": "LM-Y72B", "evidence": "E-WXJ-034-009", "mode": "scalar",
+     "scope": "流年", "target": "年命生太岁{tai_b}",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_nayin_rel", "v": "我生"},
+     "out": "本命纳音生太岁年，破财劳冗，百事不成（L4410）",
+     "detail_tpl": "年命{year_nayin}生太岁{tai_nayin}"},
+    {"id": "LM-Y72C", "evidence": "E-WXJ-034-009", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}克年命",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_nayin_rel", "v": "克我"},
+     "out": "太岁与本命相克年，宜防上人怒责（L4410）",
+     "detail_tpl": "太岁{tai_b}纳音{tai_nayin}克年命{year_nayin}"},
     # ---- 天罗地网 (L9724: 辰巳地网戌亥天罗, 岁运并临克害夭亡) ----
     {"id": "LM-V66", "evidence": "E-SMTH-015-003", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}临{DL}天罗地网",

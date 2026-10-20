@@ -221,6 +221,23 @@ def _he_partner(branch: str) -> str:
     return ""
 
 
+def _he_ju_str(tb: str, four_branches: list) -> str:
+    """太岁与命局合局中文描述 (如 太岁子与申半合水)."""
+    _el = {"ZI": "水", "CHOU": "土", "YIN": "木", "MAO": "木", "CHEN": "土", "SI": "火",
+           "WU": "火", "WEI": "土", "SHEN": "金", "YOU": "金", "XU": "土", "HAI": "水"}
+    _cn = {"ZI": "子", "CHOU": "丑", "YIN": "寅", "MAO": "卯", "CHEN": "辰", "SI": "巳",
+           "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥"}
+    parts = []
+    for b in four_branches:
+        if tb == _he_partner(b):
+            parts.append(f"太岁{_cn[tb]}与{_cn[b]}六合")
+    for b in four_branches:
+        grp = BRANCH_SANHE_GROUP.get(b, ())
+        if tb in grp and tb != b:
+            parts.append(f"太岁{_cn[tb]}与{_cn[b]}三合")
+    return "、".join(parts) or "合局"
+
+
 def _is_clash(b1: str, b2: str) -> bool:
     return b1 != b2 and frozenset({b1, b2}) in BRANCH_CLASH_PAIRS
 
@@ -249,6 +266,24 @@ def _kong_wang_branches(chart: Any) -> frozenset:
         idx = JIAZI_INDEX.get((p.heavenly_stem, p.earthly_branch), 0)
         out |= set(KONG_WANG_BY_XUN.get(idx // 10, ()))
     return frozenset(out)
+
+
+def _kong_po_by_clash(chart: Any) -> set:
+    """原局空亡支被原局冲破者 (L3484 广集: '空亡本不好, 冲破不为祸反为福').
+
+    原局层 V49-KWC 与流年层 V61 共用同口径:
+    空亡支若被四柱中任一他支相冲 → 入返回值 (流年填实该支应事而不判凶)."""
+    po = set()
+    kong_in_four = _kong_wang_branches(chart) & set(chart.four_branches())
+    if not kong_in_four:
+        return po
+    _pillars4 = [chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar]
+    for _b in kong_in_four:
+        for _p in _pillars4:
+            if _p.earthly_branch != _b and _is_clash(_p.earthly_branch, _b):
+                po.add(_b)
+                break
+    return po
 
 
 # 藏头空亡名单 (五行精纪 L3485 广集: "戊子戊午己丑己未戊申戊寅
@@ -1338,14 +1373,15 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
     kong_wang_tong_chong = False
     if kong_in_four:
         _pillars4 = [chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar]
-        for _b in kong_in_four:
-            _own_gan = next((p.heavenly_stem for p in _pillars4
-                             if p.earthly_branch == _b), "")
-            for _p in _pillars4:
-                if _p.earthly_branch != _b and _is_clash(_p.earthly_branch, _b):
-                    kong_wang_chong = True
-                    if _p.heavenly_stem == _own_gan:
-                        kong_wang_tong_chong = True
+        _po_set = _kong_po_by_clash(chart)
+        if _po_set:
+            kong_wang_chong = True
+            for _b in _po_set:
+                _own_gan = next((p.heavenly_stem for p in _pillars4
+                                 if p.earthly_branch == _b), "")
+                if any(_p.earthly_branch != _b and _is_clash(_p.earthly_branch, _b)
+                       and _p.heavenly_stem == _own_gan for _p in _pillars4):
+                    kong_wang_tong_chong = True
 
     # 藏头空亡 (L3485 广集: 12 干支名单; 本是祸反为福, 戊己人带之大好)
     # 2026-10-20 命例方向 oracle: "戊己人"为吉福条件(年干或日干戊己),
@@ -2510,8 +2546,19 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
 
     # 太岁 vs 大运
     tai_chong_dayun = bool(dl_branch and _is_clash(tb, dl_branch))
-    tai_xing_dayun = bool(dl_branch and _is_xing(tb, dl_branch))
+    # 2026-10-20 流年系统性偏凶根治: 太岁支=大运支(伏吟/压运)时不再另计"自刑刑大运"
+    # (2017 丁酉 太岁酉=大运酉: 酉酉自刑曾同时触发 V53刑运+V54压运 双计凶, 同一事件拆两条)
+    tai_xing_dayun = bool(dl_branch and tb != dl_branch and _is_xing(tb, dl_branch))
     tai_ya_dayun = bool(dl_branch and tb == dl_branch)
+
+    # 太岁与命局合局 (六合/三合/半合): 合为有情, 主喜庆和合 (古法太岁合局论,
+    # 三命通会"太岁与命局相合主喜庆"系; 冲刑害另计, 吉凶并存)
+    # 2026-10-20 流年系统性偏凶根治: 补流年吉信号源 (此前吉仅 V65贵禄马+V67喜神,
+    #   吉源过稀致 0 偏吉年)
+    _fb4 = [chart.year_pillar.earthly_branch, chart.month_pillar.earthly_branch,
+            chart.day_pillar.earthly_branch, chart.hour_pillar.earthly_branch]
+    tai_he_ju = bool(any(tb == _he_partner(b) for b in _fb4)
+                     or any(tb in BRANCH_SANHE_GROUP.get(b, ()) and tb != b for b in _fb4))
     sui_yun_bing_lin = bool(dl_stem and ts == dl_stem and dl_branch and tb == dl_branch)
     tai_fan_yin = _is_clash(tb, day_branch)
     tai_fu_yin = bool(tb == day_branch)
@@ -2556,9 +2603,17 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         he_shun = not zhan_ke and (ts == day_stem or tb == _he_partner(day_branch))
         zhen_tai_sui_mode = "凶" if zhan_ke else ("吉" if he_shun else "平")
 
-    # 太岁干克时干 (神白经 L4421)
-    tai_ke_shi_gan = bool(hour_stem and STEM_ELEMENT.get(ts) and STEM_ELEMENT.get(hour_stem)
-                          and CONTROLS.get(STEM_ELEMENT[ts]) == STEM_ELEMENT[hour_stem])
+    # 太岁干克/合时干 (神白经 L4421 克时身灾 / 五行精纪 L4419 晦气)
+    # 2026-10-20 严谨复核: 五合不论克 仅适用于犯命(年干); 生时与太岁干合按
+    # L4419 为晦气煞(凶) — 克与合均凶, shi_rel 区分明细 (壬丁合 2022 案例回归晦气凶)
+    _tai_he_shi = bool(ts and hour_stem and frozenset((ts, hour_stem)) in HE_PAIR)
+    _tai_ke_shi = bool(hour_stem and STEM_ELEMENT.get(ts) and STEM_ELEMENT.get(hour_stem)
+                       and CONTROLS.get(STEM_ELEMENT[ts]) == STEM_ELEMENT[hour_stem])
+    tai_fan_shi_gan = bool(_tai_ke_shi or _tai_he_shi)
+    shi_rel = "合" if _tai_he_shi else ("克" if _tai_ke_shi else "")
+
+    # 生日与太岁干合 → 晦气 (五行精纪 L4419: 生日与逐年太岁天元干合者谓之晦气, 必主阴灾)
+    tai_he_day_gui = bool(ts and day_stem and frozenset((ts, day_stem)) in HE_PAIR)
 
     # 死绝会集定死 (烛神经 L4113): 大运支临年命死绝 + 太岁冲刑命/运
     dl_growth = _growth_stage(year_nayin_el, dl_branch) if (year_nayin_el and dl_branch) else ""
@@ -2569,11 +2624,17 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
 
     # 空亡
     kong = _kong_wang_branches(chart)
-    tai_kong_wang = bool(tb in kong)
+    # 2026-10-20 流年系统性偏凶根治: 原局空亡支若被原局冲破 (V49-KWC"冲破不为祸,
+    #   反为福也"), 流年填实该支应事而不判凶 — 与"太岁至空亡年失脱破财"互证
+    _kong_chong_po = _kong_po_by_clash(chart)
+    tai_kong_wang = bool(tb in kong and tb not in _kong_chong_po)
 
     # 犯命: 太岁干克年干 (L4409 三才刑克)
+    # 2026-10-20 流年系统性偏凶根治: 天干五合者不论克 (2024甲辰 甲己合土 错判犯命已修)
+    _tai_he_nian = bool(ts and year_stem and frozenset((ts, year_stem)) in HE_PAIR)
     tai_fan_ming = bool(year_stem and STEM_ELEMENT.get(ts) and STEM_ELEMENT.get(year_stem)
-                        and CONTROLS.get(STEM_ELEMENT[ts]) == STEM_ELEMENT[year_stem])
+                        and CONTROLS.get(STEM_ELEMENT[ts]) == STEM_ELEMENT[year_stem]
+                        and not _tai_he_nian)
 
     # 咸池 (L4411)
     tao_hua_branch = PEACH_BLOSSOM_BY_YEAR.get(year_branch, "")
@@ -2649,7 +2710,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "year": year, "age": age, "luck_pillar": DL, "DL": DL,
         "DL_growth": dl_growth, "dayun_branch": dl_branch,
         "year_stem": year_stem, "year_branch": year_branch,
-        "day_branch": day_branch, "hour_stem": hour_stem,
+        "day_branch": day_branch, "day_stem": day_stem, "hour_stem": hour_stem,
         "year_nayin": year_nayin,
         "jiao_yun": jiao_yun, "jiao_yun_from": jiao_yun_from,
         "jiao_yun_to": jiao_yun_to,
@@ -2666,7 +2727,9 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_ya_dayun": tai_ya_dayun, "sui_yun_bing_lin": sui_yun_bing_lin,
         "sui_yun_mode": sui_yun_mode, "zhen_tai_sui_mode": zhen_tai_sui_mode,
         "tai_fan_yin": tai_fan_yin, "tai_fu_yin": tai_fu_yin,
-        "zhen_tai_sui": zhen_tai_sui, "tai_ke_shi_gan": tai_ke_shi_gan,
+        "tai_he_ju": tai_he_ju, "tai_he_ju_str": _he_ju_str(tb, _fb4),
+        "zhen_tai_sui": zhen_tai_sui, "tai_fan_shi_gan": tai_fan_shi_gan,
+        "shi_rel": shi_rel, "tai_he_day_gui": tai_he_day_gui,
         "tai_death_meeting": tai_death_meeting, "tai_kong_wang": tai_kong_wang,
         "kong_wang_str": "、".join(sorted(kong)) if kong else "",
         "tai_fan_ming": tai_fan_ming, "tai_xian_chi": tai_xian_chi,
@@ -2693,10 +2756,18 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     yctx["tai_ji_hit"] = False
     yctx["tai_xi_str"] = ""
     yctx["tai_ji_str"] = ""
-    # L4409: 太岁与命局支干纳音"无冲害刑克"为前提; 有冲刑害压则凶占先
+    # L4409: 太岁与命局支干纳音"无冲害刑克"为前提; 有冲害刑压则凶占先
+    # 2026-10-20 严谨复核 (L4409 原文核验): "欲常与本命支干纳音相合，无冲害、刑克，
+    #   仍加本命贵人禄马一切福神之地则其年有迁官得财、婚姻生子之福" —
+    #   冲害刑压 四者任一在 刑/压/冲/害 阻断贵禄马福神(V65)与喜神(V67)吉面,
+    #   冲害的"应期信号"解读由 V51 分柱承担, 不吞福神吉面
     _clean = not any(r["tai_relation"] in ("冲", "刑", "害", "压")
                      for r in yctx.get("tai_pillar_relations", []))
     yctx["tai_glm_clean"] = bool(yctx.get("tai_glm") and _clean)
+    # 2026-10-20 严谨复核 (L4409 完整吉面): "欲常与本命支干纳音相合，无冲害刑克…
+    #   则其年有迁官得财…婚姻生子之福" — 合局吉须与"无冲害刑压"组合成立,
+    #   有冲害刑压则凶占先 (LM-Y71 收窄, 与 V65 同构)
+    yctx["tai_he_ju_clean"] = bool(yctx.get("tai_he_ju") and _clean)
     if lm is not None and (lm.xi_ji or {}).get("xi"):
         _xj = lm.xi_ji
         _xi_els = [x["el"] for x in _xj.get("xi", []) if not x.get("conditional")]
@@ -2704,7 +2775,9 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         _tel = NAYIN_FIVE_ELEMENT.get(yctx.get("tai_nayin", ""), "")
         yctx["tai_xi_str"] = "、".join(_EL_CN2.get(e, e) for e in _xi_els) or "无"
         yctx["tai_ji_str"] = "、".join(_EL_CN2.get(e, e) for e in _ji_els) or "无"
-        yctx["tai_xi_hit"] = bool(_tel and _tel in _xi_els and _clean)
+        # 2026-10-20 严谨复核: V67 喜神为"纳音五行维度"响应 (原局喜忌), 非太岁
+        #   地支神煞维度 — 不受冲害刑压阻断 (冲害刑压另由 V51/V65 承担)
+        yctx["tai_xi_hit"] = bool(_tel and _tel in _xi_els)
         yctx["tai_ji_hit"] = bool(_tel and _tel in _ji_els)
 
     def _emit(rule, obj):
@@ -2713,8 +2786,12 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         detail = (rule.get("detail_tpl") or "").format(**obj)
         target = (rule.get("target") or "").format(**obj) if rule.get("target") else ""
         out_txt = rule["out"]
-        if rule.get("out_map") and obj.get("pos") in rule["out_map"]:
-            out_txt = rule["out_map"][obj["pos"]]
+        # out_map 取值键: per_pillar 用 pos (柱位); scalar 用 out_map_key 指定的 yctx 字段
+        # (2026-10-20 严谨复核: V59 克/合时干 需按 shi_rel 区分"身灾/晦气"两条断语)
+        if rule.get("out_map"):
+            _omk = rule.get("out_map_key", "pos")
+            if obj.get(_omk) in rule["out_map"]:
+                out_txt = rule["out_map"][obj[_omk]]
         _tone = rule["tone"]
         if isinstance(_tone, dict):
             _m = _tone.get("mode")
@@ -2734,10 +2811,12 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     for v in verdicts:
         counts[v["tone"]] = counts.get(v["tone"], 0) + 1
     # 净分制 (2026-10-20 原著核对 L4416/L4269): 吉+1/动+0.5/滞-0.5/凶-1
+    # 2026-10-20 流年系统性偏凶根治: 加死区 |score|<=1 → 吉凶相当 (score=-1 的
+    #   "吉1平2凶2" 不再偏凶); 仅 score<=-2 判偏凶 (1989 案例 16年15凶 → 修复后分布正常)
     score = counts["吉"] + 0.5 * counts["动"] - 0.5 * counts["滞"] - counts["凶"]
-    if score > 0:
+    if score >= 2:
         year_tone = "偏吉"
-    elif score < 0:
+    elif score <= -2:
         year_tone = "偏凶"
     else:
         year_tone = "吉凶相当"
@@ -2750,15 +2829,19 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         if info:
             lc = info["counts"]
             risk_n = len(info.get("risk") or [])
-            f = {"吉": lc.get("吉", 0) + counts["吉"],
-                 "动": lc.get("动", 0) + counts["动"],
-                 "平": lc.get("平", 0) + counts["平"],
-                 "滞": lc.get("滞", 0) + counts["滞"],
-                 "凶": lc.get("凶", 0) + risk_n + counts["凶"]}
+            # 2026-10-20 流年系统性偏凶根治: 大运为十年环境基调, 权重 0.5
+            # (luck_counts×0.5 + year_counts×1) — 避免大运凶被逐条直接叠加
+            # (壬申运4凶+3risk 曾令 2029 流年自身全0仍 final 凶5.5);
+            # risk(六害/三刑/宫位绝) 亦按 0.5 权重计入
+            f = {"吉": 0.5 * lc.get("吉", 0) + counts["吉"],
+                 "动": 0.5 * lc.get("动", 0) + counts["动"],
+                 "平": 0.5 * lc.get("平", 0) + counts["平"],
+                 "滞": 0.5 * lc.get("滞", 0) + counts["滞"],
+                 "凶": 0.5 * lc.get("凶", 0) + 0.5 * risk_n + counts["凶"]}
             fs = f["吉"] + 0.5 * f["动"] - 0.5 * f["滞"] - f["凶"]
-            if fs > 0:
+            if fs >= 2:
                 fv = "偏吉"
-            elif fs < 0:
+            elif fs <= -2:
                 fv = "偏凶"
             else:
                 fv = "吉凶相当"

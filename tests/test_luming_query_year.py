@@ -38,7 +38,8 @@ class TestQueryYearStructure:
         assert r["tai_sui"] == "BINGCHEN"
         assert isinstance(r["verdicts"], list)
         for v in r["verdicts"]:
-            assert v["rule_id"].startswith(("LM-V5", "LM-V6"))
+            # 2026-10-20 流年修复: 允许 LM-V5x/LM-V6x 岁运规则 + LM-Y71 太岁合局吉
+            assert v["rule_id"].startswith(("LM-V5", "LM-V6", "LM-Y"))
             assert v["evidence"]
             assert v["tone"] in ("吉", "动", "平", "滞", "凶")
 
@@ -98,6 +99,9 @@ class TestYu1951:
         outs = {v["rule_id"]: v for v in r["verdicts"]}
         assert outs.get("LM-V61")       # 太岁卯空亡 (年旬)
         assert outs.get("LM-V51")       # 压月柱
+        # 2026-10-20 严谨复核 (L4409 组合吉面): 太岁卯压月柱 → 不满足"无冲害刑压",
+        #   LM-Y71 合局吉不立 (原泛合拉平口径废弃) → 空亡+压月柱 2凶 → 偏凶
+        #   (喻求清 1951 年被处决, 偏凶贴合)
         assert r["tone"] == "偏凶"
 
 
@@ -108,10 +112,16 @@ class TestCai1916:
         r = _qy(be, 1882, 12, 18, 9, 1916)
         v51 = [v for v in r["verdicts"] if v["rule_id"] == "LM-V51"]
         assert v51 and v51[0]["out"] == "太岁刑冲压害生日，主妻妾己身之灾"
+        # 2026-10-20 严谨复核 (L4419 晦气): 太岁丙合日干辛 → 晦气凶; 辰害日支卯(广信集)
+        #   + 太岁丙辰沙中土犯杨柳木忌(V68) → 三凶齐集 → 偏凶 (贴合蔡锷 1916 卒于日本)
+        #   [辛卯日属甲申旬(空午未), 辰非空亡 — 勿误断 V61]
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert outs.get("LM-V59B")     # 丙辛合日干 → 晦气
+        assert outs.get("LM-V61") is None   # 辰非空亡(辛卯=甲申旬空午未)
         assert r["tone"] == "偏凶"
-        # 杨柳木专条后: 太岁辰沙中土非杨柳木之忌(杨柳喜砂土但辰害卯日支凶占先)
-        # combined 偏凶 = 害日柱凶 + 三刑月柱 risk (更贴合蔡锷 1916 卒于日本)
-        assert r["combined"]["final_verdict"] == "偏凶"
+        # combined: 流年三凶(害日+晦气+忌神)被偏吉大运按 0.5 权重拉平 → 吉凶相当
+        # (语义: 运吉期出凶事; 流年凶信号已在 tone 层完整呈现)
+        assert r["combined"]["final_verdict"] == "吉凶相当"
 
 
 class TestGLMGood:
@@ -129,6 +139,8 @@ class TestGLMGood:
         assert outs.get("LM-V65") is None
         assert outs.get("LM-V67") is None
         assert outs.get("LM-V68") is None
+        # 2026-10-20 严谨复核 (L4409 组合吉面): 太岁卯压月柱 → V65 贵禄马吉不立(凶占先),
+        #   Y71 合局吉亦不立 → 空亡+压月柱 2凶 → 偏凶 (喻求清 1951 年被处决)
         assert r["tone"] == "偏凶"
         assert outs.get("LM-V61")      # 太岁卯年旬空亡仍在
 
