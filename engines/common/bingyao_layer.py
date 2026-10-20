@@ -458,8 +458,21 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
 
     # 2. 杀重身轻 (统一收紧触发)
     #    前提闸门: dm_tier<=1(身轻) 才问——原文「杀重身轻」「杀重身轻终有败」
+    # ★ V7.59 补「杀重(量)」要件(原典 SFTK L9090「身强煞浅, 煞运无妨; 煞重身轻, 制乡为福」/
+    #   L1002「多杀之攒...惟喜身强杀浅; 若是杀重身轻, 终身有损」/ L753「财杀太多」):
+    #   「重」为量词, 与「浅」相对; 单杀当令=杀旺, 未足以言"重".
+    #   判据: 杀成党(combo>=DANG_COMBO) 或 杀相令乘权成党(相令+本气根>=1, 引擎既有 xiang_ling 逻辑).
     sha_wx = KE_WO.get(daymaster_element, '')
     ok, matched = _kexie_trigger(sha_wx, 'SHAZHONG-SHENQING', True, xiang_ling=True)
+    if ok:
+        _shaT, _shaB = _tou_ben(sha_wx)
+        _sha_combo = _shaT + _shaB + _ju_piao(sha_wx)
+        _sha_ling = (wp_data.get(sha_wx, {}) or {}).get('ling_state', '')
+        _sha_xiang_cheng = (_sha_ling == '相' and _shaB >= 1)
+        if not (_sha_combo >= DANG_COMBO or _sha_xiang_cheng):
+            ok = False
+            matched = ['杀不重(他干%d+本根%d+局票=%d<%d, 且非相令乘权) -> 非「杀重」, 不报杀重身轻(PZZQ SFTK L9090/L1002)' % (
+                _shaT, _shaB, _sha_combo, DANG_COMBO)]
     if ok and not _shen_ruo:
         ok = False
         matched = ['日主不弱(%s), 杀为喜, 不触发' % _shen_ruo_note]
