@@ -2712,7 +2712,9 @@ def _er_yun_hits_calc(chart: Any, D: str, X: str) -> list:
     _ty = getattr(chart, "tai_yuan", None) or {}
     tai_unit_zhi = (_ty.get("branch") or _ty.get("zhi") or "") if isinstance(_ty, dict) else ""
     if D in (lu_jue, ming_jue) and X in (lu_bai, ming_bai):
-        hits.append("厄会①大运至禄命绝+小运至败")
+        hits.append("厄会①大运至禄命绝+小运至败（取法: 大运按禄(干五行)/命(支五行)之绝、"
+                    "小运按禄/命五行之沐浴=败，L4343 二运厄会口径; 非小运纳音十二宫，"
+                    "后者按年命纳音分轨见小运临宫）")
     if D in wq and X in wq:
         hits.append("厄会②大小运并在禄命无气之乡")
     if _is_clash(D, X):
@@ -3109,6 +3111,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     #   岁运不宜逢之受杀; 命前五辰=宅(L4411 已有 V26), 命后五辰=墓 → 太岁临墓)
     _mu_b = EARTHLY_BRANCHES[(_yb_i - 5) % 12] if _yb_i is not None else ""
     tai_mu = bool(_mu_b and tb == _mu_b)
+    tai_mu_branch = _mu_b   # 命后五辰之墓支 (V84 detail 动态口径注)
 
     # ---- 小运消费 (2026-10-21 三命通会论小运 L933-943; 小运干支由排盘引擎
     #      BaziEngine 计算 chart.xiao_yun_pillars, 此处仅消费做禄命判定) ----
@@ -3198,7 +3201,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_zheng": tai_zheng,
         "de_jiu": de_jiu, "tai_tian_yue_de": tai_tian_yue_de,
         "tai_gan_tui_liang_chong": tai_gan_tui_liang_chong,
-        "tai_mu": tai_mu,
+        "tai_mu": tai_mu, "tai_mu_branch": tai_mu_branch,
         "tai_wu_gui": tai_wu_gui, "tai_wu_gui_stage": _tai_wu_gui_stage,
         "tai_si_sha": tai_si_sha, "tai_si_sha_chong": tai_si_sha_chong,
         # 小运 (排盘引擎产出, 本层消费): 干支/纳音/十二宫/刑害/贵马
