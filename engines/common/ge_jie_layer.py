@@ -622,7 +622,21 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             if (cai_gans or yin_gans) and not shangguan and not guan_chong:
                 # 喜神按成格路径取(原典ZHENG_GUAN_002逐案, 非财印全并):
                 #  官格喜生之护之: 财生官(财护官)/印护官; 官是格体不列喜
-                _guan_xi = sorted(set(GAN_WX[g] for g in cai_gans+yin_gans))
+                # ★ V7.54 财印兼用须"两不相碍"(原典 PZZQ L1119-1121/L1125-1126):
+                #   财印并透紧贴相克 -> 相碍 -> 财不兼用(不作喜神), 印仍可用.
+                _cai_yin_gans = list(cai_gans) + list(yin_gans)
+                _buai_note = ''
+                if cai_gans and yin_gans:
+                    try:
+                        from engines.common.cai_yin_bu_ai import cai_yin_bu_ai as _buaic
+                        _br = _buaic(dg, pillars, cai_gans, yin_gans)
+                        if not _br.get('bu_ai'):
+                            # 相碍: 财不兼用(印护官仍用)
+                            _cai_yin_gans = list(yin_gans)
+                            _buai_note = ' [财印相碍, 财不兼用: %s]' % _br.get('reason', '')
+                    except Exception:
+                        pass
+                _guan_xi = sorted(set(GAN_WX[g] for g in _cai_yin_gans))
                 _guan_po = [{'type':'组合','match':'ANY','required':['伤官']}, {'type':'地支','match':'ANY','branch_cond':'刑冲'}]
                 if _officer_mixed:
                     # PZZQ258 官杀混杂破格(官不清): 七杀透干盖官即破; 定格层已核官杀并见
@@ -633,7 +647,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
                     'po_ge': _guan_po,
-                    'rule': 'PZZQ255: 官逢财印又无刑冲破害->官格成; 官是格体非杀病; 喜神=财印; 破格: 伤官克/刑冲/官杀混杂(PZZQ258)',
+                    'rule': 'PZZQ255: 官逢财印又无刑冲破害->官格成; 官是格体非杀病; 喜神=财印(兼用须财印不相碍, PZZQ L1119-1121)' + _buai_note + '; 破格: 伤官克/刑冲/官杀混杂(PZZQ258)',
                 }
                 return _attach_ge_evidence(facts)
             # 默认输出：月令正官+官透，但不满足成格条件（无财印辅助）
@@ -747,7 +761,17 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 _sha_gans = _god_gans('七杀')
                 if guan_gans:
                     # 财生官旺: 原典ZHENG_CAI_002"身强而不透伤官,不混七煞" -- 伤官是破格忌, 不入喜
-                    _cai_xi = list(_shishen_only) + list(cai_gans) + list(yin_gans)  # 喜食(生财)+财(护官)+印(滋官)
+                    # ★ V7.54 财印兼用须"两不相碍"(PZZQ L3448/L3453/L4305): 并透紧贴相克 -> 财不兼用.
+                    _cai_g = list(cai_gans)
+                    if cai_gans and yin_gans:
+                        try:
+                            from engines.common.cai_yin_bu_ai import cai_yin_bu_ai as _buaic2
+                            _br2 = _buaic2(dg, pillars, cai_gans, yin_gans)
+                            if not _br2.get('bu_ai'):
+                                _cai_g = []   # 财印相碍: 财不兼用(印滋官仍用)
+                        except Exception:
+                            pass
+                    _cai_xi = list(_shishen_only) + list(_cai_g) + list(yin_gans)  # 喜食(生财)+财(护官)+印(滋官)
                 elif yin_gans:
                     _cai_xi = list(yin_gans)                     # 财格透印: 喜印
                 elif shi_gans and self_root:
