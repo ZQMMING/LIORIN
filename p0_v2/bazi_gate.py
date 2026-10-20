@@ -699,7 +699,12 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
             "winner_basis": (yy.get("routing") or {}).get("winner_basis", ""),
             "routes": (yy.get("routing") or {}).get("routes", []),
             "route_count": (yy.get("routing") or {}).get("route_count", 0),
-            "basis": "第4层程级·A′: 硬情形(L420/L298)→病药(L240)→并行; winner_shen=消解喜用神(DTS_CITED), primary=扶抑(现)",
+            # ★ V7.46 喜忌闲三桶(DTS L404「自喜忌之外皆闲神」+ PZZQ L3208 十神相对格, 查表派生):
+            #   喜=生助用神/制忌者, 忌=克破用神/助病者, 闲=局中五行余集(中性, 不预派吉凶, 岁运引动才翻)
+            "xi_wx": ((yy.get("xiji_xian") or (yy.get("routing") or {}).get("xiji_xian") or {}).get("xi_wx") or []),
+            "ji_wx": ((yy.get("xiji_xian") or (yy.get("routing") or {}).get("xiji_xian") or {}).get("ji_wx") or []),
+            "xian_wx": ((yy.get("xiji_xian") or (yy.get("routing") or {}).get("xiji_xian") or {}).get("xian_wx") or []),
+            "basis": "第4层程级·A′: 硬情形(L420/L298)→病药(L240)→并行; winner_shen=消解喜用神(DTS_CITED), primary=扶抑(现); 喜忌闲=DTS L404 + PZZQ L3208 十神查表",
         },
         # ★ PATCH-L3-03 (2026-10-03) 旺衰矩阵投影 (six_dims 已废弃)
         #   L1 数据出口: dm_row(日主整行) / yin_row(印行) / by_element(五行全表)
