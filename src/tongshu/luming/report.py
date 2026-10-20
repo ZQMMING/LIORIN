@@ -220,6 +220,9 @@ def build_report(lm: Any) -> Dict[str, Any]:
         "tai_sui": [{"tone": v["tone"], "out": v["out"], "detail": v["detail"]}
                     for v in tai_sui],
         "hui_zong": hui_zong,
+        "luck_scope": {"current_year": luck_scope.get("current_year", 0),
+                       "current_luck_branch": luck_scope.get("current_luck_branch", ""),
+                       "xiaoyun_zhi": luck_scope.get("xiaoyun_zhi", "")},
     }
 
 
@@ -301,9 +304,15 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
     if report["er_yun"]:
         lines.append("## 五、二运喜会/厄会（大运×小运）")
         lines.append("")
+        # 当前视角年份+大运×小运 (2026-10-21 用户第三轮: 厄会须落到具体条目)
+        ls2 = (report.get("luck_scope") or {})
+        _cy = ls2.get("current_year") or 0
+        _dl2 = BRANCH_CN.get(ls2.get("current_luck_branch", ""), "")
+        _xy2 = BRANCH_CN.get(ls2.get("xiaoyun_zhi", ""), "")
+        _yr_tag = f"（{_cy} 视角: 大运{_dl2}×小运{_xy2}触发）" if _cy else ""
         for v in report["er_yun"]:
             lines.append(f"- [{v['tone']}] {_clip(_zh(v['out']))}"
-                         f"（{_clip(_zh(v['detail']))}；按流年逐年见报告末流年表）")
+                         f"（{_clip(_zh(v['detail']))}{_yr_tag}；按流年逐年见报告末流年表）")
         lines.append("")
 
     # 吉凶汇总

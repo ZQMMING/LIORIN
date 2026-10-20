@@ -338,17 +338,15 @@ class TestLuckScope(unittest.TestCase):
         self.assertEqual(lm.nayin_five_element["year"], "WOOD")
 
     def test_52_xiaoyun_consumed_with_current_datetime(self):
-        """提供 current_datetime 时消费小运 (五行精纪卷33 SOURCE_VERIFIED)."""
+        """提供 current_datetime 时消费小运 (古法固定起: 男丙寅顺, 1岁起本身).
+        2026-10-21 口径统一: 运层/流年层小运一律古法 (壬申逆/丙寅顺), 弃醉醒子从时起."""
         from datetime import datetime
         chart = BaziEngine().compute((1990, 1, 1, 12), gender="male")
         lm = from_bazi_chart(chart, current_datetime=datetime(2026, 10, 18))
         xy = lm.luck_scope["xiaoyun"]
-        self.assertIsInstance(xy, dict)
-        self.assertEqual(xy.get("algorithm"), "SOURCE_VERIFIED(WXJJ_V33_论小运)")
-        self.assertEqual(xy["start_pillar"]["gan"], "BING")     # 男丙寅顺行
-        self.assertEqual(xy["start_pillar"]["zhi"], "YIN")
-        self.assertEqual(xy["direction"], "forward")
-        self.assertEqual(xy["step"], "一位一年")
+        # 1990 男 1岁丙寅; 2026 虚岁=37 → 丙寅+36=壬寅 (序号2+36=38)
+        self.assertEqual(xy, "RENYIN")
+        self.assertEqual(lm.luck_scope["xiaoyun_zhi"], "YIN")
 
 
 class TestClassicInstances(unittest.TestCase):
@@ -619,7 +617,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertIn("LM-V27", {v["rule_id"] for v in lm.verdicts})
 
     def test_107_verdict_xi_hui_jiu(self):
-        """V23 喜会⑨: 癸丑年禄命旺乡{亥子巳午}, 大运乙亥(age10)+小运亥."""
+        """V23 喜会⑨: 癸丑男命古法小运(丙寅顺) 2010虚岁10=乙亥 + 大运丙亥 → 禄命旺乡{子亥巳午}."""
         import datetime as _dt
         from tongshu.luming.engine import from_bazi_chart
         chart = _make_chart_luck(
@@ -627,7 +625,7 @@ class TestEvidenceRegistration(unittest.TestCase):
             [("JIA", "YIN"), ("BING", "HAI"), ("WU", "CHEN")],
             birth=_dt.datetime(2000, 1, 1, 12),
         )
-        lm = from_bazi_chart(chart, _dt.datetime(2010, 7, 1, 12))  # age≈10 → 大运第2柱亥 + 小运亥
+        lm = from_bazi_chart(chart, _dt.datetime(2010, 7, 1, 12))  # 虚岁10 → 小运乙亥(亥∈旺乡) + 大运丙亥
         self.assertIn("LM-V23", {v["rule_id"] for v in lm.verdicts})
 
     def test_108_verdict_e_hui_chong(self):

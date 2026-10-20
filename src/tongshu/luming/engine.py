@@ -1154,13 +1154,20 @@ def _build_luck_scope(chart: Any, current_datetime=None, lookup_mode: str = "yea
 
     xiaoyun: Any = "TODO_CONSUME_SPEC_XIAOYUN_SCOPE"
     xiaoyun_zhi = ""
+    # 2026-10-21 统一口径: 小运一律用古法 xiao_yun_pillars (壬申逆/丙寅顺,
+    #   用户定夺取古法) — 此前运层用醉醒子 _calc_xiaoyun_scope (从时起) 与
+    #   流年层古法口径不一致, 致厄会②运层/流年层小运不同 (卯 vs 丑)
     if current_datetime is not None and getattr(chart, "birth_datetime", None):
-        try:
-            xiaoyun = _calc_xiaoyun_scope(chart, current_datetime)
-            _cur = xiaoyun.get("current", {}) or {}
-            xiaoyun_zhi = _cur.get("zhi", "")
-        except Exception:
-            xiaoyun = "TODO_CONSUME_SPEC_XIAOYUN_SCOPE"
+        _xyv_age = current_datetime.year - chart.birth_datetime.year + 1
+        _xyv_hit = next((p for p in (getattr(chart, "xiao_yun_pillars", None) or [])
+                         if (p.get("age", 0) or 0) == _xyv_age), None)
+        if _xyv_hit:
+            xiaoyun = _xyv_hit.get("pillar", "")
+            xiaoyun_zhi = _xyv_hit.get("branch", "")
+        else:
+            # 手工构造 chart (无 xiao_yun_pillars) 回退古法公式, 保证同口径
+            _xyv_gz, _xyv_b = _calc_gu_xiaoyun(chart, _xyv_age)
+            xiaoyun, xiaoyun_zhi = _xyv_gz, _xyv_b
 
     # 太岁(流年)消费: 太岁干/支 + 见神煞 + 纳音生克 + 十二宫 + 入宅/撞命杀/刑大运
     liu_nian: Dict[str, Any] = {"stem": "", "branch": "",
@@ -1219,6 +1226,7 @@ def _build_luck_scope(chart: Any, current_datetime=None, lookup_mode: str = "yea
         "luck_pillars": tuple(luck),
         "pillars": tuple(pillars_view),
         "current_luck_branch": current_luck_branch,
+        "current_year": current_datetime.year if current_datetime is not None else 0,
         "xiaoyun": xiaoyun,
         "xiaoyun_zhi": xiaoyun_zhi,
         "liu_nian": liu_nian,
@@ -2651,6 +2659,21 @@ _STEM_CN_LOCAL = {"JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU":
                   "JI": "己", "GENG": "庚", "XIN": "辛", "REN": "壬", "GUI": "癸"}
 
 
+def _calc_gu_xiaoyun(chart: Any, age: int) -> tuple:
+    """古法小运干支回退 (chart 无 xiao_yun_pillars 时; 男丙寅顺/女壬申逆,
+    1岁起本身, 一位一年 60 甲子循环 — 与 bazi_engine._compute_xiao_yun_pillars 同公式)."""
+    if not age:
+        return "", ""
+    seq0 = JIAZI_INDEX.get(("BING", "YIN"), 2) if chart.gender == "male" \
+        else JIAZI_INDEX.get(("REN", "SHEN"), 8)
+    step = 1 if chart.gender == "male" else -1
+    seq = (seq0 + step * (age - 1)) % 60
+    for (_s, _b), _i in JIAZI_INDEX.items():
+        if _i == seq:
+            return _s + _b, _b
+    return "", ""
+
+
 def _er_yun_hits_calc(chart: Any, D: str, X: str) -> list:
     """二运厄会九式 (五行精纪 L4343; ①-⑧ 独立可同出, ⑨天罗/地网互斥).
 
@@ -2839,7 +2862,10 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     _xy_age2 = year - chart.birth_datetime.year + 1 if getattr(chart, "birth_datetime", None) else 0
     _xy_hit2 = next((p for p in (getattr(chart, "xiao_yun_pillars", None) or [])
                      if (p.get("age", 0) or 0) == _xy_age2), None)
-    _xy_branch2 = (_xy_hit2 or {}).get("branch", "")
+    if _xy_hit2:
+        _xy_branch2 = _xy_hit2.get("branch", "")
+    else:
+        _, _xy_branch2 = _calc_gu_xiaoyun(chart, _xy_age2)
     _xy_growth2 = _growth_stage(year_nayin_el, _xy_branch2) \
         if (year_nayin_el and _xy_branch2) else ""
     # 衰息之乡 = 沐浴(败)/衰/病/死/绝 五处 (墓为库非衰息; 生旺胎养不在此列)
