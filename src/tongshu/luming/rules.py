@@ -700,12 +700,13 @@ LUMING_RULES = [
      "detail_tpl": "运{branch}与原局{xing_with}三刑"},
 
     # ================= 大运: 纳音生克/十二宫/干支 (LM-V42/V44/V45, per_pillar) =================
+    # 2026-10-20 比和分流修正: 年命自旺(临官帝旺)运再同类=太过主凶 (L3379 物极必反,
+    #   大海水"忌再见水助波澜"); 年命衰绝=同类扶助=吉; 其余平.
     {"id": "LM-V42", "evidence": "E-WXJ-008-001", "mode": "per_pillar",
      "scope": "运", "target": "{stem}{branch}",
-     "tone": {"mode": "rel_map", "k": "nayin_relation",
-              "table": {"生我": "吉", "比和": "吉", "克我": "凶"}},
+     "tone": {"mode": "fn", "fn": "nayin_rel_tone", "k": "nayin_relation", "k2": "year_stage"},
      "when": {"op": "not", "cond": {"op": "eq", "k": "nayin_relation", "v": ""}},
-     "out": "运纳音对年命生克（生我吉深/我生吉浅/克我凶多/我克凶少/比和吉）",
+     "out": "运纳音对年命生克（生我吉深/我生吉浅/克我凶多/我克凶少/比和看年命强弱·自旺太过为凶）",
      "detail_tpl": "运{stem}{branch}纳音{nayin}{nayin_relation}年命"},
     {"id": "LM-V44", "evidence": "E-WXJ-033-001", "mode": "per_pillar",
      "scope": "运", "target": "{stem}{branch}",
@@ -715,11 +716,12 @@ LUMING_RULES = [
      "detail_tpl": "运支{branch}临年命纳音五行之{shier_gong}（{shier_gong_desc}）"},
     {"id": "LM-V45", "evidence": "E-WXJ-034-009", "mode": "per_pillar",
      "scope": "运", "target": "{stem}{branch}",
-     "tone": {"mode": "ganzhi", "gan": "gan_rel", "zhi": "zhi_rel"},
+     "tone": {"mode": "fn", "fn": "nayin_ganzhi_tone",
+              "gan": "gan_rel", "zhi": "zhi_rel", "k2": "year_stage"},
      "when": {"op": "and", "conds": [
          {"op": "not", "cond": {"op": "eq", "k": "gan_rel", "v": ""}},
          {"op": "not", "cond": {"op": "eq", "k": "zhi_rel", "v": ""}}]},
-     "out": "运干支五行对年命纳音五行生克（干判与支判并见; 生我比和吉/克我凶/我生我克平）",
+     "out": "运干支五行对年命纳音五行生克（干判与支判并见; 同向取判·异向战克参半·比和看年命强弱）",
      "detail_tpl": "运干{gan_el}{gan_rel}·运支{zhi_el}{zhi_rel}（比合则吉战克则凶）"},
 
     # ================= 原局: 魁罡 (LM-V43) =================

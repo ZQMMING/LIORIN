@@ -806,7 +806,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         #   贵人年干口径: 甲子/壬申两运日干贵人(乙贵子申/庚贵)误判移除 → 吉-2;
         #   V02 三元十二宫口径: 癸亥禄(子)临官/命(亥)帝旺/身(癸亥)临官 皆不死绝 → 原局凶-1)
         self.assertEqual(ts["overall"]["counts"],
-                         {"吉": 23, "动": 0, "平": 32, "滞": 2, "凶": 17})
+                         {"吉": 22, "动": 0, "平": 32, "滞": 2, "凶": 18})  # 2026-10-20 V42比和分流: 癸亥运比和(年命临官太过)吉→凶 → 吉-1凶+1
         self.assertEqual(ts["overall"]["verdict"], "偏吉")
         # 乙丑运偏凶
         yichou = next(p for p in ts["pillars"] if p["target"] == "YICHOU")
@@ -1077,10 +1077,10 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertEqual(hz["current_counts"]["吉"], 4)
         self.assertEqual(hz["current_counts"]["凶"], 1)
         self.assertEqual(hz["overall_counts"],
-                         {"吉": 23, "动": 0, "平": 32, "滞": 2, "凶": 17})  # 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径+V02三元十二宫修正
+                         {"吉": 22, "动": 0, "平": 32, "滞": 2, "凶": 18})  # 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径+V02三元十二宫修正+比和分流吉-1凶+1
         self.assertEqual(hz["overall_verdict"], "偏吉")
         self.assertIn("当前大运: 丁卯", md)
-        self.assertIn("总体: 吉 23 · 凶 17 · 平 32 · 滞 2 → 吉", md)  # 2026-10-20 原著措辞: 偏吉→吉
+        self.assertIn("总体: 吉 22 · 凶 18 · 平 32 · 滞 2 → 吉", md)  # 2026-10-20 原著措辞: 偏吉→吉
 
     # ============ 根治层: 古籍命例 oracle (独立于案例批文与自裁定) ============
     def _mk_gu_chart(self, yb):

@@ -27,8 +27,7 @@ from typing import Any, Dict
 
 from ..facts.bazi_facts import (
     BRANCH_ELEMENT,
-    SEASON_BY_BRANCH,
-    BRANCH_SANHE_GROUP,
+    SEASON_BY_BRANCH,    BRANCH_SANHE_GROUP,
     SHEN_SHA_BY_SANHE,
     GU_CHEN_GU_SU_BY_YEAR,
     LU_BY_STEM,
@@ -181,6 +180,41 @@ def _stage_tone(stage: str) -> str:
     return {"长生": "吉", "临官": "吉", "帝旺": "吉"}.get(stage, (
         "滞" if stage in ("沐浴", "衰", "病") else (
             "凶" if stage in ("死", "绝") else "平")))
+
+
+def _nayin_rel_tone(relation: str, year_stage: str) -> str:
+    """运纳音对年命生克定性 (V42) — 2026-10-20 原著核对修正:
+
+    比和不再无条件论吉: 年命纳音本已生旺(临官/帝旺)者, 运再同类=太过,
+    物极必反主凶 (五行精纪 L3379 希尹"已极而将反则为凶"; 三命通会 L9379
+    "有余不足皆能致凶"; 大海水注"忌再见水助波澜"); 年命衰绝(衰/病/死/绝)
+    者, 比和=同类扶助=吉; 其余(长生/沐浴/冠带/墓/胎/养)=平.
+    生我吉深/克我凶多/我生我克平 (L4356 行年二运口径).
+    """
+    if relation == "生我":
+        return "吉"
+    if relation == "克我":
+        return "凶"
+    if relation in ("我生", "我克"):
+        return "平"
+    if relation == "比和":
+        if year_stage in ("临官", "帝旺"):
+            return "凶"
+        if year_stage in ("衰", "病", "死", "绝"):
+            return "吉"
+        return "平"
+    return "平"
+
+
+def _nayin_ganzhi_tone(gan_rel: str, zhi_rel: str, year_stage: str) -> str:
+    """运干支五行对年命生克双判 (V45) — 干判与支判并见:
+    两判同向(同吉/同凶/同平)取该向, 异向=战克参半取平 (比合则吉战克则凶);
+    比和按 _nayin_rel_tone 分流 (年命强弱)."""
+    _sg = _nayin_rel_tone(gan_rel, year_stage)
+    _sz = _nayin_rel_tone(zhi_rel, year_stage)
+    if _sg == _sz:
+        return _sg
+    return "平"
 
 
 def _growth_stage_stem(stem: str, branch: str) -> str:
@@ -1097,6 +1131,8 @@ def _build_luck_scope(chart: Any, current_datetime=None, lookup_mode: str = "yea
             "sees_wen_chang": bool(wen_chang_b) and branch == wen_chang_b,
             "nayin_relation": _nayin_relation(year_nayin, nayin_name),
             "shier_gong": _growth_stage(year_nayin_el, branch),
+            # 年支对年命纳音十二宫 (比和分流依据: 年命自旺=太过→凶 / 衰绝=扶助→吉)
+            "year_stage": _growth_stage(year_nayin_el, chart.year_pillar.earthly_branch),
             "gan_el": STEM_ELEMENT.get(p.heavenly_stem, ""),
             "zhi_el": BRANCH_WX.get(branch, ""),
             "gan_rel": _ganzhi_rel(STEM_ELEMENT.get(p.heavenly_stem, ""),
@@ -2156,6 +2192,13 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         if m == "rel_map":
             return tone["table"].get(obj.get(tone["k"]), "平")
         if m == "fn":
+            _fn = tone.get("fn", "stage_tone")
+            if _fn == "nayin_rel_tone":
+                return _nayin_rel_tone(obj.get(tone["k"]), obj.get(tone.get("k2", ""), ""))
+            if _fn == "nayin_ganzhi_tone":
+                return _nayin_ganzhi_tone(obj.get(tone.get("gan", "")),
+                                          obj.get(tone.get("zhi", "")),
+                                          obj.get(tone.get("k2", ""), ""))
             return _stage_tone(obj.get(tone["k"]))
         if m == "ganzhi":
             g, z = obj.get(tone["gan"]), obj.get(tone["zhi"])
@@ -2195,7 +2238,8 @@ def _nayin_tone(relation: str) -> str:
 def _build_tone_scope(verdicts: tuple, luck_view: Dict | None = None,
                       gy_any_present: bool = False,
                       yang_ren_in_four: bool = False,
-                      four_branches: set | None = None) -> Dict[str, Any]:
+                      four_branches: set | None = None,
+                      gender: str = "male") -> Dict[str, Any]:
     """吉凶分级汇总 (只按断语 tone 计数, 不自由发挥).
 
     - layers: 原局 / 运 / 太岁 三层吉凶计数 (tone 枚举: 吉/动/平/滞/凶)
@@ -2385,9 +2429,11 @@ def _build_tone_scope(verdicts: tuple, luck_view: Dict | None = None,
             # 不并入 pillars 聚合 (2026-10-20 切片审计: 幽灵柱"大运WU"修复)
             if tgt.startswith("大运"):
                 continue
-            pt = pillar_tone.setdefault(tgt, {"吉": 0, "动": 0, "平": 0, "滞": 0, "凶": 0, "rules": []})
+            pt = pillar_tone.setdefault(tgt, {"吉": 0, "动": 0, "平": 0, "滞": 0, "凶": 0,
+                                               "rules": [], "items": []})
             pt[tone] = pt.get(tone, 0) + 1
             pt["rules"].append(v["rule_id"])
+            pt["items"].append((v["rule_id"], tone))
 
     def _risk_signals(tgt: str) -> tuple:
         """该运柱的局部凶关系信号.
@@ -2410,12 +2456,34 @@ def _build_tone_scope(verdicts: tuple, luck_view: Dict | None = None,
         return tuple(sig)
 
     def _verdict(t: Dict[str, int], risk_n: int = 0) -> str:
-        # 净分制 (2026-10-20 原著核对): 吉+1/动+0.5/滞-0.5/凶-1.
-        # 2026-10-20 方向对照根因: 原 risk 在 counts 已计凶后再扣分=重复计分
-        # (V44 凶宫/V40六害/V41三刑 均已在 tone 计数 -1), 导致大运系统性偏凶
-        # (每运净-1.28) → risk 仅作标注上报, 不再进 score.
-        score = t.get("吉", 0) + 0.5 * t.get("动", 0) \
-            - t.get("凶", 0) - 0.5 * t.get("滞", 0)
+        # 强度加权制 (2026-10-20 方向对照根因修复): 大运吉凶不再纯计数 —
+        # 每条吉凶信号按原著强度分级 (strength.LUCK_XI/LUCK_XIONG) 计分,
+        # 吉面占先→偏吉 / 凶面占先→偏凶 / 相抵→吉凶相当.
+        # 修复例: 癸亥运 2吉1平判吉(比和=吉 误), 戊辰运 3凶2平判凶(纯计数
+        # 不分强度, 女地网/大小耗=中凶被按重凶计) — 均与外部详批方向相左.
+        from .strength import LUCK_XI, LUCK_XIONG
+        _is_female = (gender or "").lower().startswith(("f", "女"))
+        _items = t.get("items")
+        if _items is None:
+            # 无 items (overall 三层计数汇总, 无强度明细) → 净分制回退
+            score = t.get("吉", 0) - t.get("凶", 0) \
+                + 0.5 * t.get("动", 0) - 0.5 * t.get("滞", 0)
+        else:
+            score = 0.0
+            for rid, _tone in _items:
+                if _tone == "吉":
+                    score += LUCK_XI.get(rid, 1.0)
+                elif _tone == "凶":
+                    # 天罗地网 L4325: 男天罗(戌亥)官符刑狱=重凶4 / 女地网(辰巳)
+                    # 口舌沉疴=中凶2 (戊辰运 女命地网按 2 计, 对齐外部详批"中下平")
+                    if rid == "LM-V124" and _is_female:
+                        score -= 2.0
+                    else:
+                        score -= LUCK_XIONG.get(rid, 1.0)
+                elif _tone == "动":
+                    score += 0.5
+                elif _tone == "滞":
+                    score -= 0.5
         if score > 0:
             return "偏吉"
         if score < 0:
@@ -2482,7 +2550,8 @@ def from_bazi_chart(chart: Any, current_datetime=None, lookup_mode: str = "year"
         gong=gong)
     tone_scope = _build_tone_scope(tuple(verdicts), luck_scope, gy_any_present,
                                    yang_ren_in_four,
-                                   four_branches=set(chart.four_branches()))
+                                   four_branches=set(chart.four_branches()),
+                                   gender=chart.gender)
     instance = LumingChart(
         four_pillars=tuple(
             (p.heavenly_stem, p.earthly_branch)
@@ -2838,7 +2907,8 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   (三命通会 L943: 大运虽吉小运不通未可便言吉利; 大运虽凶小运却吉未可便作凶推).
     #   → 流年自身判定 = L4276 基地福力 × 流年恶力 查表 (非逐条±1对冲);
     #     唯一互动 = L4273 条件标注 (凶祸之运+太岁刑冲→发祸 / 吉泰之运+太岁刑害→浮灾).
-    from .strength import base_fortune, year_power, aggregate, dim_hits_of, l4273_interaction
+    from .strength import (base_fortune, year_power, aggregate, dim_hits_of,
+                           l4273_interaction, LUCK_XI, LUCK_XIONG)
     _base = base_fortune(lm) if lm is not None else {"score": 0.5, "level": "中"}
     _power = year_power(verdicts)
     _dims = dim_hits_of(verdicts)
