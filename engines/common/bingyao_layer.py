@@ -671,8 +671,37 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         })
 
     # 8. 印多埋子/母多灭子 (统一触发: 当令或成党, 无重根)
+    # ★ V7.61 补两要件(原典 DTS L445「土重金埋」/ PZZQ L896「印多用财, 透财以抑太过」/
+    #   L3718「财轻印多, 用财损印, 则喜财乡」/ L3636「印绶过旺令日主呆滞」):
+    #   ① 印【重】= 印在多处有根(根气支数>=2)或成党, 非仅月令当令一处;
+    #   ② 印重而【有财】= 财为疏印之药(印不作病), 不报印多埋子.
+    #   (印为生扶神, 须财疏之方为病, 与财/杀/泄气为克泄耗不同.)
     yin_wx = SHENG_WO.get(daymaster_element, '')
     ok, yin_matched = _kexie_trigger(yin_wx, 'YINDUO-MAIZI', False)
+    if ok:
+        # ① 印重: 根气支数(印在哪些支有根) >=2 或 已成党
+        _yin_t, _yin_b = _tou_ben(yin_wx)
+        _yin_combo = _yin_t + _yin_b + _ju_piao(yin_wx)
+        _hd_y = facts.get('hidden_stems') or {}
+        _yin_root_brs = 0
+        for _pos in ('year', 'month', 'day', 'hour'):
+            for _h in (_hd_y.get(_pos) or []):
+                if GAN_WX.get(_h, '') == yin_wx:
+                    _yin_root_brs += 1
+                    break
+        _yin_chong = (_yin_combo >= DANG_COMBO) or (_yin_root_brs >= 2)
+        if not _yin_chong:
+            ok = False
+            yin_matched = ['印不重(根气仅在%d支, 透干%d, combo=%d) -> 非「印多」(DTS L445「土重金埋」)' % (
+                _yin_root_brs, _yin_t, _yin_combo)]
+    if ok:
+        # ② 有财疏印 -> 印不作病(PZZQ L896/L3718)
+        _cai_wx_y = KE.get(daymaster_element, '')
+        _cy_t, _cy_b = _tou_ben(_cai_wx_y)
+        if _cy_t >= 1 or _cy_b >= 1:
+            ok = False
+            yin_matched = ['印重而有财(透干%d/本根%d) -> 财为疏印之药, 印不作病(PZZQ L896「印多用财, 透财以抑太过」/ L3718「财轻印多, 用财损印」)' % (
+                _cy_t, _cy_b)]
     if ok:
         b = BING_TYPES['YIN_DUO_MAI_ZI']
         bing_list.append({
