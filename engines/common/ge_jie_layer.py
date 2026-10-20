@@ -1095,6 +1095,22 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             # 阳刃喜神按原典JIAN_LU_YANG_REN_002/003逐案收窄:
             #  官煞制刃为喜(格体); 印护刃亦喜; 财单用"阳刃用财格所不喜"不入喜
             _yr_xi = list(ks_gans) + list(_yr_yin)
+            # ★ V7.56 财印并见为吉(须不相碍): 原典 PZZQ L1140「印滋刃, 财生煞, 故以财印并见为吉,
+            #   但须不相碍耳」/ L4532「刃旺煞强, 财不破印, 为美」/ L4490「阳刃用之...反喜财印」.
+            #   财单用仍所不喜(L4542「阳刃用财, 格所不喜」+ L4617「必须有食伤通关」), 故仅在
+            #   财印并见且两不相碍时把财列入喜神(财生煞, 煞制刃).
+            _yr_cai_note = ''
+            if _yr_cai and _yr_yin:
+                try:
+                    from engines.common.cai_yin_bu_ai import cai_yin_bu_ai as _yr_buai
+                    _yr_br = _yr_buai(dg, pillars, _yr_cai, _yr_yin)
+                    if _yr_br.get('bu_ai'):
+                        _yr_xi = list(_yr_xi) + list(_yr_cai)
+                        _yr_cai_note = ' 财印并见不相碍->财生煞助制刃(PZZQ L1140/L4532)'
+                    else:
+                        _yr_cai_note = ' 财印相碍->财不兼用(%s)' % _yr_br.get('reason', '')
+                except Exception:
+                    pass
             # ★ DTS 准神 DT-0497「必用卯之羊刃」: 阳刃在 L3 身旺(泄伤/通关)时顺刃,
             #   比劫(日主自身五行=刃木)置喜首, 官煞制刃退居其后(制刃为局病非局喜)。
             #   依据 DTS 专旺顺刃(旁参 PZZQ JIAN_LU_YANG_REN_002 官煞制刃, 旁参不顶准神)。
@@ -1112,7 +1128,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'zhi_wx': ks_wx,  # 制神: 官煞
                 'hua_wx': [],
                 'po_ge': [{'type':'缺失','match':'ANY','forbidden':['正官','七杀']}],  # PZZQ258: 阳刃无官煞(缺失才破, 非忌神)
-                'rule': 'PZZQ255: 阳刃透官煞露财印不见伤官->刃格成; 官煞制刃是喜神, 印护刃亦喜, 财单用所不喜; 破格: 无官煞',
+                'rule': 'PZZQ255: 阳刃透官煞露财印不见伤官->刃格成; 官煞制刃是喜神, 印护刃亦喜, 财单用所不喜; 财印并见不相碍则财生煞助制刃(PZZQ L1140/L4532)' + _yr_cai_note + '; 破格: 无官煞',
             }
             return _attach_ge_evidence(facts)
 
