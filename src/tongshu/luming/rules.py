@@ -1487,9 +1487,11 @@ YEAR_RULES = [
     {"id": "LM-V54", "evidence": "E-WXJ-034-007", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}压大运{DL}",
      "tone": "凶",
-     "when": {"op": "eq", "k": "tai_ya_dayun", "v": True},
+     "when": {"op": "and", "conds": [
+         {"op": "eq", "k": "tai_ya_dayun", "v": True},
+         {"op": "eq", "k": "dl_guan_di_wang", "v": False}]},
      "out": "太岁压大运，主权握不宁",
-     "detail_tpl": "太岁{tai_b}压大运{DL}（烛神经：太岁压大运主权握不宁）"},
+     "detail_tpl": "太岁{tai_b}压大运{DL}（烛神经：太岁压大运主权握不宁；大运非临官帝旺时论）"},
     # ---- 岁运并临 (L954: 甲子流年又是甲子运; 劫财羊刃灾殃立至) ----
     {"id": "LM-V55", "evidence": "E-SMTH-015-001", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}并大运{DL}",
@@ -1778,4 +1780,17 @@ YEAR_RULES = [
      "when": {"op": "eq", "k": "xy_fu_hui", "v": True},
      "out": "行年值福会，迁官进财之喜（十干所生及所克，大小运行年至此有喜）",
      "detail_tpl": "小运{xiao_yun}干=日干{day_stem}所生/所克（L748 八字金书福运；L750 福会大小运行年至此亦有迁官进财之喜）"},
+    #   V86 大运临官帝旺+太岁持之 = 迁官进禄吉会 (五行精纪 L4282:
+    #     "凡行运至临宫帝旺上, 太岁持之, 官员主荐章改秩之喜, 官印食神亦然,
+    #      马旺贵人之地, 必入参侍之列"; SMTH L929 同源互证"行运至临官、帝旺上,
+    #      太岁持之, 官员主荐事改秩之喜") — 大运支=日干禄/刃 + 太岁支同 → 吉会
+    #      (临官帝旺上太岁持之优先于烛神经压运凶: 同支不同判, 专条在临官帝旺论吉)
+    {"id": "LM-V86", "evidence": "E-WXJ-034-006", "mode": "scalar",
+     "scope": "流年", "target": "大运{DL}临官帝旺, 太岁{tai_b}持之",
+     "tone": "吉",
+     "when": {"op": "and", "conds": [
+         {"op": "eq", "k": "dl_guan_di_wang", "v": True},
+         {"op": "eq", "k": "tai_ya_dayun", "v": True}]},
+     "out": "行运至临官帝旺上，太岁持之，官员主荐章改秩之喜（迁官进禄吉会）",
+     "detail_tpl": "大运{DL}支=日干{day_stem}临官/帝旺，太岁{tai_b}持之（L4282 行运至临宫帝旺上太岁持之官员主荐章改秩之喜）"},
 ]

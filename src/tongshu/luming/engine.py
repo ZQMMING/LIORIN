@@ -2643,6 +2643,17 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     # (2017 丁酉 太岁酉=大运酉: 酉酉自刑曾同时触发 V53刑运+V54压运 双计凶, 同一事件拆两条)
     tai_xing_dayun = bool(dl_branch and tb != dl_branch and _is_xing(tb, dl_branch))
     tai_ya_dayun = bool(dl_branch and tb == dl_branch)
+    # 大运支 = 日干临官(禄)/帝旺(刃) → 行运至临官帝旺上 (五行精纪 L4282:
+    #   "凡行运至临宫帝旺上, 太岁持之, 官员主荐章改秩之喜, 官印食神亦然")
+    _LU = {"JIA": "YIN", "YI": "MAO", "BING": "SI", "DING": "WU",
+           "WU": "SI", "JI": "WU", "GENG": "SHEN", "XIN": "YOU",
+           "REN": "HAI", "GUI": "ZI"}
+    _DAO_WANG = {"JIA": "MAO", "YI": "YIN", "BING": "WU", "DING": "SI",
+                 "WU": "WU", "JI": "SI", "GENG": "YOU", "XIN": "SHEN",
+                 "REN": "ZI", "GUI": "HAI"}
+    dl_guan_di_wang = bool(dl_branch and
+                           dl_branch in {_LU.get(chart.day_pillar.heavenly_stem, ""),
+                                         _DAO_WANG.get(chart.day_pillar.heavenly_stem, "")})
 
     # 太岁与命局合局 (六合/三合/半合): 合为有情, 主喜庆和合 (古法太岁合局论,
     # 三命通会"太岁与命局相合主喜庆"系; 冲刑害另计, 吉凶并存)
@@ -2951,6 +2962,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_chong_nian_he": bool(_is_clash(tb, year_branch) and tai_nayin_rel != "克我"),
         "tai_chong_dayun": tai_chong_dayun, "tai_xing_dayun": tai_xing_dayun,
         "tai_ya_dayun": tai_ya_dayun, "sui_yun_bing_lin": sui_yun_bing_lin,
+        "dl_guan_di_wang": dl_guan_di_wang,
         "sui_yun_mode": sui_yun_mode, "zhen_tai_sui_mode": zhen_tai_sui_mode,
         "tai_fan_yin": tai_fan_yin, "tai_fu_yin": tai_fu_yin,
         "tai_he_ju": tai_he_ju, "tai_he_ju_str": _he_ju_str(tb, _fb4),
@@ -3125,4 +3137,5 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "xy_fu_hui": yctx.get("xy_fu_hui", False),
             "tai_tian_yue_de": yctx.get("tai_tian_yue_de", False),
             "tai_gan_tui_liang_chong": yctx.get("tai_gan_tui_liang_chong", False),
-            "tai_mu": yctx.get("tai_mu", False)}
+            "tai_mu": yctx.get("tai_mu", False),
+            "dl_guan_di_wang": yctx.get("dl_guan_di_wang", False)}

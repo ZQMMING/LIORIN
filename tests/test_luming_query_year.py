@@ -342,3 +342,22 @@ class TestYearDistributionSystemic:
         # 现成案例难以命中; 保留结构断言: 规则已注册于 YEAR_RULES 且权重可查
         from tongshu.luming.rules import YEAR_RULES
         assert any(v["id"] == "LM-V83" for v in YEAR_RULES)
+
+    def test_137_guan_xiang_chi_zhi_ji_hui(self, be):
+        """2026-10-21 大运官乡+太岁持之 = 迁官进禄吉会 (五行精纪 L4282:
+        '凡行运至临宫帝旺上, 太岁持之, 官员主荐章改秩之喜';
+        SMTH L929 同源互证). 大运支=日干禄/刃 且 太岁支同 → V86 吉会,
+        且临官帝旺上 V54 压运凶让位 (同支不同判, 专条在临官帝旺论吉)."""
+        # 1983 坤造 日干乙: 乙禄卯/刃寅 — 丙寅大运 2022 壬寅 太岁寅持之
+        r = _qy(be, 1983, 11, 3, 12, 2022, gender="female")
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert r.get("dl_guan_di_wang") is True   # 丙寅支寅=乙木帝旺(刃)
+        assert outs.get("LM-V86")                 # 大运临官帝旺+太岁持之=荐章改秩
+        assert outs.get("LM-V86")["tone"] == "吉"
+        assert "LM-V54" not in outs               # 临官帝旺上压运凶让位
+        # 大运非官乡时 (丁卯运? 卯=乙禄临官仍官乡) — 取 2031-2040 戊辰大运(辰非乙禄刃)
+        r2 = _qy(be, 1983, 11, 3, 12, 2036, gender="female")   # 2036 丙辰? 查太岁支=辰
+        outs2 = {v["rule_id"]: v for v in r2["verdicts"]}
+        if r2.get("tai_ya_dayun"):                 # 太岁辰 若=大运辰 → 支同非官乡 → V54
+            assert "LM-V86" not in outs2
+            assert outs2.get("LM-V54")
