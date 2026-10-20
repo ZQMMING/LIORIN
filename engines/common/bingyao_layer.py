@@ -1126,8 +1126,13 @@ def apply_yuanju_yao(bing_list: List[Dict], facts: Dict[str, Any]) -> tuple:
         _bs_ling = ''
         if bs_wx and isinstance(wp_data, dict):
             _bs_ling = (wp_data.get(bs_wx, {}) or {}).get('ling_state', '休')
-        # 病重 = 当令 或 成党(combo>=2) 或 相令乘权(月令所生+有根)——
-        #   PZZQ沈孝瞻原文「专令之中亦有并存者」「党众为强」: 相令次旺, 有根即有力
+        # 病重 = 当令 或 病神多处有根(combo>=2) 或 相令乘权(月令所生+有根)——
+        #   PZZQ沈孝瞻原文「专令之中亦有并存者」「党众为强」: 相令次旺, 有根即有力.
+        # ★ V7.72 层次说明(三支非同一"成党"概念, 故 combo>=2 与 bing_debate.DANG_COMBO=4 无须统一):
+        #   ① bing_dang         病神当令 —— 病最重(月令提纲)
+        #   ② bing_combo >= 2   病神多处有根 —— 病有依托(SFTK L1113「柱中支干重重」)
+        #   ③ 相令乘权(次旺+有根) —— 病有力(PZZQ L765「党众为强」)
+        #   统一为 4 会把"病有两处根"误降为"病轻", 反失 SFTK L1113 之意.
         bing_zhong = bing_dang or bing_combo >= 2 \
             or (bs_wx and _bs_ling == '相' and bing_combo >= 1)
         # ② 根判据: 病重 且 药无本气根(虚透) -> 药少, 待运 (SFTK 病重而药少宜行运)
