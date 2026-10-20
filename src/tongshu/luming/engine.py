@@ -2789,6 +2789,31 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
             break
     gu_chen_su = bool(gu_branches_all and tb in gu_branches_all)
 
+    # 丧吊 / 勾绞 (2026-10-21 珞琭子赋注+五行精纪深挖补齐):
+    #   丧门吊客: 五行精纪 L4425 "命前二辰为丧门, 后二辰为吊客, 若太岁在丧吊上
+    #     主其年有孝服哭泣之事"; 珞琭子赋注 "丧吊临人, 变宫商为薤露".
+    #   勾绞: 三命通会 L1743 "阳男阴女命前三辰为勾, 命后三辰为绞; 阴男阳女反之";
+    #     "行年至勾绞, 主口舌刑狱等事"; 珞琭子 "狂横起於勾绞".
+    _yb_i = EARTHLY_BRANCHES.index(year_branch)
+    _tb_i = EARTHLY_BRANCHES.index(tb)
+    _men_gate = EARTHLY_BRANCHES[(_yb_i + 2) % 12]     # 命前二辰=丧门
+    _diao_ke = EARTHLY_BRANCHES[(_yb_i - 2) % 12]      # 命后二辰=吊客
+    sang_diao = bool(tb in (_men_gate, _diao_ke))
+    # 勾绞方向按阴阳命 (阳男阴女: 前勾后绞; 阴男阳女: 前绞后勾)
+    _yang_ming = year_stem in ("JIA", "BING", "WU", "GENG", "REN")
+    _yang_male = _yang_ming and chart.gender == "male"
+    _yin_female = (not _yang_ming) and chart.gender == "female"
+    if _yang_male or _yin_female:
+        _gou = EARTHLY_BRANCHES[(_yb_i + 3) % 12]      # 前三辰=勾
+        _jiao = EARTHLY_BRANCHES[(_yb_i - 3) % 12]     # 后三辰=绞
+    else:
+        _gou = EARTHLY_BRANCHES[(_yb_i - 3) % 12]      # 阴男阳女: 前三辰为绞, 后三辰为勾
+        _jiao = EARTHLY_BRANCHES[(_yb_i + 3) % 12]
+    tai_sang_diao = bool(tb in (_men_gate, _diao_ke))
+    tai_gou_jiao = bool(tb in (_gou, _jiao))
+    sang_diao_which = "丧门" if tb == _men_gate else ("吊客" if tb == _diao_ke else "")
+    gou_jiao_which = "勾煞" if tb == _gou else ("绞煞" if tb == _jiao else "")
+
     # 交运年 (五行精纪 L4267-4268 珞琭子: "阴男阳女时观出入之年, 有吉凶之变";
     #         L4269 三命指掌: "凡阳男阳女, 至交运时, 主有灾滞")
     # 边界语义: start_age = 交入第1步( luck_pillars[0] )的实龄;
@@ -2812,6 +2837,29 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     #         太岁支=元辰 → 如物当风, 动摇颠倒)
     yuan_chen = _calc_yuan_chen(chart)
     tai_yuan_chen = bool(yuan_chen and tb == yuan_chen)
+
+    # 日干轴 (2026-10-21 三命通会论太岁章深挖补齐):
+    #   L951 "岁伤日干有祸必轻; 日犯岁君灾殃必重, 五阳干重五阴干轻,
+    #        若五行有救四柱有情则凶为吉兆"
+    #   L954 "日干支冲克太岁曰征, 运干支伤冲太岁亦曰征, 其年则凶灾祸未免"
+    _GAN_KE = {"JIA": "WU", "YI": "JI", "BING": "GENG", "DING": "XIN", "WU": "REN",
+               "JI": "GUI", "GENG": "JIA", "XIN": "YI", "REN": "BING", "GUI": "DING"}
+    _YANG_GAN = {"JIA", "BING", "WU", "GENG", "REN"}
+    tai_ke_day_stem = bool(ts and day_stem and _GAN_KE.get(ts) == day_stem)
+    tai_day_fan_sui = bool(ts and day_stem and _GAN_KE.get(day_stem) == ts)
+    # 五行有救: 四柱天干有能制日干者 (救日干不克太岁) — L951"五行有救四柱有情,
+    #   如甲日克戊年四柱原有庚申金制甲则为有救, 凶为吉兆"
+    _day_jiu = False
+    for _s in (chart.year_pillar.heavenly_stem, chart.month_pillar.heavenly_stem,
+               chart.hour_pillar.heavenly_stem):
+        if _s and _s != day_stem and _GAN_KE.get(_s) == day_stem:
+            _day_jiu = True
+            break
+    day_fan_saved = bool(_day_jiu)
+    day_fan_weight = "重" if (day_stem in _YANG_GAN) else "轻"
+    tai_zheng = bool((tai_day_fan_sui and _is_clash(tb, day_branch))
+                     or (tai_ke_day_stem and _is_clash(tb, day_branch))
+                     or (dl_stem and _GAN_KE.get(dl_stem) == ts and _is_clash(dl_branch, tb)))
 
     return {
         "tai_s": ts, "tai_b": tb, "tai_sui": ts + tb, "tai_nayin": tai_nayin,
@@ -2847,6 +2895,11 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_tianluo_diwang": tai_tianluo_diwang, "TLDW": tldw,
         "in_zhai": in_zhai, "zhuang_ming": zhuang_ming,
         "gu_chen_su": gu_chen_su, "tao_hua_branch": tao_hua_branch,
+        "tai_sang_diao": tai_sang_diao, "sang_diao_which": sang_diao_which,
+        "tai_gou_jiao": tai_gou_jiao, "gou_jiao_which": gou_jiao_which,
+        "tai_ke_day_stem": tai_ke_day_stem, "tai_day_fan_sui": tai_day_fan_sui,
+        "day_fan_saved": day_fan_saved, "day_fan_weight": day_fan_weight,
+        "tai_zheng": tai_zheng,
     }
 
 

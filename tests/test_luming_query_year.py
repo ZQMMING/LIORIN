@@ -261,7 +261,9 @@ class TestYearDistributionSystemic:
             r = query_year(ch, yr, lm=lm)
             dist[yr] = r["tone"]
         xiong = sum(1 for t in dist.values() if t == "凶")
-        assert xiong <= 6, f"凶年仍过多: {dist}"
+        # 2026-10-21 三命通会/珞琭子赋注深挖后: 2021 辛丑 新增 丧门(V74)+岁伤日干(V76)
+        #   +征太岁(V78) 三重应期 (丑未冲+三刑+晦气+空亡+丧门 = 重恶年) → 凶7
+        assert xiong <= 7, f"凶年仍过多: {dist}"
         # 原著反例修复: 2025 乙巳 (癸亥生得乙巳岁, 水克火为财+巳上乘马,
         #   虽巳亥冲不为灾忒宜获福 L4416 王氏注) — 不得判凶
         assert dist[2025] != "凶", f"2025 乙巳判凶 = 珞琭子原著反例: {dist}"
@@ -281,3 +283,25 @@ class TestYearDistributionSystemic:
                          "LM-V52", "LM-V50", "LM-Y72C")
                         for v in r["verdicts"])
             assert heavy, f"{yr} {r['tai_sui']} 判凶但无重灾4分信号"
+
+    def test_134_new_shensha_yinji_years(self, be):
+        """2026-10-21 珞琭子赋注/三命通会深挖补齐应期验证:
+        V74 丧吊 / V75 勾绞 / V76 岁伤日干 / V77 日犯岁君 / V78 征太岁 —
+        死亡年丧吊应验 (蔡1916 吊客临命 / 喻1951 丧门临命)."""
+        # 蔡锷 1916: 1882 壬午年, 年支午 → 吊客=午前二辰=辰; 太岁丙辰=吊客
+        r = _qy(be, 1882, 12, 18, 9, 1916)
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert outs.get("LM-V74")     # 吊客临命 → 孝服哭泣 (蔡锷 1916 病逝日本)
+        assert outs.get("LM-V74")["tone"] == "凶"
+        # 喻求清 1951: 1913 癸丑年, 年支丑 → 丧门=丑前二辰=卯; 太岁辛卯=丧门
+        r2 = _qy(be, 1913, 3, 18, 22, 1951)
+        outs2 = {v["rule_id"]: v for v in r2["verdicts"]}
+        assert outs2.get("LM-V74")    # 丧门临命 (喻求清 1951 被处决)
+        # 周 1976: 1898 戊戌? 日柱与太岁丙辰冲克 → 征太岁 (V78)
+        r3 = _qy(be, 1898, 3, 5, 6, 1976)
+        outs3 = {v["rule_id"]: v for v in r3["verdicts"]}
+        assert outs3.get("LM-V78")    # 征太岁 → 灾祸未免
+        # 日犯岁君: 2029 己酉 (1983 坤造 日干乙 vs 太岁己? 乙克己=日犯岁君)
+        r4 = _qy(be, 1983, 11, 3, 12, 2029, gender="female")
+        outs4 = {v["rule_id"]: v for v in r4["verdicts"]}
+        assert outs4.get("LM-V77")    # 乙日犯己岁君 → 灾殃必重

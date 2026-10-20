@@ -1674,4 +1674,49 @@ YEAR_RULES = [
      "when": {"op": "eq", "k": "tai_yuan_chen", "v": True},
      "out": "太岁临元辰之岁，如物当风动摇颠倒（不有内疾必有外难）",
      "detail_tpl": "太岁{tai_b}=元辰（{yuan_chen}；岁运临之如物当风，纵有吉神扶持不免灾祸倚伏）"},
+    # ---- 丧吊临命 (五行精纪 L4425: 命前二辰为丧门, 后二辰为吊客, 太岁临之主孝服哭泣;
+    #      珞琭子赋注: "丧吊临人, 变宫商为薤露") ----
+    # 2026-10-21 珞琭子赋注/李虚中命书深挖补齐 (此前流年层缺失孝服哭泣应期)
+    {"id": "LM-V74", "evidence": "E-WXJ-034-018", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临{sang_diao_which}",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_sang_diao", "v": True},
+     "out": "太岁临丧门吊客，主其年孝服哭泣之事（轻者外亲远服）",
+     "detail_tpl": "太岁{tai_b}临{sang_diao_which}（L4425 命前二辰为丧门后二辰为吊客；珞琭子：丧吊临人变宫商为薤露）"},
+    # ---- 勾绞临命 (三命通会 L1743: 阳男阴女命前三辰为勾后三辰为绞, 阴男阳女反之;
+    #      行年至勾绞主口舌刑狱等事; 珞琭子: "狂横起於勾绞") ----
+    # 2026-10-21 珞琭子赋注深挖补齐 (口舌官非应期缺失)
+    {"id": "LM-V75", "evidence": "E-SMTH-015-004", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临{gou_jiao_which}",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_gou_jiao", "v": True},
+     "out": "太岁临勾绞，主口舌刑狱、非灾横祸（狂横起於勾绞）",
+     "detail_tpl": "太岁{tai_b}临{gou_jiao_which}（L1743 勾绞牵连羁绊；珞琭子：狂横起於勾绞）"},
+    # ---- 岁伤日干 (三命通会 L951: "岁伤日干, 有祸必轻" — 岁君克日主, 上治其下顺也) ----
+    # 2026-10-21 三命通会论太岁章深挖补齐 (此前只按年干犯命, 缺日干轴主判)
+    {"id": "LM-V76", "evidence": "E-SMTH-015-001", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_s}克日干{day_stem}",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_ke_day_stem", "v": True},
+     "out": "岁伤日干，有祸必轻（君治臣、父治子，顺也其情未尽绝）",
+     "detail_tpl": "太岁干{tai_s}克日干{day_stem}（L951 岁伤日干有祸必轻）"},
+    # ---- 日犯岁君 (三命通会 L951: "日犯岁君, 灾殃必重" — 臣犯君, 子犯父, 逆也凶决不能免;
+    #      五阳干重五阴干轻; 五行有救四柱有情则凶为吉兆) ----
+    # 2026-10-21 三命通会论太岁章深挖补齐 (下凌上逆=重灾, 与岁克日干镜像)
+    {"id": "LM-V77", "evidence": "E-SMTH-015-001", "mode": "scalar",
+     "scope": "流年", "target": "日干{day_stem}犯岁君{tai_s}",
+     "tone": "凶",
+     "when": {"op": "and", "conds": [
+         {"op": "eq", "k": "tai_day_fan_sui", "v": True},
+         {"op": "not", "cond": {"op": "eq", "k": "day_fan_saved", "v": True}}]},
+     "out": "日犯岁君，灾殃必重（臣犯君、子犯父，逆也其凶决不能免；五阳干重五阴干轻）",
+     "detail_tpl": "日干{day_stem}克太岁干{tai_s}（L951 日犯岁君灾殃必重；{day_fan_weight}）"},
+    # ---- 征太岁 (三命通会 L954: 日干支冲克太岁曰征, 运干支伤冲太岁亦曰征, 其年则凶灾祸未免) ----
+    # 2026-10-21 三命通会论太岁章深挖补齐 (V58 真太岁只覆盖转趾煞, 征太岁独立)
+    {"id": "LM-V78", "evidence": "E-SMTH-015-001", "mode": "scalar",
+     "scope": "流年", "target": "日柱{day_stem}{day_branch}征太岁{tai_s}{tai_b}",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_zheng", "v": True},
+     "out": "征太岁（日干支冲克太岁/运干支伤冲太岁），其年则凶，灾祸未免",
+     "detail_tpl": "日柱{day_stem}{day_branch}与太岁{tai_s}{tai_b}冲克（L954 征太岁）"},
 ]
