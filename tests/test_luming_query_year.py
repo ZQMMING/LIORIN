@@ -31,6 +31,10 @@ def _qy(be, y, m, d, h, qyear, gender="male"):
     return query_year(chart, qyear, lm=lm)
 
 
+def _lm(be, y, m, d, h, gender="female"):
+    return from_bazi_chart(_chart(be, y, m, d, h, gender))
+
+
 class TestQueryYearStructure:
     def test_120_structure_complete(self, be):
         r = _qy(be, 1893, 12, 26, 20, 1976)
@@ -121,16 +125,20 @@ class TestCai1916:
     def test_126_hai_day_pillar(self, be):
         r = _qy(be, 1882, 12, 18, 9, 1916)
         v51 = [v for v in r["verdicts"] if v["rule_id"] == "LM-V51"]
-        assert v51 and v51[0]["out"] == "太岁刑冲压害生日，主妻妾己身之灾"
+        assert v51 and v51[0]["tone"] == "平"
+        # 2026-10-20 系统性重构 (珞琭子 L4416): 太岁丙辰沙中土 vs 壬午杨柳木
+        #   = 木克土(我克为财) 非克身 → 辰害日支卯 = 平(细累浮灾不为重害 L4273),
+        #   应期仍定位"妻妾己身之应" (广信集 L4423 分柱)
+        assert v51[0]["out"] == "太岁刑冲压害生日，主妻妾己身之应（克身者己身之灾，不克身者变动应期）"
         # 2026-10-20 严谨复核 (L4419 晦气): 太岁丙合日干辛 → 晦气凶; 辰害日支卯(广信集)
-        #   + 太岁丙辰沙中土犯杨柳木忌(V68) → 三凶齐集 → 偏凶 (贴合蔡锷 1916 卒于日本)
+        #   + 太岁丙辰沙中土犯杨柳木忌(V68) → 重恶(晦气4+犯忌3=7=重恶运) → 凶
         #   [辛卯日属甲申旬(空午未), 辰非空亡 — 勿误断 V61]
         outs = {v["rule_id"]: v for v in r["verdicts"]}
         assert outs.get("LM-V59B")     # 丙辛合日干 → 晦气
         assert outs.get("LM-V61") is None   # 辰非空亡(辛卯=甲申旬空午未)
-        # 2026-10-20 第二版 (原著核实): 流年自身 重恶(晦气4+害日3+犯忌3=10=七分恶运) → 凶
-        #   (L4276 方有重灾; 蔡锷 1916 卒于日本); 大运乙卯吉泰+太岁辰害日支卯 → L4273
-        #   浮灾标注(不为重害) — 流年自身已凶, 浮灾不加重不减轻
+        # 重恶(晦气4+犯忌3=7=七分恶运) → 凶 (L4276 方有重灾; 蔡锷 1916 卒于日本);
+        # 大运乙卯吉泰+太岁辰害日支卯 → L4273 浮灾标注(不为重害) — 流年自身已凶,
+        # 浮灾不加重不减轻
         assert r["tone"] == "凶"
         assert r["combined"]["l4273"]["mode"] == "浮灾"
 
@@ -142,19 +150,20 @@ class TestGLMGood:
     """
 
     def test_127_glm_needs_clean_year(self, be):
-        # 喻求清 1951: 卯为癸年天乙贵人(壬癸兔蛇藏), 但太岁卯压月柱(乙卯)
-        #   → L4409 前提不满足, V65 不触发; 太岁辛卯松柏木=木, 非癸丑桑柘木之喜忌
-        #   (桑柘木喜金水土火, 忌水多) → V67/V68 均不触发; 空亡+压月柱 → 流年偏凶
+        # 喻求清 1951: 卯为癸年天乙贵人(壬癸兔蛇藏), 太岁辛卯压月柱(乙卯).
+        # 2026-10-20 系统性重构 (珞琭子 L4416 王氏注): "掩冲岁临尚不为灾…癸亥生得
+        #   乙巳岁, 虽巳亥冲临于返吟之上, 以身财之旺故不为灾, 宜获福" — 冲/压
+        #   (返吟/伏吟)本身不为灾, 不阻断贵禄马吉面; 贵禄马仅被"克身之鬼"阻断.
+        #   → V65 吉面在场 (卯贵人+卯马, 太岁辛卯松柏木 vs 癸丑桑柘木=比和不克身);
+        #   V51 压月柱=动(不为灾); 空亡凶(2分) → 辛亥运天罗(男4)+太岁卯压月柱
+        #   → L4273 发祸 → tone 凶 (喻求清 1951 年被处决, 凶年正确)
         r = _qy(be, 1913, 3, 18, 22, 1951)
         outs = {v["rule_id"]: v for v in r["verdicts"]}
-        assert outs.get("LM-V65") is None
+        assert outs.get("LM-V65")            # 贵禄马命中且不克身 → 吉面在场 (L4416)
         assert outs.get("LM-V67") is None
         assert outs.get("LM-V68") is None
-        # 2026-10-20 严谨复核 (L4409 组合吉面): 太岁卯压月柱 → V65 贵禄马吉不立(凶占先),
-        #   Y71 合局吉亦不立 → 空亡+压月柱 2凶; L4273: 辛亥运天罗=凶祸之运+太岁卯刑压
-        #   → 发祸 → tone 凶 (喻求清 1951 年被处决)
-        assert r["tone"] == "凶"
-        assert outs.get("LM-V61")      # 太岁卯年旬空亡仍在
+        assert r["tone"] == "凶"             # 发祸 (凶祸运+太岁刑压) 压过贵禄马吉面
+        assert outs.get("LM-V61")            # 太岁卯年旬空亡仍在
 
     def test_128_glm_clean_year_positive(self, be):
         # 蔡锷 1916: 太岁丙辰, 辰为壬年贵人? 否 (壬癸兔蛇藏); 辰非禄非马 → V65 不触发;
@@ -230,3 +239,45 @@ class TestYuanChen:
         assert r2["tai_yuan_chen"] is True
         outs = {v["rule_id"]: v for v in r2["verdicts"]}
         assert outs.get("LM-V70") is not None
+
+
+class TestYearDistributionSystemic:
+    """2026-10-20 系统性重构回归断言 (流年 90% 凶根治).
+
+    原著框架: 珞琭子 L4416"掩冲岁临尚不为灾, 相生则吉相克则凶" (冲/压不克身
+    不为灾, 我克为财主得财) / 三命提要"更带克身之鬼其年决有大灾" (克身才重)
+    / 广信集 L4423 分柱=应期定位 / 三命通会 L968 伏吟不利六亲 / L4273 吉面
+    净胜之年凶祸运亦只浮灾不为重害.
+
+    锚: 1983 坤造(癸亥大海水, 阴女顺排, 丙寅运偏吉) 2020-2030 十一年 —
+    不得再出现"10年9凶"; 凶年必须带重灾4分信号 (晦气/死绝/元辰/冲运/克身).
+    """
+
+    def test_132_1983_kun_years_not_all_xiong(self, be):
+        ch = _chart(be, 1983, 11, 3, 12)
+        lm = _lm(be, 1983, 11, 3, 12)
+        dist = {}
+        for yr in range(2020, 2031):
+            r = query_year(ch, yr, lm=lm)
+            dist[yr] = r["tone"]
+        xiong = sum(1 for t in dist.values() if t == "凶")
+        assert xiong <= 6, f"凶年仍过多: {dist}"
+        # 原著反例修复: 2025 乙巳 (癸亥生得乙巳岁, 水克火为财+巳上乘马,
+        #   虽巳亥冲不为灾忒宜获福 L4416 王氏注) — 不得判凶
+        assert dist[2025] != "凶", f"2025 乙巳判凶 = 珞琭子原著反例: {dist}"
+        # 2024 甲辰: 水克火为财(Y73吉) → 吉面应立
+        assert dist[2024] != "凶"
+
+    def test_133_1983_kun_2020_signal_grounded(self, be):
+        """凶年必须信号可回指 (重灾4分: 晦气/死绝/元辰/冲运/克身)."""
+        ch = _chart(be, 1983, 11, 3, 12)
+        lm = _lm(be, 1983, 11, 3, 12)
+        for yr in range(2020, 2031):
+            r = query_year(ch, yr, lm=lm)
+            if r["tone"] != "凶":
+                continue
+            heavy = any(v.get("tone") == "凶" and v["rule_id"] in
+                        ("LM-V59", "LM-V59B", "LM-V60", "LM-V66", "LM-V70",
+                         "LM-V52", "LM-V50", "LM-Y72C")
+                        for v in r["verdicts"])
+            assert heavy, f"{yr} {r['tai_sui']} 判凶但无重灾4分信号"

@@ -2752,6 +2752,23 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     # 纳音生克 / 十二宫
     tai_nayin = NAYIN_60.get((ts, tb), "")
     tai_nayin_rel = _nayin_relation(year_nayin, tai_nayin) if tai_nayin else ""
+
+    # V51 动态判定 (2026-10-20 系统性根治, 原著深挖):
+    #   珞琭子 L4416"掩冲岁临尚不为灾……相生则吉相克则凶" — 冲/压(返吟伏吟)
+    #     本身不为灾;
+    #   三命提要 L4413"欲知人受灾之年…更带克身之鬼, 其年决有大灾" — 重灾需
+    #     太岁纳音克本命纳音(克身之鬼)在场;
+    #   广信集 L4423 分柱 = 应期定位(父母/兄弟/妻妾己身/子孙), 非灾级计数.
+    #   → 克我(克身之鬼)+刑冲压害任一 = 凶(决有大灾);
+    #     刑/害不克身 = 平 (细累浮灾不为重害 L4273);
+    #     冲/压不克身 = 动 (掩冲岁临不为灾, 主变动应期).
+    for _pr in tai_pillar_relations:
+        if tai_nayin_rel == "克我":
+            _pr["v51_tone"] = "凶"
+        elif _pr["tai_relation"] in ("刑", "害"):
+            _pr["v51_tone"] = "平"
+        else:
+            _pr["v51_tone"] = "动"
     tai_growth = _growth_stage(year_nayin_el, tb) if year_nayin_el else ""
 
     # 天罗地网 (SMTH L9724): 大运支+太岁支 = 戌亥 / 辰巳
@@ -2850,13 +2867,16 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     yctx["tai_xi_str"] = ""
     yctx["tai_ji_str"] = ""
     # L4409: 太岁与命局支干纳音"无冲害刑克"为前提; 有冲害刑压则凶占先
-    # 2026-10-20 严谨复核 (L4409 原文核验): "欲常与本命支干纳音相合，无冲害、刑克，
-    #   仍加本命贵人禄马一切福神之地则其年有迁官得财、婚姻生子之福" —
-    #   冲害刑压 四者任一在 刑/压/冲/害 阻断贵禄马福神(V65)与喜神(V67)吉面,
-    #   冲害的"应期信号"解读由 V51 分柱承担, 不吞福神吉面
+    # 2026-10-20 系统性根治 (珞琭子 L4416 王氏注): "掩冲岁临尚不为灾…
+    #   癸亥生得乙巳岁, 水克火为财, 巳上乘马, 虽巳亥冲临于返吟之上,
+    #   以身财之旺故不为灾, 宜获福" — 冲/压(返吟伏吟)不阻断贵禄马吉面,
+    #   冲害刑压的应期信号由 V51 分柱承担 (克身才凶).
+    #   贵禄马吉面仅被"克身之鬼"(太岁纳音克本命)阻断 — 三命提要"更带克身之鬼
+    #   其年决有大灾", 重灾占先, 贵禄马不抵 (L4409 充分条件非必要条件).
     _clean = not any(r["tai_relation"] in ("冲", "刑", "害", "压")
                      for r in yctx.get("tai_pillar_relations", []))
-    yctx["tai_glm_clean"] = bool(yctx.get("tai_glm") and _clean)
+    _ke_shen = yctx.get("tai_nayin_rel") == "克我"
+    yctx["tai_glm_clean"] = bool(yctx.get("tai_glm") and not _ke_shen)
     # 2026-10-20 严谨复核 (L4409 完整吉面): "欲常与本命支干纳音相合，无冲害刑克…
     #   则其年有迁官得财…婚姻生子之福" — 合局吉须与"无冲害刑压"组合成立,
     #   有冲害刑压则凶占先 (LM-Y71 收窄, 与 V65 同构)
@@ -2915,8 +2935,8 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     _agg = aggregate(_base, _power, _dims)
     year_tone = _agg["verdict"]
 
-    # L4273 条件互动 (原著唯一运年互动, 标注非合成)
-    _i4273 = l4273_interaction(lm, year_tone, yctx) if lm is not None else {
+    # L4273 条件互动 (原著唯一运年互动, 标注非合成; 浮灾含强度修正)
+    _i4273 = l4273_interaction(lm, year_tone, yctx, verdicts) if lm is not None else {
         "mode": "无", "year_tone": year_tone, "detail": "", "luck_verdict": ""}
     year_tone = _i4273["year_tone"]
 
