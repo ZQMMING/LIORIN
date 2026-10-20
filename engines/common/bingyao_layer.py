@@ -726,13 +726,20 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             yin_matched = ['印不重(根气仅在%d支, 透干%d, combo=%d) -> 非「印多」(DTS L445「土重金埋」)' % (
                 _yin_root_brs, _yin_t, _yin_combo)]
     if ok:
-        # ② 有财疏印 -> 印不作病(PZZQ L896/L3718)
+        # ② V7.67 财是否【足以破印】(原典 PZZQ L1130「财无根气, 不能用财破印; 原局财星太旺,
+        #   印绶被伤, 则反须以比劫去财扶印为美」/ L3589「印重身强...只要根深, 无防财破」):
+        #   财太旺(当令/成党) 且 印根浅 -> 财破印, 印绶被伤, 印仍为病(药=比劫去财扶印);
+        #   印根深 或 财弱(不当令且不成党) -> 财不足以破印, 财反为疏印之药, 印不作病.
         _cai_wx_y = KE.get(daymaster_element, '')
         _cy_t, _cy_b = _tou_ben(_cai_wx_y)
-        if _cy_t >= 1 or _cy_b >= 1:
+        _cy_combo = _cy_t + _cy_b + _ju_piao(_cai_wx_y)
+        _cai_wang = (month_qi_element == _cai_wx_y) or (_cy_combo >= DANG_COMBO)
+        _yin_root_deep = (_yin_b >= 2)
+        _cai_po_yin = _cai_wang and not _yin_root_deep
+        if not _cai_po_yin and (_cy_t >= 1 or _cy_b >= 1):
             ok = False
-            yin_matched = ['印重而有财(透干%d/本根%d) -> 财为疏印之药, 印不作病(PZZQ L896「印多用财, 透财以抑太过」/ L3718「财轻印多, 用财损印」)' % (
-                _cy_t, _cy_b)]
+            yin_matched = ['印重而财不足以破印(财透干%d/本根%d, 财旺=%s, 印根深=%s) -> 财为疏印之药, 印不作病(PZZQ L3589「只要根深, 无防财破」/ L1130)' % (
+                _cy_t, _cy_b, _cai_wang, _yin_root_deep)]
     if ok:
         b = BING_TYPES['YIN_DUO_MAI_ZI']
         bing_list.append({
