@@ -361,3 +361,18 @@ class TestYearDistributionSystemic:
         if r2.get("tai_ya_dayun"):                 # 太岁辰 若=大运辰 → 支同非官乡 → V54
             assert "LM-V86" not in outs2
             assert outs2.get("LM-V54")
+
+    def test_138_wu_gui_zhong(self, be):
+        """2026-10-21 五鬼 (珞琭子三命消息赋徐子平注 L78: '四煞轻五鬼重,
+        运逢之轻岁遇之重'; 王廷光: '以纳音克我之谓鬼, 鬼在生败旺死绝五处见').
+        1983 坤造 癸亥大海水: 2020 庚子(壁上土)/2028 戊申(大驿土) 土克水
+        = 克身之鬼, 且鬼临生败旺死绝宫 → V87 岁遇之重."""
+        r = _qy(be, 1983, 11, 3, 12, 2020, gender="female")
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert r.get("tai_wu_gui") is True
+        assert outs.get("LM-V87")
+        assert outs.get("LM-V87")["tone"] == "凶"
+        assert r.get("tai_wu_gui_stage")            # 鬼临生/败/旺/死/绝宫之一
+        # 非克我之年不触发: 2023 癸卯(金箔金? 癸卯金生水?) — 金生水非克我
+        r2 = _qy(be, 1983, 11, 3, 12, 2023, gender="female")
+        assert not r2.get("tai_wu_gui")

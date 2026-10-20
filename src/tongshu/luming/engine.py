@@ -2781,6 +2781,15 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         else:
             _pr["v51_tone"] = "动"
     tai_growth = _growth_stage(year_nayin_el, tb) if year_nayin_el else ""
+    # 五鬼 (珞琭子三命消息赋徐子平注 L78: "四煞轻, 五鬼重…运逢之轻, 岁遇之重";
+    #   王廷光: "五鬼者, 以纳音克我之谓鬼, 鬼在生、败、旺、死、绝五处见者是也";
+    #   五行精纪总则: "校量身克杀而尚轻, 杀克身而尤重")
+    #   → 太岁纳音克本命纳音(克身之鬼) + 鬼所临宫处 生/败/旺/死/绝 五处之一 = 岁遇之重
+    _tai_nayin_el = NAYIN_FIVE_ELEMENT.get(tai_nayin, "") if tai_nayin else ""
+    _tai_wu_gui_stage = _growth_stage(_tai_nayin_el, tb) if _tai_nayin_el else ""
+    tai_wu_gui = bool(
+        tai_nayin_rel == "克我" and
+        _tai_wu_gui_stage in ("长生", "沐浴", "帝旺", "死", "绝"))
 
     # 天罗地网 (SMTH L9724): 大运支+太岁支 = 戌亥 / 辰巳
     tldw = ""
@@ -2983,6 +2992,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "de_jiu": de_jiu, "tai_tian_yue_de": tai_tian_yue_de,
         "tai_gan_tui_liang_chong": tai_gan_tui_liang_chong,
         "tai_mu": tai_mu,
+        "tai_wu_gui": tai_wu_gui, "tai_wu_gui_stage": _tai_wu_gui_stage,
         # 小运 (排盘引擎产出, 本层消费): 干支/纳音/十二宫/刑害/贵马
         "xiao_yun": _xy_gz, "xiao_yun_nayin": xy_nayin,
         "xiao_yun_growth": xy_growth, "xy_dead_jue": xy_dead_jue,
@@ -3138,4 +3148,6 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "tai_tian_yue_de": yctx.get("tai_tian_yue_de", False),
             "tai_gan_tui_liang_chong": yctx.get("tai_gan_tui_liang_chong", False),
             "tai_mu": yctx.get("tai_mu", False),
+            "tai_wu_gui": yctx.get("tai_wu_gui", False),
+            "tai_wu_gui_stage": yctx.get("tai_wu_gui_stage", ""),
             "dl_guan_di_wang": yctx.get("dl_guan_di_wang", False)}
