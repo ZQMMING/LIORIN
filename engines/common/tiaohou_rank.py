@@ -170,7 +170,17 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
         #   ★ V7.49 修: 炼金神取官杀火 = KE_BACK[dm](克我者), 原写 KE.get(dm)=财(我克)取神错误,
         #     导致 QTBJ「六月庚金专用丁火/三伏生寒金顽已极」之丁火候干(官杀火)职能判不中而被剔除.
         #   原典: QTBJ 六月庚金「专用丁火」/ 九月庚金「土厚埋金」; DTS L445 君赖臣生(财破印)为并行路.
-        _is_lianjin = (dm_wx == '金' and bing_wx == SHENG_BACK.get(dm_wx, '') and wx == KE_BACK.get(dm_wx, ''))
+        # ★ V7.70 炼金判据精确化(原典先读全, 一次改完):
+        #   炼金之病源有二(QTBJ 庚金各月原文): ①土厚埋金(L5819 三月庚金「先用甲木疏土, 次用丁火煅炼」);
+        #     ②金顽/金弱失令(L5675 正月「顽钝之金, 非火炼不成器」/ L6110 六月「顽钝至极, 无丁火锻打则无以成器」/
+        #     L6121 七月「专用丁火煅炼」/ L6214 八月「须见丁火锻炼」/ L6348 十月「非丁不能锻炼」/
+        #     L6489 十二月「次取丁火炼金」). 故不取"主病=印"为前提.
+        #   但须以【QTBJ 候干表序1或序2为火】为位(原文明言"专用丁火/非丁不成器"之月):
+        #     庚寅丙1/庚卯丁1/庚辰丁2/庚未丁1/庚申丁1/庚酉丁1/庚亥丁1/庚子丁1/庚丑丙1丁2 -> 可升;
+        #     庚巳(丙3)/庚戌(丁3)/庚午(无火) -> 序1乃他神, 火在序3不升.
+        _lianjin_wx = KE_BACK.get(dm_wx, '')      # 官杀火=炼金之神
+        _hou_fire_top2 = any((c['wx'] == _lianjin_wx) and (c.get('order', 99) <= 2) for c in cands)
+        _is_lianjin = (dm_wx == '金' and wx == _lianjin_wx and _hou_fire_top2)
         _reason = ['候干序1=%s 有气: 透干%d/坐旺%s' % (top.get('stem', ''), _stem_present(wx, pillars), _ben_wang(wx, pillars))]
         if _in_chu and not _in_xing(wx, pillars) and (_is_shishang or _is_zhi or _is_lianjin):
             _role = []

@@ -702,11 +702,12 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             })
 
     # 8. 印多埋子/母多灭子 (统一触发: 当令或成党, 无重根)
-    # ★ V7.61 补两要件(原典 DTS L445「土重金埋」/ PZZQ L896「印多用财, 透财以抑太过」/
-    #   L3718「财轻印多, 用财损印, 则喜财乡」/ L3636「印绶过旺令日主呆滞」):
-    #   ① 印【重】= 印在多处有根(根气支数>=2)或成党, 非仅月令当令一处;
-    #   ② 印重而【有财】= 财为疏印之药(印不作病), 不报印多埋子.
-    #   (印为生扶神, 须财疏之方为病, 与财/杀/泄气为克泄耗不同.)
+    # ★ V7.71 判据订正(母多灭子=印多埋子; 病源在母不在财):
+    #   ① 印【重】= 印成党或根气支数>=2 (DTS L445「土重金埋」) —— 母成势;
+    #   ② 日主【无本气真根】= 子被埋 (母多灭子) —— 病方成立.
+    #   财不参与成立与否(PZZQ L1130「财无根气...不能用财破印」= 财不能治, 非印无病),
+    #   只影响药方(财破印/比劫扶身/食伤泄秀).
+    #   (V7.61 曾以"有财疏印"作印不作病之理由, 方向反致 golden 回归, 已撤.)
     yin_wx = SHENG_WO.get(daymaster_element, '')
     ok, yin_matched = _kexie_trigger(yin_wx, 'YINDUO-MAIZI', False)
     if ok:
@@ -726,20 +727,14 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             yin_matched = ['印不重(根气仅在%d支, 透干%d, combo=%d) -> 非「印多」(DTS L445「土重金埋」)' % (
                 _yin_root_brs, _yin_t, _yin_combo)]
     if ok:
-        # ② V7.67 财是否【足以破印】(原典 PZZQ L1130「财无根气, 不能用财破印; 原局财星太旺,
-        #   印绶被伤, 则反须以比劫去财扶印为美」/ L3589「印重身强...只要根深, 无防财破」):
-        #   财太旺(当令/成党) 且 印根浅 -> 财破印, 印绶被伤, 印仍为病(药=比劫去财扶印);
-        #   印根深 或 财弱(不当令且不成党) -> 财不足以破印, 财反为疏印之药, 印不作病.
-        _cai_wx_y = KE.get(daymaster_element, '')
-        _cy_t, _cy_b = _tou_ben(_cai_wx_y)
-        _cy_combo = _cy_t + _cy_b + _ju_piao(_cai_wx_y)
-        _cai_wang = (month_qi_element == _cai_wx_y) or (_cy_combo >= DANG_COMBO)
-        _yin_root_deep = (_yin_b >= 2)
-        _cai_po_yin = _cai_wang and not _yin_root_deep
-        if not _cai_po_yin and (_cy_t >= 1 or _cy_b >= 1):
+        # ② V7.71 母多灭子之成立要件: 子(日主)无本气真根(被母埋) —— 与财无关.
+        #   原典 PZZQ L1130「若四柱财无根气, 则印虽多, 【不能用财破印】; 原局财星太旺, 印绶被伤,
+        #   则反须以比劫去财扶印为美」—— 财只决定【用什么药】, 不决定【病是否成立】.
+        #   (V7.61 曾以"有财疏印"作印不作病之理由, 方向反, 已撤; 连带的 V7.67/V7.69 亦撤.)
+        _, _dm_ben_y = _tou_ben(daymaster_element)
+        if _dm_ben_y >= 1:
             ok = False
-            yin_matched = ['印重而财不足以破印(财透干%d/本根%d, 财旺=%s, 印根深=%s) -> 财为疏印之药, 印不作病(PZZQ L3589「只要根深, 无防财破」/ L1130)' % (
-                _cy_t, _cy_b, _cai_wang, _yin_root_deep)]
+            yin_matched = ['日主有本气真根%d -> 母不灭子, 印不作病(印滞身属格之问题, 印格用财损印按格论)' % _dm_ben_y]
     if ok:
         b = BING_TYPES['YIN_DUO_MAI_ZI']
         bing_list.append({
