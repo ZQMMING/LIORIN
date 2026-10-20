@@ -307,6 +307,14 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                  if _pl and ZHI_BEN_WX.get(_pl[pos][1]) == dm) if _pl else 0
 
     rejected_climate = []
+    # V7.49 候神不拒: 候干表=日干×月令原典用神(QTBJ, 如六月庚金「专用丁火」).
+    #   候神已升 primary 时, 该候干不得再被判"病之源"剔除(自相矛盾: 药不可既是主用神又为病源).
+    _hou_wx_pre = ''
+    if climate:
+        from engines.common import tiaohou_rank as _thr
+        _rk_pre = _thr._tiaohou_primary_rank(climate, bw, dm, _pl)
+        if _rk_pre.get('rank') == 'PROMOTE':
+            _hou_wx_pre = _rk_pre.get('wx') or ''
     if climate:
         for c in climate.get('climate_candidates', []):
             stem = c.get('stem', '')
@@ -316,6 +324,8 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                 reason = '与主病同五行(%s), 用之添病' % bw
             elif SHENG_BACK.get(bw) == cwx:
                 reason = '%s生%s(病), 为病之源' % (cwx, bw)
+            if reason and cwx == _hou_wx_pre:
+                continue   # V7.49 候神已升 primary, 不拒(见上)
             if reason:
                 rejected_climate.append({'stem': stem, 'wuxing': cwx, 'reason': reason})
 
@@ -646,6 +656,11 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     _sb_bw = SHENG_BACK.get(bw, '')
     if _sb_bw and _sb_bw not in _ji_bkt:
         _ji_bkt.append(_sb_bw)
+    # ★ V7.49 候神不入忌桶(同 ji_shen 原则, L598-604): 候神=原典用神(QTBJ 候干表),
+    #   既是 primary 用神, 不得同时列忌(自相矛盾). 生病者(火生土病)让位炼金候神.
+    _hou_wx_bkt = (zhu or {}).get('wuxing', '') if (zhu or {}).get('kind') == '调候' else ''
+    if _hou_wx_bkt and _hou_wx_bkt in _ji_bkt:
+        _ji_bkt.remove(_hou_wx_bkt)
     # ★ V7.46 互斥(DTS L404「自喜忌之外皆闲神」: 同一五行不可既喜又忌, 冲突则归闲=中性):
     #   喜∩忌 的五行从两桶各剔除, 落入闲桶(既非明确喜亦非明确忌, 岁运引动才定).
     _conflict = [w for w in _ji_bkt if w in _xi_bkt]

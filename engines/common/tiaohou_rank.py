@@ -165,9 +165,12 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
         _is_shishang = SHENG.get(dm_wx, '') == wx     # 候干=食伤(我生)=泄秀
         _is_zhi = KE_BACK.get(bing_wx, '') == wx     # 候干=制药(克主病)
         _is_yin = SHENG_BACK.get(dm_wx, '') == wx     # 候干=生我(印)=主病源
-        # V7.26 炼金职能: 金日主 主病印(土)重埋金时, 官火=炼金(制比劫+成器)为候神(原典"土重金埋需火炼金").
+        # V7.49 炼金职能: 金日主 主病印(土)重埋金时, 官火=炼金(制比劫+成器)为候神(原典"土重金埋需火炼金").
         #   候火不入忌(炼金是药), 同食伤泄秀.
-        _is_lianjin = (dm_wx == '金' and bing_wx == SHENG_BACK.get(dm_wx, '') and wx == KE.get(dm_wx, ''))
+        #   ★ V7.49 修: 炼金神取官杀火 = KE_BACK[dm](克我者), 原写 KE.get(dm)=财(我克)取神错误,
+        #     导致 QTBJ「六月庚金专用丁火/三伏生寒金顽已极」之丁火候干(官杀火)职能判不中而被剔除.
+        #   原典: QTBJ 六月庚金「专用丁火」/ 九月庚金「土厚埋金」; DTS L445 君赖臣生(财破印)为并行路.
+        _is_lianjin = (dm_wx == '金' and bing_wx == SHENG_BACK.get(dm_wx, '') and wx == KE_BACK.get(dm_wx, ''))
         _reason = ['候干序1=%s 有气: 透干%d/坐旺%s' % (top.get('stem', ''), _stem_present(wx, pillars), _ben_wang(wx, pillars))]
         if _in_chu and not _in_xing(wx, pillars) and (_is_shishang or _is_zhi or _is_lianjin):
             _role = []
