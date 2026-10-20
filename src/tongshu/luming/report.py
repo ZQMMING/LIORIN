@@ -105,6 +105,8 @@ def build_report(lm: Any) -> Dict[str, Any]:
     gong = nc.get("gong", {}) or {}
     ming_gong = gong.get("ming", {}) or {}
     shen_gong = gong.get("shen", {}) or {}
+    luck_scope = d.get("luck_scope", {}) or {}
+    start_age = luck_scope.get("start_age", 0) or 0
     paiban = {
         "four": four,
         "tai_yuan": _gz(tai.get("stem", ""), tai.get("branch", "")),
@@ -114,6 +116,9 @@ def build_report(lm: Any) -> Dict[str, Any]:
         "ming_gong_algorithm": ming_gong.get("algorithm", ""),
         "shen_gong": shen_gong.get("pillar", ""),
         "shen_gong_nayin": shen_gong.get("nayin", ""),
+        "start_age": round(start_age, 1),
+        "first_luck": (luck_scope.get("pillars", [{}])[0] or {}).get("stem", "") +
+                      (luck_scope.get("pillars", [{}])[0] or {}).get("branch", ""),
     }
 
     # 神煞集解 (确定性事实; 视图层中文化)
@@ -154,8 +159,8 @@ def build_report(lm: Any) -> Dict[str, Any]:
     pillars_view = {p["stem"] + p["branch"]: p for p in
                     (d.get("luck_scope", {}).get("pillars", []))}
     luck_rows = []
-    for p in d.get("luck_pillars", []):
-        gz = p[0] + p[1]
+    for _i, _p in enumerate(d.get("luck_pillars", [])):
+        gz = _p[0] + _p[1]
         pv = pillars_view.get(gz, {})
         p_verdicts = [v for v in verdicts if v["scope"] == "运" and v["target"] == gz]
         sees = []
@@ -169,7 +174,8 @@ def build_report(lm: Any) -> Dict[str, Any]:
         tone_summary = "、".join(f"{t}{tones.count(t)}" for t in ("吉", "凶", "平")
                                  if tones.count(t)) or "—"
         luck_rows.append({
-            "gz": _gz(p[0], p[1]),
+            "gz": _gz(_p[0], _p[1]),
+            "age_range": f"{round(start_age + _i * 10, 1)}-{round(start_age + _i * 10 + 9, 1)}岁",
             "nayin": pv.get("nayin", ""),
             "nayin_relation": pv.get("nayin_relation", ""),
             "shier_gong": pv.get("shier_gong", ""),
@@ -236,6 +242,13 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
     lines.append(f"| 身宫 | {p['shen_gong']} | {p['shen_gong_nayin']} |"
                  f" {NAYIN_ELEMENT_CN.get(p['shen_gong_nayin'], '')} |")
     lines.append("")
+    if p.get("start_age") is not None:
+        lines.append(f"> 起运: {p['start_age']}岁交第一步大运 {p.get('first_luck', '')}"
+                     f"（阳男阴女顺行/阴男阳女逆行，折除以三日为年）")
+        lines.append("")
+    lines.append("> 命宫/身宫算法: 五行精纪起命宫例(太阳加时顺数见卯)与太阴星宫法"
+                 "（WXJJ L3736-3739，与三命通会 L2679-2683 互证），非袁树珊月数法。")
+    lines.append("")
     lines.append("神煞集解:")
     ss = report["shen_sha"]
     for k, v in ss.items():
@@ -258,14 +271,14 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
     # 三、大运详批
     lines.append("## 三、大运详批")
     lines.append("")
-    lines.append("| 大运 | 纳音 | 生克 | 十二宫 | 干支纲 | 断语 | 吉凶 |")
-    lines.append("| --- | --- | --- | --- | --- | --- | --- |")
+    lines.append("| 大运 | 岁数 | 纳音 | 生克 | 十二宫 | 干支纲 | 断语 | 吉凶 |")
+    lines.append("| --- | --- | --- | --- | --- | --- | --- | --- |")
     for r in report["luck"]:
         details = "；".join(_clip(_zh(v["detail"])) for v in r["verdicts"])
         sees = r["sees"]
         gan_zhi = f"{_zh(r['gan_rel'])}/{_zh(r['zhi_rel'])}" if r["gan_rel"] else ""
         duan = details if not sees else f"{sees}；{details}"
-        lines.append(f"| {r['gz']} | {r['nayin']} | {r['nayin_relation']} |"
+        lines.append(f"| {r['gz']} | {r['age_range']} | {r['nayin']} | {r['nayin_relation']} |"
                      f" {r['shier_gong']} | {gan_zhi} | {duan} | {r['tone_summary']} |")
     lines.append("")
 

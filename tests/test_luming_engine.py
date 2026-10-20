@@ -779,7 +779,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         # 每条规则都有证据
         for r in VERDICT_RULES:
             self.assertIn(r["evidence"], {v for v in LM_EV.values()})
-        self.assertEqual(len(VERDICT_RULES), 153)  # 150 + 日德入格V151/日德犯忌V152/夹禄占禄V153 (V148夹禄/V149真武当权/V150绝处建贵) (V144贵合/V145贵食/V146纳音水多/V147纳音金多) (V138丙丁亥子/V139己午庚辛/V140甲申乙酉/V141辛卯庚寅/V142水土寅卯/V143酉上逢丁) (V128日轮当表/V129官禄会官星/V130天泽仲夏/V131月华仲秋/V132日合辛卯/V133龙虎风云/V134斗牛月露/V135才满三峡/V136学富三场/V137甲人巳午) (V116马化龙驹/V117蛇化青龙/V118宝剑冲牛斗/V119麟逢凤沼/V120龙跃天门/V121月生沧海/V122蚌珠照月/V123金马嘶风)
+        self.assertEqual(len(VERDICT_RULES), 155)  # 154 + V85-B食伤藏支(2026-10-21, V85日主立极拆两档)
 
     def test_116_tone_scope_case_19831103(self):
         """吉凶分级 oracle: 1983-11-3 坤造.
@@ -795,7 +795,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         lm = from_bazi_chart(chart, _dt.datetime(2026, 10, 19, 12))
         ts = lm.tone_scope
         orig = ts["layers"]["原局"]
-        self.assertEqual((orig["吉"], orig["凶"], orig["平"]), (3, 1, 12))  # 2026-10-20: (2,2,6)+V85子星得力吉+1、V81火受亏平、V82水太过平、V84夫星不现平、V106时冲年平、V108时带煞平、V110狡害平 (健康/性情/六亲/婚育维度不扰方向); V02三元十二宫修正(癸亥三元皆旺) 凶-1
+        self.assertEqual((orig["吉"], orig["凶"], orig["平"]), (2, 1, 14))  # 2026-10-21: (3,1,12)→V85子星日主立极修正吉-1、V85-B食伤藏支平+1、V31H得印降V31H-L(凶转平)、V14华盖孤寡亲缘计入凶+1(原continue不计); 2026-10-20: (2,2,6)+V85子星得力吉+1、V81火受亏平、V82水太过平、V84夫星不现平、V106时冲年平、V108时带煞平、V110狡害平 (健康/性情/六亲/婚育维度不扰方向); V02三元十二宫修正(癸亥三元皆旺) 凶-1
         # 当前运 (2026 时 43 虚岁 → 丁卯运): 偏吉
         cur = ts["current"]
         self.assertEqual(cur["pillar"], "DINGMAO")
@@ -806,7 +806,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         #   贵人年干口径: 甲子/壬申两运日干贵人(乙贵子申/庚贵)误判移除 → 吉-2;
         #   V02 三元十二宫口径: 癸亥禄(子)临官/命(亥)帝旺/身(癸亥)临官 皆不死绝 → 原局凶-1)
         self.assertEqual(ts["overall"]["counts"],
-                         {"吉": 22, "动": 0, "平": 32, "滞": 2, "凶": 18})  # 2026-10-20 V42比和分流: 癸亥运比和(年命临官太过)吉→凶 → 吉-1凶+1
+                         {"吉": 21, "动": 0, "平": 34, "滞": 2, "凶": 18})  # 2026-10-21: 原局 V85吉-1(日主立极)、V85-B食伤藏支平+1、V31H→V31H-L 凶-1平+1、V14亲缘凶+1 → 净 吉-1 平+2; 2026-10-20 V42比和分流: 癸亥运比和(年命临官太过)吉→凶 → 吉-1凶+1
         self.assertEqual(ts["overall"]["verdict"], "偏吉")
         # 乙丑运偏凶
         yichou = next(p for p in ts["pillars"] if p["target"] == "YICHOU")
@@ -910,7 +910,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         l_ids = {r["id"] for r in LUMING_RULES}
         # 1) 登记 ↔ 可执行: 双向覆盖 (73 条展开规则, 52 个 id)
         self.assertEqual(v_ids, l_ids)
-        self.assertEqual(len(VERDICT_RULES), 153)  # 150 + 日德入格V151/日德犯忌V152/夹禄占禄V153 (V148夹禄/V149真武当权/V150绝处建贵) (V144贵合/V145贵食/V146纳音水多/V147纳音金多) (V138丙丁亥子/V139己午庚辛/V140甲申乙酉/V141辛卯庚寅/V142水土寅卯/V143酉上逢丁) (V128日轮当表/V129官禄会官星/V130天泽仲夏/V131月华仲秋/V132日合辛卯/V133龙虎风云/V134斗牛月露/V135才满三峡/V136学富三场/V137甲人巳午) (V116马化龙驹/V117蛇化青龙/V118宝剑冲牛斗/V119麟逢凤沼/V120龙跃天门/V121月生沧海/V122蚌珠照月/V123金马嘶风)
+        self.assertEqual(len(VERDICT_RULES), 155)  # 154 + V85-B食伤藏支(2026-10-21, V85日主立极拆两档)
         self.assertGreaterEqual(len(LUMING_RULES), 45)
         # 2) 每条可执行规则 id 都落在判定矩阵, 且矩阵每格非空
         matrix_ids = set()
@@ -1077,10 +1077,10 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertEqual(hz["current_counts"]["吉"], 4)
         self.assertEqual(hz["current_counts"]["凶"], 1)
         self.assertEqual(hz["overall_counts"],
-                         {"吉": 22, "动": 0, "平": 32, "滞": 2, "凶": 18})  # 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径+V02三元十二宫修正+比和分流吉-1凶+1
+                         {"吉": 21, "动": 0, "平": 34, "滞": 2, "凶": 18})  # 2026-10-21: V85日主立极吉-1、V85-B食伤藏支平+1、V31H→V31H-L凶-1平+1、V14亲缘凶+1 → 净吉-1平+2; 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径+V02三元十二宫修正+比和分流吉-1凶+1
         self.assertEqual(hz["overall_verdict"], "偏吉")
         self.assertIn("当前大运: 丁卯", md)
-        self.assertIn("总体: 吉 22 · 凶 18 · 平 32 · 滞 2 → 吉", md)  # 2026-10-20 原著措辞: 偏吉→吉
+        self.assertIn("总体: 吉 21 · 凶 18 · 平 34 · 滞 2 → 吉", md)  # 2026-10-21 同步 (V85/V85-B/V31H/V14)
 
     # ============ 根治层: 古籍命例 oracle (独立于案例批文与自裁定) ============
     def _mk_gu_chart(self, yb):
@@ -1197,7 +1197,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         v31 = [v for v in lm.verdicts if v.get("rule_id") == "LM-V31" and v.get("scope") == "原局"]
         self.assertEqual(len(v31), 1)
         o = lm.tone_scope["layers"]["原局"]
-        self.assertEqual(o["凶"], 2)                       # 三刑+贵人有气 → 分流为吉; 短命×1+鬼印×1 (贵格降级); V81金0不现不判受亏 (2026-10-20)
+        self.assertEqual(o["凶"], 3)                       # 2026-10-21: 亲缘 V32原局六害(寅巳害)计入凶+1(原continue不计) → 短命1+鬼印1+六害1; 2026-10-20 注释: 三刑+贵人有气 → 分流为吉; 短命×1+鬼印×1 (贵格降级); V81金0不现不判受亏
         self.assertIn("LM-V31", o["rules"])
         self.assertIn("LM-V31A", o["rules"])               # 日时冲短命因子 (贵格降级)
         self.assertIn("LM-V31C", o["rules"])               # 癸巳绝中逢鬼因子 (贵格降级)
@@ -1217,7 +1217,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         v31 = [v for v in lm.verdicts if v.get("rule_id") == "LM-V31" and v.get("scope") == "原局"]
         self.assertEqual(len(v31), 3)      # 三酉自刑重逢 → 3 条 (count 展开加重)
         o = lm.tone_scope["layers"]["原局"]
-        self.assertEqual(o["凶"], 0)   # V31×3 自刑平化(非四字足) → 方向中平
+        self.assertEqual(o["凶"], 1)   # 2026-10-21: 亲缘 V14华盖孤寡(未=年支华盖坐命)计入凶+1(原continue不计); V31×3 自刑平化(非四字足) → 方向中平
         self.assertFalse(any(v.get("rule_id") == "LM-V05" for v in lm.verdicts))
 
     def test_132_shensha_lookup_mode_switch(self):

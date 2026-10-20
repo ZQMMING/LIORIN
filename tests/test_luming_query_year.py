@@ -312,16 +312,19 @@ class TestYearDistributionSystemic:
         三命通会 L933-943 '小运掌一岁之灾祥…行死绝煞旺之宫必有危难'.
         2026-10-21 用户定夺取古法: 男起丙寅顺行, 女起壬申逆行."""
         r = _qy(be, 1983, 11, 3, 12, 2020, gender="female")
-        # 古法女逆: 壬申(1岁) → 37岁 = 乙未(养) — 非死绝, V79 不触发
+        # 古法女逆: 1岁壬申本身 → 2020虚岁38 = 乙未(养) — 非死绝, V79 不触发
         assert r.get("xiao_yun") == "YIWEI"
         assert not r.get("xy_dead_jue")
-        # 排盘引擎小运: 古法 男丙寅顺 / 女壬申逆
+        # 排盘引擎小运: 古法 男起丙寅顺 / 女起壬申逆, 1岁=起点本身 (2026-10-21 修正)
         ch = _chart(be, 1983, 11, 3, 12, gender="female")
-        assert ch.xiao_yun_pillars[0]["pillar"] == "XINWEI"   # 壬申逆 → 辛未(1岁)
-        assert ch.xiao_yun_pillars[2]["pillar"] == "JISI"     # 己巳(3岁, 水绝宫)
+        assert ch.xiao_yun_pillars[0]["pillar"] == "RENSHEN"   # 女1岁=壬申(起点本身)
+        assert ch.xiao_yun_pillars[1]["pillar"] == "XINWEI"    # 2岁=辛未(逆一位)
+        assert ch.xiao_yun_pillars[2]["pillar"] == "GENGWU"    # 3岁=庚午
+        assert ch.xiao_yun_pillars[36]["pillar"] == "BINGSHEN"  # 37岁=丙申
         ch2 = _chart(be, 1989, 12, 26, 22, gender="male")
-        assert ch2.xiao_yun_pillars[0]["pillar"] == "DINGMAO"  # 丙寅顺 → 丁卯(1岁)
-        # 3岁小运己巳(水绝) → V79 死绝凶 (1983坤 1986丙寅年)
+        assert ch2.xiao_yun_pillars[0]["pillar"] == "BINGYIN"  # 男1岁=丙寅(起点本身)
+        assert ch2.xiao_yun_pillars[1]["pillar"] == "DINGMAO"  # 2岁=丁卯(顺一位)
+        # 4岁小运己巳(水绝) → V79 死绝凶 (1983坤 1986丙寅年, 虚岁4)
         r3 = _qy(be, 1983, 11, 3, 12, 1986, gender="female")
         outs3 = {v["rule_id"]: v for v in r3["verdicts"]}
         assert outs3.get("LM-V79")     # 小运行绝宫必有危难

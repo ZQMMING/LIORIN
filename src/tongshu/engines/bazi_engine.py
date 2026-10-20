@@ -2069,6 +2069,9 @@ class BaziEngine:
 
         口径 (2026-10-21 用户定夺取古法): **男起丙寅顺行, 女起壬申逆行**,
           一位一年, 60甲子循环. 醉醒子"由时生而行之"为备查口径 (未采用).
+          起点语义: 1岁即起丙寅/壬申本身 (古法"男起丙寅/女起壬申"=一岁之运),
+          2岁顺/逆进一位 → seq = seq0 + step*(age-1). (2026-10-21 用户核验:
+          女 1岁壬申/2岁辛未/3岁庚午/4岁己巳/37岁丙申/38岁乙未, 旧式 seq0+step*age 错位一年)
 
         Returns: [{"age", "pillar", "stem", "branch", "nayin"}, ...]
         """
@@ -2078,7 +2081,8 @@ class BaziEngine:
         step = 1 if gender == "male" else -1
         out = []
         for age in range(1, n_years + 1):
-            seq = (seq0 + step * age) % 60
+            # 1岁=起点本身, 之后逐年顺/逆一位
+            seq = (seq0 + step * (age - 1)) % 60
             _pair = next(((s, b) for (s, b), i in JIAZI_INDEX.items()
                           if i == seq), None)
             if not _pair:

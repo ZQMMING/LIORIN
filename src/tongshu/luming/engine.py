@@ -43,6 +43,7 @@ from ..facts.bazi_facts import (
     BRANCH_SANXING_DOUBLE,
     BRANCH_SANXING_SELF,
     KONG_WANG_BY_XUN,
+    BRANCH_HIDDEN_STEMS,
     JIAZI_INDEX,
     GENERATES,
     CONTROLS,
@@ -1396,6 +1397,15 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
                     break
     ri_gan_wu_qi = bool(_dm_el_wq and _wq_moon_bad and not _has_bijie
                         and not _dm_root and not wuhe_transformed and not _day_he_cai)
+    # 无气但有救 → 降"日主偏弱得印生" (2026-10-21 用户核验: 1983坤 乙日戌月无本气根,
+    # 但天干壬癸印星生身 + 日支未藏乙木余气 → "一生晦滞难发越"过重):
+    # 印星生身 = 四干(除日干)五行生日干五行; 日支藏气 = 日支藏干含日干同类
+    _hidden_day = BRANCH_HIDDEN_STEMS.get(chart.day_pillar.earthly_branch, [])
+    _has_day_yu_qi = any(STEM_ELEMENT.get(h, "") == _dm_el_wq for h in _hidden_day)
+    _has_yin_sheng = any(
+        GENERATES.get(STEM_ELEMENT.get(s, ""), None) == _dm_el_wq
+        for i, s in enumerate(_stems4) if i != 2)
+    ri_gan_wu_qi_light = bool(ri_gan_wu_qi and (_has_yin_sheng or _has_day_yu_qi))
 
     # 原局列表事实
     san_xing_list = [dict(sx, branches_str="、".join(sx["branches"]), hit=True)
@@ -1637,15 +1647,30 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
                  if el and n >= 1 and _gz_counts.get(_KESHENG.get(el, ""), 0) >= n + 2]
     # 五行太过 (干支计数 >= 4, L3315/3321/3324 性情论太过凶面)
     _tai_guo = [el for el, n in _gz_counts.items() if el and n >= 4]
-    # 年干十神透干计数 (禄命法年干立极: L3391"以克我为夫, 我生为子")
-    _ytg = chart.year_stem_ten_gods or {}
+    # 日主十神透干计数 (三命通会论女命=日主立极: L3522"官为夫…食为子,
+    #   日干不宜太旺"、L3463 例丁日坐巳自旺以壬水为夫、L3503 例辛日用丙火为官
+    #   → 夫星=日主官煞, 子星=日主食伤).
+    #   2026-10-21 用户核验修正: 原以年干立极 (year_stem_ten_gods) 为根因错误 —
+    #   1983坤 乙日主四柱天干癸壬乙壬无丙丁火, 旧式却误报"食伤透干1位"
+    #   (年干癸水生乙木被当作子星). 改用四柱 Pillar.stem_ten_god (相对日主).
     _y_tg_counts: Dict[str, int] = {}
-    for _pos in ("year", "month", "day", "hour"):
-        _tg = _ytg.get(_pos, "")
+    for _pl in (chart.year_pillar, chart.month_pillar,
+                chart.day_pillar, chart.hour_pillar):
+        _tg = getattr(_pl, "stem_ten_god", "") or ""
         if _tg:
             _y_tg_counts[_tg] = _y_tg_counts.get(_tg, 0) + 1
     _y_guan_sha = int(_y_tg_counts.get("正官", 0) + _y_tg_counts.get("七杀", 0))
     _y_shi_shang = int(_y_tg_counts.get("食神", 0) + _y_tg_counts.get("伤官", 0))
+    # 子星藏支不透 (2026-10-21 用户核验: 1983坤 乙日主食伤丙丁火天干不透,
+    # 但时支午藏丁火 → "食伤藏于时支, 子星有根但不透"降级断语 V85-B)
+    _SHI_SHANG_HIDDEN = {"WOOD": ("YIN", "MAO"), "FIRE": ("SI", "WU", "WEI"),
+                         "EARTH": ("CHEN", "XU"), "METAL": ("SHEN", "YOU"),
+                         "WATER": ("ZI", "HAI")}
+    _dm_el2 = STEM_ELEMENT.get(chart.day_pillar.heavenly_stem, "")
+    _shi_shang_el = GENERATES.get(_dm_el2, None)
+    _y_shi_shang_hidden = bool(
+        _shi_shang_el and any(b in _SHI_SHANG_HIDDEN.get(_shi_shang_el, ())
+                              for b in chart.four_branches()))
     # 年干羊刃 (L3568 六亲赋"年逢刃煞幼年早丧爹娘/时遇刃伤未年却损儿女")
     _YANG_REN_BY_YEAR = {"JIA": "MAO", "YI": "CHEN", "BING": "WU", "DING": "WEI",
                          "WU": "WU", "JI": "WEI", "GENG": "YOU", "XIN": "SHEN",
@@ -1773,8 +1798,19 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
     _shi_xing_nian = bool(_is_xing(_hb, _yb2))
     _shi_po_nian = bool(_PO_BY.get(_hb, "") == _yb2)
     _shi_hai_nian = bool(_is_harm(_hb, _yb2))
-    _shi_dai_sha = bool(_hb in _kw_set or _hb == jie_sha_b or _hb == yuan_chen
-                        or (_yr_yang_ren and _hb == _yr_yang_ren))
+    _shi_dai_items = []
+    if _hb in _kw_set:
+        _shi_dai_items.append("空亡")
+    if _hb == jie_sha_b:
+        _shi_dai_items.append("劫煞")
+    if _hb == yuan_chen:
+        _shi_dai_items.append("元辰")
+    if _yr_yang_ren and _hb == _yr_yang_ren:
+        _shi_dai_items.append("羊刃")
+    _shi_dai_sha = bool(_shi_dai_items)
+    # 具体触发项输出 (2026-10-21 用户核验: 1983坤 午=元辰(癸亥阴女冲前一位,
+    # SMTH L1711"阳男阴女冲前一位"→巳+1=午), 非刃/劫/空亡 — 断语须注明具体项)
+    _shi_dai_sha_by = "、".join(_shi_dai_items) if _shi_dai_items else ""
     _shi_hua_gai = bool(_hb == hua_gai_b)
     # 狡害杀 L4008: 申日亥时, 巳日寅时, 互换见者主绝嗣
     _db = chart.day_pillar.earthly_branch
@@ -2041,6 +2077,7 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         "fu_yin": fu_yin, "fan_yin": fan_yin,
         "tian_luo_di_wang_chong_bing": tian_luo_di_wang_chong_bing,
         "ri_gan_wu_qi": ri_gan_wu_qi,
+        "ri_gan_wu_qi_light": ri_gan_wu_qi_light,
         "in_zhai": bool(ln.get("in_zhai")), "zhuang_ming": bool(ln.get("zhuang_ming")),
         "xing_dayun": bool(ln.get("xing_dayun")),
         "gu_chen_su": bool(ln.get("sees_gu_chen") or ln.get("sees_gu_su")),
@@ -2103,6 +2140,7 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         "y_tg_counts": _y_tg_counts,
         "y_guan_sha": _y_guan_sha,
         "y_shi_shang": _y_shi_shang,
+        "y_shi_shang_hidden": _y_shi_shang_hidden,
         "year_at_yang_ren": _year_at_yang_ren,
         "hour_at_yang_ren": _hour_at_yang_ren,
         "chong_pairs_count": _chong_pairs,
@@ -2132,6 +2170,7 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         "shi_po_nian": _shi_po_nian,
         "shi_hai_nian": _shi_hai_nian,
         "shi_dai_sha": _shi_dai_sha,
+        "shi_dai_sha_by": _shi_dai_sha_by,
         "shi_hua_gai": _shi_hua_gai,
         "jiao_hai_sha": _jiao_hai_sha,
         # ---- 五行精纪卷廿二 贵格 (L2911-3131) ----
@@ -2378,9 +2417,10 @@ def _build_tone_scope(verdicts: tuple, luck_view: Dict | None = None,
             if set(re.findall(r"[子丑寅卯辰巳午未申酉戌亥]", v.get("detail") or "")) & _kw_cn:
                 tone = "平"
         # 原局六害/华盖孤寡: 亲缘维度 (L3421 妨六亲 / 三命通会华盖"总贵亦不免孤独"),
-        # 不进贵贱方向净分 (映射层仍输出妨六亲/孤高断语)
+        # 断语与计数均保留 (2026-10-21 用户核验: 断语列[凶]而汇总不计数=内部不一致;
+        # 亲缘凶仍计入 layers 计数, 与断语列表同源; 方向净分权重见 _verdict 的 LUCK_XIONG)
         if sc == "原局" and rid in ("LM-V32", "LM-V14"):
-            continue
+            pass
         # 生我吉信息去重 (2026-10-20 命例方向 oracle 根因):
         # V33 纳音生克逐柱生我吉 + V34 命宫身宫生我吉 为同一"印绶有气"事实,
         # 重复计数致吉信号系统性虚高 (韩球/老庚辰/玉黼 吉5-7 的来源)
@@ -2421,6 +2461,10 @@ def _build_tone_scope(verdicts: tuple, luck_view: Dict | None = None,
             layers[sc]["凶"] = layers[sc].get("凶", 0) + 1
             layers[sc]["rules"].append(v["rule_id"])
             continue
+        # 校准 tone 写回 verdicts (2026-10-21 用户核验: 报告断语列表与吉凶汇总
+        # 曾不同源 — 列表用原始 tone、汇总用校准 tone; 现统一以校准 tone 为准,
+        # 使 report.yuan_ju / 大运段 / hui_zong.layers 全链路一致)
+        v["tone"] = tone
         layers[sc][tone] = layers[sc].get(tone, 0) + 1
         layers[sc]["rules"].append(v["rule_id"])
         if sc == "运":
@@ -2930,8 +2974,11 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     #   原文: "夫大运司十年之休咎, 小运掌一岁之灾祥, 是小运者补大运之不足而立名也"
     #        "醉醒子以为男女小运皆由时生而行之, 逆顺亦以年定…一位一年, 周而复始"
     #   口径: 小运从时柱起(1岁=时柱后一位), 男顺女逆, 60甲子循环 (见 bazi_engine).
+    #   年龄口径 = 虚岁 (2026-10-21 用户核验: 古法小运一岁一运, 出生年即1岁,
+    #   1983坤 2020虚岁38=乙未; 实龄(周岁)定位会整体错位一年)
+    _xy_age = year - chart.birth_datetime.year + 1 if getattr(chart, "birth_datetime", None) else 0
     _xy_hit = next((p for p in (getattr(chart, "xiao_yun_pillars", None) or [])
-                    if (p.get("age", 0) or 0) == int(round(age))), None)
+                    if (p.get("age", 0) or 0) == _xy_age), None)
     _xy_gz = (_xy_hit or {}).get("pillar", "")
     _xy_branch = (_xy_hit or {}).get("branch", "")
     if _xy_branch and year_nayin_el:
