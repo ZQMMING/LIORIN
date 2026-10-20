@@ -2875,9 +2875,17 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
                         "year_counts": counts,
                         "final_verdict": fv, "l4276": _agg2}
 
+    # 禄刃印母法 (子平轴独立校验层, 不并入禄命吉凶聚合 — 体系分界)
+    # 2026-10-20: 用户提供流年细批母法, 按原著核实后落层 —
+    #   物极必反 (五行精纪 L3379) / 印绶喜食伤 (三命通会 L14184) /
+    #   刃印全非必凶 (L3287 印绶化刃故贵, L3382 揽辔澄清格) → 先查制化.
+    from .lu_ren_yin import check_year_lury
+    _lury = check_year_lury(chart, yctx["tai_s"], yctx["tai_b"])
+
     return {"year": year, "tai_sui": yctx["tai_sui"], "age": round(yctx["age"], 2),
             "luck_pillar": yctx["luck_pillar"], "verdicts": verdicts,
             "tone": year_tone, "counts": counts, "combined": combined,
+            "lury": _lury,
             "jiao_yun": yctx.get("jiao_yun", False),
             "jiao_yun_from": yctx.get("jiao_yun_from", ""),
             "jiao_yun_to": yctx.get("jiao_yun_to", ""),
