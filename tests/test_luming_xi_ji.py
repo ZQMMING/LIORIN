@@ -37,22 +37,29 @@ class TestDaHaiShui1983:
         earth = next(x for x in xj["xi"] if x["el"] == "EARTH")
         assert earth.get("conditional"), "大海水土应为条件喜(可堤不可过)"
         assert "死绝则吉" in earth["reason"]
-        # 大海水专条命中时 xi 内火仅一条 (L340/L343 合并去重)
+        # 大海水专条命中时 xi 内火仅一条 (L310 玉霄宝鉴"惟以火土损益之乃成大器")
         fire = [x for x in xj["xi"] if x["el"] == "FIRE"]
         assert len(fire) == 1
-        # 金由喜转忌 (金沉水底)
-        assert "METAL" in ji_els
+        assert "L310" in fire[0]["reason"]
+        # 2026-10-20 严谨复核: L343 系"甲戌火喜春夏"误引已删; L1513"水旺则金沉"
+        # 为普适五行量论(金多水旺才沉), 非大海水无条件忌金 → 金不列喜不列忌
+        assert "METAL" not in ji_els
         assert "METAL" not in xi_els
         # 喜木泄秀/火暖局
         assert "WOOD" in xi_els and "FIRE" in xi_els
-        # 忌水助波澜
+        # 忌水助波澜 (L309 忌见众水)
         assert "WATER" in ji_els
+        assert "忌见众水" in next(x for x in xj["ji"] if x["el"] == "WATER")["reason"]
 
-    def test_131_dahai_luck_response_gold_ji(self, be):
+    def test_131_dahai_luck_response(self, be):
         xj = _xj(be, 1983, 11, 3, 11)
         by_pillar = {r["pillar"]: r for r in xj["luck_response"]}
-        assert by_pillar["JIAZI"]["resp"] == "犯忌"     # 甲子海中金 → 金沉水底
-        assert by_pillar["BINGYIN"]["resp"] == "应喜"  # 丙寅炉中火 → 火暖局
+        # 2026-10-20 严谨复核: 金非忌(L1509 命水得金乃优长) → 甲子海中金判平
+        assert by_pillar["JIAZI"]["resp"] == "平"
+        # 忌见众水(L309 专条) → 癸亥运大海水犯忌凶
+        assert by_pillar["GUIHAI"]["resp"] == "犯忌"
+        assert by_pillar["GUIHAI"]["tone"] == "凶"
+        assert by_pillar["BINGYIN"]["resp"] == "应喜"  # 丙寅炉中火 → 火暖局(L310)
 
 
 class TestHuoming1987:

@@ -134,14 +134,16 @@ class TestKouJing(unittest.TestCase):
             self.assertEqual(wc.get("branch", ""), "CHOU", "文昌查表值必须为丑（原局不现）")
 
     def test_06_xi_ji_from_engine(self):
-        """喜忌读引擎切片（五行精纪口径：癸亥大海水 喜木火/土条件喜/忌水金）. """
+        """喜忌读引擎切片（五行精纪 L309/L310 口径：癸亥大海水 喜木火/土条件喜/忌水；金非忌）. """
         xj = self.lm.xi_ji or {}
         xi = [x["el"] for x in xj.get("xi", [])]
         ji = [j["el"] for j in xj.get("ji", [])]
         self.assertIn("WOOD", xi)
         self.assertIn("FIRE", xi)
         self.assertIn("WATER", ji)
-        self.assertIn("METAL", ji)
+        # 2026-10-20 严谨复核: L343 误引已删, L1513 为普适量论 → 金不列喜不列忌
+        self.assertNotIn("METAL", ji)
+        self.assertNotIn("METAL", xi)
 
 
 if __name__ == "__main__":

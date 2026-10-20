@@ -801,9 +801,11 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertEqual(cur["pillar"], "DINGMAO")
         self.assertEqual(cur["verdict"], "偏吉")
         self.assertEqual(cur["counts"]["凶"], 1)   # V44 运支卯=大海水之死乡(凶)
-        # overall (2026-10-20 限运切片: V126运到羊刃平+1、V124天罗壬戌癸亥凶+2、V125大小耗丙辰凶+1)
+        # overall (2026-10-20 限运切片: V126运到羊刃平+1、V124天罗壬戌癸亥凶+2、V125大小耗丙辰凶+1;
+        #   喜忌覆盖: 癸亥运 V42 比和吉 → 犯忌降平 → 吉-1平+1;
+        #   贵人年干口径: 甲子/壬申两运日干贵人(乙贵子申/庚贵)误判移除 → 吉-2)
         self.assertEqual(ts["overall"]["counts"],
-                         {"吉": 26, "动": 0, "平": 31, "滞": 2, "凶": 18})
+                         {"吉": 23, "动": 0, "平": 32, "滞": 2, "凶": 18})
         self.assertEqual(ts["overall"]["verdict"], "偏吉")
         # 乙丑运偏凶
         yichou = next(p for p in ts["pillars"] if p["target"] == "YICHOU")
@@ -1074,10 +1076,10 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertEqual(hz["current_counts"]["吉"], 4)
         self.assertEqual(hz["current_counts"]["凶"], 1)
         self.assertEqual(hz["overall_counts"],
-                         {"吉": 26, "动": 0, "平": 31, "滞": 2, "凶": 18})  # 2026-10-20 限运切片: V126羊刃平+1、V124天罗凶+2、V125大小耗凶+1
+                         {"吉": 23, "动": 0, "平": 32, "滞": 2, "凶": 18})  # 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径(甲子/壬申日贵移除)
         self.assertEqual(hz["overall_verdict"], "偏吉")
         self.assertIn("当前大运: 丁卯", md)
-        self.assertIn("总体: 吉 26 · 凶 18 · 平 31 · 滞 2 → 偏吉", md)
+        self.assertIn("总体: 吉 23 · 凶 18 · 平 32 · 滞 2 → 偏吉", md)
 
     # ============ 根治层: 古籍命例 oracle (独立于案例批文与自裁定) ============
     def _mk_gu_chart(self, yb):

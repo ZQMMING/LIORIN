@@ -963,6 +963,20 @@ def _build_xi_ji_scope(chart: Any, luck_view: Dict | None = None) -> Dict[str, A
                             f"运支{branch}属{_EL_CN.get(zhi_el, zhi_el)}（{z_resp}）" + (f"；{note}" if note else "")}
             luck_response.append(lr)
 
+    # ---- 回写喜忌响应到运柱上下文 (V42 纳音生克被喜忌专条覆盖) ----
+    # 2026-10-20 严谨复核 (L309/L310 专条优先于 L4356 通用): 运纳音犯原局之忌时,
+    #   V42 的"比和/生我吉"降为平 (专条"忌见众水"覆盖通用"比和吉");
+    #   应喜运保持 V42 判定并与喜忌吉叠加 (丙寅/丁卯炉中火双吉)
+    if luck_view is not None:
+        for lr in luck_response:
+            for _p in (luck_view.get("pillars") or []):
+                if _p.get("stem", "") + _p.get("branch", "") == lr["pillar"]:
+                    _p["xi_ji_tone"] = lr["tone"]
+                    _p["xi_ji_resp"] = lr["resp"]
+                    if lr["tone"] == "凶" and _p.get("nayin_relation") in ("比和", "生我"):
+                        _p["nayin_relation"] = _p["nayin_relation"] + "·犯忌"
+                    break
+
     # ---- 断语 ----
     verdicts = []
     xi_cn = "、".join(f"{_EL_CN.get(x['el'], x['el'])}（{x['reason'][:24]}）" for x in xi) or "无"
@@ -975,6 +989,7 @@ def _build_xi_ji_scope(chart: Any, luck_view: Dict | None = None) -> Dict[str, A
                          "evidence": "E-WXJ-007-002", "detail": "缺行待补"})
     for lr in luck_response:
         verdicts.append({"scope": "喜忌·大运", "tone": lr["tone"],
+                         "target": lr["pillar"],
                          "out": f"{lr['pillar']}运{lr['nayin']}：{lr['resp']}",
                          "evidence": "E-WXJ-007-002", "detail": lr["detail"]})
 
@@ -1015,13 +1030,14 @@ def _build_luck_scope(chart: Any, current_datetime=None, lookup_mode: str = "yea
     hua_gai_branch = shen_by.get("HUA_GAI", "")
     tao_hua_branch = PEACH_BLOSSOM_BY_YEAR.get(year_branch, "")
     lu_branch = LU_BY_STEM.get(year_stem, "")
-    # 贵人支并集 (旦暮两表, 年干+日干)
+    # 贵人支: 运层神煞临只按年干 (禄命法主源 L2008/L2010 年干口径, 2026-10-20
+    # 严谨复核: 1983 癸亥乙未坤造甲子运误见贵人——原因为日干乙之贵人子申混入);
+    # 日干贵人(by_day)仅用于原局贵格判定(麒麟窟/贵格), 不进运层临支
     gui_branches = set()
-    for s in (year_stem, day_stem):
-        for t in (TIAN_YI_GUI_REN_DAY, TIAN_YI_GUI_REN_NIGHT):
-            b = t.get(s, "")
-            if b:
-                gui_branches.add(b)
+    for t in (TIAN_YI_GUI_REN_DAY, TIAN_YI_GUI_REN_NIGHT):
+        b = t.get(year_stem, "")
+        if b:
+            gui_branches.add(b)
 
     luck = []
     pillars_view = []
