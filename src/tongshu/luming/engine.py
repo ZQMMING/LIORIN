@@ -3287,11 +3287,21 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   → 流年自身判定 = L4276 基地福力 × 流年恶力 查表 (非逐条±1对冲);
     #     唯一互动 = L4273 条件标注 (凶祸之运+太岁刑冲→发祸 / 吉泰之运+太岁刑害→浮灾).
     from .strength import (base_fortune, year_power, aggregate, dim_hits_of,
-                           l4273_interaction, LUCK_XI, LUCK_XIONG)
+                           l4273_interaction, LUCK_XI, LUCK_XIONG, YEAR_XIONG)
     _base = base_fortune(lm) if lm is not None else {"score": 0.5, "level": "中"}
     _power = year_power(verdicts)
     _dims = dim_hits_of(verdicts)
     _agg = aggregate(_base, _power, _dims)
+    # 2026-10-21 流年吉以除千殃 (SMTH L13314"大运危而生百祸, 流年吉以除千殃"):
+    #   流年吉面显著净胜恶力 (吉力 ≥ 恶力+5) 且无 4 分定级重灾(定死/天罗/元辰/
+    #   晦气/冲运/冲年克命等) → 大运凶殃为流年吉所除, 凶降吉凶相杂不为重害
+    #   (1986 2022: 贵禄马4+克太岁为财4+喜神3+天月德2 = 吉13 vs 恶8 → 吉凶相杂;
+    #    守 oracle 反例: 含 4 分重灾不升, 吉力不足净胜不升)
+    if _agg["verdict"] == "凶":
+        _h4 = any(YEAR_XIONG.get(v.get("rule_id", ""), 1) >= 4
+                  for v in verdicts if v.get("tone") == "凶")
+        if not _h4 and _power["ji"] >= _power["xiong"] + 5:
+            _agg["verdict"] = "吉凶相杂"
     year_tone = _agg["verdict"]
 
     # L4273 条件互动 (原著唯一运年互动, 标注非合成; 浮灾含强度修正)
