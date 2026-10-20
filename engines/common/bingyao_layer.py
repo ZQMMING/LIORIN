@@ -510,11 +510,23 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
 
     # 3. 泄气太重 (统一收紧触发)
     #    前提闸门: dm_tier<=1(身弱) 才问——原文「身轻泄气太重」「木泄气太重虽秉令而不强也」
+    # ★ V7.60 补「太重(量)」要件(原典 PZZQ L768「午, 则火之党众, 木泄气太重, 虽秉令而不强也」——
+    #   "党众"=成党, "虽秉令而不强"明示当令不足为太重; L3930「食伤旺而生财, 为身轻泄气太重」):
+    #   泄气太重须 食伤成党(combo>=DANG_COMBO) 或 当令且另有再见(透干>=1 或 中/余气根>=1).
     xie_wx = SHENG.get(daymaster_element, '')
     ok, matched = _kexie_trigger(xie_wx, 'XIEQI-TAIZHONG', True)
     if ok and not _shen_ruo:
         ok = False
         matched = ['日主不弱(%s), 泄秀为喜, 不触发' % _shen_ruo_note]
+    if ok:
+        _xt_q, _xb_q = _tou_ben(xie_wx)
+        _x_combo = _xt_q + _xb_q + _ju_piao(xie_wx)
+        _x_dangling = (facts.get('month_qi_element', '') == xie_wx)
+        _x_more = (_xt_q >= 1) or (_xb_q >= 1) or (_x_combo >= DANG_COMBO)
+        if not (_x_combo >= DANG_COMBO or (_x_dangling and _x_more)):
+            ok = False
+            matched = ['食伤不重(他干%d+本根%d+局票=%d<%d, 非党众) -> 非「泄气太重」(PZZQ L768「火之党众, 木泄气太重, 虽秉令而不强」)' % (
+                _xt_q, _xb_q, _x_combo, DANG_COMBO)]
     # 成格喜神过滤: 食神生财格成, 食神为成格喜神, 泄气病不报; 过旺(combo>=阈值)例外仍报
     if ok:
         from engines.common.ge_jie_layer import is_xix_shen
