@@ -422,19 +422,31 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
     )
     if _sv_tiaohou:
         _sv_dir.append("调候")
-    # 通关: 日主所属五行的"克我者"与"我克者"两党同局相战, 需中间通关之神
-    #   DTS L250「木土而要火, 火金而要土, 土水而要金, 金水而要水」
-    _sv_ke = _ke.get(_sv_dmwx, "")   # 日主克谁(我克者)
-    _sv_kewo = ""
-    for _k, _v in _ke.items():
-        if _v == _sv_dmwx:
-            _sv_kewo = _k
-            break
-    _sv_war = (
-        _sv_ke and _sv_kewo
-        and int((_wpd.get(_sv_ke) or {}).get("ben_n", 0) or 0) >= 1
-        and int((_wpd.get(_sv_kewo) or {}).get("ben_n", 0) or 0) >= 1
-    )
+    # 通关: DTS L250 通关章四型(原典明列, 非自造)
+    #   「木土而要火, 火金而要土, 土水而要金, 金水而要水」—— 日主五行 与 财五行 相战 -> 通关神.
+    #   ★ V7.73 修: 旧实现只取 (我克者=财) 与 (克我者=官杀) 两党, 漏"木土而要火"等型.
+    #     例 乙木日主: 印(水)旺 vs 财(土)旺, 两党相战, 通关神=火(校对稿实例 癸亥壬戌乙未壬午
+    #     「通关化泄旺印以生财」正属此型).
+    #   通关成立要件: ①两方同局相战(各有本气根) ②通关神在局中有气(透干或本气根).
+    _GUAN_TONG = {   # (日主五行, 财五行) -> 通关神
+        ('木', '土'): '火',   # 木土而要火
+        ('火', '金'): '土',   # 火金而要土
+        ('土', '水'): '金',   # 土水而要金
+        ('金', '水'): '水',   # 金水而要水
+    }
+    _sv_ke = _ke.get(_sv_dmwx, "")   # 日主克谁(我克者=财)
+    _sv_war = False
+    if _sv_ke:
+        _tg_wx = _GUAN_TONG.get((_sv_dmwx, _sv_ke), '')
+        if _tg_wx:
+            _d_ke_root = int((_wpd.get(_sv_ke) or {}).get("ben_n", 0) or 0) >= 1
+            # 相战方: 日主(印/比) 与 财; 以"日主五行之印/比党"与"财"同局为相战
+            _yin_ro = _sheng_back.get(_sv_dmwx, "")
+            _d_yin_root = int((_wpd.get(_yin_ro) or {}).get("ben_n", 0) or 0) >= 1
+            _tg_root = int((_wpd.get(_tg_wx) or {}).get("ben_n", 0) or 0) >= 1
+            _tg_tou = int((_wpd.get(_tg_wx) or {}).get("stem_n", 0) or 0) >= 1
+            if _d_ke_root and _d_yin_root and (_tg_root or _tg_tou):
+                _sv_war = True
     if _sv_war:
         _sv_dir.append("通关")
     # 从格: special.cong_type 有值 (日主孤立无气, 财官强)
