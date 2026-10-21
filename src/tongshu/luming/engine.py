@@ -979,7 +979,7 @@ def build_yun_fayong(chart: Any, gz_stem: str, gz_branch: str, xi_ji: Dict | Non
     if xi_ji:
         for _mk in (xi_ji.get("missing") or []):
             if _mk.get("el") == zhi_el or _mk.get("el") == gan_el:
-                items.append(f"原局缺{_EL_CN4.get(_mk.get('el', ''), _mk.get('el', ''))}（{_mk.get('role', '')}星）不现，"
+                items.append(f"原局纳音缺{_EL_CN4.get(_mk.get('el', ''), _mk.get('el', ''))}（{_mk.get('role', '')}星）不现，"
                              f"运来补足——待运补发{_mk.get('role', '')}")
     # ⑥ 喜忌响应
     _xi_ji_tone = ""
