@@ -566,6 +566,13 @@ for _dmx, _pos in (('甲', '木'), ('丙', '火'), ('戊', '土'), ('庚', '金'
     ck("坐旺支表 与根气表一致 %s(禄%s旺%s)" % (_dmx, _lu, _wang),
        set(_WANG_BR.get(_pos, ())) == {_lu, _wang},
        "%s vs %s" % (sorted(_WANG_BR.get(_pos, ())), [_lu, _wang]))
+# 调候层 _WANG_ZHI 须同口径(V7.102: 同 V7.94 之 evil_offset 错, 已一并统一)
+from engines.common.tiaohou_rank import _WANG_ZHI
+ck("坐旺支表 调候层 _WANG_ZHI 与 evil_offset 同口径(V7.102)",
+   all(set(_WANG_ZHI.get(w, ())) == set(_WANG_BR.get(w, ())) for w in ('木', '火', '土', '金', '水')),
+   {w: sorted(_WANG_ZHI.get(w, ())) for w in ('木', '火', '土', '金', '水')})
+ck("坐旺支表 调候层土行为禄巳帝旺午(V7.102)",
+   set(_WANG_ZHI.get('土', ())) == {'巳', '午'}, sorted(_WANG_ZHI.get('土', ())))
 
 # ═══ S. 候神职能表: 病→药 映射 (SFTK L129 / PZZQ L1128-1129 / DTS L445) ═══
 # SFTK L129「如用财见比肩为病, 喜见官杀为药也。如用食神伤官, 以印为病, 喜财为药也。」
