@@ -957,6 +957,33 @@ ck("岁运 吉·制 不看量(克主病恒正向)",
 ck("岁运 恶神不抵消制化之功(V7.25 恶神抵消表)",
    "恶神抵消表" in _sy_src or "不抵消制化之功" in _sy_src, "")
 
+# ═══ CC. DTS 体用轨 结构轴读取 (DTS L212/L215/L235 + PZZQ L799/L762) ═══
+# DTS L212 体用章 / L215「体为用神所依附」/ L235「衰则喜帮喜助, 旺则宜泄宜伤」
+# PZZQ L799「失令为衰; 若比劫印绶重叠, 年日时又通根, 则失令而不弱」/ L762「秋木虽弱, 木根深而木亦强」
+# -> 旺/衰/中和三态由【得令(in_season) + 根气(class) + 党众(stem_count)】三结构项派生;
+#    衰局须【无根且无生扶党众】; 且不得造"身强/身弱"单极布尔(AGENTS.md 公理二).
+print("\n[CC] DTS 体用轨 结构轴读取")
+_mt_src = open(os.path.join(ROOT, "engines", "common", "yongshen_multi_track.py"),
+                encoding='utf-8').read()
+_ps_src = open(os.path.join(ROOT, "engines", "common", "daymaster_power_structure.py"),
+               encoding='utf-8').read()
+ck("DTS轨 读结构轴 seasonal_axis/root_axis(非旧键 wang_shuai/qiang_ruo)",
+   "seasonal_axis" in _mt_src and "root_axis" in _mt_src, "")
+ck("DTS轨 不读旧键 spectrum/wang_shuai/qiang_ruo",
+   "spectrum.get('spectrum')" not in _mt_src and "spectrum.get('wang_shuai')" not in _mt_src
+   and "spectrum.get('qiang_ruo')" not in _mt_src, "")
+ck("DTS轨 per_pillar 根类读 'class'(引擎实键)",
+   "_rwc.get(_k) or {}).get('class')" in _mt_src or "get('class')" in _mt_src, "")
+ck("DTS轨 党众计数取各组 stem_count 之和",
+   "_grp_count" in _mt_src and "stem_count" in _mt_src, "")
+ck("DTS轨 衰局要件含「无生扶党众」(PZZQ L799「失令而不弱」)",
+   "support_n == 0" in _mt_src and "not has_root" in _mt_src, "")
+ck("公理二: DTS轨只用结构三态(旺局/衰局/中和), 不出身强弱布尔",
+   "'旺局'" in _mt_src and "'衰局'" in _mt_src and "'中和'" in _mt_src
+   and ("'身强'" not in _mt_src and "'身弱'" not in _mt_src), "")
+ck("DTS轨 旺局分支出官杀/食伤(DTS L215「旺则抑之」)而非只出宜扶",
+   "旺则抑之" in _mt_src or "官杀制" in _mt_src or "克身" in _mt_src, "")
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
