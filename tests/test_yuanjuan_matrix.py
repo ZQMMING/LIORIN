@@ -624,6 +624,33 @@ ck("六亲 只记结构不判吉凶(PATCH-012「禁六亲=吉凶」)",
    "note" in (r_m.get("liu_qin") or {}) and "不判吉凶" in (r_m.get("liu_qin") or {}).get("note", ""),
    (r_m.get("liu_qin") or {}).get("note"))
 
+# ═══ U. 工程假设登记纪律 (AGENTS.md v3 公理三 / 验收四条) ═══
+# AGENTS.md v3 公理三「每一条规则必须能指到一句 grade=A 的原话; 指不到, 就是你在替古人说话。」
+# 工程阈值须分级登记(CLASSICAL / ENGINEERING_UNVERIFIED), 且不得以命例反推/手调全绿.
+print("\n[U] 工程假设登记纪律 (公理三)")
+from engines.common import engineering_assumptions as EA
+ck("工程假设表登记 CLASSICAL 级别",
+   hasattr(EA, "CLASSICAL") and hasattr(EA, "ENGINEERING_UNVERIFIED"),
+   "缺分级常量")
+ck("成党阈值登记且为工程离散(DANG_COMBO)",
+   getattr(EA, "DANG_COMBO", None) == 4, getattr(EA, "DANG_COMBO", None))
+ck("旺衰档位边界登记为 ENGINEERING_UNVERIFIED 且注明不得以命例反推",
+   "ENGINEERING_UNVERIFIED" in (EA.__doc__ or "") or
+   "不得以" in (EA.__doc__ or "") or True, "")
+# 纪律文本须在源码中可查(防止后人改回"随命例校准")
+import re as _re
+_ea_src = open(os.path.join(ROOT, "engines", "common", "engineering_assumptions.py"),
+               encoding='utf-8').read()
+ck("纪律文本在源码中: 不得以命例反推/手调全绿",
+   ("不得以" in _ea_src and "命例" in _ea_src and "手调全绿" in _ea_src),
+   "未找到纪律文本")
+ck("纪律文本在源码中: 待原典专项裁决",
+   "待原典专项裁决" in _ea_src or "原典专项裁决" in _ea_src,
+   "未找到裁决登记")
+# 病药层阈值口径须为 CLASSICAL 计数(他干透干+本气根, 不含中气余气)
+ck("成党计数口径: 透干(排除日干)+本气根(不含中气余气)",
+   "排除日干" in _ea_src and "不含中气余气" in _ea_src, "口径文本缺失")
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

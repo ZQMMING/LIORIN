@@ -54,10 +54,16 @@ TIER_WANG = 2
 TIER_PING = 1
 TIER_SHUAI = 0
 
-TIER_STRONG_BEN_MULTI = 3   # 强: 本气根 >= 3
-TIER_WANG_BEN = 2           # 旺: 本气根 >= 2
+# ★ V7.99 阈值性质与裁决纪律: 本气根"个数"阈值原典未给数字(PZZQ L800-801 只言【轻重根之别】,
+#   SMTH 旺相休囚死序为通例), 故此二值为【工程推定|ENGINEERING_UNVERIFIED】, 仅作现行默认.
+#   纪律: 不得以【命例】反推或手调本阈值以求全绿 —— 命例是验证物, 非规格来源(AGENTS.md v3 公理三);
+#   调整须先有 grade=A 原句依据, 并留档变更理由. 待【原典专项裁决】.
+TIER_STRONG_BEN_MULTI = 3   # 强: 本气根 >= 3  (ENGINEERING_UNVERIFIED, 待原典专项裁决)
+TIER_WANG_BEN = 2           # 旺: 本气根 >= 2  (ENGINEERING_UNVERIFIED, 待原典专项裁决)
 # 其余为组合布尔条件(成局 / 当令配合 / 中余气根 / 半合 / 相令透干),
-# 见 transit_power.element_power_tier, 阈值随命例回归校准.
+# 见 transit_power.element_power_tier.
+# ★ V7.99 纪律: 本表所有 ENGINEERING_UNVERIFIED 阈值一律不得以命例反推/手调全绿;
+#   须先得 grade=A 原句依据方可调整(AGENTS.md v3 公理三 + 验收四条).
 
 # ==============================================================
 # 4. 转归层判据
