@@ -327,30 +327,32 @@ def compute_liuri(
     yue_lines: list[int],
     yue_yao_index: int,
     jie_datetime: str | None = None,
+    next_jie_datetime: str | None = None,
+    rule: str = "hou5",
 ) -> LiuRiResult:
     """
     流日卦（《河洛真数·起例卷之上·起日卦例》万历二十年李学诗刻本）。
 
-    规则（按现存最早刻本口径，2026-09-12 考证裁定）：
+    规则分疏（H10b 修正，2026-10-21 用户核证）：
       1. 以当月月卦为本，从月卦居位爻的下一爻起，自下而上变六爻
          （绕一圈回到居位爻为止），即"六爻俱变毕，则满三十日"。
-      2. "每一爻管五日"：六爻各管五日，共三十日。
-      3. "另画一乾卦"：各段以月卦为本独立变对应爻位（非链式）。
-      例（乾九二居位）：九三→履、九四→小畜、九五→大有、
-         上九→夬、初九→姤、九二（居位）→同人。
+      2. 两套操作规则并存，均从当月"节"交接时刻起算：
+         - rule="hou5"（五日一变·候卦系统）：6 段（初爻→上爻），每爻管约 5 日；
+         - rule="gua6"（六日一变·卦气系统）：5 段（每卦管约 6 日），汉易"一爻一日、一卦六日"模型。
+      3. 节气为界均匀分配（关键）：段边界按当月节时刻 T0 与下月节时刻 T1 的
+         实际间隔（节→节，约 29~31 日不等，含时刻）均匀切分，每段 = (T1-T0)/N，
+         **不可机械固定每段日数**。节气长度不均等（或不足 30、或超过 30），
+         必须按实际时刻"均匀"分配。
+      4. 无节气数据时退化为机械相对分段（兼容旧调用）。
 
     异文记录：《河洛理数》卷二下（国图藏史应选校订明刊本，晚出约40年）
       "除此一爻不变…每管六日…自下爻行至上爻"为 5 爻×6 日口径
       （不含居位爻），按"最早书籍为准"原则不采用，保留为异文。
-
-    节气对齐（《河洛真数》："日卦行起必须按月卦节气方不误"）：
-      若提供 jie_datetime（当月"节"的精确时刻，如 2024-08-07 08:09），
-      则第1段从"节"当日开始管起，各段标注真实起止日期；
-      否则退化为相对分段（第1-5天、第6-10天...），兼容旧调用。
     """
+    n_seg = 6 if rule == "hou5" else 5
     start = (yue_yao_index + 1) % 6
     days = []
-    for k in range(6):
+    for k in range(n_seg):
         flip_idx = (start + k) % 6
         seg_lines = _flip_line(yue_lines, flip_idx)
         u, lo, name = _lines_to_hexagram(seg_lines)
@@ -358,17 +360,30 @@ def compute_liuri(
             "segment": k + 1, "day_from": k * 5 + 1, "day_to": k * 5 + 5,
             "name": name, "upper": u, "lower": lo, "lines": seg_lines,
         }
-        if jie_datetime:
-            # 节气对齐：段k覆盖节起第(k*5+1)~第(k*5+5)天
+        if jie_datetime and next_jie_datetime:
+            # 节气为界均匀分配（H10b）：段边界 = 节时刻 + k*(下节-节)/N，
+            # 按实际节气间隔（含时刻）切分，不机械固定每段日数
             try:
-                base = _parse_datetime(jie_datetime)
                 from datetime import timedelta
-                day_from_dt = base + timedelta(days=k * 5)
-                day_to_dt = base + timedelta(days=k * 5 + 4)
-                entry["date_from"] = day_from_dt.strftime("%Y-%m-%d")
-                entry["date_to"] = day_to_dt.strftime("%Y-%m-%d")
+                t0 = _parse_datetime(jie_datetime)
+                t1 = _parse_datetime(next_jie_datetime)
+                if t1 <= t0:
+                    raise ValueError("下节时刻须晚于当月节时刻")
+                span = (t1 - t0).total_seconds()
+                seg_sec = span / n_seg
+                b0 = t0 + timedelta(seconds=k * seg_sec)
+                b1 = t0 + timedelta(seconds=(k + 1) * seg_sec)
+                day_from = int((b0.date() - t0.date()).days) + 1
+                day_to = int((b1.date() - t0.date()).days)
+                if k == n_seg - 1:
+                    day_to = int((t1.date() - t0.date()).days) + 1  # 末段至下一节
+                entry["day_from"] = day_from
+                entry["day_to"] = day_to
+                entry["date_from"] = b0.strftime("%Y-%m-%d %H:%M")
+                entry["date_to"] = b1.strftime("%Y-%m-%d %H:%M")
+                entry["jie_span_days"] = round(span / 86400.0, 4)  # 实际节气间隔（天）
             except Exception:
-                pass  # 解析失败则保持相对分段
+                pass  # 解析/时序失败则保持相对分段
         days.append(entry)
     return LiuRiResult(month=0, days=days)
 

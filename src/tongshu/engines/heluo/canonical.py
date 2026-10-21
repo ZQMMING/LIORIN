@@ -118,6 +118,24 @@ def _jie_datetime_for_lunar_month(year: int, lunar_month: int) -> str | None:
     return _jie_cache[year].get(lunar_month)
 
 
+def _jie_interval_for_lunar_month(year: int, lunar_month: int) -> tuple[str | None, str | None]:
+    """(当月节时刻, 下月节时刻) — 节气为界（H10b 规则分疏）。
+
+    流日卦段边界须按"节→下节"实际间隔（约 29~31 日不等）均匀切分，
+    不可机械固定每段日数。下月节跨年：亥月（12）→ 下一年链子月（大雪）。
+    """
+    t0 = _jie_datetime_for_lunar_month(year, lunar_month)
+    if t0 is None:
+        return None, None
+    nxt_lm = lunar_month + 1
+    nxt_year = year
+    if nxt_lm > 12:
+        nxt_lm = 1
+        nxt_year = year + 1
+    t1 = _jie_datetime_for_lunar_month(nxt_year, nxt_lm)
+    return t0, t1
+
+
 def _compute_year_jie(year: int) -> dict[int, str]:
     """遍历公历 year-1~year+1，找齐 12 个"节"，按农历月 1-12 建映射。
 
@@ -252,6 +270,7 @@ def _compose_daily_hexagram(
             "lines": dl,
             "flip_index": fl,
             "date_from": dseg.get("date_from") or "",
+            "jie_span_days": dseg.get("jie_span_days"),  # H10b 实际节气间隔（天）
             "hours": dseg.get("hours") or [],  # 流时（设计剥离，保留结构）
         }
         daily_yao.append(seg)
@@ -558,14 +577,10 @@ class HeluoCanonical:
             liuyue = compute_liuyue(y.lines, yyt)
             months = []
             for m in liuyue.months:
-                # 流日卦：以当月月卦为本，从居位爻下一爻起六爻俱变（每爻管5日，§6.4 裁定）
-                # 节气对齐：流日卦须从当月"节"时刻起管（《河洛真数》起日卦例）
-                jie_dt = None
-                try:
-                    jie_dt = _jie_datetime_for_lunar_month(y.year, m["month"])
-                except Exception:
-                    jie_dt = None
-                liuri = compute_liuri(m["lines"], m["yue_yao_index"], jie_dt)
+                # 流日卦：以当月月卦为本，从居位爻下一爻起六爻俱变（节气为界，H10b 均匀分配）
+                # 段边界按"当月节→下月节"实际间隔均匀切分，不可机械固定每段日数
+                jie_dt, next_jie_dt = _jie_interval_for_lunar_month(y.year, m["month"])
+                liuri = compute_liuri(m["lines"], m["yue_yao_index"], jie_dt, next_jie_dt)
                 # 流时卦（《河洛真数·起例卷之上·起时卦例》）：以值日卦为本，
                 # 前六时(子~巳)进数变/后六时(午~亥)退数变，阳时变爻阴时取应
                 for dseg in liuri.days:
