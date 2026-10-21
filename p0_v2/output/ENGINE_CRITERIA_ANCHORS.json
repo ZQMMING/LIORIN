@@ -1,10 +1,10 @@
 {
  "purpose": "AGENTS.md v3 公理三落地: 引擎判据 -> 原典章节 -> 切片ID 锚点对照(不改判定)",
- "total_anchor_groups": 111,
- "total_refs": 342,
+ "total_anchor_groups": 112,
+ "total_refs": 344,
  "match_modes": {
   "EXACT_CHAPTER": 35,
-  "CHAPTER": 76
+  "CHAPTER": 77
  },
  "anchors": [
   {
@@ -261,7 +261,7 @@
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:1311",
     "engines\\common\\ge_jie_layer.py:1345",
-    "engines\\common\\yongshen_multi_track.py:368",
+    "engines\\common\\yongshen_multi_track.py:397",
     "engines\\common\\yongyao_resolve.py:389",
     "engines\\common\\yongyao_resolve.py:553",
     "engines\\common\\yongyao_resolve.py:554",
@@ -1093,7 +1093,7 @@
    "row": 799,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\yongshen_multi_track.py:404"
+    "engines\\common\\yongshen_multi_track.py:433"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1192,6 +1192,29 @@
    "ref_count": 1,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:1333"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1113,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\yongshen_multi_track.py:84",
+    "engines\\common\\yongshen_multi_track.py:115"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",

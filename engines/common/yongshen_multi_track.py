@@ -80,14 +80,43 @@ def _track_zpzq(pillars, facts, wuxing_power, spectrum, special, climate):
     has_pattern = bool(special.get('cong_type') or special.get('zhuanwang')
                        or special.get('hua_qi') or special.get('liangqi'))
 
-    # 激活条件: 月令本气透干 或 成格
-    activated = benqi_tou or has_pattern
+    # ★ V7.113 激活条件: 【主链已落格】或【成格】—— 不再要求"月令本气透干"
+    #   原典 PZZQ L1113「用神专寻月令」: 月令本气即定格局, 不要求透干
+    #   (同 V7.78 正官格 / V7.79 七煞格 之同类修正).
+    #   原读法(须月令本气透干)致【月令不透干而成格】之盘(如 癸亥壬戌乙未壬午: 戌月戊土不透干,
+    #   主链已判财格)在本轨恒不激活, 与主链 ge_cheng 两套格局判定相互矛盾.
+    _gc_main = (facts.get('ge_cheng') or {}) if isinstance(facts, dict) else {}
+    _ge_main = _gc_main.get('ge') or ''
+    _shape_main = _gc_main.get('shape') or ''
+    _ge_formed = bool(_ge_main)
+    activated = _ge_formed or has_pattern or benqi_tou
 
     if not activated:
-        return _track_output('ZPZQ', '格局轨', False, note='月令本气未透且未成格')
+        return _track_output('ZPZQ', '格局轨', False, note='月令未成格且无成格结构')
 
     candidates = []
-    # 格局用神 = 月令本气对应的十神五行
+    # ★ V7.113 格局用神优先取【主链形态】所定的格神(形态单一数据源, V7.51);
+    #   无形态时退回"月令本气对应十神"并标注 LEGACY(非原典口径, 勿据以立论).
+    _shape_yongshen = {
+        '用官': '官杀', '用官带伤食': '官杀',
+        '用财': '财星', '用财印': '财星', '用财印同官格': '财星',
+        '佩印': '印星', '旺生官': '官杀',
+        '用食印': '食伤', '用食生': '食伤', '用食伤': '食伤',
+        '生财': '财星', '食制': '食伤',
+        '同官格': '官杀', '同财格': '财星', '同煞格': '官杀',
+    }.get(_shape_main, '')
+    if _shape_yongshen:
+        _yx = {'官杀': KE_ME.get(dmw), '财星': KE.get(dmw), '印星': SHENG_ME.get(dmw),
+               '食伤': SHENG.get(dmw)}.get(_shape_yongshen, '')
+        if _yx:
+            candidates.append(_candidate(
+                _yx, 1,
+                evidence=f'子平真诠: 格局用神专求月令, {_ge_main}·形态「{_shape_main}」以'
+                         f'{_shape_yongshen}为用(PZZQ L1113/L3212/L1142-1143)',
+                boundary='形态用神; 喜忌随形态与身轻身重而异(取运章), 不可与调候/病药混为总用神',
+                stem_element=''))
+            return _track_output('ZPZQ', '格局轨', True, candidates, 'DIRECT',
+                                 note=f'主链格局={_ge_main}·形态「{_shape_main}」; 用神取形态所定格神')
     if month_benqi_wx:
         # 月令本气五行 vs 日主的十神关系
         if month_benqi_wx == dmw:

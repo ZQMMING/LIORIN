@@ -984,6 +984,16 @@ ck("公理二: DTS轨只用结构三态(旺局/衰局/中和), 不出身强弱�
 ck("DTS轨 旺局分支出官杀/食伤(DTS L215「旺则抑之」)而非只出宜扶",
    "旺则抑之" in _mt_src or "官杀制" in _mt_src or "克身" in _mt_src, "")
 
+# ZPZQ 格局轨: 读主链格局与形态(单一数据源 V7.51), 激活不要求月令透干(PZZQ L1113)
+ck("ZPZQ轨 读主链 ge_cheng 的格名与形态(单一数据源)",
+   "_gc_main" in _mt_src and "_shape_main" in _mt_src, "")
+ck("ZPZQ轨 激活条件含「主链已落格」(不要求月令本气透干)",
+   "_ge_formed" in _mt_src, "")
+ck("ZPZQ轨 格局用神取自形态所定格神(非月令本气对应十神之自造)",
+   "_shape_yongshen" in _mt_src and "用神取形态所定格神" in _mt_src, "")
+ck("四轨冲突不裁决(保留多解, AGENTS.md 并列不压序)",
+   "保留多解，不裁决" in _mt_src, "")
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
