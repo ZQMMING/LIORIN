@@ -3348,8 +3348,10 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   主断吉在场 (天月德V82/贵禄马V65/本命克太岁为财Y73/合局Y71/喜神V67/
     #   小运禄马贵V81/福会V85/临官帝旺V86 至少一条 tone=吉) → 需防级凶降浮灾
     from .strength import _JIUXI_JI_RULES as _JXR, YEAR_XIONG as _YX
-    # V60 二运太岁会集定死 — 发祸级, 尊吉卑凶只救细累/需防级, 定死不救 (2026-10-21)
-    _jiu_yi = (not any(v.get("rule_id") == "LM-V60" and v.get("tone") == "凶"
+    # V60 定死 / V70 元辰 — 发祸级不可救 (珞琭子"元辰纵有吉神扶持, 不免灾祸倚伏";
+    #   2026-10-21 用户定案: V70 与 V60 同级不救)
+    _NO_JIUXI = {"LM-V60", "LM-V70"}
+    _jiu_yi = (not any(v.get("rule_id") in _NO_JIUXI and v.get("tone") == "凶"
                        for v in verdicts)) and any(
         v.get("tone") == "吉" and v.get("rule_id") in _JXR for v in verdicts)
     # 尊吉卑凶只减"需防级重凶集"凶分 (细累已在 year_power 归零; 普通凶如 V68 犯忌不动)
@@ -3375,6 +3377,18 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     _i4273 = l4273_interaction(lm, year_tone, yctx, verdicts) if lm is not None else {
         "mode": "无", "year_tone": year_tone, "detail": "", "luck_verdict": ""}
     year_tone = _i4273["year_tone"]
+
+    # 2026-10-21 用户定案(核验二): tone 与应期联动, 不得脱钩 —
+    #   L4273 发祸 (凶祸之运+太岁刑冲, "方主发祸") → tone 定凶;
+    #   重凶集在场 (应期=需防/定死) → tone 不为纯吉, 上限"吉凶相杂";
+    #   V60 定死 → tone 必凶 (发祸级, 吉神不救)
+    _rids2 = [v.get("rule_id", "") for v in verdicts]
+    if _i4273.get("mode") == "发祸":
+        year_tone = "凶"
+    elif "LM-V60" in _rids2:
+        year_tone = "凶"
+    elif year_tone == "吉" and any(rid in _HEAVY_XIONG for rid in _rids2):
+        year_tone = "吉凶相杂"
 
     # combined: 大运吉凶(独立展示) + L4273 条件互动标注 — 不再做运年算术聚合
     combined = None
@@ -3439,6 +3453,8 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     _heavy_hit = [v for v in verdicts if v.get("rule_id") in _HEAVY and v.get("tone") == "凶"]
     if "LM-V60" in _rids:
         _yq_level = "定死/大凶"
+    elif _i4273.get("mode") == "发祸":
+        _yq_level = "需防"     # 2026-10-21 核验二: 发祸(凶祸之运+太岁刑冲)接应期需防
     elif _heavy_hit:
         _yq_level = "需防"
     elif year_tone == "凶" or counts.get("凶", 0) > 0:

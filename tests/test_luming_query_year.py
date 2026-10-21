@@ -274,18 +274,18 @@ class TestYearDistributionSystemic:
         # 原著反例修复: 2025 乙巳 (癸亥生得乙巳岁, 水克火为财+巳上乘马,
         #   虽巳亥冲不为灾忒宜获福 L4416 王氏注) — 不得判凶
         assert dist[2025] != "凶", f"2025 乙巳判凶 = 珞琭子原著反例: {dist}"
-        # 2024 甲辰: 水克火为财(Y73吉)+V67喜神吉 双主断吉在场 → 2026-10-21 古法第三层
-        #   尊吉卑凶: V70元辰(需防级)降浮灾 → 恶力 V61(4)+V70(2)+V79(3)+V88(细累0)=9-2=7
-        #   重档→中档(降档) → 厚基×中 = 吉凶相杂; **应期仍需防** (元辰V70重凶集在场,
-        #   应期不随 tone 降) — 叠凶当防而吉面救应, 属 tone 改造正确连锁
-        #   (旧断言"凶"基于 tone 改造前; 元辰辰口径不变)
-        assert dist[2024] == "吉凶相杂", f"2024 甲辰应判吉凶相杂(尊吉卑凶救应): {dist}"
+        # 2024 甲辰: 水克火为财(Y73吉)+V67喜神吉 双主断吉在场, 但 V70元辰在场 —
+        #   2026-10-21 用户定案(珞琭子"元辰纵有吉神扶持, 不免灾祸倚伏"): V70与V60同级
+        #   不救, 尊吉卑凶降级不触发 → 恶力 V61(4)+V70(4)+V79(3)+V88(细累0)=11 重档
+        #   → 厚基×重 = 凶(需防) — 回到阶段C用户裁定(元辰叠凶判凶)
+        #   (此前"吉凶相杂"为 V70 仍参与降级的中间态, 已废止)
+        assert dist[2024] == "凶", f"2024 甲辰应判凶(V70元辰不救+叠凶): {dist}"
 
     def test_134_1986_kun_2027_zun_ji_bei_xiong(self, be):
         """用户回算①: 1986乾 2027 丁未 — Y71合局主断吉触发尊吉卑凶 → 吉凶相杂(偏凶),
         非纯凶. (V61空亡需防级降浮灾; 合局=午未合, 未非刑冲害引动为空)"""
         ch = _chart(be, 1986, 8, 15, 12)
-        lm = _lm(be, 1986, 8, 15, 12)
+        lm = _lm(be, 1986, 8, 15, 12, gender="male")
         r = query_year(ch, 2027, lm=lm)
         assert r["tone"] == "吉凶相杂", r["tone"]
         yq = r.get("ying_qi") or {}
@@ -295,11 +295,42 @@ class TestYearDistributionSystemic:
         """用户回算②: 1990乾 2024 甲辰 — Y72生本命主断吉触发尊吉卑凶 →
         吉凶相杂, 非纯凶. (V59晦气需防级降浮灾; V74丧门普通凶+V80细累不计)"""
         ch = _chart(be, 1990, 6, 18, 10)
-        lm = _lm(be, 1990, 6, 18, 10)
+        lm = _lm(be, 1990, 6, 18, 10, gender="male")
         r = query_year(ch, 2024, lm=lm)
         assert r["tone"] == "吉凶相杂", r["tone"]
         yq = r.get("ying_qi") or {}
         assert yq.get("level") == "需防", yq
+
+    def test_136_1990_2026_tone_cap_by_heavy(self, be):
+        """用户核验二①: 1990乾 2026 丙午 — V62犯命(重凶集)→应期需防,
+        tone 不为纯吉(上限吉凶相杂); 三主断吉(Y73/V67/V82)只降 tone 不降应期"""
+        ch = _chart(be, 1990, 6, 18, 10)
+        lm = _lm(be, 1990, 6, 18, 10, gender="male")
+        r = query_year(ch, 2026, lm=lm)
+        assert r["tone"] == "吉凶相杂", r["tone"]
+        yq = r.get("ying_qi") or {}
+        assert yq.get("level") == "需防", yq
+
+    def test_137_1990_2030_fa_huo_lian_dong(self, be):
+        """用户核验二②: 1990乾 2030 庚戌 — L4273发祸(大运酉=土死凶祸之运+太岁戌害酉,
+        '方主发祸') → tone=凶, 应期接发祸升需防 (不再写浮灾细累)"""
+        ch = _chart(be, 1990, 6, 18, 10)
+        lm = _lm(be, 1990, 6, 18, 10, gender="male")
+        r = query_year(ch, 2030, lm=lm)
+        assert r["tone"] == "凶", r["tone"]
+        yq = r.get("ying_qi") or {}
+        assert yq.get("level") == "需防", yq
+
+    def test_138_1983_2025_ji_you_fu_zai(self, be):
+        """用户核验二③: 1983坤 2025 乙巳 — 厚基+三主断吉(V65贵禄马/Y73得财/V67喜神)
+        尊吉卑凶 → tone=吉; 应期浮灾细累=有细累凶断语(V53刑大运+V61空亡)在场,
+        tone与应期独立, 以应期定防 (珞琭子 L4416 王氏注: 巳亥冲不为灾忒宜获福)"""
+        ch = _chart(be, 1983, 11, 3, 12, gender="female")
+        lm = _lm(be, 1983, 11, 3, 12)
+        r = query_year(ch, 2025, lm=lm)
+        assert r["tone"] == "吉", r["tone"]
+        yq = r.get("ying_qi") or {}
+        assert yq.get("level") == "浮灾细累", yq
 
     def test_133_1983_kun_2020_signal_grounded(self, be):
         """凶年必须信号可回指 (重灾4分: 晦气/死绝/元辰/冲运/克身)."""
