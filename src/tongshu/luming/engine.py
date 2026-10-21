@@ -3260,6 +3260,132 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     }
 
 
+_WUXING_HEALTH = {
+    "WOOD": "肝胆、情绪、睡眠", "FIRE": "心血管、眼目、炎症",
+    "EARTH": "脾胃、消化", "METAL": "肺、呼吸、皮肤",
+    "WATER": "肾、泌尿、循环",
+}
+_DIM_FANG = {
+    "身/健康": "健康", "禄/事业": "事业(决策、竞争、变动)",
+    "命/财富": "财务(破财、借贷、投资)", "宫/六亲": "家宅/六亲(长辈、子女、婚姻)",
+    "煞/灾祸": "自身灾祸(口舌、官非、外伤、出行)",
+}
+_XIONG_FANG = {  # 重凶断语 → 具体生活方向 (用户示例粒度)
+    "LM-V61": "破财落空", "LM-V84": "家宅变动、长辈健康", "LM-V74": "长辈健康、丧事往来",
+    "LM-V58": "阴灾口舌", "LM-V55": "口舌是非", "LM-V57": "酒色口舌",
+    "LM-V64": "子女晚辈", "LM-V62": "疾病、官灾、破财", "LM-V52": "事业根基、健康",
+    "LM-V66": "灾祸", "LM-V87": "疾病、官灾、破财", "LM-V59": "权柄不宁、官非",
+    "LM-V70": "自身灾祸", "LM-V60": "自身健康重灾", "LM-V60B": "自身衰祸",
+    "LM-V79": "劳碌奔波", "LM-V80": "细累浮灾",
+}
+
+
+_JIUXI_NAME = {  # 主断吉规则 → 吉神中文名 (备注/救应展示用)
+    "LM-V82": "天月德", "LM-V65": "贵人", "LM-Y73": "喜神", "LM-Y71": "合局",
+    "LM-V67": "禄马", "LM-V86": "天德", "LM-V85": "月德", "LM-V81": "福会",
+    "LM-Y72": "生本命",
+}
+
+
+def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
+    """风险指引 (2026-10-21 产品伦理层: 信号→用户指引).
+
+    把'凶/吉 + 应期级别 + 维度'翻译成用户可执行的风险描述:
+      风险等级(用户语言: 安顺/留意/谨慎/重点防) + 主防/次防方向(具体到健康/财务/家宅)
+      + 可执行建议 + 备注(吉神救应/防大于治/大运底色).
+    依据不变: 应期级别=重凶信号决定; 方向=维度+断语定向; 建议=等级模板+方向裁剪;
+      备注=吉神救应(珞琭子尊吉卑凶)与大运基调(三命通会论大运).
+    """
+    level = ying_qi.get("level", "")
+    l4273 = (combined or {}).get("l4273") or {}
+    luck_verdict = (combined or {}).get("luck_verdict", "")
+    rids = [v.get("rule_id", "") for v in verdicts]
+    xiong_d = [_XIONG_FANG[r] for r in rids if r in _XIONG_FANG]
+    from .strength import _JIUXI_JI_RULES as _JXR_RULES
+    # 吉神救应: 主断吉在场 或 天月德
+    jiu_ji = [_JIUXI_NAME.get(v["rule_id"], v["rule_id"]) for v in verdicts
+              if v.get("tone") == "吉" and v.get("rule_id") in _JXR_RULES]
+    has_yue_de = bool(yctx.get("tai_tian_yue_de"))
+    jifu = jiu_ji or (["天月德"] if has_yue_de else [])
+    # --- 风险等级 (用户语言) ---
+    if level == "定死/大凶":
+        risk_label = "重点防"
+        risk_reason = "大运死绝+小运衰息+太岁刑克会集, 古法'定死/大凶'之岁"
+    elif level == "需防":
+        risk_label = "谨慎"
+        risk_reason = ("L4273发祸: 大运凶祸+太岁刑冲+小运不和" if l4273.get("mode") == "发祸"
+                       else "重凶信号在场, 未全会集死绝衰息")
+    elif level == "浮灾细累":
+        risk_label, risk_reason = "留意", "细累浮灾, 不为重害"
+    else:
+        risk_label, risk_reason = ("安顺", "无重凶信号") if year_tone == "吉" else ("留意", "信号不显")
+    # --- 主防方向 (吉年=顺势语义; 凶年=防守语义) ---
+    zhu = ying_qi.get("zhu_ying", "") or ""
+    el = (chart.nayin_five_element or {}).get("year", "") if hasattr(chart, "nayin_five_element") else ""
+    health = _WUXING_HEALTH.get(el, "身心")
+    if year_tone == "吉":
+        zhu_fang = "顺势推进(吉神护持)" if jifu else "顺势而为"
+    elif zhu in ("身/健康",):
+        zhu_fang = "健康(%s)" % health
+    elif zhu in ("禄/事业", "命/财富", "宫/六亲"):
+        zhu_fang = _DIM_FANG[zhu]
+    elif zhu in ("煞/灾祸",):
+        zhu_fang = "自身灾祸(%s)" % ("、".join(xiong_d[:3]) if xiong_d
+                                     else "口舌、官非、外伤、出行")
+    elif zhu in ("吉神/辅助",) or zhu == "无明确主应":
+        zhu_fang = "顺势/健康管理(%s)" % health if xiong_d else "吉神护持之年, 顺势而为"
+    else:
+        zhu_fang = zhu or "健康(%s)" % health
+    # --- 次防方向 ---
+    ci = ying_qi.get("ci_ying", "")
+    ci_parts = []
+    if ci and ci in _DIM_FANG:
+        ci_parts.append(_DIM_FANG[ci])
+    elif ci and ci not in ("", "吉神/辅助", "无"):
+        ci_parts.append(ci)
+    for x in xiong_d:
+        if x not in zhu_fang and x not in " ".join(ci_parts):
+            ci_parts.append(x)
+    _ci4 = list(dict.fromkeys(ci_parts))[:4]
+    ci_fang = "、".join(_ci4) or "无明确次防"
+    # --- 可执行建议 ---
+    adv = []
+    if risk_label == "重点防":
+        adv += ["重大健康决策(手术、生育等)格外审慎", "定期体检, 避免过度劳累/熬夜"]
+        if "财务" in zhu_fang or "破财" in ci_fang:
+            adv += ["重大投资、签约、借贷推迟"]
+        if "家宅" in zhu_fang or "长辈" in ci_fang:
+            adv += ["家中长辈多加关注, 家宅变动缓行"]
+        adv += ["防大于治: 定死级信号不因吉神降级, 提前布局应对"]
+    elif risk_label == "谨慎":
+        adv += ["不冒险决策, 守成为上"]
+        if "财务" in zhu_fang or "破财" in ci_fang:
+            adv += ["守财节流, 勿轻信投资机会"]
+        if "口舌" in zhu_fang + ci_fang:
+            adv += ["避口舌是非, 出行谨慎"]
+        if "健康" in zhu_fang:
+            adv += ["定期检查, 劳逸结合"]
+    elif risk_label == "留意":
+        adv += ["小事处理即可, 不扩大担忧", "作息规律, 情绪平稳"]
+    else:
+        adv += ["顺势推进, 把握机会"]
+        if xiong_d:
+            adv += ["虽有浮灾细累, 注意节奏即可"]
+    # --- 备注 ---
+    note = []
+    if jifu:
+        note.append("流年有%s护持, 逢灾有救" % "、".join(jifu[:2]))
+    if level in ("定死/大凶", "需防") and jifu:
+        note.append("但定死/元辰级信号不因吉神降级, 防大于治")
+    if luck_verdict in ("偏吉", "吉") and level != "定死/大凶":
+        note.append("大运吉泰之运, 浮灾细累不为重害")
+    if luck_verdict in ("偏凶", "凶"):
+        note.append("大运屯蹇凶祸之地, 凶年当防")
+    return {"risk_label": risk_label, "risk_reason": risk_reason,
+            "zhu_fang": zhu_fang, "ci_fang": ci_fang,
+            "advice": adv, "beizhu": "; ".join(note) or "按应期防御即可"}
+
+
 def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     """流年应期层: 任意公历年太岁断语 (YEAR_RULES V50+).
 
@@ -3531,6 +3657,7 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _zhu_ying = "无明确主应"
     ying_qi = {"level": _yq_level, "zhu_ying": _zhu_ying, "ci_ying": _ci_ying,
                "yin_dong": yin_dong}
+    guidance = build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx)
 
     return {"year": year, "tai_sui": yctx["tai_sui"], "age": round(yctx["age"], 2),
             "luck_pillar": yctx["luck_pillar"], "verdicts": verdicts,
@@ -3560,4 +3687,5 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "tai_si_sha": yctx.get("tai_si_sha", False),
             "tai_si_sha_chong": yctx.get("tai_si_sha_chong", False),
             "dl_guan_di_wang": yctx.get("dl_guan_di_wang", False),
-            "ying_qi": ying_qi}
+            "ying_qi": ying_qi,
+            "guidance": guidance}
