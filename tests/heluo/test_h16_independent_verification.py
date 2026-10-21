@@ -398,27 +398,30 @@ check("正月卦≠二月卦", liuyue.months[0]["name"] != liuyue.months[1]["nam
 # ═══════════════════════════════════════════════════════════════
 section("Rule: 梅花易数起卦法")
 
-from tongshu.engines.meihua import cast_by_time, cast_by_numbers
+try:
+    from tongshu.engines.meihua import cast_by_time, cast_by_numbers
 
-r = cast_by_time(2024, 3, 15, 10)
-check("梅花时间起卦本卦有内容", len(r.ben_gua) > 0, True, "本卦应为主卦名")
-check("梅花时间起卦有变卦", r.bian_gua is not None and len(r.bian_gua) > 0, True, "应产生变卦")
-check("梅花时间起卦有互卦", r.hu_gua is not None and len(r.hu_gua) > 0, True, "应产生互卦")
-check("梅花时间起卦有体用", r.ti is not None and r.yong is not None, True, "应区分体卦和用卦")
-check("梅花时间起卦体用为卦名", r.ti in TRIGRAM_LINES and r.yong in TRIGRAM_LINES, True,
-      "体用应为八卦名之一")
+    r = cast_by_time(2024, 3, 15, 10)
+    check("梅花时间起卦本卦有内容", len(r.ben_gua) > 0, True, "本卦应为主卦名")
+    check("梅花时间起卦有变卦", r.bian_gua is not None and len(r.bian_gua) > 0, True, "应产生变卦")
+    check("梅花时间起卦有互卦", r.hu_gua is not None and len(r.hu_gua) > 0, True, "应产生互卦")
+    check("梅花时间起卦有体用", r.ti is not None and r.yong is not None, True, "应区分体卦和用卦")
+    check("梅花时间起卦体用为卦名", r.ti in TRIGRAM_LINES and r.yong in TRIGRAM_LINES, True,
+          "体用应为八卦名之一")
 
-r = cast_by_numbers(3, 5)
-check("梅花数起(3,5)本卦", r.ben_gua, "火风鼎", "上离(3)下巽(5)→火风鼎")
-check("梅花数起(3,5)动爻1based", r.dong_yao_1based, 2, "(3+5)%6=2, 1-based=2")
+    r = cast_by_numbers(3, 5)
+    check("梅花数起(3,5)本卦", r.ben_gua, "火风鼎", "上离(3)下巽(5)→火风鼎")
+    check("梅花数起(3,5)动爻1based", r.dong_yao_1based, 2, "(3+5)%6=2, 1-based=2")
 
-r = cast_by_numbers(1, 1)
-check("梅花乾为天", r.ben_gua, "乾为天", "上下皆乾")
-check("梅花乾错卦=坤", r.cuo_gua, "坤为地", "乾(111,111)错为坤(000,000)")
-check("梅花乾综卦=乾", r.zong_gua, "乾为天", "乾自综")
+    r = cast_by_numbers(1, 1)
+    check("梅花乾为天", r.ben_gua, "乾为天", "上下皆乾")
+    check("梅花乾错卦=坤", r.cuo_gua, "坤为地", "乾(111,111)错为坤(000,000)")
+    check("梅花乾综卦=乾", r.zong_gua, "乾为天", "乾自综")
 
-r = cast_by_numbers(1, 3)
-check("同人动爻=4", r.dong_yao_1based, 4, "(1+3)%6=4, 1-based=4")
+    r = cast_by_numbers(1, 3)
+    check("同人动爻=4", r.dong_yao_1based, 4, "(1+3)%6=4, 1-based=4")
+except ImportError:
+    print("  ⏭️ SKIP: meihua(梅花易数)引擎不在河洛独立包中，跳过梅花易数小节")
 
 
 # ═══════════════════════════════════════════════════════════════

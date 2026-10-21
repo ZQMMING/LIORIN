@@ -246,7 +246,8 @@ class TestCanpingRawShici:
     def test_canping_dir_default(self):
         """默认语料目录可解析（data/heluo/canping/ 存在）"""
         import os
-        d = os.path.join(r"D:\shuntian", "data", "heluo", "canping")
+        root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        d = os.path.join(root, "data", "heluo", "canping")
         assert os.path.exists(os.path.join(d, "raw_shici_p24-58.json"))
 
 
