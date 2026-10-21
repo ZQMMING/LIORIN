@@ -1,10 +1,10 @@
 {
  "purpose": "AGENTS.md v3 公理三落地: 引擎判据 -> 原典章节 -> 切片ID 锚点对照(不改判定)",
- "total_anchor_groups": 109,
- "total_refs": 335,
+ "total_anchor_groups": 110,
+ "total_refs": 340,
  "match_modes": {
   "EXACT_CHAPTER": 35,
-  "CHAPTER": 74
+  "CHAPTER": 75
  },
  "anchors": [
   {
@@ -335,8 +335,8 @@
    "ref_count": 5,
    "engine_refs": [
     "engines\\common\\bingyao_layer.py:37",
-    "engines\\common\\bingyao_layer.py:1051",
-    "engines\\common\\bingyao_layer.py:1186",
+    "engines\\common\\bingyao_layer.py:1053",
+    "engines\\common\\bingyao_layer.py:1188",
     "engines\\common\\yongyao_resolve.py:355",
     "engines\\common\\yongyao_resolve.py:364"
    ],
@@ -376,8 +376,8 @@
    "row": 250,
    "ref_count": 11,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:1053",
-    "engines\\common\\bingyao_layer.py:1198",
+    "engines\\common\\bingyao_layer.py:1055",
+    "engines\\common\\bingyao_layer.py:1200",
     "engines\\common\\topology_paths.py:348",
     "engines\\common\\topology_paths.py:396",
     "engines\\common\\topology_paths.py:424",
@@ -429,7 +429,7 @@
    "book": "DTS",
    "book_cn": "滴天髓",
    "row": 295,
-   "ref_count": 15,
+   "ref_count": 16,
    "engine_refs": [
     "engines\\common\\tiaohou_rank.py:10",
     "engines\\common\\tiaohou_rank.py:17",
@@ -438,11 +438,11 @@
     "engines\\common\\tiaohou_rank.py:143",
     "engines\\common\\tiaohou_rank.py:145",
     "engines\\common\\tiaohou_rank.py:147",
+    "engines\\common\\tiaohou_rank.py:169",
     "engines\\common\\yongshen_engine.py:599",
     "engines\\common\\yongyao_resolve.py:257",
     "engines\\common\\yongyao_resolve.py:270",
-    "engines\\common\\yongyao_resolve.py:339",
-    "engines\\common\\yongyao_resolve.py:345"
+    "engines\\common\\yongyao_resolve.py:339"
    ],
    "source_chapter": "二十九、寒暖",
    "slice_match": "EXACT_CHAPTER",
@@ -474,7 +474,7 @@
    "row": 334,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:315"
+    "engines\\common\\bingyao_layer.py:317"
    ],
    "source_chapter": "二、子女",
    "slice_match": "EXACT_CHAPTER",
@@ -617,16 +617,15 @@
    "book": "DTS",
    "book_cn": "滴天髓",
    "row": 445,
-   "ref_count": 9,
+   "ref_count": 8,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:47",
-    "engines\\common\\bingyao_layer.py:731",
-    "engines\\common\\bingyao_layer.py:754",
+    "engines\\common\\bingyao_layer.py:50",
+    "engines\\common\\bingyao_layer.py:733",
+    "engines\\common\\bingyao_layer.py:756",
     "engines\\common\\fan_ju.py:352",
     "engines\\common\\fan_ju.py:361",
     "engines\\common\\fan_ju.py:427",
-    "engines\\common\\tiaohou_rank.py:209",
-    "engines\\common\\tiaohou_rank.py:216",
+    "engines\\common\\tiaohou_rank.py:180",
     "p0_v2\\bazi_gate.py:448"
    ],
    "source_chapter": "十七、反局",
@@ -705,8 +704,8 @@
    "row": 461,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:1123",
-    "engines\\common\\bingyao_layer.py:1145"
+    "engines\\common\\bingyao_layer.py:1125",
+    "engines\\common\\bingyao_layer.py:1147"
    ],
    "source_chapter": "十九、合局",
    "slice_match": "EXACT_CHAPTER",
@@ -979,8 +978,8 @@
    "row": 421,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:1124",
-    "engines\\common\\bingyao_layer.py:1145"
+    "engines\\common\\bingyao_layer.py:1126",
+    "engines\\common\\bingyao_layer.py:1147"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1048,7 +1047,7 @@
    "row": 765,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:1161"
+    "engines\\common\\bingyao_layer.py:1163"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1070,8 +1069,8 @@
    "row": 768,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:538",
-    "engines\\common\\bingyao_layer.py:553"
+    "engines\\common\\bingyao_layer.py:540",
+    "engines\\common\\bingyao_layer.py:555"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1093,7 +1092,7 @@
    "row": 800,
    "ref_count": 7,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:742",
+    "engines\\common\\bingyao_layer.py:744",
     "engines\\common\\engineering_assumptions.py:57",
     "engines\\common\\evil_offset.py:81",
     "engines\\common\\ge_jie_layer.py:235",
@@ -1122,9 +1121,9 @@
    "ref_count": 4,
    "engine_refs": [
     "engines\\common\\bingyao_layer.py:36",
-    "engines\\common\\bingyao_layer.py:1050",
-    "engines\\common\\bingyao_layer.py:1185",
-    "engines\\common\\bingyao_layer.py:1234"
+    "engines\\common\\bingyao_layer.py:1052",
+    "engines\\common\\bingyao_layer.py:1187",
+    "engines\\common\\bingyao_layer.py:1236"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1234,9 +1233,10 @@
    "book": "PZZQ",
    "book_cn": "子平真诠",
    "row": 1128,
-   "ref_count": 1,
+   "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\evil_offset.py:144"
+    "engines\\common\\evil_offset.py:144",
+    "engines\\common\\tiaohou_rank.py:170"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1258,9 +1258,9 @@
    "row": 1130,
    "ref_count": 8,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:48",
-    "engines\\common\\bingyao_layer.py:733",
-    "engines\\common\\bingyao_layer.py:758",
+    "engines\\common\\bingyao_layer.py:51",
+    "engines\\common\\bingyao_layer.py:735",
+    "engines\\common\\bingyao_layer.py:760",
     "engines\\common\\ge_jie_layer.py:966",
     "engines\\common\\ge_jie_layer.py:1049",
     "engines\\common\\ge_jie_layer.py:1063",
@@ -1335,7 +1335,7 @@
    "row": 1145,
    "ref_count": 5,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:603",
+    "engines\\common\\bingyao_layer.py:605",
     "engines\\common\\ge_jie_layer.py:778",
     "engines\\common\\ge_jie_layer.py:794",
     "engines\\common\\ge_jie_layer.py:946",
@@ -1384,7 +1384,7 @@
    "row": 1156,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:590"
+    "engines\\common\\bingyao_layer.py:592"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1495,7 +1495,7 @@
    "row": 2319,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:314"
+    "engines\\common\\bingyao_layer.py:316"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1794,7 +1794,7 @@
    "row": 3930,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:316"
+    "engines\\common\\bingyao_layer.py:318"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1816,10 +1816,10 @@
    "row": 3977,
    "ref_count": 4,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:1059",
-    "engines\\common\\bingyao_layer.py:1174",
-    "engines\\common\\bingyao_layer.py:1179",
-    "engines\\common\\bingyao_layer.py:1199"
+    "engines\\common\\bingyao_layer.py:1061",
+    "engines\\common\\bingyao_layer.py:1176",
+    "engines\\common\\bingyao_layer.py:1181",
+    "engines\\common\\bingyao_layer.py:1201"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2092,8 +2092,30 @@
    "row": 774,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:1059",
-    "engines\\common\\bingyao_layer.py:1199"
+    "engines\\common\\bingyao_layer.py:1061",
+    "engines\\common\\bingyao_layer.py:1201"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "QTBJ.五行总论.1",
+    "QTBJ.五行总论.2",
+    "QTBJ.五行总论.3",
+    "QTBJ.五行总论.4",
+    "QTBJ.五行总论.5",
+    "QTBJ.五行总论.6",
+    "QTBJ.五行总论.7",
+    "QTBJ.论木"
+   ],
+   "slice_count": 149
+  },
+  {
+   "book": "QTBJ",
+   "book_cn": "穷通宝鉴",
+   "row": 5675,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\tiaohou_rank.py:172"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2115,7 +2137,7 @@
    "row": 5819,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\tiaohou_rank.py:208"
+    "engines\\common\\tiaohou_rank.py:179"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2157,10 +2179,12 @@
    "book": "SFTK",
    "book_cn": "神峰通考",
    "row": 129,
-   "ref_count": 2,
+   "ref_count": 4,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:55",
-    "engines\\common\\bingyao_layer.py:67"
+    "engines\\common\\bingyao_layer.py:38",
+    "engines\\common\\bingyao_layer.py:57",
+    "engines\\common\\bingyao_layer.py:69",
+    "engines\\common\\bingyao_layer.py:1291"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2180,15 +2204,16 @@
    "book": "SFTK",
    "book_cn": "神峰通考",
    "row": 424,
-   "ref_count": 7,
+   "ref_count": 8,
    "engine_refs": [
     "engines\\common\\bingyao_layer.py:36",
-    "engines\\common\\bingyao_layer.py:1030",
-    "engines\\common\\bingyao_layer.py:1050",
-    "engines\\common\\bingyao_layer.py:1057",
-    "engines\\common\\bingyao_layer.py:1185",
-    "engines\\common\\bingyao_layer.py:1198",
-    "engines\\common\\bingyao_layer.py:1234"
+    "engines\\common\\bingyao_layer.py:1032",
+    "engines\\common\\bingyao_layer.py:1052",
+    "engines\\common\\bingyao_layer.py:1059",
+    "engines\\common\\bingyao_layer.py:1187",
+    "engines\\common\\bingyao_layer.py:1200",
+    "engines\\common\\bingyao_layer.py:1236",
+    "engines\\common\\tiaohou_rank.py:171"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2210,8 +2235,8 @@
    "row": 1095,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:68",
-    "engines\\common\\bingyao_layer.py:709"
+    "engines\\common\\bingyao_layer.py:70",
+    "engines\\common\\bingyao_layer.py:711"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2233,10 +2258,10 @@
    "row": 1113,
    "ref_count": 7,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:459",
-    "engines\\common\\bingyao_layer.py:469",
-    "engines\\common\\bingyao_layer.py:1160",
+    "engines\\common\\bingyao_layer.py:461",
+    "engines\\common\\bingyao_layer.py:471",
     "engines\\common\\bingyao_layer.py:1162",
+    "engines\\common\\bingyao_layer.py:1164",
     "engines\\common\\slice_conditions.py:49",
     "engines\\common\\slice_conditions.py:66",
     "engines\\common\\slice_conditions.py:107"
@@ -2285,8 +2310,8 @@
    "row": 9090,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:486",
-    "engines\\common\\bingyao_layer.py:499"
+    "engines\\common\\bingyao_layer.py:488",
+    "engines\\common\\bingyao_layer.py:501"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2382,7 +2407,7 @@
    "row": 2915,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:315",
+    "engines\\common\\bingyao_layer.py:317",
     "engines\\common\\slice_conditions.py:108"
    ],
    "source_chapter": "",
@@ -2405,8 +2430,8 @@
    "row": 3493,
    "ref_count": 3,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:459",
-    "engines\\common\\bingyao_layer.py:469",
+    "engines\\common\\bingyao_layer.py:461",
+    "engines\\common\\bingyao_layer.py:471",
     "engines\\common\\slice_conditions.py:49"
    ],
    "source_chapter": "",
@@ -2429,7 +2454,7 @@
    "row": 4923,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\bingyao_layer.py:316"
+    "engines\\common\\bingyao_layer.py:318"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",

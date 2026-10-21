@@ -867,6 +867,16 @@ for _fp in _g3.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=True)
                     [e.value for e in _v.elts]))
 ck("全仓病/药类字典项无固定五行字面(V7.106/107 型已清)", not _fixed_hits, _fixed_hits[:5])
 
+# 全仓闸门: 不得有 `if False:` 死代码块(V7.108 型)
+_dead = []
+for _fp in _g3.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=True):
+    if '.bak' in _fp or '_archive' in _fp:
+        continue
+    for _i, _ln in enumerate(open(_fp, encoding='utf-8', errors='ignore').read().split('\n'), 1):
+        if _ln.strip() == 'if False:':
+            _dead.append("%s:%d" % (os.path.relpath(_fp, ROOT), _i))
+ck("全仓无 `if False:` 死代码块(V7.108 已清)", not _dead, _dead[:5])
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

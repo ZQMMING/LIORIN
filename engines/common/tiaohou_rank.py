@@ -165,6 +165,20 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
     if cands:
         # ★ V7.76 候干次序递降(原典 order=先后次序): 序1 不成立则试序2、序3.
         #   各候干的"职能"判据随候干而定(食伤泄秀/制药/炼金/疏病), 逐个判.
+        # 职能之原典依据:
+        #   食伤泄秀: DTS L295/L298「寒之甚/过于燥皆偏枯 -> 候神优先(冬夏硬情形)」;
+        #             PZZQ L1128「身强印旺...最喜食伤泄日元之秀」。
+        #   制药(克主病): 病药通例「得一字以去之」(SFTK L424)之克病一路。
+        #   炼金: QTBJ L5675 正月庚金「顽钝之金, 非火炼不成器」/ L5819 三月庚金「先用甲木疏土, 次用丁火煅炼成器」/
+        #         L6110 六月庚金「顽钝至极, 无丁火锻打则无以成器」/ L6121 七月「专用丁火煅炼」/
+        #         L6214 八月「须见丁火锻炼」/ L6348 十月「非丁不能锻炼」/ L6489 十二月「次取丁火炼金」——
+        #         炼金之病源有二: 土厚埋金 或 金顽/金弱失令, 故不取"主病=印"为前提;
+        #         但须以【QTBJ 候干表序1或序2为火】为位(原文明言"专用丁火/非丁不成器"之月):
+        #         庚寅丙1/庚卯丁1/庚辰丁2/庚未丁1/庚申丁1/庚酉丁1/庚亥丁1/庚子丁1/庚丑丙1丁2 -> 可升;
+        #         庚巳(丙3)/庚戌(丁3)/庚午(无火) -> 序1乃他神, 火在序3不升.
+        #   疏病(财克印救母): QTBJ L5819 三月庚金「先用甲木疏土」/ L6278 九月庚金「最怕土厚埋金, 宜先用甲疏」/
+        #         L6282「宜先用甲疏, 後用壬洗」; DTS L445「土重金埋, 木克土则生金...君赖臣生也」;
+        #         任氏「局中印绶虽旺, 柱中财星有气, 可用财破印也」。
         _cands_sorted = sorted(cands, key=lambda c: c.get('order', 99))
         for _top in _cands_sorted:
             wx = _top['wx']
@@ -196,54 +210,6 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
             return {'rank': 'PROMOTE', 'wx': wx, 'reason': _reason,
                     'refs': ['QTBJ %s 候干序%d=%s' % (mb, _top.get('order', 99), _top.get('stem', ''))] + list(_top.get('ref') or [])}
         # 全候干皆不成立 -> 让位寒燥交互(维持原行为)
-        return _hanzao_shishang_rank(climate, dm_wx, mb, pillars)
-    if False:
-        top = cands[0]
-        wx = top['wx']
-        _in_chu = _stem_present(wx, pillars) >= 1 or _ben_wang(wx, pillars)
-        _is_shishang = SHENG.get(dm_wx, '') == wx     # 候干=食伤(我生)=泄秀
-        _is_zhi = KE_BACK.get(bing_wx, '') == wx     # 候干=制药(克主病)
-        _is_yin = SHENG_BACK.get(dm_wx, '') == wx     # 候干=生我(印)=主病源
-        # ★ V7.75 疏病职能: 候干=财(我克) 且 主病=印(生我) -> 财克印救母(疏病), 可升 primary.
-        #   原典 QTBJ L5819 三月庚金「先用甲木疏土, 次用丁火煅炼成器」/ L6278 九月庚金「最怕土厚埋金,
-        #   宜先用甲疏」/ L6282「宜先用甲疏, 後用壬洗」; DTS L445「土重金埋, 木克土则生金...君赖臣生也」;
-        #   任氏「局中印绶虽旺, 柱中财星有气, 可用财破印也」.
-        _is_shubing = (KE.get(dm_wx, '') == wx and bing_wx == SHENG_BACK.get(dm_wx, ''))
-        # V7.49 炼金职能: 金日主 主病印(土)重埋金时, 官火=炼金(制比劫+成器)为候神(原典"土重金埋需火炼金").
-        #   候火不入忌(炼金是药), 同食伤泄秀.
-        #   ★ V7.49 修: 炼金神取官杀火 = KE_BACK[dm](克我者), 原写 KE.get(dm)=财(我克)取神错误,
-        #     导致 QTBJ「六月庚金专用丁火/三伏生寒金顽已极」之丁火候干(官杀火)职能判不中而被剔除.
-        #   原典: QTBJ 六月庚金「专用丁火」/ 九月庚金「土厚埋金」; DTS L445 君赖臣生(财破印)为并行路.
-        # ★ V7.70 炼金判据精确化(原典先读全, 一次改完):
-        #   炼金之病源有二(QTBJ 庚金各月原文): ①土厚埋金(L5819 三月庚金「先用甲木疏土, 次用丁火煅炼」);
-        #     ②金顽/金弱失令(L5675 正月「顽钝之金, 非火炼不成器」/ L6110 六月「顽钝至极, 无丁火锻打则无以成器」/
-        #     L6121 七月「专用丁火煅炼」/ L6214 八月「须见丁火锻炼」/ L6348 十月「非丁不能锻炼」/
-        #     L6489 十二月「次取丁火炼金」). 故不取"主病=印"为前提.
-        #   但须以【QTBJ 候干表序1或序2为火】为位(原文明言"专用丁火/非丁不成器"之月):
-        #     庚寅丙1/庚卯丁1/庚辰丁2/庚未丁1/庚申丁1/庚酉丁1/庚亥丁1/庚子丁1/庚丑丙1丁2 -> 可升;
-        #     庚巳(丙3)/庚戌(丁3)/庚午(无火) -> 序1乃他神, 火在序3不升.
-        _lianjin_wx = KE_BACK.get(dm_wx, '')      # 官杀火=炼金之神
-        _hou_fire_top2 = any((c['wx'] == _lianjin_wx) and (c.get('order', 99) <= 2) for c in cands)
-        _is_lianjin = (dm_wx == '金' and wx == _lianjin_wx and _hou_fire_top2)
-        _reason = ['候干序1=%s 有气: 透干%d/坐旺%s' % (top.get('stem', ''), _stem_present(wx, pillars), _ben_wang(wx, pillars))]
-        if _in_chu and not _in_xing(wx, pillars) and (_is_shishang or _is_zhi or _is_lianjin or _is_shubing):
-            _role = []
-            if _is_shishang:
-                _role.append('食伤泄秀')
-            if _is_zhi:
-                _role.append('制药')
-            if _is_lianjin:
-                _role.append('炼金(制比劫+成器)')
-            if _is_shubing:
-                _role.append('疏病(财克印救母)')
-            _reason.append('候干职能: %s' % '+'.join(_role))
-            _reason.append('候干有气+职能中+未刑 -> 升 primary')
-            return {'rank': 'PROMOTE', 'wx': wx, 'reason': _reason,
-                    'refs': ['QTBJ %s 候干序1=%s' % (mb, top.get('stem', ''))] + list(top.get('ref') or [])}
-        if _is_yin:
-            _reason.append('候干=生我(印)=主病之源, 不升(让位寒燥交互候食伤)')
-            return _hanzao_shishang_rank(climate, dm_wx, mb, pillars)
-        _reason.append('候干无气/入刑/职能不中, 让位寒燥交互候')
         return _hanzao_shishang_rank(climate, dm_wx, mb, pillars)
     # 候干表未录入 -> 直接寒燥交互候
     return _hanzao_shishang_rank(climate, dm_wx, mb, pillars)
