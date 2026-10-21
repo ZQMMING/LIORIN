@@ -1103,6 +1103,28 @@ for _fp in _g3.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=True)
 ck("全仓「土之旺地」表不用四库(V7.102/103/122 同型已清)", not _wzt_bad, _wzt_bad[:5])
 ck("全仓土旺地支表已扫描到(>=1 处)", _wzt_n >= 1, _wzt_n)
 
+# ═══ GG. 未接主链层清单 + 拓扑层 PENDING 状态 (V7.116/117/125) ═══
+print("\n[GG] 未接主链层清单 + 拓扑 PENDING 状态")
+# 以下模块已实现但【未被主链 bazi_gate 引用】(demo/独立口径), 须登记防误当生产:
+from p0_v2.bazi_gate import paipan as _pa
+_bg = open(os.path.join(ROOT, "p0_v2", "bazi_gate.py"), encoding='utf-8').read()
+_DEMO_MODULES = {
+    "wai_ge_rules": "外格独立口径(主链走 special_pattern.py), V7.125 标注 DEMO",
+    "six_relative_full": "六亲完整层, demo 未接主链",
+}
+for _mod, _why in _DEMO_MODULES.items():
+    ck("登记为未接主链(demo): %s" % _mod, _mod not in _bg, _why)
+# topology check_guan_topology: jie_zhan 劫占 INFERRED 未核 -> verdict 恒 INCOMPLETE(原典未核清)
+_gu = _pa("甲戌 辛未 庚子 丁亥").get("topology") or {}
+_gt = _gu.get("guan_topo") or {}
+ck("topology guan_topo verdict=INCOMPLETE(jie_zhan 劫占未核清, 原典 PENDING)",
+   _gt.get("verdict") == "INCOMPLETE" and "jie_zhan" in (_gt.get("pending") or []),
+   ("verdict=%s pending=%s" % (_gt.get("verdict"), _gt.get("pending"))))
+ck("topology yuan_liu 已派生(源流骨架)", bool((_gu.get("yuan_liu") or {}).get("skeleton"))
+   or bool(_gu.get("yuan_liu")), list((_gu.get("yuan_liu") or {}).keys())[:6])
+ck("topology fang_ju 已派生(方局混纯)", "fang_ju" in _gu, list(_gu.keys()))
+
+
 # 运行时: 日主有重根之盘不得报印多埋子(母不灭子)
 from engines.common.l0_fact_builder import build as _bf
 _viol = []

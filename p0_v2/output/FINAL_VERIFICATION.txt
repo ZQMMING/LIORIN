@@ -2,7 +2,7 @@
 ==========================================================================
 
 [1] 黄金套件
-  test_yuanjuan_matrix               PASS  矩阵结果: PASS=212 FAIL=0
+  test_yuanjuan_matrix               PASS  矩阵结果: PASS=217 FAIL=0
   test_criteria_anchors              PASS  结果: PASS=120 FAIL=0
   test_special_pattern_golden        PASS  TOTAL 67 FAILS 0
   test_bingyao_layer_golden          PASS  
