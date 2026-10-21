@@ -804,7 +804,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         #   贵人年干口径: 甲子/壬申两运日干贵人(乙贵子申/庚贵)误判移除 → 吉-2;
         #   V02 三元十二宫口径: 癸亥禄(子)临官/命(亥)帝旺/身(癸亥)临官 皆不死绝 → 原局凶-1)
         self.assertEqual(ts["overall"]["counts"],
-                         {"吉": 34, "动": 0, "平": 56, "滞": 2, "凶": 22})  # 2026-10-21 发用层(LM-F)入主展示计数: 运层新增发用吉/平/凶(财化鬼F04按纳音口径: 丙寅/丁卯炉中火财+柱有土等); 发用不参与吉凶算术(year_power过滤)与大运定基调(净verdict); 2026-10-21: 原局 V85吉-1(日主立极)、V85-B食伤藏支平+1、V31H→V31H-L 凶-1平+1、V14亲缘凶+1、元辰口径修正(阴女冲后=辰)时支午非元辰→V108不触发平-1、羊刃口径修正(蠡海集阴干不立)乙丑运V126平-1 → 净 吉-1 平+0; 2026-10-20 V42比和分流: 癸亥运比和(年命临官太过)吉→凶 → 吉-1凶+1
+                         {"吉": 36, "动": 0, "平": 56, "滞": 2, "凶": 20})  # 2026-10-21 发用层(LM-F)入主展示计数(纳音主判: 丙寅/丁卯炉中火财化鬼F04, 庚午路旁土/己巳干土鬼化气F05); 发用不参与吉凶算术(year_power过滤)与大运定基调(净verdict); 2026-10-21: 原局 V85吉-1(日主立极)、V85-B食伤藏支平+1、V31H→V31H-L 凶-1平+1、V14亲缘凶+1、元辰口径修正(阴女冲后=辰)时支午非元辰→V108不触发平-1、羊刃口径修正(蠡海集阴干不立)乙丑运V126平-1 → 净 吉-1 平+0; 2026-10-20 V42比和分流: 癸亥运比和(年命临官太过)吉→凶 → 吉-1凶+1
         self.assertEqual(ts["overall"]["verdict"], "偏吉")
         # 乙丑运偏凶
         yichou = next(p for p in ts["pillars"] if p["target"] == "YICHOU")
@@ -1075,10 +1075,10 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertEqual(hz["current_counts"]["吉"], 5)  # 发用层 F03 贵人入丁卯(2026-10-21)
         self.assertEqual(hz["current_counts"]["凶"], 2)  # V44 死乡 + F04 财化鬼(2026-10-21 纳音口径)
         self.assertEqual(hz["overall_counts"],
-                         {"吉": 34, "动": 0, "平": 56, "滞": 2, "凶": 22})  # 2026-10-21 发用层(LM-F)入主展示计数(财化鬼F04按纳音口径: 丙寅/丁卯炉中火等); 发用不参与吉凶算术与大运定基调; 原 V85日主立极吉-1、V85-B食伤藏支平+1、V31H→V31H-L凶-1平+1、V14亲缘凶+1、元辰口径修正(阴女冲后=辰)时支午非元辰→V108不触发平-1、羊刃口径修正(阴干不立)乙丑运V126平-1 → 净吉-1平+0; 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径+V02三元十二宫修正+比和分流吉-1凶+1
+                         {"吉": 36, "动": 0, "平": 56, "滞": 2, "凶": 20})  # 2026-10-21 发用层(LM-F)入主展示计数(纳音主判: 庚午/己巳由F04改F05鬼化气); 发用不参与吉凶算术与大运定基调; 原 V85日主立极吉-1、V85-B食伤藏支平+1、V31H→V31H-L凶-1平+1、V14亲缘凶+1、元辰口径修正(阴女冲后=辰)时支午非元辰→V108不触发平-1、羊刃口径修正(阴干不立)乙丑运V126平-1 → 净吉-1平+0; 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径+V02三元十二宫修正+比和分流吉-1凶+1
         self.assertEqual(hz["overall_verdict"], "偏吉")
         self.assertIn("当前大运: 丁卯", md)
-        self.assertIn("总体: 吉 34 · 凶 22 · 平 56 · 滞 2 → 吉", md)  # 2026-10-21 同步 (发用入主计数)
+        self.assertIn("总体: 吉 36 · 凶 20 · 平 56 · 滞 2 → 吉", md)  # 2026-10-21 同步 (发用入主计数)
 
     def test_F04_F05_transformation_oracle(self):
         """岁运发用·五行转化 oracle (渊海子平卷三《论大运》/五行精纪卷33 同文).
@@ -1087,9 +1087,10 @@ class TestEvidenceRegistration(unittest.TestCase):
                 是财化为鬼, 转福成祸. 四柱有金至土运是鬼运, 却反为吉者,
                 以土生金, 金生水, 是化鬼为助气, 反祸为福. 五行俱以此为例."
         口径 (2026-10-21 深挖定案, 宁漏勿错):
-          运侧 = 运纳音 ∪ 运干 ∪ 运支 (任一属我克=财运 / 克我=鬼运;
-                卷33 换甲段"皆以生年太岁纳音推之"纳音为主, 同段"柱中有寅午戌"干支为佐);
-          柱侧 = 四柱干支 ∪ 四柱纳音 (渊海"柱中有寅午戌, 或纳音火"互证);
+          运侧判定序 = 运纳音 → 运干 → 运支 (先中者定局, 单柱单链,
+                防混合柱如庚午(纳音土=鬼, 干支午火=财)双判冲突 — 卷33"皆以生年
+                太岁纳音推之"纳音为宗); 柱侧 = 四柱干支 ∪ 四柱纳音
+                (渊海"柱中有寅午戌, 或纳音火"互证);
           转化链三段全成立才触发: 运生柱、柱克/生命.
         """
         import datetime as _dt
@@ -1101,6 +1102,11 @@ class TestEvidenceRegistration(unittest.TestCase):
         dingmao = next(p for p in lm.tone_scope["pillars"] if p["target"] == "DINGMAO")
         self.assertIn("LM-F04", [x[0] for x in dingmao["counts"]["items"]],
                       "丁卯运(炉中火=财, 柱有土)应触发财化鬼F04")
+        # 混合柱纳音主判: 庚午运 纳音路旁土=克水命(鬼) → 柱有金(沙中金) → 金生水 → F05
+        #   (旧并集口径判干支午火=财→F04, 现按"以纳音推之"纠正为F05)
+        gengwu = next(p for p in lm.tone_scope["pillars"] if p["target"] == "GENGWU")
+        self.assertIn("LM-F05", [x[0] for x in gengwu["counts"]["items"]],
+                      "庚午运(纳音路旁土=鬼, 柱有金通关)应触发鬼化气F05, 纳音主判压过干支午火=财")
         # 运层反例: 癸亥运 纳音大海水=比和, 非财非鬼 → 无 F04/F05
         guihai = next(p for p in lm.tone_scope["pillars"] if p["target"] == "GUIHAI")
         self.assertFalse([x[0] for x in guihai["counts"]["items"]
@@ -1115,6 +1121,69 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertIn("LM-F04", [v["rule_id"] for v in r24["verdicts"]],
                       "甲辰(佛灯火=财, 柱有土)应触发财化鬼F04")
         self.assertEqual(r24["tone"], "凶", "2024 元辰重凶, 发用F04不参与算术不扰动tone")
+
+    def test_F04_F05_all_five_elements(self):
+        """五行转化全展开 oracle: 五命(木火土金水) × 两链(财化鬼/鬼化气) = 十链.
+
+        "五行俱以此为例" (渊海/五行精纪卷33同文). 手填四柱 (年柱纳音定命五行),
+        直调 _build_fayong_verdicts 验证触发; 每命附比和反例(不触发).
+
+        链表 (命M / 财C=我克 / 财化鬼媒介G=运生且克我 / 鬼K=克我 / 鬼化气通关H=运生且生我):
+          M=水: C=火(媒介土→克水)  K=土(通关金→生水)   ← 原著原例
+          M=木: C=土(媒介金→克木)  K=金(通关水→生木)
+          M=火: C=金(媒介水→克火)  K=水(通关木→生火)
+          M=土: C=水(媒介木→克土)  K=木(通关火→生土)
+          M=金: C=木(媒介火→克金)  K=火(通关土→生金)
+        """
+        from tongshu.luming.engine import _build_fayong_verdicts
+        # (命五行, 年柱干支[纳音定命], 四柱其余三柱(月/日/时), 财化鬼运柱, 鬼化气运柱, 比和反例运柱)
+        # 链表 (命M / 财C=我克 / 财化鬼媒介G=C生且克M / 鬼K=克我 / 鬼化气通关H=K生且生M):
+        #   M=水: C=火(媒介土→克水)  K=土(通关金→生水)   ← 原著原例
+        #   M=木: C=土(媒介金→克木)  K=金(通关水→生木)
+        #   M=火: C=金(媒介水→克火)  K=水(通关木→生火)
+        #   M=土: C=水(媒介木→克土)  K=木(通关火→生土)
+        #   M=金: C=木(媒介火→克金)  K=火(通关土→生金)
+        cases = [
+            # 水命 癸亥(大海水): 柱含土(庚子壁上土+未戌支)与金(乙未沙中金)
+            ("WATER", ("GUI", "HAI"), [("REN", "XU"), ("YI", "WEI"), ("GENG", "ZI")],
+             ("DING", "MAO"), ("GENG", "ZI"), ("GUI", "HAI")),
+            # 木命 戊辰(大林木): 柱含金(甲子海中金, 媒介)与水(丙子涧下水, 通关)
+            ("WOOD", ("WU", "CHEN"), [("JIA", "ZI"), ("BING", "ZI"), ("WU", "XU")],
+             ("GENG", "ZI"), ("JIA", "ZI"), ("REN", "WU")),
+            # 火命 戊子(霹雳火): 柱含水(丙子涧下水, 媒介)与木(戊辰大林木, 通关)
+            ("FIRE", ("WU", "ZI"), [("BING", "ZI"), ("WU", "CHEN"), ("JIA", "YIN")],
+             ("GENG", "XU"), ("BING", "ZI"), ("DING", "MAO")),
+            # 土命 戊寅(城头土): 柱含木(戊辰大林木, 媒介)与火(丙寅炉中火, 通关)
+            ("EARTH", ("WU", "YIN"), [("WU", "CHEN"), ("BING", "YIN"), ("REN", "XU")],
+             ("REN", "XU"), ("WU", "CHEN"), ("DING", "SI")),
+            # 金命 庚辰(白蜡金): 柱含火(丙午干支火, 媒介)与土(戊寅/辛未, 通关)
+            ("METAL", ("GENG", "CHEN"), [("BING", "WU"), ("WU", "YIN"), ("XIN", "WEI")],
+             ("WU", "XU"), ("WU", "WU"), ("GENG", "CHEN")),
+        ]
+        for _el, _y, _others, _f04_gz, _f05_gz, _bie_gz in cases:
+            chart = self._mk_gu_chart((_y, _others[0], _others[1], _others[2]))
+            self.assertEqual(
+                (chart.nayin_five_element or {}).get("year", ""), _el,
+                f"{_y[0]}{_y[1]} 年命纳音应属{_el}")
+            # 财化鬼链: 运纳音=我克(财) → 命中 F04
+            v04 = _build_fayong_verdicts(
+                chart, _f04_gz[0], _f04_gz[1], "运", _f04_gz[0] + _f04_gz[1],
+                None, None, None)
+            self.assertIn("LM-F04", [x["rule_id"] for x in v04],
+                          f"{_el}命 运{_f04_gz[0]}{_f04_gz[1]}=财(我克), 柱有媒介→应F04")
+            # 鬼化气链: 运纳音=克我(鬼) → 命中 F05
+            v05 = _build_fayong_verdicts(
+                chart, _f05_gz[0], _f05_gz[1], "运", _f05_gz[0] + _f05_gz[1],
+                None, None, None)
+            self.assertIn("LM-F05", [x["rule_id"] for x in v05],
+                          f"{_el}命 运{_f05_gz[0]}{_f05_gz[1]}=鬼(克我), 柱有通关→应F05")
+            # 比和反例: 运纳音=同命五行 且 干支无财无鬼 → 无 F04/F05
+            v0 = _build_fayong_verdicts(
+                chart, _bie_gz[0], _bie_gz[1], "运", _bie_gz[0] + _bie_gz[1],
+                None, None, None)
+            self.assertFalse([x["rule_id"] for x in v0
+                              if x["rule_id"] in ("LM-F04", "LM-F05")],
+                             f"{_el}命 运{_bie_gz[0]}{_bie_gz[1]}=比和→不应触发转化")
 
     # ============ 根治层: 古籍命例 oracle (独立于案例批文与自裁定) ============
     def _mk_gu_chart(self, yb):

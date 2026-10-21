@@ -998,25 +998,27 @@ def _build_fayong_verdicts(chart: Any, gz_stem: str, gz_branch: str, scope: str,
     # 原文: "凡水命四柱有土, 至火运本是财运, 却反为鬼者, 以火生土, 土克水,
     #         是财化为鬼, 转福成祸. 四柱有金至土运是鬼运, 却反为吉者,
     #         以土生金, 金生水, 是化鬼为助气, 反祸为福. 五行俱以此为例."
+    #     → 法则五行通用: 五命(木火土金水)×两链(财化鬼/鬼化气)共十链全展开.
     # 同段互证: "水命人柱中有寅午戌, 或纳音火, 更行寅午戌, 皆为好运" — "柱有X"
     #           明确含干支(寅午戌)与纳音两口径 → 柱侧=干支∪纳音 (已并入 _col_set);
     #           卷33 换甲段"凡行运…皆以生年太岁纳音推之" → 运侧纳音为主、干支为佐.
-    # 判定口径 (宁漏勿错, 转化链三段全成立才触发):
-    #   运侧五行 = 运纳音 ∪ 运干 ∪ 运支 (任一属"我克"即财运 / 属"克我"即鬼运);
-    #   财化鬼: 运行=我克(财) ∧ 柱有(运行所生之行) ∧ 该行克我 → 转福成祸(凶);
-    #   鬼化气: 运行=克我(鬼) ∧ 柱有(运行所生之行) ∧ 该行生我 → 反祸为福(吉).
+    # 判定口径 (2026-10-21 深挖定案, 宁漏勿错):
+    #   运侧判定序 = 运纳音 → 运干 → 运支 (先中者定局, 单柱单链;
+    #     防混合柱如庚午(纳音路旁土=鬼, 干支午火=财)双判冲突 — 纳音为宗);
+    #   转化链三段全成立才触发: 运生柱、柱克/生命.
+    #     财化鬼: 运侧=我克(财) ∧ 柱有(运侧所生之行) ∧ 该行克我 → 转福成祸(凶);
+    #     鬼化气: 运侧=克我(鬼) ∧ 柱有(运侧所生之行) ∧ 该行生我 → 反祸为福(吉).
     _yun_nayin_el = NAYIN_FIVE_ELEMENT.get(NAYIN_60.get((gz_stem, gz_branch), ""), "")
-    _yun_set = {el for el in (gan_el, zhi_el, _yun_nayin_el) if el}
     _f04_hit = _f05_hit = None
-    for _y in sorted(_yun_set):
-        if (_CTL4.get(yr_el) == _y and _GEN4.get(_y) in _col_set
-                and _CTL4.get(_GEN4.get(_y)) == yr_el):
-            _f04_hit = _y
-            break
-    if _f04_hit is None:
-        for _y in sorted(_yun_set):
-            if (_CTL4.get(_y) == yr_el and _GEN4.get(_y) in _col_set
-                    and _GEN4.get(_GEN4.get(_y)) == yr_el):
+    for _y in (el for el in (_yun_nayin_el, gan_el, zhi_el) if el):
+        if _CTL4.get(yr_el) == _y:
+            # 财化鬼: 我克(财) + 运生柱 + 柱克我
+            if _GEN4.get(_y) in _col_set and _CTL4.get(_GEN4.get(_y)) == yr_el:
+                _f04_hit = _y
+                break
+        elif _CTL4.get(_y) == yr_el:
+            # 鬼化气: 克我(鬼) + 运生柱 + 柱生我
+            if _GEN4.get(_y) in _col_set and _GEN4.get(_GEN4.get(_y)) == yr_el:
                 _f05_hit = _y
                 break
     if _f04_hit:
