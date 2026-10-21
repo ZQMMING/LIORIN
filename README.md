@@ -16,6 +16,7 @@ src/tongshu/
       jiehhou.py           # 节候卦（节气回溯）
       timeline_yun.py      # 大运/流年/流月/流日/流时爻位值运（含 Timeline 数据类）
       guajie.py            # 卦辞/断语/诗断
+      heluo_lunar_bridge.py  # H9b 河洛×黄历桥接（流日段黄历标注：注入优先/lunar_python 兜底）
       yi_interpreter.py    # 流年卦断语（P1 解卦层）
       diagnosis_rule_graph.py  # 诊断规则图
       frozen_state.py      # 冻结态输出
@@ -40,6 +41,24 @@ docs/heluo/HELUO_ENGINE.md # 引擎说明
 - `compute_from_context(...)`：消费完整计算上下文。
 
 > 流时卦按设计剥离，不纳入计算。大运/流年/流月由引擎自算；流月以节气为锚。
+
+### 黄历桥接（H9b）
+
+流日应期段（guajie.liuri_lunar）挂载黄历标注（农历/日柱/纳音/节气/宜忌）。数据源：
+
+- **注入优先**：`adapter.compute(..., huangli_provider=fn)`，fn 接收公历日期 `YYYY-MM-DD`、返回主工作区黄历引擎（HuangliEngine.get_day）产物 dict，字段映射见 `heluo_lunar_bridge.annotate_day`；标注 `source=huangli_engine`。
+- **lunar_python 兜底**：不传 provider 时独立自产（农历/日柱/纳音/节气），标注 `source=lunar_python`，保证引擎独立可跑。
+
+```python
+def huangli_provider(solar_date: str) -> dict | None:
+    return huangli_engine.get_day(date.fromisoformat(solar_date)).__dict__
+r = HeluoAdapter().compute((1980, 6, 22, 10), gender="male",
+                           target_year=2027, target_month=6, target_day=15,
+                           huangli_provider=huangli_provider)
+r.guajie["liuri_lunar"]  # {'solar_date': '2027-05-16', 'lunar': '十一月 初十', ...}
+```
+
+流日定位段取 `date_from`（节气对齐段首日）标注；未命中流日段时 `liuri_lunar` 为 None。
 
 ## 安装
 
