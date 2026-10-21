@@ -1283,7 +1283,43 @@ if os.path.exists(_qs_path):
        [x.get("slice_id") for x in (_qs.get("results") or []) if not x.get("hit_line")][:3])
     ck("抽检人工签字位保留为空(「1处编造即全退」裁定属人工)",
        _qs.get("human_signoff") is None, _qs.get("human_signoff"))
-    ck("抽检切片池规模已记录(供 Phase1 重切后重跑对照)",
+    # ═══ NN. 验收条③ 四桶之和 == 总条数 (V7.137/138) ═══
+print("\n[NN] 验收条③ 四桶之和 == 总条数")
+from engines.common.spec_bucket import BUCKETS as _BUCK, classify as _cls, reconcile as _rec
+ck("桶分类器四桶枚举齐备(verifiable/unverifiable/spec_gap/conflict_pending)",
+   set(_BUCK) == {"verifiable", "unverifiable", "spec_gap", "conflict_pending"}, list(_BUCK))
+# 分类器判定规则(逐条可核)
+ck("分类器: grade=C -> unverifiable(§六 验收条2)",
+   _cls({"source_grade": "C", "conditions": ["x"]})["bucket"] == "unverifiable", "")
+ck("分类器: 仅 grade=B -> unverifiable(§〇 底本分级)",
+   _cls({"source_grade": "B", "conditions": ["x"]})["bucket"] == "unverifiable", "")
+ck("分类器: grade=A 无条件 -> spec_gap(有原句无要件)",
+   _cls({"source_grade": "A", "conditions": []})["bucket"] == "spec_gap", "")
+ck("分类器: grade=A + 冲突 -> conflict_pending",
+   _cls({"source_grade": "A", "conditions": ["x"], "conflict": "与DTS冲突"})["bucket"] == "conflict_pending", "")
+ck("分类器: grade=A + 条件齐备 -> verifiable",
+   _cls({"source_grade": "A", "conditions": ["x"]})["bucket"] == "verifiable", "")
+# 对账器
+_rec1 = _rec([{"id": "a", "source_grade": "A", "conditions": ["x"]},
+               {"id": "b", "source_grade": "C", "conditions": []}])
+ck("对账器: 四桶之和 == 总条数 且无重复",
+   _rec1["sum"] == _rec1["total"] and _rec1["ok"] and not _rec1["duplicates"],
+   ("sum=%s total=%s" % (_rec1["sum"], _rec1["total"])))
+# 现状对账报告
+_recp = os.path.join(ROOT, "p0_v2", "output", "SPEC_BUCKET_RECONCILE_2026_10_21.json")
+ck("四桶对账报告已生成", os.path.exists(_recp), _recp)
+if os.path.exists(_recp):
+    _rc = _json2.load(open(_recp, encoding='utf-8'))
+    ck("现状对账: 四桶之和 == 总条数(3023)", _rc.get("sum") == _rc.get("total") == 3023,
+       ("sum=%s total=%s" % (_rc.get("sum"), _rc.get("total"))))
+    ck("现状对账: 四桶计数齐备且合计等于总条数",
+       sum((_rc.get("buckets") or {}).values()) == _rc.get("total"),
+       _rc.get("buckets"))
+    ck("现状对账: Phase1 未落 bucket 字段(阻塞已登记, 不可臆断为已通过)",
+       "Phase 1" in str(_rc.get("phase1_status", "")), "")
+    ck("现状对账人工签字位保留为空", _rc.get("human_signoff") is None, "")
+
+ck("抽检切片池规模已记录(供 Phase1 重切后重跑对照)",
        isinstance(_qs.get("method"), str) and "3023" in _qs.get("method", ""),
        _qs.get("method", "")[:60])
 

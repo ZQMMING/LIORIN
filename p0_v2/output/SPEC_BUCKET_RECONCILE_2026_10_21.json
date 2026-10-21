@@ -1,0 +1,46 @@
+{
+  "doc_id": "SPEC_BUCKET_RECONCILE_2026_10_21",
+  "source": "docs/AGENTS.md §六 验收四条 第3条「四桶之和 == 总条数」",
+  "date": "2026-10-21",
+  "method": "engines/common/spec_bucket.py 分类器(V7.137) 对六部切片集 3023 条逐条定桶; grade 由 source_location 指向的底本文件归类(现行 raw 传统本=A); 旧 schema 无 source_grade 字段, 未标的一律归 unverifiable(不臆断, 只登记待核)",
+  "total": 3023,
+  "sum": 3023,
+  "ok": true,
+  "buckets": {
+    "verifiable": 792,
+    "unverifiable": 6,
+    "spec_gap": 2225,
+    "conflict_pending": 0
+  },
+  "per_book": {
+    "DTS_LB": {
+      "spec_gap": 136
+    },
+    "PZZQ": {
+      "verifiable": 255,
+      "spec_gap": 68
+    },
+    "QTBJ": {
+      "spec_gap": 149
+    },
+    "SFTK": {
+      "spec_gap": 465,
+      "verifiable": 316
+    },
+    "SMTH": {
+      "spec_gap": 135,
+      "unverifiable": 6
+    },
+    "YHZP": {
+      "spec_gap": 1272,
+      "verifiable": 221
+    }
+  },
+  "grade_by_base_file": {
+    "A": 3017,
+    "UNKNOWN": 6
+  },
+  "phase1_status": "schema v3 尚未落地: 切片集无 bucket / source_grade 字段(Phase 1「按 schema v3 重切 513 条」未执行). 本报告为【分类基线与待办】, 非最终对账; 正式四桶和须在 Phase 1 落标后重跑.",
+  "blocking": "Phase 1 重切并落 source_grade / bucket 字段后重跑本对账",
+  "human_signoff": null
+}
