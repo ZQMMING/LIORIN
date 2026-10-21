@@ -1,9 +1,9 @@
 {
  "purpose": "AGENTS.md v3 公理三落地: 引擎判据 -> 原典章节 -> 切片ID 锚点对照(不改判定)",
- "total_anchor_groups": 112,
- "total_refs": 344,
+ "total_anchor_groups": 113,
+ "total_refs": 347,
  "match_modes": {
-  "EXACT_CHAPTER": 35,
+  "EXACT_CHAPTER": 36,
   "CHAPTER": 77
  },
  "anchors": [
@@ -256,12 +256,28 @@
   {
    "book": "DTS",
    "book_cn": "滴天髓",
+   "row": 212,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\wangshuai_multi_track.py:204",
+    "engines\\common\\wangshuai_multi_track.py:210"
+   ],
+   "source_chapter": "十三、体用",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.13_十三、体用"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
    "row": 215,
    "ref_count": 10,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:1311",
     "engines\\common\\ge_jie_layer.py:1345",
-    "engines\\common\\yongshen_multi_track.py:397",
+    "engines\\common\\yongshen_multi_track.py:416",
     "engines\\common\\yongyao_resolve.py:389",
     "engines\\common\\yongyao_resolve.py:553",
     "engines\\common\\yongyao_resolve.py:554",
@@ -1093,7 +1109,7 @@
    "row": 799,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\yongshen_multi_track.py:433"
+    "engines\\common\\yongshen_multi_track.py:452"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2225,12 +2241,13 @@
    "book": "SFTK",
    "book_cn": "神峰通考",
    "row": 129,
-   "ref_count": 4,
+   "ref_count": 5,
    "engine_refs": [
     "engines\\common\\bingyao_layer.py:38",
     "engines\\common\\bingyao_layer.py:57",
     "engines\\common\\bingyao_layer.py:69",
-    "engines\\common\\bingyao_layer.py:1291"
+    "engines\\common\\bingyao_layer.py:1291",
+    "engines\\common\\yongshen_multi_track.py:244"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",

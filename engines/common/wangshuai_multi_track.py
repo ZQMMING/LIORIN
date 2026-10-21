@@ -201,12 +201,15 @@ def _judge_dts(season, root_power, root_eff, support):
     太旺似金(喜克泄), 旺极似火(喜克), 太衰似水(喜生), 衰极似土(喜生)."""
     effective_root = root_power if root_eff != '根拔' else '无根'
 
-    # 体用俱旺: 得令+重根+生扶成势 → 从强(太旺似金, 喜克泄)
+    # 体用俱旺: 得令+重根+生扶成势 → 【太旺】(DTS L212「太旺似金, 喜克泄」)
+    #   V7.115: 不写「从强」—— AGENTS.md v3 第八节明文取消「从旺/从强/从气/从势」四桶
+    #   (其立项依据为任氏自注「诸书所未载」), 第三节判定元清单亦无「从格」;
+    #   此处为【气势极端】表述, 非从格命名.
     if season == '得令' and effective_root == '重根' and support == '生扶成势':
-        return '从强'
-    # 体用俱衰: 失令+无根+克泄成势 → 从弱(太衰似水, 喜生)
+        return '太旺'
+    # 体用俱衰: 失令+无根+克泄成势 → 【太衰】(DTS L212「太衰似水, 喜生」)
     if season == '失令' and effective_root == '无根' and support == '克泄成势':
-        return '从弱'
+        return '太衰'
 
     # 体用相生(印比成势): 生扶成势 → 身旺
     if support == '生扶成势':
