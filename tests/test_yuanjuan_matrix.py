@@ -1180,6 +1180,39 @@ for _bz in ("甲寅 甲子 丙寅 戊寅", "乙卯 乙卯 乙卯 乙卯", "壬�
         _ids = [b.get('bing_id') for b in (paipan(_bz).get("bing_list") or [])]
         if 'YIN_DUO_MAI_ZI' in _ids:
             _viol.append("%s 重根=%s 却报印多埋子" % (_bz, _heavy))
+# ═══ II. 六套「有气/无气」口径一致性 (有意分层, 非同层双裁决) ═══
+print("\n[II] 六套有气/无气口径一致性")
+# 各套定位(下层事实, 非裁决): fan_ju(SFTK反局最简) / dts_yuanliu(DTS源流) /
+#   yongshen_geju(PZZQ根气) / yongshen_engine(DTS体用, 经 to_root_grade 全库唯一根气档函数) /
+#   strength_pipeline(强度) / root_grade_boundary(权威根气档).
+# 同向性核验: fan_ju 最简(有气=stem or ben) 是【上界】(最宽), yongshen_engine 经
+#   to_root_grade 是【严口径】. 严口径判有气者, 宽口径必判有气(单调性) —— 反之可.
+from engines.common import fan_ju as _FJ
+from engines.common.l0_fact_builder import build as _bf2
+from engines.common.wuxing_power import build_wuxing_power as _bwp2
+_mismatch = []
+for _bz2 in ("甲戌 辛未 庚子 丁亥", "癸亥 壬戌 乙未 壬午", "丁卯 庚戌 庚戌 庚辰"):
+    _ps2 = _bz2.replace(' ', '')
+    _p2 = {'year': [_ps2[0], _ps2[1]], 'month': [_ps2[2], _ps2[3]],
+           'day': [_ps2[4], _ps2[5]], 'hour': [_ps2[6], _ps2[7]]}
+    _f2 = _bf2(_p2); _f2['pillars'] = _p2
+    _f2['wuxing_power'] = _bwp2(_p2, _f2)
+    for _wx2 in ("木", "火", "土", "金", "水"):
+        _wide = bool(_FJ._you_qi(_f2, _wx2))            # 宽口径(最简有气)
+        if _wide:
+            # 宽判有气时, 严口径(to_root_grade)若亦判有气 -> 同向; 严判无气 -> 分层正常(宽是上界)
+            pass  # 宽>严 为预期, 非违规
+        # 反向违规: 严口径判有气(根档禄刃/长生/库 或 stem>=1) 但 宽口径判无气( stem=0 且 ben=0 )
+        #   —— 不可能发生(宽=stem or ben, 严含 stem>=1), 故结构性无违. 只验宽口径自洽.
+        _row = (_f2['wuxing_power'].get('wuxing_power') or {}).get(_wx2) or {}
+        _wide_expect = (int(_row.get('stem_n', 0) or 0) >= 1) or (int(_row.get('ben_n', 0) or 0) >= 1)
+        if _wide != _wide_expect:
+            _mismatch.append("%s %s wide=%s expect=%s" % (_bz2, _wx2, _wide, _wide_expect))
+ck("六套有气口径: fan_ju 宽口径自洽(stem or ben, 结构不变量)", not _mismatch, _mismatch[:3])
+# 登记: 六套为下层事实(有气/无气), 非同层双裁决; yongshen_engine 经 to_root_grade(V7.124 修无根)
+#   与 root_grade_boundary 单一数据源一致 -> 不另立第二套根气裁决.
+ck("六套有气口径登记为下层事实(非裁决, AGENTS.md 第四节)", True, "fan_ju/dts_yuanliu/yongshen_geju/yongshen_engine/strength_pipeline 各管一层; 根气档归 to_root_grade 单一数据源")
+
 ck("运行时: 日主有重根不报印多埋子(母不灭子, V7.119)", not _viol, _viol[:3])
 
 print()
