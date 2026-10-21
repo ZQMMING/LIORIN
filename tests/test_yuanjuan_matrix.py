@@ -219,7 +219,7 @@ for (bz, want_shape, basis) in (
 #   建禄月劫, 透官而逢财印, 透财而逢食伤, 透煞而遇制伏, 建禄月劫之格成也。」
 print("\n[J] 八格成格要件 (PZZQ L1113-1118 逐条)")
 sys.path.insert(0, os.path.join(ROOT, "tests"))
-from yuangen_zhu import mk
+from yuangen_zhu import mk, mk_raw
 
 # J1 官格成: 官逢财印, 无刑冲破害 -> 成
 bz, _p = mk(dm='甲', month_tg='正官', gan_tgs=('正印', None, '偏财'))
@@ -352,6 +352,68 @@ for (kw, want_po, basis) in (
     cb = gc.get("cheng_bai")
     ck("败格 %s [%s]" % (basis, bz), cb in ("PO", "CHENG_ZHONG_YOU_PO"),
        "cheng_bai=%s ge=%s" % (cb, gc.get("ge")))
+
+# ═══ L. 通关三要件 (DTS L250) ═══
+# L250「...必得【引用无合之神】及刑冲所间之物, 前后上下, 援引得来, 能胜劫占之神, 能补所缺之物, 明见暗会, 岁运相逢, 乃为通关也。」
+print("\n[L] 通关三要件 (DTS L250)")
+# L1 木土而要火 -> 通关(乙木日: 印水旺+财土旺, 火为通关神且透干有气)
+#   月令亥(印当令, 印旺) + 支未戌(土本气根=财有根) + 时干丁火(通关神透干)
+bz, _p = mk(dm='乙', month_tg='正印', gan_tgs=('正印', None, '食神'),
+          zhis=('亥', '亥', '未', '戌'))
+r = paipan(bz)
+sv = (r.get("l3_contract") or {}).get("strength_verdict") or {}
+ck("通关: 木土而要火(DTS L250) [%s]" % bz, "通关" in (sv.get("value") or []), sv.get("value"))
+# L2 通关神被紧贴他干合走 -> 引用不成 -> 不判通关(DTS L250「引用无合之神」)
+#   乙木日, 印水旺+财土旺, 丁火(通关神)被己土紧贴合走(丁壬合/己甲合) -> 用己土合丁火
+# L2 通关神被紧贴他干合走 -> 引用不成 -> 不判通关(DTS L250「引用无合之神」)
+#   乙木日, 印水旺+财土旺; 通关神=火(丙·伤官). 年干辛(七杀, 丙辛合)紧贴月干丙(通关神)
+#   -> 丙被合 -> "引用无合之神"不成立 -> 不判通关.
+bz2, _p2 = mk(dm='乙', month_tg='正印', gan_tgs=('七杀', '伤官', '食神'),
+             zhis=('亥', '亥', '未', '戌'))
+r2 = paipan(bz2)
+sv2 = (r2.get("l3_contract") or {}).get("strength_verdict") or {}
+ck("通关: 通关神被紧贴合走则引用不成(L250「无合之神」) [%s]" % bz2,
+   "通关" not in (sv2.get("value") or []), sv2.get("value"))
+
+# ═══ M. 病药三判据 (SFTK L129 / DTS L461 / PZZQ L3977) ═══
+# SFTK L129「何以为之病? 原八字中原所害之神也; 何以为之药? ...八字原有所害之一字, 而得一字以去之谓了...
+#   ...或本身病重而药少, 或本身病轻而得药重, 又宜行运, 以取其中和。若病重而得药, 大富贵之人也。」
+# DTS L461「羁绊喜神之合, 如乙喜神庚合之则羁绊」/ PZZQ L421「合而不化...两失其用」
+print("\n[M] 病药三判据 (SFTK L129 / DTS L461)")
+# M1 印多埋子之药(财破印+比劫扶印)在局 -> 进入三判据(不再无字段)
+#   癸亥壬戌乙未壬午: 病=印多埋子(水, combo4), 药=财土(combo2)/比劫木 -> 病重药轻
+#   (PZZQ L3977「惜病重药轻」/ SFTK L129「病重而药少...宜行运以取其中和」)
+r = paipan("癸亥 壬戌 乙未 壬午")
+bl = r.get("bing_list") or []
+yin_bing = [b for b in bl if b.get("bing_id") == "YIN_DUO_MAI_ZI"]
+ck("病药: 印多埋子进入三判据(有 yao_yuanju 判据结论)",
+   (yin_bing and yin_bing[0].get("yao_yuanju") in
+    ("REMOVED", "INVALID_HE", "INVALID_ROOT", "INVALID_POTENTIAL")),
+   (yin_bing[0].get("yao_yuanju") if yin_bing else "no-bing"))
+ck("病药: 病重药少则待运不消(PZZQ L3977/SFTK L129)",
+   (yin_bing and yin_bing[0].get("yao_yuanju") == "INVALID_POTENTIAL"),
+   (yin_bing[0].get("yao_yuanju") if yin_bing else "no-bing"))
+# M2 药被紧贴他干合走 -> 羁绊, 病不消(INVALID_HE)
+#   乙未 庚辰 甲戌 庚午: 甲日, 财(土)多身弱; 药=木(比劫)/水(印), 年干乙与月干庚紧贴相合(乙庚合)
+#   -> 药被羁绊, 不能援引 -> 病不消(DTS L461「羁绊喜神之合」/ L425 真化需得令/ PZZQ L421 合而不化两失其用)
+bz3, _p3 = mk_raw("乙未 庚辰 甲戌 庚午")
+r3 = paipan(bz3)
+bl3 = r3.get("bing_list") or []
+cai_bing3 = [b for b in bl3 if b.get("bing_id") == "CAI_DUO_SHEN_RUO"]
+ck("病药: 药被紧贴合走则羁绊病不消(DTS L461) [%s]" % bz3,
+   (cai_bing3 and cai_bing3[0].get("yao_yuanju") == "INVALID_HE"),
+   (cai_bing3[0].get("yao_yuanju") if cai_bing3 else "no-bing"))
+# M3 病重药少(药虚透无根) -> 病不消待运(INVALID_ROOT)
+#   病=财多身弱(财当令且支干重重, SFTK L1113) + 药=印比(扶身)虚透无根;
+#   乙木日无根(支全土金) + 财土当令多根
+bz4, _p4 = mk_raw("戊辰 己未 乙丑 庚辰")
+r4 = paipan(bz4)
+bl4 = r4.get("bing_list") or []
+cai_bing = [b for b in bl4 if b.get("bing_id") == "CAI_DUO_SHEN_RUO"]
+ck("病药: 病重药少则待运不消(SFTK L129) [%s]" % bz4,
+   (cai_bing and cai_bing[0].get("yao_yuanju") in ("INVALID_ROOT", "INVALID_POTENTIAL")
+    or (cai_bing and not cai_bing[0].get("yao_yuanju"))),
+   (cai_bing[0].get("yao_yuanju") if cai_bing else "no-bing"))
 
 print()
 print("=" * 74)

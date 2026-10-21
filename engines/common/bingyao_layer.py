@@ -44,6 +44,11 @@ BING_YAO_MAP = {
     'BIJIE_DUO_CAI': ['金'],  # 比劫夺财, 药=官杀(制劫护财, SFTK「用财见比肩为病喜官杀为药」)
     'BIJIE_CHENG_DANG': ['金'],  # 比劫成党, 药=官杀
     'ZHI_SHA_TAI_GUO': [],  # 制杀太过: 按日主动态取(印=SHENG_WO, 财=KE), 见 _bing_yao_map()
+    # ★ V7.87 印多埋子(母多灭子)之药: 财(我克=破印救母, DTS L445「土重金埋, 木克土则生金」/
+    #   任氏「印绶虽旺, 柱中财星有气, 可用财破印」) + 比劫(同我=去财扶印, PZZQ L1130「反须以比劫去财扶印」).
+    #   按日主动态取(财=KE[dm], 比劫=dm), 见 _bing_yao_map(); 旧版此病不在五行药表 ->
+    #   原局药消病三判据(合/根/势)对印多埋子从未生效, yao_yuanju 字段永不设置.
+    'YIN_DUO_MAI_ZI': [],  # 按日主动态取(财=KE[dm], 比劫=dm), 见 _bing_yao_map()
 }
 
 def _bing_yao_map(daymaster_element: str) -> dict:
@@ -52,6 +57,9 @@ def _bing_yao_map(daymaster_element: str) -> dict:
     if daymaster_element:
         m['ZHI_SHA_TAI_GUO'] = [SHENG_WO.get(daymaster_element, ''),
                                 KE.get(daymaster_element, '')]
+        # ★ V7.87 印多埋子: 药=财(破印救母)+比劫(去财扶印)
+        _ym = [KE.get(daymaster_element, ''), daymaster_element]
+        m['YIN_DUO_MAI_ZI'] = [w for w in _ym if w]
     return m
 
 # 阴干在阳干当权月: 月令本气为同五行阳干(劫财), 非日主自身令(劫财当权,日主反弱).

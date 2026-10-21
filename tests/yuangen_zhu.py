@@ -61,6 +61,14 @@ def _safe_with(z, used):
     return True
 
 
+def mk_raw(bz):
+    """直接由四柱串造盘(用于需精确指定干支者)."""
+    ps = bz.split()
+    p = {'year': [ps[0][0], ps[0][1]], 'month': [ps[1][0], ps[1][1]],
+         'day': [ps[2][0], ps[2][1]], 'hour': [ps[3][0], ps[3][1]]}
+    return bz, p
+
+
 def mk(dm='甲', month_tg='正官', gan_tgs=('正印', None, '偏财'), zhis=None, day_zhi=None):
     """按要件造盘. 返回 (bazi字符串, pillars dict).
     gan_tgs: (年干十神, 月干十神, 时干十神) —— 月干默认与年干同.
@@ -79,10 +87,16 @@ def mk(dm='甲', month_tg='正官', gan_tgs=('正印', None, '偏财'), zhis=Non
             if ten_god(dm, _ZHI_BEN[z]) == month_tg:
                 mz = z
                 break
-    # zhis 显式指定时, 以指定的月支为准(其本气十神须与 month_tg 一致, 阳刃位除外)
+    # zhis 显式指定时, 以指定的月支为准(十神须与 month_tg 一致, 不一致则报错; 阳刃位除外)
     if zhis:
         _mz_spec = zhis[1]
-        if month_tg == '阳刃' or ten_god(dm, _ZHI_BEN[_mz_spec]) == month_tg:
+        if month_tg == '阳刃':
+            mz = _mz_spec
+        else:
+            _tg_spec = ten_god(dm, _ZHI_BEN[_mz_spec])
+            if _tg_spec != month_tg:
+                raise ValueError("指定月支 %s 对 %s 为 %s, 与要件 %s 不符" % (
+                    _mz_spec, dm, _tg_spec, month_tg))
             mz = _mz_spec
     if mz is None:
         raise ValueError("无月支可作 %s 之 %s" % (dm, month_tg))

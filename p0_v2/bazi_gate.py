@@ -45,7 +45,7 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 # ---- 引擎入口(唯一, 全部来自引擎实现, 本文件不复制任何映射表) ----
-from engines.common.l0_fact_builder import build as _l0build, ten_god, HIDDEN
+from engines.common.l0_fact_builder import build as _l0build, ten_god, HIDDEN, WUXING as _WX
 from engines.common.wuxing_power import build_wuxing_power
 from engines.common.daymaster_tian_he import build_tian_he
 from engines.common.daymaster_power_structure import build_power_structure
@@ -448,7 +448,31 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
             _d_yin_root = int((_wpd.get(_yin_ro) or {}).get("ben_n", 0) or 0) >= 1
             _tg_root = int((_wpd.get(_tg_wx) or {}).get("ben_n", 0) or 0) >= 1
             _tg_tou = int((_wpd.get(_tg_wx) or {}).get("stem_n", 0) or 0) >= 1
-            if _d_ke_root and _d_yin_root and (_tg_root or _tg_tou):
+            # ★ V7.86 通关神须【无合】(DTS L250「必得引用无合之神」): 通关神透干被紧贴他干合走,
+            #   则"引用"不成(合绊), 通关不立. 取引擎 build_tian_he 的 he_pairs(已含位置距离/间干阻隔);
+            #   邻位(adjacent)才绊, 隔位/遥隔合不牢; 日主自身参与合不按"合去"论(引擎 M3-A 口径).
+            #   合走对象可为合之任一方(丙辛合走丙=火通关神, 亦合走辛=金).
+            _tg_he_ok = True
+            try:
+                for _hp in ((th or {}).get('he_pairs') or []):
+                    if _hp.get('position_distance') != 'adjacent':
+                        continue
+                    for _role in ('he_subject', 'he_target'):
+                        _g_hp = _hp.get(_role)
+                        _pos_hp = _hp.get('he_subject_pos') if _role == 'he_subject' \
+                            else _hp.get('he_target_pos')
+                        if not _g_hp or not _pos_hp:
+                            continue
+                        if _pos_hp == 'day':
+                            continue      # 日主自身参与合不按"合去"论
+                        if _tg_wx and _WX.get(_g_hp, '') == _tg_wx:
+                            _tg_he_ok = False
+                            break
+                    if not _tg_he_ok:
+                        break
+            except Exception:
+                pass
+            if _d_ke_root and _d_yin_root and (_tg_root or _tg_tou) and _tg_he_ok:
                 _sv_war = True
     if _sv_war:
         _sv_dir.append("通关")
