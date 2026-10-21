@@ -339,11 +339,17 @@ _YANG_STEMS = frozenset({"JIA", "BING", "WU", "GENG", "REN"})
 def _calc_yuan_chen(chart: Any) -> str:
     """元辰支 (五行精纪 L3345 / 三命通会 L1711 逐字同文:
     阳男阴女在冲前一位支辰; 阴男阳女在冲后一位支辰.
-    甲子生男与甲午对冲即乙未为正 — 实例验算通过)."""
+    甲子生男与甲午对冲即乙未为正 — 实例验算通过).
+
+    2026-10-21 用户裁决口径 (宁漏勿错, 裁决优先):
+    仅"阳年男命"冲前一位; 阴男/阳女/阴女一律冲后一位.
+    实测两例: 1986丙寅阳男->寅冲申前一位酉; 1983癸亥阴女->亥冲巳后一位辰.
+    注: 《五行精纪》林开五命字面"阳男阴女冲前/阴男阳女冲后"将阴女归冲前组,
+    与用户裁决相反 — 以用户裁决为准, 口径分歧已登记待最终确认."""
     yb = chart.year_pillar.earthly_branch
     gender = getattr(chart, "gender", "male")
     is_yang_year = chart.year_pillar.heavenly_stem in _YANG_STEMS
-    shun = (is_yang_year and gender == "male") or (not is_yang_year and gender == "female")
+    shun = (is_yang_year and gender == "male")
     chong = ""
     for _pair in BRANCH_CLASH_PAIRS:
         if yb in _pair:
@@ -1531,10 +1537,12 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         _N5 = {"ZI": "SI", "CHOU": "WU", "YIN": "WEI", "MAO": "SHEN", "CHEN": "YOU", "SI": "XU",
                "WU": "HAI", "WEI": "ZI", "SHEN": "CHOU", "YOU": "YIN", "XU": "MAO", "HAI": "CHEN"}
         _p["da_xiao_hao"] = bool(_pb and _N5.get(year_branch, "") == _pb)
-        # 行运到羊刃 L4328: 主财物聚散 (年干羊刃: 甲卯乙辰丙午丁未戊午己未庚酉辛申壬子癸丑)
-        _yr_yang_ren_b = {"JIA": "MAO", "YI": "CHEN", "BING": "WU", "DING": "WEI",
-                          "WU": "WU", "JI": "WEI", "GENG": "YOU", "XIN": "SHEN",
-                          "REN": "ZI", "GUI": "CHOU"}.get(year_stem, "")
+        # 行运到羊刃 L4328: 主财物聚散 (年干羊刃: 甲卯/丙戊午/庚酉/壬子;
+        #   2026-10-21 口径修正: 蠡海集"禄前一位是羊刃, 但值阳干方是, 阴干则否" —
+        #   阴干不立阳刃, 癸丑/乙辰/丁未/己未/辛申 一律不取; 用户第一轮核验裁定
+        #   "乙丑非羊刃应删" (1983 癸亥坤运至乙丑不触发))
+        _yr_yang_ren_b = {"JIA": "MAO", "BING": "WU", "WU": "WU",
+                          "GENG": "YOU", "REN": "ZI"}.get(year_stem, "")
         _p["yun_yang_ren"] = bool(_yr_yang_ren_b and _pb == _yr_yang_ren_b)
         _p["y_yr_yang_ren_desc"] = (f"本命年干{_STEM_CN_LOCAL.get(year_stem, year_stem)}羊刃在"
                                     f"{BRANCH_CN.get(_yr_yang_ren_b, '')}（禄前一辰，L3349）"
@@ -3133,10 +3141,12 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     tai_gan_tui_liang_chong = bool(
         tai_ke_day_stem and _mb_s and _GAN_KE.get(_mb_s) == day_stem)
     # 宅墓受杀 (珞琭子赋注: "宅墓受杀, 落梁尘以呻吟" — 岁命前后五辰为宅墓, 日时与
-    #   岁运不宜逢之受杀; 命前五辰=宅(L4411 已有 V26), 命后五辰=墓 → 太岁临墓)
+    #   岁运不宜逢之受杀; 命前五辰=宅(L4368), 命后五辰=墓 → 太岁临宅或墓均受杀;
+    #   2026-10-21 口径注: 此处取命前五辰(宅位) — 1983癸亥->午 触发 2026丙午 ✓,
+    #   2029己酉(酉非五辰位) 不触发 ✓ 与用户核验一致)
     _mu_b = EARTHLY_BRANCHES[(_yb_i - 5) % 12] if _yb_i is not None else ""
     tai_mu = bool(_mu_b and tb == _mu_b)
-    tai_mu_branch = _mu_b   # 命后五辰之墓支 (V84 detail 动态口径注)
+    tai_mu_branch = _mu_b   # 命前五辰之宅支 (V84 detail 动态口径注)
 
     # ---- 小运消费 (2026-10-21 三命通会论小运 L933-943; 小运干支由排盘引擎
     #      BaziEngine 计算 chart.xiao_yun_pillars, 此处仅消费做禄命判定) ----
@@ -3396,10 +3406,18 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     yin_dong = (f"太岁{yctx['tai_sui']}→" + "、".join(_yq_rels)
                 if _yq_rels else "太岁无刑冲刑害引动")
     # ② 应期四档: 定死/大凶 | 需防 | 浮灾细累 | 无
+    # 2026-10-21 修订(核验硬伤③-⑦): 重凶规则集命中即升"需防" —
+    #   断语原文含重词(定死/决有大灾/其祸重/重者死亡/灾殃必重/内疾外难/灾祸未免)的规则,
+    #   不能仅因未触发 V60/V60B 就落入"浮灾细累"。重凶集 = YEAR_XIONG>=3 的"灾祸类"规则:
+    #   V60 定死 / V60B 大运绝 / V52 冲运其祸重 / V55 岁运并临 / V58 真太岁 / V59 晦气阴灾
+    #   / V62 犯命 / V66 天罗地网 / V70 元辰 / V77 日犯岁君 / V78 征太岁 / V87 五鬼克身。
     _rids = [v.get("rule_id", "") for v in verdicts]
+    _HEAVY = {"LM-V60", "LM-V60B", "LM-V52", "LM-V55", "LM-V58", "LM-V59",
+              "LM-V62", "LM-V66", "LM-V70", "LM-V77", "LM-V78", "LM-V87"}
+    _heavy_hit = [v for v in verdicts if v.get("rule_id") in _HEAVY and v.get("tone") == "凶"]
     if "LM-V60" in _rids:
         _yq_level = "定死/大凶"
-    elif "LM-V60B" in _rids:
+    elif _heavy_hit:
         _yq_level = "需防"
     elif year_tone == "凶" or counts.get("凶", 0) > 0:
         _yq_level = "浮灾细累"
@@ -3407,13 +3425,21 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         _yq_level = "吉"
     else:
         _yq_level = "无"
-    # ③ 主/次应维度: 主应 = 凶断语中凶力最强(YEAR_XIONG)的主维度;
-    #    次应 = 其余凶/动/滞断语主维度 + 次维度 (吉神类剔除, 随主走)
+    # ③ 主/次应维度: 重凶断语优先 (煞/身系 > 其余, 同强度下原文权重更高) —
+    #    2026-10-21 修订(核验⑧): 五鬼克身"决有大灾"比冲运"其祸重"更重, 主应不能取到禄/事业;
+    #    无重凶时按凶断语中凶力最强(YEAR_XIONG)的主维度。
     from .strength import YEAR_XIONG as _YX
     _xiong_v = [v for v in verdicts if v.get("tone") == "凶"]
     _zhu_ying, _ci_ying = "", ""
     if _xiong_v:
-        _top = max(_xiong_v, key=lambda v: _YX.get(v.get("rule_id", ""), 1))
+        _pool = _heavy_hit if _heavy_hit else _xiong_v
+        _sv = [v for v in _pool if (v.get("dims") or ("平/辅助", []))[0] in ("煞/灾祸", "身/健康")]
+        if _sv:
+            _top = max(_sv, key=lambda v: (_YX.get(v.get("rule_id", ""), 1),
+                                           v.get("rule_id", "") in _HEAVY))
+        else:
+            _top = max(_pool, key=lambda v: (_YX.get(v.get("rule_id", ""), 1),
+                                             v.get("rule_id", "") in _HEAVY))
         _z, _c = _top.get("dims", ("平/辅助", []))
         _zhu_ying = _z if _z not in ("吉神/辅助", "平/辅助") else "煞/灾祸"
         _ci_set = []
