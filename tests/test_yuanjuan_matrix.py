@@ -725,6 +725,33 @@ for _fp in _glob.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=Tru
             _bad.append("%s:%d %s" % (os.path.relpath(_fp, ROOT), _i, _ln.strip()[:90]))
 ck("全仓无「以四库为旺地」的表(V7.94/102/103 三处已统一)",
    not _bad, _bad[:5])
+# 全仓 12 支全五行表: 内容须与支本气干基准相符(V7.104 单一数据源待办期间由本闸门守护)
+_BEN_WX = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+           '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'}
+_Z12 = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+_tbl_re = _re2.compile(
+    r"\{'子'\s*:\s*'([木火土金水])'\s*,\s*'丑'\s*:\s*'([木火土金水])'"
+    r"\s*,\s*'寅'\s*:\s*'([木火土金水])'\s*,\s*'卯'\s*:\s*'([木火土金水])'"
+    r"\s*,\s*'辰'\s*:\s*'([木火土金水])'\s*,\s*'巳'\s*:\s*'([木火土金水])'"
+    r"\s*,\s*'午'\s*:\s*'([木火土金水])'\s*,\s*'未'\s*:\s*'([木火土金水])'"
+    r"\s*,\s*'申'\s*:\s*'([木火土金水])'\s*,\s*'酉'\s*:\s*'([木火土金水])'"
+    r"\s*,\s*'戌'\s*:\s*'([木火土金水])'\s*,\s*'亥'\s*:\s*'([木火土金水])'\}")
+_seen = set()
+_drift = []
+for _fp in _glob.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=True):
+    if '.bak' in _fp or '_archive' in _fp:
+        continue
+    for _i, _ln in enumerate(open(_fp, encoding='utf-8', errors='ignore').read().split('\n'), 1):
+        _m2 = _tbl_re.search(_ln)
+        if not _m2:
+            continue
+        _got = dict(zip(_Z12, _m2.groups()))
+        _seen.add(os.path.relpath(_fp, ROOT))
+        for _z in _Z12:
+            if _got[_z] != _BEN_WX[_z]:
+                _drift.append("%s:%d %s=%s(应%s)" % (os.path.relpath(_fp, ROOT), _i, _z, _got[_z], _BEN_WX[_z]))
+ck("全仓地支五行表与支本气干基准相符(V7.104 单一数据源待办守护)", not _drift, _drift[:5])
+ck("全仓地支五行表已扫描到(>=3 文件)", len(_seen) >= 3, sorted(_seen))
 # 三处表须互相一致
 import engines.common.yongyao_resolve as _YR
 from engines.common.tiaohou_rank import _WANG_ZHI
