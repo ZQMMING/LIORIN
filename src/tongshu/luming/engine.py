@@ -3344,6 +3344,8 @@ def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
     elif ci and ci not in ("", "吉神/辅助", "无"):
         ci_parts.append(ci)
     for x in xiong_d:
+        if x == "细累浮灾":            # 定死/需防级次防不列浮灾 (核验: 会困惑用户)
+            continue
         if x not in zhu_fang and x not in " ".join(ci_parts):
             ci_parts.append(x)
     _ci4 = list(dict.fromkeys(ci_parts))[:4]
@@ -3371,16 +3373,33 @@ def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
         adv += ["顺势推进, 把握机会"]
         if xiong_d:
             adv += ["虽有浮灾细累, 注意节奏即可"]
-    # --- 备注 ---
+    # --- 备注 (2026-10-21 核验修订: 首句必须反映应期级别, 大运底色仅作补充) ---
+    #   用户裁定: 备注不能按大运底色机械生成 — 应期=浮灾写"浮灾细累不为重害",
+    #   应期=需防写"需防当注意", 应期=定死写"重点防防大于治";
+    #   大运吉+发祸级/重凶突破 → "大运虽吉, 但流年有发祸级信号, 不可轻忽";
+    #   大运凶+应期轻 → 不再写"凶年当防" (会放大担忧).
     note = []
+    if level == "定死/大凶":
+        note.append("重点防: 防大于治, 提前布局应对")
+    elif level == "需防":
+        note.append("需防: 重凶信号在场, 当注意")
+    elif level == "浮灾细累":
+        note.append("浮灾细累, 不为重害")
+    else:
+        note.append("吉顺之年, 按日常节奏即可")
     if jifu:
         note.append("流年有%s护持, 逢灾有救" % "、".join(jifu[:2]))
-    if level in ("定死/大凶", "需防") and jifu:
-        note.append("但定死/元辰级信号不因吉神降级, 防大于治")
-    if luck_verdict in ("偏吉", "吉") and level != "定死/大凶":
-        note.append("大运吉泰之运, 浮灾细累不为重害")
-    if luck_verdict in ("偏凶", "凶"):
-        note.append("大运屯蹇凶祸之地, 凶年当防")
+    _fa_huo_now = (level in ("定死/大凶", "需防"))
+    if luck_verdict in ("偏吉", "吉"):
+        if _fa_huo_now:
+            note.append("大运虽吉, 但流年有发祸级/重凶信号突破, 不可轻忽")
+        else:
+            note.append("大运吉泰之运, 底色偏吉")
+    elif luck_verdict in ("偏凶", "凶"):
+        if _fa_huo_now:
+            note.append("大运屯蹇凶祸之地, 与流年重凶信号共振")
+        else:
+            note.append("大运底色偏凶, 然本年轻微, 不扩大担忧")
     return {"risk_label": risk_label, "risk_reason": risk_reason,
             "zhu_fang": zhu_fang, "ci_fang": ci_fang,
             "advice": adv, "beizhu": "; ".join(note) or "按应期防御即可"}
