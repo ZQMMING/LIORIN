@@ -699,6 +699,41 @@ ck("公理二: 格局层不产出身强/身弱布尔值(定格入口无身弱字
    ("'身弱'" not in _gj_src) and ("\"身弱\"" not in _gj_src)
    or "不回答身强/身弱" in _gj_src, "格局层疑似出现身弱字段")
 
+# ═══ X. 全仓「旺支表」同源性闸门 (PZZQ L800-801 轻重根之别) ═══
+# 教训: V7.94/V7.102/V7.103 三处同型错误(土以四库为旺地), 故设全仓闸门:
+#   凡引擎内"旺/坐旺支表"必须与 daymaster_root_class.POS(十二长生) 同源, 墓库(四库)不得作旺地.
+print("\n[X] 全仓旺支表同源性闸门 (PZZQ L800-801)")
+import glob as _glob, re as _re2
+_WANG_OK = {'木': {'寅', '卯'}, '火': {'巳', '午'}, '土': {'巳', '午'},
+            '金': {'申', '酉'}, '水': {'亥', '子'}}
+_four = set('辰戌丑未')
+_bad = []
+for _fp in _glob.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=True):
+    if '.bak' in _fp or '_archive' in _fp:
+        continue
+    _src = open(_fp, encoding='utf-8', errors='ignore').read()
+    for _i, _ln in enumerate(_src.split('\n'), 1):
+        if not _re2.search(r'(旺|WANG|坐旺)', _ln):
+            continue
+        if not _re2.search(r"'土'\s*:\s*\(", _ln):
+            continue
+        _m = _re2.search(r"'土'\s*:\s*\(([^)]*)\)", _ln)
+        if not _m:
+            continue
+        _items = set(_re2.findall(r"'([辰戌丑未寅卯巳午申酉亥子])'", _m.group(1)))
+        if _items & _four:
+            _bad.append("%s:%d %s" % (os.path.relpath(_fp, ROOT), _i, _ln.strip()[:90]))
+ck("全仓无「以四库为旺地」的表(V7.94/102/103 三处已统一)",
+   not _bad, _bad[:5])
+# 三处表须互相一致
+import engines.common.yongyao_resolve as _YR
+from engines.common.tiaohou_rank import _WANG_ZHI
+from engines.common.evil_offset import _WANG_BR
+ck("三处旺支表互一致(evil_offset / tiaohou_rank / yongyao_resolve)",
+   all(set(_WANG_BR.get(w, ())) == set(_WANG_ZHI.get(w, ())) == _WANG_OK[w]
+       for w in ('木', '火', '土', '金', '水')),
+   {w: (sorted(_WANG_BR.get(w, ())), sorted(_WANG_ZHI.get(w, ()))) for w in ('木', '火', '土', '金', '水')})
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

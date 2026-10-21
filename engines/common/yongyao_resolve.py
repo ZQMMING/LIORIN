@@ -717,8 +717,11 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     if bw == _cai_wx and _bi_wx not in ji:
         _bi_brs = [p[1] for p in _pl.values()] if _pl else []
         _bi_pen = any(GAN_WX.get(_pl[pos][0]) == _bi_wx for pos in ('year', 'month', 'hour') if _pl)
+        # ★ V7.103 修正: 土之旺地为【禄巳、帝旺午】(十二长生: 长生申/禄巳/帝旺午/墓辰);
+        #   旧表以四库(墓库=轻根, PZZQ L800-801)为坐旺, 致土之比劫坐四库被误判得势而入忌(群比争财).
+        #   与 V7.94 evil_offset._WANG_BR / V7.102 tiaohou_rank._WANG_ZHI 三处口径统一.
         _bi_wang = any(ZHI_BEN_WX.get(b) == _bi_wx and b in
-                       ({'木': ('寅', '卯'), '火': ('巳', '午'), '土': ('辰', '戌', '丑', '未'),
+                       ({'木': ('寅', '卯'), '火': ('巳', '午'), '土': ('巳', '午'),
                           '金': ('申', '酉'), '水': ('亥', '子')}.get(_bi_wx, ())) for b in _bi_brs)
         if _bi_pen or _bi_wang:
             ji.append(_bi_wx)
