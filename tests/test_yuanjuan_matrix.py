@@ -1105,15 +1105,25 @@ ck("全仓土旺地支表已扫描到(>=1 处)", _wzt_n >= 1, _wzt_n)
 
 # ═══ GG. 未接主链层清单 + 拓扑层 PENDING 状态 (V7.116/117/125) ═══
 print("\n[GG] 未接主链层清单 + 拓扑 PENDING 状态")
-# 以下模块已实现但【未被主链 bazi_gate 引用】(demo/独立口径), 须登记防误当生产:
+# 以下条目已实现但【未接主链 bazi_gate 作独立层】(demo/独立口径), 须登记防误当生产:
+# 注: 六亲层【已接主链】—— bazi_gate._liu_qin_of(L163) 消费 six_relative_producer.SIX_RELATIVE_MAP
+#     (十神→六亲符号契约) 产出 liu_qin 顶层键; six_relative_producer 是底层映射契约, 非独立 demo.
 from p0_v2.bazi_gate import paipan as _pa
 _bg = open(os.path.join(ROOT, "p0_v2", "bazi_gate.py"), encoding='utf-8').read()
 _DEMO_MODULES = {
-    "wai_ge_rules": "外格独立口径(主链走 special_pattern.py), V7.125 标注 DEMO",
-    "six_relative_full": "六亲完整层, demo 未接主链",
+    "wai_ge_rules": "外格独立口径(主链外格走 special_pattern.py), V7.125 标注 DEMO, 未接主链",
 }
 for _mod, _why in _DEMO_MODULES.items():
     ck("登记为未接主链(demo): %s" % _mod, _mod not in _bg, _why)
+# 六亲层已接主链: _liu_qin_of 消费 six_relative_producer.SIX_RELATIVE_MAP
+ck("六亲层已接主链(liu_qin 顶层键 + SIX_RELATIVE_MAP 消费)",
+   '"liu_qin"' in _bg and 'SIX_RELATIVE_MAP' in _bg, "")
+_lq = _pa("甲戌 辛未 庚子 丁亥", gender="男").get("liu_qin") or {}
+ck("六亲实跑: 传 gender 时产出 items(符号+十神+在局+宫位)",
+   _lq.get("state") == "six_relative_state" and len(_lq.get("items") or []) > 0,
+   ("state=%s n_items=%d" % (_lq.get("state"), len(_lq.get("items") or []))))
+_lq_ng = _pa("甲戌 辛未 庚子 丁亥").get("liu_qin") or {}
+ck("六亲实跑: 未传 gender 时不臆断(UNKNOWN_GENDER)", _lq_ng.get("status") == "UNKNOWN_GENDER", _lq_ng.get("status"))
 # topology check_guan_topology: jie_zhan 劫占 INFERRED 未核 -> verdict 恒 INCOMPLETE(原典未核清)
 _gu = _pa("甲戌 辛未 庚子 丁亥").get("topology") or {}
 _gt = _gu.get("guan_topo") or {}
