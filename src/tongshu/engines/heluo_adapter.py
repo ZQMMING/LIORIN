@@ -66,6 +66,9 @@ class HeluoAdapter:
         solar_date: tuple[int, int, int, int],
         gender: str = "male",
         birth_datetime: Optional[datetime] = None,
+        target_year: Optional[int] = None,
+        target_month: Optional[int] = None,
+        target_day: Optional[int] = None,
     ) -> HeluoResult:
         chart = self._bazi_engine.compute(
             solar_date,
@@ -73,7 +76,12 @@ class HeluoAdapter:
             skip_late_zi=False,  # 独立入口由 BaziEngine 内部处理夜子时
             birth_datetime=birth_datetime,
         )
-        return self.compute_from_chart(chart)
+        return self.compute_from_chart(
+            chart,
+            target_year=target_year,
+            target_month=target_month,
+            target_day=target_day,
+        )
 
     # ------------------------------------------------------------------
     # 正式链路：CalculationContext → BaziAdapter → 河洛
@@ -88,7 +96,13 @@ class HeluoAdapter:
     # ------------------------------------------------------------------
     # BaziChart → 河洛（核心投影转发）
     # ------------------------------------------------------------------
-    def compute_from_chart(self, chart: BaziChart) -> HeluoResult:
+    def compute_from_chart(
+        self,
+        chart: BaziChart,
+        target_year: Optional[int] = None,
+        target_month: Optional[int] = None,
+        target_day: Optional[int] = None,
+    ) -> HeluoResult:
         bazi = [
             (
                 STEM_CN[chart.year_pillar.heavenly_stem],
@@ -127,6 +141,8 @@ class HeluoAdapter:
             era=era,
             birth_year=birth_year,
             birth_date=birth_date,
+            target_year=target_year,
+            target_month=target_month,
         )
 
         # H8: 解卦层（原典判词）挂载 — 独立于冻结的 calculate，防御性兜底

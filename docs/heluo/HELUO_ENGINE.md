@@ -116,7 +116,7 @@ data/research/heluo/
 
 ## 7. 守卫（tests/heluo/）
 
-- **354 passed**（`python -m pytest tests/` 全量，含 16 个河洛测试文件）
+- **927 passed**（`python -m pytest tests/` 全量，含 16 个河洛测试文件）
 - 覆盖：H2 冻结态 / H6 化工 / H7 元气 / H9b 黄历桥接 / H10 惰性化 /
   H11 节候 / H12 诊断 / H16 独立验证 / 参评 / 卦爻辞 / 边界 / 负例 / 扩展
 - **审计脚本**（`audit/`，一次性裁决复核，非 pytest）：
@@ -186,38 +186,95 @@ python tools/heluo/quzheng_20261008/dump_natural.py      # 引擎自然输出（
 主分支：main（HEAD = 78fc5694）
 本分支：`feature/heluo-engine-package-20261011`（仅河洛域）
 
-## 11. 与其它副本的差异（2026-10-21 整理时核实）
+## 11. 与其它副本的差异 + 2026-10-21/22 重建记录
 
 河洛引擎历史上存在三份副本，现已收敛为**本包为唯一活副本**：
 
 | 副本 | 位置 | 状态 |
 |---|---|---|
-| **本包（权威）** | `feature/heluo-engine-package-20261011` | ✅ 25 模块 + 38 原典 + 16 测试，**354 全绿** |
-| wisdom main | `ZQMMING/wisdom` `main`（`e6a6a41e`，09-30） | 旧架构快照，29 模块（多 5 个旧模块），**9-30 后未再更新河洛** |
+| **本包（权威）** | `feature/heluo-engine-package-20261011` | 36 模块 + 56 原典 + 285 规则 + 52 守卫 + 58 工具，**927 全绿** |
+| wisdom main | `ZQMMING/wisdom` `main`（`e6a6a41e`，09-30） | 旧架构快照，29 模块，**9-30 后未再更新河洛** |
 | D:\shuntian 主工作区 | `feature/luming-engine`（`10a59d82`） | 河洛整目录已移走（"移除重复冗余"），**非河洛域不再持有河洛** |
 
-### 11.1 旧模块的去向（不是缺件，是架构演进）
+### 11.1 【重要】独立包曾发生功能退化，2026-10-22 已修复
 
-`8b863c62`（未接盘点收口）删掉 5 个模块，均为**无人 import 的死模块**：
+`19ea5ea7`（10-16，名为「河洛引擎独立打包更新——修复+元气/断语层+真太阳时口径统一」）
+实测是**大删减**：相对共同祖先 `78fc5694` **净删 6540 行、只加 1212 行**。
 
-| 旧模块 | 去向 |
-|---|---|
-| `temporal.py` | 能力迁入 `timeline_yun.py`（`class Timeline`）；`canonical.py` 改 `from .timeline_yun import Timeline` |
-| `interpretation.py` | 内联进 `guajie.py` |
-| `dayu.py` / `hexagram_state.py` / `time_sequence.py` | 旁支死模块，无人 import |
+删掉的每一项都有 main 上的守卫在用：
 
-> wisdom main 上 `temporal.py` 仍是**活代码**（`canonical.py` 直接 import），故 wisdom 旧快照会与本包行为有别——**以本包为准**。
+| 被删 | main 上的守卫 | 后果（实测） |
+|---|---|---|
+| `hua_gong.py` -634 行 | `test_h6_hua_gong.py` 等 | **用 main 守卫测独立包代码 → 25 failed / 7 passed** |
+| `jiegua` / `yue_ling_shu_ge` / `gui_ming_liu_ju` / `xian_tian_ce_shu` / `yao_xiang` / `yuanqi_tables` / `temporal` / `time_sequence` / `hexagram_state` / `dayu` / `interpretation` | 13 个守卫文件 | collection error |
+| `jiehhou.solar_term_date`（批次 L 性能优化，fromSolar 224→40） | — | 退回逐日扫整月 92 次 |
+| 批次 P fast-path（99 骨架 + 2 段嵌入） | `tests/test_heluo_fastpath.py`（10 条） | 输出体积 **10MB → 65MB（6.3 倍）** |
+| 33 个守卫文件 | — | 「删掉会失败的测试让全绿」 |
 
-### 11.2 死代码留档
+同盘对比（5 个真实案例）：
 
-`hexagram_symbol.py` 引用了不存在的 `models` 模块，全仓无人 import，**导入即崩但不影响运行**。按原审计报告判定为历史遗留死代码，暂留档不删。
+- **化工**：独立包判 `RESCUED`（救应·吉），main 判 `KEZHI`（克制·原典"尤凶"）
+  → 即 `fed7a4a7` 修过的「相生救应」空断言 bug 回归
+- **structure**：独立包 `hu_gua` / `cuo_gua` / `zong_gua` 全 `None`（互/错/综卦未接，`9004e649` 修复丢失）
+- 其余字段（numbers / prenatal / yuantang / postnatal / guajie 等）**完全一致**
 
-### 11.3 本次整理动作（2026-10-21）
+### 11.2 本次重建（以 main 河洛域为准）
 
-- 补回 6 个河洛审计脚本（`audit/`）——它们在 `10a59d82` 移除主工作区副本时被一并删掉，
-  且未进本包。取回自 `10a59d82^`，并把其中的 `sys.path.insert(0, r"D:\shuntian")`
-  硬编码改为 `os.path.abspath(__file__)` 相对定位，6 个脚本实跑 exit=0 断言全过。
-- 修正 `tests/heluo/test_heluo_kuozhan.py::test_canping_dir_default` 的路径断言
-  （旧版硬编码 `D:\shuntian\data\heluo\canping`，换机/worktree 必挂）。
-- 更新本文件模块清单（补 `heluo_lunar_bridge.py`）与守卫数字。
+1. **`src/tongshu/engines/heluo/`** ← main 全部 34 模块
+   （恢复化工三级判据、互错综卦接线、死断诸法、批次 L 性能优化、批次 P fast-path、
+   以及被删的 11 个模块）
+2. **`data/heluo/`** ← main 完整原典数据（56 文件，canping 金土部 78 条全量）
+3. **`data/rules/`** ← main 的 `HL-*` / `HLT-*` 判据规则表（285 个）
+4. **`tests/heluo/`** ← main 47 个守卫 + `tests/` 顶层 10 个 heluo 守卫
+5. **`tools/heluo/`** ← main 的变异验证 + 取证 + 独立复核脚本（58 个）
 
+### 11.3 补修的两个导入缺陷（本包特有）
+
+- **`src/tongshu/__init__.py`（补）**：独立包原先缺此文件 → `tongshu` 退化为
+  namespace package（`__file__ = None`）→ pytest 收集时 `tongshu.engines.heluo`
+  解析失配，报误导性的 `No module named 'tongshu.engines.heluo'`。补回后导入链恢复。
+- **`src/tongshu/engines/__init__.py`（新增）**：main 版导出 Ziwei / Huangli，
+  本包不含，故写惰性导出版（只导 Heluo / Bazi）。
+
+### 11.4 从独立包移植回来的新功能
+
+| 功能 | 来源 | 状态 |
+|---|---|---|
+| **H7 元气层** | `5f837cbf` | ✅ 已移植（canonical + frozen_state），`test_h7_yuan_qi.py` 7/7 |
+| **H10b 节气为界均匀分配** | `e13e7fd7` | ✅ 机制已移植（`compute_liuri` 新增 `next_jie_datetime` / `rule="gua6"`；`_jie_interval_for_lunar_month`）——**作为显式调用能力**，生产路径保持 main 批次 P 行为不变 |
+| **H10 惰性化** | `e15298dd` | ❌ 未移植（重写 canonical 133 行 + guajie 105 行，与批次 P fast-path 方案冲突；**保留 main 方案**，其 10 条 fast-path 守卫钉死） |
+| **H9b 黄历×河洛桥接** | `ec6e2214` | ❌ 未移植（依赖 H10 的 `target_*` 惰性化接口；`heluo_lunar_bridge.py` 已随重建进包，待接） |
+
+> H10b 的另两条数值契约（`test_hou5_uniform_not_mechanical` / `test_gua6_five_segments`）
+> 依赖独立包独有的「农历月 ↔ 流月编号」映射，在 main 代码底上不成立，
+> 拆分为 `tests/heluo/test_h10b_jie_interval.py` 保留与映射无关的两条
+> （节气间隔真实不均等 / 30 日整间隔退化一致），其余待口径统一后重校。
+
+### 11.5 变异演练已恢复（核心方法论资产）
+
+独立包此前无 `tools/` 目录 → 「变异演练防自证」全部缺席（能测但不能证伪）。
+补回后实测 `mutation_verify_hua_gong.py`：
+
+- 基线全绿 OK（69 passed）
+- 注入「KEZHI 退回 RESCUED（原典尤凶又变吉）」→ **[CAUGHT]**
+- 注入「五行相克表清空」「相克判定退化单向」「KEZHI 映射回 SUPPORTIVE」
+  「反卦表退回先天对宫」「伪引文复现」「真实原句被删」「出处改回伪节名」等 → 全部 **[CAUGHT]**
+
+正是这类演练能提前抓住 11.1 节的退化。
+
+### 11.6 死代码留档
+
+`hexagram_symbol.py` 引用了不存在的 `models` 模块，全仓无人 import，**导入即崩但不影响运行**。
+按原审计报告判定为历史遗留死代码，暂留档不删。
+
+### 11.7 本包不含的守卫（集成层依赖）
+
+以下守卫依赖 `tongshu.pipeline` / `tongshu.engines.meihua` / `tongshu.reasoning.signal_engine`
+等**集成层**，本独立包不含，故不纳入：
+
+`test_meihua*`（4）/ `test_heluo_event_topic_claims` / `test_heluo_birthinfo_passthrough`
+/ `test_h16_independent_verification` / `test_b01_heluo_yi_passthrough` / `test_heluo_context`
+/ `test_heluo_guajie_wiring` / `test_heluo_yi_flow` / `test_layer_consistency_20261009`
+/ `test_own_direction_20261008` / `test_interp_and_wiring_20261008`
+
+这些守卫在 main 上**全部存在且通过**（集成层跑），并未被删除。

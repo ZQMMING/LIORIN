@@ -392,7 +392,9 @@ def compute_liuri(
     yue_lines: list[int],
     yue_yao_index: int,
     jie_datetime: str | None = None,
+    next_jie_datetime: str | None = None,
     align_dates: bool = False,
+    rule: str = "hou5",
 ) -> LiuRiResult:
     """
     流日卦（《河洛真数·起例卷之上·起日卦例》万历二十年李学诗刻本）。
@@ -432,21 +434,27 @@ def compute_liuri(
     """
     positions = liuri_day_positions(yue_yao_index)
     day_lines = liuri_day_lines(yue_lines, yue_yao_index)
-    base = _parse_datetime(jie_datetime) if (jie_datetime and align_dates) else None
+    n_seg = 6 if rule == "hou5" else 5
+    seg_len = 5 if rule == "hou5" else 6
+    # H10b：给了节与下节时刻即按实际间隔均匀切分（自动对齐），
+    # 不必再显式开 align_dates。
+    _align = align_dates or bool(jie_datetime and next_jie_datetime)
+    base = _parse_datetime(jie_datetime) if (jie_datetime and _align) else None
+    nxt = _parse_datetime(next_jie_datetime) if (next_jie_datetime and _align) else None
     days = []
-    for k in range(6):
-        seg_days = positions[k * 5:k * 5 + 5]
+    for k in range(n_seg):
+        seg_days = positions[k * seg_len:k * seg_len + seg_len]
         flip_idx = seg_days[0]          # 段首爻位（保留旧键语义=该段第一日）
-        seg_lines = day_lines[k * 5][1]
+        seg_lines = day_lines[k * seg_len][1]
         u, lo, name = _lines_to_hexagram(seg_lines)
         # 段内五日逐日各有一卦（原典「挨次而变」），不共一卦
         day_items = []
         for j, pos in enumerate(seg_days):
-            dl = day_lines[k * 5 + j][1]
+            dl = day_lines[k * seg_len + j][1]
             du, dlo, dname = _lines_to_hexagram(dl)
             item = {
-                "day": k * 5 + j + 1,
-                "polarity": "阳日" if (k * 5 + j) % 2 == 0 else "阴日",
+                "day": k * seg_len + j + 1,
+                "polarity": "阳日" if (k * seg_len + j) % 2 == 0 else "阴日",
                 "flip_index": pos,
                 "day_yao_index": pos,   # 原典「变为履六三」的「三」即当日变爻
                 "name": dname, "upper": du, "lower": dlo, "lines": dl,
@@ -454,17 +462,35 @@ def compute_liuri(
             if base is not None:
                 try:
                     from datetime import timedelta
-                    item["date"] = (base + timedelta(days=k * 5 + j)).strftime("%Y-%m-%d")
+                    item["date"] = (base + timedelta(days=k * seg_len + j)).strftime("%Y-%m-%d")
                 except Exception as exc:
                     item["date_align_error"] = f"节气日期对齐失败：{exc}"
             day_items.append(item)
         entry = {
-            "segment": k + 1, "day_from": k * 5 + 1, "day_to": k * 5 + 5,
+            "segment": k + 1, "day_from": k * seg_len + 1, "day_to": k * seg_len + seg_len,
             "flip_index": flip_idx,
             "name": name, "upper": u, "lower": lo, "lines": seg_lines,
             "day_items": day_items,
         }
-        if base is not None:
+        if base is not None and nxt is not None and nxt > base:
+            # H10b 节气为界均匀分配：段边界 = 节时刻 + k*(下节-节)/N，
+            # 按实际节气间隔（含时刻）切分，不机械固定每段日数
+            try:
+                from datetime import timedelta
+                span = (nxt - base).total_seconds()
+                seg_sec = span / n_seg
+                b0 = base + timedelta(seconds=k * seg_sec)
+                b1 = base + timedelta(seconds=(k + 1) * seg_sec)
+                entry["day_from"] = int((b0.date() - base.date()).days) + 1
+                entry["day_to"] = int((b1.date() - base.date()).days)
+                if k == n_seg - 1:
+                    entry["day_to"] = int((nxt.date() - base.date()).days) + 1  # 末段至下一节
+                entry["date_from"] = b0.strftime("%Y-%m-%d %H:%M")
+                entry["date_to"] = b1.strftime("%Y-%m-%d %H:%M")
+                entry["jie_span_days"] = round(span / 86400.0, 4)  # 实际节气间隔（天）
+            except Exception as exc:
+                entry["jie_align_error"] = f"节气均匀分配失败：{exc}"
+        elif base is not None:
             # 节气对齐：段k覆盖节起第(k*5+1)~第(k*5+5)天
             try:
                 from datetime import timedelta

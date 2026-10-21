@@ -126,6 +126,36 @@ def _get_sxtwl():
     return _SXTWL
 
 
+def _jie_interval_for_lunar_month(year: int, lunar_month: int) -> tuple[str | None, str | None]:
+    """(当月节时刻, 下月节时刻) — 节气为界（H10b 规则分疏）。
+
+    流日卦段边界须按"节→下节"实际间隔（约 29~31 日不等）均匀切分，
+    不可机械固定每段日数。
+
+    月编号与节的实际时序（实测 2027 年）：
+        lm=1 子月=雨水 02-04   lm=7 午月=立秋 08-08
+        lm=2 丑月=惊蛰 03-06   lm=8 未月=白露 09-08
+        lm=3 寅月=清明 04-05   lm=9 申月=寒露 10-08
+        lm=4 卯月=立夏 05-06   lm=10 酉月=立冬 11-07
+        lm=5 辰月=芒种 06-06   lm=11 戌月=大雪 12-07
+        lm=6 巳月=小暑 07-07   lm=12 亥月=小寒 01-05（**在年初**）
+    故循环序为 12 → 1 → 2 → … → 11 → 12，**跨年点在 lm=11 → lm=12**
+    （大雪 12-07 → 次年小寒 01-05）；lm=12 → lm=1 仍在同一年内。
+    """
+    t0 = _jie_datetime_for_lunar_month(year, lunar_month)
+    if t0 is None:
+        return None, None
+    nxt_lm = lunar_month + 1
+    nxt_year = year
+    if nxt_lm > 12:
+        nxt_lm = 1
+    elif nxt_lm == 12:
+        # lm=11（戌月·大雪 12 月）→ lm=12（亥月·小寒，次年 1 月）
+        nxt_year = year + 1
+    t1 = _jie_datetime_for_lunar_month(nxt_year, nxt_lm)
+    return t0, t1
+
+
 def _jie_datetime_for_lunar_month(year: int, lunar_month: int) -> str | None:
     """返回农历 lunar_month 月"节"的精确时刻（公历 YYYY-MM-DD HH:MM）。
 
@@ -545,10 +575,13 @@ class HeluoCanonical:
                 # 流日卦：以当月月卦为本，从居位爻下一爻起六爻俱变（每爻管5日，§6.4 裁定）
                 # 节气对齐：流日卦须从当月"节"时刻起管（《河洛真数》起日卦例）
                 jie_dt = None
+                _jie_dt_next = None
                 try:
                     jie_dt = _jie_datetime_for_lunar_month(y.year, m["month"])
+                    _jie_dt_next = _jie_interval_for_lunar_month(y.year, m["month"])[1]
                 except Exception:
                     jie_dt = None
+                    _jie_dt_next = None
                 # 流日 / 流时均改按需（2026-10-06）：
                 #   · 流时：旧实现在此把 93 流年 × 12 月 × 6 日全部展开为流时卦，
                 #     共 6,696 次 compute_liushi / 80,352 条小时记录，占四层载荷 91%、
@@ -623,11 +656,18 @@ class HeluoCanonical:
             monthly_hexagrams=target_months if fast_path else [],
             # daily_hexagram 在 fast-path 且 target_month 命中时填 6 段字典
             # （每段 segment/day_from/day_to/flip_index）；未命中时 {}。
-            daily_hexagram={
-                "year": target_year,
-                "month": target_month,
-                "segments": target_days,
-            } if fast_path and target_month is not None else {},
+            # H10b 兼容：另给 "daily_yao" 键（同一份 6 段），供按节气均匀切分后的
+            # 流日段查询使用——不改动既有 "segments" 契约，批次 P 的 10 条 fast-path
+            # 守卫不受影响。
+            daily_hexagram=(
+                {
+                    "year": target_year,
+                    "month": target_month,
+                    "segments": target_days,
+                    "daily_yao": target_days,
+                }
+                if fast_path and target_month is not None else {}
+            ),
             hourly_hexagram=None,
             seasonal_hexagram=None,
             qi_phase={
