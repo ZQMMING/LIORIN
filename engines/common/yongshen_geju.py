@@ -298,7 +298,10 @@ def check_geju_youqing_youli(facts: Dict[str, Any], xiangshen_candidates: List[D
     # 五行映射
     stem_to_wx = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土',
                   '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
-    wx_to_roots = {'木': ['寅', '卯'], '火': ['巳', '午'], '土': ['辰', '戌', '丑', '未'],
+    # ★ V7.122 旺地表按 PZZQ L800-801 轻重根之别: 长生、禄、帝旺为重根, 墓库余气为轻根.
+    #   土之禄在巳、帝旺在午; 旧表误以四库(辰戌丑未)为旺地(同 V7.102/V7.103 之误),
+    #   致土相神坐库被误判「通根」. 四库为轻根, 不作通根之据.
+    wx_to_roots = {'木': ['寅', '卯'], '火': ['巳', '午'], '土': ['巳', '午'],
                     '金': ['申', '酉'], '水': ['亥', '子']}
 
     results = []
@@ -316,7 +319,8 @@ def check_geju_youqing_youli(facts: Dict[str, Any], xiangshen_candidates: List[D
         gen_branches = []
         for wx in xiang_wuxings:
             for branch, root_info in root_weight.items():
-                if root_info.get('root_element') == wx or branch in wx_to_roots.get(wx, []):
+                # ★ V7.122 per_pillar 实际键为 'same_element'(同五行), 无 'root_element'
+                if root_info.get('same_element') == wx or branch in wx_to_roots.get(wx, []):
                     has_gen = True
                     gen_branches.append(branch)
                     break
