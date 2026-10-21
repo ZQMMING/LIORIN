@@ -651,6 +651,28 @@ ck("纪律文本在源码中: 待原典专项裁决",
 ck("成党计数口径: 透干(排除日干)+本气根(不含中气余气)",
    "排除日干" in _ea_src and "不含中气余气" in _ea_src, "口径文本缺失")
 
+# ═══ V. 岁运×原局结构关系接入主链 (PZZQ L2932-2937 透清 / PATCH-178) ═══
+# L2932「所谓『透清』, 指的是: 地支中所藏之神, 经由运干引动而显露出来」
+# L2935「若命局某支与行运之支相会成局, 也算透清...年柱会局效力重, 日柱次之, 时柱最轻」
+# PATCH-178 契约: Relation Fact ≠ 作用成立 ≠ 成格 ≠ 喜忌吉凶
+print("\n[V] 岁运×原局结构关系接入主链 (PZZQ L2932 透清)")
+_rv0 = paipan("甲午 丙寅 戊辰 庚午")
+ck("岁运关系 未喂岁运时标 NO_YUN",
+   (_rv0.get("yun_natal_relations") or {}).get("state") == "NO_YUN",
+   (_rv0.get("yun_natal_relations") or {}).get("state"))
+_rv = paipan("甲午 丙寅 戊辰 庚午", dayun_list=["辛酉", "庚申"], liunian_map={2024: "甲辰"})
+_yr = _rv.get("yun_natal_relations") or {}
+ck("岁运关系 喂岁运后产出(OK)", _yr.get("state") == "OK", _yr.get("state"))
+ck("岁运关系 含透清(PZZQ L2932 运干透命局藏干)",
+   "透清" in (_yr.get("by_type") or {}), _yr.get("by_type"))
+ck("岁运关系 含地支六冲/六合等结构",
+   any(k in (_yr.get("by_type") or {}) for k in ("地支六冲", "地支六合")), _yr.get("by_type"))
+ck("岁运关系 只记结构不判吉凶(PATCH-178 契约)",
+   "≠ 喜忌吉凶" in (_yr.get("note") or ""), _yr.get("note"))
+ck("岁运关系 大运与流年分别标注 yun_type",
+   set(r.get("yun_type") for r in (_yr.get("relations") or [])) <= {"decade", "year"},
+   set(r.get("yun_type") for r in (_yr.get("relations") or [])))
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

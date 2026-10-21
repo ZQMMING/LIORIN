@@ -66,6 +66,7 @@ from engines.common.qtbj_climate_candidates import build_climate_candidates
 from engines.common.yongyao_resolve import resolve_yongyao
 from engines.common.suiyun_validate import validate_suiyun
 from engines.common.fan_ju import resolve_fan_ju
+from engines.common.relation_178 import yun_natal_relations
 from engines.common.six_relative_producer import SIX_RELATIVE_MAP
 from engines.common.special_pattern import build_special_patterns
 from engines.common.ge_jie_layer import (build_ge_cheng, apply_he_po_ge,
@@ -96,6 +97,36 @@ _POS = ("year", "month", "day", "hour")
 
 
 # ==================== ① 八字排盘临时接口 ====================
+
+def _yun_rel_of(pillars, dayun_list, liunian_map):
+    """岁运×原局结构关系事实(PATCH-178; 纯结构, 不判吉凶/成格/用神).
+    大运逐步取 decade, 流年取 year; 透清/六合/六冲/三合/三会/刑害破/并临 由 relation_178 产出."""
+    if not dayun_list and not liunian_map:
+        return {"state": "NO_YUN", "relations": [],
+                "note": "未喂 dayun_list/liunian_map, 无岁运关系可出"}
+    rels = []
+    try:
+        for i, gz in enumerate(dayun_list or []):
+            if not gz or len(gz) < 2:
+                continue
+            rels += yun_natal_relations({'decade': [gz[0], gz[1]]}, pillars)
+        for y, gz in (liunian_map or {}).items():
+            if not gz or len(gz) < 2:
+                continue
+            rels += yun_natal_relations({'year': [gz[0], gz[1]]}, pillars)
+    except Exception as e:
+        return {"state": "ERROR", "relations": [], "note": "岁运关系派生异常: %s" % e}
+    by_type = {}
+    for r in rels:
+        by_type[r.get('relation')] = by_type.get(r.get('relation'), 0) + 1
+    return {
+        "state": "OK", "relations": rels, "count": len(rels),
+        "by_type": by_type,
+        "evidence_refs": ["PZZQ L2932-2937", "PATCH-178"],
+        "note": "岁运×原局结构事实(透清/六合/六冲/三合/三会/刑害破/并临); "
+                "Relation Fact ≠ 作用成立 ≠ 成格 ≠ 喜忌吉凶",
+    }
+
 
 def _liu_qin_of(facts, pillars, gender):
     """六亲结构事实(符号+十神+在局+宫位), 不判吉凶(SMTH L3565 / YHZP-102-001 / SFTK-007-002).
@@ -764,6 +795,9 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         #   YHZP-102-001 印母财父 / SFTK-007-002 宫位: 年祖月父母日夫妻时子女;
         #   docs/PATCH-012「禁六亲=吉凶」). 未传 gender 则不输出(性别未知不臆断).
         "liu_qin": _liu_qin_of(f, p, gender),
+        # ★ V7.100 岁运×原局结构关系事实(PZZQ L2932-2937「透清」/会局效力轻重; PATCH-178 契约:
+        #   Relation Fact ≠ 作用成立 ≠ 成格 ≠ 喜忌吉凶). 此前 relation_178 仅被 tests 引用, 主链不可取用.
+        "yun_natal_relations": _yun_rel_of(p, dayun_list, liunian_map),
         "bing_list": by.get("bing_list", []),
         # 药消病(甲路)投影: yao_removed_yuanju 只在 bingyao dict 内, 顶层无键 -> 有输出不投影
         "bingyao_summary": {k: by.get(k) for k in
