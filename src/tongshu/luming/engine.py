@@ -3502,7 +3502,7 @@ _XIONG_FANG = {  # 重凶断语 → 具体生活方向 (用户示例粒度)
 _JIUXI_NAME = {  # 主断吉规则 → 吉神中文名 (备注/救应展示用)
     "LM-V82": "天月德", "LM-V65": "贵人", "LM-Y73": "喜神", "LM-Y71": "合局",
     "LM-V67": "禄马", "LM-V86": "天德", "LM-V85": "月德", "LM-V81": "福会",
-    "LM-Y72": "生本命",
+    "LM-Y72": "生本命", "LM-F03": "贵禄马", "LM-F01": "发禄",
 }
 
 
@@ -3521,9 +3521,10 @@ def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
     rids = [v.get("rule_id", "") for v in verdicts]
     xiong_d = [_XIONG_FANG[r] for r in rids if r in _XIONG_FANG]
     from .strength import _JIUXI_JI_RULES as _JXR_RULES
-    # 吉神救应: 主断吉在场 或 天月德
-    jiu_ji = [_JIUXI_NAME.get(v["rule_id"], v["rule_id"]) for v in verdicts
-              if v.get("tone") == "吉" and v.get("rule_id") in _JXR_RULES]
+    # 吉神救应: 主断吉在场 或 天月德 (去重: 同一吉神多条只列一次)
+    jiu_ji = list(dict.fromkeys(
+        _JIUXI_NAME.get(v["rule_id"], v["rule_id"]) for v in verdicts
+        if v.get("tone") == "吉" and v.get("rule_id") in _JXR_RULES))
     has_yue_de = bool(yctx.get("tai_tian_yue_de"))
     jifu = jiu_ji or (["天月德"] if has_yue_de else [])
     # --- 风险等级 (用户语言) ---
@@ -3619,9 +3620,17 @@ def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
             note.append("大运屯蹇凶祸之地, 与流年重凶信号共振")
         else:
             note.append("大运底色偏凶, 然本年轻微, 不扩大担忧")
+    # --- 2026-10-21 输出端重构: 一句话结论 + 现代词句 (展示层, 不参与判定) ---
+    from .modern_words import modern_words as _mw
+    _tone_cn = {"吉": "吉顺", "吉凶相杂": "吉凶相杂", "凶": "偏凶", "平": "平稳"}.get(year_tone, year_tone)
+    _level_cn = {"定死/大凶": "重点防之年", "需防": "谨慎之年", "浮灾细累": "留意之年",
+                 "吉": "安顺之年", "无": "平稳"}.get(level, level)
+    _concl = f"{_tone_cn}·{_level_cn}。主防：{zhu_fang}；次防：{ci_fang}"
+    _modern = _mw(" ".join(v.get("out", "") for v in verdicts))
     return {"risk_label": risk_label, "risk_reason": risk_reason,
             "zhu_fang": zhu_fang, "ci_fang": ci_fang,
-            "advice": adv, "beizhu": "; ".join(note) or "按应期防御即可"}
+            "advice": adv, "beizhu": "; ".join(note) or "按应期防御即可",
+            "conclusion": _concl, "modern": _modern}
 
 
 def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
