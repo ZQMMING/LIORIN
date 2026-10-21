@@ -228,7 +228,11 @@ gc = r.get("ge_cheng") or {}
 ck("官格成: 官逢财印无刑冲破害(L1113) [%s]" % bz, (gc.get("ge") or "").startswith("正官格"), gc.get("ge"))
 
 # J2 财格成: 财逢食生而身强带比(月令财, 食神透, 比劫透)
-bz, _p = mk(dm='甲', month_tg='正财', gan_tgs=('食神', None, '比肩'))
+#   注: 造盘须避开"从格候选"(日主无根+食伤成势+无官煞) —— 引擎设计为"从格CONFIRMED优先覆盖正格"
+#   (ge_jie_layer L363「从格CONFIRMED优先(覆盖正格)」; PZZQ L4126「弃命从煞则另属外格」),
+#   本组断言聚焦八格成格判据本身, 不涉跨层优先.
+bz, _p = mk(dm='甲', month_tg='正财', gan_tgs=('食神', None, '比肩'),
+          zhis=('寅', '未', '子', '戌'))
 r = paipan(bz)
 gc = r.get("ge_cheng") or {}
 ck("财格成: 财逢食生身强带比(L1114) [%s]" % bz, (gc.get("ge") or "") == "财格", gc.get("ge"))
@@ -261,7 +265,9 @@ gc = r.get("ge_cheng") or {}
 ck("印格成: 印多逢财财透根轻(L1114) [%s]" % bz, (gc.get("ge") or "").startswith("印格"), gc.get("ge"))
 
 # J7 食神格成: 食神生财(月令食神+财透)
-bz, _p = mk(dm='甲', month_tg='食神', gan_tgs=('偏财', None, None))
+#   注: 造盘须避开"从格候选"(日主无根+食伤成势) —— 引擎设计为"从格CONFIRMED优先覆盖正格".
+bz, _p = mk(dm='甲', month_tg='食神', gan_tgs=('偏财', None, '比肩'),
+          zhis=('寅', '巳', '子', '戌'))
 r = paipan(bz)
 gc = r.get("ge_cheng") or {}
 ck("食格成: 食神生财(L1115) [%s]" % bz, (gc.get("ge") or "").startswith("食神格"), gc.get("ge"))
@@ -414,6 +420,42 @@ ck("病药: 病重药少则待运不消(SFTK L129) [%s]" % bz4,
    (cai_bing and cai_bing[0].get("yao_yuanju") in ("INVALID_ROOT", "INVALID_POTENTIAL")
     or (cai_bing and not cai_bing[0].get("yao_yuanju"))),
    (cai_bing[0].get("yao_yuanju") if cai_bing else "no-bing"))
+
+# ═══ N. 岁运层恶神抵消表 (V7.25 evil_offset) ═══
+# 算理(原典): 刑/冲药根/破格 = 恶神(刑伤/药根拔/格破), 主凶, 与制化之功不同类(刑是结构伤), 不抵消药;
+#   冲月令提纲/冲日主重根 = 提纲伤(交战性) -> 平(吉凶参半), 不入凶;
+#   合走主药根/冲拔主药根 = 药根拔 -> 凶; 主药被合绊 = 药被合去失制力 -> 抵消制.
+# 依据: PZZQ L1182「成中之败, 亦变化万端」/ L1523「盖官逢财印, 无刑冲, 为官格之成, 冲官则破格」
+#       PZZQ L3346「身弱得印, 用神即在于印, 以行官煞运为佳」(克伐日主非无条件凶 -> 不入恶神表)
+print("\n[N] 岁运层恶神抵消表 (V7.25 evil_offset)")
+from engines.common import evil_offset
+# N1 恶神(刑/破格/伤官见官/药根拔) -> 不抵消制化之功, 判凶(-2)
+for (b, want_level, basis) in (
+        (["制主病水(土)", "三刑(丑戌未恃势之刑)"], -2, "恶神(刑)不抵消制化之功 -> 凶"),
+        (["制主病水(土)", "格局破格(财格·岁运辛(七杀)触发)"], -2, "恶神(破格)不抵消制化之功 -> 凶"),
+        (["制主病水(土)", "冲拔主药根(午冲子·药火根拔)"], -2, "恶神(药根拔)不抵消制化之功 -> 凶"),
+        (["制主病水(土)", "伤官见官(火伤官克土官)"], -2, "恶神(伤官见官)不抵消制化之功 -> 凶")):
+    v = evil_offset.verdict_arbitrate([b[0]], b[1:])
+    ck("岁运裁决 %s" % basis, v['level'] == want_level, "%s -> %s" % (b, v))
+# N2 交战(冲提纲/冲重根): 有制化之功(hard_good)或药成局 -> 平(0, 吉凶参半不降档);
+#    无制化之功 -> 平偏凶(-1)
+for (g, b, want_level, basis) in (
+        (["三合局成火候神(午合戌/午·药成局, 吉)"], ["冲月令提纲(辰冲戌)"], 0, "交战+药成局 -> 平"),
+        (["制主病水(土)"], ["冲月令提纲(辰冲戌)"], 0, "交战+制化之功 -> 平(吉凶参半)"),
+        ([], ["冲月令提纲(辰冲戌)"], -1, "交战(冲提纲)无制化之功 -> 平偏凶"),
+        ([], ["合日主重根(未合午·根被合走)"], -1, "交战(合重根)无制化之功 -> 平偏凶")):
+    v = evil_offset.verdict_arbitrate(g, b)
+    ck("岁运裁决 %s" % basis, v['level'] == want_level, "%s %s -> %s" % (g, b, v))
+# N3 纯制化无恶神 -> 吉(+2); 纯 bad -> 凶(-2)
+v = evil_offset.verdict_arbitrate(["制主病水(土)"], [])
+ck("岁运裁决 纯制化无恶神 -> 吉(+2)", v['level'] == 2, v)
+v = evil_offset.verdict_arbitrate([], ["克伐日主(火)"])
+ck("岁运裁决 纯凶(克伐日主) -> 凶(-2)", v['level'] == -2, v)
+# N4 克伐日主不入恶神表(身弱得印者行官煞运为佳, PZZQ L3346) -> 有制化之功时判吉/平, 不判凶
+ck("岁运裁决 克伐日主不入恶神表(PZZQ L3346)",
+   evil_offset.evil_no_offset(["克伐日主(火)"]) is False, "克伐日主被误列为恶神")
+ck("岁运裁决 助主病不入恶神表(药病交战走平)",
+   evil_offset.evil_no_offset(["助主病土(土)"]) is False, "助主病被误列为恶神")
 
 print()
 print("=" * 74)

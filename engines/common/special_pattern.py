@@ -413,8 +413,11 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     #   DT-0332/YH-0039 曾静默消失; 入口前置后印根盘显式 BAN, 回正格路径有记录)。
     _yin_root_any2 = yin_ben_eff + _yin_zhong_eff + _yin_yu_eff
     _dm_yang2 = day_stem in ('甲', '丙', '戊', '庚', '壬')
+    # V7.88/V7.89d 入口 ban: 只拦【阳干微根】(PZZQ L179「五阳从气不从势」, 与格类无关);
+    #   印绶有根之 ban 移至从儿分支之后按最终 cong 判(见下 V7.89e).
+    _cong_er_candidate = bool(ss_ling or ss_pow)
     _cong_ban_entry = bool(rootless_entry and not zhi_sha_save
-                           and (_yin_root_any2 > 0 or (_dm_yang2 and dm_ben_eff >= 1)))
+                           and _dm_yang2 and dm_ben_eff >= 1 and not _cong_er_candidate)
     if _cong_ban_entry:
         _ban_reason2 = ('印绶有根则不从(PZZQ L180/L187/L4936/L4939)' if _yin_root_any2 > 0
                         else '阳干微根不能从(PZZQ L179, 五阳从气不从势)')
@@ -453,13 +456,14 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                     cong, side = '从财格', cai_wx
                 elif cai_lead or (cai_ling and _shi(cai)):
                     cong, side = '从财格', cai_wx
-                elif ss_stem >= 2 and cai_stem == 0:
+                elif ss_stem >= 2 and cai_stem == 0 and ss_ben >= 1:
+                    # V7.89j 从儿须食伤【有本气根成气】(DTS L438/L440)
                     cong, side = '从儿格', ss_wx
-                elif ss_ben > cai_ben:
+                elif ss_ben > cai_ben and ss_ben >= 1:
                     cong, side = '从儿格', ss_wx
                 elif ss_ben == cai_ben and cai_stem >= 1:
                     cong, side = '从财格', cai_wx
-                elif ss_ben == cai_ben:
+                elif ss_ben == cai_ben and ss_ben >= 1:
                     cong, side = '从儿格', ss_wx
                 else:
                     cong, side = '从财格', cai_wx
@@ -481,18 +485,19 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                     cong, side = ('从杀格' if (gs_ben >= 2 or gs_ju >= 1 or gs_ling or cai_ben >= 1) else '从官格'), gs_wx
                 elif top_name == '财':
                     # 食伤叠透而财藏不透=从儿(儿会财局); 财明透成局=从财
-                    if ss_pow and ss_stem >= 2 and cai_stem == 0 and not cai_lead:
+                    if ss_pow and ss_stem >= 2 and cai_stem == 0 and not cai_lead and ss_ben >= 1:
                         cong, side = '从儿格', ss_wx
                     else:
                         cong, side = '从财格', cai_wx
                 elif top_name == '食伤':
+                    # V7.89k 从儿须食伤有本气根成气(DTS L438「吾儿成气」/L440「吾儿又得儿」)
                     if cai_lead:
                         cong, side = '从财格', cai_wx
-                    elif ss_stem >= 2 and cai_stem == 0 and ss_pow:
+                    elif ss_stem >= 2 and cai_stem == 0 and ss_pow and ss_ben >= 1:
                         cong, side = '从儿格', ss_wx
                     elif (cai_ben >= 1 or cai_ju >= 1) and not (ss_stem >= 2 and cai_stem == 0):
                         cong, side = '从财格', cai_wx
-                    else:
+                    elif ss_ben >= 1:
                         cong, side = '从儿格', ss_wx
                 else:
                     cong, side = '从势格', top_wx
@@ -510,10 +515,10 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             #     入寅午戌火局被化去 -> 印根=0 -> 从财成立(L193 已注); 用原始 zhong_n/yu_n 会误拦。
             _yin_root_any = yin_ben_eff + _yin_zhong_eff + _yin_yu_eff
             _dm_yang = day_stem in ('甲', '丙', '戊', '庚', '壬')
-            _cong_ban = (_yin_root_any > 0) or (_dm_yang and dm_ben_eff >= 1)
+            # V7.89e 印根 ban 移至从儿分支之后(按最终 cong 判); 此处只留阳干微根(L179).
+            _cong_ban = (_dm_yang and dm_ben_eff >= 1)
             if cong and _cong_ban:
-                _ban_reason = ('印绶有根则不从(PZZQ L180/L187/L4936/L4939)' if _yin_root_any > 0
-                               else '阳干微根不能从(PZZQ L179, 五阳从气不从势)')
+                _ban_reason = '阳干微根不能从(PZZQ L179, 五阳从气不从势)'
                 out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', _ban_reason, 'SPECIAL_FAIL', None,
                     '从格通判据拦下: ' + _ban_reason + '; SPECIAL_FAIL 态待实现, 盘回正格路径',
                     ['daymaster_root', 'wuxing_power']))
@@ -538,16 +543,32 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
 
     # ---------- 从儿不论身强弱(日主非比劫当令、可带一禄根; 官杀无、食伤成势、无印逆局)----------
     if not cong:  # P0-b: 移除not hua_name互斥分支
-        if (gs_ben == 0 and gs_stem == 0 and yin_ben_eff == 0 and ss_pow and not dm_ling
-                and not cai_lead and dm_ben_eff <= 1):
+        # V7.89i 从儿须【食伤有本气根成气】(DTS L438「吾儿成气」/L440「吾儿又得儿」/PZZQ L5092「气势偏于木」)
+        if (gs_ben == 0 and gs_stem == 0 and yin_ben_eff == 0 and ss_pow and ss_ben >= 1
+                and not dm_ling and not cai_lead and dm_ben_eff <= 1):
             if cai_stem >= 2 and cai_ben >= 1 and ss_stem >= 1 and ss_ben <= cai_ben + 1:
                 # 食伤透干泄身太过(干支同党)、财复透干成众有根, 食伤+财并旺顺克泄 -> 从势
                 # (戊戌丁巳火旺木焚顺火土); 食伤当令而不透干(丁巳癸卯木在支)未焚身, 仍专从儿
                 # 食伤与财两神并旺、财透干成众(食伤生财顺局), 衰极从其势 -> 从势(戊戌丁巳顺火土)
                 cong, side = '从势格', None
-            else:
+            elif cai_stem == 0:
+                # V7.89h 顺局从儿须财不透(PZZQ L5092 丑遥巳禄格例「乙未 癸卯 癸卯 甲寅」财不透;
+                #   财透则食伤生财为正格: L1115 食神生财=食格 / L1114 财逢食生=财格).
                 cong, side = '从儿格', ss_wx
-            cstate = 'CONFIRMED' if dm_ben_eff == 0 else 'CANDIDATE'
+            else:
+                cong, side = None, None
+            if cong:
+                cstate = 'CONFIRMED' if dm_ben_eff == 0 else 'CANDIDATE'
+
+    # V7.89e 印根 ban(按最终 cong 类型): 从财/从杀/从官/从势 印有根则不从
+    #   (PZZQ L4936「若透印则身赖印生而不从」/L4939「有印则印以化煞而不从」/L4942「通根, 如印无根, 不碍相从」);
+    #   从儿格不受此 ban(DTS L438「从儿不管身强弱」/L440「不论日主强弱」/PZZQ L5092「印运亦忌」属行运层).
+    if cong and cong != '从儿格' and _yin_root_any2 > 0:
+        _ban_reason = '印绶有根则不从(PZZQ L180/L187/L4936/L4939)'
+        out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', _ban_reason, 'SPECIAL_FAIL', None,
+            '从格通判据拦下: ' + _ban_reason + '; SPECIAL_FAIL 态待实现, 盘回正格路径',
+            ['daymaster_root', 'wuxing_power']))
+        cong = None; side = None; cstate = None
 
     # ---------- 气候虚湿寒土假从(辰丑湿土寒冻、火印全无, 土虚不能用, 反顺旺水之财; 见火暖则土能任财而翻转, 故只CANDIDATE)----------
     if not cong and climate and 'XU_SHI_HAN_TU' in (climate.get('structure_flags') or []):  # P0-b: 移除not hua_name互斥分支
