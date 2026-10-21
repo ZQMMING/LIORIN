@@ -1146,6 +1146,70 @@ ck("topology yuan_liu 已派生(源流骨架)", bool((_gu.get("yuan_liu") or {})
    or bool(_gu.get("yuan_liu")), list((_gu.get("yuan_liu") or {}).keys())[:6])
 ck("topology fang_ju 已派生(方局混纯)", "fang_ju" in _gu, list(_gu.keys()))
 
+# ═══ KK. Phase2 原典专项: 证据等级闸门 + 阈值查证登记 (V7.129) ═══
+print("\n[KK] Phase2 证据等级 + 阈值原典查证登记")
+import glob as _gl
+import json as _json2
+import re as _re3
+_grade_c = set()
+for _f in _gl.glob(os.path.join(ROOT, "registries", "source", "sources.*.jsonl")):
+    for _line in open(_f, encoding="utf-8"):
+        _line = _line.strip()
+        if not _line:
+            continue
+        try:
+            _d = _json2.loads(_line)
+        except Exception:
+            continue
+        if _d.get("evidence_grade") == "C":
+            _grade_c.add(_d["source_id"])
+ck("grade=C 原典已识别(批注层, 不作判据来源)", len(_grade_c) > 0, len(_grade_c))
+# 引擎判据零引用 grade=C (排除 _archive/_verify 与 tests 目录)
+_pat = _re3.compile("|".join(_re3.escape(x) for x in sorted(_grade_c))) if _grade_c else None
+_c_hits = []
+for _base in ("engines", "p0_v2"):
+    for _path in _gl.glob(os.path.join(ROOT, _base, "**", "*.py"), recursive=True):
+        if "_archive" in _path or "_verify" in _path or "\\tests\\" in _path or "/tests/" in _path:
+            continue
+        _txt = open(_path, encoding="utf-8", errors="replace").read()
+        # 只查【实际代码】(剥离行注释/串字面量), 注释里的"原引…已改正"说明不算引用
+        _code = "\n".join(
+            _ln.split("#", 1)[0] for _ln in _txt.splitlines()
+            if not _ln.lstrip().startswith("#"))
+        if _pat:
+            for _m in _pat.finditer(_code):
+                _c_hits.append((os.path.relpath(_path, ROOT), _m.group(0)))
+ck("引擎判据零引用 grade=C 原典(V7.129 改正中和纯粹引证后)", not _c_hits, _c_hits[:5])
+# 中和纯粹改引 grade=A 中和论正文
+from engines.common import daymaster_power_queries as _dpq
+_dq_src = open(os.path.join(ROOT, "engines", "common", "daymaster_power_queries.py"), encoding="utf-8").read()
+ck("中和纯粹判据改引 grade=A 中和论(DTS-017-001/002), 不再引滴天髓序(grade=C)",
+   "DTS-017-001" in _dq_src and "evidence_refs=['DTS-001-001']" not in _dq_src,
+   ("has_017=%s old_ref=%s" % ("DTS-017-001" in _dq_src, "evidence_refs=['DTS-001-001']" in _dq_src)))
+# 阈值: 四项均已登记原典查证结论, 且状态仍为 ENGINEERING_UNVERIFIED(值不得擅改)
+from engines.common.engineering_assumptions import ASSUMPTIONS as _ASM
+_asm = {a["key"]: a for a in _ASM}
+for _k in ("DANG_COMBO", "TIER_STRONG_BEN_MULTI", "TIER_WANG_BEN", "YOU_QI", "LIANGQI_COUNT_MIN"):
+    ck("阈值 %s 已登记原典查证结论(底本已校, 无数字明文)" % _k,
+       "classical_verification_2026_10_21" in (_asm.get(_k) or {}),
+       list((_asm.get(_k) or {}).keys()))
+    ck("阈值 %s 状态仍 ENGINEERING_UNVERIFIED(无 grade=A 明文不改值)" % _k,
+       (_asm.get(_k) or {}).get("status") == "ENGINEERING_UNVERIFIED",
+       (_asm.get(_k) or {}).get("status"))
+ck("DANG_COMBO 值仍为 4(未擅改)", _asm.get("DANG_COMBO", {}).get("value") == 4, _asm.get("DANG_COMBO", {}).get("value"))
+ck("两气成象计数仍为 3(未擅改, 形象论底本无数字门槛)", _asm.get("LIANGQI_COUNT_MIN", {}).get("value") == 3,
+   _asm.get("LIANGQI_COUNT_MIN", {}).get("value"))
+ck("TIER 强/旺 本气根阈值仍为 3/2(未擅改)",
+   _asm.get("TIER_STRONG_BEN_MULTI", {}).get("value") == 3 and _asm.get("TIER_WANG_BEN", {}).get("value") == 2,
+   (_asm.get("TIER_STRONG_BEN_MULTI", {}).get("value"), _asm.get("TIER_WANG_BEN", {}).get("value")))
+ck("YOU_QI 仍为 1(未擅改)", _asm.get("YOU_QI", {}).get("value") == 1, _asm.get("YOU_QI", {}).get("value"))
+# 劫占核清: 拓扑三条件全 READY(原典+阐微底本互证后)
+from engines.common.topology_paths import GUAN_TOPO_CONDITIONS as _GTC
+ck("劫占/破 两档均 READY(V7.127 原典核清: 占=位置隔断, 非劫财夺气)",
+   all(c["status"] == "READY" for c in _GTC) and {c["key"] for c in _GTC} >= {"JIE_ZHAN", "PO"},
+   [(c["key"], c["status"]) for c in _GTC])
+
+
 # ═══ HH. 治理层 validation_layer (PATCH-020) 禁转换 / 冲突解析闸门 ═══
 # 五部「概念边界」禁转换(旺≠强 / 得令≠强 / 有根≠强 / 调候≠旺衰 / 病药≠用神)
 #   若规则库出现允许禁转换的候选 → 引擎概念混层, 属 AGENTS.md 公理三(结构事实≠断语)违约.

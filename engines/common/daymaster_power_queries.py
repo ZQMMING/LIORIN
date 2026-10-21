@@ -1297,6 +1297,6 @@ def query_zhong_he(network: Dict[str, Any]) -> Dict:
         match_type='STRUCTURE_MATCH' if match else 'NO_MATCH',
         matched_nodes=['HAS_ROOT', 'YIN_OR_BIJIE_PARTY', 'NOT_EXTREME'] if match else [],
         matched_edges=['SUPPORT_RELATION', 'ROOT_PRESENT'] if match else [],
-        evidence_refs=['DTS-001-001'],  # 滴天髓通神论: 中和纯粹
+        evidence_refs=['DTS-017-001', 'DTS-017-002'],  # V7.129: 滴天髓中和论(grade=A 正文「既识中和之正理」+ B级任注「中而且和, 子平要法也」); 原引 DTS-001-001(滴天髓序, grade=C LATER_COMMENTARY)已按 Phase2 grade=C 清零纪律改正
         boundary_note='只匹配有根+印比透扶+非极端; 不判格局高低, 不下吉凶结论',
     )

@@ -105,18 +105,40 @@ ASSUMPTIONS: List[Dict[str, Any]] = [
     # --- 取值类(待回归) ---
     {"key": "DANG_COMBO", "value": DANG_COMBO, "status": ENGINEERING_UNVERIFIED,
      "source": "工程离散值(无原典精确数字)",
-     "note": "他干透干+本气根 combo>=4 判成党; 临界点待真实命例回归, 或为3/5"},
+     "note": "他干透干+本气根 combo>=4 判成党; 临界点待真实命例回归, 或为3/5",
+     "classical_verification_2026_10_21": (
+         "已查证(维基文库《滴天髓》辑要底本 + PZZQ-005-005 grade=A): "
+         "PZZQ 只言「干多不如根重」「长生禄刃根之重者, 墓库余气根之轻者」(轻重根之别), "
+         "全文检索「成党/党众」无计数门槛明文 -> 本值无 grade=A 数字依据, 维持现值不变.")},
+    {"key": "LIANGQI_COUNT_MIN", "value": 3, "status": ENGINEERING_UNVERIFIED,
+     "source": "工程离散值(无原典精确数字)",
+     "note": "两气成象「各成势」计数>=3(含天干+地支本气); 见 special_pattern.py L770-774 登记",
+     "classical_verification_2026_10_21": (
+         "已查证(《滴天髓·形象论》底本: 「两气合而成象, 像不可破也」「天干属木, 地支属火...若见金即破, 余仿此」): "
+         "底本只给「两行相生成象 + 见第三行即破」结构条件, 无任何数字门槛 -> 维持现值不变. "
+         "★ 不可挪《阐微》「五气聚而成形, 形不可害也」(属五气聚形章)作两气成象门槛 —— "
+         "2026-10-21 两次据此误改, 均致三锚点盘判 None, 已撤回.")},
     {"key": "SHI_COMBO_MIN", "value": SHI_COMBO_MIN, "status": ENGINEERING_UNVERIFIED,
      "source": "工程离散值",
      "note": "combo>=1 判成势; 与成党阈值配套回归"},
     {"key": "TIER_STRONG_BEN_MULTI", "value": TIER_STRONG_BEN_MULTI,
      "status": ENGINEERING_UNVERIFIED,
      "source": "工程离散值",
-     "note": "本气根>=3 判强; 四档边界整体待命例回归"},
-    {"key": "TIER_WANG_BEN", "value": TIER_WANG_BEN,
-     "status": ENGINEERING_UNVERIFIED,
+     "note": "本气根>=3 判强; 四档边界整体待命例回归",
+     "classical_verification_2026_10_21": (
+         "已查证(PZZQ-005-005 grade=A + 底本校对): PZZQ 只言「长生禄刃, 根之重者也; 墓库余气, 根之轻者也」"
+         "(轻重根之别), 无「几根为强/旺」数字明文 -> 维持现值不变, 待原典专项裁决.")},
+    {"key": "TIER_WANG_BEN", "value": TIER_WANG_BEN, "status": ENGINEERING_UNVERIFIED,
      "source": "工程离散值",
-     "note": "本气根>=2 判旺; 与强/平边界配套回归"},
+     "note": "本气根>=2 判旺; 与强/平边界配套回归",
+     "classical_verification_2026_10_21": (
+         "已查证: 同 TIER_STRONG_BEN_MULTI, 无 grade=A 数字明文 -> 维持现值不变.")},
+    {"key": "YOU_QI", "value": 1, "status": ENGINEERING_UNVERIFIED,
+     "source": "工程离散值(dts_yuanliu 有气阈值)",
+     "note": "源流追踪「有气即住」最简工程化: combo>=1 视为有气; 见 dts_yuanliu.py YOU_QI",
+     "classical_verification_2026_10_21": (
+         "已查证(DTS-019-002 L108 源流/通关语境 + 底本《滴天骼·源流论》「以取最多旺, 可为全局祖者宗为源头」): "
+         "原典只言「最多最旺」为源、「有情/住」为流, 无「计数>=1」门槛 -> 维持现值不变.")},
     # --- 原典通例类 ---
     {"key": "MONTH_ORDER_NUM", "value": MONTH_ORDER_NUM, "status": CLASSICAL,
      "source": "渊海子平/滴天髓 月令旺相休囚死通例",
