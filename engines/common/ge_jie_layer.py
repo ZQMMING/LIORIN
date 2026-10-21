@@ -171,8 +171,11 @@ _GEJU_SHAPE_SPEC = {
     '食神格': [('生财', '默认')],
     '伤官格': [('佩印', '印透'), ('用财', '默认')],
     '七煞格': [('食制', '默认')],
-    '建禄月劫格': [('同官格', '默认')],
-    '阳刃格': [('同官格', '默认')],
+    # 建禄月劫(PZZQ L1142-1143「透官而逢财印即同官格; 透财而逢食伤即同财格; 透煞而遇制伏即同煞格」)
+    '建禄月劫格': [('同官格', '官杀透+财印'), ('同财格', '财透+食伤透'), ('同煞格', '七杀透+有制伏')],
+    # 阳刃(PZZQ L1140-1141/L4579-4582 取运章: 以官煞制刃/食伤泄秀/财印并见为吉; 阳刃本身为用, 非"禄劫不能为用"那类)
+    '阳刃格': [('用官', '官杀透'), ('用食伤', '食伤透'),
+               ('用财印', '财印并见')],
 }
 
 
@@ -216,6 +219,10 @@ def derive_ge_shape(facts):
         if cond == '官杀透': return has_guan
         if cond == '食伤透+印透': return has_ss and has_yin
         if cond == '官杀透+食伤透': return has_guan and has_ss
+        if cond == '官杀透+财印': return has_guan and (has_cai or has_yin)
+        if cond == '财透+食伤透': return has_cai and has_ss
+        if cond == '七杀透+有制伏': return has_sha and has_ss
+        if cond == '财印并见': return has_cai and has_yin
         return True   # 默认
     for name, cond in spec:
         if _match(cond):

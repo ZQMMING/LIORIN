@@ -480,6 +480,39 @@ ck("六亲 男女取用不同(SMTH「女取用与男不同」): 女命财=父/�
    and "妻星" not in (r_female.get("relative_symbols") or []),
    (r_male.get("relative_symbols"), r_female.get("relative_symbols")))
 
+# ═══ P. 建禄月劫/阳刃 形态分档 (PZZQ L1142-1143 / L4579-4582) ═══
+# L1142-1143「建禄月劫, 透官而逢财印即同官格; 透财而逢食伤即同财格; 透煞而遇制伏即同煞格」
+# L4579「阳刃用官, 则运喜助官...」/ L4580「非用官煞克之, 即用食伤泄之」/ L1140「以财印并见为吉」
+print("\n[P] 建禄月劫/阳刃 形态分档 (PZZQ L1142-1143 / L4579-4582)")
+from engines.common.ge_jie_layer import derive_ge_shape, build_ge_cheng
+
+# P1 建禄月劫: 透官+财印 -> 同官格; 透财+食伤 -> 同财格; 透煞+有制 -> 同煞格
+for (kw, want_shape, basis) in (
+        (dict(dm='甲', month_tg='比肩', gan_tgs=('正官', None, '正印'),
+              zhis=('寅', '寅', '午', '子')), '同官格', "建禄月劫 透官逢财印=同官格(L1142)"),
+        (dict(dm='甲', month_tg='比肩', gan_tgs=('偏财', None, '食神'),
+              zhis=('寅', '寅', '午', '子')), '同财格', "建禄月劫 透财逢食伤=同财格(L1142)"),
+        (dict(dm='甲', month_tg='比肩', gan_tgs=('七杀', None, '食神'),
+              zhis=('寅', '寅', '午', '子')), '同煞格', "建禄月劫 透煞遇制伏=同煞格(L1142)")):
+    bz, p = mk(**kw)
+    _p_p, f = facts_of(bz)
+    build_ge_cheng(f)
+    base, shape = derive_ge_shape(f)
+    ck("形态 %s [%s]" % (basis, bz), shape == want_shape, "%s/%s" % (base, shape))
+# P2 阳刃: 官杀透=用官; 食伤透=用食伤; 财印并见=用财印
+for (kw, want_shape, basis) in (
+        (dict(dm='甲', month_tg='阳刃', gan_tgs=('正官', None, '正印'),
+              zhis=('寅', '卯', '午', '子')), '用官', "阳刃 官杀透=用官(L4579)"),
+        (dict(dm='甲', month_tg='阳刃', gan_tgs=('食神', None, '比肩'),
+              zhis=('寅', '卯', '午', '子')), '用食伤', "阳刃 食伤泄秀=用食伤(L4580)"),
+        (dict(dm='甲', month_tg='阳刃', gan_tgs=('偏财', None, '正印'),
+              zhis=('寅', '卯', '午', '子')), '用财印', "阳刃 财印并见=用财印(L1140)")):
+    bz, p = mk(**kw)
+    _p_p, f = facts_of(bz)
+    build_ge_cheng(f)
+    base, shape = derive_ge_shape(f)
+    ck("形态 %s [%s]" % (basis, bz), shape == want_shape, "%s/%s" % (base, shape))
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
