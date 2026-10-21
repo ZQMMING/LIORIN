@@ -752,6 +752,53 @@ for _fp in _glob.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=Tru
                 _drift.append("%s:%d %s=%s(应%s)" % (os.path.relpath(_fp, ROOT), _i, _z, _got[_z], _BEN_WX[_z]))
 ck("全仓地支五行表与支本气干基准相符(V7.104 单一数据源待办守护)", not _drift, _drift[:5])
 ck("全仓地支五行表已扫描到(>=3 文件)", len(_seen) >= 3, sorted(_seen))
+
+# 全仓 旺相休囚死表: 语义 = 【被算五行 在该月支】之状态(非"月令五行在该支")
+#   基准(SMTH 旺衰通例): 当令者旺, 令所生者相, 生令者休, 克令者囚, 令所克者死.
+#   注: 引擎表只列非旺/相之支(仅需判"是否失令"), 故按"所列之支须与基准相符"核.
+_SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+_KE = {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}
+_BZWX = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '土', '巳': '火',
+         '午': '火', '未': '土', '申': '金', '酉': '金', '戌': '土', '亥': '水'}
+
+
+def _ling_base(mw, z):
+    """基准 = SMTH 旺衰通例: 当令者旺, 令所生者相, 生令者休, 【克令者囚】, 令所克者死.
+    注意: 「克令者囚」= 克月令者为囚(即日主克月令), 非"被月令克"(那是令所克者=死).
+    与引擎 transit_power._ling_state 同口径."""
+    m = _BZWX[z]
+    if mw == m:
+        return '旺'
+    if _SHENG[m] == mw:
+        return '相'
+    if _SHENG[mw] == m:
+        return '休'
+    if _KE[mw] == m:
+        return '囚'
+    return '死'
+
+
+_zing_re = _re2.compile(r"'([子丑寅卯辰巳午未申酉戌亥])'\s*:\s*'([旺相休囚死])'")
+_ling_bad = []
+_ling_n = 0
+for _fp in _glob.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=True):
+    if '.bak' in _fp or '_archive' in _fp:
+        continue
+    for _i, _ln in enumerate(open(_fp, encoding='utf-8', errors='ignore').read().split('\n'), 1):
+        _m3 = _re2.search(r"'(木|火|土|金|水)'\s*:\s*\{([^{}]*)\}", _ln)
+        if not _m3:
+            continue
+        _pairs = _zing_re.findall(_m3.group(2))
+        if len(_pairs) < 6:
+            continue
+        _ling_n += 1
+        for _z, _v in _pairs:
+            _exp = _ling_base(_m3.group(1), _z)
+            if _v != _exp:
+                _ling_bad.append("%s:%d %s在%s=%s(应%s)" % (
+                    os.path.relpath(_fp, ROOT), _i, _m3.group(1), _z, _v, _exp))
+ck("全仓旺相休囚死表与SMTH通例相符(非旺相支, V7.105)", not _ling_bad, _ling_bad[:5])
+ck("全仓旺相休囚死表已扫描到(>=1 张)", _ling_n >= 1, _ling_n)
 # 三处表须互相一致
 import engines.common.yongyao_resolve as _YR
 from engines.common.tiaohou_rank import _WANG_ZHI
