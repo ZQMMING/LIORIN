@@ -868,6 +868,138 @@ def _build_shen_sha(chart: Any, lookup_mode: str = "year") -> Dict[str, Any]:
     return out
 
 
+# ==============================================================================
+# 岁运发用层 (2026-10-21): 原局有什么, 岁运来什么才"发"什么
+#   渊海子平卷三《论大运》/三命通会同文: "原有官行官运发官, 原有财行财运发财,
+#     原有灾行灾运发灾" → 原局已现十神被运干/运支对应引动 = 发;
+#   "官欲运生/杀欲运制/财欲运扶/印欲运旺/食欲运生/身弱欲运引进旺乡" → 十神方向语义;
+#   五行精纪: "水命四柱有土, 至火运本是财运, 却反为鬼者, 以火生土土克水,
+#     是财化为鬼, 转福成祸; 四柱有金至土运是鬼运, 却反为吉者, 以土生金金生水,
+#     是化鬼为助气, 反祸为福" → 财化鬼/鬼化气 转化判定;
+#   附: 禄马贵人命中 (发贵/发马)、缺行待运补 (待大运流年补足)、喜忌响应。
+# ------------------------------------------------------------------------------
+_EL_CN4 = {"WOOD": "木", "FIRE": "火", "EARTH": "土", "METAL": "金", "WATER": "水"}
+_GEN4 = {"WOOD": "FIRE", "FIRE": "EARTH", "EARTH": "METAL", "METAL": "WATER", "WATER": "WOOD"}
+_CTL4 = {"WOOD": "EARTH", "EARTH": "WATER", "WATER": "FIRE", "FIRE": "METAL", "METAL": "WOOD"}
+_STEM_CN4 = {"JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU": "戊", "JI": "己",
+             "GENG": "庚", "XIN": "辛", "REN": "壬", "GUI": "癸"}
+_BRANCH_CN4 = {"ZI": "子", "CHOU": "丑", "YIN": "寅", "MAO": "卯", "CHEN": "辰", "SI": "巳",
+               "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥"}
+
+
+def _zh_gz4(s: str) -> str:
+    """发用条目中文化: 替换英文干支/五行 token."""
+    for _k, _v in {**_STEM_CN4, **_BRANCH_CN4}.items():
+        s = s.replace(_k, _v)
+    for _k, _v in _EL_CN4.items():
+        s = s.replace(_k, _v)
+    return s
+_FAYONG_DIRECTION = {
+    "正官": ("发官/得名", "官欲运生, 不欲运伤（原有官行官运发官）"),
+    "七杀": ("发杀制", "杀欲运制, 不欲运助"),
+    "正财": ("发财", "财欲运扶, 不欲运劫（原有财行财运发财）"),
+    "偏财": ("发财", "财欲运扶, 不欲运劫"),
+    "正印": ("发印/文书贵气", "印欲运旺, 不欲运衰"),
+    "偏印": ("发偏印", "印欲运旺, 不欲运衰"),
+    "食神": ("发食/子星", "食欲运生, 不欲运枭绝"),
+    "伤官": ("发伤官/泄秀", "食欲运生, 不欲运枭绝"),
+    "比肩": ("帮身", "身弱欲运引进旺乡"),
+    "劫财": ("帮身", "身弱欲运引进旺乡；旺则劫财破耗"),
+}
+
+
+def build_yun_fayong(chart: Any, gz_stem: str, gz_branch: str, xi_ji: Dict | None) -> Dict[str, Any]:
+    """岁运发用: 判定大运/流年干支对原局"来了什么、发在什么方向".
+
+    判定链:
+      ① 运干/运支主气 对日主十神 (ten_god) → 方向语义 (发官/发财/帮身…)
+      ② 原局已透十神 被同十神运引动 → "原有X行X运发X" 发用
+      ③ 运支 临 禄/天乙贵人/驿马 → 发贵/发马 (喜)
+      ④ 五行转化 (五行精纪): 运=我克(财)且柱有[运所生之行]且[此行克我]
+           → 财化为鬼, 转福成祸; 运=克我(鬼)且柱有通关[运所生之行生我]
+           → 鬼化为气, 反祸为福
+      ⑤ 缺行补: 原局缺(不现)的五行被运补 → 待运补发
+      ⑥ 喜忌响应: 运五行 ∈ 喜 → 应喜(吉); ∈ 忌 → 犯忌(凶) (取 xi_ji 专条)
+    返回: {items: [发用条目], zhuanhua: 转化提醒, useful: 有用/无用/双面}
+    """
+    items: List[str] = []
+    day_el = STEM_ELEMENT.get(chart.day_master, "")
+    yr_el = (chart.nayin_five_element or {}).get("year", "")
+    # 原局已透十神 (四柱天干对日主)
+    _transparent: Dict[str, int] = {}
+    for _pl in (chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar):
+        _tg = getattr(_pl, "stem_ten_god", "") or ""
+        if _tg:
+            _transparent[_tg] = _transparent.get(_tg, 0) + 1
+    # 四柱五行集合 (干支+纳音并集, 供转化判定"柱有X")
+    _col_set = set()
+    for _pl in (chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar):
+        _col_set.add(STEM_ELEMENT.get(_pl.heavenly_stem, ""))
+        _col_set.add(BRANCH_WX.get(_pl.earthly_branch, ""))
+    if isinstance(chart.nayin, dict):
+        for _k in ("year", "month", "day", "hour"):
+            _n5 = NAYIN_FIVE_ELEMENT.get(chart.nayin.get(_k, ""), "")
+            if _n5:
+                _col_set.add(_n5)
+
+    gan_el = STEM_ELEMENT.get(gz_stem, "")
+    zhi_el = BRANCH_WX.get(gz_branch, "")
+    try:
+        from tongshu.reasoning.bazi_ten_gods import ten_god as _tg10, hidden_main_stem as _hms
+        _gan_tg = _tg10(chart.day_master, gz_stem)
+        _zhi_tg = _tg10(chart.day_master, _hms(gz_branch)) if zhi_el else ""
+    except Exception:
+        _gan_tg, _zhi_tg = "", ""
+    for _tg, _who in ((_gan_tg, "运干"), (_zhi_tg, "运支主气")):
+        if not _tg:
+            continue
+        _fa, _note = _FAYONG_DIRECTION.get(_tg, ("", ""))
+        if not _fa:
+            continue
+        if _transparent.get(_tg, 0):
+            items.append(f"{_who}来{_tg}，原局已有{_tg}{_transparent.get(_tg)}位——原有{_tg}行{_tg}运，{_fa}（{_note}）")
+        else:
+            items.append(f"{_who}来{_tg}——{_fa}（{_note}）；原局未透{_tg}，发而未全，随原局喜忌定吉凶")
+    # ③ 禄马贵人 (喜)
+    if _zhi_tg in ("正财", "偏财") and _transparent.get(_zhi_tg):
+        pass  # 已计
+    # ④ 五行转化 (以运支为主, 大运重地支)
+    if yr_el and zhi_el:
+        _rel = "我克" if _CTL4.get(yr_el) == zhi_el else ("克我" if _CTL4.get(zhi_el) == yr_el
+              else ("我生" if _GEN4.get(yr_el) == zhi_el else ("生我" if _GEN4.get(zhi_el) == yr_el else "比和")))
+        if _rel == "我克" and _GEN4.get(zhi_el) in _col_set and _CTL4.get(_GEN4.get(zhi_el)) == yr_el:
+            _g = _GEN4[zhi_el]
+            items.append(f"运来{_EL_CN4.get(zhi_el, zhi_el)}本为年命之财（我克），然柱有{_EL_CN4.get(_g, _g)}，"
+                         f"{_EL_CN4.get(zhi_el, zhi_el)}生{_EL_CN4.get(_g, _g)}克水——财化为鬼，转福成祸（五行精纪）")
+        elif _rel == "克我" and _GEN4.get(zhi_el) in _col_set and _GEN4.get(_GEN4.get(zhi_el)) == yr_el:
+            _g = _GEN4[zhi_el]
+            items.append(f"运来{_EL_CN4.get(zhi_el, zhi_el)}克年命本为鬼，然柱有{_EL_CN4.get(_g, _g)}通关，"
+                         f"{_EL_CN4.get(zhi_el, zhi_el)}生{_EL_CN4.get(_g, _g)}生年命——鬼化为气，反祸为福（五行精纪）")
+    # ⑤ 缺行补
+    if xi_ji:
+        for _mk in (xi_ji.get("missing") or []):
+            if _mk.get("el") == zhi_el or _mk.get("el") == gan_el:
+                items.append(f"原局缺{_EL_CN4.get(_mk.get('el', ''), _mk.get('el', ''))}（{_mk.get('role', '')}星）不现，"
+                             f"运来补足——待运补发{_mk.get('role', '')}")
+    # ⑥ 喜忌响应
+    _xi_ji_tone = ""
+    if xi_ji:
+        _lr = next((x for x in (xi_ji.get("luck_response") or [])
+                    if x.get("pillar") == gz_stem + gz_branch), None)
+        if _lr:
+            _xi_ji_tone = _lr.get("tone", "")
+            if _lr.get("resp") in ("应喜", "可堤"):
+                items.append(f"年命纳音喜忌：运纳音应喜（{_zh_gz4(_lr.get('detail', ''))}）")
+            elif _lr.get("resp") == "犯忌":
+                items.append(f"年命纳音喜忌：运纳音犯忌（{_zh_gz4(_lr.get('detail', ''))}）")
+    if not items:
+        items.append("无显著发用引动（运与原局十神/五行/禄马贵人无对应）")
+    _bad = sum(1 for i in items if any(k in i for k in ("化为鬼", "犯忌", "劫财破耗")))
+    _good = sum(1 for i in items if any(k in i for k in ("发", "帮身", "应喜", "补足", "化气", "通关")))
+    useful = "有用" if _good > _bad and _good > 0 else ("无用" if _bad > _good else "双面")
+    return {"items": items, "useful": useful, "xi_ji_tone": _xi_ji_tone}
+
+
 def _build_xi_ji_scope(chart: Any, luck_view: Dict | None = None) -> Dict[str, Any]:
     """原局喜忌层 (五行精纪卷七【论五行一】L1254-1270 主源).
 
@@ -2647,6 +2779,13 @@ def from_bazi_chart(chart: Any, current_datetime=None, lookup_mode: str = "year"
     gong = _build_gong(chart, lookup_mode)
     luck_scope = _build_luck_scope(chart, current_datetime, lookup_mode)
     xi_ji = _build_xi_ji_scope(chart, luck_scope)
+    # 岁运发用挂载: 每运柱 "来什么、发什么" (渊海子平论大运 + 五行精纪转化)
+    for _lp in (luck_scope.get("pillars") or []):
+        try:
+            _lp["fayong"] = build_yun_fayong(
+                chart, _lp.get("stem", ""), _lp.get("branch", ""), xi_ji)
+        except Exception:
+            _lp["fayong"] = {"items": [], "useful": "平", "xi_ji_tone": ""}
     verdicts, gy_any_present, yang_ren_in_four = _build_verdicts(
         chart, san_yuan, lu_ma, gui_ren, shen_sha, hua_qi,
         luck_pillars=luck_scope["pillars"],

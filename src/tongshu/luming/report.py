@@ -186,6 +186,7 @@ def build_report(lm: Any) -> Dict[str, Any]:
             "gan_rel": pv.get("gan_rel", ""),
             "zhi_rel": pv.get("zhi_rel", ""),
             "sees": "、".join(sees),
+            "fayong": pv.get("fayong") or {},
             "verdicts": [{"tone": v["tone"], "out": v["out"], "detail": v["detail"]}
                          for v in p_verdicts],
             "tone_summary": tone_summary,
@@ -279,15 +280,17 @@ def render_markdown(report: Dict[str, Any], gender: str = "") -> str:
     # 三、大运详批
     lines.append("## 三、大运详批")
     lines.append("")
-    lines.append("| 大运 | 岁数 | 纳音 | 生克 | 十二宫 | 干支纲 | 断语 | 吉凶 |")
-    lines.append("| --- | --- | --- | --- | --- | --- | --- | --- |")
+    lines.append("| 大运 | 岁数 | 纳音 | 生克 | 十二宫 | 干支纲 | 断语 | 吉凶 | 岁运发用 |")
+    lines.append("| --- | --- | --- | --- | --- | --- | --- | --- | --- |")
     for r in report["luck"]:
         details = "；".join(_clip(_zh(v["detail"])) for v in r["verdicts"])
         sees = r["sees"]
         gan_zhi = f"{_zh(r['gan_rel'])}/{_zh(r['zhi_rel'])}" if r["gan_rel"] else ""
         duan = details if not sees else f"{sees}；{details}"
+        fayong = (r.get("fayong") or {}).get("items") or []
+        fy_txt = "；".join(fy for fy in fayong[:3])
         lines.append(f"| {r['gz']} | {r['age_range']} | {r['nayin']} | {r['nayin_relation']} |"
-                     f" {r['shier_gong']} | {gan_zhi} | {duan} | {r['tone_summary']} |")
+                     f" {r['shier_gong']} | {gan_zhi} | {duan} | {r['tone_summary']} | {fy_txt} |")
     lines.append("")
 
     # 四、太岁
