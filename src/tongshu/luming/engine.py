@@ -3648,8 +3648,10 @@ def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
         if _tp and _tp not in _t_ci:
             _t_ci.append(_tp)
     _topic_txt = "、".join(dict.fromkeys([t for t in [_t_main] + _t_ci if t and t != "—"]))
+    _yd = ying_qi.get("ying_dui") or []
+    _yd_txt = ("；应到：" + "、".join(_yd)) if _yd else ""
     _concl = (f"{_tone_cn}·{_level_cn}" + (f"（主题：{_topic_txt}）" if _topic_txt else "")
-              + f"。主防：{zhu_fang}；次防：{ci_fang}")
+              + f"。主防：{zhu_fang}；次防：{ci_fang}" + _yd_txt)
     _modern = list(dict.fromkeys(_mw(_all_out) + _tgod))
     return {"risk_label": risk_label, "risk_reason": risk_reason,
             "zhu_fang": zhu_fang, "ci_fang": ci_fang,
@@ -3963,8 +3965,23 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _ci_ying = "、".join(x for x in _c if x not in ("吉神/辅助", "平/辅助"))[:80]
         else:
             _zhu_ying = "无明确主应"
+    # ④ 分柱应期 (2026-10-21 语义修正: "应期"应含'应到谁', 非仅领域标签):
+    #   古法 V51 分柱应期 (L4423: 年主父母/月主兄弟/日主己身/时主子息) —
+    #   从凶断语 out 提取"主X之应", 补 zhu/ci_ying(凶灾领域)之外的分柱定位。
+    #   女命"妻妾己身"归一为"己身"。独立于上 if/else, 不覆盖 zhu/ci_ying。
+    import re as _re
+    _fen_zhu_pat = _re.compile(r"主(?:妻妾)?(父母|兄弟|子孙|妻妾|己身|长辈)之应")
+    _ying_dui = []
+    for _v in _xiong_v:
+        _m2 = _fen_zhu_pat.search(_v.get("out", ""))
+        if _m2:
+            _who = "己身" if _m2.group(1) == "妻妾" else _m2.group(1)
+            if _who not in _ying_dui:
+                _ying_dui.append(_who)
+    if not _ying_dui and _ci_ying and "宫/六亲" in _ci_ying:
+        _ying_dui.append("六亲")
     ying_qi = {"level": _yq_level, "zhu_ying": _zhu_ying, "ci_ying": _ci_ying,
-               "yin_dong": yin_dong}
+               "yin_dong": yin_dong, "ying_dui": _ying_dui}
     # ========== 2026-10-21 用户裁决: tone 与应期联动约束 ==========
     #   应期=浮灾细累(最轻级) → tone 封顶"吉凶相杂": 大运吉泰/平运下细累浮灾
     #   "不为重害"(三命通会·论太岁), tone 不得标"凶";
