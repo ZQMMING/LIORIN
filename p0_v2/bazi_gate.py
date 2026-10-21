@@ -67,6 +67,7 @@ from engines.common.yongyao_resolve import resolve_yongyao
 from engines.common.suiyun_validate import validate_suiyun
 from engines.common.fan_ju import resolve_fan_ju
 from engines.common.relation_178 import yun_natal_relations
+from engines.common.yongshen_multi_track import build_yongshen_multi_track
 from engines.common.six_relative_producer import SIX_RELATIVE_MAP
 from engines.common.special_pattern import build_special_patterns
 from engines.common.ge_jie_layer import (build_ge_cheng, apply_he_po_ge,
@@ -126,6 +127,23 @@ def _yun_rel_of(pillars, dayun_list, liunian_map):
         "note": "岁运×原局结构事实(透清/六合/六冲/三合/三会/刑害破/并临); "
                 "Relation Fact ≠ 作用成立 ≠ 成格 ≠ 喜忌吉凶",
     }
+
+
+def _mt_of(facts, pillars, by, cli, special, facts_all):
+    """用神四轨并行层(ZPZQ格局/QTBJ调候/SFTK病药/DTS体用)—— 结构事实, 冲突保留多解不裁决.
+    参数缺任一项则该轨不激活; 整体异常时优雅降级(不影响主链输出)."""
+    try:
+        from engines.common.daymaster_power_structure import build_power_structure
+        from engines.common.wuxing_power import build_wuxing_power
+        _wp = facts_all.get('wuxing_power') or build_wuxing_power(pillars, facts_all)
+        _sp = build_power_structure(pillars)
+        _sp_all = facts_all.get('special') or special or {}
+        _by = by or {}
+        return build_yongshen_multi_track(pillars, facts_all, _wp, _sp, _sp_all,
+                                          cli, _by)
+    except Exception as e:
+        return {"state": "DEGRADED", "tracks": {},
+                "note": "四轨并行层派生异常(不影响主链其他层): %s" % e}
 
 
 def _liu_qin_of(facts, pillars, gender):
@@ -795,6 +813,8 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         #   YHZP-102-001 印母财父 / SFTK-007-002 宫位: 年祖月父母日夫妻时子女;
         #   docs/PATCH-012「禁六亲=吉凶」). 未传 gender 则不输出(性别未知不臆断).
         "liu_qin": _liu_qin_of(f, p, gender),
+        # ★ V7.116 用神四轨并行层(结构事实; 各书视角并列, 冲突保留多解不裁决; 不覆盖主链程级路由)
+        "yongshen_multi_track": _mt_of(f, p, by, cli, special, f),
         # ★ V7.100 岁运×原局结构关系事实(PZZQ L2932-2937「透清」/会局效力轻重; PATCH-178 契约:
         #   Relation Fact ≠ 作用成立 ≠ 成格 ≠ 喜忌吉凶). 此前 relation_178 仅被 tests 引用, 主链不可取用.
         "yun_natal_relations": _yun_rel_of(p, dayun_list, liunian_map),
