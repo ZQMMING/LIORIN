@@ -994,6 +994,41 @@ ck("ZPZQ轨 格局用神取自形态所定格神(非月令本气对应十神之�
 ck("四轨冲突不裁决(保留多解, AGENTS.md 并列不压序)",
    "保留多解，不裁决" in _mt_src, "")
 
+# ═══ DD. 多轨层与主链口径一致 (单一数据源, V7.113/V7.114) ═══
+# AGENTS.md v3 第四节: 同一层不设两套裁决; 格局定义/药方之单一数据源.
+print("\n[DD] 多轨层与主链口径一致")
+ck("SFTK轨 药方取病药层日主动态表(_bing_yao_map), 非仅「药=克病五行」简化式",
+   "_bing_yao_map" in _mt_src and "_yao_list" in _mt_src
+   and "_ke_yao in _yao_list" in _mt_src, "")
+ck("SFTK轨 evidence 标明药方多路(单一数据源可追溯)",
+   "药方多路" in _mt_src, "")
+ck("多轨层 格局用神读主链形态(不另造格局判定)",
+   "用神取形态所定格神" in _mt_src, "")
+ck("多轨层 读主链 ge_cheng 的格名与形态",
+   "_gc_main" in _mt_src and "_shape_main" in _mt_src, "")
+# 运行时一致性: 多轨 ZPZQ 轨所读格名须与主链 ge_cheng 一致(以真实盘核)
+from engines.common.yongshen_multi_track import _track_zpzq as _tz
+from engines.common.ge_jie_layer import build_ge_cheng as _bgc
+_consistent = True
+_detail = []
+for _bz in ("癸亥 壬戌 乙未 壬午", "甲戌 辛未 庚子 丁亥", "丁卯 庚戌 庚戌 庚辰"):
+    _ps = _bz.replace(' ', '')
+    _p = {'year': [_ps[0], _ps[1]], 'month': [_ps[2], _ps[3]],
+          'day': [_ps[4], _ps[5]], 'hour': [_ps[6], _ps[7]]}
+    _f = build(_p)
+    _f['pillars'] = _p
+    try:
+        _bgc(_f)
+    except Exception:
+        pass
+    _gc = _f.get('ge_cheng') or {}
+    _t = _tz(_p, _f, {}, {}, {}, None)
+    _note = _t.get('note') or ''
+    if _gc.get('ge') and '主链格局=' not in _note and _gc.get('shape'):
+        _consistent = False
+        _detail.append("%s 主链=%s 多轨note=%s" % (_bz, _gc.get('ge'), _note[:50]))
+ck("多轨ZPZQ 与主链 ge_cheng 口径一致(运行时)", _consistent, _detail[:3])
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

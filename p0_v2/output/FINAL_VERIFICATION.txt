@@ -2,7 +2,7 @@
 ==========================================================================
 
 [1] 黄金套件
-  test_yuanjuan_matrix               PASS  矩阵结果: PASS=196 FAIL=0
+  test_yuanjuan_matrix               PASS  矩阵结果: PASS=201 FAIL=0
   test_criteria_anchors              PASS  结果: PASS=119 FAIL=0
   test_special_pattern_golden        PASS  TOTAL 67 FAILS 0
   test_bingyao_layer_golden          PASS  
@@ -25,7 +25,7 @@
   报告: D:\shuntian-ziping-p0\p0_v2\output\REGRESSION_LATEST.txt
 
 [4] 判据锚点(公理三)
-  引擎原典引用点: 112 组 / 344 次
+  引擎原典引用点: 112 组 / 345 次
   结果: PASS=119 FAIL=0
 
 [5] 分布快照
