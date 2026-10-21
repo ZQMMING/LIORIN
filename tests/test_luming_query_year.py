@@ -44,7 +44,9 @@ class TestQueryYearStructure:
         for v in r["verdicts"]:
             # 2026-10-20 流年修复: 允许 LM-V5x/LM-V6x 岁运规则 + LM-Y71 太岁合局吉
             # 2026-10-21: 新增 LM-V7x(丧吊/勾绞/日干轴/征太岁) + LM-V8x(小运)
-            assert v["rule_id"].startswith(("LM-V5", "LM-V6", "LM-V7", "LM-V8", "LM-Y"))
+            #            + LM-Fx(岁运发用: 原有引动/禄马贵人/财化鬼/鬼化气/缺行补)
+            assert v["rule_id"].startswith(("LM-V5", "LM-V6", "LM-V7", "LM-V8",
+                                            "LM-Y", "LM-F"))
             assert v["evidence"]
             assert v["tone"] in ("吉", "动", "平", "滞", "凶")
 

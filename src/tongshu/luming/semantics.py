@@ -68,6 +68,13 @@ RULE_SEMANTICS: dict[str, dict] = {
     "LM-V45": {"quote": "", "strength": "待补", "quote_status": "pending", "topic": ["岁运"]},
     "LM-V49-XS": {"quote": "凡人命空亡本不好，若被日时或运冲刑者，反为虚声杀（五行精纪 L3484 广集）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
     "LM-V49-YC": {"quote": "阳男阴女，大小运行年之元辰，亦为厄会（L4270）；元辰犯运，仲尼困陈蔡之饥（L4271 壶中子）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
+    # ================= 岁运发用 (LM-F, 2026-10-21) =================
+    "LM-F01": {"quote": "原有官行官运发官，原有财行财运发财，原有灾行灾运发灾（渊海子平卷三·论大运 L592；五行精纪卷33 论大运同文）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
+    "LM-F02": {"quote": "官欲运生、杀欲运制、财欲运扶、印欲运旺、食欲运生、身弱欲运引进旺乡（渊海子平卷三·论大运；五行精纪卷33 论大运同文）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
+    "LM-F03": {"quote": "凡行运至夹贵华盖贵人六合上及乘生旺气者，皆主善庆；禄马贵神一切吉神，其年却有小庆（渊海子平卷三·论大运；五行精纪卷33 论大运同文）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
+    "LM-F04": {"quote": "水命四柱有土，至火运本是财运，却反为鬼者，以火生土土克水，是财化为鬼转福成祸（五行精纪卷33 论大运）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
+    "LM-F05": {"quote": "四柱有金至土运是鬼运，却反为吉者，以土生金金生水，是化鬼为助气反祸为福（五行精纪卷33 论大运）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
+    "LM-F06": {"quote": "凡四柱五行俱全者贵……原局缺一行，待大运流年补足（五行精纪卷七·论五行一 L1254 撮要）", "strength": "推导", "quote_status": "complete", "topic": ["岁运"]},
     # ================= P0 德贵神煞 (五行精纪卷二十 / 三命通会) =================
     "LM-V71": {"quote": "天德者，五行福德之辰，若人遇之，主登台辅之位，更与月德并者贵，纵遇凶杀，亦主清显（五行精纪 L2028 三命钤）；须要日上见，时上不犯克冲刑破，方吉（三命通会 L1491）", "strength": "逐字", "quote_status": "complete", "topic": ["综合"]},
     "LM-V71B": {"quote": "天德者，五行福德之辰……主登台辅之位……须要日上见……方吉（五行精纪 L2028 / 三命通会 L1491）→ 非日上见仅主清显（推导）", "strength": "推导", "quote_status": "complete", "topic": ["综合"]},

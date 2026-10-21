@@ -186,7 +186,7 @@ def build_report(lm: Any) -> Dict[str, Any]:
             "gan_rel": pv.get("gan_rel", ""),
             "zhi_rel": pv.get("zhi_rel", ""),
             "sees": "、".join(sees),
-            "fayong": pv.get("fayong") or {},
+            "fayong": {"items": [v["out"] for v in (pv.get("fayong_rules") or [])]},
             "verdicts": [{"tone": v["tone"], "out": v["out"], "detail": v["detail"]}
                          for v in p_verdicts],
             "tone_summary": tone_summary,
