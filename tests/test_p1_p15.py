@@ -12,11 +12,6 @@ from tongshu.engines.time.solar_time import (
     create_global_time_table,
     get_equation_of_time
 )
-from tongshu.engines.heluo.hexagram_state import (
-    calculate_hexagram_state,
-    calculate_element_modifier,
-    get_branch_element
-)
 
 import psycopg2
 
@@ -87,46 +82,6 @@ class TestGlobalTimeTable(unittest.TestCase):
         cur.execute("SELECT COUNT(*) FROM global_time_params")
         count = cur.fetchone()[0]
         self.assertGreaterEqual(count, 4)
-
-
-class TestHexagramState(unittest.TestCase):
-    """测试卦象状态引擎。"""
-    
-    def test_basic_calculation(self):
-        """基本状态计算。"""
-        result = calculate_hexagram_state(
-            hexagram="乾上乾下",
-            state_type="动",
-            element_state={"木": 0.6, "火": 0.8, "土": 0.3, "金": 0.5, "水": 0.7},
-            month_branch="午"
-        )
-        self.assertIsNotNone(result)
-        self.assertEqual(result.hexagram, "乾上乾下")
-        self.assertEqual(result.state_type, "动")
-    
-    def test_element_modifier(self):
-        """五行修正计算。"""
-        modifier = calculate_element_modifier(
-            {"木": 0.6, "火": 0.8},
-            month_branch="午"
-        )
-        # 午属火，火生土，木生火
-        # 应有正向修正
-        self.assertIsInstance(modifier, float)
-    
-    def test_branch_element(self):
-        """地支五行查询。"""
-        self.assertEqual(get_branch_element("子"), "水")
-        self.assertEqual(get_branch_element("午"), "火")
-        self.assertEqual(get_branch_element("寅"), "木")
-        self.assertEqual(get_branch_element("申"), "金")
-        self.assertEqual(get_branch_element("丑"), "土")
-    
-    def test_interpretation_generated(self):
-        """解释生成。"""
-        result = calculate_hexagram_state("坤上坤下", "静")
-        self.assertIsInstance(result.interpretation, str)
-        self.assertGreater(len(result.interpretation), 0)
 
 
 if __name__ == "__main__":

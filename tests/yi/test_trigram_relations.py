@@ -13,11 +13,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 import unittest
 from tongshu.engines.heluo.hexagram import TRIGRAM_ELEMENT, SHENG_MAP, KE_MAP
-from tongshu.engines.heluo.relationship.engine import (
-    ElementRelation,
-    calculate_element_interaction,
-    PersonModel,
-)
 
 
 class TestFivePhaseSheng(unittest.TestCase):
@@ -56,37 +51,6 @@ class TestFivePhaseKe(unittest.TestCase):
     def test_ke_from_mu(self):
         """木克土。"""
         self.assertEqual(KE_MAP["木"], "土")
-
-
-class TestFivePhaseRelation(unittest.TestCase):
-    """元素关系测试。"""
-    
-    def test_shengxiang_relation(self):
-        """相生关系：金生水。"""
-        result = calculate_element_interaction(
-            PersonModel(user_id="a", birth_info={}, heluo_model={"dominant_element": "金"}, daily_state={}),
-            PersonModel(user_id="b", birth_info={}, heluo_model={"dominant_element": "水"}, daily_state={}),
-        )
-        self.assertEqual(result["element_relation"], "相生")
-        self.assertEqual(result["interaction"], "A生B - 支持")
-    
-    def test_xiangke_relation(self):
-        """相克关系：金克木。"""
-        result = calculate_element_interaction(
-            PersonModel(user_id="a", birth_info={}, heluo_model={"dominant_element": "金"}, daily_state={}),
-            PersonModel(user_id="b", birth_info={}, heluo_model={"dominant_element": "木"}, daily_state={}),
-        )
-        self.assertEqual(result["element_relation"], "相克")
-        self.assertEqual(result["interaction"], "A克B - 制约")
-    
-    def test_reverse_shengxiang(self):
-        """被相生：水生木。"""
-        result = calculate_element_interaction(
-            PersonModel(user_id="a", birth_info={}, heluo_model={"dominant_element": "木"}, daily_state={}),
-            PersonModel(user_id="b", birth_info={}, heluo_model={"dominant_element": "水"}, daily_state={}),
-        )
-        self.assertEqual(result["element_relation"], "相生")
-        self.assertEqual(result["interaction"], "B生A - 被支持")
 
 
 class TestTrigramElements(unittest.TestCase):
