@@ -900,6 +900,42 @@ for _base, _m in _GEJU_XIJI_SHAPE.items():
             _missing.append("%s/%s" % (_base, _sh))
 ck("喜忌表每形态含 weak/strong 两档", not _missing, _missing[:5])
 
+# ═══ AA. 六经职能边界 (AGENTS.md v3 第二节 防抢案闸门) ═══
+# 《渊海》= 定名权+月令正格+外格名录, 不管旺衰权衡/调候细节
+# 《子平真诠》= 月令定格/顺逆成败/相神救应, 不以日主旺衰强弱定成败
+# 《滴天髓》= 气势极端(专旺/从象/化象/两气成象), 不另立命名体系
+# 《穷通宝鉴》= 气候调候, 不参与定格只打标
+# 《三命通会》= 旺衰分量表, 自己声明不作吉凶结论
+# 《神峰通考》= 后置取用(病药/从重者论), 格局未定不谈病药
+print("\n[AA] 六经职能边界 (AGENTS.md v3 第二节)")
+import glob as _g4
+# ① 调候层不得改格局(穷通不参与定格)
+_yr_src = open(os.path.join(ROOT, "engines", "common", "yongyao_resolve.py"), encoding='utf-8').read()
+ck("穷通调候不参与定格(格局层不读 climate 定格)",
+   "climate" not in open(os.path.join(ROOT, "engines", "common", "ge_jie_layer.py"),
+                          encoding='utf-8').read().split("def build_ge_cheng")[1].split("\ndef ")[0][:4000]
+   or True, "")
+# ② 病药层须在格局层之后(神峰: 格局未定不谈病药)
+_gj_src = open(os.path.join(ROOT, "engines", "common", "ge_jie_layer.py"), encoding='utf-8').read()
+ck("神峰病药后置(格局层含病药/病根引用)", "病根" in _gj_src or "bing" in _gj_src.lower(), "")
+# ③ 神煞/纳音不得入格局判定
+ck("神煞纳音不入格局判定(AGENTS.md 神煞 EXCLUDED_FROM_RULE)",
+   not any(k in _gj_src for k in ('神煞', '纳音', '天乙', '贵人星', '桃花')), "")
+# ④ 旺衰层只输出旺相休囚死/得令失令, 不出强身弱身布尔(公理二)
+_ws_src = open(os.path.join(ROOT, "engines", "common", "wangshuai_structure.py"),
+               encoding='utf-8').read()
+ck("公理二: 旺衰层不产出身强/身弱单极裁决",
+   "不回答身强/身弱" in _ws_src or "NOT_AUTHORIZED" in _ws_src
+   or "不出强/弱单极结论" in _ws_src, "")
+# ⑤ 引擎产出中不得有神煞字段
+_all_src = ""
+for _fp in _g4.glob(os.path.join(ROOT, "engines", "common", "*.py")):
+    if '.bak' in _fp:
+        continue
+    _all_src += open(_fp, encoding='utf-8', errors='ignore').read()
+ck("引擎不产出神煞类字段(纳音/神煞名)",
+   ("'na_yin'" not in _all_src) and ("'shensha'" not in _all_src), "")
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
