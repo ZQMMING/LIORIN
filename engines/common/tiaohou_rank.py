@@ -159,12 +159,52 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
     #   候干=生我(印) 时是主病之源(印多成病), 不升候干(让位寒燥交互候食伤).
     cands = _hou_candidates(climate)
     if cands:
+        # ★ V7.76 候干次序递降(原典 order=先后次序): 序1 不成立则试序2、序3.
+        #   各候干的"职能"判据随候干而定(食伤泄秀/制药/炼金/疏病), 逐个判.
+        _cands_sorted = sorted(cands, key=lambda c: c.get('order', 99))
+        for _top in _cands_sorted:
+            wx = _top['wx']
+            _in_chu = _stem_present(wx, pillars) >= 1 or _ben_wang(wx, pillars)
+            _is_shishang_x = SHENG.get(dm_wx, '') == wx
+            _is_zhi_x = KE_BACK.get(bing_wx, '') == wx
+            _is_yin_x = SHENG_BACK.get(dm_wx, '') == wx
+            _lianjin_wx_x = KE_BACK.get(dm_wx, '')
+            _hou_fire_x = any((c['wx'] == _lianjin_wx_x) and (c.get('order', 99) <= 2) for c in cands)
+            _is_lianjin_x = (dm_wx == '金' and wx == _lianjin_wx_x and _hou_fire_x)
+            _is_shubing_x = (KE.get(dm_wx, '') == wx and bing_wx == SHENG_BACK.get(dm_wx, ''))
+            if not (_in_chu and not _in_xing(wx, pillars)):
+                continue
+            if not (_is_shishang_x or _is_zhi_x or _is_lianjin_x or _is_shubing_x):
+                continue
+            _role = []
+            if _is_shishang_x:
+                _role.append('食伤泄秀')
+            if _is_zhi_x:
+                _role.append('制药')
+            if _is_lianjin_x:
+                _role.append('炼金(制比劫+成器)')
+            if _is_shubing_x:
+                _role.append('疏病(财克印救母)')
+            _reason = ['候干序%d=%s 有气: 透干%d/坐旺%s' % (
+                _top.get('order', 99), _top.get('stem', ''), _stem_present(wx, pillars), _ben_wang(wx, pillars))]
+            _reason.append('候干职能: %s' % '+'.join(_role))
+            _reason.append('候干有气+职能中+未刑 -> 升 primary')
+            return {'rank': 'PROMOTE', 'wx': wx, 'reason': _reason,
+                    'refs': ['QTBJ %s 候干序%d=%s' % (mb, _top.get('order', 99), _top.get('stem', ''))] + list(_top.get('ref') or [])}
+        # 全候干皆不成立 -> 让位寒燥交互(维持原行为)
+        return _hanzao_shishang_rank(climate, dm_wx, mb, pillars)
+    if False:
         top = cands[0]
         wx = top['wx']
         _in_chu = _stem_present(wx, pillars) >= 1 or _ben_wang(wx, pillars)
         _is_shishang = SHENG.get(dm_wx, '') == wx     # 候干=食伤(我生)=泄秀
         _is_zhi = KE_BACK.get(bing_wx, '') == wx     # 候干=制药(克主病)
         _is_yin = SHENG_BACK.get(dm_wx, '') == wx     # 候干=生我(印)=主病源
+        # ★ V7.75 疏病职能: 候干=财(我克) 且 主病=印(生我) -> 财克印救母(疏病), 可升 primary.
+        #   原典 QTBJ L5819 三月庚金「先用甲木疏土, 次用丁火煅炼成器」/ L6278 九月庚金「最怕土厚埋金,
+        #   宜先用甲疏」/ L6282「宜先用甲疏, 後用壬洗」; DTS L445「土重金埋, 木克土则生金...君赖臣生也」;
+        #   任氏「局中印绶虽旺, 柱中财星有气, 可用财破印也」.
+        _is_shubing = (KE.get(dm_wx, '') == wx and bing_wx == SHENG_BACK.get(dm_wx, ''))
         # V7.49 炼金职能: 金日主 主病印(土)重埋金时, 官火=炼金(制比劫+成器)为候神(原典"土重金埋需火炼金").
         #   候火不入忌(炼金是药), 同食伤泄秀.
         #   ★ V7.49 修: 炼金神取官杀火 = KE_BACK[dm](克我者), 原写 KE.get(dm)=财(我克)取神错误,
@@ -182,7 +222,7 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
         _hou_fire_top2 = any((c['wx'] == _lianjin_wx) and (c.get('order', 99) <= 2) for c in cands)
         _is_lianjin = (dm_wx == '金' and wx == _lianjin_wx and _hou_fire_top2)
         _reason = ['候干序1=%s 有气: 透干%d/坐旺%s' % (top.get('stem', ''), _stem_present(wx, pillars), _ben_wang(wx, pillars))]
-        if _in_chu and not _in_xing(wx, pillars) and (_is_shishang or _is_zhi or _is_lianjin):
+        if _in_chu and not _in_xing(wx, pillars) and (_is_shishang or _is_zhi or _is_lianjin or _is_shubing):
             _role = []
             if _is_shishang:
                 _role.append('食伤泄秀')
@@ -190,6 +230,8 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
                 _role.append('制药')
             if _is_lianjin:
                 _role.append('炼金(制比劫+成器)')
+            if _is_shubing:
+                _role.append('疏病(财克印救母)')
             _reason.append('候干职能: %s' % '+'.join(_role))
             _reason.append('候干有气+职能中+未刑 -> 升 primary')
             return {'rank': 'PROMOTE', 'wx': wx, 'reason': _reason,
