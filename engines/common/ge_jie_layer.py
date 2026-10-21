@@ -368,6 +368,11 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         return spv
 
     # 从格CONFIRMED优先(覆盖正格): 日主无根+印比虚浮无根+临绝(子平真诠'四柱无可扶抑')
+    # ★ V7.101 登记(v3 待办, 判定不动): AGENTS.md v3 第四节「决胜条件作为合取的一项写进定义内部,
+    #   外部不再设『谁打败谁』的优先级链...『从得真者只论从』本身就是从格的定义项, 无需另写裁决器」。
+    #   本处判据(日主无根+印比虚浮无根+临绝)本身即从格定义项, 与 v3 精神相符; 差异在【位置】:
+    #   此处为"优先序"(从格CONFIRMED先判并覆盖正格), 而 v3 所求为"合取写进定义内、外部不设优先级链".
+    #   结构改造属 AGENTS.md v3 Phase 4.3/4.4 范围, 须先有 Phase 3 干净 baseline, 本次不擅动.
     # CANDIDATE不覆盖, 走正格判定(v1/v2误报=无差别覆盖, 已回退)
     try:
         from engines.common.special_pattern import build_special_patterns

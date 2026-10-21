@@ -673,6 +673,25 @@ ck("岁运关系 大运与流年分别标注 yun_type",
    set(r.get("yun_type") for r in (_yr.get("relations") or [])) <= {"decade", "year"},
    set(r.get("yun_type") for r in (_yr.get("relations") or [])))
 
+# ═══ W. AGENTS.md v3 规格待办登记 (结构改造须待 Phase 3 干净 baseline) ═══
+# AGENTS.md v3 第四节:「决胜条件作为合取的一项写进定义内部, 外部不再设『谁打败谁』的优先级链」
+#   -> 引擎"从格CONFIRMED优先(覆盖正格)"为【位置】差异, 属 Phase 4.3/4.4 改造范围.
+#   登记而不擅动: 改造须先有 Phase 3 干净 baseline, 否则动格局层结构会污染基线.
+print("\n[W] AGENTS.md v3 规格待办登记")
+_gj_src = open(os.path.join(ROOT, "engines", "common", "ge_jie_layer.py"), encoding='utf-8').read()
+ck("v3 待办已登记于代码(从格/正格互斥结构)",
+   "V7.101" in _gj_src and "Phase 4.3" in _gj_src, "未见登记")
+ck("登记注明不改判定(避免在 baseline 未重跑前动格局层结构)",
+   "本次不擅动" in _gj_src, "未见不改判定声明")
+# 专旺/从格兜底位置(正格分支之后)须保持 —— v3 精神相符
+ck("专旺/从格兜底在正格分支之后(正格不成时才看)",
+   _gj_src.index("专旺/从格兜底") > _gj_src.index("正官格: 官逢财印"),
+   "兜底位置异常")
+# 身弱不得出现在定格入口(公理二)—— 格局层不得直接产出身弱布尔
+ck("公理二: 格局层不产出身强/身弱布尔值(定格入口无身弱字段)",
+   ("'身弱'" not in _gj_src) and ("\"身弱\"" not in _gj_src)
+   or "不回答身强/身弱" in _gj_src, "格局层疑似出现身弱字段")
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
