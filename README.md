@@ -42,6 +42,20 @@ docs/heluo/HELUO_ENGINE.md # 引擎说明
 
 > 流时卦按设计剥离，不纳入计算。大运/流年/流月由引擎自算；流月以节气为锚。
 
+### 惰性化（H10 定稿方案）
+
+只算目标点，其余仅元数据：
+
+- `compute(..., target_year, target_month, target_day)`：目标流年 1 套流年卦、
+  目标年 12 流月卦（顶层 `timeline.monthly_hexagrams`，完整卦象，不再嵌套 yearly）、
+  目标月 1 个流日本卦（顶层 `timeline.daily_hexagram`：`base_hex` + `daily_yao` 6 段，
+  每爻管 5 日、满 30 日，原典《起日卦例》）。
+- 全部流年元数据（year/age/ganzhi，无卦象）在 `timeline.yearly_meta`。
+- 不传 target：兼容全量（静态层一次算完）。
+
+性能（1980-06-22 庚申男，稳态）：**带 target 惰性 ~24ms/案例** vs 无 target 全量 ~937ms，
+省约 97% 算力。
+
 ### 黄历桥接（H9b）
 
 流日应期段（guajie.liuri_lunar）挂载黄历标注（农历/日柱/纳音/节气/宜忌）。数据源：

@@ -157,6 +157,7 @@ def compute_liunian(
     birth_year: int,
     age_from: int = 1,
     age_to: int = 100,
+    target_year: int | None = None,
 ) -> LiuNianResult:
     """
     逐岁推演流年卦（《河洛真数》小象行年卦气，按大运爻分段）。
@@ -170,6 +171,12 @@ def compute_liunian(
     阴爻大运段：自本爻起逐爻自下而上回绕（一年变一爻）。
 
     应爻关系：一四应、二五应、三六应 → 应爻 index = (yuantang + 3) % 6。
+
+    target_year: 惰性化（H10 定稿方案）。传公历年份时仅该年生成完整卦象
+      （hexagram_name/upper/lower/lines/rule），其余年份只保留元数据
+      （age/year/ganzhi/yang_year/yuantang_index，卦象字段置空），
+      避免全量 100 套卦象输出；链式推演（prev1）不受影响。
+      缺省 None 保持全量行为（向后兼容，独立函数测试依赖）。
     """
     result = LiuNianResult(birth_year=birth_year)
     dayun = compute_dayun_liyao(
@@ -238,10 +245,15 @@ def compute_liunian(
             rule = f"阴爻段自本爻逐爻(变{flip_idx})"
 
         upper, lower, name = _lines_to_hexagram(cur)
+        is_target = (target_year is None) or (year == target_year)
         result.years.append(LiuNianYear(
             age=age, year=year, ganzhi=ganzhi, yang_year=yang,
-            hexagram_name=name, upper=upper, lower=lower,
-            lines=cur, rule=rule, yuantang_index=seg_yt,
+            hexagram_name=name if is_target else "",
+            upper=upper if is_target else "",
+            lower=lower if is_target else "",
+            lines=cur if is_target else [],
+            rule=rule if is_target else "",
+            yuantang_index=seg_yt,
         ))
         prev1 = cur
 
@@ -443,11 +455,16 @@ __all__ = [
 
 @dataclass(frozen=True)
 class Timeline:
-    """时间序列卦象结果（原 temporal.py 数据类，随占位实现清理迁入本模块）。"""
-    yearly_hexagrams: list  # 流年卦列表（含 months/days）
-    monthly_hexagrams: list  # 流月卦列表（首年 12 月模板）
-    daily_hexagram: dict     # 今日卦
+    """时间序列卦象结果（原 temporal.py 数据类，随占位实现清理迁入本模块）。
+
+    H10 定稿方案惰性化：完整卦只算目标点（目标流年 1 套 / 目标年 12 流月 / 目标月 1 流日），
+    其余流年只保留元数据（yearly_meta）。
+    """
+    yearly_hexagrams: list  # 兼容字段：目标流年 1 条（含 months/days），无目标时为空
+    monthly_hexagrams: list  # 目标年 12 流月卦（完整卦象），不再嵌套在 yearly 内
+    daily_hexagram: dict     # 目标月流日本卦（base_hex + daily_yao 6 段）
     hourly_hexagram: object  # 时刻卦（流时按设计剥离，恒 None）
     seasonal_hexagram: object  # 节候卦（H11，calculate 层回填）
     qi_phase: object         # 卦气（含大运爻位值运）
     hua_gong: object         # 化工状态（H6，calculate 层回填 dict）
+    yearly_meta: list = None  # H10 全部流年元数据（year/age/ganzhi/yang_year/大运段归属，无卦象）

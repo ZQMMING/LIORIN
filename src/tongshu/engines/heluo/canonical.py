@@ -207,6 +207,71 @@ def _hua_gong_to_dict(hg: HuaGongResult | None) -> dict | None:
     }
 
 
+def _compose_daily_hexagram(
+    monthly_hexagrams: list[dict],
+    target_month: int | None = None,
+    target_day: int | None = None,
+) -> dict:
+    """H10 顶层流日结构：目标月 1 个流日本卦（《起日卦例》每爻管5日/满30日）。
+
+    daily_yao = 6 段（初爻→上爻，每段管 5 日），target_day 命中段标 active_segment。
+    流日卦以当月流月卦为本逐爻变（days 段由 compute_liuri 产出，节气对齐）。
+    """
+    empty = {"base_hex": None, "daily_yao": [], "target_day": target_day,
+             "active_segment": None, "note": "无目标年流月卦"}
+    if not monthly_hexagrams:
+        return empty
+    m = None
+    if target_month is not None:
+        for mm in monthly_hexagrams:
+            if mm.get("month") == target_month:
+                m = mm
+                break
+    if m is None:
+        m = monthly_hexagrams[0]
+    days = m.get("days") or []
+    if not days:
+        return {"base_hex": None, "daily_yao": [], "target_day": target_day,
+                "active_segment": None, "note": "目标月无流日段"}
+    daily_yao = []
+    active_segment = None
+    m_lines = m.get("lines") or []
+    for k, dseg in enumerate(days):
+        yao_idx = k if k < 6 else 5
+        dl = dseg.get("lines") or []
+        # 流日动爻 = 段卦相对月卦的变爻（《起日卦例》逐爻俱变）
+        fl = dseg.get("flip_index")
+        if fl is None:
+            diffs = [i for i in range(6) if len(dl) > i and len(m_lines) > i and dl[i] != m_lines[i]]
+            fl = diffs[0] if len(diffs) == 1 else None
+        seg = {
+            "day_from": dseg.get("day_from", k * 5 + 1),
+            "day_to": dseg.get("day_to", k * 5 + 5),
+            "active_yao": ("初爻", "二爻", "三爻", "四爻", "五爻", "上爻")[yao_idx],
+            "hexagram": dseg.get("name", ""),
+            "lines": dl,
+            "flip_index": fl,
+            "date_from": dseg.get("date_from") or "",
+            "hours": dseg.get("hours") or [],  # 流时（设计剥离，保留结构）
+        }
+        daily_yao.append(seg)
+        if target_day is not None and seg["day_from"] <= target_day <= seg["day_to"]:
+            active_segment = seg
+    return {
+        "base_hex": {
+            "month": m.get("month"),
+            "month_hexagram": m.get("name", ""),
+            "yue_yao_index": m.get("yue_yao_index"),
+            "jie_datetime": m.get("jie_datetime") or "",
+            "first_segment": daily_yao[0] if daily_yao else None,
+            "note": "流日本卦：以目标月月卦为本逐爻变，每爻管5日、满30日（起日卦例）",
+        },
+        "daily_yao": daily_yao,
+        "target_day": target_day,
+        "active_segment": active_segment,
+    }
+
+
 @dataclass(frozen=True)
 class HeluoResult:
     """河洛计算完整结果"""
@@ -277,6 +342,9 @@ class HeluoCanonical:
         birth_date: str | None = None,
         true_solar_datetime: str | None = None,
         solar_phase: str | None = None,
+        target_year: int | None = None,
+        target_month: int | None = None,
+        target_day: int | None = None,
     ) -> HeluoResult:
         """
         完整计算链：
@@ -291,6 +359,8 @@ class HeluoCanonical:
         true_solar_datetime: 真太阳时 ISO 格式。可选，默认取 birth_date。
         solar_phase: "winter"（冬至后至夏至前）/ "summer"（夏至后至冬至前）。
                       纯卦（女乾/男坤）元堂上下行向分支；未传且 birth_date 有效时自动推算。
+        target_year/target_month/target_day: H10 惰性化目标点。仅目标流年生成完整流年卦、
+                      目标年 12 流月卦、目标月 1 流日卦；其余流年仅元数据。缺省仅元数据。
         """
         # Step 1: 计算天数地数
         numbers = compute_tian_di_shu(bazi, gender)
@@ -341,9 +411,10 @@ class HeluoCanonical:
             solar_phase=solar_phase,
         )
 
-        # Step 6: 时间序列（大运爻位值运 + 流年卦 + 流月卦）
+        # Step 6: 时间序列（大运爻位值运 + 流年卦 + 流月卦 + 流日卦；H10 惰性目标点）
         timeline = self._build_timeline(
-            bazi, prenatal, yuantang, postnatal, postnatal_yuantang, birth_year
+            bazi, prenatal, yuantang, postnatal, postnatal_yuantang, birth_year,
+            target_year=target_year, target_month=target_month, target_day=target_day,
         )
 
         # Step 7: 卦象结构分析
@@ -420,10 +491,20 @@ class HeluoCanonical:
         postnatal: PostnatalHexagram,
         postnatal_yuantang: YuanTang,
         birth_year: int | None,
+        target_year: int | None = None,
+        target_month: int | None = None,
+        target_day: int | None = None,
     ) -> Timeline:
-        """构建时间序列：大运（爻位值运）+ 流年卦 + 流月卦。
+        """构建时间序列：大运（爻位值运）+ 流年卦 + 流月卦 + 流日卦。
 
         基于 timeline_yun 模块（《河洛理数·卷之四/五》论大运/流年/流月）。
+
+        H10 定稿方案惰性化：完整卦只算目标点——
+          - 大运层：元数据（爻位值运，不起卦）
+          - 流年层：全部年份保留元数据（yearly_meta）；仅目标流年 target_year 生成完整卦
+          - 流月层：仅目标年 12 个流月卦，放顶层 monthly_hexagrams（不再嵌套 yearly[].months 全量）
+          - 流日层：仅目标月 1 个流日本卦，放顶层 daily_hexagram（base_hex + 30 日/6 爻段）
+        target_year 缺省：仅元数据，不产目标卦（guajie 无目标不定位，向后兼容）。
         """
         if birth_year is None:
             # DISPUTE-HL-03：不再静默占位（1984 甲子），按 docstring 承诺从年柱干支反推
@@ -445,7 +526,7 @@ class HeluoCanonical:
             postnatal_yuantang.yuantang_index,
         )
 
-        # 流年卦（1~100 岁，按大运爻分段）
+        # 流年卦（1~100 岁，按大运爻分段；H10 惰性：仅 target_year 生成完整卦象）
         liunian = compute_liunian(
             prenatal_lines,
             yuantang.yuantang_index,
@@ -454,11 +535,22 @@ class HeluoCanonical:
             birth_year=birth_year,
             age_from=1,
             age_to=100,
+            target_year=target_year,
         )
 
         # 流月卦（以流年卦为本，元堂取该流年所属大运段元堂）+ 流日卦
         yearly = []
+        yearly_meta = []
         for y in liunian.years:
+            yearly_meta.append({
+                "age": y.age,
+                "year": y.year,
+                "ganzhi": y.ganzhi,
+                "yang_year": y.yang_year,
+                "yuantang_index": y.yuantang_index if y.yuantang_index >= 0 else -1,
+            })
+            if not y.hexagram_name:
+                continue  # 非目标年：仅元数据，不起流月/流日卦
             # 流年卦元堂：大运分段后取该年所属大运段元堂；无则回退先天元堂
             yyt = y.yuantang_index if y.yuantang_index >= 0 else yuantang.yuantang_index
             # 流年卦元堂爻性（H8 解卦层：流年卦断爻=流年卦元堂，规格书"流月以流年卦元堂为本"）
@@ -508,12 +600,13 @@ class HeluoCanonical:
                 "months": months,
             })
 
-        # P1：易经解卦层 — 为每个流年卦附加 EVENT_SIGNAL
-        yearly = interpret_all_liunian(
-            yearly,
-            yuan_tang_index=yuantang.yuantang_index,
-            yuan_tang_nature=yuantang.yao_nature,
-        )
+        # P1：易经解卦层 — 为目标流年卦附加 EVENT_SIGNAL（惰性：仅 1 条）
+        if yearly:
+            yearly = interpret_all_liunian(
+                yearly,
+                yuan_tang_index=yuantang.yuantang_index,
+                yuan_tang_nature=yuantang.yao_nature,
+            )
 
         dayun_entries = [
             {
@@ -526,19 +619,16 @@ class HeluoCanonical:
             for e in dayun.sequence
         ]
 
+        # H10 顶层结构：monthly_hexagrams = 目标年 12 流月卦（完整，含 days）
+        monthly_hexagrams = list(yearly[0].get("months", [])) if yearly else []
+        # H10 顶层结构：daily_hexagram = 目标月流日本卦（base_hex + 30 日/6 爻段）
+        daily_hexagram = _compose_daily_hexagram(monthly_hexagrams, target_month, target_day)
+
         return Timeline(
             yearly_hexagrams=yearly,
-            # 流月模板：首年 12 月（逐岁同构，按月卦从世上起例）；完整流月在 yearly[].months
-            monthly_hexagrams=[
-                {k: m[k] for k in ("month", "name", "upper", "lower", "yue_yao_index")}
-                for m in (yearly[0].get("months", []) if yearly else [])
-            ],
-            daily_hexagram={
-                "date": str(birth_year),
-                "hexagram": prenatal.hexagram_name,
-                "upper": prenatal.upper_gua,
-                "lower": prenatal.lower_gua,
-            },
+            # 完整流月卦在 monthly_hexagrams（修复"内嵌在 year、顶层为空"的接线 bug）
+            monthly_hexagrams=monthly_hexagrams,
+            daily_hexagram=daily_hexagram,
             hourly_hexagram=None,  # 流时按设计剥离（不接）
             seasonal_hexagram=None,  # H11 节候卦：calculate() 层回填
             qi_phase={
@@ -546,6 +636,7 @@ class HeluoCanonical:
                 "note": "爻位值运（阳爻9年/阴爻6年，自元堂起行先天再行后天）",
             },
             hua_gong=None,  # H6 化工：calculate() 层回填 dict
+            yearly_meta=yearly_meta,
         )
 
     def _compute_huagong(

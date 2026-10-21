@@ -994,71 +994,66 @@ def build_guajie_from_result(
         liushi_hex_name = ""
         liushi_yao_name = ""
         if target_year is not None and result.timeline is not None:
-            entries = result.timeline.yearly_hexagrams or []
-            for i, e in enumerate(entries):
+            # 流年：目标年卦（H10 惰性后 yearly_hexagrams 仅目标年 1 条，无 prev 逐年回退）
+            for e in (result.timeline.yearly_hexagrams or []):
                 if e.get("year") == target_year:
                     liunian_hex = _short(e.get("hexagram", ""))
                     # 流年卦断爻：优先取流年卦元堂爻（规格书：流年断爻=流年卦元堂，
-                    # 流月亦以流年卦元堂为本）；无则回退逐年差异动爻；再无则先天元堂
+                    # 流月亦以流年卦元堂为本）；无则回退先天元堂
                     yyt = e.get("yuantang_index")
                     cur_lines = e.get("lines") or []
                     if yyt is not None and len(cur_lines) > yyt:
                         liunian_yao_name = _yao_name(yyt, cur_lines[yyt])
-                    if not liunian_yao_name and i > 0:
-                        prev_lines = entries[i - 1].get("lines") or []
-                        diffs = [k for k in range(6) if len(cur_lines) > k and len(prev_lines) > k and cur_lines[k] != prev_lines[k]]
-                        if len(diffs) == 1 and len(cur_lines) > diffs[0]:
-                            liunian_yao_name = _yao_name(diffs[0], cur_lines[diffs[0]])
                     if not liunian_yao_name:
                         liunian_yao_name = yuantang_yao
-                    # 流月应期：从当年 months 自动定位
-                    if target_month and not liuyue_hex_name:
-                        for m in (e.get("months") or []):
-                            if m.get("month") == target_month:
-                                liuyue_hex_name = _short(m.get("name", ""))
-                                yi = m.get("yue_yao_index")
-                                ml = m.get("lines") or []
-                                if yi is not None and len(ml) > yi:
-                                    liuyue_yao_name = _yao_name(yi, ml[yi])
-                                # 流日应期：当月 days 段（每爻管5日）自动定位
-                                if target_day and m.get("days"):
-                                    for dseg in m["days"]:
-                                        d_from = dseg.get("day_from", 1)
-                                        d_to = dseg.get("day_to", 5)
-                                        if d_from <= target_day <= d_to:
-                                            liuri_hex_name = _short(dseg.get("name", ""))
-                                            dl = dseg.get("lines") or []
-                                            diffs = [k for k in range(6) if len(dl) > k and len(ml) > k and dl[k] != ml[k]]
-                                            if len(diffs) == 1 and len(dl) > diffs[0]:
-                                                liuri_yao_name = _yao_name(diffs[0], dl[diffs[0]])
-                                            # 流日黄历标注（H9b）：命中段首日公历（节气对齐才有）
-                                            liuri_solar_date = dseg.get("date_from") or ""
-                                            if liuri_solar_date:
-                                                try:
-                                                    hd = huangli_provider(liuri_solar_date) if callable(huangli_provider) else None
-                                                except Exception:
-                                                    hd = None
-                                                if hd is None:
-                                                    from .heluo_lunar_bridge import annotate_day as _anno
-                                                    _lunar_anno = _anno(liuri_solar_date)
-                                                else:
-                                                    from .heluo_lunar_bridge import annotate_day as _anno
-                                                    _lunar_anno = _anno(liuri_solar_date, hd)
-                                            else:
-                                                _lunar_anno = None
-                                            # 流时应期：值日卦 hours（起时卦例：前六时进/后六时退）
-                                            if target_hour and dseg.get("hours"):
-                                                for hs in dseg["hours"]:
-                                                    if hs.get("hour") == target_hour:
-                                                        liushi_hex_name = _short(hs.get("name", ""))
-                                                        si = hs.get("shi_yao_index")
-                                                        sl = hs.get("lines") or []
-                                                        if si is not None and len(sl) > si:
-                                                            liushi_yao_name = _yao_name(si, sl[si])
-                                                        break
-                                            break
-                                break
                     break
+            # 流月应期：顶层 monthly_hexagrams（H10 完整 12 月，不再嵌套 yearly[].months）
+            if target_month and not liuyue_hex_name:
+                for m in (result.timeline.monthly_hexagrams or []):
+                    if m.get("month") == target_month:
+                        liuyue_hex_name = _short(m.get("name", ""))
+                        yi = m.get("yue_yao_index")
+                        ml = m.get("lines") or []
+                        if yi is not None and len(ml) > yi:
+                            liuyue_yao_name = _yao_name(yi, ml[yi])
+                        break
+            # 流日应期：顶层 daily_hexagram.daily_yao（H10 目标月 6 段，每爻管5日）
+            if target_day and not liuri_hex_name:
+                for dseg in ((result.timeline.daily_hexagram or {}).get("daily_yao") or []):
+                    d_from = dseg.get("day_from", 1)
+                    d_to = dseg.get("day_to", 5)
+                    if d_from <= target_day <= d_to:
+                        liuri_hex_name = _short(dseg.get("hexagram", ""))
+                        dl = dseg.get("lines") or []
+                        fl = dseg.get("flip_index")
+                        if fl is not None and len(dl) > fl:
+                            liuri_yao_name = _yao_name(fl, dl[fl])
+                        # 流日黄历标注（H9b）：命中段首日公历（节气对齐才有）
+                        liuri_solar_date = dseg.get("date_from") or ""
+                        if liuri_solar_date:
+                            try:
+                                hd = huangli_provider(liuri_solar_date) if callable(huangli_provider) else None
+                            except Exception:
+                                hd = None
+                            if hd is None:
+                                from .heluo_lunar_bridge import annotate_day as _anno
+                                _lunar_anno = _anno(liuri_solar_date)
+                            else:
+                                from .heluo_lunar_bridge import annotate_day as _anno
+                                _lunar_anno = _anno(liuri_solar_date, hd)
+                        else:
+                            _lunar_anno = None
+                        # 流时应期：值日卦 hours（起时卦例：前六时进/后六时退）
+                        if target_hour and dseg.get("hours"):
+                            for hs in dseg["hours"]:
+                                if hs.get("hour") == target_hour:
+                                    liushi_hex_name = _short(hs.get("name", ""))
+                                    si = hs.get("shi_yao_index")
+                                    sl = hs.get("lines") or []
+                                    if si is not None and len(sl) > si:
+                                        liushi_yao_name = _yao_name(si, sl[si])
+                                    break
+                        break
 
         gj = compose_guajie(
             prenatal_name=prenatal, postnatal_name=postnatal,

@@ -77,9 +77,12 @@ class TestJingyiOutputLayer:
     @pytest.fixture(scope="class")
     @classmethod
     def guajie_dict(cls):
-        r = HeluoAdapter().compute((1980, 6, 22, 10), gender="male")
-        return build_guajie_from_result(
-            r, target_year=2026, target_month=9, target_day=15, target_hour=10)
+        # H10 惰性化契约：target 必须传入 compute（timeline 仅含目标点数据）；
+        # 流时按设计剥离（target_hour 不接，liushi_yao 恒 None，test_four_layers 自动跳过）
+        r = HeluoAdapter().compute(
+            (1980, 6, 22, 10), gender="male",
+            target_year=2026, target_month=9, target_day=15)
+        return r.guajie or {}
 
     def test_benming_present(self, guajie_dict):
         bm = guajie_dict.get("benming") or {}

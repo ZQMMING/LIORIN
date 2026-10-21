@@ -177,6 +177,9 @@ class HeluoAdapter:
             birth_year=birth_year,
             birth_date=birth_date,
             true_solar_datetime=true_solar_datetime,
+            target_year=target_year,
+            target_month=target_month,
+            target_day=target_day,
         )
 
         # H8: 解卦层（原典判词）挂载 — 独立于冻结的 calculate，防御性兜底
