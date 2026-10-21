@@ -1075,6 +1075,34 @@ for _fp in _g3.glob(os.path.join(ROOT, 'engines', '**', '*.py'), recursive=True)
         if _re2.search(r"get\('class'\)\s*==\s*'(HEAVY|LIGHT)'", _l):
             _repo_bad.append('%s:%d %s' % (os.path.relpath(_fp, ROOT), _i, _l.strip()[:70]))
 ck('全仓无「class 精确等于 HEAVY/LIGHT」写法(V7.118/120 已清零)', not _repo_bad, _repo_bad[:5])
+
+# ═══ FF2. 全仓「土之旺地」表口径 (PZZQ L800-801 轻重根之别; V7.102/103/122 三次同型错误的防再犯闸门) ═══
+# 凡以支表表示"某五行之旺地/通根/重根"者, 土行须为【禄巳、帝旺午】;
+#   以四库(辰戌丑未)为土之旺地属墓库轻根, 判"坐旺/通根"会与原典轻重根之别相反.
+_WANGZHI_OK = {
+    '木': {'寅', '卯'}, '火': {'巳', '午'}, '土': {'巳', '午'},
+    '金': {'申', '酉'}, '水': {'亥', '子'},
+}
+_wzt_bad = []
+_wzt_n = 0
+for _fp in _g3.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=True):
+    if '.bak' in _fp or '_archive' in _fp:
+        continue
+    for _i, _l in enumerate(open(_fp, encoding='utf-8', errors='ignore').read().split('\n'), 1):
+        _m = _re2.search(r"'土'\s*:\s*[\(\[]([^\)\]]*)[\)\]]", _l)
+        if not _m:
+            continue
+        _items = set(_re2.findall(r"'([辰戌丑未寅卯巳午申酉亥子])'", _m.group(1)))
+        if not _items:
+            continue
+        if not _re2.search(r'旺|WANG|根|有气|通根|坐旺|heavy|wang', _l, _re.I):
+            continue
+        _wzt_n += 1
+        if _items != _WANGZHI_OK['土']:
+            _wzt_bad.append("%s:%d %s" % (os.path.relpath(_fp, ROOT), _i, _l.strip()[:90]))
+ck("全仓「土之旺地」表不用四库(V7.102/103/122 同型已清)", not _wzt_bad, _wzt_bad[:5])
+ck("全仓土旺地支表已扫描到(>=1 处)", _wzt_n >= 1, _wzt_n)
+
 # 运行时: 日主有重根之盘不得报印多埋子(母不灭子)
 from engines.common.l0_fact_builder import build as _bf
 _viol = []
