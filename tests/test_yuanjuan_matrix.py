@@ -1048,6 +1048,41 @@ ck("主链实跑: 六亲未传性别时不臆断",
    (_r_mt.get("liu_qin") or {}).get("status") == "UNKNOWN_GENDER",
    (_r_mt.get("liu_qin") or {}).get("status"))
 
+# ═══ FF. 根类轻重口径统一 (PZZQ L800-801; V7.118/V7.119) ═══
+# L800-801「根有轻重之分: 长生、禄、帝旺为重根, 墓库、余气为轻根」
+# -> 根类枚举为细分(HEAVY_LONGSHENG/HEAVY_LU/HEAVY_WANG/HEAVY_BEN/LIGHT_MU_KU/LIGHT_YU_QI/
+#    SPECIAL_LONGSHENG_YIN), 判"有无重根"须用前缀匹配, 不可精确等于 'HEAVY'.
+print("\n[FF] 根类轻重口径统一 (PZZQ L800-801)")
+from engines.common.daymaster_root_class import build_root_classes as _brc
+_rc_files = {}
+for _fn in ('bingyao_layer.py', 'zhuangui_layer.py', 'branch_role_matrix.py',
+            'daymaster_power_network.py'):
+    _rc_files[_fn] = open(os.path.join(ROOT, "engines", "common", _fn),
+                          encoding='utf-8', errors='ignore').read()
+for _fn, _src in _rc_files.items():
+    _bad_exact = []
+    for _l in _src.split('\n'):
+        if _re2.search(r"get\('class'\)\s*==\s*'HEAVY'", _l):
+            _bad_exact.append(_l.strip()[:80])
+# 运行时: 日主有重根之盘不得报印多埋子(母不灭子)
+from engines.common.l0_fact_builder import build as _bf
+_viol = []
+for _bz in ("甲寅 甲子 丙寅 戊寅", "乙卯 乙卯 乙卯 乙卯", "壬申 壬申 壬申 壬申"):
+    _ps = _bz.replace(' ', '')
+    _p = {'year': [_ps[0], _ps[1]], 'month': [_ps[2], _ps[3]],
+          'day': [_ps[4], _ps[5]], 'hour': [_ps[6], _ps[7]]}
+    _f = _bf(_p)
+    _f['pillars'] = _p
+    _hidden = {_p[_k][1]: _f['hidden_stems'][_k] for _k in ('year', 'month', 'day', 'hour')}
+    _rcx = _brc(_p, _hidden)
+    _heavy = [k for k, v in (_rcx.get('per_pillar') or {}).items()
+              if str(v.get('root_class') or '').startswith('HEAVY')]
+    if _heavy:
+        _ids = [b.get('bing_id') for b in (paipan(_bz).get("bing_list") or [])]
+        if 'YIN_DUO_MAI_ZI' in _ids:
+            _viol.append("%s 重根=%s 却报印多埋子" % (_bz, _heavy))
+ck("运行时: 日主有重根不报印多埋子(母不灭子, V7.119)", not _viol, _viol[:3])
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

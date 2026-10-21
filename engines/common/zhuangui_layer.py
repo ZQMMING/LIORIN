@@ -39,7 +39,8 @@ def resolve_zhuangui(facts: Dict[str, Any], debate: Dict[str, Any]) -> Dict[str,
     dm_g = facts.get('day_stem', '')
     dmwx = GAN_WX.get(dm_g, '')
     rwcf = facts.get('root_weight_class_facts', {})
-    has_heavy = any(v.get('class') == 'HEAVY' for v in rwcf.values())
+    # ★ V7.118 根类细分枚举须前缀匹配(HEAVY_LU/HEAVY_BEN/...); 精确匹配恒假.
+    has_heavy = any(str(v.get('class') or '').startswith('HEAVY') for v in rwcf.values())
 
     converted, secondary = [], []
     for r in ranked[1:]:

@@ -181,7 +181,9 @@ def build_power_network(a: Dict[str, Any], root_classes: Dict[str, Any] = None,
         },
         'ROOT': {
             'root_weight_class': _agg_root(root_classes) if root_classes is not None else ra['root_weight_class'],
-            'has_root': (_agg_root(root_classes) if root_classes is not None else ra['root_weight_class']) in ('HEAVY', 'LIGHT'),
+            # ★ V7.118 根类细分枚举须前缀匹配
+        'has_root': (str(_agg_root(root_classes) if root_classes is not None
+                      else ra['root_weight_class']) or '').startswith(('HEAVY', 'LIGHT', 'SPECIAL')),
             **({
                 'root_class_detail': {
                     k: v['root_class'] for k, v in root_classes['per_pillar'].items()

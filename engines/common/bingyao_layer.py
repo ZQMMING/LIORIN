@@ -301,8 +301,14 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     dm_wx = GAN_WX.get(facts.get('day_stem', ''), daymaster_element)
     month_qi_element = facts.get('month_qi_element', '')
     root_weight = facts.get('root_weight_class_facts', {})
-    has_heavy_root = any(v.get('class') == 'HEAVY' for v in root_weight.values())
-    has_light_root = any(v.get('class') == 'LIGHT' for v in root_weight.values())
+    # ★ V7.118 根类为细分枚举(HEAVY_LU/HEAVY_BEN/LIGHT_YU_QI/SPECIAL_LONGSHENG_YIN...),
+    #   须前缀匹配(与 root_effectiveness_filter 一致); 精确匹配恒假致「日主无重根」恒成立,
+    #   误报印多埋子等病(真值 甲寅甲子丙寅戊寅: 甲禄寅为重根, 母不灭子).
+    has_heavy_root = any(str(v.get('class') or '').startswith('HEAVY')
+                        for v in root_weight.values())
+    has_light_root = any(str(v.get('class') or '').startswith('LIGHT')
+                        or str(v.get('class') or '').startswith('SPECIAL')
+                        for v in root_weight.values())
     has_root = has_heavy_root or has_light_root
 
     # 五行力量(供各病识别使用, facts中可能已注入wuxing_power)
@@ -760,10 +766,13 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         #   原典 PZZQ L1130「若四柱财无根气, 则印虽多, 【不能用财破印】; 原局财星太旺, 印绶被伤,
         #   则反须以比劫去财扶印为美」—— 财只决定【用什么药】, 不决定【病是否成立】.
         #   (V7.61 曾以"有财疏印"作印不作病之理由, 方向反, 已撤; 连带的 V7.67/V7.69 亦撤.)
-        _, _dm_ben_y = _tou_ben(daymaster_element)
-        if _dm_ben_y >= 1:
+        # ★ V7.119 日主【无重根】方为母多灭子(PZZQ L800-801「长生、禄、帝旺为重根, 墓库、余气为轻根」;
+        #   L1075「日时逢刃, 取刃帮身以敌煞」/ L1331「乙生寅月, 月劫秉令」).
+        #   旧判用 _tou_ben 本气根数, 把【长生重根】(丙在寅/壬在申/庚在巳)误作无根 -> 误报母多灭子
+        #   (真值 甲寅甲子丙寅戊寅: 丙日主, 寅为长生重根, 印水当令, 母不灭子).
+        if has_heavy_root:
             ok = False
-            yin_matched = ['日主有本气真根%d -> 母不灭子, 印不作病(印滞身属格之问题, 印格用财损印按格论)' % _dm_ben_y]
+            yin_matched = ['日主有重根 -> 母不灭子, 印不作病(PZZQ L800-801 重根含长生禄帝旺; 印滞身属格之问题, 印格用财损印按格论)']
     if ok:
         b = BING_TYPES['YIN_DUO_MAI_ZI']
         bing_list.append({
