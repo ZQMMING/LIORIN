@@ -363,20 +363,49 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
     dm = facts['day_stem']
     dmw = WX[dm]
 
-    # 从spectrum获取独立布尔枚举输出 (P0新增)
-    ws = spectrum.get('wang_shuai', {}) if isinstance(spectrum, dict) else {}
-    qr = spectrum.get('qiang_ruo', {}) if isinstance(spectrum, dict) else {}
-    in_season = ws.get('in_season', False)
-    root_class = qr.get('root_class', 'NONE')
-    has_heavy = qr.get('has_heavy_root', False)
-    has_root = qr.get('has_root', False)
-    support_n = qr.get('support_stem_count', 0)
-    oppose_n = qr.get('oppose_stem_count', 0)
-    legacy_tier = spectrum.get('spectrum') if isinstance(spectrum, dict) else None
+    # ★ V7.110 读取【结构轴】(build_power_structure 的实际结构; 旧读键 'wang_shuai'/'qiang_ruo'/'spectrum'
+    #   均不存在 -> in_season 恒 False、root_class 恒 'NONE' -> is_shuai_ju 恒 True -> 全盘皆判"衰局",
+    #   DTS L215/L235「旺则抑之」分支(官杀/食伤)从未生效, 且文案恒写"日主None").
+    #   现读 seasonal_axis(得令) / root_axis(根气) 两结构轴, 依 AGENTS.md 公理二只组织结构,
+    #   不造"身强/身弱"单极布尔(沿用「旺局/衰局/中和」三态表述).
+    _sp = spectrum if isinstance(spectrum, dict) else {}
+    _sea = _sp.get('seasonal_axis') or {}
+    _root_ax = _sp.get('root_axis') or {}
+    in_season = bool(_sea.get('in_season'))
+    root_class = _root_ax.get('root_weight_class') or 'NONE'
+    _rwc = _root_ax.get('per_pillar') or {}
+    # 根气轻重: per_pillar 之类字段键为 'class'(非 'root_class'); HEAVY*=重根, LIGHT*=有根
+    has_heavy = any(str((v or {}).get('class') or '').startswith('HEAVY')
+                    for v in _rwc.values() if isinstance(v, dict))
+    has_root = has_heavy or any(str((v or {}).get('class') or '').startswith('LIGHT')
+                                for v in _rwc.values() if isinstance(v, dict))
+    # 党众计数: support/drain/control 各组为 {十神名: {stem_present, stem_count, root_present,...}},
+    #   故计数取各组 stem_count 之和(印比=生扶, 食伤财=泄, 官杀=克)
+    def _grp_count(_g):
+        _t = 0
+        for _v in (_g or {}).values():
+            if isinstance(_v, dict):
+                _t += int(_v.get('stem_count') or 0)
+        return _t
+    _sg = _sp.get('support_group') or {}
+    _dg = _sp.get('drain_group') or {}
+    _cg = _sp.get('control_group') or {}
+    support_n = _grp_count(_sg)
+    drain_n = _grp_count(_dg)
+    oppose_n = _grp_count(_cg) + drain_n
+    if not support_n:
+        support_n = sum(1 for _k in ('year', 'month', 'day', 'hour')
+                        if _k in _rwc and str((_rwc.get(_k) or {}).get('class') or '').startswith('HEAVY'))
+    # 文案档位(结构三态, 非身强弱)
+    legacy_tier = '旺局' if (has_heavy and (in_season or support_n >= 2)) else (
+        '衰局' if (not has_root and support_n == 0 and (not in_season)) else '中和')
 
     # 旺局/衰局判断 (布尔+枚举组合, 不依赖ratio)
+    # ★ V7.112 衰局要件补【无生扶党众】: 原典 PZZQ L799「失令为衰; 若比劫印绶重叠, 年日时又通根,
+    #   则失令而不弱」/ L762「秋木虽弱, 木根深而木亦强」—— 失令而有印比党众者不得判衰,
+    #   否则轨内只出"宜扶"候选, 抹去原典"失令而不弱"之别.
     is_wang_ju = has_heavy and (in_season or support_n >= 2)
-    is_shuai_ju = (root_class == 'NONE') and ((not in_season) or oppose_n >= 2)
+    is_shuai_ju = (not has_root) and (support_n == 0) and (not in_season)
 
     # 中和: 不满足旺局也不满足衰局
     if not is_wang_ju and not is_shuai_ju:
@@ -388,13 +417,13 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                 boundary='中和需配合格局/调候/病药综合判断；不单独裁决'
             ))
         return _track_output('DTS', '体用轨', True, all_candidates, 'CANDIDATE',
-                             note=f'日主中和(布尔枚举: 得令={in_season},根={root_class}), 全五行候选(需配合其他轨道综合判断); legacy_tier={legacy_tier}')
+                             note=f'日主中和(结构枚举: 得令={in_season}, 根={root_class}, 印比={support_n}, 克泄={oppose_n}), 全五行候选(需配合其他轨道综合判断)')
 
     activated = is_wang_ju or is_shuai_ju
 
     if not activated:
         return _track_output('DTS', '体用轨', False,
-                             note=f'日主状态不明显偏离中和(得令={in_season},根={root_class}); legacy_tier={legacy_tier}')
+                             note=f'日主状态不明显偏离中和(结构枚举: 得令={in_season}, 根={root_class}, 印比={support_n}, 克泄={oppose_n})')
 
     candidates = []
     if is_wang_ju:
@@ -713,7 +742,7 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                 boundary='仅财星成势/从财格时适用；普通身衰财为忌'
             ))
 
-    grade = 'DIRECT' if legacy_tier in ('旺极', '衰极') else 'INFERRED'
+    grade = 'DIRECT' if legacy_tier in ('旺局', '衰局') else 'INFERRED'
     return _track_output('DTS', '体用轨', True, candidates, grade,
                          note=f'日主{legacy_tier}，{"宜抑" if is_wang_ju else "宜扶"}')
 
