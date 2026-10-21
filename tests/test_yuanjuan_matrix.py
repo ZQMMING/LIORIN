@@ -207,6 +207,152 @@ for (bz, want_shape, basis) in (
     else:
         ck("形态 %s" % basis, sh == want_shape, sh)
 
+# ═══ J. 八格成格要件 (PZZQ L1113-1118 原文逐条) ═══
+# 原文: 「用神专寻月令, 以四柱配之, 必有成败。何谓成?
+#   如官逢财印, 又无刑冲破害, 官格成也。
+#   财生官旺, 或财逢食生而身强带比, 或财格透印而位置妥贴, 两不相克, 财格成也。
+#   印轻逢煞, 或官印双全, 或身印两旺而用食伤泄气, 或印多逢财而财透根轻, 印格成也。
+#   食神生财, 或食带煞而无财, 弃食就煞而透印, 食格成也。
+#   身强七煞逢制, 煞格成也。
+#   伤官生财, 或伤官佩印而伤官旺印有根, 或伤官旺身主弱而透煞印, 或伤官带煞而无财, 伤官格成也。
+#   阳刃透官煞而露财印, 不见伤官, 阳刃格成也。
+#   建禄月劫, 透官而逢财印, 透财而逢食伤, 透煞而遇制伏, 建禄月劫之格成也。」
+print("\n[J] 八格成格要件 (PZZQ L1113-1118 逐条)")
+sys.path.insert(0, os.path.join(ROOT, "tests"))
+from yuangen_zhu import mk
+
+# J1 官格成: 官逢财印, 无刑冲破害 -> 成
+bz, _p = mk(dm='甲', month_tg='正官', gan_tgs=('正印', None, '偏财'))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("官格成: 官逢财印无刑冲破害(L1113) [%s]" % bz, (gc.get("ge") or "").startswith("正官格"), gc.get("ge"))
+
+# J2 财格成: 财逢食生而身强带比(月令财, 食神透, 比劫透)
+bz, _p = mk(dm='甲', month_tg='正财', gan_tgs=('食神', None, '比肩'))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("财格成: 财逢食生身强带比(L1114) [%s]" % bz, (gc.get("ge") or "") == "财格", gc.get("ge"))
+
+# J3 财格成: 财格透印而位置妥贴两不相克
+bz, _p = mk(dm='甲', month_tg='正财', gan_tgs=('正印', None, None))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("财格成: 财格透印位置妥贴两不相克(L1114) [%s]" % bz, (gc.get("ge") or "") == "财格", gc.get("ge"))
+
+# J4 印格成: 印轻逢煞(月令印+煞透+印不透)
+bz, _p = mk(dm='甲', month_tg='正印', gan_tgs=('七杀', None, None))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("印格成: 印轻逢煞(L1114) [%s]" % bz, (gc.get("ge") or "") == "印格(印轻逢煞)", gc.get("ge"))
+
+# J5 印格成: 官印双全(月令印+官透+官有根+无杀透)
+#   注: 原典 L1114 印格成格为【并列四路】(印轻逢煞/官印双全/身印两旺用食伤/印多逢财财透根轻),
+#   故断言只验"成格"(ge 非 None 且非 PO), 不锁格名细分.
+bz, _p = mk(dm='甲', month_tg='正印', gan_tgs=('正官', None, None))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("印格成: 官印双全(L1114, 并列四路之一) [%s]" % bz,
+   (gc.get("ge") or "").startswith("印格") and gc.get("cheng_bai") != "PO", gc.get("ge"))
+
+# J6 印格成: 印多逢财而财透根轻(月令印+财透)
+bz, _p = mk(dm='甲', month_tg='正印', gan_tgs=('偏财', None, None))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("印格成: 印多逢财财透根轻(L1114) [%s]" % bz, (gc.get("ge") or "").startswith("印格"), gc.get("ge"))
+
+# J7 食神格成: 食神生财(月令食神+财透)
+bz, _p = mk(dm='甲', month_tg='食神', gan_tgs=('偏财', None, None))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("食格成: 食神生财(L1115) [%s]" % bz, (gc.get("ge") or "").startswith("食神格"), gc.get("ge"))
+
+# J8 食神格成: 食带煞而无财, 弃食就煞而透印
+bz, _p = mk(dm='甲', month_tg='食神', gan_tgs=('七杀', None, '正印'))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("食格成: 食带煞无财弃食就煞透印(L1115) [%s]" % bz, (gc.get("ge") or "").startswith("食神格"), gc.get("ge"))
+
+# J9 七煞格成: 身强七煞逢制(月令七杀+食神制+身强)
+bz, _p = mk(dm='甲', month_tg='七杀', gan_tgs=('食神', None, '比肩'))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("煞格成: 身强七煞逢制(L1115) [%s]" % bz, (gc.get("ge") or "").startswith("七煞格"), gc.get("ge"))
+
+# J10 伤官格成: 伤官生财(月令伤官+财透)
+bz, _p = mk(dm='甲', month_tg='伤官', gan_tgs=('偏财', None, None))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("伤官格成: 伤官生财(L1116) [%s]" % bz, (gc.get("ge") or "").startswith("伤官格"), gc.get("ge"))
+
+# J11 伤官格成: 伤官佩印而伤官旺印有根
+bz, _p = mk(dm='甲', month_tg='伤官', gan_tgs=('正印', None, None))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("伤官格成: 伤官佩印而伤官旺印有根(L1116) [%s]" % bz, (gc.get("ge") or "").startswith("伤官格"), gc.get("ge"))
+
+# J12 阳刃格成: 阳刃透官煞而露财印, 不见伤官(日主阳, 月支=刃位)
+bz, _p = mk(dm='甲', month_tg='劫财', gan_tgs=('正官', None, '偏财'))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("阳刃格成: 透官煞露财印不见伤官(L1117) [%s]" % bz, (gc.get("ge") or "") == "阳刃格", gc.get("ge"))
+
+# J13 建禄月劫格成: 透官而逢财印(日主阳, 月支=禄位)
+bz, _p = mk(dm='甲', month_tg='比肩', gan_tgs=('正官', None, '偏财'))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("建禄月劫格成: 透官逢财印(L1117) [%s]" % bz, (gc.get("ge") or "") == "建禄月劫格", gc.get("ge"))
+
+# J14 建禄月劫格成: 透财而逢食伤
+bz, _p = mk(dm='甲', month_tg='比肩', gan_tgs=('偏财', None, '食神'))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("建禄月劫格成: 透财逢食伤(L1117) [%s]" % bz, (gc.get("ge") or "") == "建禄月劫格", gc.get("ge"))
+
+# J15 建禄月劫格成: 透煞而遇制伏
+bz, _p = mk(dm='甲', month_tg='比肩', gan_tgs=('七杀', None, '食神'))
+r = paipan(bz)
+gc = r.get("ge_cheng") or {}
+ck("建禄月劫格成: 透煞遇制伏(L1117) [%s]" % bz, (gc.get("ge") or "") == "建禄月劫格", gc.get("ge"))
+
+# ═══ K. 八格败格要件 (PZZQ L1145-1147 原文逐条) ═══
+# 原文: 「何谓败? 官逢伤克刑冲, 官格败也; 财轻比重, 财透七煞, 财格败也;
+#   印轻逢财, 或身强印重而透煞, 印格败也; 食神逢枭, 或生财露煞, 食神格败也;
+#   七煞逢财无制, 七煞格败也; 伤官非金水而见官, 或生财而带煞, 或佩印而伤轻身旺, 伤官格败也;
+#   阳刃无官煞, 刃格败也; 建禄月劫, 无财官, 透煞印, 建禄月劫之格败也。」
+print("\n[K] 八格败格要件 (PZZQ L1145-1147 逐条)")
+    # K 组: 用造盘器保证月令十神正确(手写柱易错十神, 致断言失真)
+print("\n[K] 八格败格要件 (PZZQ L1145-1147 逐条)")
+# L1145「何谓败? 官逢伤克刑冲, 官格败也; 财轻比重, 财透七煞, 财格败也;
+#   印轻逢财, 或身强印重而透煞, 印格败也; 食神逢枭, 或生财露煞, 食神格败也;
+#   七煞逢财无制, 七煞格败也; 伤官非金水而见官, 或生财而带煞, 或佩印而伤轻身旺, 伤官格败也;
+#   阳刃无官煞, 刃格败也; 建禄月劫, 无财官, 透煞印, 建禄月劫之格败也。」
+# 注: 败格判据为"格成而带忌", 引擎以 cheng_bai=PO / CHENG_ZHONG_YOU_PO 表之.
+for (kw, want_po, basis) in (
+        (dict(dm='甲', month_tg='正官', gan_tgs=('伤官', None, None)), True, "官格败: 官逢伤克(L1145)"),
+        (dict(dm='甲', month_tg='正财', gan_tgs=('七杀', None, None)), True, "财格败: 财透七煞(L1145)"),
+        # 印格败须【印轻财重】(PZZQ L2178「贪财坏印者, 必也印轻财重」): 印只月令一处本气根,
+        #   余支无印根; 财透干且有根(戊土在辰戌未为根).
+        (dict(dm='甲', month_tg='正印', gan_tgs=('比肩', None, '偏财'),
+              zhis=('寅', '子', '午', '辰')), True, "印格败: 印轻财重(L1145/L2178)"),
+        (dict(dm='甲', month_tg='食神', gan_tgs=('偏印', None, None)), True, "食神格败: 食神逢枭(L1145)"),
+        (dict(dm='甲', month_tg='七杀', gan_tgs=('偏财', None, None)), True, "七煞格败: 七煞逢财无制(L1145)"),
+        (dict(dm='甲', month_tg='伤官', gan_tgs=('正官', None, None)), True, "伤官格败: 非金水见官(L1145)"),
+        # 阳刃格败须【无官煞】且【非从旺/非专旺】: 戊日午月(戊刃午), 四柱无官杀透干
+        #   (注: 官杀若透而无根仍算"有官"? 引擎以 present_all(十神成员) 判存在, 故此处取 truly 无官杀)
+        (dict(dm='戊', month_tg='阳刃', gan_tgs=('正印', None, '正印'),
+              zhis=('子', '午', '丑', '卯')), True, "阳刃格败: 无官煞(L1147)"),
+):
+    try:
+        bz, _p = mk(**kw)
+    except Exception as _e:
+        ck("败格 %s" % basis, False, "造盘失败: %s" % _e)
+        continue
+    r = paipan(bz)
+    gc = r.get("ge_cheng") or {}
+    cb = gc.get("cheng_bai")
+    ck("败格 %s [%s]" % (basis, bz), cb in ("PO", "CHENG_ZHONG_YOU_PO"),
+       "cheng_bai=%s ge=%s" % (cb, gc.get("ge")))
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

@@ -3,10 +3,8 @@
   {
    "cid": "DT-0401",
    "bazi": "癸亥 乙卯 甲寅 乙亥",
-   "ge": "曲直格",
-   "xi_wx": [
-    "火"
-   ],
+   "ge": "阳刃格",
+   "xi_wx": [],
    "winner_shen": null
   },
   {
@@ -32,7 +30,7 @@
    "cid": "DT-0399",
    "bazi": "戊午 甲寅 乙卯 己卯",
    "ge": null,
-   "xi_wx": [],
+   "xi_wx": null,
    "winner_shen": null
   },
   {
@@ -183,7 +181,7 @@
    "cid": "QT-0455",
    "bazi": "乙亥 乙酉 己卯 庚午",
    "ge": null,
-   "xi_wx": [],
+   "xi_wx": null,
    "winner_shen": "火"
   },
   {
@@ -245,7 +243,7 @@
    "cid": "PZ-0285",
    "bazi": "丁巳 壬子 癸卯 己未",
    "ge": null,
-   "xi_wx": [],
+   "xi_wx": null,
    "winner_shen": null
   },
   {
@@ -268,7 +266,7 @@
    "cid": "DT-0218",
    "bazi": "戊辰 乙丑 戊戌 辛酉",
    "ge": null,
-   "xi_wx": [],
+   "xi_wx": null,
    "winner_shen": "火"
   },
   {
@@ -283,10 +281,8 @@
   {
    "cid": "DT-0335",
    "bazi": "丙午 甲午 丙午 甲午",
-   "ge": "炎上格",
-   "xi_wx": [
-    "土"
-   ],
+   "ge": "阳刃格",
+   "xi_wx": [],
    "winner_shen": "水"
   },
   {
@@ -309,7 +305,7 @@
   {
    "cid": "DT-0117",
    "bazi": "己亥 丁卯 庚寅 丙子",
-   "ge": "财格",
+   "ge": "无根须印(财不成格)",
    "xi_wx": [
     "土"
    ],
@@ -318,8 +314,10 @@
   {
    "cid": "DT-0228",
    "bazi": "丙子 丙申 丙子 丙申",
-   "ge": "财格",
-   "xi_wx": [],
+   "ge": "无根须印(财不成格)",
+   "xi_wx": [
+    "木"
+   ],
    "winner_shen": null
   },
   {
@@ -342,13 +340,13 @@
    "cid": "DT-0389",
    "bazi": "己亥 甲戌 戊寅 丙辰",
    "ge": null,
-   "xi_wx": [],
+   "xi_wx": null,
    "winner_shen": null
   },
   {
    "cid": "PZ-0037",
    "bazi": "丙子 甲午 丙午 庚寅",
-   "ge": null,
+   "ge": "阳刃格",
    "xi_wx": [],
    "winner_shen": "水"
   },
@@ -392,10 +390,9 @@
   {
    "cid": "DT-0125",
    "bazi": "辛丑 癸巳 戊申 丙辰",
-   "ge": "印格(印轻逢财)",
+   "ge": "印格(印多逢财)",
    "xi_wx": [
-    "火",
-    "土"
+    "水"
    ],
    "winner_shen": "木"
   },
@@ -483,8 +480,10 @@
   {
    "cid": "YH-0084",
    "bazi": "庚子 戊寅 戊子 丁巳",
-   "ge": null,
-   "xi_wx": [],
+   "ge": "七煞格",
+   "xi_wx": [
+    "金"
+   ],
    "winner_shen": null
   },
   {
@@ -511,7 +510,7 @@
    "cid": "QT-0332",
    "bazi": "丙子 甲午 丁酉 癸卯",
    "ge": null,
-   "xi_wx": [],
+   "xi_wx": null,
    "winner_shen": "水"
   },
   {
@@ -527,15 +526,19 @@
   {
    "cid": "QT-0577",
    "bazi": "甲午 己巳 辛未 庚寅",
-   "ge": null,
-   "xi_wx": [],
+   "ge": "正官格",
+   "xi_wx": [
+    "土"
+   ],
    "winner_shen": "水"
   },
   {
    "cid": "QT-0284",
    "bazi": "辛酉 庚子 丙辰 己丑",
-   "ge": null,
-   "xi_wx": [],
+   "ge": "正官格",
+   "xi_wx": [
+    "火"
+   ],
    "winner_shen": "水"
   },
   {
@@ -550,8 +553,10 @@
   {
    "cid": "QT-0642",
    "bazi": "乙酉 庚辰 壬寅 己酉",
-   "ge": null,
-   "xi_wx": [],
+   "ge": "七煞格",
+   "xi_wx": [
+    "金"
+   ],
    "winner_shen": null
   },
   {
@@ -590,7 +595,7 @@
   {
    "cid": "QT-0479",
    "bazi": "辛巳 庚寅 庚戌 丙戌",
-   "ge": null,
+   "ge": "财格",
    "xi_wx": [],
    "winner_shen": null
   },
@@ -607,7 +612,7 @@
   {
    "cid": "QT-0412",
    "bazi": "庚申 戊寅 己酉 丁卯",
-   "ge": null,
+   "ge": "正官格",
    "xi_wx": [],
    "winner_shen": null
   },
@@ -682,10 +687,9 @@
   {
    "cid": "QT-0519",
    "bazi": "辛亥 乙未 庚子 己卯",
-   "ge": "印格(印轻逢财)",
+   "ge": "印格(印多逢财)",
    "xi_wx": [
-    "土",
-    "金"
+    "木"
    ],
    "winner_shen": null
   },
@@ -693,13 +697,13 @@
    "cid": "SF-0131",
    "bazi": "癸丑 甲寅 乙卯 己卯",
    "ge": null,
-   "xi_wx": [],
+   "xi_wx": null,
    "winner_shen": null
   },
   {
    "cid": "YH-0025",
    "bazi": "乙卯 丙子 丙午 癸巳",
-   "ge": null,
+   "ge": "正官格",
    "xi_wx": [],
    "winner_shen": "水"
   },
@@ -801,7 +805,7 @@
   {
    "cid": "SF-0041",
    "bazi": "甲戌 辛未 乙丑 乙酉",
-   "ge": null,
+   "ge": "财格",
    "xi_wx": [],
    "winner_shen": "火"
   },
@@ -833,7 +837,7 @@
   {
    "cid": "DT-0407",
    "bazi": "辛巳 甲午 丙子 甲午",
-   "ge": null,
+   "ge": "阳刃格",
    "xi_wx": [],
    "winner_shen": "水"
   },
@@ -850,7 +854,7 @@
   {
    "cid": "QT-0419",
    "bazi": "庚午 己卯 己未 庚午",
-   "ge": null,
+   "ge": "七煞格",
    "xi_wx": [],
    "winner_shen": null
   }
