@@ -1,0 +1,2376 @@
+{
+ "purpose": "AGENTS.md v3 公理三落地: 引擎判据 -> 原典章节 -> 切片ID 锚点对照(不改判定)",
+ "total_anchor_groups": 106,
+ "total_refs": 325,
+ "match_modes": {
+  "EXACT_CHAPTER": 35,
+  "CHAPTER": 71
+ },
+ "anchors": [
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 30,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\tiaohou_rank.py:25",
+    "engines\\common\\tiaohou_rank.py:44",
+    "engines\\common\\tiaohou_rank.py:130",
+    "engines\\common\\tiaohou_rank.py:131"
+   ],
+   "source_chapter": "四、知命",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.04_四、知命"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 47,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:512"
+   ],
+   "source_chapter": "七、天干",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.07_七、天干_01",
+    "DTS_LB.上篇.07_七、天干_02",
+    "DTS_LB.上篇.07_七、天干_03",
+    "DTS_LB.上篇.07_七、天干_04",
+    "DTS_LB.上篇.07_七、天干_05",
+    "DTS_LB.上篇.07_七、天干_06",
+    "DTS_LB.上篇.07_七、天干_07",
+    "DTS_LB.上篇.07_七、天干_08"
+   ],
+   "slice_count": 12
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 83,
+   "ref_count": 1,
+   "engine_refs": [
+    "p0_v2\\bazi_gate.py:595"
+   ],
+   "source_chapter": "七、天干",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.07_七、天干_01",
+    "DTS_LB.上篇.07_七、天干_02",
+    "DTS_LB.上篇.07_七、天干_03",
+    "DTS_LB.上篇.07_七、天干_04",
+    "DTS_LB.上篇.07_七、天干_05",
+    "DTS_LB.上篇.07_七、天干_06",
+    "DTS_LB.上篇.07_七、天干_07",
+    "DTS_LB.上篇.07_七、天干_08"
+   ],
+   "slice_count": 12
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 96,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\transit_power.py:155",
+    "engines\\common\\transit_power.py:225"
+   ],
+   "source_chapter": "八、地支",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.08_八、地支_01",
+    "DTS_LB.上篇.08_八、地支_02",
+    "DTS_LB.上篇.08_八、地支_03",
+    "DTS_LB.上篇.08_八、地支_04",
+    "DTS_LB.上篇.08_八、地支_05"
+   ],
+   "slice_count": 5
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 102,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\transit_power.py:153"
+   ],
+   "source_chapter": "八、地支",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.08_八、地支_01",
+    "DTS_LB.上篇.08_八、地支_02",
+    "DTS_LB.上篇.08_八、地支_03",
+    "DTS_LB.上篇.08_八、地支_04",
+    "DTS_LB.上篇.08_八、地支_05"
+   ],
+   "slice_count": 5
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 106,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\transit_power.py:90",
+    "engines\\common\\transit_power.py:151",
+    "engines\\common\\transit_power.py:215"
+   ],
+   "source_chapter": "八、地支",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.08_八、地支_01",
+    "DTS_LB.上篇.08_八、地支_02",
+    "DTS_LB.上篇.08_八、地支_03",
+    "DTS_LB.上篇.08_八、地支_04",
+    "DTS_LB.上篇.08_八、地支_05"
+   ],
+   "slice_count": 5
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 108,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\transit_power.py:55",
+    "engines\\common\\transit_power.py:80",
+    "engines\\common\\transit_power.py:240",
+    "engines\\common\\transit_power.py:276"
+   ],
+   "source_chapter": "八、地支",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.08_八、地支_01",
+    "DTS_LB.上篇.08_八、地支_02",
+    "DTS_LB.上篇.08_八、地支_03",
+    "DTS_LB.上篇.08_八、地支_04",
+    "DTS_LB.上篇.08_八、地支_05"
+   ],
+   "slice_count": 5
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 110,
+   "ref_count": 2,
+   "engine_refs": [
+    "p0_v2\\bazi_gate.py:352",
+    "p0_v2\\bazi_gate.py:423"
+   ],
+   "source_chapter": "八、地支",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.08_八、地支_01",
+    "DTS_LB.上篇.08_八、地支_02",
+    "DTS_LB.上篇.08_八、地支_03",
+    "DTS_LB.上篇.08_八、地支_04",
+    "DTS_LB.上篇.08_八、地支_05"
+   ],
+   "slice_count": 5
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 115,
+   "ref_count": 3,
+   "engine_refs": [
+    "p0_v2\\bazi_gate.py:456",
+    "p0_v2\\bazi_gate.py:459",
+    "p0_v2\\bazi_gate.py:460"
+   ],
+   "source_chapter": "九、干支总论",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.09_九、干支总论_01",
+    "DTS_LB.上篇.09_九、干支总论_02",
+    "DTS_LB.上篇.09_九、干支总论_03",
+    "DTS_LB.上篇.09_九、干支总论_04",
+    "DTS_LB.上篇.09_九、干支总论_05",
+    "DTS_LB.上篇.09_九、干支总论_06",
+    "DTS_LB.上篇.09_九、干支总论_07",
+    "DTS_LB.上篇.09_九、干支总论_08"
+   ],
+   "slice_count": 12
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 162,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:771"
+   ],
+   "source_chapter": "十、形象",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.10_十、形象_01",
+    "DTS_LB.上篇.10_十、形象_02",
+    "DTS_LB.上篇.10_十、形象_03",
+    "DTS_LB.上篇.10_十、形象_04",
+    "DTS_LB.上篇.10_十、形象_05"
+   ],
+   "slice_count": 5
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 183,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\topology_paths.py:234"
+   ],
+   "source_chapter": "十一、方局",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.11_十一、方局_01",
+    "DTS_LB.上篇.11_十一、方局_02",
+    "DTS_LB.上篇.11_十一、方局_03",
+    "DTS_LB.上篇.11_十一、方局_04",
+    "DTS_LB.上篇.11_十一、方局_05"
+   ],
+   "slice_count": 5
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 210,
+   "ref_count": 5,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:1252",
+    "engines\\common\\ge_jie_layer.py:1550",
+    "engines\\common\\ge_jie_layer.py:1571",
+    "p0_v2\\bazi_gate.py:285",
+    "p0_v2\\pzzq_align.py:325"
+   ],
+   "source_chapter": "十二、八格",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.12_十二、八格_01",
+    "DTS_LB.上篇.12_十二、八格_02"
+   ],
+   "slice_count": 2
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 215,
+   "ref_count": 9,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:1300",
+    "engines\\common\\ge_jie_layer.py:1334",
+    "engines\\common\\yongyao_resolve.py:377",
+    "engines\\common\\yongyao_resolve.py:541",
+    "engines\\common\\yongyao_resolve.py:542",
+    "engines\\common\\yongyao_resolve.py:555",
+    "engines\\common\\yongyao_resolve.py:560",
+    "engines\\common\\yongyao_resolve.py:584",
+    "engines\\common\\yongyao_resolve.py:592"
+   ],
+   "source_chapter": "十三、体用",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.13_十三、体用"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 220,
+   "ref_count": 1,
+   "engine_refs": [
+    "p0_v2\\bazi_gate.py:593"
+   ],
+   "source_chapter": "十四、精神",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.14_十四、精神"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 230,
+   "ref_count": 1,
+   "engine_refs": [
+    "p0_v2\\bazi_gate.py:429"
+   ],
+   "source_chapter": "十六、生时",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.16_十六、生时"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 235,
+   "ref_count": 8,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:176",
+    "engines\\common\\yongyao_resolve.py:607",
+    "engines\\common\\yongyao_resolve.py:629",
+    "engines\\common\\yongyao_resolve.py:631",
+    "engines\\common\\yongyao_resolve.py:635",
+    "p0_v2\\bazi_gate.py:455",
+    "p0_v2\\bazi_gate.py:458",
+    "p0_v2\\bazi_gate.py:558"
+   ],
+   "source_chapter": "十七、衰旺",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.17_十七、衰旺"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 240,
+   "ref_count": 5,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:37",
+    "engines\\common\\bingyao_layer.py:1032",
+    "engines\\common\\bingyao_layer.py:1167",
+    "engines\\common\\yongyao_resolve.py:355",
+    "engines\\common\\yongyao_resolve.py:364"
+   ],
+   "source_chapter": "十八、中和",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.18_十八、中和"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 245,
+   "ref_count": 9,
+   "engine_refs": [
+    "engines\\common\\topology_paths.py:43",
+    "engines\\common\\topology_paths.py:66",
+    "engines\\common\\topology_paths.py:94",
+    "engines\\common\\yongyao_resolve.py:232",
+    "engines\\common\\yongyao_resolve.py:247",
+    "engines\\common\\yongyao_resolve.py:252",
+    "engines\\common\\yongyao_resolve.py:370",
+    "p0_v2\\bazi_gate.py:800",
+    "p0_v2\\jiu_ying.py:93"
+   ],
+   "source_chapter": "十九、源流",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.19_十九、源流"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 250,
+   "ref_count": 11,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:1034",
+    "engines\\common\\bingyao_layer.py:1179",
+    "engines\\common\\topology_paths.py:348",
+    "engines\\common\\topology_paths.py:396",
+    "engines\\common\\topology_paths.py:424",
+    "engines\\common\\topology_paths.py:450",
+    "engines\\common\\topology_paths.py:522",
+    "engines\\common\\topology_paths.py:528",
+    "engines\\common\\yongyao_resolve.py:373",
+    "p0_v2\\bazi_gate.py:475",
+    "p0_v2\\bazi_gate.py:498"
+   ],
+   "source_chapter": "二十、通关",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.20_二十、通关"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 260,
+   "ref_count": 1,
+   "engine_refs": [
+    "p0_v2\\jiu_ying.py:286"
+   ],
+   "source_chapter": "二十二、伤官",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.22_二十二、伤官"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 275,
+   "ref_count": 1,
+   "engine_refs": [
+    "p0_v2\\bazi_gate.py:596"
+   ],
+   "source_chapter": "二十五、真神",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.25_二十五、真神"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 295,
+   "ref_count": 15,
+   "engine_refs": [
+    "engines\\common\\tiaohou_rank.py:10",
+    "engines\\common\\tiaohou_rank.py:17",
+    "engines\\common\\tiaohou_rank.py:24",
+    "engines\\common\\tiaohou_rank.py:116",
+    "engines\\common\\tiaohou_rank.py:139",
+    "engines\\common\\tiaohou_rank.py:141",
+    "engines\\common\\tiaohou_rank.py:143",
+    "engines\\common\\yongshen_engine.py:599",
+    "engines\\common\\yongyao_resolve.py:257",
+    "engines\\common\\yongyao_resolve.py:270",
+    "engines\\common\\yongyao_resolve.py:339",
+    "engines\\common\\yongyao_resolve.py:345"
+   ],
+   "source_chapter": "二十九、寒暖",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.29_二十九、寒暖"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 298,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:329",
+    "engines\\common\\yongyao_resolve.py:330",
+    "engines\\common\\yongyao_resolve.py:352"
+   ],
+   "source_chapter": "三十、燥湿",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.30_三十、燥湿"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 334,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:298"
+   ],
+   "source_chapter": "二、子女",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.36_二、子女"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 347,
+   "ref_count": 2,
+   "engine_refs": [
+    "p0_v2\\gaodi.py:12",
+    "p0_v2\\gaodi.py:41"
+   ],
+   "source_chapter": "五、何知章",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.39_五、何知章_01",
+    "DTS_LB.下篇.39_五、何知章_02",
+    "DTS_LB.下篇.39_五、何知章_03",
+    "DTS_LB.下篇.39_五、何知章_04",
+    "DTS_LB.下篇.39_五、何知章_05",
+    "DTS_LB.下篇.39_五、何知章_06",
+    "DTS_LB.下篇.39_五、何知章_07",
+    "DTS_LB.下篇.39_五、何知章_08"
+   ],
+   "slice_count": 8
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 357,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\fan_ju.py:77",
+    "engines\\common\\fan_ju.py:285"
+   ],
+   "source_chapter": "五、何知章",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.39_五、何知章_01",
+    "DTS_LB.下篇.39_五、何知章_02",
+    "DTS_LB.下篇.39_五、何知章_03",
+    "DTS_LB.下篇.39_五、何知章_04",
+    "DTS_LB.下篇.39_五、何知章_05",
+    "DTS_LB.下篇.39_五、何知章_06",
+    "DTS_LB.下篇.39_五、何知章_07",
+    "DTS_LB.下篇.39_五、何知章_08"
+   ],
+   "slice_count": 8
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 404,
+   "ref_count": 23,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:296",
+    "engines\\common\\yongyao_resolve.py:398",
+    "engines\\common\\yongyao_resolve.py:400",
+    "engines\\common\\yongyao_resolve.py:467",
+    "engines\\common\\yongyao_resolve.py:522",
+    "engines\\common\\yongyao_resolve.py:528",
+    "engines\\common\\yongyao_resolve.py:535",
+    "engines\\common\\yongyao_resolve.py:564",
+    "engines\\common\\yongyao_resolve.py:570",
+    "engines\\common\\yongyao_resolve.py:588",
+    "engines\\common\\yongyao_resolve.py:592",
+    "engines\\common\\yongyao_resolve.py:598"
+   ],
+   "source_chapter": "十一、闲神",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.45_十一、闲神_01",
+    "DTS_LB.下篇.45_十一、闲神_02",
+    "DTS_LB.下篇.45_十一、闲神_03"
+   ],
+   "slice_count": 3
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 420,
+   "ref_count": 5,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:329",
+    "engines\\common\\ge_jie_layer.py:1425",
+    "engines\\common\\yongyao_resolve.py:322",
+    "engines\\common\\yongyao_resolve.py:326",
+    "p0_v2\\bazi_gate.py:527"
+   ],
+   "source_chapter": "十二、从象",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.46_十二、从象"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 438,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:460",
+    "engines\\common\\special_pattern.py:493",
+    "engines\\common\\special_pattern.py:546",
+    "engines\\common\\special_pattern.py:565"
+   ],
+   "source_chapter": "十六、顺局",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.50_十六、顺局"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 442,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\fan_ju.py:427",
+    "p0_v2\\bazi_gate.py:619"
+   ],
+   "source_chapter": "十七、反局",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.51_十七、反局_01",
+    "DTS_LB.下篇.51_十七、反局_02",
+    "DTS_LB.下篇.51_十七、反局_03",
+    "DTS_LB.下篇.51_十七、反局_04"
+   ],
+   "slice_count": 4
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 445,
+   "ref_count": 9,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:47",
+    "engines\\common\\bingyao_layer.py:714",
+    "engines\\common\\bingyao_layer.py:735",
+    "engines\\common\\fan_ju.py:352",
+    "engines\\common\\fan_ju.py:361",
+    "engines\\common\\fan_ju.py:427",
+    "engines\\common\\tiaohou_rank.py:205",
+    "engines\\common\\tiaohou_rank.py:212",
+    "p0_v2\\bazi_gate.py:417"
+   ],
+   "source_chapter": "十七、反局",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.51_十七、反局_01",
+    "DTS_LB.下篇.51_十七、反局_02",
+    "DTS_LB.下篇.51_十七、反局_03",
+    "DTS_LB.下篇.51_十七、反局_04"
+   ],
+   "slice_count": 4
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 447,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\fan_ju.py:377",
+    "engines\\common\\fan_ju.py:387",
+    "engines\\common\\fan_ju.py:428"
+   ],
+   "source_chapter": "十七、反局",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.51_十七、反局_01",
+    "DTS_LB.下篇.51_十七、反局_02",
+    "DTS_LB.下篇.51_十七、反局_03",
+    "DTS_LB.下篇.51_十七、反局_04"
+   ],
+   "slice_count": 4
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 449,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\fan_ju.py:364",
+    "engines\\common\\fan_ju.py:374",
+    "engines\\common\\fan_ju.py:428"
+   ],
+   "source_chapter": "十七、反局",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.51_十七、反局_01",
+    "DTS_LB.下篇.51_十七、反局_02",
+    "DTS_LB.下篇.51_十七、反局_03",
+    "DTS_LB.下篇.51_十七、反局_04"
+   ],
+   "slice_count": 4
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 451,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\fan_ju.py:390",
+    "engines\\common\\fan_ju.py:399",
+    "engines\\common\\fan_ju.py:428"
+   ],
+   "source_chapter": "十七、反局",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.51_十七、反局_01",
+    "DTS_LB.下篇.51_十七、反局_02",
+    "DTS_LB.下篇.51_十七、反局_03",
+    "DTS_LB.下篇.51_十七、反局_04"
+   ],
+   "slice_count": 4
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 461,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:1104",
+    "engines\\common\\bingyao_layer.py:1126"
+   ],
+   "source_chapter": "十九、合局",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.下篇.53_十九、合局"
+   ],
+   "slice_count": 1
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 862,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:759"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.01_一、天道",
+    "DTS_LB.上篇.02_二、地道",
+    "DTS_LB.上篇.03_三、人道",
+    "DTS_LB.上篇.04_四、知命",
+    "DTS_LB.上篇.05_五、理气",
+    "DTS_LB.上篇.06_六、配合",
+    "DTS_LB.上篇.07_七、天干_01",
+    "DTS_LB.上篇.07_七、天干_02"
+   ],
+   "slice_count": 136
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 2251,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:654"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.01_一、天道",
+    "DTS_LB.上篇.02_二、地道",
+    "DTS_LB.上篇.03_三、人道",
+    "DTS_LB.上篇.04_四、知命",
+    "DTS_LB.上篇.05_五、理气",
+    "DTS_LB.上篇.06_六、配合",
+    "DTS_LB.上篇.07_七、天干_01",
+    "DTS_LB.上篇.07_七、天干_02"
+   ],
+   "slice_count": 136
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 24,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\tiaohou_rank.py:26",
+    "engines\\common\\tiaohou_rank.py:143"
+   ],
+   "source_chapter": "子平真诠 完整全文（完整版）",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 170,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:1404",
+    "engines\\common\\ge_jie_layer.py:1447",
+    "engines\\common\\ge_jie_layer.py:1462",
+    "engines\\common\\yongyao_resolve.py:466"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 179,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:416",
+    "engines\\common\\special_pattern.py:423",
+    "engines\\common\\special_pattern.py:521"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 180,
+   "ref_count": 5,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:214",
+    "engines\\common\\special_pattern.py:410",
+    "engines\\common\\special_pattern.py:422",
+    "engines\\common\\special_pattern.py:510",
+    "engines\\common\\special_pattern.py:567"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 187,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:246"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 201,
+   "ref_count": 3,
+   "engine_refs": [
+    "p0_v2\\bazi_gate.py:389",
+    "p0_v2\\bazi_gate.py:432",
+    "p0_v2\\bazi_gate.py:595"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 241,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\wangshuai_multidim.py:14",
+    "engines\\common\\wangshuai_multidim.py:18",
+    "engines\\common\\wangshuai_multidim.py:24",
+    "engines\\common\\wangshuai_structure.py:159"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 255,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:34",
+    "engines\\common\\ge_jie_layer.py:41"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 261,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\wangshuai_multidim.py:25"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 421,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:1105",
+    "engines\\common\\bingyao_layer.py:1126"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 536,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\daymaster_tian_he.py:135"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 565,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:378",
+    "engines\\common\\ge_jie_layer.py:399",
+    "engines\\common\\special_pattern.py:366"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 765,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:1142"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 768,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:521",
+    "engines\\common\\bingyao_layer.py:536"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 800,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\evil_offset.py:81",
+    "engines\\common\\ge_jie_layer.py:235",
+    "engines\\common\\ge_jie_layer.py:268"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 957,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:36",
+    "engines\\common\\bingyao_layer.py:1031",
+    "engines\\common\\bingyao_layer.py:1166",
+    "engines\\common\\bingyao_layer.py:1215"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1034,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:380",
+    "engines\\common\\special_pattern.py:375"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1047,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:1322"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1119,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:723",
+    "engines\\common\\ge_jie_layer.py:748"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1126,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\cai_yin_bu_ai.py:81"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1128,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\evil_offset.py:144"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1130,
+   "ref_count": 8,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:48",
+    "engines\\common\\bingyao_layer.py:716",
+    "engines\\common\\bingyao_layer.py:739",
+    "engines\\common\\ge_jie_layer.py:955",
+    "engines\\common\\ge_jie_layer.py:1038",
+    "engines\\common\\ge_jie_layer.py:1052",
+    "engines\\common\\ge_jie_layer.py:1077",
+    "engines\\common\\ge_jie_layer.py:1079"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1140,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:176",
+    "engines\\common\\ge_jie_layer.py:528",
+    "engines\\common\\ge_jie_layer.py:539",
+    "engines\\common\\ge_jie_layer.py:564"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1142,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:174",
+    "engines\\common\\yongyao_resolve.py:126"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1145,
+   "ref_count": 5,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:586",
+    "engines\\common\\ge_jie_layer.py:773",
+    "engines\\common\\ge_jie_layer.py:789",
+    "engines\\common\\ge_jie_layer.py:935",
+    "engines\\common\\ge_jie_layer.py:943"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1146,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:1200",
+    "engines\\common\\ge_jie_layer.py:1204"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1156,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:573"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1198,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:686"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1226,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:463",
+    "p0_v2\\jiu_ying.py:373"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1474,
+   "ref_count": 1,
+   "engine_refs": [
+    "p0_v2\\gaodi.py:7"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 1526,
+   "ref_count": 1,
+   "engine_refs": [
+    "p0_v2\\gaodi.py:40"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 2319,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:297"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 2923,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:211"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3208,
+   "ref_count": 20,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:36",
+    "engines\\common\\yongyao_resolve.py:296",
+    "engines\\common\\yongyao_resolve.py:398",
+    "engines\\common\\yongyao_resolve.py:400",
+    "engines\\common\\yongyao_resolve.py:467",
+    "engines\\common\\yongyao_resolve.py:522",
+    "engines\\common\\yongyao_resolve.py:528",
+    "engines\\common\\yongyao_resolve.py:535",
+    "engines\\common\\yongyao_resolve.py:540",
+    "engines\\common\\yongyao_resolve.py:564",
+    "engines\\common\\yongyao_resolve.py:588",
+    "engines\\common\\yongyao_resolve.py:592"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3212,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:44"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3345,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\cai_yin_bu_ai.py:84"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3425,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:67"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3448,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:882"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3453,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\cai_yin_bu_ai.py:76"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3574,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\fan_ju.py:323",
+    "engines\\common\\fan_ju.py:429"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3658,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:86"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3717,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:785"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3910,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:101"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3930,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:299"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 3977,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:1040",
+    "engines\\common\\bingyao_layer.py:1155",
+    "engines\\common\\bingyao_layer.py:1160",
+    "engines\\common\\bingyao_layer.py:1180"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4093,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:1148"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4148,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:119"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4374,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:108"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4579,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:132"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4652,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:1550",
+    "engines\\common\\ge_jie_layer.py:1571",
+    "p0_v2\\bazi_gate.py:285",
+    "p0_v2\\pzzq_align.py:325"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4882,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:811",
+    "engines\\common\\ge_jie_layer.py:842",
+    "engines\\common\\suiyun_validate.py:326",
+    "engines\\common\\suiyun_validate.py:420"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4888,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\suiyun_validate.py:436"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4936,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:247",
+    "engines\\common\\special_pattern.py:564"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4937,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:538"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 4939,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:447"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 5092,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:546",
+    "engines\\common\\special_pattern.py:555",
+    "engines\\common\\special_pattern.py:565"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "QTBJ",
+   "book_cn": "穷通宝鉴",
+   "row": 774,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:1040",
+    "engines\\common\\bingyao_layer.py:1180"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "QTBJ.五行总论.1",
+    "QTBJ.五行总论.2",
+    "QTBJ.五行总论.3",
+    "QTBJ.五行总论.4",
+    "QTBJ.五行总论.5",
+    "QTBJ.五行总论.6",
+    "QTBJ.五行总论.7",
+    "QTBJ.论木"
+   ],
+   "slice_count": 149
+  },
+  {
+   "book": "QTBJ",
+   "book_cn": "穷通宝鉴",
+   "row": 5819,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\tiaohou_rank.py:204"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "QTBJ.五行总论.1",
+    "QTBJ.五行总论.2",
+    "QTBJ.五行总论.3",
+    "QTBJ.五行总论.4",
+    "QTBJ.五行总论.5",
+    "QTBJ.五行总论.6",
+    "QTBJ.五行总论.7",
+    "QTBJ.论木"
+   ],
+   "slice_count": 149
+  },
+  {
+   "book": "QTBJ",
+   "book_cn": "穷通宝鉴",
+   "row": 6278,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\qtbj_climate_candidates.py:346"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "QTBJ.五行总论.1",
+    "QTBJ.五行总论.2",
+    "QTBJ.五行总论.3",
+    "QTBJ.五行总论.4",
+    "QTBJ.五行总论.5",
+    "QTBJ.五行总论.6",
+    "QTBJ.五行总论.7",
+    "QTBJ.论木"
+   ],
+   "slice_count": 149
+  },
+  {
+   "book": "SFTK",
+   "book_cn": "神峰通考",
+   "row": 424,
+   "ref_count": 7,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:36",
+    "engines\\common\\bingyao_layer.py:1011",
+    "engines\\common\\bingyao_layer.py:1031",
+    "engines\\common\\bingyao_layer.py:1038",
+    "engines\\common\\bingyao_layer.py:1166",
+    "engines\\common\\bingyao_layer.py:1179",
+    "engines\\common\\bingyao_layer.py:1215"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "SFTK.五星正说类.1_安身命宫",
+    "SFTK.五星正说类.2_安星辰法体用",
+    "SFTK.五星正说类.3_限行以命宫为庐舍",
+    "SFTK.五星正说类.4_命宫与度主之争",
+    "SFTK.五星正说类.5_七曜四余君子小人",
+    "SFTK.五星正说类.6_五星诸书指南为门户",
+    "SFTK.五星谬说类.1_纳音生肖论命之谬",
+    "SFTK.五星谬说类.2_生肖与八字论命之争"
+   ],
+   "slice_count": 781
+  },
+  {
+   "book": "SFTK",
+   "book_cn": "神峰通考",
+   "row": 1095,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:692"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "SFTK.五星正说类.1_安身命宫",
+    "SFTK.五星正说类.2_安星辰法体用",
+    "SFTK.五星正说类.3_限行以命宫为庐舍",
+    "SFTK.五星正说类.4_命宫与度主之争",
+    "SFTK.五星正说类.5_七曜四余君子小人",
+    "SFTK.五星正说类.6_五星诸书指南为门户",
+    "SFTK.五星谬说类.1_纳音生肖论命之谬",
+    "SFTK.五星谬说类.2_生肖与八字论命之争"
+   ],
+   "slice_count": 781
+  },
+  {
+   "book": "SFTK",
+   "book_cn": "神峰通考",
+   "row": 1113,
+   "ref_count": 7,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:442",
+    "engines\\common\\bingyao_layer.py:452",
+    "engines\\common\\bingyao_layer.py:1141",
+    "engines\\common\\bingyao_layer.py:1143",
+    "engines\\common\\slice_conditions.py:49",
+    "engines\\common\\slice_conditions.py:66",
+    "engines\\common\\slice_conditions.py:107"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "SFTK.五星正说类.1_安身命宫",
+    "SFTK.五星正说类.2_安星辰法体用",
+    "SFTK.五星正说类.3_限行以命宫为庐舍",
+    "SFTK.五星正说类.4_命宫与度主之争",
+    "SFTK.五星正说类.5_七曜四余君子小人",
+    "SFTK.五星正说类.6_五星诸书指南为门户",
+    "SFTK.五星谬说类.1_纳音生肖论命之谬",
+    "SFTK.五星谬说类.2_生肖与八字论命之争"
+   ],
+   "slice_count": 781
+  },
+  {
+   "book": "SFTK",
+   "book_cn": "神峰通考",
+   "row": 7770,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:1014",
+    "engines\\common\\ge_jie_layer.py:1061",
+    "engines\\common\\suiyun_validate.py:292"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "SFTK.五星正说类.1_安身命宫",
+    "SFTK.五星正说类.2_安星辰法体用",
+    "SFTK.五星正说类.3_限行以命宫为庐舍",
+    "SFTK.五星正说类.4_命宫与度主之争",
+    "SFTK.五星正说类.5_七曜四余君子小人",
+    "SFTK.五星正说类.6_五星诸书指南为门户",
+    "SFTK.五星谬说类.1_纳音生肖论命之谬",
+    "SFTK.五星谬说类.2_生肖与八字论命之争"
+   ],
+   "slice_count": 781
+  },
+  {
+   "book": "SFTK",
+   "book_cn": "神峰通考",
+   "row": 9090,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:469",
+    "engines\\common\\bingyao_layer.py:482"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "SFTK.五星正说类.1_安身命宫",
+    "SFTK.五星正说类.2_安星辰法体用",
+    "SFTK.五星正说类.3_限行以命宫为庐舍",
+    "SFTK.五星正说类.4_命宫与度主之争",
+    "SFTK.五星正说类.5_七曜四余君子小人",
+    "SFTK.五星正说类.6_五星诸书指南为门户",
+    "SFTK.五星谬说类.1_纳音生肖论命之谬",
+    "SFTK.五星谬说类.2_生肖与八字论命之争"
+   ],
+   "slice_count": 781
+  },
+  {
+   "book": "SMTH",
+   "book_cn": "三命通会",
+   "row": 923,
+   "ref_count": 4,
+   "engine_refs": [
+    "p0_v2\\bazi_gate.py:149",
+    "p0_v2\\bazi_gate.py:695",
+    "p0_v2\\bazi_gate.py:698",
+    "p0_v2\\bazi_gate.py:707"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "SMTH.论五行生克.水生木",
+    "SMTH.论五行生克.木生火",
+    "SMTH.论五行生克.土生金",
+    "SMTH.论五行生克.金生水",
+    "SMTH.论五行生克.火生土",
+    "SMTH.论五行生克.木克土",
+    "SMTH.论五行生成.水北子位",
+    "SMTH.论五行生成.火南午位"
+   ],
+   "slice_count": 141
+  },
+  {
+   "book": "SMTH",
+   "book_cn": "三命通会",
+   "row": 3565,
+   "ref_count": 6,
+   "engine_refs": [
+    "engines\\common\\six_relative_producer.py:10",
+    "p0_v2\\bazi_gate.py:101",
+    "p0_v2\\bazi_gate.py:104",
+    "p0_v2\\bazi_gate.py:107",
+    "p0_v2\\bazi_gate.py:141",
+    "p0_v2\\bazi_gate.py:763"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "SMTH.论五行生克.水生木",
+    "SMTH.论五行生克.木生火",
+    "SMTH.论五行生克.土生金",
+    "SMTH.论五行生克.金生水",
+    "SMTH.论五行生克.火生土",
+    "SMTH.论五行生克.木克土",
+    "SMTH.论五行生成.水北子位",
+    "SMTH.论五行生成.火南午位"
+   ],
+   "slice_count": 141
+  },
+  {
+   "book": "YHZP",
+   "book_cn": "渊海子平",
+   "row": 2915,
+   "ref_count": 2,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:298",
+    "engines\\common\\slice_conditions.py:108"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "YHZP.主正文_论五行生克制化.01_旺得制成器",
+    "YHZP.主正文_论五行生克制化.02_生多为患",
+    "YHZP.主正文_论五行生克制化.03_生多反害",
+    "YHZP.主正文_论五行生克制化.04_克坚反伤",
+    "YHZP.主正文_论五行生克制化.05_衰遇克必败",
+    "YHZP.主正文_论五行生克制化.06_强得泄方挫",
+    "YHZP.主正文_论五行生克制化.07_论日为主",
+    "YHZP.主正文_论五行生克制化.08_论月令提纲"
+   ],
+   "slice_count": 1493
+  },
+  {
+   "book": "YHZP",
+   "book_cn": "渊海子平",
+   "row": 3493,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:442",
+    "engines\\common\\bingyao_layer.py:452",
+    "engines\\common\\slice_conditions.py:49"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "YHZP.主正文_论五行生克制化.01_旺得制成器",
+    "YHZP.主正文_论五行生克制化.02_生多为患",
+    "YHZP.主正文_论五行生克制化.03_生多反害",
+    "YHZP.主正文_论五行生克制化.04_克坚反伤",
+    "YHZP.主正文_论五行生克制化.05_衰遇克必败",
+    "YHZP.主正文_论五行生克制化.06_强得泄方挫",
+    "YHZP.主正文_论五行生克制化.07_论日为主",
+    "YHZP.主正文_论五行生克制化.08_论月令提纲"
+   ],
+   "slice_count": 1493
+  },
+  {
+   "book": "YHZP",
+   "book_cn": "渊海子平",
+   "row": 4923,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\bingyao_layer.py:299"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "YHZP.主正文_论五行生克制化.01_旺得制成器",
+    "YHZP.主正文_论五行生克制化.02_生多为患",
+    "YHZP.主正文_论五行生克制化.03_生多反害",
+    "YHZP.主正文_论五行生克制化.04_克坚反伤",
+    "YHZP.主正文_论五行生克制化.05_衰遇克必败",
+    "YHZP.主正文_论五行生克制化.06_强得泄方挫",
+    "YHZP.主正文_论五行生克制化.07_论日为主",
+    "YHZP.主正文_论五行生克制化.08_论月令提纲"
+   ],
+   "slice_count": 1493
+  }
+ ]
+}
