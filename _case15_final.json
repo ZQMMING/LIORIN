@@ -1,0 +1,280 @@
+[
+ {
+  "no": "1",
+  "bazi": "壬子 辛亥 壬辰 丙午",
+  "gender": "乾",
+  "ge": null,
+  "xi": null,
+  "winner": "土",
+  "primary": "土",
+  "bing": [
+   "BIJIE_DUO_CAI",
+   "BIJIE_CHENG_DANG"
+  ],
+  "cong": null,
+  "cong_state": null,
+  "patterns": []
+ },
+ {
+  "no": "2",
+  "bazi": "丁未 癸卯 庚子 丁丑",
+  "gender": "坤",
+  "ge": "财格",
+  "xi": [],
+  "winner": null,
+  "primary": "土",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [
+   [
+    "从财无官煞(PZZQ-033-001 L4937)",
+    "SPECIAL_FAIL"
+   ]
+  ]
+ },
+ {
+  "no": "3",
+  "bazi": "戊申 己未 庚申 辛巳",
+  "gender": "乾",
+  "ge": "印格",
+  "xi": [],
+  "winner": "火",
+  "primary": "",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": []
+ },
+ {
+  "no": "4",
+  "bazi": "甲寅 丙子 己亥 戊辰",
+  "gender": "坤",
+  "ge": "从官格",
+  "xi": [],
+  "winner": null,
+  "primary": "火",
+  "bing": [],
+  "cong": "从官格",
+  "cong_state": "CONFIRMED",
+  "patterns": [
+   [
+    "阴干印根不碍从(PZZQ L178/L4941/L4942)",
+    "SPECIAL_PASS"
+   ],
+   [
+    "从官格",
+    "CONFIRMED"
+   ]
+  ]
+ },
+ {
+  "no": "5",
+  "bazi": "丁亥 癸丑 己未 癸酉",
+  "gender": "乾",
+  "ge": "从财格",
+  "xi": [
+   "水"
+  ],
+  "winner": null,
+  "primary": "水",
+  "bing": [],
+  "cong": "从财格",
+  "cong_state": "CONFIRMED",
+  "patterns": [
+   [
+    "阴干印根不碍从(PZZQ L178/L4941/L4942)",
+    "SPECIAL_PASS"
+   ],
+   [
+    "从财格",
+    "CONFIRMED"
+   ]
+  ]
+ },
+ {
+  "no": "6",
+  "bazi": "庚寅 戊寅 己亥 丙寅",
+  "gender": "乾",
+  "ge": "从官格",
+  "xi": [],
+  "winner": null,
+  "primary": "火",
+  "bing": [],
+  "cong": "从官格",
+  "cong_state": "CONFIRMED",
+  "patterns": [
+   [
+    "阴干印根不碍从(PZZQ L178/L4941/L4942)",
+    "SPECIAL_PASS"
+   ],
+   [
+    "从官格",
+    "CONFIRMED"
+   ]
+  ]
+ },
+ {
+  "no": "7",
+  "bazi": "戊申 己未 癸巳 己未",
+  "gender": "乾",
+  "ge": "从杀格",
+  "xi": [],
+  "winner": null,
+  "primary": "金",
+  "bing": [],
+  "cong": "从杀格",
+  "cong_state": "CONFIRMED",
+  "patterns": [
+   [
+    "阴干印根不碍从(PZZQ L178/L4941/L4942)",
+    "SPECIAL_PASS"
+   ],
+   [
+    "从杀格",
+    "CONFIRMED"
+   ]
+  ]
+ },
+ {
+  "no": "8",
+  "bazi": "乙巳 甲申 辛酉 乙未",
+  "gender": "乾",
+  "ge": null,
+  "xi": null,
+  "winner": "水",
+  "primary": "水",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": []
+ },
+ {
+  "no": "9",
+  "bazi": "癸丑 乙卯 戊戌 癸亥",
+  "gender": "乾",
+  "ge": "正官格",
+  "xi": [
+   "水"
+  ],
+  "winner": null,
+  "primary": "水",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": []
+ },
+ {
+  "no": "10",
+  "bazi": "戊申 壬戌 甲子 丙寅",
+  "gender": "坤",
+  "ge": "财格",
+  "xi": [
+   "水"
+  ],
+  "winner": null,
+  "primary": "水",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": []
+ },
+ {
+  "no": "11",
+  "bazi": "庚寅 乙酉 戊午 丁巳",
+  "gender": "坤",
+  "ge": "伤官格",
+  "xi": [
+   "木",
+   "火"
+  ],
+  "winner": null,
+  "primary": "木",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": []
+ },
+ {
+  "no": "12",
+  "bazi": "丁亥 甲辰 己巳 丙寅",
+  "gender": "坤",
+  "ge": "从官格",
+  "xi": [],
+  "winner": null,
+  "primary": "金",
+  "bing": [],
+  "cong": "从官格",
+  "cong_state": "CONFIRMED",
+  "patterns": [
+   [
+    "阴干印根不碍从(PZZQ L178/L4941/L4942)",
+    "SPECIAL_PASS"
+   ],
+   [
+    "从官格",
+    "CONFIRMED"
+   ]
+  ]
+ },
+ {
+  "no": "13",
+  "bazi": "甲辰 庚午 甲辰 戊辰",
+  "gender": "坤",
+  "ge": "伤官格",
+  "xi": [
+   "土"
+  ],
+  "winner": "水",
+  "primary": "火",
+  "bing": [
+   "CAI_DUO_SHEN_RUO"
+  ],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [
+   [
+    "从财无官煞(PZZQ-033-001 L4937)",
+    "SPECIAL_FAIL"
+   ]
+  ]
+ },
+ {
+  "no": "14",
+  "bazi": "乙丑 辛巳 辛酉 己亥",
+  "gender": "坤",
+  "ge": "从官格",
+  "xi": [],
+  "winner": null,
+  "primary": "土",
+  "bing": [],
+  "cong": "从官格",
+  "cong_state": "CONFIRMED",
+  "patterns": [
+   [
+    "阴干印根不碍从(PZZQ L178/L4941/L4942)",
+    "SPECIAL_PASS"
+   ],
+   [
+    "从官格",
+    "CONFIRMED"
+   ]
+  ]
+ },
+ {
+  "no": "15",
+  "bazi": "乙未 乙酉 庚子 丁丑",
+  "gender": "坤",
+  "ge": "阳刃格",
+  "xi": [
+   "火",
+   "金"
+  ],
+  "winner": "火",
+  "primary": "火",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": []
+ }
+]
