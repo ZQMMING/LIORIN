@@ -1,0 +1,38 @@
+canonical_signals 摊平后: 1 条
+元素类型: tongshu.spec.canonical_signal.CanonicalSignal
+其字段: ['signal_id', 'source_engine', 'ontology_type', 'event_types', 'direction', 'confidence', 'temporal_scope', 'evidence_refs', 'rule_refs', 'layer', 'extracted_at', 'system', 'theme', 'time_scope', 'conflict_group', 'domain']
+
+  signal_id       = 'SIG-BA-YI000'
+  source_engine   = <SourceEngine.BAZI: 'Bazi'>
+  event_types     = []
+  domain          = ''
+  ontology_type   = 'SUPPORT'
+  direction       = 'NEUTRAL'  (type=str, .value=None)
+  temporal_scope  = SignalTemporalScope(start_year=None, end_year=None, start_month=None, end_month=None, start_day=None, end_day=None, granularity='YEARLY')
+  rule_refs       = ['ZPZ-001', 'ZPZ-121', 'ZPZ-122']
+  evidence_refs   = ['E-ZPZ-001-001', 'E-ZPZ-121-001', 'E-ZPZ-122-001']
+  layer           = <SignalLayer.BASELINE: 'BASELINE'>
+  extracted_at    = '2026-10-08T06:31:16.739556+00:00'
+  confidence      = 0.5
+  有 rule_id 属性? False
+
+=== 河洛证据的 rule_id 与注册表 ===
+  HL_TIAN_DI_SHU             value={'tian_shu': 18, 'di_shu': 44, 'tian_reduced': 8, 'di_reduced': 4} 注册=True 授权=True
+      prefix(前4)='HL_T'
+  HL_PRENATAL_HEXAGRAM       value='风山渐'    注册=True 授权=True
+      prefix(前4)='HL_P'
+  HL_YUANTANG                value='初六'     注册=True 授权=True
+      prefix(前4)='HL_Y'
+  HL_POSTNATAL_HEXAGRAM      value='火风鼎'    注册=True 授权=True
+      prefix(前4)='HL_P'
+  HL_HEXAGRAM_STRUCTURE      value="HexagramStructure(name='火风鼎', upper='离', lower='巽', lines=(-1, 1, 1, 1, -1, 1), ti_yong={'ti': '巽', 'ti_element': '木', 'yong': '离', 'yong_element': '火', 'relation': '体生用（泄）'}, sheng_ke='体生用（泄）', cheng_cheng=['1承2', '5承6', '4乘5'], bi=['2比3', '3比4'], ying=['3应6'], hu_gua='泽天夬', cuo_gua='水雷屯', zong_gua='风火家人')" 注册=False 授权=None
+      prefix(前4)='HL_H'
+  HL_HUA_GONG                value='NORMAL' 注册=True 授权=True
+      prefix(前4)='HL_H'
+  HL_JIEHOU_GUA              value='兑'      注册=True 授权=True
+      prefix(前4)='HL_J'
+
+=== _signal_direction_for_evidence 的匹配逻辑能否对上 ===
+  取 ev.rule_id[:4] 作为 prefix，与 sig 的 rule_id 做前缀/包含匹配。
+  但 CanonicalSignal 只有 signal_id 与 rule_refs（列表），无 rule_id。
+  本盘所有 rule_refs 汇总: ['ZPZ-001', 'ZPZ-121', 'ZPZ-122']

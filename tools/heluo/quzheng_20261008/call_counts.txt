@@ -1,0 +1,49 @@
+================================================================================================
+1983-11-03 12:00 男（回归案例）   耗时 2.61s
+================================================================================================
+产出：断言 8 / 建议 3
+
+计算项                                  次数   主要调用点
+------------------------------------------------------------------------------------------------
+sxtwl.getJieQiByYear                195   jiehhou:311×190, jiehhou:273×4, bazi_engine:
+sxtwl.fromSolar                      40   bazi_engine:1836×26, yue_ling_shu_ge:608×11,
+河洛自有判据                                6   diagnosis_rule_graph:203×6
+数格分类                                  4   guajie:824×2, yue_ling_shu_ge:354×2
+guajie 纳音元气                           3   guajie:1338×1, guajie:2928×1, guajie:2930×1
+guajie 数格凶吉                           2   guajie:1291×1, diagnosis_rule_graph:430×1
+canonical.calculate 河洛主链              1   compute_stage:374×1
+numbers 天数归一                          1   numbers:194×1
+节候卦求 jq                               1   canonical:400×1
+canonical._compute_huagong            1   canonical:404×1
+guajie 解卦                             1   compute_stage:415×1
+guajie.compose 综合断卦                   1   guajie:1595×1
+guajie 十二凶卦                           1   guajie:1276×1
+guajie 死断诸法                           1   guajie:1820×1
+证据产出                                  1   compute_stage:445×1
+frozen_state 冻结态                      1   compute_stage:446×1
+诊断图构建                                 1   compute_stage:448×1
+
+================================================================================================
+1990-05-20 08:00 男   耗时 2.18s
+================================================================================================
+产出：断言 10 / 建议 2
+
+计算项                                  次数   主要调用点
+------------------------------------------------------------------------------------------------
+sxtwl.fromSolar                      36   bazi_engine:1836×18, yue_ling_shu_ge:608×15,
+sxtwl.getJieQiByYear                 31   jiehhou:311×26, jiehhou:273×4, bazi_engine:1
+河洛自有判据                                6   diagnosis_rule_graph:203×6
+数格分类                                  4   guajie:824×2, yue_ling_shu_ge:354×2
+guajie 纳音元气                           3   guajie:1338×1, guajie:2928×1, guajie:2930×1
+guajie 数格凶吉                           2   guajie:1291×1, diagnosis_rule_graph:430×1
+canonical.calculate 河洛主链              1   compute_stage:374×1
+numbers 天数归一                          1   numbers:194×1
+节候卦求 jq                               1   canonical:400×1
+canonical._compute_huagong            1   canonical:404×1
+guajie 解卦                             1   compute_stage:415×1
+guajie.compose 综合断卦                   1   guajie:1595×1
+guajie 十二凶卦                           1   guajie:1276×1
+guajie 死断诸法                           1   guajie:1820×1
+证据产出                                  1   compute_stage:445×1
+frozen_state 冻结态                      1   compute_stage:446×1
+诊断图构建                                 1   compute_stage:448×1
