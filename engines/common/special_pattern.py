@@ -767,6 +767,11 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                     and (BRANCH_WX.get(_pr[0])==dm_wx or BRANCH_WX.get(_pr[1])==dm_wx):
                 _gen_hua_ss = True
         _not_lq = _ss_lin and _gen_hua_ss
+        # ★ V7.93 阈值口径登记: 「各成势」(计数>=3, 计数含天干+地支本气)为【工程离散值】——
+        #   原典 DTS L162「两气合而成象」/L164「天干属木, 地支属火...若见金水则破」未给数字;
+        #   现有 golden 三锚点(甲午丁卯甲午丁卯/丙午戊戌丙午戊戌/戊戌辛酉戊戌辛酉)支撑.
+        #   不可据 L178/L180「形全」(属"五气聚形"章)或 L164「干支分野」改此阈值 ——
+        #   2026-10-21 两次据此误改, 均致三锚点盘判 None, 已撤回. 待原典专项裁决.
         if len(_pres)==2 and _cnt[_pres[0]]>=3 and _cnt[_pres[1]]>=3 \
                 and (SHENG.get(_pres[0])==_pres[1] or SHENG.get(_pres[1])==_pres[0]) and not _not_lq:
             _a,_b=_pres

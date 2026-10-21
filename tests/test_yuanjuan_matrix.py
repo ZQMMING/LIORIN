@@ -33,9 +33,11 @@ def ck(name, ok, extra=""):
 
 
 def P(s):
-    """'甲申 壬申 乙巳 戊寅' -> pillars dict."""
+    """'甲申 壬申 乙巳 戊寅' 或 '甲申壬申乙巳戊寅' -> pillars dict."""
     if isinstance(s, str):
         parts = s.split()
+        if len(parts) == 1 and len(s) == 8:
+            parts = [s[i:i + 2] for i in range(0, 8, 2)]
         s = [(parts[0][0], parts[0][1]), (parts[1][0], parts[1][1]),
              (parts[2][0], parts[2][1]), (parts[3][0], parts[3][1])]
     return {'year': [s[0][0], s[0][1]], 'month': [s[1][0], s[1][1]],
@@ -512,6 +514,33 @@ for (kw, want_shape, basis) in (
     build_ge_cheng(f)
     base, shape = derive_ge_shape(f)
     ck("形态 %s [%s]" % (basis, bz), shape == want_shape, "%s/%s" % (base, shape))
+
+# ═══ Q. 两气成象 (DTS L162/L164 形象章) ═══
+# L162「两气合而成象, 象不可破也。」/ L164「天干属木, 地支属火, 天干属火, 地支属木, 其象则一。
+#   若见金水则破, 余仿此。」/ L166「五气聚而成形, 形不可害也。」
+# 注: 「各成势」阈值(计数>=3)为工程离散值(原典未给数字), 现有 golden 三锚点支撑;
+#   不得据 L178/L180「形全」或 L164「干支分野」擅改(2026-10-21 两次误改已撤回) —— 登记待原典专项裁决.
+print("\n[Q] 两气成象 (DTS L162/L164)")
+from engines.common.special_pattern import build_special_patterns
+from engines.common.daymaster_tian_he import build_tian_he as _bth
+
+for (bz, exp_xiu, basis) in (
+        ("甲午丁卯甲午丁卯", "火", "木火通明, 秀神丁火"),
+        ("丙午戊戌丙午戊戌", "土", "火土成象, 顺土(食伤)泄秀"),
+        ("戊戌辛酉戊戌辛酉", "金", "土金成象, 取辛金伤官为用")):
+    _p_q, _f_q = facts_of(bz)
+    _th_q = _bth(_p_q, _f_q)
+    _sp_q = build_special_patterns(_p_q, _f_q, _f_q.get('wuxing_power'), _th_q)
+    _lq = _sp_q.get('liangqi')
+    ck("两气成象 %s [%s]" % (basis, bz),
+       bool(_lq) and _lq.get('xiu') == exp_xiu and not _sp_q.get('zhuanwang') and not _sp_q.get('cong_type'),
+       _lq)
+# 反例: 癸亥甲寅(DTS L862) 两行相生但寅亥合木、伤官太重泄身 -> 不判两气成象(回正格)
+_p_q2, _f_q2 = facts_of("癸亥甲寅癸亥甲寅")
+_th_q2 = _bth(_p_q2, _f_q2)
+_sp_q2 = build_special_patterns(_p_q2, _f_q2, _f_q2.get('wuxing_power'), _th_q2)
+ck("两气成象 反例: 假两气(寅亥合木/伤官太重)不判成象(DTS L862)",
+   not _sp_q2.get('liangqi'), _sp_q2.get('liangqi'))
 
 print()
 print("=" * 74)
