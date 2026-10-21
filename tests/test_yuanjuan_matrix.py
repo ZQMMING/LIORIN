@@ -457,6 +457,29 @@ ck("岁运裁决 克伐日主不入恶神表(PZZQ L3346)",
 ck("岁运裁决 助主病不入恶神表(药病交战走平)",
    evil_offset.evil_no_offset(["助主病土(土)"]) is False, "助主病被误列为恶神")
 
+# ═══ O. 六亲映射 (SMTH L3565 男女取用不同) ═══
+# SMTH L3565「男取克干为子, 女取干生为息...【女取用与男不同】, 我生者为子, 克我者为夫,
+#   生我夫者为姑, 克我姑者为丈人...」/ 夫=财(男), 妻=财(男)
+print("\n[O] 六亲映射 (SMTH L3565 男女取用不同)")
+from engines.common.six_relative_producer import six_relative_producer
+for (tg, gender, want_syms, basis) in (
+        ("财", "男", ["父", "妻星"], "男: 财=父/妻星(SMTH 男以财为妻)"),
+        ("官杀", "女", ["丈夫星"], "女: 克我者(官杀)=丈夫星(SMTH「克我者为夫」)"),
+        ("食伤", "女", ["子女"], "女: 干生为息(食伤)=子女(SMTH「女取干生为息」)"),
+        ("食伤", "男", ["子女", "作品"], "男: 克干为子(食伤)=子女(SMTH「男取克干为子」)"),
+        ("印", "男", ["母", "长辈", "学习"], "男: 生我者(印)=母"),
+        ("比劫", "男", ["兄弟", "同辈"], "男: 同我者(比劫)=兄弟")):
+    r = six_relative_producer(tg, gender, "STRONG_ROOT")
+    syms = r.get("relative_symbols") or []
+    ck("六亲 %s" % basis, all(w in syms for w in want_syms), syms)
+# 性别取用不同: 女命无"妻星"(夫星=官杀), 男命无"丈夫星"
+r_male = six_relative_producer("财", "男", "STRONG_ROOT")
+r_female = six_relative_producer("财", "女", "STRONG_ROOT")
+ck("六亲 男女取用不同(SMTH「女取用与男不同」): 女命财=父/资源, 非妻星",
+   "妻星" in (r_male.get("relative_symbols") or [])
+   and "妻星" not in (r_female.get("relative_symbols") or []),
+   (r_male.get("relative_symbols"), r_female.get("relative_symbols")))
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

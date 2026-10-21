@@ -374,6 +374,10 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         #           —— 喜神=化神(行旺地); 化神极旺则喜泄(食伤)。
         #   ti_wx=化神五行(格体豁免); xi_wx=化神(主喜), 化神极旺喜泄(食伤)登记待专案。
         #   hua_state=CONFIRMED 才覆盖正格; CANDIDATE(假化/返象)只记结构不覆盖。
+        # ★ V7.90 口径说明(防误改): 本处「化气格」是【《子平真诠》体系】的独立格(grade=A: L565/L1034),
+        #   与 docs/AGENTS.md v3 第八节「取消化气格独立桶」所指不同 —— 后者针对【《渊海》化象/《滴天髓》化象】
+        #   (该体系化象须"地全一方", 如乙庚化金须巳酉丑全, 归《从革格》), 非真诠化气格.
+        #   依 AGENTS.md 公理一「六部经典在断言层自洽」, 二者并存不冲突, 不得据 v3 误删此处.
         if _sp0.get('hua_qi') and _sp0.get('hua_qi_state') == 'CONFIRMED':
             _hwx = _sp0['hua_qi'][1] if len(_sp0['hua_qi']) > 1 and _sp0['hua_qi'][0] == '化' else None
             if _hwx:
