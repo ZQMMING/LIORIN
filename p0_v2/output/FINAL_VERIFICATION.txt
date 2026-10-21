@@ -25,7 +25,7 @@
   报告: D:\shuntian-ziping-p0\p0_v2\output\REGRESSION_LATEST.txt
 
 [4] 判据锚点(公理三)
-  引擎原典引用点: 113 组 / 353 次
+  引擎原典引用点: 113 组 / 354 次
   结果: PASS=120 FAIL=0
 
 [5] 分布快照

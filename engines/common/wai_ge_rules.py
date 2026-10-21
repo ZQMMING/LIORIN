@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
-"""外格规则：從殺/曲直/炎上/潤下/從兒/從勢/從革 判定"""
+"""外格规则：從殺/曲直/炎上/潤下/從兒/從勢/從革 判定
+
+★ DEMO 状态(非生产, V7.125 标注):
+  本模块未被主链 bazi_gate 引用。主链外格/从格判定走 engines/common/special_pattern.py
+  (从杀格 CANDIDATE 状态机 L741-748 / 专旺格 ZHUANWANG_NAME L27 / 从格破格 ge_jie_layer L326+),
+  与本模块是两套不同步口径。本模块自包含 HIDDEN 表 + 依赖 gc002_builder(非主链 l0_fact_builder),
+  属独立演示; 待接入主链时须与 special_pattern.py 口径归一(AGENTS.md 第四节「同一层不设两套裁决」)。
+  与 six_relative_full.py(六亲 demo) 同列, 均登记为「已实现未接主链」."""
 import sys
 sys.path.insert(0, r'engines\common')
 from gc002_builder import paipan, HIDDEN
@@ -35,11 +42,20 @@ def cong_sha_rule(c):
     no_shang = not any(s in tl['shi_shang'] for s in stems)
     sha_root = any(ELEM[h] == tl['sha_elem'] for b in br for h in HIDDEN[b])
     mixed = any(s in tl['guan'] for s in stems) and any(s in tl['sha'] for s in stems)
-    if rootless and no_fu and sha_dang and no_shang and sha_root:
-        ctx = '官杀混杂(官留杀从杀论)' if mixed else '纯杀从杀'
+    # ★ V7.125 官杀混杂矛盾修正: PZZQ「弃命从杀, 杀无制化, 有官星杂之则不纯」——
+    #   官杀混杂(mixed)时不成【纯】从杀(须杀独成势/官留杀制), 旧判把官吞进从杀是口径反.
+    #   仅【纯杀】(月令本气属杀, 天干无官)方成立; 官杀混杂 -> 留 boundary, 不报从杀格.
+    guan_in_stems = any(s in tl['guan'] for s in stems)
+    sha_in_stems = any(s in tl['sha'] for s in stems)
+    pure_sha = (not guan_in_stems) and (sha_in_stems or benqi in tl['sha'])
+    if rootless and no_fu and sha_dang and no_shang and sha_root and pure_sha:
         return {'pattern_state': 'DETERMINED(從殺格)', 'pattern_success_state': 'SUCCESS(棄命從殺)',
-                'condition_context': f'日主无根无食制，官杀成势；{ctx}',
+                'condition_context': '日主无根无食制，纯杀成势(官星不杂)',
                 'evidence': ['SFTK-012-002'], 'note': '從殺成：舍命從殺；忌根運制殺運'}
+    if rootless and no_fu and sha_dang and mixed:
+        return {'pattern_state': 'INCOMPLETE(官殺混雜不成純從殺)', 'pattern_success_state': 'NA',
+                'condition_context': '日主无根但官杀混杂(官星杂之, PZZQ「有官星杂之则不纯」), 须杀独成势方论从杀',
+                'evidence': ['SFTK-012-002'], 'note': '官杀混杂边界: 不报纯从杀, 留待主链 special_pattern 裁定'}
     return None
 
 
