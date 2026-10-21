@@ -35,19 +35,21 @@ SHENG = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
 # 病类→药神五行 (单一数据源: check_qubing_level 岁运去病 + apply_yuanju_yao 原局药消病共用)
 #   依据: PZZQ L957「除其病神, 即谓之药」(以抑为喜则去其抑者为病); SFTK L424 病药说
 #   「用财见比肩为病喜官杀为药, 用食神伤官以印为病喜财为药」; DTS L240「格中如去病,财禄两相宜」。
+# ★ V7.106 病药之五行随【日主】而变(SFTK L129「何以为之药? ...八字原有所害之一字, 而得一字以去之」),
+#   故本表一律留空, 全部在 _bing_yao_map() 内按日主动态派生; 旧版固定字面(如下注释所示)仅对木日主成立,
+#   致他日主之药方取错五行而误消病(掩盖真实病机), 已随 V7.106 全部改为动态派生.
 BING_YAO_MAP = {
-    'CAI_DUO_SHEN_RUO': ['木', '水'],  # 财多身弱, 药=印比(帮身任财)
-    'SHA_ZHONG_SHEN_QING': ['火', '木', '水'],  # 煞重身轻, 药=食伤制煞/印化煞
-    'XIE_QI_TAI_ZHONG': ['木', '水'],  # 泄气太重, 药=印比
-    'SHANGGUAN_JIAN_GUAN': ['水', '土'],  # 伤官见官, 药=印财
-    'XIAO_DUO_SHI': ['土'],  # 枭神夺食, 药=财(制枭)
-    'BIJIE_DUO_CAI': ['金'],  # 比劫夺财, 药=官杀(制劫护财, SFTK「用财见比肩为病喜官杀为药」)
-    'BIJIE_CHENG_DANG': ['金'],  # 比劫成党, 药=官杀
-    'ZHI_SHA_TAI_GUO': [],  # 制杀太过: 按日主动态取(印=SHENG_WO, 财=KE), 见 _bing_yao_map()
+    'CAI_DUO_SHEN_RUO': [],  # 财多身弱, 药=印比(帮身任财)        [动态: 印 SHENG_WO[dm] + 比劫 dm]
+    'SHA_ZHONG_SHEN_QING': [],  # 煞重身轻, 药=食伤制煞/印化煞      [动态: 食伤 SHENG[dm] + 印 SHENG_WO[dm]]
+    'XIE_QI_TAI_ZHONG': [],  # 泄气太重, 药=印比                  [动态: 印 SHENG_WO[dm] + 比劫 dm]
+    'SHANGGUAN_JIAN_GUAN': [],  # 伤官见官, 药=印财              [动态: 印 SHENG_WO[dm] + 财 KE[dm]]
+    'XIAO_DUO_SHI': [],  # 枭神夺食, 药=财(制枭)                [动态: 财 KE[dm]]
+    'BIJIE_DUO_CAI': [],  # 比劫夺财, 药=官杀(制劫护财)           [动态: 官杀 KE_WO[dm]]
+    'BIJIE_CHENG_DANG': [],  # 比劫成党, 药=官杀                [动态: 官杀 KE_WO[dm]]
+    'ZHI_SHA_TAI_GUO': [],  # 制杀太过: 印(制食护杀)/财(泄食生杀)   [动态: 印 SHENG_WO[dm] + 财 KE[dm]]
     # ★ V7.87 印多埋子(母多灭子)之药: 财(我克=破印救母, DTS L445「土重金埋, 木克土则生金」/
     #   任氏「印绶虽旺, 柱中财星有气, 可用财破印」) + 比劫(同我=去财扶印, PZZQ L1130「反须以比劫去财扶印」).
-    #   按日主动态取(财=KE[dm], 比劫=dm), 见 _bing_yao_map(); 旧版此病不在五行药表 ->
-    #   原局药消病三判据(合/根/势)对印多埋子从未生效, yao_yuanju 字段永不设置.
+    #   旧版此病不在五行药表 -> 原局药消病三判据(合/根/势)对印多埋子从未生效, yao_yuanju 字段永不设置.
     'YIN_DUO_MAI_ZI': [],  # 按日主动态取(财=KE[dm], 比劫=dm), 见 _bing_yao_map()
 }
 
@@ -1286,12 +1288,12 @@ def check_qubing_level(original_bing_list: List[Dict], dayun_stems: List[str] = 
         has_yao = len(yao_in_dayun) > 0
 
         # 检查是否添病(大运/流年增加病的五行)
-        # 简化: 比劫成党病, 大运再逢比劫(水)则添病
-        bing_wuxing_map = {
-            'BIJIE_CHENG_DANG': ['水'],  # 比劫=水(癸日主)
-            'CAI_DUO_SHEN_RUO': ['土'],  # 财=土(癸日主)
-        }
-        bing_wx = bing_wuxing_map.get(bing_id, [])
+        # ★ V7.107 改按日主派生(病神五行随日主而变, SFTK L129「原八字中原所害之神也」):
+        #   旧版固定字面(['水']比劫/['土']财, 注释明说"癸日主")仅对癸日主成立,
+        #   他日主之岁运"添病"判据取错五行 -> 「含药神但亦添病 -> 去病不净」判定错误.
+        #   病神五行由 _bing_shen_wx(病类, 日主五行) 统一派生(比劫=同我/财=我克/印=生我/杀=克我/食伤=我生).
+        _bing_wx = _bing_shen_wx(bing_id, daymaster_element)
+        bing_wx = [_bing_wx] if _bing_wx else []
         bing_added = any(wx in dayun_wuxing for wx in bing_wx)
 
         if has_yao and not bing_added:

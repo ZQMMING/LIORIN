@@ -837,6 +837,36 @@ ck("药方 跨日主不得同形(木日财多身弱≠金日)",
    _ym1['CAI_DUO_SHEN_RUO'] != _ym2['CAI_DUO_SHEN_RUO'],
    (_ym1['CAI_DUO_SHEN_RUO'], _ym2['CAI_DUO_SHEN_RUO']))
 
+# 全仓闸门: 病/药类字典项不得用固定五行字面(应按日主派生, V7.106/V7.107 型)
+# 用 AST 精确判定(避免注释/多行 dict 误判): 取字面量 dict 中"键含病药类关键字"且"值为五行字符串列表"者.
+import glob as _g3, ast as _a3
+_wx_keys = ('CAI', 'SHA', 'XIE', 'YIN', 'BIJIE', 'XIAO', 'SHANGGUAN', 'ZHI_SHA',
+            'YAO', 'BING')
+_fixed_hits = []
+for _fp in _g3.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=True):
+    if '.bak' in _fp or '_archive' in _fp:
+        continue
+    try:
+        _tree = _a3.parse(open(_fp, encoding='utf-8', errors='ignore').read())
+    except Exception:
+        continue
+    for _node in _a3.walk(_tree):
+        if not isinstance(_node, _a3.Dict):
+            continue
+        for _k, _v in zip(_node.keys, _node.values):
+            if not isinstance(_k, _a3.Constant) or not isinstance(_k.value, str):
+                continue
+            if not any(_kk in _k.value for _kk in _wx_keys):
+                continue
+            if not (isinstance(_v, (_a3.List, _a3.Tuple)) and _v.elts):
+                continue
+            if all(isinstance(_e, _a3.Constant) and _e.value in ('木', '火', '土', '金', '水')
+                   for _e in _v.elts):
+                _fixed_hits.append("%s:%d %s=%s" % (
+                    os.path.relpath(_fp, ROOT), _node.lineno, _k.value,
+                    [e.value for e in _v.elts]))
+ck("全仓病/药类字典项无固定五行字面(V7.106/107 型已清)", not _fixed_hits, _fixed_hits[:5])
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
