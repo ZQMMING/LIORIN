@@ -227,7 +227,12 @@ def base_fortune(lm) -> dict:
 # 细累浮灾级规则 (三命通会 L4273: "细累浮灾, 但不为重害") —
 #   2026-10-21 用户定案(古法第二层): 单条计 0; 两条及以上同现合计计 1.
 #   不得把"不为重害"的浮灾与"发祸"平权计凶。
-_XI_LEI_RULES = frozenset({"LM-V80", "LM-V88", "LM-V64"})   # 小运刑害/四煞轻凶/岁压稽滞
+# 2026-10-21 深度审计BUG-3: 补 V79 小运行死绝 / V60B 大运死绝 / V63 咸池 —
+#   三规则引擎注释自标"细累级"(V79"小运细累级补大运不足"/V60B"细累级不逐年重判"/
+#   V63"败乡酒色级细累") 却未归零, 与用户定案口径不一致;
+#   实测 5 例 55 年归零 tone/应期零漂移 (应期由 _HEAVY 重凶集决定, 不靠计分).
+_XI_LEI_RULES = frozenset({"LM-V80", "LM-V88", "LM-V64",
+                            "LM-V79", "LM-V60B", "LM-V63"})   # 小运刑害/四煞轻凶/岁压稽滞/小运死绝/大运绝/咸池
 
 # 主断吉集 (珞琭子"尊吉卑凶, 逢灾自愈" — 救应降级权):
 #   临天月德/贵人禄马/本命克太岁为财/合局/喜神/小运禄马贵/福会/临官帝旺
@@ -339,7 +344,8 @@ def aggregate(base: dict, power: dict, dim_hits: dict | None = None,
 #   三命通会 L943: "大运虽吉, 其小运不通, 未可便言吉利; 大运虽凶, 其小运
 #   却吉, 未可便作凶推" — 运年各自独立, 只作条件修正标注.
 # ============================================================================
-_XIONG_HUI_RULES = {"LM-V124", "LM-V125", "LM-V49-YC", "LM-V49-XS"}  # 天罗/大小耗/元辰犯运/凶煞
+_XIONG_HUI_RULES = {"LM-V124", "LM-V49-YC", "LM-V49-XS"}  # 天罗/元辰犯运/凶煞 (真屯蹇凶祸)
+_XIONG_HUI_LIGHT = {"LM-V125"}  # 大小耗 (耗散, 非灾祸级屯蹇 — 1986乙丑运误判根源, 需净恶力重才发祸)
 
 
 def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dict:
@@ -399,10 +405,14 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
     #   1990 2030 BINGXU 偏吉带天罗, 太岁庚戌伏吟压, 然小运丙午(土帝旺)非死绝
     #   → 缺"小运不和冲击死绝"要件 → 浮灾, tone 尊重流年自身判定(细累浮灾不为重害)
     if xiong_hui and (tai_xing or tai_chong or tai_hai or tai_ya):
-        _year_ji = sum(YEAR_XI.get(v.get("rule_id", ""), 0)
-                       for v in (year_verdicts or []) if v.get("tone") == "吉")
-        _year_xiong = sum(YEAR_XIONG.get(v.get("rule_id", ""), 1)
-                          for v in (year_verdicts or []) if v.get("tone") == "凶")
+        # 2026-10-21 深度审计BUG-4: 吉/凶力用 year_power 净口径 —
+        #   raw YEAR_XIONG 会把细累规则(V80/V88/V64/V79/V60B/V63)计原始分
+        #   (year_power 已归零) 且 LM-F04 凶条按默认1分误计; 两口径不一致
+        #   可能推高"发祸"门槛(_year_xiong>=7)误判。统一净口径(剔除LM-F+细累归零)。
+        _pwr = year_power([v for v in (year_verdicts or [])
+                           if not (v.get("rule_id", "") or "").startswith("LM-F")])
+        _year_ji = _pwr["ji"]
+        _year_xiong = _pwr["xiong"]
         # 小运要件: 死绝(凶2) 或 刑害(凶1) — "小运不和, 冲击死绝"方主发祸
         _xy_bad = bool(yctx.get("xy_dead_jue") or yctx.get("xy_xing_hai"))
         if _year_ji > _year_xiong:
@@ -421,7 +431,13 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
             #   仅细累浮灾不为重害 → 尊重流年自身判定 (用户⑧: 大运绝地十年底色,
             #   不能每年因太岁犯命重新判"发祸凶"; 1986 2024/2025/2028 凶力 6/6/5
             #   → 降浮灾; 喻1951 处决年凶力重 → 仍发祸)
-            if _year_xiong >= 7:
+            # 2026-10-21 深度审计BUG-5: 真屯蹇(天罗/元辰犯运)门槛降至6 —
+            #   喻1951 辛亥天罗+太岁压+小运刑害+空亡丧吊 净恶力6(细累V80归零后),
+            #   发祸不得依赖细累凑分; 天罗/元辰=灾祸级屯蹇, 结构凶即发祸;
+            #   轻屯蹇(大小耗/凶煞)仍须净恶力≥7 (1986 乙丑运大小耗 6分→浮灾守住)
+            _heavy_hui = bool((_luck_rules & _XIONG_HUI_RULES)
+                              and not (_luck_rules & _XIONG_HUI_LIGHT))
+            if _year_xiong >= 7 or (_heavy_hui and _year_xiong >= 6):
                 out["mode"] = "发祸"
                 out["year_tone"] = "凶"   # L4273 凶祸之运遇太岁刑冲 + 小运冲击死绝 → 方可发祸
                 out["detail"] = "大运屯蹇凶祸(死绝凶杀), 太岁又见刑冲, 小运不和冲击死绝, 恶力重, 方主发祸 (五行精纪 L4273/L4276/三命通会 L943)"
@@ -436,10 +452,9 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
         # L4273 吉运中太岁/小运到刑害之乡 → 细累浮灾不为重害:
         #   2026-10-21 扩小运信号 (吉泰之运+小运死绝/刑害 = 细累浮灾);
         #   吉面不弱于凶面则保留流年自身判定 (吉面之年细累不为重害)
-        _j2 = sum(YEAR_XI.get(v.get("rule_id", ""), 0)
-                  for v in (year_verdicts or []) if v.get("tone") == "吉")
-        _x2 = sum(YEAR_XIONG.get(v.get("rule_id", ""), 1)
-                  for v in (year_verdicts or []) if v.get("tone") == "凶")
+        _p2 = year_power([v for v in (year_verdicts or [])
+                          if not (v.get("rule_id", "") or "").startswith("LM-F")])
+        _j2, _x2 = _p2["ji"], _p2["xiong"]
         if year_tone == "吉":
             out["year_tone"] = "吉" if _j2 >= _x2 else "吉凶相杂"
         elif year_tone == "凶":

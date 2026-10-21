@@ -3735,6 +3735,10 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
                 _emit(rule, {**yctx, **pr})
 
     counts = {"吉": 0, "动": 0, "平": 0, "滞": 0, "凶": 0}
+    # 2026-10-21 深度审计BUG-1: 发用规则族(LM-F)不参与吉凶算术(用户定案),
+    #   counts 亦须剔除 LM-F — 否则 LM-F04(财化鬼)凶条污染应期判定(counts凶>0)
+    #   与展示计数。LM-F 单列 display_counts 仅供展示。
+    display_counts = {"吉": 0, "平": 0, "凶": 0}
     # 岁运发用规则族 (LM-F): 太岁干支"来什么、发什么" (渊海子平论大运+五行精纪转化)
     if lm is not None:
         try:
@@ -3746,7 +3750,10 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         except Exception:
             pass
     for v in verdicts:
-        counts[v["tone"]] = counts.get(v["tone"], 0) + 1
+        if (v.get("rule_id") or "").startswith("LM-F"):
+            display_counts[v.get("tone", "平")] = display_counts.get(v.get("tone", "平"), 0) + 1
+        else:
+            counts[v["tone"]] = counts.get(v["tone"], 0) + 1
     # 2026-10-20 第二版 (原著核实): 大运归大运、流年归流年 — 原著无运年算术聚合
     #   (三命通会 L943: 大运虽吉小运不通未可便言吉利; 大运虽凶小运却吉未可便作凶推).
     #   → 流年自身判定 = L4276 基地福力 × 流年恶力 查表 (非逐条±1对冲);
@@ -3935,7 +3942,11 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #    2026-10-21 修订(核验⑧): 五鬼克身"决有大灾"比冲运"其祸重"更重, 主应不能取到禄/事业;
     #    无重凶时按凶断语中凶力最强(YEAR_XIONG)的主维度。
     from .strength import YEAR_XIONG as _YX
-    _xiong_v = [v for v in verdicts if v.get("tone") == "凶"]
+    # 2026-10-21 深度审计BUG-2: 主/次应聚合剔除 LM-F — 发用不参与判定(用户定案),
+    #   且 LM-F 断语无 dims 字段(维度=平/辅助兜底), 混入会污染主/次应内部字段
+    #   (F04财化鬼 tone=凶 被当凶断语取主应)
+    _xiong_v = [v for v in verdicts if v.get("tone") == "凶"
+                and not (v.get("rule_id") or "").startswith("LM-F")]
     _zhu_ying, _ci_ying = "", ""
     if _xiong_v:
         _pool = _heavy_hit if _heavy_hit else _xiong_v
