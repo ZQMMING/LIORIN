@@ -334,7 +334,10 @@ def check_geju_youqing_youli(facts: Dict[str, Any], xiangshen_candidates: List[D
         has_deshi = any(stem_to_wx.get(s, '') == month_qi_element for s in appeared_stems)
 
         # 有力条件2: 得地(相神有重根)
-        has_dedi = any(root_weight.get(b, {}).get('class') == 'HEAVY' for b in gen_branches)
+        #   ★ V7.121 根类为细分枚举(HEAVY_LU/HEAVY_BEN/HEAVY_LONGSHENG/...),
+        #   精确等于 'HEAVY' 恒假致"得地"条件永不成立 —— 须前缀匹配(PZZQ L800-801 轻重根之别).
+        has_dedi = any(str((root_weight.get(b) or {}).get('class') or '').startswith('HEAVY')
+                       for b in gen_branches)
 
         # 有力条件3: 不克不破(简化: 相神不被日主克)
         # 这里简化处理, 不做复杂的克破关系判断

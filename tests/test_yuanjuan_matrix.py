@@ -1064,6 +1064,17 @@ for _fn, _src in _rc_files.items():
     for _l in _src.split('\n'):
         if _re2.search(r"get\('class'\)\s*==\s*'HEAVY'", _l):
             _bad_exact.append(_l.strip()[:80])
+# 全仓闸门: 任何模块不得对 per_pillar[].class 精确等于 'HEAVY'/'LIGHT'
+#   (根类枚举为细分 HEAVY_LU/HEAVY_BEN/HEAVY_LONGSHENG/LIGHT_YU_QI/SPECIAL_LONGSHENG_YIN,
+#    精确匹配恒假 —— V7.118/120 已清零, 本断言防再犯)
+_repo_bad = []
+for _fp in _g3.glob(os.path.join(ROOT, 'engines', '**', '*.py'), recursive=True):
+    if '.bak' in _fp or '_archive' in _fp:
+        continue
+    for _i, _l in enumerate(open(_fp, encoding='utf-8', errors='ignore').read().split('\n'), 1):
+        if _re2.search(r"get\('class'\)\s*==\s*'(HEAVY|LIGHT)'", _l):
+            _repo_bad.append('%s:%d %s' % (os.path.relpath(_fp, ROOT), _i, _l.strip()[:70]))
+ck('全仓无「class 精确等于 HEAVY/LIGHT」写法(V7.118/120 已清零)', not _repo_bad, _repo_bad[:5])
 # 运行时: 日主有重根之盘不得报印多埋子(母不灭子)
 from engines.common.l0_fact_builder import build as _bf
 _viol = []
