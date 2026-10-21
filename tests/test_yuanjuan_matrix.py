@@ -936,6 +936,27 @@ for _fp in _g4.glob(os.path.join(ROOT, "engines", "common", "*.py")):
 ck("引擎不产出神煞类字段(纳音/神煞名)",
    ("'na_yin'" not in _all_src) and ("'shensha'" not in _all_src), "")
 
+# ═══ BB. 岁运层判据互斥边界 (制/化/暖/帮 vs 助病/克伐) ═══
+# DTS L404 闲神为中性; 岁运层以「药病关系」定吉凶:
+#   吉·制=克主病(恒正向) / 吉·化=病所生且不反克日主 / 吉·暖=水病火暖 / 吉·帮=比劫印帮身(不助病)
+#   凶·助病=同病/生病(但候神职能五行豁免) / 凶·克伐=克日主(炼金官火豁免)
+print("\n[BB] 岁运层判据互斥边界")
+_sy_src = open(os.path.join(ROOT, "engines", "common", "suiyun_validate.py"),
+               encoding='utf-8').read()
+ck("岁运 吉·帮 排除助病五行(不助病方为帮身)",
+   "x not in (bw, SHENG_BACK.get(bw))" in _sy_src, "")
+ck("岁运 吉·化 排除反克日主之五行(化出不反克日主)",
+   "KE_BACK.get(dm_wx) != hua" in _sy_src, "")
+ck("岁运 凶·助病 排除候神职能五行(炼金/泄秀/制药为药非病源)",
+   "_houshen_exempt" in _sy_src, "")
+ck("岁运 凶·克伐 排除候神(炼金官火克身是炼金非克伐)",
+   "V7.28 候神/炼金豁免" in _sy_src, "")
+ck("岁运 吉·制 不看量(克主病恒正向)",
+   "吉·制: 克主病(恒正向, 不看量)" in _sy_src, "")
+# 恶神抵消表: 刑/冲药根/破格 不抵消制化之功; 冲提纲/合重根=交战(平)
+ck("岁运 恶神不抵消制化之功(V7.25 恶神抵消表)",
+   "恶神抵消表" in _sy_src or "不抵消制化之功" in _sy_src, "")
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
