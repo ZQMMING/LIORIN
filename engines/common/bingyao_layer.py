@@ -722,13 +722,15 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         # ① 印重: 根气支数(印在哪些支有根) >=2 或 已成党
         _yin_t, _yin_b = _tou_ben(yin_wx)
         _yin_combo = _yin_t + _yin_b + _ju_piao(yin_wx)
-        _hd_y = facts.get('hidden_stems') or {}
+        # ★ V7.98 印重之根气支数改计【本气根】(轻重根之别, PZZQ L800-801「长生、禄、帝旺为重根,
+        #   墓库、余气为轻根」): 母成势须靠本气/重根, 中气余气(轻根)散落两支不足言「印多」;
+        #   旧口径遍历 hidden_stems 凡印五行出现即计 1(含中气余气), 与同函数 ②要件之 _tou_ben 本气根
+        #   口径不一, 亦与根气表 daymaster_root_class 轻重之分相悖.
         _yin_root_brs = 0
         for _pos in ('year', 'month', 'day', 'hour'):
-            for _h in (_hd_y.get(_pos) or []):
-                if GAN_WX.get(_h, '') == yin_wx:
-                    _yin_root_brs += 1
-                    break
+            _bz_y = (pillars.get(_pos) or ['', ''])[1]
+            if ZHI_BEN_WX.get(_bz_y, '') == yin_wx:
+                _yin_root_brs += 1
         _yin_chong = (_yin_combo >= DANG_COMBO) or (_yin_root_brs >= 2)
         if not _yin_chong:
             ok = False
