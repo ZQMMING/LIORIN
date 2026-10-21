@@ -3505,6 +3505,13 @@ _JIUXI_NAME = {  # 主断吉规则 → 吉神中文名 (备注/救应展示用)
     "LM-Y72": "生本命", "LM-F03": "贵禄马", "LM-F01": "发禄",
 }
 
+# 2026-10-21 输出端重构(主题体系): 维度 → 词库六主题 (行/事/人/居/养/时)
+# 依据: 词库V4.0 07_PRODUCT_THEMES 六主题定义; 展示层映射, 不参与判定
+_TOPIC_MAP = {
+    "身/健康": "养", "禄/事业": "事", "命/财富": "事",
+    "宫/六亲": "人", "煞/灾祸": "行", "吉神/辅助": "—",
+}
+
 
 def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
     """风险指引 (2026-10-21 产品伦理层: 信号→用户指引).
@@ -3570,8 +3577,15 @@ def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
             ci_parts.append(x)
     _ci4 = list(dict.fromkeys(ci_parts))[:4]
     ci_fang = "、".join(_ci4) or "无明确次防"
-    # --- 可执行建议 ---
+    # --- 可执行建议 (2026-10-21 三段式: 概念动作 + 等级模板 + 避免清单) ---
+    _all_out = " ".join(v.get("out", "") for v in verdicts)
+    from .modern_words import modern_actions as _ma, avoid_words as _aw, ten_god_modern as _tgm
     adv = []
+    _acts = _ma(_all_out)          # 概念级动作 (词库 allowed_actions)
+    _forbid = _aw(_all_out)        # 避免清单 (词库 forbidden_actions)
+    _tgod = _tgm(_all_out)         # 十神现代词 (词库 product_semantic)
+    if _acts:
+        adv.append("动作提示：" + "、".join(_acts[:2]))
     if risk_label == "重点防":
         adv += ["重大健康决策(手术、生育等)格外审慎", "定期体检, 避免过度劳累/熬夜"]
         if "财务" in zhu_fang or "破财" in ci_fang:
@@ -3593,6 +3607,8 @@ def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
         adv += ["顺势推进, 把握机会"]
         if xiong_d:
             adv += ["虽有浮灾细累, 注意节奏即可"]
+    if _forbid:
+        adv.append("避免：" + "、".join(_forbid[:2]))
     # --- 备注 (2026-10-21 核验修订: 首句必须反映应期级别, 大运底色仅作补充) ---
     #   用户裁定: 备注不能按大运底色机械生成 — 应期=浮灾写"浮灾细累不为重害",
     #   应期=需防写"需防当注意", 应期=定死写"重点防防大于治";
@@ -3625,8 +3641,16 @@ def build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx) -> dict:
     _tone_cn = {"吉": "吉顺", "吉凶相杂": "吉凶相杂", "凶": "偏凶", "平": "平稳"}.get(year_tone, year_tone)
     _level_cn = {"定死/大凶": "重点防之年", "需防": "谨慎之年", "浮灾细累": "留意之年",
                  "吉": "安顺之年", "无": "平稳"}.get(level, level)
-    _concl = f"{_tone_cn}·{_level_cn}。主防：{zhu_fang}；次防：{ci_fang}"
-    _modern = _mw(" ".join(v.get("out", "") for v in verdicts))
+    _t_main = _TOPIC_MAP.get(zhu, "")      # 主应维度 → 词库主题
+    _t_ci = []
+    for _c in ying_qi.get("ci_ying", "").split("、"):
+        _tp = _TOPIC_MAP.get(_c.strip(), "")
+        if _tp and _tp not in _t_ci:
+            _t_ci.append(_tp)
+    _topic_txt = "、".join(dict.fromkeys([t for t in [_t_main] + _t_ci if t and t != "—"]))
+    _concl = (f"{_tone_cn}·{_level_cn}" + (f"（主题：{_topic_txt}）" if _topic_txt else "")
+              + f"。主防：{zhu_fang}；次防：{ci_fang}")
+    _modern = list(dict.fromkeys(_mw(_all_out) + _tgod))
     return {"risk_label": risk_label, "risk_reason": risk_reason,
             "zhu_fang": zhu_fang, "ci_fang": ci_fang,
             "advice": adv, "beizhu": "; ".join(note) or "按应期防御即可",

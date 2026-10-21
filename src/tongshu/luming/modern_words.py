@@ -61,6 +61,34 @@ PATTERN_ACTION = {
     "财官双美": ["用资源支撑职责"],
 }
 
+# 十神 → 现代语义词 (词库 product_semantic)
+TEN_GOD_MODERN = {
+    "正官": "边界与担当",
+    "七杀": "攻坚与突破",
+    "正印": "支持与智慧",
+    "偏印": "独立思考",
+    "正财": "积累与安稳",
+    "偏财": "流动与机遇",
+    "比肩": "自我确认",
+    "劫财": "协作与平衡",
+    "食神": "创造与表达",
+    "伤官": "突破与革新",
+}
+
+# 十神 → 避免清单 (词库 forbidden_actions; 展示层建议用)
+TEN_GOD_FORBID = {
+    "正官": ["保证成功", "绝对服从"],
+    "七杀": ["硬碰硬", "冒进"],
+    "正印": ["闭门造车", "拒绝帮助"],
+    "偏印": ["否定自我", "随波逐流"],
+    "正财": ["投机", "冲动消费"],
+    "偏财": ["赌博", "盲目投资"],
+    "比肩": ["过度自我", "拒绝协作"],
+    "劫财": ["恶性竞争", "过度侵占"],
+    "食神": ["压抑表达", "过度自我否定"],
+    "伤官": ["无度批判", "冒犯权威"],
+}
+
 # 现代词句源关键词 → 现代词 (断语 out 文本关键词匹配; 长词优先)
 _MODERN_KEYWORDS = (
     [("官印相生", "官印相生"), ("官杀混杂", "官杀混杂"), ("印星过旺", "印星过旺"),
@@ -102,4 +130,32 @@ def modern_actions(text: str, limit: int = 2) -> list:
                     out.append(a)
             if len(out) >= limit:
                 break
+    return out
+
+
+def avoid_words(text: str, limit: int = 2) -> list:
+    """从断语文本提取避免清单 (词库 forbidden_actions, 展示层建议用)."""
+    if not text:
+        return []
+    out = []
+    for k, forbids in TEN_GOD_FORBID.items():
+        if k in text:
+            for f in forbids:
+                if f not in out:
+                    out.append(f)
+            if len(out) >= limit:
+                break
+    return out
+
+
+def ten_god_modern(text: str, limit: int = 2) -> list:
+    """从断语文本提取十神现代语义词 (词库 product_semantic, 展示层)."""
+    if not text:
+        return []
+    out = []
+    for k, w in TEN_GOD_MODERN.items():
+        if k in text and w not in out:
+            out.append(w)
+        if len(out) >= limit:
+            break
     return out
