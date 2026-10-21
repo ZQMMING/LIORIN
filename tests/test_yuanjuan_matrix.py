@@ -808,6 +808,35 @@ ck("三处旺支表互一致(evil_offset / tiaohou_rank / yongyao_resolve)",
        for w in ('木', '火', '土', '金', '水')),
    {w: (sorted(_WANG_BR.get(w, ())), sorted(_WANG_ZHI.get(w, ()))) for w in ('木', '火', '土', '金', '水')})
 
+# ═══ Y. 病药药方按日主派生 (SFTK L129 / PZZQ L1130/L1284) ═══
+# SFTK L129「何以为之病? 原八字中原所害之神也; 何以为之药? ...八字原有所害之一字, 而得一字以去之」
+#   -> 药之五行随【病神五行】与【日主】而异, 不得用固定字面(旧版仅对木日主成立).
+print("\n[Y] 病药药方按日主派生 (SFTK L129)")
+from engines.common.bingyao_layer import _bing_yao_map as _bym
+_SH = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
+_KE = {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}
+_YB = {v: k for k, v in _SH.items()}
+_KB = {v: k for k, v in _KE.items()}
+for _dm in ('木', '火', '土', '金', '水'):
+    _m = _bym(_dm)
+    ck("药方 财多身弱=印比(%s日: 印%s+比%s)" % (_dm, _YB[_dm], _dm),
+       set(_m['CAI_DUO_SHEN_RUO']) == {_YB[_dm], _dm}, _m['CAI_DUO_SHEN_RUO'])
+    ck("药方 枭神夺食=财(克枭护食)(%s日: 财%s)" % (_dm, _KE[_dm]),
+       set(_m['XIAO_DUO_SHI']) == {_KE[_dm]}, _m['XIAO_DUO_SHI'])
+    ck("药方 比劫夺财/成党=官杀(%s日: 官杀%s)" % (_dm, _KB[_dm]),
+       set(_m['BIJIE_DUO_CAI']) == {_KB[_dm]} == set(_m['BIJIE_CHENG_DANG']),
+       (_m['BIJIE_DUO_CAI'], _m['BIJIE_CHENG_DANG']))
+    ck("药方 印多埋子=财+比劫(%s日: 财%s+比%s)" % (_dm, _KE[_dm], _dm),
+       set(_m['YIN_DUO_MAI_ZI']) == {_KE[_dm], _dm}, _m['YIN_DUO_MAI_ZI'])
+    ck("药方 杀重身轻=食伤+印(%s日: 食伤%s+印%s)" % (_dm, _SH[_dm], _YB[_dm]),
+       set(_m['SHA_ZHONG_SHEN_QING']) == {_SH[_dm], _YB[_dm]}, _m['SHA_ZHONG_SHEN_QING'])
+# 跨日主不得同形(旧固定字面之弊)
+_ym1 = _bym('木')
+_ym2 = _bym('金')
+ck("药方 跨日主不得同形(木日财多身弱≠金日)",
+   _ym1['CAI_DUO_SHEN_RUO'] != _ym2['CAI_DUO_SHEN_RUO'],
+   (_ym1['CAI_DUO_SHEN_RUO'], _ym2['CAI_DUO_SHEN_RUO']))
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

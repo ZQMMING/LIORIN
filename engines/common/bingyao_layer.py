@@ -52,14 +52,31 @@ BING_YAO_MAP = {
 }
 
 def _bing_yao_map(daymaster_element: str) -> dict:
-    """药表动态取: ZHI_SHA_TAI_GUO 按日主 印(制食护杀)/财(泄食生杀) 两路。"""
+    """药表动态取: 病药之五行随日主而变(SFTK L129「原有所害之一字, 而得一字以去之」),
+    故本表一律按日主动态派生(V7.106 全量补齐; 旧版固定字面仅对部分日主成立)."""
     m = dict(BING_YAO_MAP)
     if daymaster_element:
-        m['ZHI_SHA_TAI_GUO'] = [SHENG_WO.get(daymaster_element, ''),
-                                KE.get(daymaster_element, '')]
+        _dm = daymaster_element
+        _yin = SHENG_WO.get(_dm, '')      # 印=生我
+        _shi = SHENG.get(_dm, '')         # 食伤=我生
+        _cai = KE.get(_dm, '')            # 财=我克
+        _gua = KE_WO.get(_dm, '')         # 官杀=克我
+        # ★ V7.106 全量按日主动态派生:
+        #   财多身弱 -> 药=印比(帮身任财); 杀重身轻 -> 药=食伤制杀 + 印化杀;
+        #   泄气太重 -> 药=印比(扶身止泄); 伤官见官 -> 药=印(制伤护官) + 财(伤官生财);
+        #   枭神夺食 -> 药=财(克枭护食, SFTK L129「用食神伤官...喜财为药」);
+        #   比劫夺财/成党 -> 药=官杀(制劫护财, SFTK L1095「用财见比肩为病喜官杀为药」);
+        #   制杀太过 -> 药=印(制食护杀)+财(泄食生杀); 印多埋子 -> 药=财(破印救母)+比劫(扶印).
+        m['CAI_DUO_SHEN_RUO'] = [w for w in (_yin, _dm) if w]
+        m['SHA_ZHONG_SHEN_QING'] = [w for w in (_shi, _yin) if w]
+        m['XIE_QI_TAI_ZHONG'] = [w for w in (_yin, _dm) if w]
+        m['SHANGGUAN_JIAN_GUAN'] = [w for w in (_yin, _cai) if w]
+        m['XIAO_DUO_SHI'] = [w for w in (_cai,) if w]
+        m['BIJIE_DUO_CAI'] = [w for w in (_gua,) if w]
+        m['BIJIE_CHENG_DANG'] = [w for w in (_gua,) if w]
+        m['ZHI_SHA_TAI_GUO'] = [w for w in (_yin, _cai) if w]
         # ★ V7.87 印多埋子: 药=财(破印救母)+比劫(去财扶印)
-        _ym = [KE.get(daymaster_element, ''), daymaster_element]
-        m['YIN_DUO_MAI_ZI'] = [w for w in _ym if w]
+        m['YIN_DUO_MAI_ZI'] = [w for w in (_cai, _dm) if w]
     return m
 
 # 阴干在阳干当权月: 月令本气为同五行阳干(劫财), 非日主自身令(劫财当权,日主反弱).
