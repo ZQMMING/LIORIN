@@ -42,12 +42,15 @@ def to_root_grade(root_count, has_root=None, root_controlled=None) -> str:
             return '长生'
         return '库'
     # 1参便捷形态: 仅党众计数, 按有根未受制判档
+    # ★ V7.124 无根(ben_n=0)须判「无根」而非「库」(L8 枚举 ROOT_GRADES 含独立「无根」档;
+    #   PZZQ L800-801 墓库余气为轻根, 无根者非轻根; 旧 fallthrough 致无根被误认库根而有气).
+    #   库根仅在「有根且非禄刃/长生」时由调用方按 ben_n>=1 语义判 —— 本函数对无根输入返回「无根」.
     root_count = int(root_count)
     if root_count >= 2:
         return '禄刃'
     if root_count >= 1:
         return '长生'
-    return '库'
+    return '无根'
 
 
 if __name__ == '__main__':
