@@ -1124,6 +1124,34 @@ ck("topology yuan_liu 已派生(源流骨架)", bool((_gu.get("yuan_liu") or {})
    or bool(_gu.get("yuan_liu")), list((_gu.get("yuan_liu") or {}).keys())[:6])
 ck("topology fang_ju 已派生(方局混纯)", "fang_ju" in _gu, list(_gu.keys()))
 
+# ═══ HH. 治理层 validation_layer (PATCH-020) 禁转换 / 冲突解析闸门 ═══
+# 五部「概念边界」禁转换(旺≠强 / 得令≠强 / 有根≠强 / 调候≠旺衰 / 病药≠用神)
+#   若规则库出现允许禁转换的候选 → 引擎概念混层, 属 AGENTS.md 公理三(结构事实≠断语)违约.
+#   validation_layer 是独立治理脚本(不进排盘主链), 本组直接跑其三层验证固化.
+print("\n[HH] 治理层 validation_layer (PATCH-020) 禁转换/冲突解析")
+import subprocess as _sp
+_vl_out = _sp.run([sys.executable, os.path.join(ROOT, "engines", "common", "validation_layer.py")],
+                  capture_output=True, text=True, cwd=ROOT)
+_vl = (_vl_out.stdout or "") + (_vl_out.stderr or "")
+import json as _json
+_vl_rep = os.path.join(ROOT, "governance", "patch_020_engine_validation_report.json")
+ck("validation_layer 报告已生成", os.path.exists(_vl_rep), _vl_rep)
+if os.path.exists(_vl_rep):
+    _vr = _json.load(open(_vl_rep, encoding='utf-8'))
+    _sum = _vr.get("summary") or {}
+    ck("PATCH-020 60 条规则静态验证全 PASS(0 FAIL)",
+       _sum.get("static_fail") == 0 and _sum.get("rules_total") == 60,
+       ("static_pass=%s fail=%s total=%s" % (_sum.get("static_pass"), _sum.get("static_fail"), _sum.get("rules_total"))))
+    ck("PATCH-020 五禁转换全 BLOCKED(Golden 拦截)",
+       _sum.get("golden_block_pass") == 5 and _sum.get("golden_block_total") == 5,
+       ("gold_pass=%s/%s" % (_sum.get("golden_block_pass"), _sum.get("golden_block_total"))))
+    ck("PATCH-020 冲突解析器单测 PASS(8 类 resolution 合法)",
+       _sum.get("conflict_resolver") == "PASS", _sum.get("conflict_resolver"))
+    _gb = _vr.get("020_03_golden_block") or []
+    _viol = [g.get("violations") for g in _gb if g.get("violations")]
+    ck("PATCH-020 无任何禁转换违规规则", not _viol, _viol[:4])
+
+
 
 # 运行时: 日主有重根之盘不得报印多埋子(母不灭子)
 from engines.common.l0_fact_builder import build as _bf
