@@ -89,6 +89,7 @@ from .facts import (
     WEN_CHANG_BY_DAY,
     XI_JI_TABLE,
     NAYIN_XI_JI_SPECIFIC,
+    dimension_of,
 )
 from .types import (
     LumingChart,
@@ -2302,6 +2303,8 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
             "rule_id": rule["id"], "out": rule["out"], "evidence": rule["evidence"],
             "tone": _resolve_tone(rule["tone"], obj),
             "scope": rule["scope"], "target": target, "detail": detail,
+            # 2026-10-21 维度标签 (禄/命/身/宫/煞/吉神, 主应+次应)
+            "dims": dimension_of(rule["id"], rule["out"], detail, rule["scope"]),
         })
 
     for rule in LUMING_RULES:
@@ -3299,7 +3302,9 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _tone = _tone["table"].get(obj.get(_tone.get("k", "")), "平") if _m == "rel_map" else "平"
         verdicts.append({"rule_id": rule["id"], "out": out_txt,
                          "evidence": rule["evidence"], "tone": _tone,
-                         "scope": "流年", "target": target, "detail": detail})
+                         "scope": "流年", "target": target, "detail": detail,
+                         # 2026-10-21 维度标签
+                         "dims": dimension_of(rule["id"], out_txt, detail, "流年")})
 
     for rule in YEAR_RULES:
         if rule["mode"] == "scalar":
@@ -3374,6 +3379,63 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     elif "LURY-04" in _lury_tones and _power["level"] != "重":
         year_tone = "吉"
 
+    # ========== 2026-10-21 应期与维度 (用户定案, 三字段: 引动/应期级别/主次应) ==========
+    # ① 引动对象: 太岁 → 原局柱 / 大运 / 小运
+    _yq_rels = []
+    for _pr in yctx.get("tai_pillar_relations", []):
+        _yq_rels.append(f"{_pr['pos']}柱{_pr['branch']}{_pr['tai_relation']}")
+    if yctx.get("tai_chong_dayun"):
+        _yq_rels.append(f"大运{yctx['luck_pillar']}支冲")
+    elif yctx.get("tai_xing_dayun"):
+        _yq_rels.append(f"大运{yctx['luck_pillar']}支刑")
+    elif yctx.get("tai_ya_dayun"):
+        _yq_rels.append(f"大运{yctx['luck_pillar']}支压")
+    if yctx.get("xiao_yun_branch") and not any(
+            x.endswith(f"运{yctx['xiao_yun_branch']}") for x in _yq_rels):
+        pass  # 小运并入应期级别 (V60/V60B 已消费小运死绝)
+    yin_dong = (f"太岁{yctx['tai_sui']}→" + "、".join(_yq_rels)
+                if _yq_rels else "太岁无刑冲刑害引动")
+    # ② 应期四档: 定死/大凶 | 需防 | 浮灾细累 | 无
+    _rids = [v.get("rule_id", "") for v in verdicts]
+    if "LM-V60" in _rids:
+        _yq_level = "定死/大凶"
+    elif "LM-V60B" in _rids:
+        _yq_level = "需防"
+    elif year_tone == "凶" or counts.get("凶", 0) > 0:
+        _yq_level = "浮灾细累"
+    elif counts.get("吉", 0) > 0:
+        _yq_level = "吉"
+    else:
+        _yq_level = "无"
+    # ③ 主/次应维度: 主应 = 凶断语中凶力最强(YEAR_XIONG)的主维度;
+    #    次应 = 其余凶/动/滞断语主维度 + 次维度 (吉神类剔除, 随主走)
+    from .strength import YEAR_XIONG as _YX
+    _xiong_v = [v for v in verdicts if v.get("tone") == "凶"]
+    _zhu_ying, _ci_ying = "", ""
+    if _xiong_v:
+        _top = max(_xiong_v, key=lambda v: _YX.get(v.get("rule_id", ""), 1))
+        _z, _c = _top.get("dims", ("平/辅助", []))
+        _zhu_ying = _z if _z not in ("吉神/辅助", "平/辅助") else "煞/灾祸"
+        _ci_set = []
+        for _v2 in _xiong_v:
+            _z2, _c2 = _v2.get("dims", ("平/辅助", []))
+            if _z2 not in ("吉神/辅助", "平/辅助", _zhu_ying) and _z2 not in _ci_set:
+                _ci_set.append(_z2)
+            for _x2 in _c2:
+                if _x2 not in ("吉神/辅助", "平/辅助", _zhu_ying) and _x2 not in _ci_set:
+                    _ci_set.append(_x2)
+        _ci_ying = "、".join(_ci_set)[:80]
+    else:
+        _ji_v = [v for v in verdicts if v.get("tone") == "吉"]
+        if _ji_v:
+            _z, _c = _ji_v[0].get("dims", ("平/辅助", []))
+            _zhu_ying = _z if _z not in ("吉神/辅助", "平/辅助") else "吉神/辅助"
+            _ci_ying = "、".join(x for x in _c if x not in ("吉神/辅助", "平/辅助"))[:80]
+        else:
+            _zhu_ying = "无明确主应"
+    ying_qi = {"level": _yq_level, "zhu_ying": _zhu_ying, "ci_ying": _ci_ying,
+               "yin_dong": yin_dong}
+
     return {"year": year, "tai_sui": yctx["tai_sui"], "age": round(yctx["age"], 2),
             "luck_pillar": yctx["luck_pillar"], "verdicts": verdicts,
             "tone": year_tone, "counts": counts, "combined": combined,
@@ -3401,4 +3463,5 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "tai_wu_gui_stage": yctx.get("tai_wu_gui_stage", ""),
             "tai_si_sha": yctx.get("tai_si_sha", False),
             "tai_si_sha_chong": yctx.get("tai_si_sha_chong", False),
-            "dl_guan_di_wang": yctx.get("dl_guan_di_wang", False)}
+            "dl_guan_di_wang": yctx.get("dl_guan_di_wang", False),
+            "ying_qi": ying_qi}
