@@ -1264,6 +1264,29 @@ ck("旺衰多轨 DTS 轨只出「太旺/太衰」气势表述(V7.115)",
    and "从强" not in "\n".join(_ln.split("#", 1)[0] for _ln in _wmt_src.splitlines()
                               if not _ln.lstrip().startswith("#")), "")
 
+# ═══ MM. 验收条① 随机抽 20 行回原文核对 (V7.136) ═══
+print("\n[MM] 验收条① 随机抽 20 行回原文核对")
+_qs_path = os.path.join(ROOT, "p0_v2", "output", "QUOTE_SAMPLE_20_2026_10_21.json")
+ck("20 行抽检报告已生成", os.path.exists(_qs_path), _qs_path)
+if os.path.exists(_qs_path):
+    _qs = _json2.load(open(_qs_path, encoding='utf-8'))
+    ck("抽检样本量 == 20", _qs.get("sample_size") == 20, _qs.get("sample_size"))
+    ck("抽检 20 行全部回底本命中(0 编造)", _qs.get("fail") == 0 and _qs.get("pass") == 20,
+       ("pass=%s fail=%s" % (_qs.get("pass"), _qs.get("fail"))))
+    ck("抽检六部全覆盖(分层抽样, 非偏科)",
+       len({x.get("book") for x in (_qs.get("results") or [])}) >= 5,
+       sorted({x.get("book") for x in (_qs.get("results") or [])}))
+    ck("抽检随机种子固定(可复现)", isinstance(_qs.get("seed"), int), _qs.get("seed"))
+    ck("抽检每条均有命中底本文件与行号",
+       all(x.get("hit_file") and x.get("hit_line")
+           for x in (_qs.get("results") or []) if str(x.get("verdict", "")).startswith("PASS")),
+       [x.get("slice_id") for x in (_qs.get("results") or []) if not x.get("hit_line")][:3])
+    ck("抽检人工签字位保留为空(「1处编造即全退」裁定属人工)",
+       _qs.get("human_signoff") is None, _qs.get("human_signoff"))
+    ck("抽检切片池规模已记录(供 Phase1 重切后重跑对照)",
+       isinstance(_qs.get("method"), str) and "3023" in _qs.get("method", ""),
+       _qs.get("method", "")[:60])
+
 ck("劫占/破 两档均 READY(V7.127 原典核清: 占=位置隔断, 非劫财夺气)",
    all(c["status"] == "READY" for c in _GTC) and {c["key"] for c in _GTC} >= {"JIE_ZHAN", "PO"},
    [(c["key"], c["status"]) for c in _GTC])
