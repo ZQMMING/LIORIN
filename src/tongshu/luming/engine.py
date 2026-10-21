@@ -3932,6 +3932,16 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _zhu_ying = "无明确主应"
     ying_qi = {"level": _yq_level, "zhu_ying": _zhu_ying, "ci_ying": _ci_ying,
                "yin_dong": yin_dong}
+    # ========== 2026-10-21 用户裁决: tone 与应期联动约束 ==========
+    #   应期=浮灾细累(最轻级) → tone 封顶"吉凶相杂": 大运吉泰/平运下细累浮灾
+    #   "不为重害"(三命通会·论太岁), tone 不得标"凶";
+    #   发祸级硬判不落入本分支: L4273发祸/V60定死应期至少需防;
+    #   LURY-01/02 禄刃印主判凶为独立硬判(已极而将反), 亦不降。
+    #   实测修复: 1987坤2020 咸池/生太岁破财/勾绞/小运死绝 四条细累级凶被平权计凶,
+    #   应期=浮灾细累而 tone=凶 (核验硬伤①同类), 修正后回落"吉凶相杂"。
+    if (ying_qi["level"] == "浮灾细累" and year_tone == "凶"
+            and not ("LURY-01" in _lury_tones or "LURY-02" in _lury_tones)):
+        year_tone = "吉凶相杂"
     guidance = build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx)
 
     return {"year": year, "tai_sui": yctx["tai_sui"], "age": round(yctx["age"], 2),
