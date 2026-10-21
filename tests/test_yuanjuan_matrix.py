@@ -542,6 +542,31 @@ _sp_q2 = build_special_patterns(_p_q2, _f_q2, _f_q2.get('wuxing_power'), _th_q2)
 ck("两气成象 反例: 假两气(寅亥合木/伤官太重)不判成象(DTS L862)",
    not _sp_q2.get('liangqi'), _sp_q2.get('liangqi'))
 
+# ═══ R. 候神力级: 坐旺支表 (PZZQ L800-801 长生/禄/帝旺为重根, 墓库为轻根) ═══
+# L800-801「根有轻重之分: 长生、禄、帝旺为重根, 墓库、余气为轻根」
+# => 候神"坐旺"(2力)之支 = 该五行之禄与帝旺; 墓库(四库)属轻根, 不作坐旺.
+print("\n[R] 候神力级 坐旺支表 (PZZQ L800-801)")
+from engines.common.evil_offset import _WANG_BR
+from engines.common.daymaster_root_class import POS as _RC_POS
+for (wx, lu, wang, basis) in (
+        ('木', '寅', '卯', "木: 长生亥/禄寅/帝旺卯"),
+        ('火', '巳', '午', "火: 长生寅/禄巳/帝旺午"),
+        ('土', '巳', '午', "土: 长生申/禄巳/帝旺午(V7.94 修正, 旧误用四库)"),
+        ('金', '申', '酉', "金: 长生巳/禄申/帝旺酉"),
+        ('水', '亥', '子', "水: 长生申/禄亥/帝旺子")):
+    got = set(_WANG_BR.get(wx, ()))
+    ck("坐旺支表 %s" % basis, got == {lu, wang}, sorted(got))
+# 墓库(四库)不得作坐旺
+ck("坐旺支表 墓库(辰戌丑未)不作坐旺(PZZQ L800-801「墓库为轻根」)",
+   not (set(_WANG_BR.get('土', ())) & {'辰', '戌', '丑', '未'}), _WANG_BR.get('土'))
+# 与引擎根气表一致
+for _dmx, _pos in (('甲', '木'), ('丙', '火'), ('戊', '土'), ('庚', '金'), ('壬', '水')):
+    _lu = _RC_POS[_dmx].get('禄')
+    _wang = _RC_POS[_dmx].get('旺')
+    ck("坐旺支表 与根气表一致 %s(禄%s旺%s)" % (_dmx, _lu, _wang),
+       set(_WANG_BR.get(_pos, ())) == {_lu, _wang},
+       "%s vs %s" % (sorted(_WANG_BR.get(_pos, ())), [_lu, _wang]))
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
