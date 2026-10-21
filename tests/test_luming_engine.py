@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from tongshu.engines.bazi_engine import (
     BaziEngine, BaziChart, Pillar, attach_p2_fields,
 )
-from tongshu.luming.engine import LumingEngine, from_bazi_chart
+from tongshu.luming.engine import LumingEngine, from_bazi_chart, query_year
 from tongshu.luming.types import LumingChart, assert_luming_gate
 
 
@@ -798,13 +798,13 @@ class TestEvidenceRegistration(unittest.TestCase):
         cur = ts["current"]
         self.assertEqual(cur["pillar"], "DINGMAO")
         self.assertEqual(cur["verdict"], "偏吉")
-        self.assertEqual(cur["counts"]["凶"], 1)   # V44 运支卯=大海水之死乡(凶)
+        self.assertEqual(cur["counts"]["凶"], 2)   # V44 运支卯=大海水之死乡(凶) + F04 财化鬼(炉中火=财, 柱有土转克水, 2026-10-21 纳音口径)
         # overall (2026-10-20 限运切片: V126运到羊刃平+1、V124天罗壬戌癸亥凶+2、V125大小耗丙辰凶+1;
         #   喜忌覆盖: 癸亥运 V42 比和吉 → 犯忌降平 → 吉-1平+1;
         #   贵人年干口径: 甲子/壬申两运日干贵人(乙贵子申/庚贵)误判移除 → 吉-2;
         #   V02 三元十二宫口径: 癸亥禄(子)临官/命(亥)帝旺/身(癸亥)临官 皆不死绝 → 原局凶-1)
         self.assertEqual(ts["overall"]["counts"],
-                         {"吉": 34, "动": 0, "平": 56, "滞": 2, "凶": 20})  # 2026-10-21 发用层(LM-F)入主: 运层新增发用吉/平/凶(财化鬼等)计入展示计数; 发用不参与吉凶算术(year_power过滤)与大运定基调(净verdict); 2026-10-21: 原局 V85吉-1(日主立极)、V85-B食伤藏支平+1、V31H→V31H-L 凶-1平+1、V14亲缘凶+1、元辰口径修正(阴女冲后=辰)时支午非元辰→V108不触发平-1、羊刃口径修正(蠡海集阴干不立)乙丑运V126平-1 → 净 吉-1 平+0; 2026-10-20 V42比和分流: 癸亥运比和(年命临官太过)吉→凶 → 吉-1凶+1
+                         {"吉": 34, "动": 0, "平": 56, "滞": 2, "凶": 22})  # 2026-10-21 发用层(LM-F)入主展示计数: 运层新增发用吉/平/凶(财化鬼F04按纳音口径: 丙寅/丁卯炉中火财+柱有土等); 发用不参与吉凶算术(year_power过滤)与大运定基调(净verdict); 2026-10-21: 原局 V85吉-1(日主立极)、V85-B食伤藏支平+1、V31H→V31H-L 凶-1平+1、V14亲缘凶+1、元辰口径修正(阴女冲后=辰)时支午非元辰→V108不触发平-1、羊刃口径修正(蠡海集阴干不立)乙丑运V126平-1 → 净 吉-1 平+0; 2026-10-20 V42比和分流: 癸亥运比和(年命临官太过)吉→凶 → 吉-1凶+1
         self.assertEqual(ts["overall"]["verdict"], "偏吉")
         # 乙丑运偏凶
         yichou = next(p for p in ts["pillars"] if p["target"] == "YICHOU")
@@ -1073,12 +1073,48 @@ class TestEvidenceRegistration(unittest.TestCase):
         self.assertEqual(hz["current_pillar"], "DINGMAO")
         self.assertEqual(hz["current_verdict"], "偏吉")
         self.assertEqual(hz["current_counts"]["吉"], 5)  # 发用层 F03 贵人入丁卯(2026-10-21)
-        self.assertEqual(hz["current_counts"]["凶"], 1)
+        self.assertEqual(hz["current_counts"]["凶"], 2)  # V44 死乡 + F04 财化鬼(2026-10-21 纳音口径)
         self.assertEqual(hz["overall_counts"],
-                         {"吉": 34, "动": 0, "平": 56, "滞": 2, "凶": 20})  # 2026-10-21 发用层(LM-F)入主展示计数; 发用不参与吉凶算术与大运定基调; 原 V85日主立极吉-1、V85-B食伤藏支平+1、V31H→V31H-L凶-1平+1、V14亲缘凶+1、元辰口径修正(阴女冲后=辰)时支午非元辰→V108不触发平-1、羊刃口径修正(阴干不立)乙丑运V126平-1 → 净吉-1平+0; 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径+V02三元十二宫修正+比和分流吉-1凶+1
+                         {"吉": 34, "动": 0, "平": 56, "滞": 2, "凶": 22})  # 2026-10-21 发用层(LM-F)入主展示计数(财化鬼F04按纳音口径: 丙寅/丁卯炉中火等); 发用不参与吉凶算术与大运定基调; 原 V85日主立极吉-1、V85-B食伤藏支平+1、V31H→V31H-L凶-1平+1、V14亲缘凶+1、元辰口径修正(阴女冲后=辰)时支午非元辰→V108不触发平-1、羊刃口径修正(阴干不立)乙丑运V126平-1 → 净吉-1平+0; 2026-10-20 限运切片+喜忌覆盖癸亥V42降平+贵人年干口径+V02三元十二宫修正+比和分流吉-1凶+1
         self.assertEqual(hz["overall_verdict"], "偏吉")
         self.assertIn("当前大运: 丁卯", md)
-        self.assertIn("总体: 吉 34 · 凶 20 · 平 56 · 滞 2 → 吉", md)  # 2026-10-21 同步 (发用入主计数)
+        self.assertIn("总体: 吉 34 · 凶 22 · 平 56 · 滞 2 → 吉", md)  # 2026-10-21 同步 (发用入主计数)
+
+    def test_F04_F05_transformation_oracle(self):
+        """岁运发用·五行转化 oracle (渊海子平卷三《论大运》/五行精纪卷33 同文).
+
+        原文: "凡水命四柱有土, 至火运本是财运, 却反为鬼者, 以火生土, 土克水,
+                是财化为鬼, 转福成祸. 四柱有金至土运是鬼运, 却反为吉者,
+                以土生金, 金生水, 是化鬼为助气, 反祸为福. 五行俱以此为例."
+        口径 (2026-10-21 深挖定案, 宁漏勿错):
+          运侧 = 运纳音 ∪ 运干 ∪ 运支 (任一属我克=财运 / 克我=鬼运;
+                卷33 换甲段"皆以生年太岁纳音推之"纳音为主, 同段"柱中有寅午戌"干支为佐);
+          柱侧 = 四柱干支 ∪ 四柱纳音 (渊海"柱中有寅午戌, 或纳音火"互证);
+          转化链三段全成立才触发: 运生柱、柱克/生命.
+        """
+        import datetime as _dt
+        from tongshu.engines.bazi_engine import BaziEngine
+        chart = BaziEngine().compute((1983, 11, 3, 12), gender="female",
+                                     birth_datetime=_dt.datetime(1983, 11, 3, 12))
+        lm = from_bazi_chart(chart, _dt.datetime(2026, 10, 19, 12))
+        # 运层触发: 丁卯运 纳音炉中火 = 水命之财(我克) → 柱有土(戌未午干支) → 土克水 → F04
+        dingmao = next(p for p in lm.tone_scope["pillars"] if p["target"] == "DINGMAO")
+        self.assertIn("LM-F04", [x[0] for x in dingmao["counts"]["items"]],
+                      "丁卯运(炉中火=财, 柱有土)应触发财化鬼F04")
+        # 运层反例: 癸亥运 纳音大海水=比和, 非财非鬼 → 无 F04/F05
+        guihai = next(p for p in lm.tone_scope["pillars"] if p["target"] == "GUIHAI")
+        self.assertFalse([x[0] for x in guihai["counts"]["items"]
+                          if x[0] in ("LM-F04", "LM-F05")],
+                         "癸亥运比和不应触发五行转化")
+        # 太岁触发: 2020 庚子 纳音壁上土 = 克水命(鬼) → 柱有金(沙中金) → 金生水 → F05
+        r20 = query_year(chart, 2020, lm=lm)
+        self.assertIn("LM-F05", [v["rule_id"] for v in r20["verdicts"]],
+                      "庚子(壁上土=鬼, 柱有金通关)应触发鬼化气F05")
+        # 2024 甲辰 纳音佛灯火 = 水命之财 → 柱有土 → 土克水 → F04; tone 不受发用扰动仍凶
+        r24 = query_year(chart, 2024, lm=lm)
+        self.assertIn("LM-F04", [v["rule_id"] for v in r24["verdicts"]],
+                      "甲辰(佛灯火=财, 柱有土)应触发财化鬼F04")
+        self.assertEqual(r24["tone"], "凶", "2024 元辰重凶, 发用F04不参与算术不扰动tone")
 
     # ============ 根治层: 古籍命例 oracle (独立于案例批文与自裁定) ============
     def _mk_gu_chart(self, yb):

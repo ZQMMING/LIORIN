@@ -994,22 +994,51 @@ def _build_fayong_verdicts(chart: Any, gz_stem: str, gz_branch: str, scope: str,
                       "detail": f"运支临{_name}（{_bs}），凡行运至夹贵华盖贵人六合上及乘生旺气者皆主善庆；"
                                 "禄马贵神一切吉神，其年却有小庆，过去则否",
                       "evidence": "E-WXJ-033-001~004"})
-    # ---- F04/F05: 五行转化 (以运支为主, 大运重地支) ----
-    if yr_el and zhi_el:
-        _rel = "我克" if _CTL4.get(yr_el) == zhi_el else ("克我" if _CTL4.get(zhi_el) == yr_el
-              else ("我生" if _GEN4.get(yr_el) == zhi_el else ("生我" if _GEN4.get(zhi_el) == yr_el else "比和")))
-        if _rel == "我克" and _GEN4.get(zhi_el) in _col_set and _CTL4.get(_GEN4.get(zhi_el)) == yr_el:
-            _g = _GEN4[zhi_el]
-            v.append({**_BASE, "rule_id": "LM-F04", "tone": "凶",
-                      "out": f"运来{_EL_CN4.get(zhi_el, zhi_el)}本为年命之财（我克），然柱有{_EL_CN4.get(_g, _g)}——财化为鬼，转福成祸",
-                      "detail": f"四柱有{_EL_CN4.get(_g, _g)}，{_EL_CN4.get(zhi_el, zhi_el)}生{_EL_CN4.get(_g, _g)}克年命水，是财化为鬼转福成祸",
-                      "evidence": "E-WXJ-033-001~004"})
-        elif _rel == "克我" and _GEN4.get(zhi_el) in _col_set and _GEN4.get(_GEN4.get(zhi_el)) == yr_el:
-            _g = _GEN4[zhi_el]
-            v.append({**_BASE, "rule_id": "LM-F05", "tone": "吉",
-                      "out": f"运来{_EL_CN4.get(zhi_el, zhi_el)}克年命本为鬼，然柱有{_EL_CN4.get(_g, _g)}通关——鬼化为气，反祸为福",
-                      "detail": f"四柱有{_EL_CN4.get(_g, _g)}，{_EL_CN4.get(zhi_el, zhi_el)}生{_EL_CN4.get(_g, _g)}生年命，是化鬼为助气反祸为福",
-                      "evidence": "E-WXJ-033-001~004"})
+    # ---- F04/F05: 五行转化 (渊海子平卷三《论大运》/五行精纪卷33 同文) ----
+    # 原文: "凡水命四柱有土, 至火运本是财运, 却反为鬼者, 以火生土, 土克水,
+    #         是财化为鬼, 转福成祸. 四柱有金至土运是鬼运, 却反为吉者,
+    #         以土生金, 金生水, 是化鬼为助气, 反祸为福. 五行俱以此为例."
+    # 同段互证: "水命人柱中有寅午戌, 或纳音火, 更行寅午戌, 皆为好运" — "柱有X"
+    #           明确含干支(寅午戌)与纳音两口径 → 柱侧=干支∪纳音 (已并入 _col_set);
+    #           卷33 换甲段"凡行运…皆以生年太岁纳音推之" → 运侧纳音为主、干支为佐.
+    # 判定口径 (宁漏勿错, 转化链三段全成立才触发):
+    #   运侧五行 = 运纳音 ∪ 运干 ∪ 运支 (任一属"我克"即财运 / 属"克我"即鬼运);
+    #   财化鬼: 运行=我克(财) ∧ 柱有(运行所生之行) ∧ 该行克我 → 转福成祸(凶);
+    #   鬼化气: 运行=克我(鬼) ∧ 柱有(运行所生之行) ∧ 该行生我 → 反祸为福(吉).
+    _yun_nayin_el = NAYIN_FIVE_ELEMENT.get(NAYIN_60.get((gz_stem, gz_branch), ""), "")
+    _yun_set = {el for el in (gan_el, zhi_el, _yun_nayin_el) if el}
+    _f04_hit = _f05_hit = None
+    for _y in sorted(_yun_set):
+        if (_CTL4.get(yr_el) == _y and _GEN4.get(_y) in _col_set
+                and _CTL4.get(_GEN4.get(_y)) == yr_el):
+            _f04_hit = _y
+            break
+    if _f04_hit is None:
+        for _y in sorted(_yun_set):
+            if (_CTL4.get(_y) == yr_el and _GEN4.get(_y) in _col_set
+                    and _GEN4.get(_GEN4.get(_y)) == yr_el):
+                _f05_hit = _y
+                break
+    if _f04_hit:
+        _g = _GEN4[_f04_hit]
+        v.append({**_BASE, "rule_id": "LM-F04", "tone": "凶",
+                  "out": f"运来{_EL_CN4.get(_f04_hit, _f04_hit)}本为年命之财（我克），"
+                         f"然柱有{_EL_CN4.get(_g, _g)}，{_EL_CN4.get(_f04_hit, _f04_hit)}"
+                         f"生{_EL_CN4.get(_g, _g)}克年命——财化为鬼，转福成祸",
+                  "detail": f"四柱有{_EL_CN4.get(_g, _g)}，{_EL_CN4.get(_f04_hit, _f04_hit)}"
+                            f"生{_EL_CN4.get(_g, _g)}克年命{_EL_CN4.get(yr_el, yr_el)}，"
+                            "是财化为鬼转福成祸（本是财运，因柱中转化而反为鬼）",
+                  "evidence": "E-WXJ-033-001~004"})
+    elif _f05_hit:
+        _g = _GEN4[_f05_hit]
+        v.append({**_BASE, "rule_id": "LM-F05", "tone": "吉",
+                  "out": f"运来{_EL_CN4.get(_f05_hit, _f05_hit)}克年命本为鬼，"
+                         f"然柱有{_EL_CN4.get(_g, _g)}通关，{_EL_CN4.get(_f05_hit, _f05_hit)}"
+                         f"生{_EL_CN4.get(_g, _g)}生年命——鬼化为气，反祸为福",
+                  "detail": f"四柱有{_EL_CN4.get(_g, _g)}，{_EL_CN4.get(_f05_hit, _f05_hit)}"
+                            f"生{_EL_CN4.get(_g, _g)}生年命{_EL_CN4.get(yr_el, yr_el)}，"
+                            "是化鬼为助气反祸为福（本是鬼运，因柱中通关而反为吉）",
+                  "evidence": "E-WXJ-033-001~004"})
     # ---- F06: 缺行待补 (平) ----
     if xi_ji:
         for _mk in (xi_ji.get("missing") or []):
