@@ -3263,8 +3263,11 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
 def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     """流年应期层: 任意公历年太岁断语 (YEAR_RULES V50+).
 
-    lm (LumingChart, 可选): 提供则 combined 合并该年所在大运柱吉凶 (含 risk)
-    与流年凶信号 → 覆盖"吉期出凶事" (大运偏吉但流年凶, 则该年仍断凶).
+    lm (LumingChart, 可选): 提供则 combined 合并该年所在大运柱吉凶 (含 risk).
+    2026-10-21 深挖原著修订 (三命通会论大运/五行精纪卷33, 两书同文):
+    大运定基调 — 吉泰之运流年刑害至多细累浮灾不为重害 (tone 天花板吉凶相杂,
+    唯 V60定死/V70元辰 发祸级可突破); 屯蹇凶祸之运流年刑冲方主发祸.
+    旧语义"大运偏吉但流年凶则仍断凶"已废止 (用户核验三指出的根本矛盾).
     返回: {year, tai_sui, age, luck_pillar, verdicts, tone, combined}.
     """
     yctx = _build_year_scope(chart, year)
@@ -3389,6 +3392,35 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         year_tone = "凶"
     elif year_tone == "吉" and any(rid in _HEAVY_XIONG for rid in _rids2):
         year_tone = "吉凶相杂"
+
+    # 2026-10-21 用户定案(深挖原著): 大运定基调 — 流年 tone 的天花板/地板
+    #   三命通会《论大运》/五行精纪卷33(两书同文, 已核原文):
+    #   "若大运至吉乡, 却遇逐年太岁小运到刑害之乡, 亦主细累浮灾, 但不为重害也.
+    #    若大运行迍蹇凶祸之地, 逐年太岁又见刑冲, 小运不和冲击死绝, 方主发祸."
+    #   + 烛神经: "若大运曾历过本命长生处者, 谓之气盛之运, 虽岁运来冲克者,
+    #    为祸不重, 运气强故也. 未经长生而岁运刑冲克破, 则便为灾."
+    #   + 大运吉凶定义: "行至本命宫五行生旺, 支干和禄马贵人食神相生有益处,
+    #    为吉泰之运; 五行死绝, 支干刑冲六害一切凶杀者, 为屯蹇凶祸之运."
+    #   → 大运吉: tone 上限"吉凶相杂", 唯发祸级(V60定死/V70元辰)可突破;
+    #     大运凶: tone 不升纯吉 (重大救应=主断吉在场可保留);
+    #     大运平: 现有规则不动. (tone 降级, 应期独立以重凶信号定防)
+    _luck_verdict = ""
+    if lm is not None and yctx.get("luck_pillar"):
+        _lp = (lm.tone_scope or {}).get("pillars", [])
+        _linfo = next((p for p in _lp if p.get("target") == yctx["luck_pillar"]), None)
+        _luck_verdict = (_linfo or {}).get("verdict", "")
+    _luck_ji = _luck_verdict in ("吉", "偏吉")      # 吉泰之运(含吉面占先)
+    _luck_xiong = _luck_verdict in ("凶", "偏凶")   # 屯蹇凶祸之运(含凶面占先)
+    _fa_huo_ji = (any(v.get("rule_id") in ("LM-V60", "LM-V70") and v.get("tone") == "凶"
+                      for v in verdicts)
+                  or _i4273.get("mode") == "发祸")   # L4273发祸同属发祸级, 可突破大运吉天花板
+    if _luck_ji and year_tone == "凶" and not _fa_huo_ji:
+        year_tone = "吉凶相杂"          # 大运吉乡: 流年刑害只细累浮灾不为重害
+    elif _luck_xiong and year_tone == "吉":
+        _maj_jiu = any(v.get("tone") == "吉" and v.get("rule_id") in _JXR
+                       for v in verdicts)
+        if not _maj_jiu:
+            year_tone = "吉凶相杂"      # 凶祸之地: 流年不升纯吉
 
     # combined: 大运吉凶(独立展示) + L4273 条件互动标注 — 不再做运年算术聚合
     combined = None

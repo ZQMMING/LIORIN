@@ -389,6 +389,12 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
     #   又见刑冲, 小运不和, 冲击死绝, 方主发祸" — 发祸三重要件: 大运凶 +
     #   太岁刑冲 + 小运死绝或刑害; 缺小运要件者降"浮灾" (小运补大运之不足,
     #   细累浮灾不为重害).
+    # 屯蹇凶祸之运定义 (L4273): "五行死绝, 支干刑冲六害**一切凶杀**者" —
+    #   凶杀在场(天罗/大小耗/元辰犯运)即屯蹇, 不要求整体 verdict 偏凶
+    #   (周恩来1976 RENXU 偏吉带天罗, 太岁冲运+小运死绝+恶力重 → 发祸=处决实证);
+    #   发祸三重件(大运凶杀+太岁刑冲+小运死绝刑害)缺一者降浮灾:
+    #   1990 2030 BINGXU 偏吉带天罗, 太岁庚戌伏吟压, 然小运丙午(土帝旺)非死绝
+    #   → 缺"小运不和冲击死绝"要件 → 浮灾, tone 尊重流年自身判定(细累浮灾不为重害)
     if xiong_hui and (tai_xing or tai_chong or tai_hai or tai_ya):
         _year_ji = sum(YEAR_XI.get(v.get("rule_id", ""), 0)
                        for v in (year_verdicts or []) if v.get("tone") == "吉")
