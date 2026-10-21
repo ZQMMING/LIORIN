@@ -336,6 +336,15 @@ _ZANG_TOU_CN = {"WUZI": "戊子", "WUWU": "戊午", "JICHOU": "己丑", "JIWEI":
 _YANG_STEMS = frozenset({"JIA", "BING", "WU", "GENG", "REN"})
 
 
+# 重凶集 (需防级) — 2026-10-21 应期升档 + 尊吉卑凶降级同源单点定义:
+#   V60 定死 / V60B 大运绝 / V52 冲运其祸重 / V55 岁运并临 / V58 真太岁 /
+#   V59 晦气阴灾 / V62 犯命 / V66 天罗地网 / V70 元辰 / V77 日犯岁君 /
+#   V78 征太岁 / V87 五鬼克身
+_HEAVY_XIONG = frozenset({"LM-V60", "LM-V60B", "LM-V52", "LM-V55", "LM-V58",
+                          "LM-V59", "LM-V62", "LM-V66", "LM-V70", "LM-V77",
+                          "LM-V78", "LM-V87"})
+
+
 def _calc_yuan_chen(chart: Any) -> str:
     """元辰支 (五行精纪 L3345 / 三命通会 L1711 逐字同文:
     阳男阴女在冲前一位支辰; 阴男阳女在冲后一位支辰.
@@ -3335,7 +3344,21 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     _base = base_fortune(lm) if lm is not None else {"score": 0.5, "level": "中"}
     _power = year_power(verdicts)
     _dims = dim_hits_of(verdicts)
-    _agg = aggregate(_base, _power, _dims)
+    # 2026-10-21 用户定案(古法第三层 珞琭子"尊吉卑凶, 逢灾自愈"):
+    #   主断吉在场 (天月德V82/贵禄马V65/本命克太岁为财Y73/合局Y71/喜神V67/
+    #   小运禄马贵V81/福会V85/临官帝旺V86 至少一条 tone=吉) → 需防级凶降浮灾
+    from .strength import _JIUXI_JI_RULES as _JXR, YEAR_XIONG as _YX
+    # V60 二运太岁会集定死 — 发祸级, 尊吉卑凶只救细累/需防级, 定死不救 (2026-10-21)
+    _jiu_yi = (not any(v.get("rule_id") == "LM-V60" and v.get("tone") == "凶"
+                       for v in verdicts)) and any(
+        v.get("tone") == "吉" and v.get("rule_id") in _JXR for v in verdicts)
+    # 尊吉卑凶只减"需防级重凶集"凶分 (细累已在 year_power 归零; 普通凶如 V68 犯忌不动)
+    _j_heavy = 0.0
+    if _jiu_yi:
+        _j_heavy = sum(_YX.get(v.get("rule_id", ""), 2)
+                       for v in verdicts if v.get("tone") == "凶"
+                       and v.get("rule_id") in _HEAVY_XIONG)
+    _agg = aggregate(_base, _power, _dims, jiu_yi=_jiu_yi, jiu_yi_heavy=_j_heavy)
     # 2026-10-21 流年吉以除千殃 (SMTH L13314"大运危而生百祸, 流年吉以除千殃"):
     #   流年吉面显著净胜恶力 (吉力 ≥ 恶力+5) 且无 4 分定级重灾(定死/天罗/元辰/
     #   晦气/冲运/冲年克命等) → 大运凶殃为流年吉所除, 凶降吉凶相杂不为重害
@@ -3412,8 +3435,7 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   V60 定死 / V60B 大运绝 / V52 冲运其祸重 / V55 岁运并临 / V58 真太岁 / V59 晦气阴灾
     #   / V62 犯命 / V66 天罗地网 / V70 元辰 / V77 日犯岁君 / V78 征太岁 / V87 五鬼克身。
     _rids = [v.get("rule_id", "") for v in verdicts]
-    _HEAVY = {"LM-V60", "LM-V60B", "LM-V52", "LM-V55", "LM-V58", "LM-V59",
-              "LM-V62", "LM-V66", "LM-V70", "LM-V77", "LM-V78", "LM-V87"}
+    _HEAVY = _HEAVY_XIONG   # 模块级重凶集 (L3344 尊吉卑凶同源)
     _heavy_hit = [v for v in verdicts if v.get("rule_id") in _HEAVY and v.get("tone") == "凶"]
     if "LM-V60" in _rids:
         _yq_level = "定死/大凶"

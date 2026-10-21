@@ -76,8 +76,8 @@ YEAR_XIONG = {  # 凶, 负分 (绝对值 = 强度)
     "LM-V55": 2,   # 岁运并临凶面 (羊刃七煞为凶)
     "LM-V74": 2,   # 太岁临丧门吊客, 孝服哭泣 (L4425/珞琭子"丧吊临人变宫商为薤露")
     "LM-V75": 2,   # 太岁临勾绞, 口舌刑狱非灾横祸 (L1743/珞琭子"狂横起於勾绞")
-    "LM-V76": 2,   # 岁伤日干, 有祸必轻 (L951 上治下顺, 轻祸)
-    "LM-V77": 3,   # 日犯岁君, 灾殃必重 (L951 下凌上逆, 五阳干重五阴干轻)
+    "LM-V76": 1,   # 岁伤日干, 有祸必轻 (L951 上治下顺, 轻祸; 2026-10-21 用户定案: 方向分轻重 计1)
+    "LM-V77": 2,   # 日犯岁君, 灾殃必重 (L951 下凌上逆; 2026-10-21 用户定案: 方向分轻重 计2)
     "LM-V78": 4,   # 征太岁, 日干支冲克太岁, 其年则凶灾祸未免 (L954)
     "LM-V79": 1,   # 小运行死绝之宫必有危难 (L943; 小运细累级, 补大运之不足)
     "LM-V80": 1,   # 小运到刑害之乡, 细累浮灾不为重害 (L4273)
@@ -224,23 +224,43 @@ def base_fortune(lm) -> dict:
 # ============================================================================
 # 四、岁运恶力 (L4276 恶运分数档) + 吉力
 # ============================================================================
+# 细累浮灾级规则 (三命通会 L4273: "细累浮灾, 但不为重害") —
+#   2026-10-21 用户定案(古法第二层): 单条计 0; 两条及以上同现合计计 1.
+#   不得把"不为重害"的浮灾与"发祸"平权计凶。
+_XI_LEI_RULES = frozenset({"LM-V80", "LM-V88", "LM-V64"})   # 小运刑害/四煞轻凶/岁压稽滞
+
+# 主断吉集 (珞琭子"尊吉卑凶, 逢灾自愈" — 救应降级权):
+#   临天月德/贵人禄马/本命克太岁为财/合局/喜神/小运禄马贵/福会/临官帝旺
+#   至少一条主断吉在场 → 细累凶归零、需防级凶降为浮灾 (2026-10-21 用户定案第三层)
+_JIUXI_JI_RULES = frozenset({"LM-V82", "LM-V65", "LM-Y73", "LM-Y71", "LM-V67",
+                             "LM-V86", "LM-V85", "LM-V81", "LM-Y72"})
+
+
 def year_power(verdicts) -> dict:
     """流年凶力/吉力: Σ强度分 → (恶力, 恶力档, 吉力).
 
     恶力档 (对应 L4276): 轻 Y<=3 / 中 4<=Y<=6 / 重 Y>=7.
+    2026-10-21 用户定案(古法第二层): 细累浮灾级(小运刑害/四煞轻凶/岁压稽滞)
+    单条计 0、两条及以上合计计 1 — 不参与平权计凶.
     """
     xiong = 0.0
     ji = 0.0
     zhi = 0.0
+    xi_lei_n = 0
     for v in verdicts:
         rid = v.get("rule_id", "")
         tone = v.get("tone", "平")
         if tone == "凶":
+            if rid in _XI_LEI_RULES:
+                xi_lei_n += 1
+                continue                      # 细累单条计0, 汇总后计1
             xiong += YEAR_XIONG.get(rid, 2)
         elif tone == "吉":
             ji += YEAR_XI.get(rid, 2)
         elif tone == "滞":
             zhi += 0.5
+    if xi_lei_n >= 2:
+        xiong += 1.0                          # 两条以上细累合计计1
     if xiong <= 3:
         yl = "轻"
     elif xiong <= 6:
@@ -248,7 +268,7 @@ def year_power(verdicts) -> dict:
     else:
         yl = "重"
     return {"xiong": round(xiong, 2), "ji": round(ji, 2), "zhi": zhi,
-            "level": yl}
+            "level": yl, "xi_lei_n": xi_lei_n}
 
 
 # ============================================================================
@@ -269,7 +289,8 @@ L4276_TABLE = {
 }
 
 
-def aggregate(base: dict, power: dict, dim_hits: dict | None = None) -> dict:
+def aggregate(base: dict, power: dict, dim_hits: dict | None = None,
+              jiu_yi: bool = False, jiu_yi_heavy: float = 0.0) -> dict:
     """L4276 查表 + 吉力微调 + 重维度修正 — **流年自身判定, 不含大运参与**.
 
     2026-10-20 第二版 (原著核实修正):
@@ -281,8 +302,16 @@ def aggregate(base: dict, power: dict, dim_hits: dict | None = None) -> dict:
     - 吉力微调: 流年吉力≥4 且 恶力为轻 → 升一档 (吉力盖轻恶, 厚福/中福皆然);
     - 重维度修正: 自身婚姻/情性健康 维度凶信号在场且恶力为轻 → 不因厚福掩盖,
       判"吉凶相杂" (L4273 吉运中遇刑害仍细累浮灾 — 细累即相杂, 不上报重灾).
+    - 2026-10-21 用户定案(古法第三层 珞琭子"尊吉卑凶, 逢灾自愈"):
+      jiu_yi=True (主断吉在场: 天月德/贵禄马/克太岁为财/合局/喜神等至少一条)
+      → 需防级凶(重凶集 jiu_yi_heavy 合计)减半降为浮灾, 恶力档降一档(重→中→轻);
+      细累级已在 year_power 归零; 普通凶(V68 犯忌等非重凶集)不降.
     """
     eff = power["level"]
+    xiong = power["xiong"]
+    if jiu_yi:
+        xiong = round(xiong - jiu_yi_heavy * 0.5, 2)
+        eff = {"重": "中", "中": "轻", "轻": "轻"}[eff]
     v = L4276_TABLE.get((base["level"], eff), "凶")
     if power["ji"] >= 4 and eff == "轻":
         if v == "吉凶相杂":
@@ -295,7 +324,7 @@ def aggregate(base: dict, power: dict, dim_hits: dict | None = None) -> dict:
             v = "吉凶相杂"  # L4273 吉运中遇刑害 → 细累浮灾 (不上报重灾, 也不全吉)
     return {"verdict": v,
             "base_level": base["level"], "base_score": base["score"],
-            "year_level": power["level"], "year_xiong": power["xiong"],
+            "year_level": power["level"], "year_xiong": xiong,
             "year_ji": power["ji"], "eff_level": eff}
 
 
