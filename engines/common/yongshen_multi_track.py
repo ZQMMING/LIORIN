@@ -240,7 +240,25 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
         # 从病名/ID中推断病的五行
         bing_wx = _infer_bing_wuxing(bing_id, bing_name, facts)
         if bing_wx and bing_wx in WUXING:
-            yao_wx = KE_ME[bing_wx]  # 药 = 克病的五行(KE_ME=被谁克, 如木被金克→药=金)
+            # ★ V7.114 药方取【病药层日主动态表】(单一数据源, V7.106)——
+            #   原典 SFTK L129 病药配对逐病类而异, 非"药=克病五行"之单一简化式:
+            #     财多身弱(病=财)->药=印比(帮身任财, 非克病); 印多埋子(病=印)->药=财(破印)+比劫(扶印);
+            #     比劫夺财(病=比劫)->药=官杀(制劫护财); 杀重身轻(病=杀)->药=食伤(制)+印(化).
+            #   旧式 yao_wx=KE_ME[bing_wx](药=克病)于"病=财"之盘误给官杀为药.
+            _yao_list = []
+            try:
+                from engines.common.bingyao_layer import _bing_yao_map as _bym
+                _dm_wx_sftk = WX.get(facts.get('day_stem'), '')
+                _yao_list = [w for w in (_bym(_dm_wx_sftk).get(bing_id) or []) if w]
+            except Exception:
+                _yao_list = []
+            _ke_yao = KE_ME.get(bing_wx, '')
+            if _ke_yao and _ke_yao in _yao_list:
+                yao_wx = _ke_yao          # 药方含克病一路(制/破), 以之为首选
+            elif _yao_list:
+                yao_wx = _yao_list[0]     # 否则取药方首位(帮身/扶印/制杀等)
+            else:
+                yao_wx = _ke_yao          # 无表项, 退回克病(旧口径)
             # 十干细分: 区分病的阳干/阴干力量, 确定主力病干
             # 原典: 壬水冲奔泛滥=病, 癸水渗透滋润=药; 同一五行阴阳干作用机制完全不同
             bing_sd = wp_data.get(bing_wx, {}).get('stem_detail', {}) if wp_data else {}
@@ -306,7 +324,7 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
                 force_note = '同气相克力大' if not he_degraded else '合绊降级后选干'
                 evidence = (f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，'
                           f'主力病干={main_bing_gan}({main_bing_type},力{bing_yang_total if main_bing_type=="阳干" else bing_yin_total})，'
-                          f'药在{yao_wx}(克{bing_wx})，首选药干={main_yao_gan}({force_note}){he_note}')
+                          f'药在{yao_wx}(病药层日主动态表; 药方多路: {"/".join(_yao_list) if _yao_list else yao_wx})，首选药干={main_yao_gan}({force_note}){he_note}')
                 stem_detail = {
                     'bing_main_gan': main_bing_gan,
                     'bing_main_type': main_bing_type,
@@ -317,7 +335,8 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
                     'he_relation': he_relation_info,
                 }
             else:
-                evidence = f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，药在{yao_wx}(克{bing_wx})'
+                evidence = (f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，'
+                           f'药在{yao_wx}(病药层日主动态表; 药方多路: {"/".join(_yao_list) if _yao_list else yao_wx})')
                 stem_detail = {}
             cand = _candidate(
                 yao_wx, i + 1,
