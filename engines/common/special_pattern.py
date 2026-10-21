@@ -500,12 +500,16 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                     elif ss_ben >= 1:
                         cong, side = '从儿格', ss_wx
                 else:
-                    cong, side = '从势格', top_wx
+                    # ★ V7.132 撤「从势格」桶(AGENTS.md §八 四桶取消 + 公理三):
+                    #   从势格作为独立格名无 grade=A 原句支撑(DTS L47 讲天干阴阳本性, 非日主顺局格;
+                    #   PZZQ L2413 属徐注 grade=B) -> 不再单列, 归正格(依 A 级财官用神).
+                    cong, side = None, None
                 if cong in ('从财格', '从杀格', '从官格', '从儿格') and len(shi_sides) >= 2:
                     keys = sorted(((9, 0, 0) if k == '官杀' else _fkey(v[0]) for k, v in shi_sides.items()),
                                   reverse=True)
                     if keys[0][0] == keys[1][0] and keys[0][1] == keys[1][1] and not (gs_ling or cai_ling or ss_ling):
-                        cong, side = '从势格', None
+                        # ★ V7.132 撤「从势格」桶(无 grade=A 原句支撑) -> 归正格, 不再单列.
+                        cong, side = None, None
             # [2026-10-07 PATCH-4d] 从格通判据收紧: 印绶有根则不从 + 阳干从严
             #   依据: PZZQ L180「然或印绶有根则又不嫌身弱」/L187「透印有根即不能从」/
             #        L4936「若透印则身赖印生而不从」/L4939「有印则印以化煞而不从」(四处明文)
@@ -549,8 +553,10 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             if cai_stem >= 2 and cai_ben >= 1 and ss_stem >= 1 and ss_ben <= cai_ben + 1:
                 # 食伤透干泄身太过(干支同党)、财复透干成众有根, 食伤+财并旺顺克泄 -> 从势
                 # (戊戌丁巳火旺木焚顺火土); 食伤当令而不透干(丁巳癸卯木在支)未焚身, 仍专从儿
-                # 食伤与财两神并旺、财透干成众(食伤生财顺局), 衰极从其势 -> 从势(戊戌丁巳顺火土)
-                cong, side = '从势格', None
+                # 食伤与财两神并旺、财透干成众(食伤生财顺局) -> 依 A 级判据分流, 不判从势:
+                #   食伤成势(有本气根) -> 从儿格(DTS L438「吾儿成气」/L440「吾儿又得儿」);
+                #   否则财透干成众 -> 从财格(PZZQ 弃命从财条). 「从势」桶已于 V7.132 撤(无 grade=A 原句支撑).
+                cong, side = ('从儿格', ss_wx) if ss_ben >= 1 else ('从财格', cai_wx)
             elif cai_stem == 0:
                 # V7.89h 顺局从儿须财不透(PZZQ L5092 丑遥巳禄格例「乙未 癸卯 癸卯 甲寅」财不透;
                 #   财透则食伤生财为正格: L1115 食神生财=食格 / L1114 财逢食生=财格).
@@ -727,17 +733,13 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
 
     # ---------- 从格并列候选(从旺/从杀, 仅当主从格不是该类型时添加, 供经典多解参考)----------
     _existing_cong = set(p['name'] for p in out['patterns'] if p.get('pattern_id') == 'ZP-SPECIAL-CONG')
-    # 从旺格: 日主旺极+有印+官杀极弱+财不透干(不要求地支成方局, 区别于专旺格)
-    # [2026-10-07 PATCH-4e-3] L2412「日与月同, 则从强从旺」: 从旺须日干五行与月支五行相同
-    _RYT = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土',
-            '庚': '金', '辛': '金', '壬': '水', '癸': '水'}[day_stem] == BRANCH_WX.get(pillars['month'][1])
-    if '从旺格' not in _existing_cong and not out['zhuanwang']:
-        if (_shi(dm) and (yin.get('ben_n',0) >= 1 or yin.get('stem_n',0) >= 1)
-                and gs_ben_zw == 0 and gs_stem_zw <= 1 and cai_stem_zw == 0 and not ss_ling
-                and _RYT):  # P0-b.7: 使用zw版本; PATCH-4e-3: 日与月同(L2412)
-            out['patterns'].append(_pat('ZP-SPECIAL-CONG', '从旺格', 'CANDIDATE', dm_wx,
-                '日主旺极、印比成势、官杀财极弱=从旺/从强格候选(CANDIDATE), 且日与月同(L2412「日与月同, 则从强从旺」); 区别于专旺格(不要求地支成方局); 只记结构定性, 不判用神成败吉凶',
-                ['daymaster_root', 'wuxing_power']))
+    # ★ V7.131 撤「从旺格」并列候选桶(AGENTS.md §八 四桶取消 + 公理三):
+    #   原判据唯一依据 PZZQ L2412-2413「日与月同, 则从强从旺」在底本属【徐注】(徐乐吾注) = grade=B,
+    #   grade=B 不得单独支撑规格(公理三) -> 不得单列从旺桶.
+    #   相关案例依 A 级条件重判(AGENTS.md §八「相关案例归入专旺或正格」):
+    #     ① 地支成方局/局全 -> 专旺格(渊海碧渊赋/论运化气 + 滴天髓方局/独象, A 级);
+    #     ② 不成方局        -> 正格(依 A 级财官用神), 不再单列从旺桶.
+    #   ★ 本次只撤【桶】(命名层), 专旺/正格判据一字未改; 专旺判据见上方 zhuanwang 分支(A 级有据).
     # 从杀格并列: 官杀透干+财生官杀+食伤不当令+日主无根或根极弱(允许与化气格共存, 经典多解)
     # [2026-10-07 PATCH-4e-4] L4939「四柱皆煞而日主无根舍而从之, 若有伤食则煞受制而不从」:
     #   收紧 ss_stem<=2 -> ss_stem==0 and ss_ben==0(无伤食, 四柱皆煞)

@@ -1,10 +1,10 @@
 {
  "purpose": "AGENTS.md v3 公理三落地: 引擎判据 -> 原典章节 -> 切片ID 锚点对照(不改判定)",
- "total_anchor_groups": 112,
- "total_refs": 352,
+ "total_anchor_groups": 114,
+ "total_refs": 357,
  "match_modes": {
   "EXACT_CHAPTER": 35,
-  "CHAPTER": 77
+  "CHAPTER": 79
  },
  "anchors": [
   {
@@ -29,9 +29,10 @@
    "book": "DTS",
    "book_cn": "滴天髓",
    "row": 47,
-   "ref_count": 1,
+   "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:512"
+    "engines\\common\\special_pattern.py:504",
+    "engines\\common\\special_pattern.py:516"
    ],
    "source_chapter": "七、天干",
    "slice_match": "EXACT_CHAPTER",
@@ -133,8 +134,9 @@
    "book": "DTS",
    "book_cn": "滴天髓",
    "row": 108,
-   "ref_count": 4,
+   "ref_count": 5,
    "engine_refs": [
+    "engines\\common\\topology_paths.py:561",
     "engines\\common\\transit_power.py:55",
     "engines\\common\\transit_power.py:80",
     "engines\\common\\transit_power.py:240",
@@ -201,7 +203,7 @@
    "row": 162,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:771"
+    "engines\\common\\special_pattern.py:773"
    ],
    "source_chapter": "十、形象",
    "slice_match": "EXACT_CHAPTER",
@@ -383,8 +385,8 @@
     "engines\\common\\topology_paths.py:396",
     "engines\\common\\topology_paths.py:424",
     "engines\\common\\topology_paths.py:450",
-    "engines\\common\\topology_paths.py:522",
-    "engines\\common\\topology_paths.py:528",
+    "engines\\common\\topology_paths.py:536",
+    "engines\\common\\topology_paths.py:542",
     "engines\\common\\yongyao_resolve.py:385",
     "p0_v2\\bazi_gate.py:538",
     "p0_v2\\bazi_gate.py:561"
@@ -581,12 +583,13 @@
    "book": "DTS",
    "book_cn": "滴天髓",
    "row": 438,
-   "ref_count": 4,
+   "ref_count": 5,
    "engine_refs": [
     "engines\\common\\special_pattern.py:460",
     "engines\\common\\special_pattern.py:493",
-    "engines\\common\\special_pattern.py:546",
-    "engines\\common\\special_pattern.py:565"
+    "engines\\common\\special_pattern.py:550",
+    "engines\\common\\special_pattern.py:557",
+    "engines\\common\\special_pattern.py:571"
    ],
    "source_chapter": "十六、顺局",
    "slice_match": "EXACT_CHAPTER",
@@ -721,7 +724,7 @@
    "row": 862,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:759"
+    "engines\\common\\special_pattern.py:761"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -743,7 +746,7 @@
    "row": 2251,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:654"
+    "engines\\common\\special_pattern.py:660"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -815,7 +818,7 @@
    "engine_refs": [
     "engines\\common\\special_pattern.py:416",
     "engines\\common\\special_pattern.py:423",
-    "engines\\common\\special_pattern.py:521"
+    "engines\\common\\special_pattern.py:525"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -840,8 +843,8 @@
     "engines\\common\\special_pattern.py:214",
     "engines\\common\\special_pattern.py:410",
     "engines\\common\\special_pattern.py:422",
-    "engines\\common\\special_pattern.py:510",
-    "engines\\common\\special_pattern.py:567"
+    "engines\\common\\special_pattern.py:514",
+    "engines\\common\\special_pattern.py:573"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1565,6 +1568,50 @@
   {
    "book": "PZZQ",
    "book_cn": "子平真诠",
+   "row": 2412,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:737"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
+   "row": 2413,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\special_pattern.py:505"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
    "row": 2923,
    "ref_count": 1,
    "engine_refs": [
@@ -2053,7 +2100,7 @@
    "ref_count": 2,
    "engine_refs": [
     "engines\\common\\special_pattern.py:247",
-    "engines\\common\\special_pattern.py:564"
+    "engines\\common\\special_pattern.py:570"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2075,7 +2122,7 @@
    "row": 4937,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:538"
+    "engines\\common\\special_pattern.py:542"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2119,9 +2166,9 @@
    "row": 5092,
    "ref_count": 3,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:546",
-    "engines\\common\\special_pattern.py:555",
-    "engines\\common\\special_pattern.py:565"
+    "engines\\common\\special_pattern.py:550",
+    "engines\\common\\special_pattern.py:561",
+    "engines\\common\\special_pattern.py:571"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",

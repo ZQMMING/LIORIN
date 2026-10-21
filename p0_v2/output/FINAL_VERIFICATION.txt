@@ -2,8 +2,8 @@
 ==========================================================================
 
 [1] 黄金套件
-  test_yuanjuan_matrix               PASS  矩阵结果: PASS=248 FAIL=0
-  test_criteria_anchors              PASS  结果: PASS=119 FAIL=0
+  test_yuanjuan_matrix               PASS  矩阵结果: PASS=262 FAIL=0
+  test_criteria_anchors              PASS  结果: PASS=121 FAIL=0
   test_special_pattern_golden        PASS  TOTAL 67 FAILS 0
   test_bingyao_layer_golden          PASS  
   test_yongshen_geju_golden          PASS  FAILS = 0
@@ -21,19 +21,19 @@
 
 [3] 回归闸门(100盘基线)
   100pan: ge_diff=0 xi_diff=0 winner_diff=0 (expect 0/0/0)
-  病机: {'YIN_DUO_MAI_ZI': 140, 'CAI_DUO_SHEN_RUO': 140, 'BIJIE_CHENG_DANG': 64, 'BIJIE_DUO_CAI': 32, 'XIE_QI_TAI_ZHONG': 30, 'SHA_ZHONG_SHEN_QING': 13, 'ZHI_SHA_TAI_GUO': 5, 'XIAO_DUO_SHI': 2}
+  病机: {'YIN_DUO_MAI_ZI': 140, 'CAI_DUO_SHEN_RUO': 140, 'BIJIE_CHENG_DANG': 67, 'BIJIE_DUO_CAI': 35, 'XIE_QI_TAI_ZHONG': 30, 'SHA_ZHONG_SHEN_QING': 13, 'ZHI_SHA_TAI_GUO': 5, 'XIAO_DUO_SHI': 2}
   报告: D:\shuntian-ziping-p0\p0_v2\output\REGRESSION_LATEST.txt
 
 [4] 判据锚点(公理三)
-  引擎原典引用点: 112 组 / 353 次
-  结果: PASS=119 FAIL=0
+  引擎原典引用点: 114 组 / 357 次
+  结果: PASS=121 FAIL=0
 
 [5] 分布快照
-  病机: {'YIN_DUO_MAI_ZI': 140, 'CAI_DUO_SHEN_RUO': 140, 'BIJIE_CHENG_DANG': 64, 'BIJIE_DUO_CAI': 32, 'XIE_QI_TAI_ZHONG': 30, 'SHA_ZHONG_SHEN_QING': 13, 'ZHI_SHA_TAI_GUO': 5, 'XIAO_DUO_SHI': 2}
-  primary: {'水': 450, '火': 442, '木': 434, '土': 371, '金': 345, 'None': 64}
-  格局: {'财格': 303, '建禄月劫格': 223, '正官格': 176, '食神格': 159, '印格': 158, '七煞格': 145, 'None': 133, '阳刃格': 130, '伤官格': 130, '印格(印多逢财)': 124, '印格(印轻逢煞)': 91, '从儿格': 41}
+  病机: {'YIN_DUO_MAI_ZI': 140, 'CAI_DUO_SHEN_RUO': 140, 'BIJIE_CHENG_DANG': 67, 'BIJIE_DUO_CAI': 35, 'XIE_QI_TAI_ZHONG': 30, 'SHA_ZHONG_SHEN_QING': 13, 'ZHI_SHA_TAI_GUO': 5, 'XIAO_DUO_SHI': 2}
+  primary: {'水': 453, '火': 442, '木': 434, '土': 368, '金': 345, 'None': 64}
+  格局: {'财格': 303, '建禄月劫格': 223, '正官格': 176, 'None': 166, '食神格': 159, '印格': 158, '七煞格': 145, '阳刃格': 130, '伤官格': 130, '印格(印多逢财)': 124, '印格(印轻逢煞)': 91, '从儿格': 41}
   形态: {'None/None': 399, '七煞格/食制': 214, '食神格/生财': 159, '印格/用官': 125, '印格/用食伤': 109, '印格/用官带伤食': 96, '财格/用食生': 94, '伤官格/用财': 93, '伤官格/佩印': 91, '印格/印绶': 89, '财格/佩印': 82, '建禄月劫格/同官格': 73, '阳刃格/用官': 57, '建禄
-  大运吉凶: {'凶': 359, '平': 214, '吉': 96, '平偏凶': 89, '平偏吉': 42}
+  大运吉凶: {'凶': 362, '平': 211, '吉': 96, '平偏凶': 89, '平偏吉': 42}
 
 ==========================================================================
 总判定: 全部通过

@@ -1,0 +1,73 @@
+{
+  "doc_id": "QUOTE_VERIFY_2026_10_21",
+  "source": "docs/AGENTS.md §七 待核引文清单(4条 TODO:quote-verify)",
+  "date": "2026-10-21",
+  "method": "仓库底本(registries/source/raw/*.md)逐字命中 + 互联网底本(维基文库《滴天髓》辑要/阐微)校对",
+  "total": 4,
+  "verified": 4,
+  "results": [
+    {
+      "id": "Q1",
+      "book": "渊海子平",
+      "chapter": "论运化气",
+      "quote": "天干化合者秀气，地支合局者福德",
+      "source_grade": "A",
+      "repo_hit": true,
+      "hit_locations": [
+        "YHZP_渊海子平.md:L4994",
+        "SFTK_神峰通考_原文.md:L4541"
+      ],
+      "source_version_note": "现行 raw/YHZP_渊海子平_原文.md 未收此句; archive 版 + SFTK L4541 同句互证",
+      "verified": true,
+      "human_signoff": null,
+      "verified_by": "AI(2026-10-21) 仓库底本+维基文库双证"
+    },
+    {
+      "id": "Q2",
+      "book": "滴天髓",
+      "chapter": "形象",
+      "quote": "若见金水则破，余仿此",
+      "source_grade": "A",
+      "repo_hit": true,
+      "hit_locations": [
+        "DTS_滴天髓_京图撰刘基原注.md:L164"
+      ],
+      "source_version_note": "命中于【原注】段(刘基原注, 非任氏曰); 维基文库底本正文作「若見金即破」(用字差异, 属版本差异)",
+      "verified": true,
+      "human_signoff": null,
+      "verified_by": "AI(2026-10-21) 仓库底本+维基文库双证"
+    },
+    {
+      "id": "Q3",
+      "book": "穷通宝鉴",
+      "chapter": "论甲木",
+      "quote": "正二月甲木，素无取从财、从杀、从化之理",
+      "source_grade": "A",
+      "repo_hit": true,
+      "hit_locations": [
+        "QTBJ_穷通宝鉴_原文.md:L219"
+      ],
+      "source_version_note": "底本作「素无取从财从杀从化之理」(无顿号), 措辞一致",
+      "verified": true,
+      "human_signoff": null,
+      "verified_by": "AI(2026-10-21) 仓库底本+维基文库双证"
+    },
+    {
+      "id": "Q4",
+      "book": "渊海子平",
+      "chapter": "碧渊赋",
+      "quote": "庚辛局全巳酉丑，位重权高",
+      "source_grade": "A",
+      "repo_hit": true,
+      "hit_locations": [
+        "YHZP_渊海子平_原文.md:L9107",
+        "YHZP_渊海子平.md:L7702"
+      ],
+      "source_version_note": "现行底本 L9107 命中; 「要不见辛庚之气」仅 archive 版 L4718 存(须标 source_version)",
+      "verified": true,
+      "human_signoff": null,
+      "verified_by": "AI(2026-10-21) 仓库底本+维基文库双证"
+    }
+  ],
+  "note": "四条均已在仓库底本逐字命中并经互联网校对; AGENTS.md §七 状态可由 TODO:quote-verify 更新为 VERIFIED(待人工签字)。★ 版本差异须随引文记录: Q1 现行 YHZP 底本未收(仅 archive+SFTK 互证); Q2 底本正文作「若见金即破」、刘基原注作「若见金水则破」; Q4「要不见辛庚之气」仅 archive 版存。"
+}

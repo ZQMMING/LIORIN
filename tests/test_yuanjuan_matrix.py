@@ -1205,6 +1205,65 @@ ck("TIER 强/旺 本气根阈值仍为 3/2(未擅改)",
 ck("YOU_QI 仍为 1(未擅改)", _asm.get("YOU_QI", {}).get("value") == 1, _asm.get("YOU_QI", {}).get("value"))
 # 劫占核清: 拓扑三条件全 READY(原典+阐微底本互证后)
 from engines.common.topology_paths import GUAN_TOPO_CONDITIONS as _GTC
+# ═══ LL. AGENTS.md §七 待核引文核清 + 四桶取消状态 (V7.130) ═══
+print("\n[LL] AGENTS.md §七 待核引文核清 + 四桶取消")
+_qv_path = os.path.join(ROOT, "p0_v2", "output", "QUOTE_VERIFY_2026_10_21.json")
+ck("待核引文核验报告已生成", os.path.exists(_qv_path), _qv_path)
+if os.path.exists(_qv_path):
+    _qv = _json2.load(open(_qv_path, encoding='utf-8'))
+    ck("AGENTS.md §七 4 条待核引文全部逐字命中(无编造)",
+       _qv.get("verified") == 4 and _qv.get("total") == 4,
+       ("verified=%s total=%s" % (_qv.get("verified"), _qv.get("total"))))
+    for _r in (_qv.get("results") or []):
+        ck("待核引文 %s 命中(%s)且为 grade=A" % (_r["id"], _r["quote"][:14]),
+           _r.get("verified") is True and _r.get("source_grade") == "A" and _r.get("hit_locations"),
+           _r.get("hit_locations"))
+    # 版本差异须随引文记录(不得静默)
+    ck("待核引文版本差异已随记录(Q1/Q2/Q4 须标 source_version)",
+       all(("source_version_note" in _r) and _r["source_version_note"]
+           for _r in (_qv.get("results") or [])), "")
+    # 人工签字位必须仍为 null(Phase 2 属人工验收, 不可代执行)
+    ck("待核引文人工签字位保留为空(Phase2 人工项不可代执行)",
+       all(_r.get("human_signoff") is None for _r in (_qv.get("results") or [])), "")
+# 四桶取消(AGENTS.md §八): 引擎不得再出现 从旺/从强/从气/从势 四桶命名
+_four_buckets = ["从旺格", "从强格", "从气格", "从势格"]
+_bucket_hits = []
+for _base in ("engines", "p0_v2"):
+    for _path in _gl.glob(os.path.join(ROOT, _base, "**", "*.py"), recursive=True):
+        if "_archive" in _path or "_verify" in _path:
+            continue
+        _txt = open(_path, encoding="utf-8", errors="replace").read()
+        # 剥离行注释后检测(注释里可说明"已撤该桶"的历史, 不算命名残留)
+        _code = "\n".join(
+            _ln.split("#", 1)[0] for _ln in _txt.splitlines()
+            if not _ln.lstrip().startswith("#"))
+        for _b in _four_buckets:
+            if _b in _code:
+                _bucket_hits.append((os.path.relpath(_path, ROOT), _b))
+ck("AGENTS.md §八 四桶(从旺/从强/从气/从势)引擎代码侧已无命名(V7.131/132)",
+   not _bucket_hits, _bucket_hits[:5])
+# 全仓实跑: 四桶零产出(17280 盘扫描口径的一部分: 单测用若干代表盘)
+_four_out = []
+for _bz4 in ("己丑 丁丑 己亥 乙丑", "丁酉 乙巳 丁丑 丙午", "戊申 庚申 庚申 丙子",
+             "戊戌丁巳甲寅己巳", "戊午丙辰戊辰辛酉"):
+    _sp4 = _pa(_bz4).get("special") or {}
+    _names4 = [p.get("name") for p in (_sp4.get("patterns") or [])] + [_sp4.get("cong_type")]
+    for _n4 in _names4:
+        if _n4 in _four_buckets:
+            _four_out.append((_bz4, _n4))
+ck("四桶实跑零产出(从旺/从强/从气/从势)", not _four_out, _four_out[:5])
+# 从旺格三盘依 A 级正格条件重判 -> PZZQ L1147「建禄月劫, 无财官, 透煞印, 建禄月劫之格败也」= 不单列格局
+for _bz5 in ("己丑 丁丑 己亥 乙丑", "丁酉 乙巳 丁丑 丙午", "戊申 庚申 庚申 丙子"):
+    _g5 = (_pa(_bz5).get("ge_cheng") or {}).get("ge")
+    ck("撤从旺桶后重判: %s 不判从旺格" % _bz5, _g5 != "从格(从旺格)", _g5)
+# 旺衰多轨层只出「太旺/太衰」气势表述, 非从格命名
+from engines.common import wangshuai_multi_track as _wmt
+_wmt_src = open(os.path.join(ROOT, "engines", "common", "wangshuai_multi_track.py"), encoding="utf-8").read()
+ck("旺衰多轨 DTS 轨只出「太旺/太衰」气势表述(V7.115)",
+   "太旺" in _wmt_src and "太衰" in _wmt_src
+   and "从强" not in "\n".join(_ln.split("#", 1)[0] for _ln in _wmt_src.splitlines()
+                              if not _ln.lstrip().startswith("#")), "")
+
 ck("劫占/破 两档均 READY(V7.127 原典核清: 占=位置隔断, 非劫财夺气)",
    all(c["status"] == "READY" for c in _GTC) and {c["key"] for c in _GTC} >= {"JIE_ZHAN", "PO"},
    [(c["key"], c["status"]) for c in _GTC])

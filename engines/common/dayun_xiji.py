@@ -217,9 +217,10 @@ def build_dayun_xiji(
     is_shangguan_peiyin = is_shangguan_month and len(yin_stems) > 0 and yin_has_root
     
     # V4.2: 从格喜忌判断 (基于滴天髓从象: 从格喜顺势, 忌生扶日主)
-    # 从格类型: 从财格/从杀格/从官格/从儿格/从势格
+    # 从格类型: 从财格/从杀格/从官格/从儿格(V7.132 去从势格: 无 grade=A 原句支撑)
     special_name = yongshen_result.get('special', '') or ''
-    is_cong_ge = any(cong_type in special_name for cong_type in ['从财格', '从杀格', '从官格', '从儿格', '从势格'])
+    # ★ V7.132: 去「从势格」(AGENTS.md §八 四桶取消; 该桶无 grade=A 原句支撑)
+    is_cong_ge = any(cong_type in special_name for cong_type in ['从财格', '从杀格', '从官格', '从儿格'])
     # V4.3: 专旺格喜忌判断 (基于滴天髓一行得气: 专旺格喜顺势, 忌克泄)
     # 专旺格类型: 曲直格(木)/炎上格(火)/稼穡格(土)/从革格(金)/润下格(水)
     zhuanwang_names = {'曲直格': '木', '炎上格': '火', '稼穡格': '土', '从革格': '金', '润下格': '水'}

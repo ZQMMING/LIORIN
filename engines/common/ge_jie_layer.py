@@ -1455,24 +1455,9 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 # 从格格体五行=所从之神
                 _cong_wx_map = {'从杀格': 'gs_wx', '从官格': 'gs_wx',
                                 '从财格': 'cai_wx', '从儿格': 'ss_wx'}
-                # [2026-10-08 PATCH-SRC4] 从旺格: 独象喜行化地(PZZQ L170), 喜=日主所生(食伤泄秀), 格体=日主
-                _cong_wx = ''
-                _zw_sheng = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}
-                if sp['cong_type'] == '从旺格':
-                    _dm_wx_zw = GAN_WX.get(dg, '')
-                    _cong_wx = _dm_wx_zw
-                    _xi_cong = [_zw_sheng.get(_dm_wx_zw, '')]  # 独象喜行化地=食伤泄
-                    facts['ge_cheng'] = {
-                        'ge': '从格(' + sp['cong_type'] + ')',
-                        'xi_wx': sorted(set(w for w in _xi_cong if w)),
-                        'ti_wx': [_cong_wx] if _cong_wx else [],
-                        'overpower_combo': 6,
-                        'zhi_wx': [],
-                        'hua_wx': sorted(set(w for w in _xi_cong if w)),
-                        'po_ge': [],
-                        'rule': '从旺格(独象喜行化地, PZZQ L170): 日主旺极顺泄, 喜=日主所生(食伤泄秀)',
-                    }
-                    return _attach_ge_evidence(facts)
+                # ★ V7.134 删「从旺格」死代码分支: 自 V7.131 撤「从旺格」桶(AGENTS.md §八 + 公理三,
+                #   唯一依据 PZZQ L2412-2413 属【徐注】grade=B)后 cong_type 永不为'从旺格' -> 此分支不可达.
+                #   独象喜行化地(PZZQ L170)之喜忌已由「专旺格」分支承载(A 级), 语义无损失.
                 _cong_key = _cong_wx_map.get(sp['cong_type'], '')
                 _cong_wx = ''
                 if _cong_key == 'gs_wx':

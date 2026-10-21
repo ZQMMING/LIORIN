@@ -596,11 +596,11 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
                 evidence=f'渊海子平/子平真诠: 身旺任财({cai_wx})，身强财星有根可用',
                 boundary='仅身旺财有根时适用；财多身弱/财无根不宜'
             ))
-        # 第五候选: 比劫(日主同类) - 仅从强格/专旺格时适用
+        # 第五候选: 比劫(日主同类) - 仅专旺格/气势极端(V7.115「太旺/太衰」)时适用
         bi_wx = dmw
         bi_power = wp_data.get(bi_wx, {}) if wp_data else {}
         bi_ben = bi_power.get('ben_n', 0) + bi_power.get('zhong_n', 0)
-        # 从强/专旺格: 比劫本气>=2 且 官杀/食伤/财星均无力(从强格需无克泄耗)
+        # 专旺/太旺气势: 比劫本气>=2 且 官杀/食伤/财星均无力(须无克泄耗)
         guan_power_p5 = wp_data.get(guan_wx, {}) if wp_data else {}
         shi_power_p5 = wp_data.get(shi_wx, {}) if wp_data else {}
         cai_power_p5 = wp_data.get(cai_wx, {}) if wp_data else {}
@@ -611,8 +611,8 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
         if bi_wx and bi_wx not in [guan_wx, shi_wx, yin_wx, cai_wx] and is_congqiang:
             candidates.append(_candidate(
                 bi_wx, 5,
-                evidence=f'滴天髓/子平真诠: 从强格/专旺格用比劫({bi_wx})，比劫成势({bi_ben}个)官杀无力',
-                boundary='仅比劫成势/从强格时适用；普通身旺比劫为忌'
+                evidence=f'滴天髓/子平真诠: 专旺格/太旺气势用比劫({bi_wx})，比劫成势({bi_ben}个)官杀无力',
+                boundary='仅比劫成势/专旺(太旺)时适用；普通身旺比劫为忌'
             ))
     elif is_shuai_ju:
         # 衰则扶: 生(印) 或 助(比劫)
