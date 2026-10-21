@@ -2904,9 +2904,14 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     tai_he_day_gui = bool(ts and day_stem and frozenset((ts, day_stem)) in HE_PAIR)
 
     # 死绝会集定死 (烛神经 L4113: "二运太岁会集死绝衰息之乡, 更太岁刑克, 灾限相应
-    #   定死") — "二运"=大运+小运, 须 大运死绝 + 小运衰息 + 太岁刑克 三者会集才立
-    #   (2026-10-21 用户第三轮核验: 仅大运死绝+太岁刑克是简化, "定死"力度偏重)
+    #   定死") — "二运"=大运+小运, 须 大运、小运、太岁 三者全会集于死绝衰息之乡,
+    #   更太岁刑克, 方立定死
+    #   (2026-10-21 用户核验八: "死绝衰息之乡"范围 = 死/绝/衰/病/沐浴(败) 五处;
+    #    胎、养、冠带、临官、帝旺属"安康", 绝不算会集 — 2026 太岁午=水胎、
+    #    2030 太岁戌=水冠带, 均未全会集 → 降"需防"; 引擎旧判把太岁仅作"刑克"
+    #    条件不查其衰息, 是扩大定死范围、制造焦虑的机制)
     #   → 拆两档: 全会集=会集定死; 未全会集=大凶需防
+    _SX = frozenset(("沐浴", "衰", "病", "死", "绝"))
     dl_growth = _growth_stage(year_nayin_el, dl_branch) if (year_nayin_el and dl_branch) else ""
     _xy_age2 = year - chart.birth_datetime.year + 1 if getattr(chart, "birth_datetime", None) else 0
     _xy_hit2 = next((p for p in (getattr(chart, "xiao_yun_pillars", None) or [])
@@ -2917,14 +2922,23 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         _, _xy_branch2 = _calc_gu_xiaoyun(chart, _xy_age2)
     _xy_growth2 = _growth_stage(year_nayin_el, _xy_branch2) \
         if (year_nayin_el and _xy_branch2) else ""
-    # 衰息之乡 = 沐浴(败)/衰/病/死/绝 五处 (墓为库非衰息; 生旺胎养不在此列)
-    _xy_shuai_xi = _xy_growth2 in ("沐浴", "衰", "病", "死", "绝")
+    _tai_growth = _growth_stage(year_nayin_el, tb) \
+        if (year_nayin_el and tb) else ""
+    # 死绝衰息之乡 = 死/绝/衰/病/沐浴(败) 五处 (胎养冠带临官帝旺=安康, 墓为库, 均不算)
+    _xy_shuai_xi = _xy_growth2 in _SX
+    _tai_shuai_xi = _tai_growth in _SX
+    _tai_nayin_l = NAYIN_60.get((ts, tb), "")
+    _tai_nayin_rel_l = _nayin_relation(year_nayin, _tai_nayin_l) if _tai_nayin_l else ""
     _tai_ke_chong = (tai_chong_dayun or tai_xing_dayun
-                     or any(r["tai_relation"] in ("冲", "刑") for r in tai_pillar_relations))
+                     or (_is_clash(tb, year_branch) and _tai_nayin_rel_l == "克我")
+                     # 冲年须克本命才算"刑克" (L4416: 冲年而不克不为灾)
+                     or any(r["tai_relation"] == "刑" for r in tai_pillar_relations))
     tai_death_meeting = bool(
-        dl_growth in ("死", "绝") and _xy_shuai_xi and _tai_ke_chong)
+        dl_growth in ("死", "绝") and _xy_shuai_xi and _tai_shuai_xi and _tai_ke_chong)
+    # 未全会集 = 大运死绝 + 太岁刑克 成立但三者未全会集于衰息 (小运或太岁任一不在
+    #   衰息) → V60B 大凶需防 — 2026 太岁午=胎、2030 太岁戌=冠带 均属此类 (用户核验八)
     tai_death_part = bool(
-        dl_growth in ("死", "绝") and _tai_ke_chong and not _xy_shuai_xi)
+        dl_growth in ("死", "绝") and _tai_ke_chong and not tai_death_meeting)
 
     # 空亡 (取法双轨: 五行精纪 L3483 林开五命"论空亡止以年日所在"; L3458 神白经
     #   "生日旬极紧" — 年柱旬/日柱旬分轨标注, 消除"混用"观感, 均符合古法)
@@ -3232,6 +3246,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "zhen_tai_sui": zhen_tai_sui, "tai_fan_shi_gan": tai_fan_shi_gan,
         "shi_rel": shi_rel, "tai_he_day_gui": tai_he_day_gui,
         "tai_death_meeting": tai_death_meeting, "tai_death_part": tai_death_part,
+        "tai_growth": _tai_growth,
         "tai_kong_wang": tai_kong_wang, "tai_kw_year": tai_kw_year,
         "tai_kw_day": tai_kw_day, "kong_wang_track": kong_wang_track,
         "kong_wang_str": "、".join(sorted(kong)) if kong else "",
