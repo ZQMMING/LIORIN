@@ -1,0 +1,47 @@
+{
+  "rule_id": "HLT-305",
+  "title": "本命五行失衡 + 流年为失衡旺五行 → 该年对应脏器发作",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "滴天髓",
+    "chapter": "论五行",
+    "location": "旺衰失衡应期"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "five_element_imbalance",
+        "op": "present",
+        "value": true
+      },
+      {
+        "field": "flow_year_branch_main_element_clash",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命五行失衡主对应脏器易病，流年地支五行再加重失衡则该年发作。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-016"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "DITIANSUI",
+  "precedence": 7,
+  "scope": "健康应期 / 五行失衡流年加重",
+  "spec_decisions_ref": [
+    "DECISION-305"
+  ]
+}

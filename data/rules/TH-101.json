@@ -1,0 +1,50 @@
+{
+  "rule_id": "TH-101",
+  "title": "夏燥命局缺水 → 燥热失眠风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "穷通宝鉴",
+    "chapter": "调候第一等药",
+    "location": "夏月缺水"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_branch",
+        "op": "in",
+        "value": ["SI", "WU", "WEI"]
+      },
+      {
+        "field": "five_element_imbalance",
+        "op": "present",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《穷通宝鉴》调候框架: 夏月火炎土燥，首取水润。局中无水则燥热内生，心火亢盛，易见失眠、烦渴。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "心小肠"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-016"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 6,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "QIONGTONG-BAOJIAN",
+  "scope": "健康断事 / 夏燥调候"
+}

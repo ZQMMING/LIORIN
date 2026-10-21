@@ -1,0 +1,40 @@
+{
+  "rule_id": "CRR-103",
+  "title": "流年伤官当值 → 事业风险/变动",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "滴天髓",
+    "chapter": "论伤官",
+    "location": "流年伤官"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "flow_year_branch_main_ten_god",
+        "op": "eq",
+        "value": "伤官"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "流年伤官当值，主与上级不合、口舌、职业变动风险。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "CHANGE",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-DAYUN-002"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "DITIANSUI",
+  "spec_decisions_ref": [
+    "DECISION-103"
+  ]
+}

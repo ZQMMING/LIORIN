@@ -1,0 +1,43 @@
+{
+  "rule_id": "EDU-101",
+  "title": "流年印星当值 → 学业助力",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "渊海子平",
+    "chapter": "论印",
+    "location": "印主学业"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "flow_year_branch_main_ten_god",
+        "op": "in",
+        "value": [
+          "正印",
+          "偏印"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "印主学问文墨，流年印星当值，学业考试得力。",
+    "produces_layer_output_template": {
+      "direction": "INCREASE",
+      "polarity": "opportunity"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-DAYUN-002"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "YUANHAI-ZIPING",
+  "spec_decisions_ref": [
+    "DECISION-101"
+  ]
+}

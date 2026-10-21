@@ -1,0 +1,33 @@
+{
+  "rule_id": "CAND-MAR-106",
+  "engine": "MAR_ENGINE",
+  "source_ids": [
+    "MAR-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "婚姻断事 / 日支桃花",
+  "subject": "unknown",
+  "predicate": "日支为桃花(子午卯酉) → 感情机会多",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "peach_blossom",
+        "operator": "eq",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 MAR-106",
+  "created_at": "2026-09-13T21:19:41.849435",
+  "metadata": {
+    "original_rule_id": "MAR-106",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

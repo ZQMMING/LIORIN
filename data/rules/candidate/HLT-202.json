@@ -1,0 +1,40 @@
+{
+  "rule_id": "CAND-HLT-202",
+  "engine": "HLT_ENGINE",
+  "source_ids": [
+    "HLT-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "健康断事 / 火弱心小肠",
+  "subject": "unknown",
+  "predicate": "火元素过弱 → 心小肠失养风险",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "five_element_imbalance",
+        "operator": "present",
+        "value": true
+      },
+      {
+        "field": "day_master_element",
+        "operator": "nin",
+        "value": [
+          "FIRE"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 HLT-202",
+  "created_at": "2026-09-13T21:19:41.839746",
+  "metadata": {
+    "original_rule_id": "HLT-202",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

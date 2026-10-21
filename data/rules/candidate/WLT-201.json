@@ -1,0 +1,41 @@
+{
+  "rule_id": "CAND-WLT-201",
+  "engine": "WLT_ENGINE",
+  "source_ids": [
+    "WLT-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "财运断事 / 男命财星落内",
+  "subject": "unknown",
+  "predicate": "财星在日时柱 → 能落袋财",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "gender",
+        "operator": "eq",
+        "value": "male"
+      },
+      {
+        "field": "day_branch_main_ten_god",
+        "operator": "in",
+        "value": [
+          "正财",
+          "偏财"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 WLT-201",
+  "created_at": "2026-09-13T21:19:41.866417",
+  "metadata": {
+    "original_rule_id": "WLT-201",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "rule_id": "ZPZ-005",
+  "title": "水日主基线 → RESOURCE",
+  "rule_type": "十神定性",
+  "source": {
+    "work": "工程种子",
+    "chapter": "demo baseline",
+    "location": "v1.0 种子规则(非经典原文直引)"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "day_master_element",
+        "op": "eq",
+        "value": "WATER"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "五常说:水主智,性润下涵养,故定 RESOURCE 基调(工程基线)。",
+    "produces_semantic_atoms": [
+      "RESOURCE",
+      "WEALTH",
+      "ASSET",
+      "ABUNDANCE"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "RESOURCE",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-ZPZ-005-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-17T00:00:00Z"
+}

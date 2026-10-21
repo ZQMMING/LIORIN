@@ -1,0 +1,44 @@
+{
+  "rule_id": "ZPZ-002",
+  "title": "火日主基线 → ACTION",
+  "rule_type": "十神定性",
+  "source": {
+    "work": "工程种子",
+    "chapter": "demo baseline",
+    "location": "v1.0 种子规则(非经典原文直引)"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "day_master_element",
+        "op": "eq",
+        "value": "FIRE"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "五常说:火主礼,性急外放,故定 ACTION 基调(工程基线)。",
+    "produces_semantic_atoms": [
+      "ACTION",
+      "EXECUTION",
+      "INITIATIVE",
+      "MOVEMENT"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "ACTION",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-ZPZ-002-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-17T00:00:00Z"
+}

@@ -1,0 +1,57 @@
+{
+  "rule_id": "TF-102",
+  "title": "印食伤需相融(燥土印×寒水食伤则相斥)",
+  "rule_type": "神煞判定",
+  "source": {
+    "work": "工程种子",
+    "chapter": "玄学天赋正解",
+    "location": "印食伤相融"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "in",
+        "value": [
+          "正印",
+          "偏印"
+        ]
+      },
+      {
+        "field": "day_branch_main_ten_god",
+        "op": "in",
+        "value": [
+          "食神",
+          "伤官"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《子平真诠》《滴天髓》:印星与食伤需五行调和。燥土之印克寒水之食伤则相斥(天赋阻塞);燥土印配燥土食伤则相融(天赋发挥)。",
+    "produces_layer_output_template": {
+      "direction": "STABLE",
+      "polarity": "neutral"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-TF-102-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 3,
+  "created_at": "2026-08-26T18:00:00Z",
+  "passage_id": "P-TF-YINSHI",
+  "concept_id": "玄学天赋",
+  "principle_id": "PRINCIPLE-TALENT",
+  "scope": "玄学天赋(印食伤调和)",
+  "scenario": "SELF_AWAKENING_TALENT"
+}

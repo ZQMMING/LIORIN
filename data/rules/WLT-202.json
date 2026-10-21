@@ -1,0 +1,49 @@
+{
+  "rule_id": "WLT-202",
+  "title": "财星在年月柱 → 过路财神",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "渊海子平",
+    "chapter": "论财",
+    "location": "财星位置"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "gender",
+        "op": "eq",
+        "value": "male"
+      },
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "in",
+        "value": ["正财", "偏财"]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《渊海子平·论财》: 财居年月，主过路财神，财来财去难以聚蓄。年月为外，财非己有。",
+    "produces_layer_output_template": {
+      "direction": "STABLE",
+      "polarity": "passive"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-DAYUN-002"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-103"
+  ],
+  "version": "1.0.0",
+  "precedence": 4,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "YUANHAI-ZIPING",
+  "scope": "财运断事 / 男命财星在外"
+}

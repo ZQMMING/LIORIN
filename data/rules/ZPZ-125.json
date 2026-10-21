@@ -1,0 +1,55 @@
+{
+  "rule_id": "ZPZ-125",
+  "title": "非当令食神透干 → OUTPUT(透则显)",
+  "rule_type": "十神定性",
+  "source": {
+    "work": "子平真诠",
+    "edition": "通行本",
+    "chapter": "论用神",
+    "location": "年月时干透出取显"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "transparent_ten_gods",
+        "op": "contains",
+        "value": "食神"
+      },
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "ne",
+        "value": "食神"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "非当令食神透干,所泄者显,取 OUTPUT 基调。",
+    "produces_semantic_atoms": [
+      "OUTPUT",
+      "EXPRESSION",
+      "CREATIVITY",
+      "VISIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "OUTPUT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-ZPZ-125-001"
+  ],
+  "status": "validated",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-17T00:00:00Z",
+  "book_id": "ZIPING-ZHENQUAN",
+  "passage_id": "P-ZPZ-YONGSHEN",
+  "concept_id": "透干",
+  "principle_id": "PRINCIPLE-TOUGAN-TONGGEN"
+}

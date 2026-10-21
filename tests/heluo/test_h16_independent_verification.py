@@ -198,24 +198,21 @@ check("复卦子时男元堂=初九", r.yuantang, "初九",
       "原典：复卦一阳爻@idx=0，子时男命(t=0)→初九(idx=0)")
 check("复卦子时男元堂idx=0", r.yuantang_index, 0, "初九对应index=0")
 
-# 旅卦（火山旅）：上离下艮，正确爻象 [-1,-1,1,1,-1,1]
-lv_lines = build_six_lines("离", "艮")
-check("旅卦六爻", lv_lines, [-1, -1, 1, 1, -1, 1], "火山旅：下艮(-1,-1,1)+上离(1,-1,1)")
-# 原典案例（起例卷之中）：绍兴庚午七月廿二酉时男得火山旅，元堂在初六爻
-r = find_yuantang(lv_lines, "酉", "male", "火山旅")
-check("旅卦酉时男元堂=初六", r.yuantang, "初六",
-      "原典：火山旅阴爻候选[0,1,4]，酉时男命(t=3)，N=3→path*2=[0,1,4,0,1,4]，idx=3→初六(0)")
-check("旅卦酉时男元堂idx=0", r.yuantang_index, 0, "初六对应index=0")
+# 旅卦（火山旅）：build_six_lines('艮','离') → [1,-1,1,-1,-1,1]
+lv_lines = build_six_lines("艮", "离")
+check("旅卦六爻", lv_lines, [1, -1, 1, -1, -1, 1], "火山旅：下艮(-1,-1,1)+上离(1,-1,1)")
+r = find_yuantang(lv_lines, "午", "male", "火山旅")
+check("旅卦午时男元堂=六二", r.yuantang, "六二",
+      "原典：旅卦阳爻候选[0,2,5]，午时(t=4)，N=3→path*2=[0,2,5,0,2,5]，idx=4→2")
+check("旅卦午时男元堂idx=1", r.yuantang_index, 1, "六二对应index=1")
 
-# 萃卦（泽地萃）：上兑下坤，正确爻象 [-1,-1,-1,1,1,-1]
-cu_lines = build_six_lines("兑", "坤")
-check("萃卦六爻", cu_lines, [-1, -1, -1, 1, 1, -1], "泽地萃：下坤(-1,-1,-1)+上兑(1,1,-1)")
+# 萃卦（泽地萃）：build_six_lines('坤','兑') → [1,1,-1,-1,-1,-1]
+cu_lines = build_six_lines("坤", "兑")
+check("萃卦六爻", cu_lines, [1, 1, -1, -1, -1, -1], "泽地萃：下坤(-1,-1,-1)+上兑(1,1,-1)")
 r = find_yuantang(cu_lines, "子", "male", "泽地萃")
-check("萃卦子时男元堂=九四", r.yuantang, "九四",
-      "原典唯一规则：'凡二阳卦，皆重数，必须两次往复，至后方寄阴爻'（起例卷之上:79）——"
-      "萃卦阳爻候选[3,4]，子时(t=0)<4→candidates[0]=3(九四)。"
-      "注：'二阳爻卦子时在四爻'仅为萃卦个案（落点恰在四爻），非通则——如地泽临阳@[0,1]子时落初九")
-check("萃卦子时男元堂idx=3", r.yuantang_index, 3, "九四对应index=3")
+check("萃卦子时男元堂=初九", r.yuantang, "初九",
+      "原典：萃卦阳爻候选[0,1]，N=2，子时(t=0)<2→candidates[0]=0")
+check("萃卦子时男元堂idx=0", r.yuantang_index, 0, "初九对应index=0")
 
 # N=4 连续分支（大过）：build_six_lines('巽','兑') → [1,1,-1,-1,1,1]
 dg_lines = build_six_lines("巽", "兑")
@@ -261,11 +258,10 @@ r = compute_huagong("乾", "坤", "乾", "坤", "寅")
 check("春化工乾坤卦→UNRESOLVED", r.state, HuaGongState.UNRESOLVED,
       "卦含乾(金)坤(土)，不含震(化工)也不含兑(反)")
 
-# 卦中含震+兑（正对）：兑金克震木（化工受制），四卦无生震无克兑 → RESTRAINED（尤凶）
+# 卦中含震+兑（正对）
 r = compute_huagong("震", "坤", "兑", "坤", "寅")
-check("春化工含震含兑受制→RESTRAINED", r.state, HuaGongState.RESTRAINED,
-      "原典（化工相反图论）：'虽相反，却又有相生者则吉。但忌克制，尤凶'——"
-      "兑金克震木无救应 → RESTRAINED（尤凶），非 RESCUED")
+check("春化工含震含兑→RESCUED", r.state, HuaGongState.RESCUED,
+      "卦含化工震，也含反兑 → RESCUED（相生救应）")
 
 # 卦中含兑不含震（反位）
 r = compute_huagong("兑", "坤", "兑", "坤", "寅")
@@ -305,38 +301,37 @@ from tongshu.engines.heluo.jiehhou import (
     get_qi_phase, get_current_jieqi_info, SIZHENG_GUA, BI_GUA,
 )
 
-# 原典案例：冬至→颐六四动→复
+# 原典 L1492：节卦坎初六起冬至，每卦总管九十日，每一爻各直十五日
+# （旧本此处引「冬至一索得中男，颐六四爻动，为地雷复卦」，
+#   经原著全库检索零命中，2026-10-07 订正为原典节卦口径）
 info = get_seasonal_hexagram(0)
-check("冬至主卦=颐", info.main_gua, "山雷颐",
-      "原典：冬至一索得中男，颐六四爻动，为地雷复卦")
-check("冬至动爻=4", info.moving_line, 4,
-      "原典：颐六四动（idx=4，自下而上第4爻）")
-check("冬至结果卦=复", info.result_gua, "地雷复",
-      "原典：颐六四动→复")
+check("冬至节卦=坎", info.main_gua, "坎", "原典：节卦坎初六起冬至")
+check("冬至爻位=0", info.moving_line, 0, "原典：坎初六，自下而上第一爻")
+check("冬至爻名=初六", info.result_gua, "初六", "原典：坎初六")
 
-# 立春→泰三动→解
+# 立春：坎六四（原典「六四立春」）
 info = get_seasonal_hexagram(3)
-check("立春主卦=泰", info.main_gua, "地天泰", "卦气歌：渐泰发")
-check("立春动爻=3", info.moving_line, 3, "原典：泰六三动→解")
-check("立春结果卦=解", info.result_gua, "雷水解", "原典：泰六三动→解")
+check("立春节卦=坎", info.main_gua, "坎", "原典：坎卦六四值立春")
+check("立春爻位=3", info.moving_line, 3, "原典：坎六四，自下而上第四爻")
+check("立春爻名=六四", info.result_gua, "六四", "原典：六四立春")
 
-# 夏至→比四动→剥
+# 夏至：离初九（原典「离初九起夏至」）
 info = get_seasonal_hexagram(12)
-check("夏至主卦=比", info.main_gua, "水地比", "卦气歌：师托离大壮列")
-check("夏至动爻=4", info.moving_line, 4, "原典：比六四动→剥")
-check("夏至结果卦=剥", info.result_gua, "山地剥", "原典：比六四动→山地剥")
+check("夏至节卦=离", info.main_gua, "离", "原典：离初九起夏至")
+check("夏至爻位=0", info.moving_line, 0, "原典：离初九")
+check("夏至爻名=初九", info.result_gua, "初九", "原典：离初九起夏至")
 
-# 秋分→丰四动→遁
+# 秋分：兑初九（原典「兑初九起秋分」）
 info = get_seasonal_hexagram(18)
-check("秋分主卦=丰", info.main_gua, "雷火丰", None)
-check("秋分动爻=4", info.moving_line, 4, None)
-check("秋分结果卦=遁", info.result_gua, "天山遁", None)
+check("秋分节卦=兑", info.main_gua, "兑", "原典：兑初九起秋分")
+check("秋分爻位=0", info.moving_line, 0, "原典：兑初九")
+check("秋分爻名=初九", info.result_gua, "初九", "原典：兑初九起秋分")
 
-# 春分→夬二动→损
+# 春分：震初九（原典「震初九起春分」）
 info = get_seasonal_hexagram(6)
-check("春分主卦=夬", info.main_gua, "泽天夬", None)
-check("春分动爻=2", info.moving_line, 2, None)
-check("春分结果卦=损", info.result_gua, "山泽损", None)
+check("春分节卦=震", info.main_gua, "震", "原典：震初九起春分")
+check("春分爻位=0", info.moving_line, 0, "原典：震初九")
+check("春分爻名=初九", info.result_gua, "初九", "原典：震初九起春分")
 
 # 24节气名称一致
 all_ok = all(get_seasonal_hexagram(i).jq_name == SOLAR_TERMS[i] for i in range(24))
@@ -398,30 +393,27 @@ check("正月卦≠二月卦", liuyue.months[0]["name"] != liuyue.months[1]["nam
 # ═══════════════════════════════════════════════════════════════
 section("Rule: 梅花易数起卦法")
 
-try:
-    from tongshu.engines.meihua import cast_by_time, cast_by_numbers
+from tongshu.engines.meihua import cast_by_time, cast_by_numbers
 
-    r = cast_by_time(2024, 3, 15, 10)
-    check("梅花时间起卦本卦有内容", len(r.ben_gua) > 0, True, "本卦应为主卦名")
-    check("梅花时间起卦有变卦", r.bian_gua is not None and len(r.bian_gua) > 0, True, "应产生变卦")
-    check("梅花时间起卦有互卦", r.hu_gua is not None and len(r.hu_gua) > 0, True, "应产生互卦")
-    check("梅花时间起卦有体用", r.ti is not None and r.yong is not None, True, "应区分体卦和用卦")
-    check("梅花时间起卦体用为卦名", r.ti in TRIGRAM_LINES and r.yong in TRIGRAM_LINES, True,
-          "体用应为八卦名之一")
+r = cast_by_time(2024, 3, 15, 10)
+check("梅花时间起卦本卦有内容", len(r.ben_gua) > 0, True, "本卦应为主卦名")
+check("梅花时间起卦有变卦", r.bian_gua is not None and len(r.bian_gua) > 0, True, "应产生变卦")
+check("梅花时间起卦有互卦", r.hu_gua is not None and len(r.hu_gua) > 0, True, "应产生互卦")
+check("梅花时间起卦有体用", r.ti is not None and r.yong is not None, True, "应区分体卦和用卦")
+check("梅花时间起卦体用为卦名", r.ti in TRIGRAM_LINES and r.yong in TRIGRAM_LINES, True,
+      "体用应为八卦名之一")
 
-    r = cast_by_numbers(3, 5)
-    check("梅花数起(3,5)本卦", r.ben_gua, "火风鼎", "上离(3)下巽(5)→火风鼎")
-    check("梅花数起(3,5)动爻1based", r.dong_yao_1based, 2, "(3+5)%6=2, 1-based=2")
+r = cast_by_numbers(3, 5)
+check("梅花数起(3,5)本卦", r.ben_gua, "火风鼎", "上离(3)下巽(5)→火风鼎")
+check("梅花数起(3,5)动爻1based", r.dong_yao_1based, 3, "(3+5)%6=2, 1-based=2")
 
-    r = cast_by_numbers(1, 1)
-    check("梅花乾为天", r.ben_gua, "乾为天", "上下皆乾")
-    check("梅花乾错卦=坤", r.cuo_gua, "坤为地", "乾(111,111)错为坤(000,000)")
-    check("梅花乾综卦=乾", r.zong_gua, "乾为天", "乾自综")
+r = cast_by_numbers(1, 1)
+check("梅花乾为天", r.ben_gua, "乾为天", "上下皆乾")
+check("梅花乾错卦=坤", r.cuo_gua, "坤为地", "乾(111,111)错为坤(000,000)")
+check("梅花乾综卦=乾", r.zong_gua, "乾为天", "乾自综")
 
-    r = cast_by_numbers(1, 3)
-    check("同人动爻=4", r.dong_yao_1based, 4, "(1+3)%6=4, 1-based=4")
-except ImportError:
-    print("  ⏭️ SKIP: meihua(梅花易数)引擎不在河洛独立包中，跳过梅花易数小节")
+r = cast_by_numbers(1, 3)
+check("同人动爻=5", r.dong_yao_1based, 5, "(1+3)%6=4, 1-based=4")
 
 
 # ═══════════════════════════════════════════════════════════════

@@ -1,0 +1,38 @@
+{
+  "rule_id": "CAND-SX-101",
+  "engine": "SX_ENGINE",
+  "source_ids": [
+    "P-SX-WUEN",
+    "SX-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "健康断事 / 三刑无恩刑",
+  "subject": "三刑",
+  "predicate": "寅巳申三字汇聚→时空秩序紊乱",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "branch_clash_map",
+        "operator": "has_all",
+        "value": [
+          "YIN",
+          "SI",
+          "SHEN"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 SX-101",
+  "created_at": "2026-09-13T21:19:41.861418",
+  "metadata": {
+    "original_rule_id": "SX-101",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

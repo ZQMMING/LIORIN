@@ -1,0 +1,46 @@
+{
+  "rule_id": "HL-102",
+  "title": "本命卦五行木(震/巽)过旺 → 肝/胆健康风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "河洛真数",
+    "chapter": "八卦五行归属",
+    "location": "木→肝"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "heluo_benming_guawuxing",
+        "op": "eq",
+        "value": "木"
+      },
+      {
+        "field": "heluo_wuxing_imbalance",
+        "op": "eq",
+        "value": "over"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命卦五行木过旺，肝胆易受损。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "肝胆"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "status": "draft",
+  "version": "0.1.0",
+  "book_id": "SANMING-TONGHUI",
+  "spec_decisions_ref": [
+    "DECISION-102"
+  ],
+  "evidence_refs": [
+    "E-K2G-SHIPI-000"
+  ]
+}

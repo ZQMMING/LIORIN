@@ -1,0 +1,75 @@
+{
+  "rule_id": "MK-105",
+  "title": "库根透出后逢冲→余气尽伤",
+  "rule_type": "旺衰判定",
+  "source": {
+    "work": "滴天髓",
+    "chapter": "通神论·衰旺",
+    "location": "库根逢冲"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_branch",
+        "op": "in",
+        "value": [
+          "CHEN",
+          "XU",
+          "CHOU",
+          "WEI"
+        ]
+      },
+      {
+        "field": "day_branch",
+        "op": "in",
+        "value": [
+          "CHEN",
+          "XU",
+          "CHOU",
+          "WEI"
+        ]
+      },
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "in",
+        "value": [
+          "正印",
+          "偏印",
+          "比肩",
+          "劫财"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《滴天髓》:天干只得一库根,逢冲则余气尽伤。库根透出后逢冲,根基不稳。",
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-MK-105-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "DITIANSUI",
+  "passage_id": "P-MK-KUGEN",
+  "concept_id": "库根",
+  "principle_id": "PRINCIPLE-WANGSHUAI",
+  "scope": "八字旺衰判定(库根被冲)"
+}

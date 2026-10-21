@@ -1,0 +1,43 @@
+{
+  "rule_id": "WLT-101",
+  "title": "流年财星当值(正财/偏财) → 财运机会",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "三命通会",
+    "chapter": "论财",
+    "location": "流年财星"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "flow_year_branch_main_ten_god",
+        "op": "in",
+        "value": [
+          "正财",
+          "偏财"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "流年财星当值，主当年财运亨通、收入机会增多。",
+    "produces_layer_output_template": {
+      "direction": "INCREASE",
+      "polarity": "opportunity"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-DAYUN-002"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "SANMING-TONGHUI",
+  "spec_decisions_ref": [
+    "DECISION-101"
+  ]
+}

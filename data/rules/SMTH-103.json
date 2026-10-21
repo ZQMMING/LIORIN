@@ -1,0 +1,50 @@
+{
+  "rule_id": "SMTH-103",
+  "title": "建禄格(月支为日主禄位)→ SUPPORT",
+  "rule_type": "格局判定",
+  "source": {
+    "work": "三命通会",
+    "edition": "通行本(十二卷)",
+    "chapter": "论建禄",
+    "location": "建禄格判据"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "day_master_road_month",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "月支为日主禄位即建禄,日主得禄而强,取 SUPPORT 基调;建禄格取用须透干、用财官。",
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-SMTH-103-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-19T00:00:00Z",
+  "book_id": "SANMING-TONGHUI",
+  "passage_id": "P-SMTH-JIANLU",
+  "concept_id": "建禄",
+  "scope": "八字格局判定(建禄格)"
+}

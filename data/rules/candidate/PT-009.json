@@ -1,0 +1,52 @@
+{
+  "rule_id": "CAND-PT-009",
+  "engine": "PT_ENGINE",
+  "source_ids": [
+    "P-DTS-CONGGE",
+    "PT-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "特殊格局判定(从格)",
+  "subject": "从格",
+  "predicate": "从格判定(日主无根从强/从弱)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "daymaster_root",
+        "operator": "absent",
+        "value": []
+      },
+      {
+        "field": "unknown",
+        "operator": "equals",
+        "value": []
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "FOLLOW_STRUCTURE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "DOMINANT_FORCE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "SPECIAL_PATTERN"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.1.0",
+  "notes": "迁移自旧规则 PT-009",
+  "created_at": "2026-09-13T21:19:41.854954",
+  "metadata": {
+    "original_rule_id": "PT-009",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

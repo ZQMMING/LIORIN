@@ -1,0 +1,43 @@
+{
+  "rule_id": "HL-121",
+  "title": "本命卦地天泰 → 天地交泰，主通达顺利（六爻皆宜固定，不可轻进）",
+  "rule_type": "体用辨析",
+  "source": {
+    "work": "河洛真数",
+    "chapter": "地天泰卦解",
+    "location": "坤宫三世卦，属正月，纳甲甲子甲寅甲辰癸丑癸亥癸酉"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "heluo_benming_guaming",
+        "op": "eq",
+        "value": "地天泰"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命地天泰，天地交泰，主通达顺利。坤宫三世卦，属正月，六爻皆宜固定，不可轻进妄动，守正则吉。",
+    "produces_semantic_atoms": [
+      "OUTPUT",
+      "EXPRESSION",
+      "CREATIVITY",
+      "VISIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "OUTPUT",
+  "forbidden_inferences": [],
+  "status": "draft",
+  "version": "0.2.0",
+  "book_id": "HELUO-LISHU",
+  "spec_decisions_ref": [
+    "DECISION-121"
+  ],
+  "evidence_refs": [
+    "E-K2G-SHIPI-000"
+  ],
+  "created_at": "2026-08-27T15:50:14Z"
+}

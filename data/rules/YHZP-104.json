@@ -1,0 +1,50 @@
+{
+  "rule_id": "YHZP-104",
+  "title": "月劫格(月支主气劫财)→ CONSTRAINT",
+  "rule_type": "格局判定",
+  "source": {
+    "work": "渊海子平",
+    "edition": "通行本",
+    "chapter": "卷一·论月建建禄",
+    "location": "月劫格判据"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "eq",
+        "value": "劫财"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "月支主气为劫财谓月劫,与建禄同类而身更旺,取 CONSTRAINT 基调;取用须透干用财官。",
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-YHZP-104-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-19T00:00:00Z",
+  "book_id": "YUANHAI-ZIPING",
+  "passage_id": "P-YHZP-JIANLU",
+  "concept_id": "建禄",
+  "scope": "八字格局判定(月劫格)"
+}

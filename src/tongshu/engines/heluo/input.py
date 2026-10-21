@@ -53,7 +53,7 @@ def prepare_heluo_input(context: "CalculationContext") -> HeluoInput:
 
     return HeluoInput(
         birth_date=context.birth_date.isoformat() if hasattr(context.birth_date, 'isoformat') else str(context.birth_date),
-        birth_time=getattr(context, 'traditional_hour', None) or str(getattr(context, 'birth_time', '') or "00:00"),
+        birth_time=str(context.birth_time) if context.birth_time else "00:00",
         gender=subject.gender,
         location=Location(
             latitude=getattr(context, 'latitude', 39.9),
@@ -61,6 +61,6 @@ def prepare_heluo_input(context: "CalculationContext") -> HeluoInput:
             timezone=getattr(context, 'timezone', 'Asia/Shanghai'),
         ),
         timezone=getattr(context, 'timezone', 'Asia/Shanghai'),
-        true_solar_datetime=getattr(context, 'true_solar_datetime', None).isoformat() if hasattr(context, 'true_solar_datetime') and getattr(context, 'true_solar_datetime', None) is not None else str(context.birth_date),
+        true_solar_datetime=getattr(context, 'true_solar_dt', context.birth_date.isoformat()) if hasattr(context, 'true_solar_dt') else str(context.birth_date),
         day_boundary=getattr(context, 'day_boundary', '23:00'),
     )

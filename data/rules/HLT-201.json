@@ -1,0 +1,50 @@
+{
+  "rule_id": "HLT-201",
+  "title": "木元素过弱 → 肝胆失养风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "工程种子",
+    "chapter": "素问·阴阳应象大论",
+    "location": "木→肝胆藏象"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "five_element_imbalance",
+        "op": "present",
+        "value": true
+      },
+      {
+        "field": "day_master_element",
+        "op": "nin",
+        "value": ["WOOD"]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《素问·阴阳应象大论》: '东方生风，风生木，木生酸，酸生肝'。木气过弱则肝胆失养，为虚损之兆。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "肝胆"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-016"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "HUANGDI-NEIJING",
+  "scope": "健康断事 / 木弱肝胆"
+}

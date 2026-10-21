@@ -1,0 +1,56 @@
+{
+  "rule_id": "CAND-ZPZ-114",
+  "engine": "ZIPING_ZHENQUAN",
+  "source_ids": [
+    "P-ZPZ-YONGSHEN",
+    "ZPZ-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "natal",
+  "subject": "格局",
+  "predicate": "劫财当令且主气透干 → RELATION(司权显性)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "eq",
+        "value": "劫财"
+      },
+      {
+        "field": "month_hidden_main_ten_god_transparent",
+        "operator": "eq",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "RELATION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "SOCIAL"
+    },
+    {
+      "field": "judgment_value",
+      "value": "CONNECTION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "PARTNERSHIP"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 ZPZ-114",
+  "created_at": "2026-09-13T21:19:41.882452",
+  "metadata": {
+    "original_rule_id": "ZPZ-114",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

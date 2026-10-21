@@ -1,0 +1,51 @@
+{
+  "rule_id": "CAND-GW-102",
+  "engine": "GW_ENGINE",
+  "source_ids": [
+    "P-GW-YUEZHU",
+    "GW-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "四柱宫位(月柱)",
+  "subject": "四柱宫位",
+  "predicate": "月柱=父母/成长/教育/兄弟(青年)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_stem",
+        "operator": "exists",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "REFLECTION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "AWARENESS"
+    },
+    {
+      "field": "judgment_value",
+      "value": "INSIGHT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "CONTEMPLATION"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 GW-102",
+  "created_at": "2026-09-13T21:19:41.818910",
+  "metadata": {
+    "original_rule_id": "GW-102",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

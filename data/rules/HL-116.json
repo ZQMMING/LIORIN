@@ -1,0 +1,43 @@
+{
+  "rule_id": "HL-116",
+  "title": "本命卦巽宫 → 关注贵人、助运领域",
+  "rule_type": "体用辨析",
+  "source": {
+    "work": "河洛真数",
+    "chapter": "各宫位代表领域",
+    "location": "巽宫→贵人、助运"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "heluo_benming_gong",
+        "op": "eq",
+        "value": "巽"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "河洛定象：巽宫主贵人、助运，本命卦落此宫则人生重点在此领域。 重点领域：贵人、助运。",
+    "produces_semantic_atoms": [
+      "OUTPUT",
+      "EXPRESSION",
+      "CREATIVITY",
+      "VISIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "OUTPUT",
+  "forbidden_inferences": [],
+  "status": "draft",
+  "version": "0.2.0",
+  "book_id": "HELUO-LISHU",
+  "spec_decisions_ref": [
+    "DECISION-116"
+  ],
+  "evidence_refs": [
+    "E-K2G-SHIPI-000"
+  ],
+  "created_at": "2026-08-27T15:33:02Z"
+}

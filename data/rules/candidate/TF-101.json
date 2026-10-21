@@ -1,0 +1,34 @@
+{
+  "rule_id": "CAND-TF-101",
+  "engine": "TF_ENGINE",
+  "source_ids": [
+    "P-TF-XUANXUE",
+    "TF-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "玄学天赋(偏印判定)",
+  "subject": "玄学天赋",
+  "predicate": "偏印强于正印出玄学天赋;偏印不可临正官",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "eq",
+        "value": "偏印"
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 TF-101",
+  "created_at": "2026-09-13T21:19:41.862417",
+  "metadata": {
+    "original_rule_id": "TF-101",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

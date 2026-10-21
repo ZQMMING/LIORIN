@@ -1,0 +1,31 @@
+{
+  "rule_id": "MAR-103",
+  "title": "日支被冲 → 婚姻宫动 → 感情波折",
+  "rule_type": "婚姻断事",
+  "source": {
+    "work": "三命通会",
+    "chapter": "论婚姻宫",
+    "location": "日支逢冲"
+  },
+  "conditions": {
+    "all": [
+      { "field": "day_branch_clash", "op": "eq", "value": true }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "日支为婚姻宫，逢冲则感情易变动。",
+    "produces_layer_output_template": { "direction": "VOLATILE", "polarity": "caution" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "MARRIAGE_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-007"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 8,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "SANMING-TONGHUI",
+  "scope": "婚姻断事 / 日支逢冲"
+}

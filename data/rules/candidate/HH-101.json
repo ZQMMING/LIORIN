@@ -1,0 +1,55 @@
+{
+  "rule_id": "CAND-HH-101",
+  "engine": "HH_ENGINE",
+  "source_ids": [
+    "P-HH-HUAQI",
+    "HH-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "格局判定(合化得令)",
+  "subject": "化气格",
+  "predicate": "合化需得令(化神得月令旺气)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "day_master_stage_month",
+        "operator": "in",
+        "value": [
+          "临官",
+          "帝旺",
+          "长生"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "SUPPORT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "STABILITY"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESOURCE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "ENDURANCE"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 HH-101",
+  "created_at": "2026-09-13T21:19:41.821652",
+  "metadata": {
+    "original_rule_id": "HH-101",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

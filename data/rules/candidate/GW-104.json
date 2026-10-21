@@ -1,0 +1,51 @@
+{
+  "rule_id": "CAND-GW-104",
+  "engine": "GW_ENGINE",
+  "source_ids": [
+    "P-GW-SHIZHU",
+    "GW-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "四柱宫位(时柱)",
+  "subject": "四柱宫位",
+  "predicate": "时柱=子女/果报/未来(晚年)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "hour_stem",
+        "operator": "exists",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "REFLECTION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "AWARENESS"
+    },
+    {
+      "field": "judgment_value",
+      "value": "INSIGHT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "CONTEMPLATION"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 GW-104",
+  "created_at": "2026-09-13T21:19:41.819916",
+  "metadata": {
+    "original_rule_id": "GW-104",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

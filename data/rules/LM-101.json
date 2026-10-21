@@ -1,0 +1,50 @@
+{
+  "rule_id": "LM-101",
+  "title": "年柱为太极点:祖上气运/出身根基(禄命法独立维度)",
+  "rule_type": "十神定性",
+  "source": {
+    "work": "五行精纪",
+    "chapter": "论三命",
+    "location": "干配禄支合命纳音论身"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "birth_year_stem",
+        "op": "exists",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《五行精纪》《李虚中命书》:干配禄,以支合命,以纳音论身,之谓三命。年柱为太极点,看祖上气运/出身根基(独立于日柱子平层)。",
+    "produces_semantic_atoms": [
+      "REFLECTION",
+      "AWARENESS",
+      "INSIGHT",
+      "CONTEMPLATION"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "REFLECTION",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-LM-101-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "WUXINGJINGJI",
+  "passage_id": "P-LM-SANMING",
+  "concept_id": "禄命法",
+  "principle_id": "PRINCIPLE-SANMING",
+  "scope": "禄命法框架(年柱太极点)"
+}

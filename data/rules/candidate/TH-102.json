@@ -1,0 +1,42 @@
+{
+  "rule_id": "CAND-TH-102",
+  "engine": "TH_ENGINE",
+  "source_ids": [
+    "TH-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "健康断事 / 冬寒调候",
+  "subject": "unknown",
+  "predicate": "冬寒命局缺火 → 寒凝阳虚风险",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_branch",
+        "operator": "in",
+        "value": [
+          "HAI",
+          "ZI",
+          "CHOU"
+        ]
+      },
+      {
+        "field": "five_element_imbalance",
+        "operator": "present",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 TH-102",
+  "created_at": "2026-09-13T21:19:41.864417",
+  "metadata": {
+    "original_rule_id": "TH-102",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

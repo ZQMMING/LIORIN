@@ -1,0 +1,68 @@
+{
+  "rule_id": "DTS-107",
+  "title": "失令但有强根/帮扶→身偏强",
+  "rule_type": "旺衰判定",
+  "source": {
+    "work": "滴天髓",
+    "edition": "通行本(任铁樵《滴天髓阐微》)",
+    "chapter": "通神论·衰旺",
+    "location": "三辨综合判定"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "in",
+        "value": [
+          "正官",
+          "七杀",
+          "正财",
+          "偏财",
+          "食神",
+          "伤官"
+        ]
+      },
+      {
+        "field": "day_branch_main_ten_god",
+        "op": "in",
+        "value": [
+          "比肩",
+          "劫财",
+          "正印",
+          "偏印"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《滴天髓》三辨综合判定:失令但有强根强势(日支通根+天干比劫林立),仍身偏强。",
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-DTS-107-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "DITIANSUI",
+  "passage_id": "P-DTS-SHUAIWANG",
+  "concept_id": "旺衰",
+  "principle_id": "PRINCIPLE-WANGSHUAI",
+  "scope": "八字旺衰判定(失令有根修正)"
+}

@@ -1,0 +1,43 @@
+{
+  "rule_id": "HL-120",
+  "title": "本命卦乾为天 → 刚健中正，主事业官贵（生于四月/纳甲本命者富贵）",
+  "rule_type": "体用辨析",
+  "source": {
+    "work": "河洛真数",
+    "chapter": "乾为天卦解",
+    "location": "卦属四月，纳甲甲子甲寅甲辰壬午壬申壬戌，金秋旺"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "heluo_benming_guaming",
+        "op": "eq",
+        "value": "乾为天"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命乾为天，三爻皆阳，刚健中正，主事业官贵。卦属四月，纳甲本命者富贵；乾金秋旺，不及时不纳甲者需后天努力。",
+    "produces_semantic_atoms": [
+      "OUTPUT",
+      "EXPRESSION",
+      "CREATIVITY",
+      "VISIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "OUTPUT",
+  "forbidden_inferences": [],
+  "status": "draft",
+  "version": "0.2.0",
+  "book_id": "HELUO-LISHU",
+  "spec_decisions_ref": [
+    "DECISION-120"
+  ],
+  "evidence_refs": [
+    "E-K2G-SHIPI-000"
+  ],
+  "created_at": "2026-08-27T15:50:14Z"
+}

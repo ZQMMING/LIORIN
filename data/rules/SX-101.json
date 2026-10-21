@@ -1,0 +1,51 @@
+{
+  "rule_id": "SX-101",
+  "title": "寅巳申三字汇聚→时空秩序紊乱",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "五行精纪",
+    "chapter": "卷廿五·论三刑",
+    "location": "无恩之刑"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "branch_clash_map",
+        "op": "has_all",
+        "value": [
+          "YIN",
+          "SI",
+          "SHEN"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《五行精纪》卷廿五:寅刑巳、巳刑申、申刑寅,循环相克,天地乖气,无恩之刑。时空秩序紊乱、天干发用不能长效。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-SX-101-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "WUXINGJINGJI",
+  "passage_id": "P-SX-WUEN",
+  "concept_id": "三刑",
+  "principle_id": "PRINCIPLE-XINGCHONG",
+  "scope": "健康断事 / 三刑无恩刑",
+  "scenario": "MARRIAGE_HEALTH"
+}

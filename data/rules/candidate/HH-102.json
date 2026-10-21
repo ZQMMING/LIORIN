@@ -1,0 +1,62 @@
+{
+  "rule_id": "CAND-HH-102",
+  "engine": "HH_ENGINE",
+  "source_ids": [
+    "P-HH-HEBAN",
+    "HH-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "格局判定(合化能量均衡)",
+  "subject": "合绊",
+  "predicate": "合化需双方能量相当,差距大则合绊",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "in",
+        "value": [
+          "正印",
+          "偏印",
+          "比肩",
+          "劫财",
+          "正官",
+          "七杀",
+          "正财",
+          "偏财",
+          "食神",
+          "伤官"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "CONSTRAINT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "DISCIPLINE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RULE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESPONSIBILITY"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 HH-102",
+  "created_at": "2026-09-13T21:19:41.822158",
+  "metadata": {
+    "original_rule_id": "HH-102",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

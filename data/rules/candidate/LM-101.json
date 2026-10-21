@@ -1,0 +1,51 @@
+{
+  "rule_id": "CAND-LM-101",
+  "engine": "LM_ENGINE",
+  "source_ids": [
+    "P-LM-SANMING",
+    "LM-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "禄命法框架(年柱太极点)",
+  "subject": "禄命法",
+  "predicate": "年柱为太极点:祖上气运/出身根基(禄命法独立维度)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "birth_year_stem",
+        "operator": "exists",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "REFLECTION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "AWARENESS"
+    },
+    {
+      "field": "judgment_value",
+      "value": "INSIGHT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "CONTEMPLATION"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 LM-101",
+  "created_at": "2026-09-13T21:19:41.845924",
+  "metadata": {
+    "original_rule_id": "LM-101",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

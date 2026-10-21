@@ -72,6 +72,7 @@ class DayunLiyaoEntry:
     line_index: int           # 爻位 0-5
     line_nature: str          # 阳/阴
     lines: list[int]          # 该步卦象六爻
+    phase: str = "先天"        # 先天/后天（死断「行后天」限定用）
 
 
 @dataclass
@@ -101,17 +102,21 @@ def compute_dayun_liyao(
 
     def _walk(gua_name: str, lines: list[int], yuantang: int, age_start: int) -> int:
         age = age_start
+        # 爻位值运：卦不变、只走爻，故本段 6 步共用同一卦名。
+        # 2026-10-06：原先在循环内逐次调用 _lines_to_hexagram(lines)，6 次结果恒同，
+        # 提到循环外算一次（两段共省 10 次无谓换算）。
+        upper, lower, name = _lines_to_hexagram(lines)
         # 从元堂起自下而上共 6 爻
         for step in range(6):
             idx = (yuantang + step) % 6
             nature = "阳" if lines[idx] == 1 else "阴"
             span = 9 if lines[idx] == 1 else 6
             age_end = age + span - 1
-            upper, lower, name = _lines_to_hexagram(lines)
             seq.append(DayunLiyaoEntry(
                 age_start=age, age_end=age_end,
                 hexagram_name=name, upper=upper, lower=lower,
                 line_index=idx, line_nature=nature, lines=list(lines),
+                phase=gua_name,
             ))
             age = age_end + 1
         return age
@@ -157,7 +162,6 @@ def compute_liunian(
     birth_year: int,
     age_from: int = 1,
     age_to: int = 100,
-    target_year: int | None = None,
 ) -> LiuNianResult:
     """
     逐岁推演流年卦（《河洛真数》小象行年卦气，按大运爻分段）。
@@ -171,12 +175,6 @@ def compute_liunian(
     阴爻大运段：自本爻起逐爻自下而上回绕（一年变一爻）。
 
     应爻关系：一四应、二五应、三六应 → 应爻 index = (yuantang + 3) % 6。
-
-    target_year: 惰性化（H10 定稿方案）。传公历年份时仅该年生成完整卦象
-      （hexagram_name/upper/lower/lines/rule），其余年份只保留元数据
-      （age/year/ganzhi/yang_year/yuantang_index，卦象字段置空），
-      避免全量 100 套卦象输出；链式推演（prev1）不受影响。
-      缺省 None 保持全量行为（向后兼容，独立函数测试依赖）。
     """
     result = LiuNianResult(birth_year=birth_year)
     dayun = compute_dayun_liyao(
@@ -187,6 +185,7 @@ def compute_liunian(
     cur_seg_id: Optional[int] = None
     prev1: Optional[list[int]] = None  # 段内上一卦
     n = 0  # 段内第N年
+    seg: Optional[DayunLiyaoEntry] = None  # 当前大运段
 
     for age in range(age_from, age_to + 1):
         year = birth_year + age - 1
@@ -194,12 +193,14 @@ def compute_liunian(
         yang = _is_yang_year(year)
         rule = ""
 
-        # 找所属大运段
-        seg = None
-        for s in seq:
-            if s.age_start <= age <= s.age_end:
-                seg = s
-                break
+        # 找所属大运段。2026-10-06：原为每年对 seq 线性扫（O(年龄×段数)）。
+        # 大运段按 age 单调不重叠排列且 age 递增，故用游标顺推即可，O(1)。
+        if seg is None or age > seg.age_end:
+            seg = None
+            for s in seq:
+                if s.age_start <= age <= s.age_end:
+                    seg = s
+                    break
         if seg is None:
             continue
 
@@ -245,15 +246,10 @@ def compute_liunian(
             rule = f"阴爻段自本爻逐爻(变{flip_idx})"
 
         upper, lower, name = _lines_to_hexagram(cur)
-        is_target = (target_year is None) or (year == target_year)
         result.years.append(LiuNianYear(
             age=age, year=year, ganzhi=ganzhi, yang_year=yang,
-            hexagram_name=name if is_target else "",
-            upper=upper if is_target else "",
-            lower=lower if is_target else "",
-            lines=cur if is_target else [],
-            rule=rule if is_target else "",
-            yuantang_index=seg_yt,
+            hexagram_name=name, upper=upper, lower=lower,
+            lines=cur, rule=rule, yuantang_index=seg_yt,
         ))
         prev1 = cur
 
@@ -284,13 +280,9 @@ def compute_liuyue(liunian_lines: list[int], liunian_yuantang: int) -> LiuYueRes
 
     应爻关系：一四应、二五应、三六应 → 应爻 index = (月爻 + 3) % 6。
 
-    注：古籍月卦之法"悉从二十四气，非从朔望"，从子月（冬至）起
-    （裁定依据：data/heluo/起例卷算法原文索引.md"前以正月起者，非"，
-    与 L127"从人所生之月准正月起…此说方合节气"并列收录，取子月口径）。
-    此处月份按 1-12 标注（阳月=奇数月、阴月=偶数月），
+    注：古籍月卦之法"悉从二十四气，非从朔望"，从子月（冬至）起，故
+    "前以正月起者，非"。此处月份按 1-12 标注（阳月=奇数月、阴月=偶数月），
     卦序与古籍子月起始的逐爻累积完全一致。
-    节气锚点见 canonical._compute_year_jie：子月（大雪）锚流年链上一公历年末，
-    保证 12 月时序顺次（2027 链：2026-12-07 → 2027-11-07）。
     """
     start = (liunian_yuantang + 1) % 6
     months = []
@@ -323,69 +315,233 @@ class LiuRiResult:
     days: list[dict] = field(default_factory=list)
 
 
+
+# 起日卦「阳位/阴位」（原典 L390：初三五为阳位，二四上为阴位）
+_LIURI_YANG_POS = (0, 2, 4)   # 初、三、五
+_LIURI_YIN_POS = (1, 3, 5)    # 二、四、上
+_LIURI_DAYS_PER_MONTH = 30    # 「六爻俱变毕，则满三十日」
+
+
+def liuri_day_positions(yue_yao_index: int) -> list[int]:
+    """起日卦 30 日**逐日**爻位（原典 L390「挨次而变，不容紊也」）。
+
+    自月卦居位爻的下一爻起（原文「进一爻起」），
+    阳日（奇数日）只在阳位（初/三/五）取，阴日（偶数日）只在阴位（二/四/上）取，
+    逐日顺推不回头。
+
+    该式同时满足原典「每一爻管五日」：30 日内每爻恰出现 5 次。
+
+    原典实例（乾九二居位 → start=三爻）：
+        初一(阳)→三爻 履六三 ｜ 初二(阴)→四爻 中孚六四
+        初三(阳)→五爻 损六五 ｜ 初四(阴)→上爻 临上六
+        初五(阳)→初爻 师初六
+    """
+    pos = (yue_yao_index + 1) % 6
+    out: list[int] = []
+    for d in range(1, _LIURI_DAYS_PER_MONTH + 1):
+        pool = _LIURI_YANG_POS if d % 2 == 1 else _LIURI_YIN_POS
+        for step in range(6):
+            cand = (pos + step) % 6
+            if cand in pool:
+                pos = cand
+                break
+        out.append(pos)
+    return out
+
+
+def liuri_day_lines(yue_lines: list[int], yue_yao_index: int) -> list[tuple[int, list[int]]]:
+    """起日卦 30 日**逐日链式累变**（原典 L390）。
+
+    原典不是「月卦各翻一爻」，而是**每日自前一日卦继续翻下一爻**：
+
+        初一日当在三爻，变为履六三
+        初二日变履九四为中孚六四        ← 自「履」的九四翻，非自月卦乾
+        初三日变中孚九五为损六五        ← 自「中孚」的九五翻
+        初四日变损上九为临上六
+        初五日变临初九为师初六
+
+    乾初爻居位实测五日（卦名 + 变爻名）逐字吻合：
+        履六三 / 中孚六四 / 损六五 / 临上六 / 师初六
+    若改成「月卦单爻翻转」则得 履 / 小畜 / 大有 / 夬 / 姤，与原典 4/5 不符。
+
+    第二处独立佐证（起例卷之上·小象行年卦气末段，流年版）：
+        「假如同人六二爻为元堂，则一变为乾九二，再变为履六三，三变为中孚六四，
+          四变为损六五，五变为临上六，六变为师初六，一年变一爻为一卦」
+    与本节五日实例**逐字同序**。起日卦与流年小象两章共用同一条链式规则。
+
+    2026-10-07 据此改正。此前实现（2026-09-12 考证裁定，文档亦作「另画一乾卦
+    ……非链式」）与原典实例冲突，以原典为准。
+
+    Returns:
+        30 组 ``(爻位, 该日卦六爻)``；第 0 日即 ``liuri_day_positions[0]``。
+    """
+    out: list[tuple[int, list[int]]] = []
+    cur = list(yue_lines)
+    for pos in liuri_day_positions(yue_yao_index):
+        cur = _flip_line(cur, pos)
+        out.append((pos, cur))
+    return out
+
+
+def _lines_to_hexagram_name(lines: list[int]) -> tuple[str, str, str]:
+    u, lo, name = _lines_to_hexagram(lines)
+    return u, lo, name
+
+
 def compute_liuri(
     yue_lines: list[int],
     yue_yao_index: int,
     jie_datetime: str | None = None,
-    next_jie_datetime: str | None = None,
-    rule: str = "hou5",
+    align_dates: bool = False,
 ) -> LiuRiResult:
     """
     流日卦（《河洛真数·起例卷之上·起日卦例》万历二十年李学诗刻本）。
 
-    规则分疏（H10b 修正，2026-10-21 用户核证）：
-      1. 以当月月卦为本，从月卦居位爻的下一爻起，自下而上变六爻
-         （绕一圈回到居位爻为止），即"六爻俱变毕，则满三十日"。
-      2. 两套操作规则并存，均从当月"节"交接时刻起算：
-         - rule="hou5"（五日一变·候卦系统）：6 段（初爻→上爻），每爻管约 5 日；
-         - rule="gua6"（六日一变·卦气系统）：5 段（每卦管约 6 日），汉易"一爻一日、一卦六日"模型。
-      3. 节气为界均匀分配（关键）：段边界按当月节时刻 T0 与下月节时刻 T1 的
-         实际间隔（节→节，约 29~31 日不等，含时刻）均匀切分，每段 = (T1-T0)/N，
-         **不可机械固定每段日数**。节气长度不均等（或不足 30、或超过 30），
-         必须按实际时刻"均匀"分配。
-      4. 无节气数据时退化为机械相对分段（兼容旧调用）。
+    规则（原典 L390 口径，2026-10-07 复核定案）：
+      1. 自月卦居位爻的**下一爻**起，逐日翻一爻，**自前一日卦继续翻**
+         （链式累变）。原文：「挨次而变，不容紊也」，并逐日点名
+         「初二日变**履**九四为中孚六四」——明言自前一日卦而变。
+      2. 阳日（初、三、五等奇数日）只在阳位（初/三/五爻）取爻，
+         阴日只在阴位（二/四/上爻）取爻。原文：「阳日寻阳爻位，
+         （初三五为阳位。）阴日寻阴爻位。（二四上为阴位。）」
+      3. 「每一爻管五日」+「六爻俱变毕，则满三十日」：30 日内每爻恰 5 次。
+      4. 「进一爻起」：居位爻的下一爻为初一之位。此读法与原文两处实例
+         （乾初爻居位初一日在三爻、乾二爻居位初一日亦在三爻）**同时吻合**；
+         首句「以流月卦前一爻为初一日」与之矛盾，登记为异文，不据此造规则。
 
-    异文记录：《河洛理数》卷二下（国图藏史应选校订明刊本，晚出约40年）
-      "除此一爻不变…每管六日…自下爻行至上爻"为 5 爻×6 日口径
-      （不含居位爻），按"最早书籍为准"原则不采用，保留为异文。
+      例（乾初爻居位，原文五日实例逐字复现）：
+        初一 翻三爻 → 天泽履 六三
+        初二 翻四爻 → 风泽中孚 六四
+        初三 翻五爻 → 山泽损 六五
+        初四 翻上爻 → 地泽临 上六
+        初五 翻初爻 → 地水师 初六
+
+    异文记录：2026-09-12 曾据「另画一乾卦」一句定为「各段以月卦为本独立变
+      对应爻位（非链式）」，并据晚出约 40 年的《河洛理数》卷二下
+      「除此一爻不变…每管六日…自下爻行至上爻」取 5 爻×6 日口径。
+      **两说均与 L390 逐日实例冲突**（单变则初二得小畜、初三得大有，
+      原文明作中孚、损），2026-10-07 依原典实例定案为链式 6 爻×5 日，
+      前说废止；晚出本异文仅备查。
+
+    节气对齐（《河洛真数》："日卦行起必须按月卦节气方不误"）：
+      若提供 jie_datetime（当月"节"的精确时刻，如 2024-08-07 08:09）且
+      ``align_dates=True``，各段标注真实起止日期 date_from/date_to。
+      2026-10-06 起 align_dates 默认 **False**：全仓无人消费 date_from/date_to，
+      而每段多算 2 个日期串 + 一次 strptime，实测占单盘载荷的大头。
+      仍可由调用方显式开启，不丢能力。
     """
-    n_seg = 6 if rule == "hou5" else 5
-    start = (yue_yao_index + 1) % 6
+    positions = liuri_day_positions(yue_yao_index)
+    day_lines = liuri_day_lines(yue_lines, yue_yao_index)
+    base = _parse_datetime(jie_datetime) if (jie_datetime and align_dates) else None
     days = []
-    for k in range(n_seg):
-        flip_idx = (start + k) % 6
-        seg_lines = _flip_line(yue_lines, flip_idx)
+    for k in range(6):
+        seg_days = positions[k * 5:k * 5 + 5]
+        flip_idx = seg_days[0]          # 段首爻位（保留旧键语义=该段第一日）
+        seg_lines = day_lines[k * 5][1]
         u, lo, name = _lines_to_hexagram(seg_lines)
+        # 段内五日逐日各有一卦（原典「挨次而变」），不共一卦
+        day_items = []
+        for j, pos in enumerate(seg_days):
+            dl = day_lines[k * 5 + j][1]
+            du, dlo, dname = _lines_to_hexagram(dl)
+            item = {
+                "day": k * 5 + j + 1,
+                "polarity": "阳日" if (k * 5 + j) % 2 == 0 else "阴日",
+                "flip_index": pos,
+                "day_yao_index": pos,   # 原典「变为履六三」的「三」即当日变爻
+                "name": dname, "upper": du, "lower": dlo, "lines": dl,
+            }
+            if base is not None:
+                try:
+                    from datetime import timedelta
+                    item["date"] = (base + timedelta(days=k * 5 + j)).strftime("%Y-%m-%d")
+                except Exception as exc:
+                    item["date_align_error"] = f"节气日期对齐失败：{exc}"
+            day_items.append(item)
         entry = {
             "segment": k + 1, "day_from": k * 5 + 1, "day_to": k * 5 + 5,
+            "flip_index": flip_idx,
             "name": name, "upper": u, "lower": lo, "lines": seg_lines,
+            "day_items": day_items,
         }
-        if jie_datetime and next_jie_datetime:
-            # 节气为界均匀分配（H10b）：段边界 = 节时刻 + k*(下节-节)/N，
-            # 按实际节气间隔（含时刻）切分，不机械固定每段日数
+        if base is not None:
+            # 节气对齐：段k覆盖节起第(k*5+1)~第(k*5+5)天
             try:
                 from datetime import timedelta
-                t0 = _parse_datetime(jie_datetime)
-                t1 = _parse_datetime(next_jie_datetime)
-                if t1 <= t0:
-                    raise ValueError("下节时刻须晚于当月节时刻")
-                span = (t1 - t0).total_seconds()
-                seg_sec = span / n_seg
-                b0 = t0 + timedelta(seconds=k * seg_sec)
-                b1 = t0 + timedelta(seconds=(k + 1) * seg_sec)
-                day_from = int((b0.date() - t0.date()).days) + 1
-                day_to = int((b1.date() - t0.date()).days)
-                if k == n_seg - 1:
-                    day_to = int((t1.date() - t0.date()).days) + 1  # 末段至下一节
-                entry["day_from"] = day_from
-                entry["day_to"] = day_to
-                entry["date_from"] = b0.strftime("%Y-%m-%d %H:%M")
-                entry["date_to"] = b1.strftime("%Y-%m-%d %H:%M")
-                entry["jie_span_days"] = round(span / 86400.0, 4)  # 实际节气间隔（天）
-            except Exception:
-                pass  # 解析/时序失败则保持相对分段
+                entry["date_from"] = (base + timedelta(days=k * 5)).strftime("%Y-%m-%d")
+                entry["date_to"] = (base + timedelta(days=k * 5 + 4)).strftime("%Y-%m-%d")
+            except Exception as exc:
+                # 2026-10-07：原为 pass（静默吞掉），改为留痕。
+                # 失败时本段仍保持相对分段 day_from/day_to，可用性不受影响，
+                # 但必须能从 payload 看出「日期没对上」，否则调用方无从分辨
+                # 「无节气基准」与「有基准但换算失败」。
+                entry["date_align_error"] = f"节气日期对齐失败（保留相对分段）：{exc}"
         days.append(entry)
     return LiuRiResult(month=0, days=days)
+
+
+def compute_liuri_stub(yue_lines: list[int], yue_yao_index: int) -> list[dict]:
+    """流日六段的**廉价索引**（含六爻，不含卦名），供全量时间轴按需化使用。
+
+    2026-10-06：四层时间轴只为「命中应期的那一个月」付出卦名换算代价。
+    旧实现在 ``_build_timeline`` 里对 93 流年 × 12 月 = 1,116 个月逐月调用
+    ``compute_liuri``，每次做 6 次 ``_lines_to_hexagram`` 卦名换算
+    （合计 6,696 次），占单盘耗时与载荷的大头；而消费方（guajie）
+    每次排盘只查**一个**月。
+
+    本函数保留每段六爻——``_flip_line`` 只是复制一个 6 元 list 并翻转一爻，
+    近乎零成本——**只省掉 ``name``/``upper``/``lower`` 三个卦名字符串**，
+    那才是耗时与载荷的大头。
+    保留 ``lines`` 是刻意取舍：tests/heluo/test_timeline_yun_perf.py 的
+    ``TestLazyLiuShi`` 两项断言直接读 ``d["lines"]`` 校验 flip_index，
+    保留它即可在**不改任何既有测试**的前提下拿到全部收益。
+
+    ``flip_index`` 即该日/该段的变爻位置（与 ``day_yao_index`` 同值），
+    由 :func:`liuri_day_positions` 直接给出。
+
+    2026-10-07 起 ``lines``/``day_lines`` 为**链式累变**结果（见
+    :func:`liuri_day_lines`），不再是对月卦的单爻翻转。
+
+    需要卦名时，由调用方对命中的那一个月调 :func:`materialize_month_days` 现算。
+    """
+    positions = liuri_day_positions(yue_yao_index)
+    day_lines = liuri_day_lines(yue_lines, yue_yao_index)
+    out = []
+    for k in range(6):
+        seg_days = positions[k * 5:k * 5 + 5]
+        out.append({
+            "segment": k + 1,
+            "day_from": k * 5 + 1,
+            "day_to": k * 5 + 5,
+            "flip_index": seg_days[0],
+            "lines": day_lines[k * 5][1],
+            "day_positions": seg_days,
+            "day_lines": [day_lines[k * 5 + j][1] for j in range(5)],
+        })
+    return out
+
+
+def materialize_month_days(month: dict) -> list[dict]:
+    """把按需化的流月条目的 ``days`` 物化成完整日段（含卦名与六爻）。
+
+    2026-10-06：``canonical._build_timeline`` 只存六段廉价定位字段
+    （见 :func:`compute_liuri_stub`），以避免 1,116 个月 × 6 次卦名换算。
+    排盘时只有**命中应期的那一个月**需要完整日段，由消费方（guajie）
+    调本函数现算。
+
+    Args:
+        month: ``_build_timeline`` 产出的单个月份 dict。
+
+    Returns:
+        完整日段列表（segment/day_from/day_to/flip_index/name/upper/lower/lines），
+        与改造前逐月 ``compute_liuri(...).days`` 的内容逐字一致。
+    """
+    lines = month.get("lines") or []
+    yue_yao = month.get("yue_yao_index")
+    if yue_yao is None or not lines:
+        return list(month.get("days") or [])
+    days = compute_liuri(lines, yue_yao, month.get("jie_datetime")).days
+    return days
 
 
 def _parse_datetime(s: str):
@@ -463,23 +619,6 @@ __all__ = [
     "compute_liunian", "LiuNianResult", "LiuNianYear",
     "compute_liuyue", "LiuYueResult",
     "compute_liuri", "LiuRiResult",
+    "liuri_day_positions", "liuri_day_lines",
     "compute_liushi", "LiuShiResult",
-    "Timeline",
 ]
-
-
-@dataclass(frozen=True)
-class Timeline:
-    """时间序列卦象结果（原 temporal.py 数据类，随占位实现清理迁入本模块）。
-
-    H10 定稿方案惰性化：完整卦只算目标点（目标流年 1 套 / 目标年 12 流月 / 目标月 1 流日），
-    其余流年只保留元数据（yearly_meta）。
-    """
-    yearly_hexagrams: list  # 兼容字段：目标流年 1 条（含 months/days），无目标时为空
-    monthly_hexagrams: list  # 目标年 12 流月卦（完整卦象），不再嵌套在 yearly 内
-    daily_hexagram: dict     # 目标月流日本卦（base_hex + daily_yao 6 段）
-    hourly_hexagram: object  # 时刻卦（流时按设计剥离，恒 None）
-    seasonal_hexagram: object  # 节候卦（H11，calculate 层回填）
-    qi_phase: object         # 卦气（含大运爻位值运）
-    hua_gong: object         # 化工状态（H6，calculate 层回填 dict）
-    yearly_meta: list = None  # H10 全部流年元数据（year/age/ganzhi/yang_year/大运段归属，无卦象）

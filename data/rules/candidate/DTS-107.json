@@ -1,0 +1,68 @@
+{
+  "rule_id": "CAND-DTS-107",
+  "engine": "DITIANSUI",
+  "source_ids": [
+    "P-DTS-SHUAIWANG",
+    "DTS-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "八字旺衰判定(失令有根修正)",
+  "subject": "旺衰",
+  "predicate": "失令但有强根/帮扶→身偏强",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "in",
+        "value": [
+          "正官",
+          "七杀",
+          "正财",
+          "偏财",
+          "食神",
+          "伤官"
+        ]
+      },
+      {
+        "field": "day_branch_main_ten_god",
+        "operator": "in",
+        "value": [
+          "比肩",
+          "劫财",
+          "正印",
+          "偏印"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "SUPPORT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "STABILITY"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESOURCE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "ENDURANCE"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 DTS-107",
+  "created_at": "2026-09-13T21:19:41.815869",
+  "metadata": {
+    "original_rule_id": "DTS-107",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

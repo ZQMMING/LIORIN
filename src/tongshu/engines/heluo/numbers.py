@@ -101,7 +101,14 @@ def normalize_tian_shu(tian_shu: int) -> int:
     - 天数>25: 天数-25=余数
     - 天数≤25: 天数÷10取余数
     - 遇十不用：余数0取商的个位
-    - 特殊：天数25→5（中宫）
+    - 兜底：余数与商**皆为0**（即传入 0）→ 5（中宫）
+
+    ⚠ 2026-10-08 审计修：原注释写「特殊：天数25→5（中宫）」，**这是错的**。
+    天数25 时 r=25、shang=2、yu=5，在上面 ``return yu`` 那一行就返回了，
+    根本走不到函数末尾的 ``return 5``；末尾那行只在 yu==0 且 shang==0 时可达，
+    即传入 **0**。结果值恰好同为 5，所以一直没人发现注释在说谎。
+    实测确认：normalize_tian_shu(25)==5（走 yu 分支）、normalize_tian_shu(0)==5（走末尾）。
+    现按实际可达条件改写注释。
     """
     if tian_shu > 25:
         r = tian_shu - 25
@@ -113,7 +120,7 @@ def normalize_tian_shu(tian_shu: int) -> int:
         return yu
     if shang != 0:
         return shang
-    return 5  # 天数=25的特殊情况：除还天地正数后余0，商亦为0，原典"天数正数25"归中宫（5）
+    return 5  # 余数与商皆为0（即 tian_shu==0）时的兜底，归中宫（5）。天数25 走不到这里。
 
 
 def normalize_di_shu(di_shu: int) -> int:
@@ -218,5 +225,11 @@ def build_six_lines(upper_name: str, lower_name: str) -> list[int]:
     return lower_lines + upper_lines
 
 
-# 向后兼容：旧 API 别名
-resolve_yuantang = None
+# ⚠ 2026-10-07 审计修：此处原为「# 向后兼容：旧 API 别名 / resolve_yuantang = None」。
+#   名为别名、实为空值——任何人写 from .numbers import resolve_yuantang 都会静默
+#   拿到 None，调用时才抛 "TypeError: 'NoneType' object is not callable"，
+#   报错点离病因十万八千里。真身在 yuan_tang.resolve_yuantang（= find_yuantang）
+#   与 postnatal.py，__init__.py 导入的也是 yuan_tang 那个，故生产路径一直没炸。
+#   既然是「兼容」就该指对地方，而不是留一个会咬人的空壳；直接删掉，
+#   让误用者拿到明确的 ImportError。
+# 真身：from .yuan_tang import resolve_yuantang   # = find_yuantang

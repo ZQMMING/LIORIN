@@ -1,0 +1,44 @@
+{
+  "rule_id": "ZW-405",
+  "title": "四化·化禄 → RESOURCE",
+  "rule_type": "流日激活",
+  "source": {
+    "work": "紫微斗数",
+    "chapter": "signal_ontology.md §5.2",
+    "location": "四化→USO 映射表"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "daily_sihua_roles",
+        "op": "contains",
+        "value": "化禄"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "signal_ontology.md §5.2:化禄→RESOURCE(inflow 增益)。",
+    "produces_layer_output_template": {
+      "direction": "INCREASE",
+      "polarity": "active"
+    }
+  },
+  "applies_to_layers": [
+    "DAILY_ACTIVATION"
+  ],
+  "produces_signal_type": "RESOURCE",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-ZW-405-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "1.0.0",
+  "precedence": 0,
+  "created_at": "2026-08-17T00:00:00Z",
+  "book_id": "ZIWEI-DOUSHU"
+}

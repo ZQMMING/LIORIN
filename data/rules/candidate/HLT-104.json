@@ -1,0 +1,38 @@
+{
+  "rule_id": "CAND-HLT-104",
+  "engine": "HLT_ENGINE",
+  "source_ids": [
+    "HLT-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "健康断事 / 巳亥冲心肾",
+  "subject": "unknown",
+  "predicate": "巳亥冲 → 心肾疾病风险",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "branch_clash_map",
+        "operator": "has_any",
+        "value": [
+          [
+            "SI",
+            "HAI"
+          ]
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.1.0",
+  "notes": "迁移自旧规则 HLT-104",
+  "created_at": "2026-09-13T21:19:41.836291",
+  "metadata": {
+    "original_rule_id": "HLT-104",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

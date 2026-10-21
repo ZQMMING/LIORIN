@@ -1,0 +1,50 @@
+{
+  "rule_id": "HLT-203",
+  "title": "土元素过弱 → 脾胃失养风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "工程种子",
+    "chapter": "素问·阴阳应象大论",
+    "location": "土→脾胃藏象"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "five_element_imbalance",
+        "op": "present",
+        "value": true
+      },
+      {
+        "field": "day_master_element",
+        "op": "nin",
+        "value": ["EARTH"]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《素问·阴阳应象大论》: '中央生湿，湿生土，土生甘，甘生脾'。土气过弱则脾胃虚弱，肌肉萎软。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "脾胃"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-016"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "HUANGDI-NEIJING",
+  "scope": "健康断事 / 土弱脾胃"
+}

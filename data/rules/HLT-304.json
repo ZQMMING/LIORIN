@@ -1,0 +1,56 @@
+{
+  "rule_id": "HLT-304",
+  "title": "本命巳亥冲 + 流年引动 → 该年心肾疾病",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "三命通会",
+    "chapter": "地支六冲",
+    "location": "巳亥冲应期"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "branch_clash_map",
+        "op": "has_any",
+        "value": [
+          [
+            "SI",
+            "HAI"
+          ]
+        ]
+      },
+      {
+        "field": "flow_year_branch",
+        "op": "in",
+        "value": [
+          "SI",
+          "HAI"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命水克火心肾相冲，流年再逢巳亥引动则当年发作。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "心肾"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-014"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "SANMING-TONGHUI",
+  "precedence": 9,
+  "scope": "健康应期 / 巳亥冲流年引动",
+  "spec_decisions_ref": [
+    "DECISION-304"
+  ]
+}

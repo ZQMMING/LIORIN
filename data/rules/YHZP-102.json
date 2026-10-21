@@ -1,0 +1,32 @@
+{
+  "rule_id": "YHZP-102",
+  "title": "大运起法·日界敏感(子时出生按 S1 子正处理)",
+  "rule_type": "大运起止",
+  "source": {
+    "work": "渊海子平",
+    "edition": "通行本",
+    "chapter": "卷一·论起大运法",
+    "location": "眉批:神仙难断夜子时(P0-15 BAZI-002)"
+  },
+  "conditions": {
+    "all": [
+      { "field": "hour_branch", "op": "eq", "value": "ZI" }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《论起大运法》眉批:子时上四刻仍作前一日/前一月,下四刻方作新日新月。此规则登记日界纪律:子时出生的大运/日柱判定按 P0-15 推荐 S1(子正=真太阳午夜)语义记录;FD-05 未终审前不迁移任何日界代码,status=draft。",
+    "produces_layer_output_template": { "direction": "STABLE", "polarity": "neutral" }
+  },
+  "applies_to_layers": ["BASELINE"],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-YHZP-102-001"],
+  "status": "draft",
+  "spec_decisions_ref": ["SD-005", "DB-002"],
+  "version": "1.0.0",
+  "precedence": 0,
+  "created_at": "2026-08-19T00:00:00Z",
+  "book_id": "YUANHAI-ZIPING",
+  "passage_id": "P-YHZP-DAYUN",
+  "scope": "日界纪律·大运起法(子时出生,SD-005/DB-002 待裁定)"
+}

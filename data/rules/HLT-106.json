@@ -1,0 +1,31 @@
+{
+  "rule_id": "HLT-106",
+  "title": "五行失衡 → 对应脏器风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "滴天髓",
+    "chapter": "论五行",
+    "location": "旺衰失衡"
+  },
+  "conditions": {
+    "all": [
+      { "field": "five_element_imbalance", "op": "present", "value": true }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "五行失衡，过旺/过弱之五行对应脏器易病。",
+    "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-016"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 4,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "DITIANSUI",
+  "scope": "健康断事 / 五行失衡"
+}

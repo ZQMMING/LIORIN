@@ -1,0 +1,51 @@
+{
+  "rule_id": "CAND-YHZP-104",
+  "engine": "YUHAI_ZIPING",
+  "source_ids": [
+    "P-YHZP-JIANLU",
+    "YHZP-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "八字格局判定(月劫格)",
+  "subject": "建禄",
+  "predicate": "月劫格(月支主气劫财)→ CONSTRAINT",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "eq",
+        "value": "劫财"
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "CONSTRAINT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "DISCIPLINE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RULE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESPONSIBILITY"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 YHZP-104",
+  "created_at": "2026-09-13T21:19:41.869906",
+  "metadata": {
+    "original_rule_id": "YHZP-104",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

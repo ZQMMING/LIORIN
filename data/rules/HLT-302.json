@@ -1,0 +1,62 @@
+{
+  "rule_id": "HLT-302",
+  "title": "本命丑未辰戌冲 + 流年引动 → 该年脾胃疾病",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "三命通会",
+    "chapter": "地支六冲",
+    "location": "丑未辰戌冲应期"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "branch_clash_map",
+        "op": "has_any",
+        "value": [
+          [
+            "CHOU",
+            "WEI"
+          ],
+          [
+            "CHEN",
+            "XU"
+          ]
+        ]
+      },
+      {
+        "field": "flow_year_branch",
+        "op": "in",
+        "value": [
+          "CHOU",
+          "WEI",
+          "CHEN",
+          "XU"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命土土相冲主脾胃病，流年再逢丑未辰戌引动则当年发作。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "脾胃"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-012"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "SANMING-TONGHUI",
+  "precedence": 9,
+  "scope": "健康应期 / 丑未辰戌冲流年引动",
+  "spec_decisions_ref": [
+    "DECISION-302"
+  ]
+}

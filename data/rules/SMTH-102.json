@@ -1,0 +1,54 @@
+{
+  "rule_id": "SMTH-102",
+  "title": "十二宫弱位(日主于月支死墓绝)→ CONSTRAINT",
+  "rule_type": "旺衰判定",
+  "source": {
+    "work": "三命通会",
+    "edition": "通行本(十二卷)",
+    "chapter": "卷一·论天干生旺死绝",
+    "location": "十干生旺死绝十二宫"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "day_master_stage_month",
+        "op": "in",
+        "value": [
+          "死",
+          "墓",
+          "绝"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "十干于月支之十二长生位为旺衰之据:日主居死/墓/绝为弱,取 CONSTRAINT 基调。",
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-SMTH-101-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-19T00:00:00Z",
+  "book_id": "SANMING-TONGHUI",
+  "passage_id": "P-SMTH-SHENGWANG-SIJUE",
+  "concept_id": "十二长生",
+  "scope": "八字旺衰判定(十二宫弱位)"
+}

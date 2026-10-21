@@ -1,0 +1,33 @@
+{
+  "rule_id": "SMTH-104",
+  "title": "天乙贵人(命局见日干贵人支)→ SUPPORT",
+  "rule_type": "神煞判定",
+  "source": {
+    "work": "三命通会",
+    "edition": "通行本(十二卷)",
+    "chapter": "卷二·论天乙贵人",
+    "location": "天乙贵人·日干查支(通行口诀)"
+  },
+  "conditions": {
+    "all": [
+      { "field": "tianyi_guiren_branches", "op": "exists", "value": true }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "以日干查命局四支,见天乙贵人为吉神,主贵人扶助、逢凶化吉,取 SUPPORT 基调。",
+    "produces_layer_output_template": { "direction": "INCREASE", "polarity": "active" }
+  },
+  "applies_to_layers": ["BASELINE"],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-SMTH-104-001"],
+  "status": "draft",
+  "spec_decisions_ref": ["DECISION-002", "DECISION-006", "DECISION-009"],
+  "version": "1.0.0",
+  "precedence": 0,
+  "created_at": "2026-08-19T00:00:00Z",
+  "book_id": "SANMING-TONGHUI",
+  "passage_id": "P-SMTH-TIANYI",
+  "concept_id": "天乙贵人",
+  "scope": "神煞判定(天乙贵人)"
+}

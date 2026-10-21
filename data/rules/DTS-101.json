@@ -1,0 +1,56 @@
+{
+  "rule_id": "DTS-101",
+  "title": "日主得令(月支主气生扶)→ SUPPORT",
+  "rule_type": "旺衰判定",
+  "source": {
+    "work": "滴天髓",
+    "edition": "通行本(任铁樵《滴天髓阐微》)",
+    "chapter": "通神论·衰旺",
+    "location": "得令/失令判据"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "in",
+        "value": [
+          "正印",
+          "偏印",
+          "比肩",
+          "劫财"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "日主旺衰辨得令:月支主气为印比劫(生扶),日主得令而旺,取 SUPPORT 基调。",
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-DTS-101-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-19T00:00:00Z",
+  "book_id": "DITIANSUI",
+  "passage_id": "P-DTS-SHUAIWANG",
+  "concept_id": "旺衰",
+  "principle_id": "PRINCIPLE-WANGSHUAI",
+  "scope": "八字旺衰判定(日主得令)"
+}

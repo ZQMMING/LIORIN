@@ -1,0 +1,32 @@
+{
+  "rule_id": "MAR-101",
+  "title": "男命比劫夺财 → 妻星受克 → 婚姻风险",
+  "rule_type": "婚姻断事",
+  "source": {
+    "work": "三命通会",
+    "chapter": "论妻财",
+    "location": "比劫夺财"
+  },
+  "conditions": {
+    "all": [
+      { "field": "gender", "op": "eq", "value": "male" },
+      { "field": "spouse_star_attack", "op": "eq", "value": "rob_wealth" }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "男命比劫夺财，妻星受克，婚姻易生波折。",
+    "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "MARRIAGE_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-005"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 10,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "SANMING-TONGHUI",
+  "scope": "婚姻断事 / 男命比劫夺财"
+}

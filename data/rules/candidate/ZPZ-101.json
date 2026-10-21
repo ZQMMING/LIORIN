@@ -1,0 +1,59 @@
+{
+  "rule_id": "CAND-ZPZ-101",
+  "engine": "ZIPING_ZHENQUAN",
+  "source_ids": [
+    "P-ZPZ-YONGSHEN",
+    "ZPZ-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "natal",
+  "subject": "格局",
+  "predicate": "印绶当令 → SUPPORT",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "in",
+        "value": [
+          "正印",
+          "偏印"
+        ]
+      },
+      {
+        "field": "unknown",
+        "operator": "equals",
+        "value": []
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "SUPPORT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "STABILITY"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESOURCE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "ENDURANCE"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 ZPZ-101",
+  "created_at": "2026-09-13T21:19:41.875354",
+  "metadata": {
+    "original_rule_id": "ZPZ-101",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

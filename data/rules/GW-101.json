@@ -1,0 +1,50 @@
+{
+  "rule_id": "GW-101",
+  "title": "年柱=祖上/根基/事业(16岁前)",
+  "rule_type": "十神定性",
+  "source": {
+    "work": "渊海子平",
+    "chapter": "论四柱宫位",
+    "location": "年柱宫位"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "birth_year_stem",
+        "op": "exists",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《渊海子平》《五行精纪》:年柱为根祖上,主16岁前气运、出身根基。",
+    "produces_semantic_atoms": [
+      "REFLECTION",
+      "AWARENESS",
+      "INSIGHT",
+      "CONTEMPLATION"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "REFLECTION",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-GW-101-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "YUANHAI-ZIPING",
+  "passage_id": "P-GW-NIANZHU",
+  "concept_id": "四柱宫位",
+  "principle_id": "PRINCIPLE-GONGWEI",
+  "scope": "四柱宫位(年柱)"
+}

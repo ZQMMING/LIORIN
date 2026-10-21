@@ -1,0 +1,55 @@
+{
+  "rule_id": "ZPZ-121",
+  "title": "非当令正印透干 → SUPPORT(透则显)",
+  "rule_type": "十神定性",
+  "source": {
+    "work": "子平真诠",
+    "edition": "通行本",
+    "chapter": "论用神",
+    "location": "年月时干透出取显"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "transparent_ten_gods",
+        "op": "contains",
+        "value": "正印"
+      },
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "ne",
+        "value": "正印"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "非当令正印透干,其神显于命局,取 SUPPORT 基调。",
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-ZPZ-121-001"
+  ],
+  "status": "validated",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-17T00:00:00Z",
+  "book_id": "ZIPING-ZHENQUAN",
+  "passage_id": "P-ZPZ-YONGSHEN",
+  "concept_id": "透干",
+  "principle_id": "PRINCIPLE-TOUGAN-TONGGEN"
+}

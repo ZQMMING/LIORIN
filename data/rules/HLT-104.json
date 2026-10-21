@@ -1,0 +1,51 @@
+{
+  "rule_id": "HLT-104",
+  "title": "巳亥冲 → 心肾疾病风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "三命通会",
+    "chapter": "地支六冲",
+    "location": "巳亥冲"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "branch_clash_map",
+        "op": "has_any",
+        "value": [
+          [
+            "SI",
+            "HAI"
+          ]
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "水克火，心肾相冲，主心肾疾病、情绪波动。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "心肾"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-014"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.1.0",
+  "precedence": 8,
+  "created_at": "2026-08-26T00:00:00Z",
+  "updated_at": "2026-08-26T13:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "SANMING-TONGHUI",
+  "scope": "健康断事 / 巳亥冲心肾"
+}

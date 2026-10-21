@@ -75,14 +75,10 @@ class TestJingyiOutputLayer:
     """输出层：解卦层 dict 带出 benming + 四层爻断 jingyi/shiyi。"""
 
     @pytest.fixture(scope="class")
-    @classmethod
-    def guajie_dict(cls):
-        # H10 惰性化契约：target 必须传入 compute（timeline 仅含目标点数据）；
-        # 流时按设计剥离（target_hour 不接，liushi_yao 恒 None，test_four_layers 自动跳过）
-        r = HeluoAdapter().compute(
-            (1980, 6, 22, 10), gender="male",
-            target_year=2026, target_month=9, target_day=15)
-        return r.guajie or {}
+    def guajie_dict(self):
+        r = HeluoAdapter().compute((1980, 6, 22, 10), gender="male")
+        return build_guajie_from_result(
+            r, target_year=2026, target_month=9, target_day=15, target_hour=10)
 
     def test_benming_present(self, guajie_dict):
         bm = guajie_dict.get("benming") or {}
@@ -101,10 +97,19 @@ class TestJingyiOutputLayer:
         assert ly.get("jingyi") and ly.get("shiyi")
 
     def test_liuri_yao_jingyi(self, guajie_dict):
+        """流日层：必出爻、必带爻辞与精义/释义。
+
+        2026-10-07：起日卦依原典 L390 由「六段顺次」改为「逐日一爻、
+        阳日寻阳位/阴日寻阴位」后，流日卦象随之改变，故**不再硬编码
+        某一卦的爻辞字样**（那属于快照式断言，规则一改必假失败）。
+        内容正确性由 TestLiuriRuleConsistency 按原典规则复算保证；
+        本测试只守「流日层必须带全精义/释义」这一结构契约。
+        """
         lr = guajie_dict.get("liuri_yao") or {}
-        assert lr.get("ci") and "归妹" in lr["ci"]
-        assert lr.get("jingyi") and "娣" in lr["jingyi"]
-        assert lr.get("shiyi")
+        assert lr.get("yao"), "流日层应出爻"
+        assert lr.get("ci"), "流日爻应带爻辞"
+        assert lr.get("jingyi") and lr.get("shiyi")
+        assert guajie_dict.get("liuri_hexagram"), "流日层应出卦名"
 
     def test_four_layers_all_have_jingyi(self, guajie_dict):
         """流年/月/日/时四层只要出爻就必带 jingyi/shiyi。"""

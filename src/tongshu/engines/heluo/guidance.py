@@ -40,7 +40,11 @@ class ActionItem:
     id: str
     title: str                   # 简短标题
     description: str             # 详细说明
-    confidence: float            # 0-1（基于原典权威度）
+    # ⚠ 2026-10-08 审计修（⚪18）：原注释写「基于原典权威度」，但**全模块没有一个
+    # confidence 取自原典**——三处取值都是硬编码常数（0.85 / 0.9 / 0.6）或按断言条数
+    # 线性折算（0.7*min(n,3)/3）。注释比实现claim得多，会让下游以为这是有依据的权重。
+    # 现改为如实描述，并保留一个常量供统一调参。
+    confidence: float            # 0-1（引擎自定标度，**无原典依据**，见 _CONF_BASE）
     source_ref: str              # 原典出处
     temporal_scope: str          # birth/year/month/day
 
@@ -99,13 +103,23 @@ SOURCE_GUA_TONE: dict[str, str] = {
     "火水未济": "事未成，但可图进取，待时而动。",
 }
 
+#: 引擎自定标度的基准置信度。
+#: ⚠ 2026-10-08：**这不是原典权威度**，是本引擎自己定的显示刻度。
+#: 原典只给定性断语（吉/凶/轻/重），没有给任何 0-1 权重；把它包装成「原典权威度」
+#: 是伪引。现集中一处并显式命名，便于日后接到真正的依据上。
+_CONF_BASE = 0.85
+
 # 化工状态 → 建议倾向
 HUAGONG_ADVICE: dict[str, str] = {
     "NORMAL": "化工得位，根基稳固，行事多有助力。",
     "RESCUED": "虽有波折，但能逢凶化吉，坚持正道可成。",
     "REVERSE": "化工反位，行事多阻，宜守不宜攻。",
-    "RESTRAINED": "化工受反卦克制而尤凶，此际最忌强求冒进，宜谨守蛰伏、广结善缘以避灾咎。",
     "UNRESOLVED": "化工不明，形势未定，需审时度势后再行决断。",
+    # ⚠ 2026-10-07 审计修：以下两态 2026-10-07 才加入 hua_gong / diagnosis_rule_graph，
+    #   本表未同步。KEZHI 是原典「忌克制，尤凶」的**最凶一档**，此前竟落到
+    #   default「化工状态待判定」，产出 0 条建议 0 条警示——最凶档被当成未知档。
+    "KEZHI": "化工受克，原典明言「尤凶」，宜彻底守成，不可进取。",
+    "WEAK": "只得纳音级浅薄化工，福泽减半，宜安分培本，不可好高骛远。",
 }
 
 # 化工状态 → 行动建议模板
@@ -122,13 +136,15 @@ HUAGONG_ACTION_TEMPLATES: dict[str, List[dict]] = {
         {"title": "保守防守", "desc": "当前形势不利主动出击，宜退守巩固已有成果。", "scope": "year"},
         {"title": "减少开支", "desc": "化工反位，财务宜保守，避免大额投资或借贷。", "scope": "month"},
     ],
-    "RESTRAINED": [
-        {"title": "谨守蛰伏", "desc": "化工受制尤凶，此际切忌冒进，宜低调行事以避灾咎。", "scope": "year"},
-        {"title": "广结善缘", "desc": "借外力缓克势，多结善缘、避开冲突与争讼之事。", "scope": "month"},
-    ],
     "UNRESOLVED": [
         {"title": "观察等待", "desc": "形势不明朗，宜静观其变，等待更清晰的信号再行动。", "scope": "month"},
         {"title": "打好基础", "desc": "利用这段时期充实自身，为后续机会做准备。", "scope": "year"},
+    ],
+    "KEZHI": [
+        {"title": "全面守成", "desc": "化工受克，原典明言「尤凶」，宜彻底收缩、不可主动出击。", "scope": "year"},
+    ],
+    "WEAK": [
+        {"title": "培本固元", "desc": "仅得纳音级浅薄化工，福寿减半，宜务实积累。", "scope": "year"},
     ],
 }
 
@@ -164,14 +180,18 @@ class HeluoGuidanceEngine:
             source_gua: 先天卦名
             target_gua: 后天卦名
             yuan_tang: 元堂名
-            hua_gong_state: 化工状态（NORMAL/REVERSE/RESCUED/UNRESOLVED）
+            hua_gong_state: 化工状态（NORMAL/REVERSE/RESCUED/KEZHI/WEAK/UNRESOLVED）
             subject: 案例标识
 
         Returns:
             HeluoGuidance
         """
         # 1. 总体基调
-        overview = self._build_overview(source_gua, hua_gong_state)
+        # 2026-10-08 审计修（🟡11）：judgment 原先收进签名就再没出现过——
+        # 五个 _build_* 无一接收它，模块 docstring 画的「DiagnosisResult 含
+        # assertions + judgment」架构图对不上代码。现把 judgment 下传给
+        # _build_overview，由它在总览里如实交代本盘结论由哪些断言支撑。
+        overview = self._build_overview(source_gua, hua_gong_state, judgment)
 
         # 2. 提取正面行动建议
         action_items = self._build_actions(assertions, hua_gong_state)
@@ -199,12 +219,25 @@ class HeluoGuidanceEngine:
         )
 
     def _build_overview(
-        self, source_gua: str, hua_gong_state: Optional[str]
+        self, source_gua: str, hua_gong_state: Optional[str], judgment: Any = None
     ) -> str:
-        """生成总体判断描述。"""
+        """生成总体判断描述。
+
+        ⚠ 2026-10-08 审计修（🟡11）：原先 judgment 收下却不用。现用于如实交代
+        **本盘结论由哪些断言支撑**——注意不再凭空造一个授权方名字：
+        judgment.authorized_by 若存在就照登，不存在就不写。
+        """
         tone = SOURCE_GUA_TONE.get(source_gua, f"卦象{source_gua}，需结合具体爻位分析。")
         huagong = HUAGONG_ADVICE.get(hua_gong_state or "", "化工状态待判定。")
-        return f"{tone} {huagong}"
+        parts = [f"{tone} {huagong}"]
+        if judgment is not None:
+            sup = list(getattr(judgment, "supporting_assertions", None) or [])
+            by = str(getattr(judgment, "authorized_by", "") or "")
+            tail = f"本结论由 {len(sup)} 条断言支撑"
+            if by:
+                tail += f"（授权：{by}）"
+            parts.append(tail + "。")
+        return "".join(parts)
 
     def _build_actions(
         self, assertions: List[Any], hua_gong_state: Optional[str]
@@ -220,17 +253,21 @@ class HeluoGuidanceEngine:
                 id=f"ACT-{id_counter:03d}",
                 title=tmpl["title"],
                 description=tmpl["desc"],
-                confidence=0.85,
+                confidence=_CONF_BASE,
                 source_ref="河洛真数·论化工",
                 temporal_scope=tmpl["scope"],
             ))
             id_counter += 1
 
         # 从断言中提取正面信号
-        supportive_count = sum(
-            1 for a in assertions
+        supportive_rules = sorted({
+            getattr(a, "authorized_rule_id", "") or getattr(a, "source_rule", "")
+            for a in assertions
             if hasattr(a, 'direction') and a.direction.value == "supportive"
-        )
+        } - {""})
+        supportive_count = len(
+            [a for a in assertions
+             if hasattr(a, 'direction') and a.direction.value == "supportive"])
         if supportive_count > 0:
             actions.append(ActionItem(
                 id=f"ACT-{id_counter:03d}",
@@ -240,7 +277,19 @@ class HeluoGuidanceEngine:
                     "建议抓住时机推进重点事项。"
                 ),
                 confidence=0.7 * min(supportive_count, 3) / 3,
-                source_ref="V13_河洛诊断规则集",
+                # ⚠ 2026-10-08 审计修：原为 "V13_河洛诊断规则集" —— 该规则集**不存在**，
+                #   是伪引。批次 C 把 diagnosis_rule_graph 的 authorized_by 改成了
+                #   真实的 HELUO_RULES 清单，**却漏了这里**，同一处伪引两处不一致。
+                #   现改为登记**实际支撑本条建议的规则 id**，取自断言自身，
+                #   而非再编一个名字：拿不到就如实写空，不拿占位名顶替。
+                #
+                # ⚠ 2026-10-09 修：HL_HUA_GONG 本来就有**两条**断言
+                #   （证据环一条 + 冻结态补一条），按列表拼会得到
+                #   「…,HELUO_AUTH_HL_HUA_GONG,HELUO_AUTH_HL_HUA_GONG」——
+                #   同一 id 出现两次。故此处用 set 去重。
+                #   计数 supportive_count 仍按断言条数，两者口径不同、不可混用。
+                source_ref=("HELUO_RULES::" + ",".join(supportive_rules)
+                            if supportive_rules else ""),
                 temporal_scope="year",
             ))
             id_counter += 1
@@ -254,13 +303,21 @@ class HeluoGuidanceEngine:
         cautions = []
         id_counter = 1
 
-        # 化工反位时的默认警示
-        if hua_gong_state == "REVERSE":
+        # 化工反位 / 受克时的默认警示。
+        # ⚠ 2026-10-07 审计修：旧条件只有 "REVERSE"，KEZHI（原典最凶一档）
+        #   连一条警示都拿不到。WEAK 是减半的浅薄化工、非凶，故不入此表。
+        _CAUTION_BY_STATE = {
+            "REVERSE": ("谨慎决策", "化工反位，当前不宜做重大决策或冒险行动。", 0.9),
+            "KEZHI": ("化工业已受克", "化工受克，原典「但忌克制，尤凶」——本岁宜彻底守成，"
+                                       "不可主动出击，亦不宜大额投入。", 0.95),
+        }
+        if hua_gong_state in _CAUTION_BY_STATE:
+            _t, _d, _c = _CAUTION_BY_STATE[hua_gong_state]
             cautions.append(CautionItem(
                 id=f"CAU-{id_counter:03d}",
-                title="谨慎决策",
-                description="化工反位，当前不宜做重大决策或冒险行动。",
-                confidence=0.9,
+                title=_t,
+                description=_d,
+                confidence=_c,
                 source_ref="河洛真数·论化工",
                 temporal_scope="year",
             ))
@@ -320,8 +377,6 @@ class HeluoGuidanceEngine:
             advice.append("全年整体：根基稳固，适合长期规划。")
         elif hua_gong_state == "REVERSE":
             advice.append("全年整体：局势不利，建议保守防守。")
-        elif hua_gong_state == "RESTRAINED":
-            advice.append("全年整体：化工受制尤凶，务必谨守蛰伏、避开冲突。")
         elif hua_gong_state == "RESCUED":
             advice.append("全年整体：先难后易，坚持正道可成。")
 
