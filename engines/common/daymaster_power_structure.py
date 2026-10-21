@@ -80,8 +80,11 @@ def build_power_structure(pillars):
 
     # --- root_axis ---
     rwc = facts.get('root_weight_class_facts', {})
-    heavy = any(v.get('class') == 'HEAVY' for v in rwc.values())
-    light = any(v.get('class') == 'LIGHT' for v in rwc.values())
+    # ★ V7.120 根类为细分枚举(HEAVY_LU/HEAVY_BEN/HEAVY_LONGSHENG/LIGHT_YU_QI/...),
+    #   须前缀匹配(PZZQ L800-801 轻重根之别); 精确匹配恒假致 heavy/light 恒 0.
+    heavy = any(str(v.get('class') or '').startswith('HEAVY') for v in rwc.values())
+    light = any(str(v.get('class') or '').startswith('LIGHT')
+                or str(v.get('class') or '').startswith('SPECIAL') for v in rwc.values())
     if heavy:
         root_weight_class = 'HEAVY'
     elif light:

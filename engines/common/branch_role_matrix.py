@@ -150,9 +150,10 @@ def build_branch_role_matrix(fp, ye, f):
             'pattern_role': pattern_role,  # L5
             'qi_role': qi_role,  # L6
             # 综合角色标签
-            'is_dm_root': root_class in ('HEAVY', 'LIGHT'),
-            'is_heavy_root': root_class == 'HEAVY',
-            'is_light_root': root_class == 'LIGHT',
+            'is_dm_root': root_class.startswith('HEAVY') or root_class.startswith('LIGHT')
+                      or root_class.startswith('SPECIAL'),
+            'is_heavy_root': root_class.startswith('HEAVY'),
+            'is_light_root': root_class.startswith('LIGHT') or root_class.startswith('SPECIAL'),
             'has_primary_yongshen': any(h['is_primary'] for h in hidden_yongshen),
             'has_secondary_yongshen': any(h['is_secondary'] for h in hidden_yongshen),
             'has_avoid': any(h['is_avoid'] for h in hidden_yongshen),

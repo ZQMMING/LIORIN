@@ -144,7 +144,9 @@ def diff_chain(base, step):
 # =============================================================
 def _heavy_root_branches(some_facts):
     rw = some_facts.get('root_weight_class_facts', {})
-    return {v.get('branch') for v in rw.values() if v.get('class') == 'HEAVY'}
+    # ★ V7.120 根类细分枚举须前缀匹配(PZZQ L800-801)
+    return {v.get('branch') for v in rw.values()
+            if str(v.get('class') or '').startswith('HEAVY')}
 
 
 def verdict_step(pillars, base, step, extra, base_tier):
