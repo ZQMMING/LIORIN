@@ -56,54 +56,40 @@
 
 ## 4. 算力裁剪（fast-path 批次 P — 2026-10-10）
 
-`canonical.calculate(target_year, target_month)` 启用 fast-path 时：
+> ⚠️ 本节为早期 fast-path 规划描述；**当前 canonical.calculate 实现为全量路径**：
+> 87 段流年全部嵌满 12 月 × 6 日（无 97 段元数据裁剪），
+> 且 `interpret_all_liunian`（yi_interpreter）对全部流年段实际挂载 yi_signal（非 dead-write）。
+> 顶层 `monthly_hexagrams` 已填充首年 12 月模板（2026-10-21 清理后）。
 
-- **99 流年骨架保留**（依赖大运段判定）；
-- **目标流年 + 上一年 2 段嵌满 12 月 × 6 日**；
-- **其余 97 段只元数据**（10 字段：age/year/ganzhi/yang_year/hexagram/upper/lower/lines/yuantang_index/yuantang_nature，无 months/days/yi_signal/yi_interpretation）；
-- **不再调 `interpret_all_liunian`**（yearly[].yi_signal / yi_interpretation 全仓零消费方，是 dead-write）；
-- 顶层 `monthly_hexagrams` = 目标年 12 月（扁平化）；
-- 顶层 `daily_hexagram` = 目标年目标月 6 日段链式累变。
-
-**实测压缩**（1983-11-03 12:00 男 / target=2026/7）：
-- asdict 字符数：~2,142,000 → ~85,000（**25 倍压缩**）
-- 耗时：~120ms → ~13.9ms（**8 倍**）
-
-`canonical.calculate(target_year=None)` 退回全量路径（旧契约保留，守卫钉死）。
+`canonical.calculate(target_year=None)` 走全量路径（旧契约保留，守卫钉死）。
 
 ## 5. 模块接线
 
 ```
 src/tongshu/engines/heluo/
-  ├─ canonical.py             主入口 HeluoCanonical.calculate()
-  ├─ timeline_yun.py          大运 + 流年 + 流月 + 流日（六爻俱变）
+  ├─ canonical.py             主入口 HeluoCanonical.calculate()（含 _compute_year_jie 节气锚/年柱反推）
+  ├─ timeline_yun.py          大运 + 流年 + 流月 + 流日 + 流时（六爻俱变；含 Timeline 数据类）
   ├─ evidence_producer.py     解卦层证据
   ├─ guajie.py                H8 解卦层（3000+ 行原典断语）
   ├─ diagnosis_rule_graph.py  诊断层 HL_* 判据
-  ├─ interpretation.py        YiStructure 拼装
   ├─ frozen_state.py          FrozenHeluoState 冻结态
-  ├─ yi_interpreter.py        YiInterpretation
+  ├─ yi_interpreter.py        流年卦断语（P1 解卦层，interpret_all_liunian）
   ├─ yuan_tang.py             元堂（先/后天）
   ├─ yuan_qi.py               元气（先/后天）
-  ├─ yuanqi_tables.py         元气查表
-  ├─ yue_ling_shu_ge.py       月令数格
+  ├─ canping.py               参评
   ├─ hexagram.py              卦象基础
-  ├─ hexagram_state.py        卦气状态
+  ├─ hexagram_symbol.py       卦象符号
   ├─ jiehhou.py               H11 节候卦
   ├─ hua_gong.py              化工（原典 L558-L567 节气窗口）
-  ├─ dayu.py                  大运爻位值运
-  ├─ jiegua.py                解卦（基础）
-  ├─ gui_ming_liu_ju.py       贵命六体
-  ├─ canping.py               参评
+  ├─ guidance.py              指导层
+  ├─ metrics_v2.py            指标 V2
   ├─ prenatal.py              先天卦
   ├─ postnatal.py             后天卦
-  ├─ yao_xiang.py             爻象取象（原典 L741）
-  ├─ xian_tian_ce_shu.py      先天策数
-  ├─ metrics_v2.py            指标 V2
+  ├─ numbers.py               天数地数/洛书数
   ├─ exceptions.py            异常类
   ├─ input.py                 HeluoInput
   ├─ schemas.py               数据 schema
-  ├─ temporal.py              时间原子对象
+  ├─ relationship/            关系（互体/反体/对体/纳音福力）
   └─ __init__.py
 ```
 

@@ -189,6 +189,11 @@ class HeluoAdapter:
                     target_day=target_day,
                 ),
             )
-        except Exception:
-            pass  # 解卦层失败不阻塞主链
+        except Exception as _e:  # 解卦层失败不阻塞主链，但留痕（不再静默 pass）
+            try:
+                from dataclasses import replace
+                result = replace(
+                    result, guajie={"error": f"guajie 构建失败: {_e}"})
+            except Exception:
+                pass
         return result

@@ -22,7 +22,7 @@ from .numbers import (
 from .prenatal import determine_prenatal_hexagram, PrenatalHexagram
 from .yuan_tang import find_yuantang, YuanTang
 from .postnatal import compute_postnatal, PostnatalHexagram
-from .temporal import compute_timeline, Timeline
+from .timeline_yun import Timeline
 from .timeline_yun import (
     compute_dayun_liyao,
     compute_liunian,
@@ -119,7 +119,15 @@ def _jie_datetime_for_lunar_month(year: int, lunar_month: int) -> str | None:
 
 
 def _compute_year_jie(year: int) -> dict[int, str]:
-    """遍历公历 year-1~year+1，找齐 12 个"节"，按农历月 1-12 建映射。"""
+    """遍历公历 year-1~year+1，找齐 12 个"节"，按农历月 1-12 建映射。
+
+    节气归属（《河洛真数·起例卷之上·起月卦例》"悉从二十四气…此说方合节气"）：
+      - 流年链 year 的 12 个流月按节气顺次（子月=大雪 → 亥月=立冬），
+        以大雪（冬至）为岁首，子月跨前一年末。
+      - 因此子月（lunar_month=1，大雪）锚 **year-1 年 12 月**（2027 链子月=2026-12-07），
+        其余月（丑~亥）锚当年。修复此前 gap 就近导致子月锚当年末大雪
+        （2027-12-07）而时序倒错（子月晚于丑月）的缺陷。
+    """
     import sxtwl
     from datetime import date, timedelta
     result: dict[int, str] = {}
@@ -140,7 +148,11 @@ def _compute_year_jie(year: int) -> dict[int, str]:
             if lm is None:
                 d += timedelta(days=1)
                 continue
-            gap = abs(d.year - year)
+            # 归属：子月（大雪）属流年链上一公历年末；其余月属当年
+            if lm == 1:
+                gap = 0 if d.year == year - 1 else abs(d.year - year) + 10
+            else:
+                gap = 0 if d.year == year else abs(d.year - year) + 10
             if lm not in best or gap < best[lm][0]:
                 best[lm] = (gap, f"{t.Y:04d}-{t.M:02d}-{t.D:02d} {int(t.h):02d}:{int(t.m):02d}")
         d += timedelta(days=1)
@@ -152,6 +164,47 @@ from .yi_interpreter import interpret_all_liunian
 from .hua_gong import compute_huagong, HuaGongResult
 from .yuan_qi import compute_yuan_qi, YuanQiResult
 from .jiehhou import get_seasonal_hexagram, get_current_jieqi_info
+
+_STEMS60 = "甲乙丙丁戊己庚辛壬癸"
+_BRANCHES60 = "子丑寅卯辰巳午未申酉戌亥"
+
+
+def _recover_birth_year(bazi_year_ganzhi: str, now_year: int | None = None) -> int | None:
+    """从年柱干支反推最近（≤当前年）的公历年份。
+
+    DISPUTE-HL-03 配套：docstring 承诺"未提供时从 bazi 年柱干支反推（60 甲子近似）"，
+    取代此前 `birth_year = 1984` 的误导占位。甲子年 = 1984（(y-4)%10==0 且 (y-4)%12==0）。
+    """
+    if not bazi_year_ganzhi or len(bazi_year_ganzhi) < 2:
+        return None
+    try:
+        g = _STEMS60.index(bazi_year_ganzhi[0])
+        z = _BRANCHES60.index(bazi_year_ganzhi[1])
+    except ValueError:
+        return None
+    import datetime
+    if now_year is None:
+        now_year = datetime.date.today().year
+    y = now_year
+    for _ in range(300):  # 5 个甲子（300 年）内必命中最近过去年
+        if (y - 4) % 10 == g and (y - 4) % 12 == z:
+            return y
+        y -= 1
+    return None
+
+
+def _hua_gong_to_dict(hg: HuaGongResult | None) -> dict | None:
+    """HuaGongResult → dict（state 枚举转字符串，供 timeline.hua_gong 回填）。"""
+    if hg is None:
+        return None
+    return {
+        "state": hg.state.value if hasattr(hg.state, "value") else str(hg.state),
+        "huagong_trigram": hg.huagong_trigram,
+        "birth_month_branch": hg.birth_month_branch,
+        "has_huagong": hg.has_huagong,
+        "has_opposite": hg.has_opposite,
+        "evidence": list(hg.evidence),
+    }
 
 
 @dataclass(frozen=True)
@@ -290,7 +343,7 @@ class HeluoCanonical:
 
         # Step 6: 时间序列（大运爻位值运 + 流年卦 + 流月卦）
         timeline = self._build_timeline(
-            prenatal, yuantang, postnatal, postnatal_yuantang, birth_year
+            bazi, prenatal, yuantang, postnatal, postnatal_yuantang, birth_year
         )
 
         # Step 7: 卦象结构分析
@@ -336,6 +389,16 @@ class HeluoCanonical:
         # Step 9: H11 节候卦（出生日所在节气）
         seasonal_hex = self._compute_seasonal_hexagram(birth_date)
 
+        # Step 10: timeline 占位字段回填真实值（seasonal_hexagram/hua_gong），
+        # 消除 timeline 内 None 易误读（P3）；流时 hourly_hexagram 按设计剥离保持 None。
+        if timeline is not None:
+            from dataclasses import replace as _replace
+            timeline = _replace(
+                timeline,
+                seasonal_hexagram=seasonal_hex,
+                hua_gong=_hua_gong_to_dict(hua_gong),
+            )
+
         return HeluoResult(
             input=input_obj,
             numbers=numbers,
@@ -351,6 +414,7 @@ class HeluoCanonical:
 
     def _build_timeline(
         self,
+        bazi: list[tuple[str, str]],
         prenatal: PrenatalHexagram,
         yuantang: YuanTang,
         postnatal: PostnatalHexagram,
@@ -362,7 +426,12 @@ class HeluoCanonical:
         基于 timeline_yun 模块（《河洛理数·卷之四/五》论大运/流年/流月）。
         """
         if birth_year is None:
-            birth_year = 1984  # 未提供时占位（甲子年），后续需由调用方传入真实年份
+            # DISPUTE-HL-03：不再静默占位（1984 甲子），按 docstring 承诺从年柱干支反推
+            # 最近（≤当前年）的公历年份；反推失败则显式报错，宁漏勿错。
+            birth_year = _recover_birth_year(bazi_year_ganzhi=bazi[0][0] + bazi[0][1])
+            if birth_year is None:
+                raise ValueError(
+                    "birth_year 未提供且无法从年柱干支反推，必须显式传入真实出生年份")
 
         # 先天/后天六爻
         prenatal_lines = build_six_lines(prenatal.upper_gua, prenatal.lower_gua)
@@ -459,20 +528,24 @@ class HeluoCanonical:
 
         return Timeline(
             yearly_hexagrams=yearly,
-            monthly_hexagrams=[],
+            # 流月模板：首年 12 月（逐岁同构，按月卦从世上起例）；完整流月在 yearly[].months
+            monthly_hexagrams=[
+                {k: m[k] for k in ("month", "name", "upper", "lower", "yue_yao_index")}
+                for m in (yearly[0].get("months", []) if yearly else [])
+            ],
             daily_hexagram={
                 "date": str(birth_year),
                 "hexagram": prenatal.hexagram_name,
                 "upper": prenatal.upper_gua,
                 "lower": prenatal.lower_gua,
             },
-            hourly_hexagram=None,
-            seasonal_hexagram=None,
+            hourly_hexagram=None,  # 流时按设计剥离（不接）
+            seasonal_hexagram=None,  # H11 节候卦：calculate() 层回填
             qi_phase={
                 "dayun": dayun_entries,
                 "note": "爻位值运（阳爻9年/阴爻6年，自元堂起行先天再行后天）",
             },
-            hua_gong=None,  # 由 calculate() 在 HeluoResult 中单独设置
+            hua_gong=None,  # H6 化工：calculate() 层回填 dict
         )
 
     def _compute_huagong(

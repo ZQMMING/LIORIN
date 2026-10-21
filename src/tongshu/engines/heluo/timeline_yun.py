@@ -272,9 +272,13 @@ def compute_liuyue(liunian_lines: list[int], liunian_yuantang: int) -> LiuYueRes
 
     应爻关系：一四应、二五应、三六应 → 应爻 index = (月爻 + 3) % 6。
 
-    注：古籍月卦之法"悉从二十四气，非从朔望"，从子月（冬至）起，故
-    "前以正月起者，非"。此处月份按 1-12 标注（阳月=奇数月、阴月=偶数月），
+    注：古籍月卦之法"悉从二十四气，非从朔望"，从子月（冬至）起
+    （裁定依据：data/heluo/起例卷算法原文索引.md"前以正月起者，非"，
+    与 L127"从人所生之月准正月起…此说方合节气"并列收录，取子月口径）。
+    此处月份按 1-12 标注（阳月=奇数月、阴月=偶数月），
     卦序与古籍子月起始的逐爻累积完全一致。
+    节气锚点见 canonical._compute_year_jie：子月（大雪）锚流年链上一公历年末，
+    保证 12 月时序顺次（2027 链：2026-12-07 → 2027-11-07）。
     """
     start = (liunian_yuantang + 1) % 6
     months = []
@@ -433,4 +437,17 @@ __all__ = [
     "compute_liuyue", "LiuYueResult",
     "compute_liuri", "LiuRiResult",
     "compute_liushi", "LiuShiResult",
+    "Timeline",
 ]
+
+
+@dataclass(frozen=True)
+class Timeline:
+    """时间序列卦象结果（原 temporal.py 数据类，随占位实现清理迁入本模块）。"""
+    yearly_hexagrams: list  # 流年卦列表（含 months/days）
+    monthly_hexagrams: list  # 流月卦列表（首年 12 月模板）
+    daily_hexagram: dict     # 今日卦
+    hourly_hexagram: object  # 时刻卦（流时按设计剥离，恒 None）
+    seasonal_hexagram: object  # 节候卦（H11，calculate 层回填）
+    qi_phase: object         # 卦气（含大运爻位值运）
+    hua_gong: object         # 化工状态（H6，calculate 层回填 dict）

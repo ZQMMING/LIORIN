@@ -24,7 +24,7 @@ from .prenatal import PrenatalHexagram, determine_prenatal_hexagram
 from .postnatal import PostnatalHexagram, compute_postnatal
 from .yuan_tang import YuanTang, find_yuantang, resolve_yuantang
 from .hexagram import HexagramStructure, analyze_hexagram, compute_ti_yong
-from .temporal import Timeline, compute_timeline
+from .timeline_yun import Timeline
 from .hua_gong import compute_huagong, HuaGongResult, HuaGongState
 from .jiehhou import (
     SOLAR_TERMS, JIEHOU_GUA, SeasonalHexagram, QiPhase,

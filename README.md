@@ -14,9 +14,9 @@ src/tongshu/
       hua_gong.py          # 化工（NORMAL/REVERSE/RESCUED/RESTRAINED/UNRESOLVED）
       yuan_qi.py           # 元气层
       jiehhou.py           # 节候卦（节气回溯）
-      timeline_yun.py      # 大运/流年/流月爻位值运
+      timeline_yun.py      # 大运/流年/流月/流日/流时爻位值运（含 Timeline 数据类）
       guajie.py            # 卦辞/断语/诗断
-      interpretation.py    # 现代释义
+      yi_interpreter.py    # 流年卦断语（P1 解卦层）
       diagnosis_rule_graph.py  # 诊断规则图
       frozen_state.py      # 冻结态输出
       relationship/        # 关系（互体/反体/对体/纳音福力）
