@@ -877,6 +877,29 @@ for _fp in _g3.glob(os.path.join(ROOT, "engines", "**", "*.py"), recursive=True)
             _dead.append("%s:%d" % (os.path.relpath(_fp, ROOT), _i))
 ck("全仓无 `if False:` 死代码块(V7.108 已清)", not _dead, _dead[:5])
 
+# ═══ Z. 形态表 与 喜忌表 形态名一一对应 (单一数据源防漂移) ═══
+# 格局层 _GEJU_SHAPE_SPEC 产出形态名; 用神层 _GEJU_XIJI_SHAPE 按形态名查喜忌.
+# 两者须完全对应(形态名错位 -> 查表落空 -> 喜忌按默认档, 静默失真).
+print("\n[Z] 形态表与喜忌表 形态名一一对应")
+from engines.common.ge_jie_layer import _GEJU_SHAPE_SPEC
+from engines.common.yongyao_resolve import _GEJU_XIJI_SHAPE
+for _base, _shapes in _GEJU_SHAPE_SPEC.items():
+    _shape_names = set(n for n, _c in _shapes)
+    _xij = set((_GEJU_XIJI_SHAPE.get(_base) or {}).keys())
+    ck("形态名对应 %s" % _base, _shape_names == _xij,
+       "形态表=%s 喜忌表=%s" % (sorted(_shape_names), sorted(_xij)))
+ck("形态表覆盖八格(正官/财/印/食神/伤官/七煞/建禄月劫/阳刃)",
+   set(_GEJU_SHAPE_SPEC.keys()) == {'正官格', '财格', '印格', '食神格', '伤官格',
+                                    '七煞格', '建禄月劫格', '阳刃格'},
+   sorted(_GEJU_SHAPE_SPEC.keys()))
+# 喜忌表每形态须有 weak/strong 两档
+_missing = []
+for _base, _m in _GEJU_XIJI_SHAPE.items():
+    for _sh, _v in _m.items():
+        if not (isinstance(_v, dict) and 'weak' in _v and 'strong' in _v):
+            _missing.append("%s/%s" % (_base, _sh))
+ck("喜忌表每形态含 weak/strong 两档", not _missing, _missing[:5])
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
