@@ -1124,12 +1124,24 @@ ck("六亲实跑: 传 gender 时产出 items(符号+十神+在局+宫位)",
    ("state=%s n_items=%d" % (_lq.get("state"), len(_lq.get("items") or []))))
 _lq_ng = _pa("甲戌 辛未 庚子 丁亥").get("liu_qin") or {}
 ck("六亲实跑: 未传 gender 时不臆断(UNKNOWN_GENDER)", _lq_ng.get("status") == "UNKNOWN_GENDER", _lq_ng.get("status"))
-# topology check_guan_topology: jie_zhan 劫占 INFERRED 未核 -> verdict 恒 INCOMPLETE(原典未核清)
+# topology check_guan_topology (V7.127/128 核清后): 三条件全落, 可判 PASS/FAIL
 _gu = _pa("甲戌 辛未 庚子 丁亥").get("topology") or {}
 _gt = _gu.get("guan_topo") or {}
-ck("topology guan_topo verdict=INCOMPLETE(jie_zhan 劫占未核清, 原典 PENDING)",
-   _gt.get("verdict") == "INCOMPLETE" and "jie_zhan" in (_gt.get("pending") or []),
+_gc = _gt.get("conditions") or {}
+ck("topology guan_topo 三条件全落(jie_zhan 已核清, 不再恒 INCOMPLETE)",
+   _gt.get("verdict") in ("PASS", "FAIL") and not (_gt.get("pending") or []),
    ("verdict=%s pending=%s" % (_gt.get("verdict"), _gt.get("pending"))))
+ck("topology distance 由柱位几何派生(隔一物=SPAN_ONE, 纯位置语义)",
+   _gc.get("distance") == "SPAN_ONE", ("distance=%s" % _gc.get("distance")))
+ck("topology jie_zhan 位置隔断已落(blocked_by_third, 非 INFERRED)",
+   _gc.get("jie_zhan") is not None and (_gt.get("detail") or {}).get("blocked_by_third") is not None,
+   ("jie_zhan=%s" % _gc.get("jie_zhan")))
+# 拓扑三档几何: 年日=SPAN_ONE(隔一物) / 年时=REMOTE(远绝) / 月日=ADJACENT(相邻不成关)
+for _bz3, _exp in (("甲戌 辛未 庚子 丁亥", "SPAN_ONE"), ("壬午 甲辰 丙寅 戊申", "SPAN_ONE")):
+    _g3 = (_pa(_bz3).get("topology") or {}).get("guan_topo") or {}
+    ck("topology distance 几何档一致: %s -> %s" % (_bz3, _exp),
+       ((_g3.get("conditions") or {}).get("distance")) == _exp,
+       ((_g3.get("conditions") or {}).get("distance")))
 ck("topology yuan_liu 已派生(源流骨架)", bool((_gu.get("yuan_liu") or {}).get("skeleton"))
    or bool(_gu.get("yuan_liu")), list((_gu.get("yuan_liu") or {}).keys())[:6])
 ck("topology fang_ju 已派生(方局混纯)", "fang_ju" in _gu, list(_gu.keys()))

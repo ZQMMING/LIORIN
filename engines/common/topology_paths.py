@@ -472,20 +472,31 @@ GUAN_DISTANCE_MAP = [
     },
 ]
 
-# ★ 拓扑断点三类(L250 原文并列):
+# ★ 拓扑断点三类(L108 原文并列, DTS-019-002):
 #     刑冲  → relations 已有 CHONG / XING        ✓
 #     隔一物 → distance 档位(上表)              ✓
-#     劫占  → 【INFERRED, 不落】(见契约 §4.4)
+#     劫占  → 位置隔断 blocked_by_third (V7.127 核清, 结构事实) ✓
 GUAN_TOPO_CONDITIONS = [
     {'key': 'XING_CHONG', 'dts': '或被刑冲', 'source': 'relations',
      'types': ['CHONG', 'XING'], 'status': 'READY'},
     {'key': 'GE_YI_WU', 'dts': '或隔一物', 'source': 'distance',
      'types': ['span_one', 'remote'], 'status': 'READY'},
-    {'key': 'JIE_ZHAN', 'dts': '或被劫占', 'source': 'INFERRED',
-     'types': [], 'status': 'PENDING',
-     'note': ('L250 未指明「劫」是月劫还是劫财; L353「忌劫而官能去劫」提示劫=劫财(十神), '
-              '但属跨语境推断。evidence: INFERRED, 不进 relations.type 枚举。'
-              '「占」= 位置被占(与「隔一物」同层), 非力量比较 —— L250 三项并列可证。')},
+    # ★ V7.127 jie_zhan 劫占核清(原典+阔微底本互证, 去 INFERRED PENDING):
+    #   DTS-019-002(L108)「或被刑冲, 或破劫占, 或隔一物, 皆为关也」—— 破劫占 与 隔一物/远隔 三项并列,
+    #   「占」= 位置被占(有第三神隔在中间), 非「劫财(十神)夺气」之力量语义.
+    #   阔微底本「闲神章」任氏注 4 处「隔占/劫占」同型语境(「局中闲神隔占」「被闲神忌神合助忌神」)
+    #   皆指闲神/忌神占据中间位置隔断两神 —— 与「隔一物」同层. 旧注引 DTS-033-004「忌劫而官能去劫」
+    #   判「劫=劫财」属跨语境误推(该句在何知章官星制劫语境, 非通关隔断语境), 已撤.
+    #   落法: 位置隔断记录(blocked_by_third, 结构事实); 是否岁运引去通关归岁运层裁决.
+    {'key': 'JIE_ZHAN', 'dts': '或破劫占(位置隔断)', 'source': 'pos_third',
+     'types': ['blocked_by_third'], 'status': 'READY',
+     'note': ('V7.127 核清: 劫占=有第三神(闲神/忌神)占据两关神中间位置, 与「隔一物」同层. '
+              '阔微闲神章「局中闲神隔占」4处同型语境佐证; 非劫财(十神)夺气. '
+              '原局层只记隔断存在(blocked_by_third), 引去通关归岁运层.')},
+    # ★ V7.127 DTS-019-002(L108)「或破劫占」之「破」独立一档(破坏性隔断, 强于隔一物):
+    {'key': 'PO', 'dts': '或破(破坏)', 'source': 'pos_third',
+     'types': ['blocked_by_third'], 'status': 'READY',
+     'note': 'V7.127: 破与劫占同层(位置隔断), 并入 blocked_by_third 记录.'},
 ]
 
 
@@ -496,6 +507,9 @@ GUAN_TOPO_CONDITIONS = [
 # engine distance 档 -> 块5 verdict 用的档名(DTS 三词 vs 三档, mapping ENGINE_DEFINED)
 _DISTANCE_TIER = {'span_one': 'SPAN_ONE', 'remote': 'REMOTE'}
 _TIER_ORDER = {'SPAN_ONE': 1, 'REMOTE': 2}
+# ★ V7.128 柱位名序(与 L0 relations 实例 a_pos/b_pos 的表示一致: 柱位名, 非 int 索引)
+_POS_LIST = ('year', 'month', 'day', 'hour')
+_POS_ORDER = {name: i for i, name in enumerate(_POS_LIST)}
 
 
 def _pair_instances(relations, pos_a, pos_b):
@@ -544,34 +558,67 @@ def check_guan_topology(relations: List[Dict[str, Any]],
     detail = {'pairs': [], 'pos_of_missing': pos_of is None}
 
     if pos_of is not None:
-        pa_list = pos_of.get(guan_a) or []
-        pb_list = pos_of.get(guan_b) or []
+        # ★ V7.128b distance 由【柱位几何】直接派生 —— DTS L108「远隔/远绝/隔一物」是
+        #   纯位置语义(隔几柱), 不依赖两支之间是否存在六害/六冲等关系实例.
+        #   旧实现只从 relations 实例读 iv['distance'], 关系缺失时恒 None -> 拓扑层从未判过(静默失效).
+        def _norm_pos_list(lst):
+            out = []
+            for x in (lst or []):
+                if isinstance(x, int):
+                    if 0 <= x < len(_POS_LIST):
+                        out.append(_POS_LIST[x])
+                elif x in _POS_ORDER:
+                    out.append(x)
+            return out
+        pa_list = _norm_pos_list(pos_of.get(guan_a))
+        pb_list = _norm_pos_list(pos_of.get(guan_b))
         tiers = []
         blocked_any = False
         for pa in pa_list:
             for pb in pb_list:
                 if pa == pb:
                     continue
-                lo, hi = (pa, pb) if pa < pb else (pb, pa)
+                lo, hi = (pa, pb) if _POS_ORDER[pa] < _POS_ORDER[pb] else (pb, pa)
+                gap = _POS_ORDER[hi] - _POS_ORDER[lo]
+                # 几何档: 差1=adjacent(DTS 未列为关) / 差2=span_one(隔一物) / 差3=remote(远绝)
+                geo = {1: 'ADJACENT', 2: 'SPAN_ONE', 3: 'REMOTE'}.get(gap)
                 insts = _pair_instances(relations, lo, hi)
                 for rtype, iv in insts:
                     if rtype in ('CHONG', 'XING'):
                         blocked_any = True
-                    d = iv.get('distance')
-                    if d in _DISTANCE_TIER:
-                        tiers.append(_DISTANCE_TIER[d])
-                detail['pairs'].append({'pos': [lo, hi], 'count': len(insts)})
+                if geo and geo != 'ADJACENT':
+                    tiers.append(geo)
+                # 交叉校验: relations 实例自带 distance(来自 relations_builder L66-71 几何表)
+                rel_d = None
+                for _rtype, iv in insts:
+                    if iv.get('distance') in _DISTANCE_TIER:
+                        rel_d = _DISTANCE_TIER[iv['distance']]
+                        break
+                detail['pairs'].append({
+                    'pos': [lo, hi], 'gap': gap, 'geo_tier': geo,
+                    'count': len(insts), 'rel_tier': rel_d,
+                })
         # 多柱位组合时取「最远」档(阻隔强度), 全部相等则取该值
         if tiers:
             conditions['distance'] = max(tiers, key=lambda t: _TIER_ORDER[t])
         # ★ blocked: 有实例查过才判 False; 无实例 -> None(「判不了」)
         conditions['blocked'] = blocked_any if detail['pairs'] else None
+        # ★ V7.127 jie_zhan 劫占核清: 位置隔断(blocked_by_third)—— 两关神柱位间若有
+        #   第三支位(非 guan_a/guan_b 本身)占据中间位置, 记「破劫占/隔一物」同层隔断.
+        #   这是结构事实(原局位置), 非十神劫财夺气; 是否岁运引去通关归岁运层裁决.
+        _all_pos = set(pa_list) | set(pb_list)
+        _other_pos = [pos for pos in _POS_LIST if pos not in _all_pos]
+        conditions['jie_zhan'] = bool(_other_pos) if detail['pairs'] else None
+        detail['blocked_by_third'] = conditions['jie_zhan']
+        detail['third_positions'] = _other_pos
 
     pending = [k for k, v in conditions.items() if v is None]
-    if 'jie_zhan' in pending:
+    # V7.127: jie_zhan 已核清为结构事实(位置隔断), 不再挂 INFERRED PENDING;
+    #   若 pos_of 缺失(无法定位)仍 INCOMPLETE —— 「判不了」≠「判了为否」.
+    if pending:
         topo_ok, verdict = None, 'INCOMPLETE'
     else:
-        topo_ok = bool(conditions['distance']) or bool(conditions['blocked'])
+        topo_ok = bool(conditions['distance']) or bool(conditions['blocked']) or bool(conditions['jie_zhan'])
         verdict = 'PASS' if topo_ok else 'FAIL'
     return {
         'topo_ok': topo_ok,
@@ -579,11 +626,11 @@ def check_guan_topology(relations: List[Dict[str, Any]],
         'verdict': verdict,
         'pending': pending,
         'detail': detail,
-        'evidence': 'DTS_CITED',               # 判据来源 L250
-        'note': ('distance/blocked 已落(需 pos_of 柱位映射); '
-                 'jie_zhan 劫占 INFERRED 未核 -> verdict 恒为 INCOMPLETE。'
-                 '裁决链见契约 §4.6。'),
-        'line': 'L250',
+        'evidence': 'DTS_CITED',               # 判据来源 L108(破劫占) / 阐微闲神章(隔占 4 处)
+        'note': ('V7.127 核清: distance/blocked/jie_zhan 均落(需 pos_of 柱位映射); '
+                 'jie_zhan=位置隔断(blocked_by_third, 与「隔一物」同层, 非劫财夺气, 阐微闲神章佐证); '
+                 '引去通关归岁运层裁决。'),
+        'line': 'L108',
     }
 
 
