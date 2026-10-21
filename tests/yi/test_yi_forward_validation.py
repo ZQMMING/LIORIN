@@ -124,12 +124,6 @@ class TestLegacyEngineIntegrity(unittest.TestCase):
         engine = BaziEngine()
         self.assertIsNotNone(engine)
 
-    def test_heluo_engine_untouched(self):
-        """Heluo Engine 仍可正常导入。"""
-        from tongshu.engines.heluo.canonical import HeluoCanonical
-        canonical = HeluoCanonical()
-        self.assertEqual(canonical.version, "v2.0")
-
     def test_ziwei_engine_untouched(self):
         """Ziwei Engine 仍可正常导入。"""
         from tongshu.engines.ziwei_engine import ZiweiEngine
@@ -156,14 +150,6 @@ class TestLegacyEngineIntegrity(unittest.TestCase):
 
 class TestGoldenDatasetIntegrity(unittest.TestCase):
     """Golden Dataset 完整性测试（确保未被修改）。"""
-
-    def test_heluo_golden_case_unchanged(self):
-        """Heluo Golden Case 未被修改。"""
-        from tongshu.engines.heluo.canonical import HeluoCanonical
-        canonical = HeluoCanonical()
-        # 纪晓岚 case 必须仍然通过
-        result = canonical.verify_golden_case("jixiaolan")
-        self.assertTrue(result)
 
     def test_no_golden_dataset_modification(self):
         """确认没有新增或修改 Golden Dataset。"""

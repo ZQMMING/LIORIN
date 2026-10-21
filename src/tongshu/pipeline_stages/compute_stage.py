@@ -27,7 +27,6 @@ from ..canonical.composer import CanonicalComposer
 from ..cross_domain import CrossDomainOrchestrator
 from ..engines.bazi_adapter import BaziAdapter
 from ..engines.bazi_engine import BaziEngine
-from ..engines.heluo.canonical import HeluoCanonical
 from ..engines.huangli_engine import HuangliEngine
 from ..engines.time.calculation_context import CalculationContext
 from ..engines.ziwei_adapter import ZiweiAdapter
@@ -40,21 +39,8 @@ from ..spec.canonical import EngineEvidence, SemanticAtom, EngineName, TemporalS
 from ..temporal.convergence import TemporalConvergenceEngine
 from ..temporal.schema import PredictionWindow, TemporalGranularity, TemporalSignal
 from ..types import ComputeResult
-from ..yi.adapter import YiAdapter, YiAdapterInput
-from ..yi.interpreter import YiInterpretationEngine
 
 log = logging.getLogger(__name__)
-
-# BUG-P0-03: BaziEngine 输出的干支为英文（JIA/ZI），而 HeluoCanonical 需要中文
-# （甲/子）。此映射只做符号转译，不参与任何河洛算法计算。
-_STEM_CN = {
-    "JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU": "戊",
-    "JI": "己", "GENG": "庚", "XIN": "辛", "REN": "壬", "GUI": "癸",
-}
-_BRANCH_CN = {
-    "ZI": "子", "CHOU": "丑", "YIN": "寅", "MAO": "卯", "CHEN": "辰", "SI": "巳",
-    "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥",
-}
 
 
 class ComputeStage:
@@ -76,8 +62,6 @@ class ComputeStage:
         schema_dir: Path,
         matcher: RuleMatcher,
         renderer_model_id: str,
-        heluo_canonical: HeluoCanonical | None = None,
-        yi_engine: YiInterpretationEngine | None = None,
         assertion_library=None,  # ProductionRuleLibrary | None (P1.6)
         temporal_convergence_engine: TemporalConvergenceEngine | None = None,  # P1.7
         blind_engine=None,  # BZ-BLIND-001: BlindBaziEngine | None（可注入测试；None=懒加载）
@@ -92,9 +76,9 @@ class ComputeStage:
         self.schema_dir = Path(schema_dir)
         self.matcher = matcher
         self._renderer_model_id = renderer_model_id
-        # BUG-P0-03: 河洛 + 易经解释引擎接入主 Pipeline（可注入以支持测试）。
-        self.heluo_canonical = heluo_canonical or HeluoCanonical()
-        self.yi_engine = yi_engine or YiInterpretationEngine()
+        # BUG-P0-03: 河洛引擎已从主工作区移除（独立为 feature/heluo-engine-package-20261011 包）。
+        # 河洛→Yi 输入源不再可用，heluo_result 恒为 None，不影响 bazi/ziwei/huangli 主链路。
+        self.heluo_canonical = None
         # B-02: 时间政策 Adapter（封装 23:00 日界 / 阳→农历转换）
         self._bazi_adapter = BaziAdapter(bazi_engine)
         self._ziwei_adapter = ZiweiAdapter(ziwei_engine)
@@ -179,9 +163,9 @@ class ComputeStage:
         # 1b. 河洛理数 + 易经解释引擎（BUG-P0-03 接入主 Pipeline）。
         # 河洛计算 → YiAdapter 适配为 YiStructure → YiInterpretationEngine 解释。
         # 任何一步失败都降级为 None，不影响既有 bazi/ziwei/huangli 主链路。
-        heluo_result, yi_structure, yi_interpretation = self._compute_heluo_yi(
-            bazi_chart, gender
-        )
+        # 1b. 河洛理数 + 易经解释引擎：河洛引擎已从主工作区移除（独立包），
+        # heluo_result / yi_structure / yi_interpretation 恒为 None，主链路不受影响。
+        heluo_result, yi_structure, yi_interpretation = None, None, None
 
         # 1c. 梅花易数引擎（E7 接入）
         # 支持两种模式: Mode A(时间起卦) / Mode B(数字起卦)
@@ -305,49 +289,6 @@ class ComputeStage:
             canonical_bazi_chart=canonical_bazi_chart,
         )
 
-    def _compute_heluo_yi(
-        self,
-        bazi_chart,
-        gender: str,
-    ) -> tuple:
-        """河洛理数计算 + 易经解释（BUG-P0-03）。
-
-        数据流：
-            BaziChart(四柱干支) → HeluoCanonical.calculate()
-                → HeluoResult(本命卦/元堂/后天卦)
-                → YiAdapter.adapt() → YiStructure
-                → YiInterpretationEngine.interpret() → YiInterpretation
-
-        返回三元组 (heluo_result, yi_structure, yi_interpretation)。
-        任一步失败都返回 (None, None, None)，绝不让河洛/易经错误中断既有主链路。
-        """
-        heluo_result = None
-        yi_structure = None
-        yi_interpretation = None
-        try:
-            bazi_cn = self._bazi_to_heluo_pillars(bazi_chart)
-            birth_hour_cn = _BRANCH_CN.get(
-                bazi_chart.hour_pillar.earthly_branch, "子"
-            )
-            heluo_result = self.heluo_canonical.calculate(
-                bazi=bazi_cn,
-                gender=gender,
-                birth_hour=birth_hour_cn,
-                era="zhong",
-            )
-            # 将河洛结果传入 YiAdapter（只消费 Contract 化字段，不重新计算河洛）
-            yi_input = YiAdapterInput(
-                heluo_prenatal_hexagram=heluo_result.prenatal.hexagram_name,
-                heluo_postnatal_hexagram=heluo_result.postnatal.hexagram_name,
-                heluo_yuantang_index=heluo_result.yuantang.yuantang_index,
-                heluo_yuantang=heluo_result.yuantang.yuantang,
-            )
-            yi_structure = YiAdapter.adapt(yi_input)
-            yi_interpretation = self.yi_engine.interpret(yi_structure)
-        except Exception as exc:  # noqa: BLE001 — 河洛/易经降级，不中断主管道
-            log.warning("Heluo/Yi integration failed (degraded, 不影响主链路): %s", exc)
-        return heluo_result, yi_structure, yi_interpretation
-
     def _compute_meihua(
         self,
         year: int,
@@ -392,23 +333,6 @@ class ComputeStage:
         except Exception as exc:  # noqa: BLE001 — 盲派降级，不中断主管道
             log.warning("Blind integration failed (degraded, 不影响主链路): %s", exc)
             return None
-
-    @staticmethod
-    def _bazi_to_heluo_pillars(bazi_chart) -> list[tuple[str, str]]:
-        """将 BaziChart 四柱干支转为河洛引擎所需的中文 (干, 支) 列表。
-
-        仅做符号转译，不改动 V1.2 河洛算法。
-        """
-        return [
-            (_STEM_CN[bazi_chart.year_pillar.heavenly_stem],
-             _BRANCH_CN[bazi_chart.year_pillar.earthly_branch]),
-            (_STEM_CN[bazi_chart.month_pillar.heavenly_stem],
-             _BRANCH_CN[bazi_chart.month_pillar.earthly_branch]),
-            (_STEM_CN[bazi_chart.day_pillar.heavenly_stem],
-             _BRANCH_CN[bazi_chart.day_pillar.earthly_branch]),
-            (_STEM_CN[bazi_chart.hour_pillar.heavenly_stem],
-             _BRANCH_CN[bazi_chart.hour_pillar.earthly_branch]),
-        ]
 
     # ─── P1.6: CrossDomainOrchestrator integration ──────────────────────────────
 

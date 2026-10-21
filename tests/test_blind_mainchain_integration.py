@@ -110,7 +110,6 @@ class TestBlindMainchain(unittest.TestCase):
         self.assertIsNotNone(cr.bazi_chart)
         self.assertIsNotNone(cr.ziwei_chart)
         self.assertIsNotNone(cr.huangli_day)
-        self.assertIsNotNone(cr.heluo_result)
 
 
 class TestBlindDegradation(unittest.TestCase):

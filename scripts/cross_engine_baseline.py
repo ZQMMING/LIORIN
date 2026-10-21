@@ -83,15 +83,6 @@ def run_engines() -> dict:
         results["blind"] = _hash(r)  # to_dict 确定性序列化, repr 含内存地址不可用
     except Exception as e:
         results["blind"] = f"ERROR: {e}"
-    # HELUO (calculate 需 bazi 对象, 用 golden case 结果 hash 代替)
-    try:
-        from tongshu.engines.heluo import HeluoCanonical
-        h = HeluoCanonical()
-        # 用其内置 golden cases 的确定性输出做 baseline
-        ok = h.run_all_golden_cases() if hasattr(h, "run_all_golden_cases") else str(h.GOLDEN_CASES)
-        results["heluo"] = _hash(str(ok))
-    except Exception as e:
-        results["heluo"] = f"ERROR: {e}"
     # YI (hexagram symbol lookup - 纯确定性)
     try:
         from tongshu.engines.yi.hexagram_symbol import get_hexagram_symbol

@@ -61,22 +61,9 @@ def run_end_to_end():
     logger.info("[Phase 1] Algorithm Correctness (L0-L2)")
     from tongshu.engines.bazi_engine import BaziEngine, pillar_to_chinese
     from tongshu.engines.ziwei_engine import ZiweiEngine
-    from tongshu.engines.heluo import heluo_calculate
 
     bazi = BaziEngine().compute(SEED_CASE.birth_date_tuple, gender=SEED_CASE.gender)
     logger.info(f"  Bazi: {bazi.year_pillar} {bazi.month_pillar} {bazi.day_pillar} {bazi.hour_pillar}")
-
-    # 转换为中文干支格式
-    p_chinese = [pillar_to_chinese(bazi.year_pillar),
-                 pillar_to_chinese(bazi.month_pillar),
-                 pillar_to_chinese(bazi.day_pillar),
-                 pillar_to_chinese(bazi.hour_pillar)]
-    pillars = [(p[0], p[1]) for p in p_chinese]  # (天干, 地支)
-
-    hl_result = heluo_calculate(pillars, gender=SEED_CASE.gender)
-    benming = hl_result.prenatal.hexagram_name if hl_result.prenatal else "N/A"
-    yuantang = hl_result.yuantang
-    logger.info(f"  Heluo: Benming={benming}, 元堂={yuantang}")
 
     # V2.6 fix: 紫微用农历输入, 阳历->lunar_python转农历tuple(原传阳历字符串导致iztro报错)
     from lunar_python import Solar as _Solar
