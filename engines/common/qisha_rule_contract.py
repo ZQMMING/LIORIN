@@ -8,6 +8,9 @@ QISHA_BUCKET = {
     'supported': ['杀混官'],
     'unknown_pending': ['身强', '逢制', '七杀逢财无制'],
 }
+# ★ V7.145 七煞格 A 级出处 (AGENTS.md §六 验收条④):
+#   PZZQ-007-028 七煞格正文 grade=A (registry), PZZQ255 页码对应.
+QISHA_EVIDENCE = ['PZZQ-007-028', 'PZZQ-007-029']
 
 
 def qisha_rule_input(facts):

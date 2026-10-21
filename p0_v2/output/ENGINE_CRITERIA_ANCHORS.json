@@ -1,10 +1,10 @@
 {
  "purpose": "AGENTS.md v3 公理三落地: 引擎判据 -> 原典章节 -> 切片ID 锚点对照(不改判定)",
- "total_anchor_groups": 114,
- "total_refs": 357,
+ "total_anchor_groups": 112,
+ "total_refs": 355,
  "match_modes": {
   "EXACT_CHAPTER": 35,
-  "CHAPTER": 79
+  "CHAPTER": 77
  },
  "anchors": [
   {
@@ -242,8 +242,8 @@
    "ref_count": 5,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:1263",
-    "engines\\common\\ge_jie_layer.py:1561",
-    "engines\\common\\ge_jie_layer.py:1582",
+    "engines\\common\\ge_jie_layer.py:1546",
+    "engines\\common\\ge_jie_layer.py:1567",
     "p0_v2\\bazi_gate.py:348",
     "p0_v2\\pzzq_align.py:325"
    ],
@@ -789,11 +789,10 @@
    "book": "PZZQ",
    "book_cn": "子平真诠",
    "row": 170,
-   "ref_count": 4,
+   "ref_count": 3,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:1415",
-    "engines\\common\\ge_jie_layer.py:1458",
-    "engines\\common\\ge_jie_layer.py:1473",
+    "engines\\common\\ge_jie_layer.py:1460",
     "engines\\common\\yongyao_resolve.py:478"
    ],
    "source_chapter": "",
@@ -1569,8 +1568,9 @@
    "book": "PZZQ",
    "book_cn": "子平真诠",
    "row": 2412,
-   "ref_count": 1,
+   "ref_count": 2,
    "engine_refs": [
+    "engines\\common\\ge_jie_layer.py:1459",
     "engines\\common\\special_pattern.py:737"
    ],
    "source_chapter": "",
@@ -2027,8 +2027,8 @@
    "row": 4652,
    "ref_count": 4,
    "engine_refs": [
-    "engines\\common\\ge_jie_layer.py:1561",
-    "engines\\common\\ge_jie_layer.py:1582",
+    "engines\\common\\ge_jie_layer.py:1546",
+    "engines\\common\\ge_jie_layer.py:1567",
     "p0_v2\\bazi_gate.py:348",
     "p0_v2\\pzzq_align.py:325"
    ],
@@ -2101,50 +2101,6 @@
    "engine_refs": [
     "engines\\common\\special_pattern.py:247",
     "engines\\common\\special_pattern.py:570"
-   ],
-   "source_chapter": "",
-   "slice_match": "CHAPTER",
-   "slice_ids": [
-    "PZZQ.论十干十二支.一气五行",
-    "PZZQ.论十干十二支.十干阴阳",
-    "PZZQ.论十干十二支.天干地支",
-    "PZZQ.论十干十二支.干支动静旺衰",
-    "PZZQ.论阴阳生克.生克同功",
-    "PZZQ.论阴阳生克.生克阴阳异同",
-    "PZZQ.论阴阳生克.官煞阴阳之辨",
-    "PZZQ.论阴阳生死.生旺墓绝之由"
-   ],
-   "slice_count": 323
-  },
-  {
-   "book": "PZZQ",
-   "book_cn": "子平真诠",
-   "row": 4937,
-   "ref_count": 1,
-   "engine_refs": [
-    "engines\\common\\special_pattern.py:542"
-   ],
-   "source_chapter": "",
-   "slice_match": "CHAPTER",
-   "slice_ids": [
-    "PZZQ.论十干十二支.一气五行",
-    "PZZQ.论十干十二支.十干阴阳",
-    "PZZQ.论十干十二支.天干地支",
-    "PZZQ.论十干十二支.干支动静旺衰",
-    "PZZQ.论阴阳生克.生克同功",
-    "PZZQ.论阴阳生克.生克阴阳异同",
-    "PZZQ.论阴阳生克.官煞阴阳之辨",
-    "PZZQ.论阴阳生死.生旺墓绝之由"
-   ],
-   "slice_count": 323
-  },
-  {
-   "book": "PZZQ",
-   "book_cn": "子平真诠",
-   "row": 4939,
-   "ref_count": 1,
-   "engine_refs": [
-    "engines\\common\\special_pattern.py:447"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",

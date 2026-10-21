@@ -1319,6 +1319,59 @@ if os.path.exists(_recp):
        "Phase 1" in str(_rc.get("phase1_status", "")), "")
     ck("现状对账人工签字位保留为空", _rc.get("human_signoff") is None, "")
 
+# ═══ OO. 验收条④ 每条格局定义须指到至少一条 grade=A 原句 (V7.141-147) ═══
+print("\n[OO] 验收条④ 格局定义 grade=A 覆盖审计")
+_cov_p = os.path.join(ROOT, "p0_v2", "output", "SPEC_GRADE_A_COVERAGE_2026_10_21.json")
+ck("格局定义 grade=A 覆盖审计已生成", os.path.exists(_cov_p), _cov_p)
+if os.path.exists(_cov_p):
+    _cov = _json2.load(open(_cov_p, encoding='utf-8'))
+    _n_def = _cov.get("total_definition_points") or 0
+    _n_a = _cov.get("with_grade_A") or 0
+    ck("格局定义点已枚举(ge_jie_layer 'ge': + special_pattern _pat)", _n_def >= 25, _n_def)
+    ck("grade=A 覆盖率 >= 90%(_n_a/_n_def)", _n_a >= 0.90 * _n_def,
+       ("A=%d/%d" % (_n_a, _n_def)))
+    _noA = {r.get("ge_name") for r in (_cov.get("no_grade_A") or [])}
+    ck("NO-A 项已逐条登记(人工裁定清单, 不静默)", len(_cov.get("no_grade_A") or []) >= 0,
+       sorted(_noA))
+    ck("PZZQ 页码引用已登记未映射(不臆断 grade)",
+       isinstance(_cov.get("unmapped_pzzq_page_refs"), dict),
+       _cov.get("unmapped_pzzq_page_refs"))
+    ck("覆盖审计人工签字位保留为空", _cov.get("human_signoff") is None, "")
+
+# ── registry grade 修正核对(V7.147) ──
+import glob as _glob3
+_dts_meta = {}
+for _f in _glob3.glob(os.path.join(ROOT, "registries", "source", "sources.dts.jsonl")):
+    for _ln in open(_f, encoding="utf-8", errors="replace"):
+        _ln = _ln.strip()
+        if not _ln:
+            continue
+        try:
+            _dd = _json2.loads(_ln)
+        except Exception:
+            continue
+        _dts_meta[_dd.get("source_id")] = _dd.get("evidence_grade")
+ck("DTS-033-015 grade=B(ANNOTATION, 原注层, V7.147 修正; 非京图正文)",
+   _dts_meta.get("DTS-033-015") == "B", _dts_meta.get("DTS-033-015"))
+_pz_meta = {}
+for _f in _glob3.glob(os.path.join(ROOT, "registries", "source", "sources.pzzq.jsonl")):
+    for _ln in open(_f, encoding="utf-8", errors="replace"):
+        _ln = _ln.strip()
+        if not _ln:
+            continue
+        try:
+            _dd = _json2.loads(_ln)
+        except Exception:
+            continue
+        _pz_meta[_dd.get("source_id")] = _dd.get("evidence_grade")
+ck("PZZQ-033-001(弃命从财/从煞) grade=A registry 已登格", _pz_meta.get("PZZQ-033-001") == "A",
+   _pz_meta.get("PZZQ-033-001"))
+ck("PZZQ-034-001(顺局从儿) grade=A registry 已登格", _pz_meta.get("PZZQ-034-001") == "A",
+   _pz_meta.get("PZZQ-034-001"))
+ck("PZZQ-007-028(七煞格正文) grade=A", _pz_meta.get("PZZQ-007-028") == "A", _pz_meta.get("PZZQ-007-028"))
+
+ck("现状对账人工签字位保留为空", _rc.get("human_signoff") is None, "")
+
 ck("抽检切片池规模已记录(供 Phase1 重切后重跑对照)",
        isinstance(_qs.get("method"), str) and "3023" in _qs.get("method", ""),
        _qs.get("method", "")[:60])

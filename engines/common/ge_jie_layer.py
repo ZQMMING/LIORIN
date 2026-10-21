@@ -850,7 +850,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'zhi_wx': [], 'hua_wx': [],
                 'po_ge': [],
                 'rule': ('V7.34 无根日主失令(休囚死), 财格不成: 财(月令)=主病, 印(生我)=候神扶身. '
-                          'PZZQ L4882"若四柱无可扶抑"; DTS 体用章"日主无气须印扶"'),
+                          'PZZQ L4882"若四柱无可扶抑"; DTS-014-002 L94「提纲太旺取印比」/DTS-016-002 L102「衰则喜帮喜助」'),
             }
             return _attach_ge_evidence(facts)
         cai_gans = _god_gans('正财') + _god_gans('偏财')
@@ -1184,7 +1184,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
                     'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],
-                    'rule': 'PZZQ258: 七煞逢财无制->破格; 杀病照报',
+                    'rule': 'PZZQ-007-028(PZZQ258): 七煞逢财无制->破格; 杀病照报',
                 }
                 return _attach_ge_evidence(facts)
             # 成格: 身强+制
@@ -1212,7 +1212,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                         #   「忌财生煞」为行运之忌(L4152), 非原局破格.
                         'po_ge': ([{'type':'组合','match':'ANY','required':['正财','偏财']}]
                                   if (cai_gans and not has_zhi) else []),
-                        'rule': 'PZZQ255: 身强七煞逢制(食制/印化)->煞格成; 煞是格体不报杀重病; 破格: 财透而无制(PZZQ L1146/L1155)',
+                        'rule': 'PZZQ-007-028(PZZQ255): 身强七煞逢制(食制/印化)->煞格成; 煞是格体不报杀重病; 破格: 财透而无制(PZZQ L1146/L1155)',
                     }
                     return _attach_ge_evidence(facts)
             # 不成格: 哑巴标签
@@ -1225,7 +1225,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
                 'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财透无制(财单见即忌)
-                'rule': 'PZZQ255: 七煞格; 煞是格体; 喜神=食(制)/印(化); 财是破格忌不入喜; 破格: 财透无制',
+                'rule': 'PZZQ-007-028(PZZQ255): 七煞格; 煞是格体; 喜神=食(制)/印(化); 财是破格忌不入喜; 破格: 财透无制',
             }
             return _attach_ge_evidence(facts)
 
@@ -1477,11 +1477,11 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     _xi_cong = [_ke.get(_dm_wx0, '')]
                 elif sp['cong_type'] == '从财格':
                     _cong_wx = _ke.get(_dm_wx0, '')
-                    # PZZQ4943"原有食伤则能化比劫而生财": 食伤化劫生财为喜
+                    # PZZQ4943"原有食伤则能化比劫而生财": 食伤化劫生财为喜 (PZZQ-033-001)
                     _xi_cong = [_sh.get(_dm_wx0, '')]
                 elif sp['cong_type'] == '从儿格':
                     _cong_wx = _sh.get(_dm_wx0, '')
-                    # PZZQ4960"以见财为美": 财为喜
+                    # PZZQ4960"以见财为美": 财为喜 (PZZQ-034-001)
                     _xi_cong = [_ke.get(_dm_wx0, '')]
                 else:
                     _xi_cong = []
@@ -1491,7 +1491,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
                     'po_ge': [],
-                    'rule': '专旺/从格兜底(P0): 正格不成->从格; ti_wx=所从之神五行; 喜神=从财食伤/从杀从官从儿财(PZZQ4943/4960)',
+                    'rule': '专旺/从格兜底(P0): 正格不成->从格; 从财/从杀=PZZQ-033-001(弃命保财/从煞), 从儿=PZZQ-034-001(顺局从儿); ti_wx=所从之神; 喜神=从财食伤/从儿财(PZZQ4960)',
                 }
                 return _attach_ge_evidence(facts)
         except Exception:

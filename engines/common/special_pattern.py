@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import re
 import sys
 sys.path.insert(0, ".")
@@ -444,8 +444,8 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 # 官杀当令成势(不论食伤) -> 从杀用财
                 # [2026-10-07 PATCH-4e-2] L4939「若有伤食则煞受制而不从」: 伤食有根透干制煞 -> 不从
                 if ss_stem >= 1 and ss_ben >= 1:
-                    out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', '从杀无伤食制煞(PZZQ L4939)', 'SPECIAL_FAIL', None,
-                        '官杀当令成势但伤食有根透干制煞则不从(L4939); SPECIAL_FAIL 态待实现, 盘回正格路径',
+                    out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', '从杀无伤食制煞(PZZQ-033-001 L4939)', 'SPECIAL_FAIL', None,
+                        '官杀当令成势但伤食有根透干制煞则不从(PZZQ-033-001 L4939); SPECIAL_FAIL 态待实现, 盘回正格路径',
                         ['daymaster_root', 'wuxing_power']))
                     cong, side = None, None
                 else:
@@ -539,8 +539,8 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 _gs_he_ban = any(any(_s in _wh for _s in _GS_STEMS)
                                  for _wh in (facts.get('stem_combination_facts') or {}).get('wuhe', []))
                 if not _cai_sha_ke_off and not _gs_he_ban and (gs_ben >= 1 or gs_stem >= 1):
-                    out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', '从财无官煞(PZZQ L4937)', 'SPECIAL_FAIL', None,
-                        '从财格见官煞则格不成(L4937, 制去型除外); SPECIAL_FAIL 态待实现, 盘回正格路径',
+                    out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', '从财无官煞(PZZQ-033-001 L4937)', 'SPECIAL_FAIL', None,
+                        '从财格见官煞则格不成(PZZQ-033-001 L4937, 制去型除外); SPECIAL_FAIL 态待实现, 盘回正格路径',
                         ['daymaster_root', 'wuxing_power']))
                     cong = None; side = None; cstate = None
             cstate = 'CANDIDATE' if (virtual_support or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha) else 'CONFIRMED'
@@ -741,13 +741,13 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     #     ② 不成方局        -> 正格(依 A 级财官用神), 不再单列从旺桶.
     #   ★ 本次只撤【桶】(命名层), 专旺/正格判据一字未改; 专旺判据见上方 zhuanwang 分支(A 级有据).
     # 从杀格并列: 官杀透干+财生官杀+食伤不当令+日主无根或根极弱(允许与化气格共存, 经典多解)
-    # [2026-10-07 PATCH-4e-4] L4939「四柱皆煞而日主无根舍而从之, 若有伤食则煞受制而不从」:
+    # [2026-10-07 PATCH-4e-4] PZZQ-033-001 L4939「四柱皆煞而日主无根舍而从之, 若有伤食则煞受制而不从」:
     #   收紧 ss_stem<=2 -> ss_stem==0 and ss_ben==0(无伤食, 四柱皆煞)
     if '从杀格' not in _existing_cong:
         if (gs_stem_zw >= 1 and cai_ben_zw >= 1 and not ss_ling  # P0-b.7: 使用zw版本
                 and ss_stem == 0 and ss_ben == 0 and dm_ben_eff <= 1 and yin_ben_eff <= 1):
             out['patterns'].append(_pat('ZP-SPECIAL-CONG', '从杀格', 'CANDIDATE', gs_wx,
-                '官杀透干、财生官杀、食伤不当令不逆局、日主无根或根极弱=从杀格候选(CANDIDATE); 只记结构定性, 不判用神成败吉凶',
+                '官杀透干、财生官杀、食伤不当令不逆局、日主无根或根极弱=从杀格候选(CANDIDATE; PZZQ-033-001 弃命从煞 L4938-4940); 只记结构定性, 不判用神成败吉凶',
                 ['daymaster_root', 'wuxing_power']))
 
     # ---------- 两气成象(天干地支本气仅两行、各成势、相生成象; 顺食伤秀神, 不判吉凶) ----------
@@ -845,7 +845,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 mm_state = None
             if mm_state:
                 out['patterns'].append(_pat('ZP-SPECIAL-MUMIE', '母多灭子/印势漂没', mm_state, yin_wx,
-                    '印绶成势日主无本气根不受生(土重金埋/木多火塞/金多水浊/水多木漂); CONFIRMED=食伤财官三端真有力通道全断(湿土寒冻不制、孤泄被围克夺); 官杀当令化杀/官印相生任官/食伤当令吐秀/财破印/水冲奔从印/成局被冲均非灭; CANDIDATE=水方局孤泄被克漂没为病, 待病药作用层; 不据印多直接判身旺弱, 不判吉凶',
+                    '印绶成势日主无本气根不受生(土重金埋/木多火塞/金多水浊/水多木漂, DTS-033-015 L159「水多木漂」); CONFIRMED=食伤财官三端真有力通道全断(湿土寒冻不制、孤泄被围克夺); 官杀当令化杀/官印相生任官/食伤当令吐秀/财破印/水冲奔从印/成局被冲均非灭; CANDIDATE=水方局孤泄被克漂没为病, 待病药作用层; 不据印多直接判身旺弱, 不判吉凶',
                     ['wuxing_power', 'combination_facts']))
                 out['mu_mie'] = '母多灭子/印势漂没'
                 out['mu_mie_state'] = mm_state
