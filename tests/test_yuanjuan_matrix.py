@@ -596,6 +596,34 @@ _lq_roles = houchou_roles('金', '水')     # 金日+水病(食伤泄重)
 ck("候神药方 泄重之药须含印(扶身止泄, 与病药层'泄气太重=印比'同口径, V7.95)",
    '土' in _lq_roles and '印星扶身(止泄)' in _lq_roles.values(), _lq_roles)
 
+# ═══ T. 六亲接入主链 (SMTH L3565 / YHZP-102-001 / SFTK-007-002) ═══
+# SMTH L3565「男取克干为子, 女取干生为息...【女取用与男不同】, 我生者为子, 克我者为夫」
+# SFTK-007-002 六亲宫位: 年祖 月父母 日夫妻 时子女 / PATCH-012「禁六亲=吉凶」
+print("\n[T] 六亲接入主链 (SMTH L3565 / SFTK-007-002)")
+r_none = paipan("甲午 丙寅 戊辰 庚午")
+ck("六亲 未传性别不臆断(不输出映射)",
+   (r_none.get("liu_qin") or {}).get("status") == "UNKNOWN_GENDER",
+   (r_none.get("liu_qin") or {}).get("status"))
+r_m = paipan("甲午 丙寅 戊辰 庚午", gender="男")
+r_f = paipan("甲午 丙寅 戊辰 庚午", gender="女")
+_m_syms = set(i["symbol"] for i in (r_m.get("liu_qin") or {}).get("items") or [])
+_f_syms = set(i["symbol"] for i in (r_f.get("liu_qin") or {}).get("items") or [])
+ck("六亲 男命有妻星(财=我克)、无夫星(SMTH L3565)",
+   "妻星" in _m_syms and "夫星" not in _m_syms, sorted(_m_syms))
+ck("六亲 女命有夫星(官杀=克我)、无妻星(SMTH「女取用与男不同」)",
+   "夫星" in _f_syms and "妻星" not in _f_syms, sorted(_f_syms))
+ck("六亲 男女皆有母(印)/子女(食伤)/兄弟(比劫)/父(财)",
+   {"母", "子女", "兄弟", "父"} <= _m_syms and {"母", "子女", "兄弟", "父"} <= _f_syms,
+   (sorted(_m_syms), sorted(_f_syms)))
+# 宫位: 日=夫妻宫, 时=子女宫
+_m_items = {i["symbol"]: i for i in (r_m.get("liu_qin") or {}).get("items") or []}
+ck("六亲 宫位标注(SFTK-007-002: 年祖月父母日夫妻时子女)",
+   all("palaces" in v for v in _m_items.values()),
+   {k: v.get("palaces") for k, v in _m_items.items()})
+ck("六亲 只记结构不判吉凶(PATCH-012「禁六亲=吉凶」)",
+   "note" in (r_m.get("liu_qin") or {}) and "不判吉凶" in (r_m.get("liu_qin") or {}).get("note", ""),
+   (r_m.get("liu_qin") or {}).get("note"))
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))

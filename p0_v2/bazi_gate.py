@@ -66,6 +66,7 @@ from engines.common.qtbj_climate_candidates import build_climate_candidates
 from engines.common.yongyao_resolve import resolve_yongyao
 from engines.common.suiyun_validate import validate_suiyun
 from engines.common.fan_ju import resolve_fan_ju
+from engines.common.six_relative_producer import SIX_RELATIVE_MAP
 from engines.common.special_pattern import build_special_patterns
 from engines.common.ge_jie_layer import (build_ge_cheng, apply_he_po_ge,
                                               normalize_ti_wx,
@@ -95,6 +96,52 @@ _POS = ("year", "month", "day", "hour")
 
 
 # ==================== ① 八字排盘临时接口 ====================
+
+def _liu_qin_of(facts, pillars, gender):
+    """六亲结构事实(符号+十神+在局+宫位), 不判吉凶(SMTH L3565 / YHZP-102-001 / SFTK-007-002).
+    宫位: 年=祖辈/父母, 月=父母, 日=夫妻宫, 时=子女(SFTK-007-002).
+    符号: 男 财=妻/父, 食伤=子, 印=母, 官杀=事业, 比劫=兄弟; 女 官杀=夫, 食伤=子,
+    印=母, 财=父/资源, 比劫=兄弟(SMTH L3565「女取用与男不同」)."""
+    if not gender:
+        return {"status": "UNKNOWN_GENDER",
+                "note": "未传 gender, 六亲映射不可定(男/女取用不同, SMTH L3565), 不臆断"}
+    dm = facts.get("day_stem") or (pillars.get("day") or [""])[0]
+    mp = SIX_RELATIVE_MAP.get(gender) or {}
+    # 十神 -> 该十神在局之干/支
+    def _present(tg_keys):
+        out = []
+        for pos in ('year', 'month', 'day', 'hour'):
+            g = (pillars.get(pos) or ["", ""])[0]
+            if g and ten_god(dm, g) in tg_keys:
+                out.append({'pos': pos, 'gan': g, 'ten_god': ten_god(dm, g),
+                            'is_day': pos == 'day'})
+        return out
+    _PALACE = {'year': '祖辈/父母宫', 'month': '父母宫',
+               'day': '夫妻宫(日支)', 'hour': '子女宫'}
+    _GROUPS = [
+        ('妻星', '财', ('正财', '偏财')), ('夫星', '官杀', ('正官', '七杀')),
+        ('父', '财', ('正财', '偏财')), ('母', '印', ('正印', '偏印')),
+        ('子女', '食伤', ('食神', '伤官')), ('兄弟', '比劫', ('比肩', '劫财')),
+    ]
+    items = []
+    for sym, tgname, tgs in _GROUPS:
+        syms = mp.get(tgname) or []
+        if sym not in syms:
+            continue
+        pres = _present(tgs)
+        items.append({
+            'symbol': sym, 'ten_god_group': tgname,
+            'present': bool(pres),
+            'positions': pres,
+            'palaces': sorted(set(_PALACE.get(x['pos'], '') for x in pres)),
+        })
+    return {
+        'state': 'six_relative_state', 'namespace': 'SIX_RELATIVE',
+        'gender': gender, 'items': items,
+        'evidence_refs': ['SMTH L3565', 'YHZP-102-001', 'SFTK-007-002'],
+        'note': '六亲=星+宫+关系, 只记结构不判吉凶(PATCH-012「禁六亲=吉凶」)',
+    }
+
 
 def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] = None,
             gender: str = None) -> Dict[str, Any]:
@@ -713,6 +760,10 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
                      #   ★ 只加 patterns: judgment_status / mu_mie_state 生产消费者 0,
                      #     加了徒增顶层键数与回归面（裁九十八甲）。
                      "patterns")},
+        # ★ V7.96 六亲结构事实(只记符号与宫位, 不判吉凶; SMTH L3565 男女取用不同 /
+        #   YHZP-102-001 印母财父 / SFTK-007-002 宫位: 年祖月父母日夫妻时子女;
+        #   docs/PATCH-012「禁六亲=吉凶」). 未传 gender 则不输出(性别未知不臆断).
+        "liu_qin": _liu_qin_of(f, p, gender),
         "bing_list": by.get("bing_list", []),
         # 药消病(甲路)投影: yao_removed_yuanju 只在 bingyao dict 内, 顶层无键 -> 有输出不投影
         "bingyao_summary": {k: by.get(k) for k in
