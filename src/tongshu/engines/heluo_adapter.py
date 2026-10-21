@@ -74,6 +74,7 @@ class HeluoAdapter:
         location: str = "北京",
         timezone: Optional[str] = None,
         apparent_solar: bool = True,
+        huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
         # 与正式链路统一：经 TimeResolver 按出生地真太阳时排盘，
         # 不再用民用时直排（避免西部晚子时边界时柱错一个时辰）。
@@ -98,6 +99,7 @@ class HeluoAdapter:
             target_year=target_year,
             target_month=target_month,
             target_day=target_day,
+            huangli_provider=huangli_provider,
         )
 
     # ------------------------------------------------------------------
@@ -110,6 +112,7 @@ class HeluoAdapter:
         target_year: Optional[int] = None,
         target_month: Optional[int] = None,
         target_day: Optional[int] = None,
+        huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
         g = gender or ctx.subject_gender or "male"
         chart = self._bazi_adapter.compute(ctx, gender=g)
@@ -120,6 +123,7 @@ class HeluoAdapter:
             target_month=target_month,
             target_day=target_day,
             true_solar_datetime=tsd.isoformat() if tsd is not None else None,
+            huangli_provider=huangli_provider,
         )
 
     # ------------------------------------------------------------------
@@ -132,6 +136,7 @@ class HeluoAdapter:
         target_month: Optional[int] = None,
         target_day: Optional[int] = None,
         true_solar_datetime: Optional[str] = None,
+        huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
         bazi = [
             (
@@ -187,6 +192,7 @@ class HeluoAdapter:
                     target_year=target_year,
                     target_month=target_month,
                     target_day=target_day,
+                    huangli_provider=huangli_provider,
                 ),
             )
         except Exception as _e:  # 解卦层失败不阻塞主链，但留痕（不再静默 pass）
