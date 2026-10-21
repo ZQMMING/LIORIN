@@ -2,8 +2,8 @@
 ==========================================================================
 
 [1] 黄金套件
-  test_yuanjuan_matrix               PASS  矩阵结果: PASS=201 FAIL=0
-  test_criteria_anchors              PASS  结果: PASS=119 FAIL=0
+  test_yuanjuan_matrix               PASS  矩阵结果: PASS=208 FAIL=0
+  test_criteria_anchors              PASS  结果: PASS=120 FAIL=0
   test_special_pattern_golden        PASS  TOTAL 67 FAILS 0
   test_bingyao_layer_golden          PASS  
   test_yongshen_geju_golden          PASS  FAILS = 0
@@ -25,8 +25,8 @@
   报告: D:\shuntian-ziping-p0\p0_v2\output\REGRESSION_LATEST.txt
 
 [4] 判据锚点(公理三)
-  引擎原典引用点: 112 组 / 345 次
-  结果: PASS=119 FAIL=0
+  引擎原典引用点: 113 组 / 347 次
+  结果: PASS=120 FAIL=0
 
 [5] 分布快照
   病机: {'YIN_DUO_MAI_ZI': 172, 'CAI_DUO_SHEN_RUO': 140, 'BIJIE_CHENG_DANG': 64, 'BIJIE_DUO_CAI': 32, 'XIE_QI_TAI_ZHONG': 30, 'SHA_ZHONG_SHEN_QING': 13, 'ZHI_SHA_TAI_GUO': 5, 'XIAO_DUO_SHI': 2}

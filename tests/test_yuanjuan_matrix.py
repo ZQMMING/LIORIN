@@ -1029,6 +1029,25 @@ for _bz in ("癸亥 壬戌 乙未 壬午", "甲戌 辛未 庚子 丁亥", "丁�
         _detail.append("%s 主链=%s 多轨note=%s" % (_bz, _gc.get('ge'), _note[:50]))
 ck("多轨ZPZQ 与主链 ge_cheng 口径一致(运行时)", _consistent, _detail[:3])
 
+# ═══ EE. 多轨层接入主链 (V7.116/V7.117) ═══
+print("\n[EE] 多轨层接入主链")
+_bg_src = open(os.path.join(ROOT, "p0_v2", "bazi_gate.py"), encoding='utf-8').read()
+ck("主链输出含 yongshen_multi_track(用神四轨)", '"yongshen_multi_track"' in _bg_src, "")
+ck("主链输出含 wangshuai_multi_track(旺衰三轨)", '"wangshuai_multi_track"' in _bg_src, "")
+ck("主链输出含 liu_qin(六亲结构事实)", '"liu_qin"' in _bg_src, "")
+ck("主链输出含 yun_natal_relations(岁运关系/透清)", '"yun_natal_relations"' in _bg_src, "")
+_r_mt = paipan("癸亥 壬戌 乙未 壬午")
+ck("主链实跑: 四轨层有 tracks 且冲突保留不裁决",
+   bool((_r_mt.get("yongshen_multi_track") or {}).get("tracks"))
+   and ((_r_mt.get("yongshen_multi_track") or {}).get("conflict") or {}).get("resolution") == "保留多解，不裁决",
+   (_r_mt.get("yongshen_multi_track") or {}).get("conflict"))
+ck("主链实跑: 旺衰三轨有 tracks",
+   len(((_r_mt.get("wangshuai_multi_track") or {}).get("tracks") or {})) >= 3,
+   list(((_r_mt.get("wangshuai_multi_track") or {}).get("tracks") or {}).keys()))
+ck("主链实跑: 六亲未传性别时不臆断",
+   (_r_mt.get("liu_qin") or {}).get("status") == "UNKNOWN_GENDER",
+   (_r_mt.get("liu_qin") or {}).get("status"))
+
 print()
 print("=" * 74)
 print("矩阵结果: PASS=%d FAIL=%d" % (len(OKS), len(FAILS)))
