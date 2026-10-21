@@ -78,7 +78,8 @@ src/tongshu/engines/heluo/
   ├─ yuan_qi.py               元气（先/后天）
   ├─ canping.py               参评
   ├─ hexagram.py              卦象基础
-  ├─ hexagram_symbol.py       卦象符号
+  ├─ hexagram_symbol.py       卦象符号（孤立死代码，见 §11）
+  ├─ heluo_lunar_bridge.py    H9b 河洛×黄历桥接（注入优先 / lunar_python 兜底）
   ├─ jiehhou.py               H11 节候卦
   ├─ hua_gong.py              化工（原典 L558-L567 节气窗口）
   ├─ guidance.py              指导层
@@ -115,16 +116,17 @@ data/research/heluo/
 
 ## 7. 守卫（tests/heluo/）
 
-- **1005 + 3 subtests passed**（heluo 子目录）
-- **10 条 fast-path 守卫**（`tests/test_heluo_fastpath.py`）：
-  - 99 流年骨架完整 + 10 元数据字段
-  - 仅目标流年 + 上一年 2 段嵌 12 月 × 6 日
-  - 其余 97 段钉死无 months / yi_signal / yi_interpretation / days / hours
-  - 顶层 monthly_hexagrams 12 项 + daily_hexagram 6 段
-  - target_month 未传 → daily_hexagram 保持空 {}
-  - timeline 体积 < 100k chars
-  - target_year=None → 全量路径体积 ∈ [1.5M, 3M]（锁基线）
-- **变异演练**（`tools/heluo/quzheng_20261008/`）：防回归
+- **354 passed**（`python -m pytest tests/` 全量，含 16 个河洛测试文件）
+- 覆盖：H2 冻结态 / H6 化工 / H7 元气 / H9b 黄历桥接 / H10 惰性化 /
+  H11 节候 / H12 诊断 / H16 独立验证 / 参评 / 卦爻辞 / 边界 / 负例 / 扩展
+- **审计脚本**（`audit/`，一次性裁决复核，非 pytest）：
+  - `audit_anchors.py` — 案例锚点批量验证（1980 / 1724 已确证锚点）
+  - `audit_post_fix.py` — 化工五行判定矩阵 + 流月节锚对齐
+  - `audit_probe_ag.py` — 大运连续性 + 同人九三流年序列
+  - `audit_recheck_bc.py` — H17-B/C 裁决复核（萃/旅卦象构造 + 元堂落点）
+  - `audit_recheck_d.py` — H17-D 裁决复核（反卦五行关系 + 锚点）
+  - `audit_recheck_e.py` — BUG1 验证（流月编号语义错位）
+  - 全部以 `os.path.abspath(__file__)` 相对定位仓库根，**不硬编码绝对路径**
 
 ## 8. 端到端跑通
 
@@ -183,3 +185,39 @@ python tools/heluo/quzheng_20261008/dump_natural.py      # 引擎自然输出（
 
 主分支：main（HEAD = 78fc5694）
 本分支：`feature/heluo-engine-package-20261011`（仅河洛域）
+
+## 11. 与其它副本的差异（2026-10-21 整理时核实）
+
+河洛引擎历史上存在三份副本，现已收敛为**本包为唯一活副本**：
+
+| 副本 | 位置 | 状态 |
+|---|---|---|
+| **本包（权威）** | `feature/heluo-engine-package-20261011` | ✅ 25 模块 + 38 原典 + 16 测试，**354 全绿** |
+| wisdom main | `ZQMMING/wisdom` `main`（`e6a6a41e`，09-30） | 旧架构快照，29 模块（多 5 个旧模块），**9-30 后未再更新河洛** |
+| D:\shuntian 主工作区 | `feature/luming-engine`（`10a59d82`） | 河洛整目录已移走（"移除重复冗余"），**非河洛域不再持有河洛** |
+
+### 11.1 旧模块的去向（不是缺件，是架构演进）
+
+`8b863c62`（未接盘点收口）删掉 5 个模块，均为**无人 import 的死模块**：
+
+| 旧模块 | 去向 |
+|---|---|
+| `temporal.py` | 能力迁入 `timeline_yun.py`（`class Timeline`）；`canonical.py` 改 `from .timeline_yun import Timeline` |
+| `interpretation.py` | 内联进 `guajie.py` |
+| `dayu.py` / `hexagram_state.py` / `time_sequence.py` | 旁支死模块，无人 import |
+
+> wisdom main 上 `temporal.py` 仍是**活代码**（`canonical.py` 直接 import），故 wisdom 旧快照会与本包行为有别——**以本包为准**。
+
+### 11.2 死代码留档
+
+`hexagram_symbol.py` 引用了不存在的 `models` 模块，全仓无人 import，**导入即崩但不影响运行**。按原审计报告判定为历史遗留死代码，暂留档不删。
+
+### 11.3 本次整理动作（2026-10-21）
+
+- 补回 6 个河洛审计脚本（`audit/`）——它们在 `10a59d82` 移除主工作区副本时被一并删掉，
+  且未进本包。取回自 `10a59d82^`，并把其中的 `sys.path.insert(0, r"D:\shuntian")`
+  硬编码改为 `os.path.abspath(__file__)` 相对定位，6 个脚本实跑 exit=0 断言全过。
+- 修正 `tests/heluo/test_heluo_kuozhan.py::test_canping_dir_default` 的路径断言
+  （旧版硬编码 `D:\shuntian\data\heluo\canping`，换机/worktree 必挂）。
+- 更新本文件模块清单（补 `heluo_lunar_bridge.py`）与守卫数字。
+
