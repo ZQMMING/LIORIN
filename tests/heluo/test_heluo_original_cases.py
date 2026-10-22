@@ -465,6 +465,171 @@ class TestCase7CeShuRefusalKept(unittest.TestCase):
         self.assertIn("192", r.caveat, "拒算说明应点出差额 192（疑串例）")
 
 
+class TestCase9LiuYueL124(unittest.TestCase):
+    """算例 9（起例卷之上 L124 + L126）：起月卦例。
+
+    原典：
+        L124「凡起月卦，就年卦中前一位起，**单月变爻，双月变应爻**。
+              假如**观卦上九爻**流年，**进一位从初爻变起**。」
+        L126「又假如小象是**泰卦九二**，卦**应爻居五**，双月取应爻。」
+
+    「进一位」= 爻位 +1（六爻循环，故上九的下一位是初爻）。
+
+    「双月变应爻」的应爻基准已由《河洛理数》卷五「月卦」四组显式对拍裁定
+    （见 TestCase12HeLuoLiShuYueGua）：取**当月阳月居位变爻**的隔三位应爻，
+    而非元堂之应爻（若按元堂取，六个月双月将同变一爻，与该卷实证冲突）。
+    """
+
+    def test_guan_month_chain(self):
+        """观卦上九爻为元堂：月1 变初爻、月2 变应爻、月3 变次爻。"""
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import compute_liuyue
+        guan = build_six_lines("巽", "艮")          # 观卦
+        res = compute_liuyue(guan, 5)               # 上九 = 爻位 5
+        got = {m["month"]: m for m in res.months}
+        # 进一位：上九(5) → 初爻(0)
+        self.assertEqual(got[1]["yue_yao_index"], 0, "月1 应从初爻起")
+        self.assertEqual(got[1]["name"], "风火家人",
+                         "观卦单月变初爻 → 风火家人")
+        # 双月变应爻：应爻 = 0 + 3
+        self.assertEqual(got[2]["yue_yao_index"], 3, "月2 应变应爻（爻位3）")
+        self.assertEqual(got[2]["name"], "天火同人",
+                         "观卦双月变应爻 → 天火同人")
+        # 次月再进一位
+        self.assertEqual(got[3]["yue_yao_index"], 1, "月3 应进一位到爻位1")
+        self.assertEqual(got[3]["name"], "风天小畜", "月3 卦名")
+
+    def test_tai_ying_yao_at_five(self):
+        """L126「又假如小象是泰卦九二，卦应爻居五，双月取应爻」。
+
+        泰卦元堂在九二（爻位 1）：
+          - 阳月居位 = 元堂 + 1、+2 … +6 = 三、四、五、上、初、二
+          - 双月取「当月阳月居位变爻」的应爻（隔三位）= 上、初、二、三、四、五
+        故走到居位九二的那一轮（十一月居位九二）之后，十二月双月取应爻
+        1+3 = 4（五爻），与原典「卦应爻居五，双月取应爻」逐字吻合。
+        """
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import compute_liuyue
+        tai = build_six_lines("坤", "乾")           # 泰卦
+        res = compute_liuyue(tai, 1)                # 九二 = 爻位 1
+        got = {m["month"]: m for m in res.months}
+        yang = [got[m]["yue_yao_index"] for m in (1, 3, 5, 7, 9, 11)]
+        self.assertEqual(yang, [2, 3, 4, 5, 0, 1],
+                         "阳月居位 = 元堂九二 + 1…+6（三、四、五、上、初、二）")
+        yin = [got[m]["yue_yao_index"] for m in (2, 4, 6, 8, 10, 12)]
+        self.assertEqual(yin, [5, 0, 1, 2, 3, 4],
+                         "双月取当月居位变爻的应爻（隔三位）")
+        self.assertEqual(got[11]["yue_yao_index"], 1,
+                         "十一月居位应落在九二")
+        self.assertEqual(got[12]["yue_yao_index"], 4,
+                         "十二月双月取九二的应爻，居五（爻位4）")
+
+
+class TestCase12HeLuoLiShuYueGua(unittest.TestCase):
+    """算例 12（《河洛理数》卷五「月卦」K3-447/448）：起月卦的显式逐月对拍。
+
+    《河洛理数》月卦卷给出四组「阳月居位 → 双月所取应爻」的实例
+    （K3-448 修正版 L469-L471；K3-447 修正版 L1132-L1146）：
+
+        「如前五月是**小畜三爻**，六月则取**小畜应爻上九**」
+        「如前七月是**乾九四**，八月则取**乾卦应爻初九**」
+        「九月……**大有六五**……取**大有应爻**……**离卦六二**」
+        「如前十一月是**大壮上爻**，则十二月取**大壮应爻**……**归妹六三**」
+
+    四组一律是「双月 = 当月阳月居位变爻的隔三位应爻」，且该链阳月居位序为
+    上爻 → 初、二、三、四、五、上（即元堂 + 1…+6），与引擎口径逐字吻合。
+    """
+
+    def test_yin_yang_month_ying_yao_pairs(self):
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import compute_liuyue
+        kun = build_six_lines("坤", "坤")           # 坤为地（纯阴，年卦本身不入判）
+        res = compute_liuyue(kun, 5)               # 元堂在上爻
+        got = {m["month"]: m for m in res.months}
+        yang = [got[m]["yue_yao_index"] for m in (1, 3, 5, 7, 9, 11)]
+        self.assertEqual(yang, [0, 1, 2, 3, 4, 5],
+                         "阳月居位 = 元堂上爻 + 1…+6（初、二、三、四、五、上）")
+        # 四组显式对拍：阳月居位 → 紧随其后的双月所取应爻
+        for yang_m, yin_m, yao, ying in (
+            (5, 6, 2, 5),    # 小畜三爻 → 六月取小畜应爻上九
+            (7, 8, 3, 0),    # 乾九四 → 八月取乾卦应爻初九
+            (9, 10, 4, 1),   # 大有六五 → 十月取大有应爻（离卦六二）
+            (11, 12, 5, 2),  # 大壮上爻 → 十二月取大壮应爻（归妹六三）
+        ):
+            self.assertEqual(got[yang_m]["yue_yao_index"], yao,
+                             f"第{yang_m}月（阳月）居位")
+            self.assertEqual(got[yin_m]["yue_yao_index"], ying,
+                             f"第{yin_m}月（双月）应取居位爻的隔三位应爻")
+
+
+class TestCase10LiuRiL129(unittest.TestCase):
+    """算例 10（起例卷之上 L129）：起日卦例（hou5 原典链）。
+
+    原典：「假如正月得**乾卦初爻**，初一日当在**三爻**，变为**履六三**，
+    初二日变履九四为**中孚六四**，初三日变中孚九五为**损六五**，
+    初四日变损上九为**临上六**，初五日变临初九为**师初六**，挨次而变，不容紊也。」
+    """
+
+    def test_five_day_chain_verbatim(self):
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import (
+            _lines_to_hexagram, liuri_day_lines, liuri_day_positions,
+        )
+        qian = build_six_lines("乾", "乾")
+        # 逐日爻位：初一起自下一爻，阳日寻阳位（初/三/五）、阴日寻阴位（二/四/上）
+        self.assertEqual(liuri_day_positions(0)[:5], [2, 3, 4, 5, 0],
+                         "逐日爻位应与原典逐字对应（三/四/五/上/初）")
+        chain = liuri_day_lines(qian, 0)
+        want = ["天泽履", "风泽中孚", "山泽损", "地泽临", "地水师"]
+        for i, w in enumerate(want):
+            with self.subTest(day=i + 1):
+                pos, lines = chain[i]
+                self.assertEqual(_lines_to_hexagram(lines)[2], w,
+                                 f"第{i + 1}日卦名与原典不符")
+
+
+class TestCase11PureHexagramYuantang(unittest.TestCase):
+    """算例 11（起例卷之上 L98 / L99）：纯卦（乾/坤）的元堂行向。
+
+    原典：
+        L98「假令**男得乾卦纯阳**，不问阴阳，但十二时**皆自下而上行**，**子午皆在初爻**。
+              如**女得乾卦**，生冬至以后，至夏至以前，**自上九为始，往下行**至初爻。
+              若生夏至以后，至冬至以前，当**自初九为始，往上行**至上九。」
+        L99「假令**女得坤卦纯阴**，不问阴阳，但十二时**皆自下而上**……
+              如**男得坤卦**，生冬至以后，夏至以前，**自上六行至初六**，
+              夏至以后，冬至以前，当**自下而上行**。」
+    """
+
+    def _yuan_tang(self, gua, gender, hour, phase):
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.yuan_tang import find_yuantang
+        lines = build_six_lines("乾", "乾") if gua == "乾" else build_six_lines("坤", "坤")
+        r = find_yuantang(six_lines=lines, birth_hour=hour, gender=gender,
+                          xiantian_name=gua, solar_phase=phase)
+        return r.yuantang
+
+    def test_male_qian_always_from_below(self):
+        """男得乾：十二时皆自下而上行，子午皆在初爻。"""
+        self.assertEqual(self._yuan_tang("乾", "male", "午", "winter"), "初九")
+        self.assertEqual(self._yuan_tang("乾", "male", "午", "summer"), "初九")
+        self.assertEqual(self._yuan_tang("乾", "male", "子", "winter"), "初九")
+
+    def test_female_qian_direction_by_season(self):
+        """女得乾：冬至后→夏至前自上九而下行；夏至后→冬至前自初九而上行。"""
+        self.assertEqual(self._yuan_tang("乾", "female", "午", "winter"), "上九")
+        self.assertEqual(self._yuan_tang("乾", "female", "午", "summer"), "初九")
+
+    def test_male_kun_direction_by_season(self):
+        """男得坤：冬至后→夏至前自上六而下行；夏至后→冬至前自下而上行。"""
+        self.assertEqual(self._yuan_tang("坤", "male", "午", "winter"), "上六")
+        self.assertEqual(self._yuan_tang("坤", "male", "午", "summer"), "初六")
+
+    def test_female_kun_always_from_below(self):
+        """女得坤：不问阴阳，十二时皆自下而上。"""
+        self.assertEqual(self._yuan_tang("坤", "female", "午", "winter"), "初六")
+        self.assertEqual(self._yuan_tang("坤", "female", "午", "summer"), "初六")
+
+
 class TestNewCaseQuotesInRepo(unittest.TestCase):
     """新增算例（起例卷之上 L62/L95/L136、起例卷之下 L115/L117）的原文在库。"""
 
