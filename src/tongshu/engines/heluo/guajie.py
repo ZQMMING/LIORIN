@@ -1676,6 +1676,16 @@ def build_guajie_from_result(
                 f"  流时：已剥离，不产出（传入 target_hour={target_hour} 被忽略；"
                 f"原典起时卦例层待引擎能力就绪后恢复）")
 
+        # 出生年占位留痕（2026-10-22）：调用方既未传 birth_year、也未传
+        # birth_date 时，引擎用 1984（甲子年）作占位推流年 —— 与真实出生年
+        # 不同余 60 时，**流年干支整体错位一年**，流年/流月/流日判词随之全错。
+        # 缺失输入被当成真实输入，比答错更坏，故在此明确留痕。
+        if getattr(result, "birth_year_source", "") == "placeholder":
+            gj.evidence.append(
+                "  出生年：占位推流年（未传 birth_year 且无 birth_date，"
+                "引擎以 1984 甲子年占位）——流年干支与真实出生年可能错位，"
+                "流年/流月/流日判词请谨慎采信；请补传 birth_year 或 birth_date")
+
         # ── 生时化工（四正节卦，起例卷之下·节候卦爻） ────────────────
         try:
             bd = getattr(result.input, "birth_date", "") or ""

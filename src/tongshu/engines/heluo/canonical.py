@@ -25,12 +25,31 @@ from .postnatal import compute_postnatal, PostnatalHexagram
 from .temporal import Timeline  # compute_timeline 是占位桩、零调用点，不 import
 #  （谁误用它就拿到「daily_hexagram 装先天卦、date 塞 str(birth_year)」的旧 bug）
 from .timeline_yun import (
+    BRANCHES,
     compute_dayun_liyao,
     compute_liunian,
     compute_liuri_stub,
     compute_liuyue,
     compute_daily_base_hex,
+    _year_gan,
 )
+
+
+def _birth_year_from_ganzhi(gan: str, zhi: str) -> int:
+    """年柱干支 → 出生公历年份（**60 甲子近似**，取解集中最小者）。
+
+    为什么任取一个解即可：流年推演只用到年**干支**与阴阳，而干支 60 年一循环 ——
+    ``compute_liunian`` 里 ``year = birth_year + age - 1``，两个相差 60 倍数的
+    出生年给出**完全相同**的干支序列。故取解集里任一年皆得同一串流年干支。
+
+    ⚠ 这正是原实现「未提供时占位 1984（甲子年）」错在哪：1984 与真实出生年
+    **不同余 60**（除非出生年恰是 1984/1924/2044…），于是流年干支整体错位一年，
+    流年卦、流月卦、流日卦**整条链**的判词都错，且无任何报错或留痕。
+    """
+    for y in range(1900, 1960):          # 一个甲子周期内必有解
+        if _year_gan(y) == gan and BRANCHES[(y - 4) % 12] == zhi:
+            return y
+    return 1984                          # 理论上不可达（干支必在 60 甲子内）
 
 
 # 农历月 → 月令"节"（sxtwl 节气索引，奇数=节）
@@ -276,6 +295,12 @@ class HeluoResult:
     era: str = "zhong"
     seasonal_hexagram: dict | None = None          # H11: 节候卦（出生日）
     guajie: dict | None = None                     # H8: 解卦层（原典判词，可选挂载）
+    #: 实际采用的出生公历年（流年推演的起点）。
+    birth_year: int | None = None
+    #: 出生年的来源：``"explicit"``（调用方传入）/ ``"from_birth_date"``（据
+    #: birth_date 的公历年派生）/ ``"placeholder"``（两者皆无，**占位**）。
+    #: ⚠ 占位时流年干支可能与真实出生年错位，guajie 会据此在 evidence 里留痕。
+    birth_year_source: str = ""
 
 
 class HeluoCanonical:
@@ -343,7 +368,12 @@ class HeluoCanonical:
         每一步保存中间结果，供 CalculationSnapshot 使用。
 
         birth_year: 出生公历年份（可选）。用于流年卦推演（流年干支阴阳判定）。
-                    未提供时从 bazi 年柱干支反推（60 甲子近似）。
+                    未提供时**优先取 birth_date 的公历年**；再无则从 bazi 年柱干支
+                    反推（60 甲子近似 —— 干支 60 年一循环，故取解集任一年皆得
+                    同一串流年干支）。
+                    ⚠ 2026-10-22 修正：原实现未提供时硬编码 **1984（甲子年）**，
+                    与真实出生年不同余 60 → 流年干支整体错位一年，
+                    流年/流月/流日整条链判词都错，且无任何报错或留痕。
         birth_date: 出生公历日期 ISO 格式（YYYY-MM-DD）。可选，用于 HeluoInput 落真实日期
                     （DISPUTE-HL-03），未提供时由 birth_year 派生，不再使用误导占位。
         true_solar_datetime: 真太阳时 ISO 格式。可选，默认取 birth_date。
@@ -357,6 +387,29 @@ class HeluoCanonical:
         """
         # Step 1: 计算天数地数
         numbers = compute_tian_di_shu(bazi, gender)
+
+        # 2026-10-22 修正：出生公历年份的解析与留痕。
+        #   原实现不解析，`birth_year=None` 一路传到 _build_timeline，
+        #   在那里被硬编码成 **1984（甲子年）** 作占位 —— 而 1984 与真实出生年
+        #   **不同余 60**（除非出生年恰是 1984/1924/2044…），于是
+        #   `compute_liunian` 的 `year = birth_year + age - 1` 算出的流年干支
+        #   **整体错位一年**，流年卦 → 流月卦 → 流日卦**整条链**的判词都错，
+        #   且**无任何报错或留痕**（同一出生数据，因 birth_year 传不传而判词不同）。
+        #
+        #   修法：优先取 **birth_date 的公历年**（精确、无 60 年歧义）；
+        #   两者皆无时**保留 1984 占位**（维持既有流年区间，不动既有行为），
+        #   但明确标记 birth_year_source="placeholder"，由 guajie 在 evidence
+        #   里留痕 —— 缺失输入被当成真实输入，比答错更坏。
+        _birth_year_source = ""
+        if birth_year is None:
+            if birth_date and len(birth_date) >= 4 and birth_date[:4].isdigit():
+                birth_year = int(birth_date[:4])
+                _birth_year_source = "from_birth_date"
+            else:
+                birth_year = 1984          # 占位（甲子年）—— 由 evidence 留痕
+                _birth_year_source = "placeholder"
+        else:
+            _birth_year_source = "explicit"
 
         # Step 2: 确定先天卦
         year_gan = bazi[0][0]
@@ -470,6 +523,8 @@ class HeluoCanonical:
         return HeluoResult(
             input=input_obj,
             numbers=numbers,
+            birth_year=birth_year,
+            birth_year_source=_birth_year_source,
             prenatal=prenatal,
             yuantang=yuantang,
             postnatal=postnatal,
@@ -508,7 +563,13 @@ class HeluoCanonical:
         target_year=None → 退回全量（旧契约冻结保留，守卫 test_fastpath 钉死）。
         """
         if birth_year is None:
-            birth_year = 1984  # 未提供时占位（甲子年），后续需由调用方传入真实年份
+            # calculate() 已在入口解析好（birth_date 优先，否则从 bazi 年柱干支反推）。
+            # 直接调用本方法而不给 birth_year 时**显式报错** ——
+            # 原实现在这里硬编码 1984（甲子年）作占位，与真实出生年不同余 60，
+            # 会让流年干支整体错位一年且无任何痕迹。宁可报错，不可静默给错答案。
+            raise ValueError(
+                "birth_year 不能为空：请传 birth_year，或传 birth_date"
+                "（canonical.calculate 会据其公历年派生）")
 
         # 先天/后天六爻
         prenatal_lines = build_six_lines(prenatal.upper_gua, prenatal.lower_gua)
