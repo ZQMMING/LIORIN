@@ -591,3 +591,13 @@ class TestLiuNianDimensions20261023:
                 break
         assert found is not None
         assert not any(v["rule_id"] == "LM-S07" for v in found["verdicts"])
+
+    def test_151_tian_huo_fire_disaster(self, be):
+        # 天火煞: 1986-6-11 午时 = 丙寅 甲午 丙戌 甲午 (寅午戌全、火透、无水)
+        # 1990 庚午太岁至火生旺 → S09 触发 tone=凶
+        r = _qy(be, 1986, 6, 11, 12, 1990)
+        v = next((v for v in r["verdicts"] if v["rule_id"] == "LM-S09"), None)
+        assert v is not None and v["tone"] == "凶"
+        # 反例: 1986-6-17 壬辰日, 天干见壬水 (有水则非) → 不触发
+        r2 = _qy(be, 1986, 6, 17, 12, 1990)
+        assert not any(v["rule_id"] == "LM-S09" for v in r2["verdicts"])

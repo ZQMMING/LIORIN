@@ -3327,6 +3327,18 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     tai_sui_po = bool(tb == EARTHLY_BRANCHES[(_yb_i + 6) % 12])   # 大耗即岁破(太岁冲年支)
     zi_yi_heavy = bool(tai_zi_yi and (tai_kong_wang or tai_guan_fu or tai_sui_po))
 
+    # 天火煞 (三命通会卷三: "此煞取寅午戌全而天干有丙丁, 五位中全不见水者是,
+    #   有水则非; 若年运至火气生旺处, 当防火灾") — 原局火局条件严格, 太岁火生旺引动
+    _th_fb = set(chart.four_branches())
+    _th_fg = [chart.year_pillar.heavenly_stem, chart.month_pillar.heavenly_stem,
+              chart.day_pillar.heavenly_stem, chart.hour_pillar.heavenly_stem]
+    tian_huo_native = bool(
+        {"YIN", "WU", "XU"} <= _th_fb
+        and ("BING" in _th_fg or "DING" in _th_fg)
+        and not ({"REN", "GUI"} & set(_th_fg))      # 天干不见水
+        and not ({"ZI", "HAI"} & _th_fb))           # 地支不见水 (有水则非)
+    tai_tian_huo = bool(tian_huo_native and tb in {"YIN", "SI", "WU", "WEI", "XU"})
+
     # 交运年 (五行精纪 L4267-4268 珞琭子: "阴男阳女时观出入之年, 有吉凶之变";
     #         L4269 三命指掌: "凡阳男阳女, 至交运时, 主有灾滞")
     # 边界语义: start_age = 交入第1步( luck_pillars[0] )的实龄;
@@ -3499,6 +3511,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_jin_yu": tai_jin_yu, "jin_yu_branch": _jin_yu_b,
         "tai_zai_sha": tai_zai_sha, "zai_sha_branch": _zai_sha_b,
         "tai_zi_yi": tai_zi_yi, "zi_yi_branch": _zi_yi_b, "zi_yi_heavy": zi_yi_heavy,
+        "tai_tian_huo": tai_tian_huo, "tian_huo_native": tian_huo_native,
         "tai_sang_diao": tai_sang_diao, "sang_diao_which": sang_diao_which,
         "tai_gou_jiao": tai_gou_jiao, "gou_jiao_which": gou_jiao_which,
         "gou_jiao_note": gou_jiao_note,

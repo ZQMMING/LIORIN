@@ -221,6 +221,7 @@ RULE_SEMANTICS: dict[str, dict] = {
     "LM-V70": {"quote": "阳男阴女，大小运行年之元辰，亦为厄会（L4270）；太岁压元辰年，主移徙，或妻妾亲人失义（L4411）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
     "LM-S07": {"quote": "自缢煞，此煞取五行反系处，如戌人巳、巳人戌……大忌相克，天元是墓，更有天中、官符、大耗者，定凶（三命通会卷三·总论诸神煞）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
     "LM-S08": {"quote": "自缢煞取五行反系处，更有天中、官符、大耗者定凶（三命通会卷三）→ 无凶神会集则不重（推导）", "strength": "推导", "quote_status": "complete", "topic": ["岁运"]},
+    "LM-S09": {"quote": "天火煞，此煞取寅午戌全而天干有丙丁，五位中全不见水者是，有水则非；若年运至火气生旺处，当防火灾（三命通会卷三·总论诸神煞）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
 }
 
 _STRENGTHS = {"逐字", "推导", "待补", "合成", "润色"}
