@@ -956,50 +956,84 @@ class LiuShiResult:
     hours: list[dict] = field(default_factory=list)
 
 
-def compute_liushi(day_lines: list[int], day_yao_index: int) -> LiuShiResult:
-    """
-    流时卦（《河洛真数·起例卷之上·起时卦例》万历二十年李学诗刻本）。
+#: 流时卦的两法（《河洛真数》起时卦例末句「**二法皆通，前法为优**」）。
+LIUSHI_METHOD_QIAN = "qian"      # 前法（生产口径）
+LIUSHI_METHOD_HOU = "hou"        # 后法（留档，与年卦变月卦同）
 
-    原文："凡起时卦，于日中寻时，就值日卦上从前一爻起，子丑寅卯辰巳六时，
-           主进数变去；值日卦后一爻起，午未申酉戌亥六时，主退数变去。
-           假如得乾卦初爻值日，则从二爻变起。
-           又云：日卦变时卦，与年卦变月卦同。但子寅辰午申戌居左，变爻用点，
-           丑卯巳未酉亥居右取应，变爻不同点。"
 
-    规则（与年卦变月卦同，逐爻累积；进/退两分支各自从值日卦起）：
-      1. 以值日卦（流日卦）为本。
-      2. 前六时（子丑寅卯辰巳）进数：从值日爻下一爻起，阳时子寅辰逐爻累积变
-         （+1,+2,+3），阴时丑卯巳取阳时变爻之应爻。
-      3. 后六时（午未申酉戌亥）退数：**重新从值日卦起**，从值日爻上一爻退，
-         阳时午申戌逐爻累积变（-1,-2,-3），阴时未酉亥取应。
-      例：乾初爻值日 → 子时变二爻（天火同人），午时变上爻（泽天夬）。
+def compute_liushi(
+    day_lines: list[int],
+    day_yao_index: int,
+    method: str = LIUSHI_METHOD_QIAN,
+) -> LiuShiResult:
+    """流时卦（《河洛真数·起例卷之上·起时卦例》）。
+
+    原文（逐字）：
+      「凡起时卦，于日中寻时，就值日卦上从前一爻起，子丑寅卯辰巳六时，
+        主进数变去；值日卦后一爻起，午未申酉戌亥六时，主退数变去。
+        假如得乾卦初爻值日，则从二爻变起。
+        又云，日卦变时卦，与年卦变月卦同。但子寅辰午申戌居左，变爻用点，
+        丑卯巳未酉亥居右取应，变爻不同点。凡居位进一爻起，子时其应爻则丑时也。
+        假令乾卦初九居位，进一爻起数。自下而上挨次变去，取变卦应爻变之。
+        **二法皆通，前法为优，学者详之。**」
+
+    两法（``method``）：
+
+    * **前法**（默认，生产口径）：子…巳 自值日爻的下一爻起**进数**（+1…+6）
+      逐时累积变；午…亥 自值日爻的后一爻起**退数**（-1…-6）逐时累积变
+      （后六时重新从值日卦起）。**十二时皆为变爻，不取应爻。**
+    * **后法**（留档）：与「年卦变月卦」同 —— 阳时（子寅辰午申戌）链式逐爻变，
+      阴时（丑卯巳未酉亥）取对应阳时的应爻。
+
+    ⚠ 2026-10-22 修正：原实现把两法**混用**（前六时用后法的阴阳时分配，
+    后六时用「退数 + 阴时取应」的第三种组合），十二时中只有子、午两时与原典
+    前法相符 —— 既不是前法，也不是后法。已按「前法为优」更正。
+
+    ⚠ **生产链不启用本层**（用户 2026-10-22 裁决：「不要算流时卦，到流日就可以」）：
+    流时层自 2026-10-06 起整段剥离（见 guajie.build_guajie_from_result），
+    本函数**只作为算法本体保留**，不被生产链调用。保留它且按原典更正，是为了
+    不在代码里留一颗「看着能用、实则两法混用」的地雷；将来若要启用，
+    口径已是前法（= 原典「前法为优」），可直接接回。
+
+    原典实例（乾初爻值日）：子时变二爻（天火同人）、午时变上爻（泽天夬）。
     """
     u, lo, name = _lines_to_hexagram(list(day_lines))
-    hours = []
+    hours: list[dict] = []
 
-    def _push(hour_kind_prefix, flips, hour_base):
-        nonlocal hours
-        cur = list(day_lines)  # 分支各自从值日卦起
-        for k, flip in enumerate(flips):
-            flip_idx = (day_yao_index + flip) % 6
-            cur = _flip_line(cur, flip_idx)  # 阳时（逐爻累积）
-            yang_lines = list(cur)
-            ying = (flip_idx + 3) % 6
-            yin_lines = _flip_line(cur, ying)  # 阴时取应
-            for kind, lines, shi, yue_yao in (
-                ("阳时", yang_lines, hour_base + 2 * k, flip_idx),
-                ("阴时", yin_lines, hour_base + 2 * k + 1, ying),
-            ):
-                u2, lo2, name2 = _lines_to_hexagram(lines)
-                hours.append({
-                    "hour": shi, "name": name2, "upper": u2, "lower": lo2,
-                    "lines": lines, "kind": kind, "shi_yao_index": yue_yao,
-                })
+    def _emit(hour_no: int, lines: list[int], yao: int, kind: str) -> None:
+        u2, lo2, name2 = _lines_to_hexagram(lines)
+        hours.append({
+            "hour": hour_no, "name": name2, "upper": u2, "lower": lo2,
+            "lines": list(lines), "kind": kind, "shi_yao_index": yao,
+        })
 
-    # 前六时（子~巳）：进数 +1,+2,+3（阳时子寅辰）
-    _push("前", (1, 2, 3), 1)
-    # 后六时（午~亥）：退数 -1,-2,-3（阳时午申戌），重新从值日卦起
-    _push("后", (-1, -2, -3), 7)
+    if method == LIUSHI_METHOD_HOU:
+        # 后法：阳时（子寅辰午申戌）链式变爻；阴时（丑卯巳未酉亥）取应
+        yangs: list[tuple[list[int], int]] = []
+        cur = list(day_lines)
+        for k in range(6):
+            idx = (day_yao_index + 1 + k) % 6
+            cur = _flip_line(cur, idx)
+            yangs.append((list(cur), idx))
+        for k, (lines, idx) in enumerate(yangs):
+            _emit(2 * k + 1, lines, idx, "阳时")
+        for k, (lines, idx) in enumerate(yangs):
+            ying = (idx + 3) % 6
+            _emit(2 * k + 2, _flip_line(list(lines), ying), ying, "阴时")
+        hours.sort(key=lambda h: h["hour"])
+        return LiuShiResult(day_name=name, hours=hours)
+
+    # 前法（生产口径）：前六时进数、后六时退数，十二时皆变爻
+    cur = list(day_lines)
+    for k in range(6):                       # 子丑寅卯辰巳
+        idx = (day_yao_index + 1 + k) % 6
+        cur = _flip_line(cur, idx)
+        _emit(k + 1, cur, idx, "变爻")
+    cur = list(day_lines)                    # 后六时重新从值日卦起
+    for k in range(6):                       # 午未申酉戌亥
+        idx = (day_yao_index - 1 - k) % 6
+        cur = _flip_line(cur, idx)
+        _emit(7 + k, cur, idx, "变爻")
     hours.sort(key=lambda h: h["hour"])
     return LiuShiResult(day_name=name, hours=hours)
 

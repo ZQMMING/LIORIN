@@ -751,5 +751,102 @@ class TestCase13HeLuoLiShuLiUriCase(unittest.TestCase):
         self.assertEqual(base[0], 1, "段首日居位应为屯卦初九")
 
 
+class TestCase14QiShiL124(unittest.TestCase):
+    """算例 14（《河洛真数》起例卷之上 L402 起时卦例）：流时卦十二时。
+
+    原典（逐字）：
+        「凡起时卦，于日中寻时，就值日卦上从前一爻起，子丑寅卯辰巳六时，
+          主进数变去；值日卦后一爻起，午未申酉戌亥六时，主退数变去。
+          假如得乾卦初爻值日，则从二爻变起。
+          又云，日卦变时卦，与年卦变月卦同。但子寅辰午申戌居左，变爻用点，
+          丑卯巳未酉亥居右取应，变爻不同点。凡居位进一爻起，子时其应爻则丑时也。
+          假令乾卦初九居位，进一爻起数。自下而上挨次变去，取变卦应爻变之。
+          **二法皆通，前法为优，学者详之。**」
+
+    **2026-10-22 案例验证发现**：引擎原实现把两法**混用**（前六时用后法的
+    阴阳时分配、后六时用「退数 + 阴时取应」的第三种组合），十二时中只有
+    子、午两时与原典前法相符 —— 既不是前法，也不是后法；该层因此在
+    2026-10-06 被整段剥离。
+
+    **2026-10-22 用户裁决：「不要算流时卦，到流日就可以」** —— 故本类把两件事
+    都钉住：
+      · **算法本体**（``timeline_yun.compute_liushi``）按「**前法为优**」更正，
+        不在代码里留一颗「看着能用、实则两法混用」的地雷（将来若启用，口径已对）；
+      · **生产链维持剥离**：流时恒空，传 target_hour 只留痕、不产出。
+    """
+
+    #: 乾初爻值日 → 前法十二时（卦名、变爻位）——「前法」逐时对拍
+    QIAN_CASES = [
+        ("子", "天火同人", 1), ("丑", "天雷无妄", 2), ("寅", "风雷益", 3),
+        ("卯", "山雷颐", 4), ("辰", "地雷复", 5), ("巳", "坤为地", 0),
+        ("午", "泽天夬", 5), ("未", "雷天大壮", 4), ("申", "地天泰", 3),
+        ("酉", "地泽临", 2), ("戌", "地雷复", 1), ("亥", "坤为地", 0),
+    ]
+
+    def test_qian_method_twelve_hours(self):
+        """前法：子…巳 进数、午…亥 退数，十二时皆变爻。"""
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import compute_liushi
+        qian = build_six_lines("乾", "乾")
+        r = compute_liushi(qian, 0)             # 乾初爻值日
+        got = {h["hour"]: (h["name"], h["shi_yao_index"]) for h in r.hours}
+        for i, (shi, name, yao) in enumerate(self.QIAN_CASES):
+            with self.subTest(hour=shi):
+                self.assertEqual(got[i + 1][0], name, f"{shi}时卦名")
+                self.assertEqual(got[i + 1][1], yao, f"{shi}时变爻位")
+
+    def test_original_instance_two_hours(self):
+        """原典实例：乾初爻值日 → 子时变二爻（天火同人）、午时变上爻（泽天夬）。"""
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import compute_liushi
+        r = compute_liushi(build_six_lines("乾", "乾"), 0)
+        got = {h["hour"]: (h["name"], h["shi_yao_index"]) for h in r.hours}
+        self.assertEqual(got[1], ("天火同人", 1), "子时应变二爻")
+        self.assertEqual(got[7], ("泽天夬", 5), "午时应变上爻")
+
+    def test_hou_method_kept_as_variant(self):
+        """后法（又云）留档：阳时链式变爻、阴时取应。"""
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import (
+            LIUSHI_METHOD_HOU, compute_liushi,
+        )
+        r = compute_liushi(build_six_lines("乾", "乾"), 0,
+                           method=LIUSHI_METHOD_HOU)
+        got = {h["hour"]: (h["name"], h["shi_yao_index"]) for h in r.hours}
+        # 后法：阳时子寅辰午申戌 = 变爻 1,2,3,4,5,0；阴时取应（+3）
+        self.assertEqual([got[h][1] for h in (1, 3, 5, 7, 9, 11)],
+                         [1, 2, 3, 4, 5, 0])
+        self.assertEqual([got[h][1] for h in (2, 4, 6, 8, 10, 12)],
+                         [4, 5, 0, 1, 2, 3])
+        self.assertNotEqual(got[1][0], got[2][0], "后法阴时取应，不得与阳时同卦")
+
+    def test_guajie_hour_layer_stays_stripped(self):
+        """生产层**维持剥离**（用户裁决「不要算流时卦，到流日就可以」）。
+
+        传 target_hour 仍须**明确留痕**（不得静默忽略），但不产出流时卦/爻辞。
+        """
+        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from tongshu.engines.heluo import guajie as gj
+        bazi = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
+        res = HeluoCanonical().calculate(
+            bazi=bazi, gender="male", birth_hour="午", era="zhong",
+            birth_date="1983-11-03", target_year=2026, target_month=6,
+            target_day=15)
+        out = gj.build_guajie_from_result(
+            res, bazi=bazi, target_year=2026, target_month=6, target_day=15,
+            target_hour=7)
+        self.assertEqual(out["liushi_hexagram"], "", "流时层应维持剥离（到流日为止）")
+        self.assertIsNone(out["liushi_yao"])
+        self.assertTrue(any("流时：已剥离" in e for e in out["evidence"]),
+                        "传 target_hour 必须留痕，不得静默忽略")
+        # 到流日为止：流年/流月/流日三层仍须正确定位
+        self.assertTrue(out["liuri_hexagram"], "流日仍应定位")
+        out2 = gj.build_guajie_from_result(
+            res, bazi=bazi, target_year=2026, target_month=6, target_day=15)
+        self.assertFalse(out2["liushi_hexagram"])
+        self.assertFalse(any("流时：已剥离" in e for e in out2["evidence"]),
+                         "未传 target_hour 时无需留痕")
+
+
 if __name__ == "__main__":
     unittest.main()
