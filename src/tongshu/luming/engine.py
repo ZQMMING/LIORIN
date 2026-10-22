@@ -3348,6 +3348,26 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         and not ({"ZI", "HAI"} & _th_fb))           # 地支不见水 (有水则非)
     tai_tian_huo = bool(tian_huo_native and tb in {"YIN", "SI", "WU", "WEI", "XU"})
 
+    # ============ 流年吉庆神煞 (婚姻/痊愈/功名, 与灾煞同口径补齐) ============
+    # 红鸾 (卯起子逆数): 子→卯、丑→寅、寅→丑… 主婚姻喜庆; 天喜=红鸾对冲
+    _HONG_LUAN = {"ZI": "MAO", "CHOU": "YIN", "YIN": "CHOU", "MAO": "ZI",
+                  "CHEN": "HAI", "SI": "XU", "WU": "YOU", "WEI": "SHEN",
+                  "SHEN": "WEI", "YOU": "WU", "XU": "SI", "HAI": "CHEN"}
+    _hong_luan_b = _HONG_LUAN.get(year_branch, "")
+    tai_hong_luan = bool(_hong_luan_b and tb == _hong_luan_b)
+    _tian_xi_b = EARTHLY_BRANCHES[(EARTHLY_BRANCHES.index(_hong_luan_b) + 6) % 12] if _hong_luan_b else ""
+    tai_tian_xi = bool(_tian_xi_b and tb == _tian_xi_b)
+    # 天医 (月支逆推一位, 寅月→丑): 主病愈安康; 太岁临之
+    _tian_yi_b = EARTHLY_BRANCHES[(EARTHLY_BRANCHES.index(chart.month_pillar.earthly_branch) - 1) % 12]
+    tai_tian_yi = bool(tb == _tian_yi_b)
+    # 攀鞍 (马后一辰): 申子辰→丑、寅午戌→未、巳酉丑→戌、亥卯未辰; 主功名
+    _PAN_AN = {"SHEN": "CHOU", "ZI": "CHOU", "CHEN": "CHOU",
+               "YIN": "WEI", "WU": "WEI", "XU": "WEI",
+               "SI": "XU", "YOU": "XU", "CHOU": "XU",
+               "HAI": "CHEN", "MAO": "CHEN", "WEI": "CHEN"}
+    _pan_an_b = _PAN_AN.get(year_branch, "")
+    tai_pan_an = bool(_pan_an_b and tb == _pan_an_b)
+
     # 交运年 (五行精纪 L4267-4268 珞琭子: "阴男阳女时观出入之年, 有吉凶之变";
     #         L4269 三命指掌: "凡阳男阳女, 至交运时, 主有灾滞")
     # 边界语义: start_age = 交入第1步( luck_pillars[0] )的实龄;
@@ -3520,6 +3540,10 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_jin_yu": tai_jin_yu, "jin_yu_branch": _jin_yu_b,
         "tai_zai_sha": tai_zai_sha, "zai_sha_branch": _zai_sha_b,
         "tai_zi_yi": tai_zi_yi, "zi_yi_branch": _zi_yi_b, "zi_yi_heavy": zi_yi_heavy,
+        "tai_hong_luan": tai_hong_luan, "hong_luan_branch": _hong_luan_b,
+        "tai_tian_xi": tai_tian_xi, "tian_xi_branch": _tian_xi_b,
+        "tai_tian_yi": tai_tian_yi, "tian_yi_branch": _tian_yi_b,
+        "tai_pan_an": tai_pan_an, "pan_an_branch": _pan_an_b,
         "tai_tian_huo": tai_tian_huo, "tian_huo_native": tian_huo_native,
         "tai_sang_diao": tai_sang_diao, "sang_diao_which": sang_diao_which,
         "tai_gou_jiao": tai_gou_jiao, "gou_jiao_which": gou_jiao_which,

@@ -599,6 +599,34 @@ class TestLiuNianDimensions20261023:
         lm = from_bazi_chart(c)
         v = next((v for v in lm.verdicts if v["rule_id"] == "LM-S10"), None)
         assert v is not None and v["tone"] == "凶"
+
+    def test_153_hong_luan_marriage(self, be):
+        # 红鸾: 1989(年支巳)红鸾在戌 → 2018 戊戌
+        c = be.compute((1989, 12, 26, 22), gender="male")
+        from tongshu.luming.engine import query_year
+        r = query_year(c, 2018)
+        assert any(v["rule_id"] == "LM-S11" for v in r["verdicts"])
+
+    def test_154_tian_xi_joy(self, be):
+        # 天喜: 1989(年支巳)红鸾戌, 天喜辰 → 2024 甲辰
+        c = be.compute((1989, 12, 26, 22), gender="male")
+        from tongshu.luming.engine import query_year
+        r = query_year(c, 2024)
+        assert any(v["rule_id"] == "LM-S12" for v in r["verdicts"])
+
+    def test_155_tian_yi_heal(self, be):
+        # 天医: 月支子, 前一位亥 → 2019 己亥
+        c = be.compute((1989, 12, 26, 22), gender="male")
+        from tongshu.luming.engine import query_year
+        r = query_year(c, 2019)
+        assert any(v["rule_id"] == "LM-S13" for v in r["verdicts"])
+
+    def test_156_pan_an_achievement(self, be):
+        # 攀鞍: 年支巳(巳酉丑)马后一辰戌 → 2018 戊戌
+        c = be.compute((1989, 12, 26, 22), gender="male")
+        from tongshu.luming.engine import query_year
+        r = query_year(c, 2018)
+        assert any(v["rule_id"] == "LM-S14" for v in r["verdicts"])
         # 天火煞: 1986-6-11 午时 = 丙寅 甲午 丙戌 甲午 (寅午戌全、火透、无水)
         # 1990 庚午太岁至火生旺 → S09 触发 tone=凶
         r = _qy(be, 1986, 6, 11, 12, 1990)

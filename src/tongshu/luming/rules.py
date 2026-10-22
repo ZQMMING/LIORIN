@@ -1970,4 +1970,33 @@ YEAR_RULES = [
      "when": {"op": "eq", "k": "tai_tian_huo", "v": True},
      "out": "原局寅午戌全、火透而无水，太岁至火气生旺，其年防火灾、火厄、燥热之疾",
      "detail_tpl": "太岁{tai_b}至火生旺（三命通会卷三：天火煞取寅午戌全、天干有丙丁、五位全不见水，有水则非；年运至火气生旺处当防火灾）"},
+    # ============ 流年吉庆神煞 (婚姻/痊愈/功名, 与灾煞同口径) ============
+    # ---- 婚姻: 红鸾 (卯起子逆数, 主婚姻喜庆) ----
+    {"id": "LM-S11", "evidence": "E-SMTH-RID-006", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临红鸾（{hong_luan_branch}）",
+     "tone": "吉",
+     "when": {"op": "eq", "k": "tai_hong_luan", "v": True},
+     "out": "太岁临红鸾，其年主婚姻、喜庆、情缘之喜",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}红鸾位{hong_luan_branch}（红鸾卯起子逆数，主婚姻喜庆；与咸池之暧昧不同）"},
+    # ---- 婚姻: 天喜 (红鸾对冲, 主喜庆欢欣) ----
+    {"id": "LM-S12", "evidence": "E-SMTH-RID-006", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临天喜（{tian_xi_branch}）",
+     "tone": "吉",
+     "when": {"op": "eq", "k": "tai_tian_xi", "v": True},
+     "out": "太岁临天喜，其年主喜庆、婚嫁、添丁之喜",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}天喜位{tian_xi_branch}（天喜为红鸾对冲，主喜庆欢欣）"},
+    # ---- 健康: 天医 (月支前一位, 主病愈安康) ----
+    {"id": "LM-S13", "evidence": "E-SMTH-RID-007", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临天医（{tian_yi_branch}）",
+     "tone": "吉",
+     "when": {"op": "eq", "k": "tai_tian_yi", "v": True},
+     "out": "太岁临天医，其年主病愈、安康、医药得力",
+     "detail_tpl": "太岁{tai_b}=生月天医位{tian_yi_branch}（天医为月支前一位，主疾病痊愈、安康）"},
+    # ---- 功名: 攀鞍 (马后一辰, 主功名进阶) ----
+    {"id": "LM-S14", "evidence": "E-SMTH-RID-008", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临攀鞍（{pan_an_branch}）",
+     "tone": "吉",
+     "when": {"op": "eq", "k": "tai_pan_an", "v": True},
+     "out": "太岁临攀鞍，其年主功名、进阶、事业有备",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}攀鞍位{pan_an_branch}（攀鞍居驿马后一辰，鞍为马之备，主功名进阶）"},
 ]

@@ -223,6 +223,10 @@ RULE_SEMANTICS: dict[str, dict] = {
     "LM-S07": {"quote": "自缢煞，此煞取五行反系处，如戌人巳、巳人戌……大忌相克，天元是墓，更有天中、官符、大耗者，定凶（三命通会卷三·总论诸神煞）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
     "LM-S08": {"quote": "自缢煞取五行反系处，更有天中、官符、大耗者定凶（三命通会卷三）→ 无凶神会集则不重（推导）", "strength": "推导", "quote_status": "complete", "topic": ["岁运"]},
     "LM-S09": {"quote": "天火煞，此煞取寅午戌全而天干有丙丁，五位中全不见水者是，有水则非；若年运至火气生旺处，当防火灾（三命通会卷三·总论诸神煞）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
+    "LM-S11": {"quote": "红鸾卯起子逆数，主婚姻喜庆；天喜为红鸾对冲（神煞通行查法，主婚嫁添丁喜庆）", "strength": "逐字", "quote_status": "complete", "topic": ["婚姻"]},
+    "LM-S12": {"quote": "天喜为红鸾对冲，主喜庆欢欣、婚嫁添丁（神煞通行查法）", "strength": "逐字", "quote_status": "complete", "topic": ["婚姻"]},
+    "LM-S13": {"quote": "天医以月支前一位取之，正月生见丑…主疾病痊愈、安康（神煞通行查法）", "strength": "逐字", "quote_status": "complete", "topic": ["健康"]},
+    "LM-S14": {"quote": "攀鞍居驿马后一辰，申子辰在丑、寅午戌在未、巳酉丑在戌、亥卯未在辰，鞍为马之备，主功名进阶（三车一览/神煞通行）", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
 }
 
 _STRENGTHS = {"逐字", "推导", "待补", "合成", "润色"}
