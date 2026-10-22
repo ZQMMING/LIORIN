@@ -1,0 +1,179 @@
+{
+ "doc_id": "THREE_ADJUDICATION_2026_10_22",
+ "date": "2026-10-22",
+ "source": "docs/AGENTS.md §六 验收四条 + §八 取消与新增 + 公理三",
+ "method": "① 六部底本穷举扫描(registries/source/raw/*.md, 段落层级标注: 原文=A正文/【徐注】=B/【原注】=A); ② 维基文库 internet 校对(《三命通会》卷三/七/九 raw 端点)核对异文; ③ 每项给 明文/异文/未载 + 层级 + 引擎落地动作.",
+ "items": [
+  {
+   "id": "①",
+   "question": "「从官格」是否有独立 grade=A 立名依据",
+   "verdict": "明文: 有(但不与从杀对立设格) —— 官杀一格, 从官并入从杀",
+   "grade": "A",
+   "A_evidence": [
+    {
+     "source_id": "SFTK-047-001",
+     "loc": "SFTK L679《神峰通考》卷一「偏官格 附棄命從殺格」",
+     "text": "棄命從殺。格緣日主全無一點生氣。四柱純然有官殺。則不得已而只得從殺也。",
+     "layer": "A(正文)",
+     "bearing": "官杀同归从杀一格; 成立要件=日主全无一点生气+四柱纯然有官杀"
+    },
+    {
+     "source_id": "DTS-018-001",
+     "loc": "DTS L255【原注】",
+     "text": "殺即官也，同流共派者可混也…藏殺露官，干神助官，合殺留官，皆從官象",
+     "layer": "A(原注)",
+     "bearing": "官杀同流共派可相混; 「从官象」是官杀混杂去留法, 非独立格"
+    },
+    {
+     "source_id": "SMTH-096-001",
+     "loc": "SMTH L11448/L11450「六丁日壬寅时断」",
+     "text": "六丁日生時壬寅，身去從官化木神…丁日壬寅時，身去從官，丁壬化木",
+     "layer": "A(正文)",
+     "bearing": "「身去从官」属日主舍身从官一族, 与弃命从杀同族"
+    },
+    {
+     "source_id": "SMTH-042-001",
+     "loc": "SMTH L5640「弃命从煞」",
+     "text": "以煞神太重，身無所歸，不得已從之…四柱無一點比肩印綬方論",
+     "layer": "A(正文)",
+     "bearing": "从煞成立要件=四柱无比肩印绶"
+    }
+   ],
+   "internet_check": "维基文库《三命通会》卷九 raw 端点可访问, 时柱断内确认「弃命就财」「独弱从强, 弃命就财, 高命」「弃命相从, 富」等表述见于 SMTH 正文, 与仓库底本一致(非底本独有); 维基文库缺卷十~十二, 故「弃命从煞」章(L5636)与「身去从官」章(L11448)维基未收, 以仓库底本为据.",
+   "engine_action": "special_pattern.py: 「从官格」两处产出点 -> 「从杀格」; ge_jie_layer.py/dayun_xiji.py: 删除「从官格」映射键; tests 枚举同步(3 文件). 引擎不再产出该格名, 其 xi_wx_status=UNDEFINED 存疑标记随之消失.",
+   "remaining": [
+    "「身去从官」(SMTH L11450)是否需独立成格(化气类)"
+   ]
+  },
+  {
+   "id": "②",
+   "question": "PZZQ L4936/L4938「四柱皆财」「四柱皆煞」的「皆」字量化口径",
+   "verdict": "明文: 有 —— 「皆」= 四柱纯然(四柱无杂), 非「成势」; 两者并存(纯然 ⊃ 成势)",
+   "grade": "A",
+   "A_evidence": [
+    {
+     "loc": "SFTK L679",
+     "text": "四柱純然有官殺",
+     "layer": "A(正文)",
+     "bearing": "「纯然」直接口径"
+    },
+    {
+     "loc": "SFTK L3671「從象」",
+     "text": "夫從象者如甲乙日主無根遇地支純金謂之從金，若四柱純土謂之從土，四柱純水謂之從水，四柱純木謂之從木",
+     "layer": "A(正文)",
+     "bearing": "「四柱纯X」= 全柱一致无杂"
+    },
+    {
+     "loc": "SMTH L5640",
+     "text": "四柱無一點比肩印綬方論",
+     "layer": "A(正文)",
+     "bearing": "无一点=全无"
+    },
+    {
+     "loc": "SFTK L4953「棄命從殺格」",
+     "text": "若逢根氣，命隕無猜",
+     "layer": "A(正文)",
+     "bearing": "根气为忌"
+    },
+    {
+     "loc": "PZZQ L4936/L4938",
+     "text": "四柱皆財而身無氣 / 四柱皆煞，而日主無根",
+     "layer": "A(正文)",
+     "bearing": "「四柱皆X」句式出处"
+    },
+    {
+     "loc": "PZZQ L4942",
+     "text": "從財格而有印，須看印是否通根，如印無根，不礙相從",
+     "layer": "B(徐注)",
+     "bearing": "只作旁证, 未采(B级不得单独支撑规格)"
+    }
+   ],
+   "quantifier_survey": {
+    "四柱皆X": {
+     "PZZQ": 2,
+     "QTBJ": 6,
+     "SMTH": 5,
+     "YHZP": 4
+    },
+    "四柱俱X": {
+     "SFTK": 3,
+     "SMTH": 4
+    },
+    "四柱纯X": {
+     "SFTK": 5
+    },
+    "四柱无一点X": {
+     "SMTH": 1
+    },
+    "conclusion": "六部量化词一致表意「全柱一致/无杂」, 无一例指「占三柱」或「成势」"
+   },
+   "engine_action": "special_pattern.py 新增 _pure_all(target_wx): 四柱每柱天干或地支本气均属同一神; 纯然成立 -> 从格置信度升 CONFIRMED(原仅成势时 CANDIDATE); 口径登记 纯然 ⊃ 成势, 不替代.",
+   "remaining": [
+    "若人工裁定「皆」含「占三柱」之意, 须调 _pure_all 阈值"
+   ]
+  },
+  {
+   "id": "③",
+   "question": "DTS L438「从儿不管身强弱」与 DTS L420「日主孤立无气/无地人元」的张力(从儿是否豁免无根门控)",
+   "verdict": "明文: 有 —— 从儿不豁免「日主无根」; L438「不管身强弱」讲的是食伤成气/得儿, 非豁免无根",
+   "grade": "A",
+   "A_evidence": [
+    {
+     "loc": "SFTK L3671「從象」",
+     "text": "夫從象者如甲乙日主無根遇地支純金謂之從金",
+     "layer": "A(正文)",
+     "bearing": "从象/从儿同族, 日主须无根(硬条件)"
+    },
+    {
+     "loc": "DTS L438「順局」",
+     "text": "一門出來只見兒，吾兒成氣構門閭；從兒不管身強弱，只要吾兒又得兒",
+     "layer": "A(京图原文)",
+     "bearing": "「不管身强弱」所指=成气/得儿(须吾儿又得儿), 非豁免日主无根"
+    },
+    {
+     "loc": "DTS L440【原注】",
+     "text": "此與成象、從象、傷官不同，只取我生者為兒…不論日主強弱，而又看金能生水氣，轉成生育之意",
+     "layer": "A(原注)",
+     "bearing": "顺局流通义之不论强弱, 条件链仍须完整; 与「日主无根」不冲突(强弱 vs 根气有无两维度)"
+    },
+    {
+     "loc": "SFTK L4953",
+     "text": "若逢根氣，命隕無猜",
+     "layer": "A(正文)",
+     "bearing": "从格逢根气为忌"
+    }
+   ],
+   "engine_action": "special_pattern.py: _cong_er_channel 改为须 dm_ben_eff==0 and yin_ben_eff==0 (日主无本气根+印无本气根); 从儿仍不要求官杀成势(从儿不与官杀争).",
+   "remaining": [
+    "DTS L440 顺局流通义与「日主无根」的精确边界(顺局从儿 vs 从象 分界)"
+   ]
+  }
+ ],
+ "engine_changes": {
+  "version": "V7.158-163",
+  "files": [
+   "engines/common/special_pattern.py",
+   "engines/common/ge_jie_layer.py",
+   "engines/common/dayun_xiji.py",
+   "tests/assert_structural.py",
+   "tests/test_mapping_bijective.py",
+   "tests/regression/test_zhuanwang_four_layers.py",
+   "tests/test_special_pattern_golden.py"
+  ],
+  "baseline_diff": {
+   "total": 11,
+   "cong_er_to_zhengge": 4,
+   "winner_none_to_qiaohou": 7,
+   "changelog": "p0_v2/case_audit/_100盘基线变更_V7163.txt"
+  },
+  "regression": {
+   "matrix": "293/293",
+   "anchors": "PASS",
+   "golden": "12 套全绿",
+   "baseline": "0/0/0",
+   "crash": 0,
+   "final_gate": "FAILS: NONE"
+  }
+ },
+ "human_signoff": null
+}

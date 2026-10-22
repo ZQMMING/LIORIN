@@ -406,7 +406,8 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 }
                 return _attach_ge_evidence(facts)
         if _sp0.get('cong_type') and _sp0.get('cong_state') == 'CONFIRMED':
-            _cwx_map = {'从杀格': None, '从官格': None, '从财格': None, '从儿格': None}
+            # V7.158 裁决①: 从官格并入从杀格(不另立格名, SFTK L679/DTS L255)
+            _cwx_map = {'从杀格': None, '从财格': None, '从儿格': None}
             _gs_wx = (facts.get('wuxing_power', {}) or {}).get('wuxing_power', {})
             _dm_wx = (facts.get('wuxing_power', {}) or {}).get('daymaster_element', '')
             _SH = {'木':'火','火':'土','土':'金','金':'水','水':'木'}
@@ -414,7 +415,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             _KE_M = {'木':'金','金':'火','火':'水','水':'土','土':'木'}
             _ss_wx = _SH.get(_dm_wx,''); _cai_wx = _KE.get(_dm_wx,''); _gs0 = _KE_M.get(_dm_wx,'')
             _ct = _sp0['cong_type']
-            _side = {'从杀格': _gs0, '从官格': _gs0, '从财格': _cai_wx, '从儿格': _ss_wx}.get(_ct)
+            _side = {'从杀格': _gs0, '从财格': _cai_wx, '从儿格': _ss_wx}.get(_ct)
             # 从格破格检查(PZZQ4936/4941/4943/4944):
             #   从财格: 比劫透干争财(无食伤化)破格; 印通根生身破格
             #   从杀格: 食伤制杀破格; 印泄杀气破格
@@ -1453,7 +1454,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     sp['cong_state'] = None
             if sp.get('cong_type') and sp.get('cong_state') in ('CONFIRMED', 'CANDIDATE'):
                 # 从格格体五行=所从之神
-                _cong_wx_map = {'从杀格': 'gs_wx', '从官格': 'gs_wx',
+                _cong_wx_map = {'从杀格': 'gs_wx',
                                 '从财格': 'cai_wx', '从儿格': 'ss_wx'}
                 # ★ V7.134 删「从旺格」死代码分支: 自 V7.131 撤「从旺格」桶(AGENTS.md §八 + 公理三,
                 #   唯一依据 PZZQ L2412-2413 属【徐注】grade=B)后 cong_type 永不为'从旺格' -> 此分支不可达.
@@ -1471,7 +1472,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 _dm_wx0 = GAN_WX.get(dg, '')
                 _sh, _ke = {'木':'火','火':'土','土':'金','金':'水','水':'木'}, {'木':'土','土':'水','水':'火','火':'金','金':'木'}
                 _sheng_me, _ke_me = {'木':'水','火':'木','土':'火','金':'土','水':'金'}, {'木':'金','金':'火','火':'水','水':'土','土':'木'}
-                if sp['cong_type'] in ('从杀格','从官格'):
+                if sp['cong_type'] == '从杀格':
                     _cong_wx = _ke_me.get(_dm_wx0, '')
                     # PZZQ5000"从杀忌食伤"; 财生煞顺旺势为喜
                     _xi_cong = [_ke.get(_dm_wx0, '')]

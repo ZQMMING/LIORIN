@@ -128,7 +128,7 @@ print(f"✅ 零default: {len(default_cases)}")
 
 # 4. special分布合理性
 zhengge_count = sum(1 for b in baseline if b.get('special') == '正格')
-congge_count = sum(1 for b in baseline if any(x in b.get('special', '') for x in ['从财格', '从杀格', '从儿格', '从官格', '从势格']))
+congge_count = sum(1 for b in baseline if any(x in b.get('special', '') for x in ['从财格', '从杀格', '从儿格', '从势格']))  # V7.158 从官格并入从杀格
 huaqi_count = sum(1 for b in baseline if '化' in b.get('special', '') and '气格' in b.get('special', ''))
 liangge_count = sum(1 for b in baseline if '两气成象' in b.get('special', ''))
 

@@ -11,7 +11,7 @@ RESOLVERS  = json.load(Path("docs/migrations/disamb_resolvers.json").open(encodi
 SENTINELS = {"__DISAMBIGUATE_BY_BRANCH__"}
 ENUM = {
  "pattern_claimed": {v for v in MAP.values() if isinstance(v, str)} - SENTINELS |
-                    {"两气成象","从杀格","从财格","从儿格","从旺格","从官格","正格","无"},
+                    {"两气成象","从杀格","从财格","从儿格","从旺格","正格","无"},
  "pattern_type":    {"专旺型","化气型","无"},
  "confidence":      {"CONFIRMED","MID","CANDIDATE","REJECT"},
  "kind":            {"real","fixture"},

@@ -88,7 +88,7 @@
         "木",
         "水"
       ],
-      "winner_shen": null
+      "winner_shen": "火"
     },
     {
       "cid": "QT-0099",
@@ -102,11 +102,11 @@
       "cid": "SM-0093",
       "bazi": "乙未 甲申 癸酉 甲寅",
       "gender": null,
-      "ge": "从儿格",
+      "ge": "印格",
       "xi_wx": [
-        "木"
+        "金"
       ],
-      "winner_shen": null
+      "winner_shen": "火"
     },
     {
       "cid": "QT-0293",
@@ -134,7 +134,7 @@
       "xi_wx": [
         "木"
       ],
-      "winner_shen": null
+      "winner_shen": "木"
     },
     {
       "cid": "QT-0385",
@@ -171,7 +171,7 @@
       "cid": "SM-0007",
       "bazi": "壬子 癸卯 庚戌 庚辰",
       "gender": null,
-      "ge": "从儿格",
+      "ge": "财格",
       "xi_wx": [
         "水"
       ],
@@ -426,7 +426,7 @@
       "xi_wx": [
         "木"
       ],
-      "winner_shen": null
+      "winner_shen": "金"
     },
     {
       "cid": "DT-0125",
@@ -457,7 +457,7 @@
         "金",
         "火"
       ],
-      "winner_shen": null
+      "winner_shen": "火"
     },
     {
       "cid": "DT-0296",
@@ -801,7 +801,7 @@
       "xi_wx": [
         "土"
       ],
-      "winner_shen": null
+      "winner_shen": "金"
     },
     {
       "cid": "QT-0131",
@@ -835,7 +835,7 @@
       "cid": "QT-0634",
       "bazi": "癸酉 乙卯 壬戌 乙巳",
       "gender": null,
-      "ge": "从儿格",
+      "ge": "伤官格",
       "xi_wx": [],
       "winner_shen": null
     },
@@ -877,7 +877,7 @@
       "xi_wx": [
         "水"
       ],
-      "winner_shen": null
+      "winner_shen": "火"
     },
     {
       "cid": "QT-0029",
@@ -913,17 +913,17 @@
       "xi_wx": [
         "土"
       ],
-      "winner_shen": null
+      "winner_shen": "水"
     },
     {
       "cid": "QT-0544",
       "bazi": "庚辰 丁亥 庚子 庚辰",
       "gender": null,
-      "ge": "从儿格",
+      "ge": "食神格",
       "xi_wx": [
-        "水"
+        "火"
       ],
-      "winner_shen": null
+      "winner_shen": "火"
     },
     {
       "cid": "DT-0407",
@@ -953,6 +953,6 @@
       "winner_shen": null
     }
   ],
-  "note": "V7.157 基线重生成(撤 B 级阴干通道, 从格入口回归 A 级 DTS L420 三条件), 变更 18 盘",
+  "note": "V7.163 基线重生成(三项待裁裁决落地: 从官格并入从杀/四柱纯然口径/从儿须无根), 变更 11 盘",
   "tree": "commit after 055ea7fa"
 }

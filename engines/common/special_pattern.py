@@ -37,6 +37,8 @@ SHENG_ME = {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'
 KE = {'木': '土', '土': '水', '水': '火', '火': '金', '金': '木'}
 KE_ME = {'木': '金', '金': '火', '火': '水', '水': '土', '土': '木'}
 BRANCH_WX = {'子': '水', '亥': '水', '寅': '木', '卯': '木', '巳': '火', '午': '火', '申': '金', '酉': '金', '辰': '土', '戌': '土', '丑': '土', '未': '土'}
+GAN_WX0 = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土',
+           '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
 
 
 def _shi(d):
@@ -424,6 +426,20 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', _ban_reason2, 'SPECIAL_FAIL', None,
             '阳干从格入口拦下: ' + _ban_reason2 + '; 盘回正格路径',
             ['daymaster_root', 'wuxing_power']))
+    # ★ V7.158 裁决②: 「四柱皆X」= 四柱纯然(A 级: SFTK L679「四柱純然有官殺」/L3671「若四柱純土謂之從土」;
+    #   SMTH L5640「四柱無一點比肩印綬方論」). 口径 = 四柱干支本气一致为同一神, 无杂.
+    #   与「成势」不同 —— 成势只论旺度, 纯然论「四柱无杂」; 两者并存(纯然 ⊃ 成势).
+    def _pure_all(target_wx):
+        """四柱纯然: 四柱天干或地支本气均属 target_wx(全柱一致, 无杂神)."""
+        for _k in ('year', 'month', 'day', 'hour'):
+            _sg, _bz = pillars[_k]
+            if not ((GAN_WX0.get(_sg) == target_wx) or (BRANCH_WX.get(_bz) == target_wx)):
+                return False
+        return True
+    _pure_gs = _pure_all(gs_wx)
+    _pure_cai = _pure_all(cai_wx)
+    _pure_ss = _pure_all(ss_wx)
+
     # ★ V7.155 撤 B 级阴干通道, 改立 A 级真从三条件(DTS L420【原注】, grade=A):
     #   「日主孤立无气, 无地人元, 绝无一毫生扶之意, 财官强甚, 乃为真从也」
     #   → _a_cong_ok = 日主无本气根(dm_ben_eff==0) ∧ 印无本气根(yin_ben_eff==0) ∧ 财官强甚
@@ -435,7 +451,17 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     _a_cai_strong = (cai_ben >= 1 or cai_stem >= 2)
     _a_cong_ok = (dm_ben_eff == 0 and yin_ben_eff == 0
                   and (_a_gs_strong or _a_cai_strong))
-    _cong_er_channel = ss_pow and ss_ben >= 1 and not _cong_ban_entry
+    # ★ V7.158 裁决② 纯然口径落地: 纯然(四柱无杂)成立 -> CONFIRMED; 仅成势 -> CANDIDATE.
+    _a_pure_ok = (dm_ben_eff == 0 and yin_ben_eff == 0
+                  and (_pure_gs or _pure_cai))
+    # ★ V7.158 裁决③: 从儿不豁免「日主无根」.
+    #   A 级依据: SFTK L3671「夫從象者如甲乙日主無根遇地支純金謂之從金」(从象/从儿同族, 日主须无根)
+    #             + DTS L438(京图原文 A)「從兒不管身強弱, 只要吾兒又得兒」——「不管身强弱」讲的是
+    #               食伤成气/得儿(须「吾儿又得儿」), 不是豁免「日主无根」;
+    #             + SFTK L4953「若逢根氣, 命隕無猜」/ SMTH L5640「四柱無一點比肩印綬方論」(根气为忌)
+    #   -> 从儿通道改为【仍须日主无本气根 + 印无本气根】, 只是不要求「官杀成势」(从儿不与官杀争).
+    _cong_er_channel = (ss_pow and ss_ben >= 1 and not _cong_ban_entry
+                        and dm_ben_eff == 0 and yin_ben_eff == 0)
     if (rootless_entry or _cong_er_channel) and not zhi_sha_save and not _cong_ban_entry \
             and (_a_cong_ok or _cong_er_channel):
         sides = {'食伤': (ss, ss_wx), '财': (cai, cai_wx), '官杀': (gs, gs_wx)}
@@ -495,7 +521,8 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                                reverse=True)
                 top_name, (top_d, top_wx) = order[0]
                 if top_name == '官杀':
-                    cong, side = ('从杀格' if (gs_ben >= 2 or gs_ju >= 1 or gs_ling or cai_ben >= 1) else '从官格'), gs_wx
+                    # V7.158 裁决①: 原'从官格'并入从杀(官杀同流, SFTK L679/DTS L255)—— 只设从杀一格
+                    cong, side = '从杀格', gs_wx
                 elif top_name == '财':
                     # 食伤叠透而财藏不透=从儿(儿会财局); 财明透成局=从财
                     if ss_pow and ss_stem >= 2 and cai_stem == 0 and not cai_lead and ss_ben >= 1:
@@ -517,7 +544,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                     #   从势格作为独立格名无 grade=A 原句支撑(DTS L47 讲天干阴阳本性, 非日主顺局格;
                     #   PZZQ L2413 属徐注 grade=B) -> 不再单列, 归正格(依 A 级财官用神).
                     cong, side = None, None
-                if cong in ('从财格', '从杀格', '从官格', '从儿格') and len(shi_sides) >= 2:
+                if cong in ('从财格', '从杀格', '从儿格') and len(shi_sides) >= 2:
                     keys = sorted(((9, 0, 0) if k == '官杀' else _fkey(v[0]) for k, v in shi_sides.items()),
                                   reverse=True)
                     if keys[0][0] == keys[1][0] and keys[0][1] == keys[1][1] and not (gs_ling or cai_ling or ss_ling):
@@ -617,9 +644,17 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 if _sha(_tg0): _ts += 1
                 else: _tg += 1
         if _zg > _zs or (_zg == _zs and _tg > _ts):
-            cong = '从官格'   # 正官(异阴阳)本气支占优, 或支均而正官透干占优; 滴天髓官杀多混称, 否则仍从杀
+            # ★ V7.158 裁决①: 「从官格」并入「从杀格」(不另立格名).
+            #   A 级依据: SFTK L679「棄命從殺…四柱純然有官殺…則不得已而只得從殺也」(官杀同归从杀)
+            #             + DTS L255【原注】「殺即官也，同流共派者可混也」
+            #             + SMTH L11450「身去從官」(官杀同族, 原典不与从杀对立设格)
+            #   依 AGENTS.md §八「取消多桶, 相关案例依 A 级条件重判」—— 官杀一格, 不设从官桶.
+            cong = '从杀格'   # V7.158: 原'从官格'并入从杀(官杀同流, A 级依据 SFTK L679/DTS L255)
     if cong:
-        note = '日主无本气根、无有根印比，对立方成势顺其势；虚透印比地支不载/孤根被冲拔为假从(CANDIDATE)；从儿不论身强弱；虚湿寒土(辰丑寒冻、火印全无)虽带湿土本气根而寒冻不能用、反顺旺水之财为气候假从(CANDIDATE, 见火暖翻转)；只记结构定性，不判用神成败吉凶'
+        # ★ V7.158 裁决②: 纯然(四柱无杂, SFTK L679「四柱純然有官殺」)成立 -> 置信度升 CONFIRMED.
+        if _a_pure_ok and cstate == 'CANDIDATE':
+            cstate = 'CONFIRMED'
+        note = '日主无本气根、无有根印比，对立方成势顺其势；四柱纯然(四柱无杂, SFTK L679「四柱纯然有官杀」)则置信度升CONFIRMED；虚透印比地支不载/孤根被冲拔为假从(CANDIDATE)；从儿须日主无根(依 SFTK L3671「日主无根遇地支纯金」)，但不论官杀成势(DTS L438「从儿不管身强弱」)；虚湿寒土(辰丑寒冻、火印全无)虽带湿土本气根而寒冻不能用、反顺旺水之财为气候假从(CANDIDATE, 见火暖翻转)；只记结构定性，不判用神成败吉凶'
         out['patterns'].append(_pat('ZP-SPECIAL-CONG', cong, cstate, side, note,
             ['daymaster_root', 'wuxing_power', 'combination_facts']))
         out['cong_type'], out['cong_state'] = cong, cstate
