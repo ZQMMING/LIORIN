@@ -4193,6 +4193,15 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   / V62 犯命 / V66 天罗地网 / V70 元辰 / V77 日犯岁君 / V78 征太岁 / V87 五鬼克身。
     _rids = [v.get("rule_id", "") for v in verdicts]
     _HEAVY = _HEAVY_XIONG   # 模块级重凶集 (L3344 尊吉卑凶同源)
+    # 婚姻引动(喜): 太岁合/害日支夫妻宫(非冲克, v51_tone≠凶) + 喜庆吉神
+    #   (金舆/红鸾/天喜/合局/贵人禄马) — 古法"夫妻宫引动+喜庆"主婚嫁之喜
+    #   (五行精纪金舆"主婚姻庆贺"; 三命通会红鸾天喜"主婚嫁"; 太岁合日柱为合局)
+    _HUN_XI_RULES = {"LM-S04", "LM-S11", "LM-S12", "LM-Y71", "LM-V65"}
+    _day_row = next((r for r in yctx.get("tai_pillar_relations", [])
+                     if r.get("pos") == "日"), {})
+    _hun_dong = (_day_row.get("tai_relation") in ("合", "害")
+                 and _day_row.get("v51_tone") != "凶"
+                 and any(r in _rids for r in _HUN_XI_RULES))
     _heavy_hit = [v for v in verdicts if v.get("rule_id") in _HEAVY and v.get("tone") == "凶"]
     if "LM-V60" in _rids:
         _yq_level = "定死/大凶"
@@ -4210,11 +4219,13 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #    2026-10-21 修订(核验⑧): 五鬼克身"决有大灾"比冲运"其祸重"更重, 主应不能取到禄/事业;
     #    无重凶时按凶断语中凶力最强(YEAR_XIONG)的主维度。
     from .strength import YEAR_XIONG as _YX
+    from .strength import _XI_LEI_RULES as _XLR
     # 2026-10-21 深度审计BUG-2: 主/次应聚合剔除 LM-F — 发用不参与判定(用户定案),
     #   且 LM-F 断语无 dims 字段(维度=平/辅助兜底), 混入会污染主/次应内部字段
     #   (F04财化鬼 tone=凶 被当凶断语取主应)
     _xiong_v = [v for v in verdicts if v.get("tone") == "凶"
-                and not (v.get("rule_id") or "").startswith("LM-F")]
+                and not (v.get("rule_id") or "").startswith("LM-F")
+                and v.get("rule_id") not in _XLR]
     _zhu_ying, _ci_ying = "", ""
     if _xiong_v:
         _pool = _heavy_hit if _heavy_hit else _xiong_v
@@ -4244,6 +4255,9 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _ci_ying = "、".join(x for x in _c if x not in ("吉神/辅助", "平/辅助"))[:80]
         else:
             _zhu_ying = "无明确主应"
+    # 婚姻引动(喜)且无重凶 → 主应=宫/六亲(婚姻动); 重凶在场则不覆盖
+    if _hun_dong and not _heavy_hit:
+        _zhu_ying = "宫/六亲"
     # ④ 分柱应期 (2026-10-21 语义修正: "应期"应含'应到谁', 非仅领域标签):
     #   古法 V51 分柱应期 (L4423: 年主父母/月主兄弟/日主己身/时主子息) —
     #   从凶断语 out 提取"主X之应", 补 zhu/ci_ying(凶灾领域)之外的分柱定位。
