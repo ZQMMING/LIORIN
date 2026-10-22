@@ -30,6 +30,7 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 
 from tongshu.engines.heluo import guajie as gj
 from tongshu.engines.heluo.canonical import HeluoCanonical
@@ -158,6 +159,48 @@ class TestLiuriRuleUnified(unittest.TestCase):
                     self.assertEqual(seg.get("day_to"), k * 6 + 6)
                     self.assertEqual(seg.get("flip_index"), 0,
                                      "gua6 段首日 = 初爻")
+
+
+class TestGua6OriginalTextIsInRepo(unittest.TestCase):
+    """gua6 口径的依据原文**必须在库**（可逐字回查）。
+
+    2026-10-22 之前，引擎里那句「每管六日」引文「本地无源」，
+    只能登记为「待取证」。现在《河洛理数》日卦起例卷原文已切片入库，
+    依据可逐条回源 —— 本类把它钉死，防止日后又退回「无源转述」。
+    """
+
+    RAW = (Path(__file__).resolve().parent.parent
+           / "data" / "heluo" / "guajie_raw" / "河洛理数_日卦起例卷.txt")
+    NOTE = (Path(__file__).resolve().parent.parent
+            / "data" / "heluo" / "guajie_raw" / "河洛理数_日卦起例卷_校记.md")
+
+    def test_raw_text_exists(self):
+        self.assertTrue(self.RAW.exists(), f"《河洛理数》日卦原文切片缺失：{self.RAW}")
+        self.assertTrue(self.NOTE.exists(), f"校记缺失：{self.NOTE}")
+
+    def test_key_passages_present_verbatim(self):
+        """关键条文逐字在库（**照抄 OCR 讹字**，不自行订正）。
+
+        注：「日卦行起必须按月卦**節氧**方不」中的「節氧」是底本 OCR 讹字
+        （当作「節氣」），切片一律照抄原样，讹字清单见校记文件。
+        """
+        text = self.RAW.read_text(encoding="utf-8")
+        for frag in (
+            "日卦者每月變五卦每卦管六日方成一月五六三",   # K3-447 L1154
+            "一卦管六日",                                    # K3-448 L488
+            "六交从下而上一交一日自初二日至初七",            # K3-448 L479
+            "日卦行起必须按月卦節氧方不",                    # K3-448 L481（節氧=節氣 讹）
+            "以此推之则每日添一刻七分天六日",                # K3-448 L491
+            "一日共管六日也至千十四日",                      # K3-448 L483（千十四=十四 讹）
+        ):
+            self.assertIn(frag, text, f"《河洛理数》日卦原文缺失：{frag}")
+
+    def test_note_records_unresolved_textual_issues(self):
+        """校记必须留下**原文层面**未解决的问题（不得自行调和）。"""
+        note = self.NOTE.read_text(encoding="utf-8")
+        self.assertIn("未解决", note,
+                      "校记须登记原文层面未解决的问题")
+        self.assertIn("疑讹", note, "校记须登记 OCR 疑讹并留证不改")
 
 
 if __name__ == "__main__":
