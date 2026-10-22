@@ -1010,12 +1010,16 @@ def _build_fayong_verdicts(chart: Any, gz_stem: str, gz_branch: str, scope: str,
     #     鬼化气: 运侧=克我(鬼) ∧ 柱有(运侧所生之行) ∧ 该行生我 → 反祸为福(吉).
     _yun_nayin_el = NAYIN_FIVE_ELEMENT.get(NAYIN_60.get((gz_stem, gz_branch), ""), "")
     _f04_hit = _f05_hit = None
+    _f04_yi = -1
     _f05_from_nayin = False   # 通关是否以"运纳音"为鬼 (古法运纳音为宗, 真通关)
-    for _yi, _y in enumerate(el for el in (_yun_nayin_el, gan_el, zhi_el) if el):
+    for _yi, _y in enumerate((_yun_nayin_el, gan_el, zhi_el)):
+        if not _y:
+            continue
         if _CTL4.get(yr_el) == _y:
             # 财化鬼: 我克(财) + 运生柱 + 柱克我
             if _GEN4.get(_y) in _col_set and _CTL4.get(_GEN4.get(_y)) == yr_el:
                 _f04_hit = _y
+                _f04_yi = _yi
                 break
         elif _CTL4.get(_y) == yr_el:
             # 鬼化气: 克我(鬼) + 运生柱 + 柱生我
@@ -1023,7 +1027,24 @@ def _build_fayong_verdicts(chart: Any, gz_stem: str, gz_branch: str, scope: str,
                 _f05_hit = _y
                 _f05_from_nayin = (_yi == 0)   # 运纳音(第一判定)为鬼 = 真通关
                 break
-    if _f04_hit:
+    # 合化优先 (古法: 支被三合局合化则其性变, 不再论本气生克): 仅当 F04 命中的运侧
+    #   是"运支"(_f04_yi==2)时才检查 — 运支与命柱三合局全、化出五行不克年命,
+    #   此支已化, 不判财化鬼 (如 26子 2024 辰与申子三合水局, 辰土化为水, 不再机械判
+    #   "土生金财化鬼"). 若 F04 基于运纳音/运干(纳音为宗, _f04_yi=0/1), 运支另有
+    #   合化亦不取消它 (水命运丁卯, 纳音火财化鬼成立, 不以卯被合化木而废).
+    _he_hua = False
+    if _f04_yi == 2:
+        _fb4 = {_pl.earthly_branch for _pl in
+                (chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar)}
+        _SANHE_EL4 = {frozenset({"SHEN", "ZI", "CHEN"}): "WATER",
+                      frozenset({"YIN", "WU", "XU"}): "FIRE",
+                      frozenset({"SI", "YOU", "CHOU"}): "METAL",
+                      frozenset({"HAI", "MAO", "WEI"}): "WOOD"}
+        _grp4 = BRANCH_SANHE_GROUP.get(gz_branch, frozenset())
+        _hua_el4 = _SANHE_EL4.get(_grp4, "")
+        _he_hua = bool(_grp4 and (_grp4 - {gz_branch}) <= _fb4
+                       and _hua_el4 and _CTL4.get(_hua_el4) != yr_el)
+    if _f04_hit and not _he_hua:
         _g = _GEN4[_f04_hit]
         v.append({**_BASE, "rule_id": "LM-F04", "tone": "凶",
                   "out": f"运来{_EL_CN4.get(_f04_hit, _f04_hit)}本为年命之财（我克），"
