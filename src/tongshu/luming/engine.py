@@ -3367,6 +3367,13 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
                "HAI": "CHEN", "MAO": "CHEN", "WEI": "CHEN"}
     _pan_an_b = _PAN_AN.get(year_branch, "")
     tai_pan_an = bool(_pan_an_b and tb == _pan_an_b)
+    # 天厨 (食神禄): 日干→食神之禄, 甲→巳、乙→午、丙→巳、丁→午、戊→申、
+    #   己→酉、庚→亥、辛→子、壬→寅、癸→卯; 主食禄福禄
+    _TIAN_CHU = {"JIA": "SI", "YI": "WU", "BING": "SI", "DING": "WU",
+                 "WU": "SHEN", "JI": "YOU", "GENG": "HAI", "XIN": "ZI",
+                 "REN": "YIN", "GUI": "MAO"}
+    _tian_chu_b = _TIAN_CHU.get(_dm_gan, "")
+    tai_tian_chu = bool(_tian_chu_b and tb == _tian_chu_b)
 
     # 交运年 (五行精纪 L4267-4268 珞琭子: "阴男阳女时观出入之年, 有吉凶之变";
     #         L4269 三命指掌: "凡阳男阳女, 至交运时, 主有灾滞")
@@ -3544,6 +3551,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_tian_xi": tai_tian_xi, "tian_xi_branch": _tian_xi_b,
         "tai_tian_yi": tai_tian_yi, "tian_yi_branch": _tian_yi_b,
         "tai_pan_an": tai_pan_an, "pan_an_branch": _pan_an_b,
+        "tai_tian_chu": tai_tian_chu, "tian_chu_branch": _tian_chu_b,
         "tai_tian_huo": tai_tian_huo, "tian_huo_native": tian_huo_native,
         "tai_sang_diao": tai_sang_diao, "sang_diao_which": sang_diao_which,
         "tai_gou_jiao": tai_gou_jiao, "gou_jiao_which": gou_jiao_which,

@@ -227,6 +227,7 @@ RULE_SEMANTICS: dict[str, dict] = {
     "LM-S12": {"quote": "天喜为红鸾对冲，主喜庆欢欣、婚嫁添丁（神煞通行查法）", "strength": "逐字", "quote_status": "complete", "topic": ["婚姻"]},
     "LM-S13": {"quote": "天医以月支前一位取之，正月生见丑…主疾病痊愈、安康（神煞通行查法）", "strength": "逐字", "quote_status": "complete", "topic": ["健康"]},
     "LM-S14": {"quote": "攀鞍居驿马后一辰，申子辰在丑、寅午戌在未、巳酉丑在戌、亥卯未在辰，鞍为马之备，主功名进阶（三车一览/神煞通行）", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
+    "LM-S15": {"quote": "天厨名食神禄，甲丙爱行双女游、乙丁狮子己金牛、戊坐未羊庚鱼腹、辛到宝瓶、癸用天蝎壬人马，主衣食俸禄（三命通会/神煞通行）", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
 }
 
 _STRENGTHS = {"逐字", "推导", "待补", "合成", "润色"}

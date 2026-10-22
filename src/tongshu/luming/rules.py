@@ -1999,4 +1999,11 @@ YEAR_RULES = [
      "when": {"op": "eq", "k": "tai_pan_an", "v": True},
      "out": "太岁临攀鞍，其年主功名、进阶、事业有备",
      "detail_tpl": "太岁{tai_b}=年支{year_branch}攀鞍位{pan_an_branch}（攀鞍居驿马后一辰，鞍为马之备，主功名进阶）"},
+    # ---- 食禄: 天厨 (食神禄, 日干食神之禄, 主食禄福禄) ----
+    {"id": "LM-S15", "evidence": "E-SMTH-RID-009", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临天厨（{tian_chu_branch}）",
+     "tone": "吉",
+     "when": {"op": "eq", "k": "tai_tian_chu", "v": True},
+     "out": "太岁临天厨（食神禄），其年主食禄、福禄、衣食丰足",
+     "detail_tpl": "太岁{tai_b}=日干{day_stem}天厨位{tian_chu_branch}（天厨为食神之禄，甲丙巳、乙丁午、戊申、己酉、庚亥、辛子、壬寅、癸卯，宜食禄）"},
 ]

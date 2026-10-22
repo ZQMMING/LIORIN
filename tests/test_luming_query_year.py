@@ -627,6 +627,13 @@ class TestLiuNianDimensions20261023:
         from tongshu.luming.engine import query_year
         r = query_year(c, 2018)
         assert any(v["rule_id"] == "LM-S14" for v in r["verdicts"])
+
+    def test_157_tian_chu_food_salary(self, be):
+        # 天厨: 庚日主食神禄在亥 → 2019 己亥
+        c = be.compute((1989, 12, 26, 22), gender="male")
+        from tongshu.luming.engine import query_year
+        r = query_year(c, 2019)
+        assert any(v["rule_id"] == "LM-S15" for v in r["verdicts"])
         # 天火煞: 1986-6-11 午时 = 丙寅 甲午 丙戌 甲午 (寅午戌全、火透、无水)
         # 1990 庚午太岁至火生旺 → S09 触发 tone=凶
         r = _qy(be, 1986, 6, 11, 12, 1990)
