@@ -1890,4 +1890,51 @@ YEAR_RULES = [
      "when": {"op": "eq", "k": "tai_si_sha_chong", "v": True},
      "out": "四煞若冲身命，定应游走他乡（辰戌丑未四煞冲年命/日身）",
      "detail_tpl": "太岁{tai_b}=四煞冲{year_branch}/{day_branch}（三命通会：四煞若冲身命定应游走他乡）"},
+    # ===== 2026-10-23 流年维度神煞专条 (五行精纪卷34 + 三命通会卷三总论诸神煞):
+    #   非补丁, 按古法把流年各维度 (健康/官非/劫夺/婚姻/血光/六亲) 应事专条成批补齐 =====
+    # ---- 健康: 病符 (三命通会"病符煞取太岁后一辰, 犯者多疾病, 行年遇之亦然") ----
+    {"id": "LM-S01", "evidence": "E-SMTH-014-001", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临病符（{bing_fu_branch}）",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_bing_fu", "v": True},
+     "out": "太岁临病符（岁后一辰），其年多病疾，防身体不适",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}后一辰{bing_fu_branch}（三命通会卷三：病符取太岁后一辰，犯者多疾病，行年遇之亦然）"},
+    # ---- 官非/事业: 官符 (三命通会"官符取太岁前五辰, 日时遇之多官灾, 并羊刃乃刑徒") ----
+    {"id": "LM-S02", "evidence": "E-SMTH-RID-001~002", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临官符（{guan_fu_branch}）",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_guan_fu", "v": True},
+     "out": "太岁临官符（岁前五辰），其年防官事、词讼、文书纠纷",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}前五辰{guan_fu_branch}（三命通会卷三：官符取太岁前五辰，日时遇之多官灾；五行精纪卷34：二运见官符主斗讼）"},
+    # ---- 劫夺/健康: 劫煞 (五行精纪"太岁至劫杀年主咽喉目赤之灾"; 二运见劫杀"横事失权散财") ----
+    {"id": "LM-S03", "evidence": "E-YHZP-040-008", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临劫煞（{jie_sha_branch}）",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_jie_sha", "v": True},
+     "out": "太岁临劫煞，其年防劫夺耗散、咽喉目赤之灾、横事失权",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}劫煞位{jie_sha_branch}（五行精纪卷34：太岁至劫杀年主咽喉目赤之灾，二运见劫杀主横事失权散财；渊海子平论劫煞）"},
+    # ---- 婚姻/吉: 金舆 (五行精纪"二运见金舆主婚姻庆贺骨肉之喜"; 三命通会"金舆禄前二辰, 不富即贵") ----
+    {"id": "LM-S04", "evidence": "E-SMTH-010-001", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临金舆（{jin_yu_branch}）",
+     "tone": "吉",
+     "when": {"op": "eq", "k": "tai_jin_yu", "v": True},
+     "out": "太岁临金舆，其年主婚姻庆贺、骨肉之喜，不富即贵",
+     "detail_tpl": "太岁{tai_b}=日干{day_stem}金舆位{jin_yu_branch}（五行精纪卷34：二运见金舆主婚姻庆贺骨肉之喜；三命通会：金舆常居禄前二辰，不富即贵）"},
+    # ---- 血光/健康: 灾煞 (三命通会"灾煞常居劫煞之前冲破将星, 主血光横死") ----
+    {"id": "LM-S05", "evidence": "E-SMTH-014-001", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临灾煞（{zai_sha_branch}）",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "tai_zai_sha", "v": True},
+     "out": "太岁临灾煞（冲破将星），其年防血光、横祸、外伤",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}灾煞位{zai_sha_branch}（三命通会：灾煞常居劫煞之前冲破将星，主血光横死；有福神相助多为武权）"},
+    # ---- 六亲/健康: 孤辰寡宿 (五行精纪"太岁到孤辰必有孝服, 到寡宿必有血光") ----
+    {"id": "LM-S06", "evidence": "E-YHZP-040-010", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临{gu_chen_which}",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "gu_chen_su", "v": True},
+     "out_map": {"孤辰": "太岁临孤辰，其年防孝服、孤独、六亲缘薄",
+                 "寡宿": "太岁临寡宿，其年防血光、孤寡、内助之忧"},
+     "out_map_key": "gu_chen_which",
+     "out": "太岁临{gu_chen_which}，主孤寡（孝服/血光）",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}{gu_chen_which}位（五行精纪卷34金书命诀：太岁到孤辰必有孝服，到寡宿必有血光之灾；渊海子平论孤辰寡宿）"},
 ]

@@ -3253,11 +3253,15 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     in_zhai = (EARTHLY_BRANCHES.index(year_branch) + 5) % 12 == EARTHLY_BRANCHES.index(tb)
     zhuang_ming = bool(ts == chart.day_pillar.heavenly_stem and tb == day_branch)
     gu_branches_all = set()
+    gu_pair = ()
     for _k, _v in GU_CHEN_GU_SU_BY_YEAR.items():
         if year_branch in _k:
             gu_branches_all = set(_v)
+            gu_pair = _v
             break
     gu_chen_su = bool(gu_branches_all and tb in gu_branches_all)
+    gu_chen_which = ("孤辰" if gu_pair and tb == gu_pair[0]
+                     else ("寡宿" if gu_pair and len(gu_pair) > 1 and tb == gu_pair[1] else ""))
 
     # 丧吊 / 勾绞 (2026-10-21 珞琭子赋注+五行精纪深挖补齐):
     #   丧门吊客: 五行精纪 L4425 "命前二辰为丧门, 后二辰为吊客, 若太岁在丧吊上
@@ -3292,6 +3296,21 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
                     f"命前三辰{BRANCH_CN.get(_gou, _gou)}为勾、后三辰"
                     f"{BRANCH_CN.get(_jiao, _jiao)}为绞")
     gou_jiao_note = _gj_note
+
+    # ---- 流年维度神煞专条 (2026-10-23 五行精纪卷34 + 三命通会卷三总论诸神煞):
+    #   太岁临各神煞位, 按维度应事 (健康/官非/劫夺/婚姻/血光) — 非补丁, 古法流年全维度 ----
+    _dm_gan = chart.day_pillar.heavenly_stem
+    _bing_fu = EARTHLY_BRANCHES[(_yb_i - 1) % 12]       # 病符=太岁后一辰 (三命通会"病符取太岁后一辰, 犯者多疾病, 行年遇之亦然")
+    _guan_fu = EARTHLY_BRANCHES[(_yb_i + 5) % 12]      # 官符=太岁前五辰 (三命通会"官符取太岁前五辰, 日时遇之多官灾")
+    tai_bing_fu = bool(tb == _bing_fu)
+    tai_guan_fu = bool(tb == _guan_fu)
+    _ss_he = SHEN_SHA_BY_SANHE.get(BRANCH_SANHE_GROUP.get(year_branch, frozenset()), {})
+    _jie_sha_b = _ss_he.get("JIE_SHA", "")
+    tai_jie_sha = bool(_jie_sha_b and tb == _jie_sha_b)     # 劫煞: 五行精纪"太岁至劫杀年, 主咽喉目赤之灾"; 二运见劫杀"横事失权散财"
+    _jin_yu_b = JIN_YU_BY_STEM.get(_dm_gan, "")
+    tai_jin_yu = bool(_jin_yu_b and tb == _jin_yu_b)        # 金舆: 五行精纪"二运见金舆, 主婚姻庆贺骨肉之喜"; 三命通会"金舆禄前二辰, 不富即贵"
+    _zai_sha_b = ZAI_SHA_BY_SANHE.get(BRANCH_SANHE_GROUP.get(year_branch, frozenset()), "")
+    tai_zai_sha = bool(_zai_sha_b and tb == _zai_sha_b)     # 灾煞: 三命通会"常居劫煞之前冲破将星, 主血光横死"
 
     # 交运年 (五行精纪 L4267-4268 珞琭子: "阴男阳女时观出入之年, 有吉凶之变";
     #         L4269 三命指掌: "凡阳男阳女, 至交运时, 主有灾滞")
@@ -3458,7 +3477,12 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_ya_benming": tai_ya_benming, "tai_glm": tai_glm,
         "tai_tianluo_diwang": tai_tianluo_diwang, "TLDW": tldw,
         "in_zhai": in_zhai, "zhuang_ming": zhuang_ming,
-        "gu_chen_su": gu_chen_su, "tao_hua_branch": tao_hua_branch,
+        "gu_chen_su": gu_chen_su, "gu_chen_which": gu_chen_which, "tao_hua_branch": tao_hua_branch,
+        "tai_bing_fu": tai_bing_fu, "bing_fu_branch": _bing_fu,
+        "tai_guan_fu": tai_guan_fu, "guan_fu_branch": _guan_fu,
+        "tai_jie_sha": tai_jie_sha, "jie_sha_branch": _jie_sha_b,
+        "tai_jin_yu": tai_jin_yu, "jin_yu_branch": _jin_yu_b,
+        "tai_zai_sha": tai_zai_sha, "zai_sha_branch": _zai_sha_b,
         "tai_sang_diao": tai_sang_diao, "sang_diao_which": sang_diao_which,
         "tai_gou_jiao": tai_gou_jiao, "gou_jiao_which": gou_jiao_which,
         "gou_jiao_note": gou_jiao_note,
