@@ -2831,6 +2831,9 @@ def from_bazi_chart(chart: Any, current_datetime=None, lookup_mode: str = "year"
     gong = _build_gong(chart, lookup_mode)
     luck_scope = _build_luck_scope(chart, current_datetime, lookup_mode)
     xi_ji = _build_xi_ji_scope(chart, luck_scope)
+    # 日主旺衰 (得令/得地/得势) — 原局根本字段
+    from ..reasoning.day_strength import calc_day_strength
+    day_strength = calc_day_strength(chart)
     # 岁运发用挂载: 每运柱 "来什么、发什么" (渊海子平论大运 + 五行精纪转化)
     for _lp in (luck_scope.get("pillars") or []):
         try:
@@ -2889,6 +2892,7 @@ def from_bazi_chart(chart: Any, current_datetime=None, lookup_mode: str = "year"
         tone_scope=tone_scope,
         luck_scope=luck_scope,
         xi_ji=xi_ji,
+        day_strength=day_strength,
         provenance=LM_PROVENANCE_FACTORY,
     )
     _register_factory_instance(instance)
@@ -3828,7 +3832,13 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         # ② 比劫夺财专条
         _is_jie5 = bool(_tai_el5 and _tai_el5 == _ds5_el and _tai_s5 != _ds5)
         _is_bi5 = bool(_tai_s5 and _tai_s5 == _ds5)
-        _shen_wang5 = bool(BRANCH_WX.get(_day_b5) == _ds5_el)
+        # 身旺判定改用系统日主旺衰 (得令/得地/得势, 滴天髓任铁樵口径),
+        # 取代旧"日支五行=日主五行"的简化 (有根有印失令亦不弱, 失时不弱)
+        try:
+            from ..reasoning.day_strength import calc_day_strength
+            _shen_wang5 = calc_day_strength(chart)["strength"] == "强"
+        except Exception:
+            _shen_wang5 = bool(BRANCH_WX.get(_day_b5) == _ds5_el)
         if _is_jie5 and _shen_wang5:
             verdicts.append({
                 "rule_id": "LM-V90A" if _cai_k >= 0.7 else "LM-V90B",

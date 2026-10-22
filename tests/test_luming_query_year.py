@@ -47,7 +47,7 @@ class TestQueryYearStructure:
             #            + LM-Fx(岁运发用: 原有引动/禄马贵人/财化鬼/鬼化气/缺行补)
             # 2026-10-23: 新增 LM-Sx(流年维度神煞: 病符/官符/劫煞/金舆/灾煞/孤寡)
             assert v["rule_id"].startswith(("LM-V5", "LM-V6", "LM-V7", "LM-V8",
-                                            "LM-Y", "LM-F", "LM-S"))
+                                            "LM-V9", "LM-Y", "LM-F", "LM-S"))
             assert v["evidence"]
             assert v["tone"] in ("吉", "动", "平", "滞", "凶")
 

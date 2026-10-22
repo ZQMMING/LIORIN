@@ -87,6 +87,9 @@ class LumingChart:
     # === 原局喜忌层 (卷七论五行一 L1254-1270) ===
     xi_ji: dict = field(default_factory=dict)
 
+    # === 日主旺衰 (得令/得地/得势, 滴天髓任铁樵口径) — 原局根本 ===
+    day_strength: dict = field(default_factory=dict)
+
     # === 来源 ===
     provenance: str = LM_PROVENANCE_FACTORY
 
