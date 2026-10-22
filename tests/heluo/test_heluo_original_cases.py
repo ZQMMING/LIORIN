@@ -848,5 +848,190 @@ class TestCase14QiShiL124(unittest.TestCase):
                          "未传 target_hour 时无需留痕")
 
 
+class TestCase15XiaoXiangL366(unittest.TestCase):
+    """算例 15（《河洛真数》起例卷之上 L366 小象行年卦气）：流年卦链三条九年链。
+
+    原典（逐字）：
+        「其一年变一卦之法，亦自本卦之爻而始。假如同人九三爻是元堂，其阳爻
+          九年者，此大象也。其小象当看此年是阳是阴，如此年是阳年，则不变。
+          一岁在同人九三元爻，二岁取应爻，变同人上九为革上六，三岁复取应爻，
+          变革九三为随六三，然后自下而上，四岁变随九四为屯六四，五岁变屯九五
+          为复六五，六岁变复上六为颐上九，七岁变颐初九为剥初六，八岁变剥六二
+          为蒙九二，九岁变蒙六三为蛊九三，此阳年九爻变例也。」（阳年链）
+        「…如一岁是阴年…此年当变为无妄六三。二岁取应爻，变无妄上九为随上六，
+          三岁复取应爻，变随六三为革九三，然后自下而上，四岁变既济六四，五岁变
+          明夷六五，六岁变贲上九，七岁变艮初六，八岁变蛊九二，九岁变蒙六三，
+          此同人九三阴年小象九年变例也。」（阴年链）
+        「…九四爻…如一岁是阳，不变，仍用九四元爻断，次年取应爻，变同人初九为
+          遁初六，三年又取应爻，变遁九四为渐六四，四岁挨次变去，自下而上，
+          变渐九五为艮六五，五岁变谦上六，六岁变明夷初九，七岁变泰九二，
+          八岁变临六三，九岁变归妹九四。」（九四·阳年链）
+
+    这三条链是引擎**流年卦层**最核心的判据，此前无任何原典算例把关。
+    """
+
+    TONGREN = ("乾", "离")     # 同人（乾上离下）
+
+    #: 三条链的期望（卦名 + 动爻），顺序 = 一岁…九岁
+    CHAINS = [
+        ("同人九三·阳年", 2, 1990, [
+            "同人九三", "革上六", "随六三", "屯六四", "复六五",
+            "颐上九", "剥初六", "蒙九二", "蛊九三"]),
+        ("同人九三·阴年", 2, 1991, [
+            "无妄六三", "随上六", "革九三", "既济六四", "明夷六五",
+            "贲上九", "艮初六", "蛊九二", "蒙六三"]),
+        ("同人九四·阳年", 3, 1990, [
+            "同人九四", "遁初六", "渐六四", "艮六五", "谦上六",
+            "明夷初九", "泰九二", "临六三", "归妹九四"]),
+    ]
+
+    def _run_chain(self, yt_index, birth_year):
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import (
+            compute_dayun_liyao, compute_liunian,
+        )
+        lines = build_six_lines(*self.TONGREN)
+        dayun = compute_dayun_liyao(lines, yt_index, lines, yt_index)
+        res = compute_liunian(lines, yt_index, lines, yt_index,
+                              birth_year=birth_year, age_from=1, age_to=9,
+                              dayun=dayun)
+        out = []
+        prev = None
+        for y in res.years:
+            idx = yt_index if prev is None else next(
+                (k for k in range(6) if y.lines[k] != prev[k]), None)
+            pos = "初二三四五上"[idx] if idx is not None else ""
+            short = (y.hexagram_name[0] if "为" in y.hexagram_name
+                     else y.hexagram_name[2:])
+            # 原典（《周易》）爻名格式：初/上 **位在前**（初九、上六），
+            # 二三四五 **性质在前**（九三、六二）
+            if idx is None:
+                yao = ""
+            else:
+                pos = "初二三四五上"[idx]
+                nat = "九" if y.lines[idx] > 0 else "六"
+                yao = f"{pos}{nat}" if idx in (0, 5) else f"{nat}{pos}"
+            out.append(f"{short}{yao}")
+            prev = y.lines
+        return out, res
+
+    def test_three_chains_match_original(self):
+        for label, yt, birth_year, expect in self.CHAINS:
+            with self.subTest(chain=label):
+                got, _ = self._run_chain(yt, birth_year)
+                self.assertEqual(got, expect,
+                                 f"{label} 的九年流年卦链应逐字等于原典")
+
+
+class TestCase16YuanTangL98(unittest.TestCase):
+    """算例 16（《河洛真数》起例卷之上 L98-L99 定元堂式）：元堂十一个举例。
+
+    原典（逐字）：
+        「如亥时生人得小畜，午未同在六四，申九五，酉上九，戌初九，亥九二是也。
+          戌时生得讼，午初六，未六三，申复初六，酉复六三，戌九四是也。
+          亥时生得咸，亥在上六是也。戌时得明夷，元堂初九是也。
+          亥时得颐，元堂初九是也。亥时得升，元堂九三是也。
+          亥时得谦，元堂九三是也。巳时生得屯，元堂六二是也。
+          巳时生得既济，元堂九五是也。巳时生得大过，元堂在初六。
+          巳时生得遁，元堂在六二。」
+
+    六爻一律取自**引擎自己的六十四卦表**（不手抄卦序），验的是元堂定法本身。
+    """
+
+    CASES = [
+        ("小畜", "亥", "九二"), ("讼", "戌", "九四"), ("咸", "亥", "上六"),
+        ("明夷", "戌", "初九"), ("颐", "亥", "初九"), ("升", "亥", "九三"),
+        ("谦", "亥", "九三"), ("屯", "巳", "六二"), ("既济", "巳", "九五"),
+        ("大过", "巳", "初六"), ("遁", "巳", "六二"),
+    ]
+
+    def test_yuantang_eleven_examples(self):
+        from tongshu.engines.heluo.numbers import (
+            SIXTY_FOUR_HEXAGRAMS, build_six_lines,
+        )
+        from tongshu.engines.heluo.yuan_tang import find_yuantang
+        name2ul = {}
+        for (up, lo), full in SIXTY_FOUR_HEXAGRAMS.items():
+            name2ul[full[0] if "为" in full else full[2:]] = (up, lo)
+        for name, hour, expect in self.CASES:
+            with self.subTest(gua=name, hour=hour):
+                up, lo = name2ul[name]
+                r = find_yuantang(six_lines=build_six_lines(up, lo),
+                                  birth_hour=hour, gender="male",
+                                  xiantian_name=name)
+                self.assertEqual(r.yuantang, expect,
+                                 f"{name} {hour}时的元堂应逐字等于原典")
+
+
+class TestCase17GuaQiMonthTable(unittest.TestCase):
+    """算例 17（《河洛真数》起例卷之中 月令消息论）：十二月卦气表。
+
+    原典（逐字）：
+        「泰属正月雨水节，三阳出于寅…大壮属二月春分节…夬属三月谷雨节…
+          乾属四月小满节…姤属五月夏至节…遁属六月大暑节…否属七月处暑节…
+          观属八月秋分节…剥属九月霜降节…坤属十月…复属十一月冬至候…
+          临属十二月大寒节…」
+    """
+
+    def test_twelve_month_guaqi(self):
+        from tongshu.engines.heluo.guajie import GUA_QI_MONTH_TABLE
+        expect = {1: ("雨水", "泰"), 2: ("春分", "大壮"), 3: ("谷雨", "夬"),
+                  4: ("小满", "乾"), 5: ("夏至", "姤"), 6: ("大暑", "遁"),
+                  7: ("处暑", "否"), 8: ("秋分", "观"), 9: ("霜降", "剥"),
+                  10: ("—", "坤"), 11: ("冬至", "复"), 12: ("大寒", "临")}
+        for month, (jie, gua) in expect.items():
+            with self.subTest(month=month):
+                got = GUA_QI_MONTH_TABLE.get(month)
+                self.assertIsNotNone(got, f"{month}月卦气缺失")
+                self.assertEqual(got[0], jie, f"{month}月节气锚点")
+                self.assertEqual(got[1], gua, f"{month}月卦气卦名")
+
+
+class TestCase18YinYaoSixYearChain(unittest.TestCase):
+    """算例 18（《河洛真数》起例卷之上 L366）：阴爻六年游链。
+
+    原典（逐字）：
+        「假如同人六二爻为元堂，则一变为乾九二，再变为履六三，三变为中孚六四，
+          四变为损六五，五变为临上六，六变为师初六，一年变一爻为一卦，馀仿此。」
+
+    阴爻大运段（6 年）**不分阳年阴年**（原典此例无分支）—— 故两种出生年
+    应给出同一条链。
+    """
+
+    EXPECT = ["乾九二", "履六三", "中孚六四", "损六五", "临上六", "师初六"]
+
+    def _run(self, birth_year):
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import (
+            compute_dayun_liyao, compute_liunian,
+        )
+        lines = build_six_lines("乾", "离")          # 同人
+        dayun = compute_dayun_liyao(lines, 1, lines, 1)
+        res = compute_liunian(lines, 1, lines, 1, birth_year=birth_year,
+                              age_from=1, age_to=6, dayun=dayun)
+        out = []
+        prev = None
+        for y in res.years:
+            idx = 1 if prev is None else next(
+                (k for k in range(6) if y.lines[k] != prev[k]), None)
+            short = (y.hexagram_name[0] if "为" in y.hexagram_name
+                     else y.hexagram_name[2:])
+            if idx is None:
+                yao = ""
+            else:
+                pos = "初二三四五上"[idx]
+                nat = "九" if y.lines[idx] > 0 else "六"
+                yao = f"{pos}{nat}" if idx in (0, 5) else f"{nat}{pos}"
+            out.append(f"{short}{yao}")
+            prev = y.lines
+        return out
+
+    def test_six_year_chain(self):
+        for birth_year in (1990, 1991):
+            with self.subTest(birth_year=birth_year):
+                self.assertEqual(self._run(birth_year), self.EXPECT,
+                                 "阴爻六年游链应逐字等于原典")
+
+
 if __name__ == "__main__":
     unittest.main()
