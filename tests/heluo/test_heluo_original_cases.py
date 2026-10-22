@@ -321,6 +321,182 @@ class TestOriginalCasesYuanQiTables(unittest.TestCase):
         self.assertGreaterEqual(len(branches), 3, "地支表的对拍点太少")
 
 
+class TestCase5QiShaoL62(unittest.TestCase):
+    """算例 5（起例卷之上 L62 + L95）：绍兴四年甲寅十月初四日申时生男。
+
+    原典：
+        「假令绍兴四年，甲寅，十月初四日申时生男，**命未得十月节气，只作九月论**。
+          甲寅年甲戌月己卯日壬申时，**天数得二十有九**，除二十五还天正数外，
+          余四数，得巽卦。**地数四十有八**，除三十还地正数外，余十八数，
+          除十不用，只用八，得艮卦。**阳命男**，天数卦巽合在外，地数卦艮合在内，
+          二篇之策演得**风山渐卦**是也。」
+        L95：「假令前局甲寅年，甲戌月，己卯日，壬申时，演得风山渐，是**申时生人，
+          申时是第三个阴时**，合在本卦**第三阴爻**为元堂也。**渐卦第三阴爻正是六四**」
+    """
+
+    BAZI = [("甲", "寅"), ("甲", "戌"), ("己", "卯"), ("壬", "申")]
+
+    @classmethod
+    def setUpClass(cls):
+        cls.res = HeluoCanonical().calculate(
+            bazi=cls.BAZI, gender="male", birth_hour="申", era="zhong",
+            birth_year=1124)
+
+    def test_tian_di_shu(self):
+        n = self.res.numbers
+        self.assertEqual((n.tian_shu, n.di_shu), (29, 48),
+                         "算例5（起例卷之上 L62）天地二数与原典不符")
+
+    def test_prenatal_hexagram(self):
+        self.assertEqual(self.res.prenatal.hexagram_name, "风山渐",
+                         "算例5 先天卦与原典不符")
+
+    def test_yuantang(self):
+        """申时是第三个阴时 → 渐卦第三阴爻 = 六四。"""
+        self.assertEqual(self.res.yuantang.yuantang, "六四",
+                         "算例5 元堂与原典（L95）不符")
+        self.assertEqual(self.res.yuantang.yuantang_index, 3,
+                         "六四 = 爻位索引 3")
+
+
+class TestCase6DayunSwitchL136(unittest.TestCase):
+    """算例 6（起例卷之上 L136）：渐卦元堂四爻，45 岁行尽，46 岁变入后天卦。
+
+    原典：
+        「假如前命得渐卦，上巽下艮，元堂在四爻，**其人至四十五岁行尽**。
+          渐卦六爻气数**到四十六岁，却变入后天卦**，以上卦巽初爻变为乾，
+          移入内为下卦，升下卦艮，移出外为上卦，是……」
+        ⇒ 46 岁起的大运卦 = 上艮下乾 = **山天大畜**
+    """
+
+    BAZI = [("甲", "寅"), ("甲", "戌"), ("己", "卯"), ("壬", "申")]
+
+    def test_dayun_switches_to_postnatal_at_46(self):
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao
+        from tongshu.engines.heluo.yuan_tang import find_yuantang
+
+        res = HeluoCanonical().calculate(
+            bazi=self.BAZI, gender="male", birth_hour="申", era="zhong",
+            birth_year=1124)
+        pre = build_six_lines(res.prenatal.upper_gua, res.prenatal.lower_gua)
+        post = build_six_lines(res.postnatal.upper_gua, res.postnatal.lower_gua)
+        pyt = find_yuantang(six_lines=post, birth_hour="申", gender="male",
+                             xiantian_name=res.postnatal.hexagram_name)
+        dy = compute_dayun_liyao(pre, res.yuantang.yuantang_index, post,
+                                  pyt.yuantang_index)
+
+        xian_tian = [e for e in dy.sequence if e.phase == "先天"]
+        hou_tian = [e for e in dy.sequence if e.phase == "后天"]
+        self.assertTrue(xian_tian and hou_tian, "大运应分先天/后天两段")
+        # 45 岁行尽 → 先天段最后一岁是 45
+        self.assertEqual(xian_tian[-1].age_end, 45,
+                         "先天段应止于 45 岁（原典「其人至四十五岁行尽」）")
+        # 46 岁变入后天
+        self.assertEqual(hou_tian[0].age_start, 46,
+                         "后天段应起于 46 岁（原典「到四十六岁，却变入后天卦」）")
+        self.assertEqual(hou_tian[0].hexagram_name, "山天大畜",
+                         "46 岁起的后天大运卦与原典不符")
+
+    def test_postnatal_hexagram_is_shantian_daxu(self):
+        """原典的后天变法：上卦巽初爻变乾（移入内为下卦）、下卦艮移出为上卦
+        ⇒ 上艮下乾 = 山天大畜。"""
+        res = HeluoCanonical().calculate(
+            bazi=self.BAZI, gender="male", birth_hour="申", era="zhong",
+            birth_year=1124)
+        self.assertEqual(res.postnatal.hexagram_name, "山天大畜",
+                         "渐卦的后天卦与原典 L136 不符")
+
+
+class TestCase8CeShuL117(unittest.TestCase):
+    """算例 8（起例卷之下 L117）：睽九二爻的先天策数。
+
+    原典：「假如睽九二爻祖数一百九十二……共得三千八百四十策。……共得四千二百二十四数。
+    又加祖数一百九十二，合得四千四百一十六。又加外卦离三数，内卦兑二数，动爻二数，
+    共合得**四千四百二十三数**。……以千为元，十为会，百为运，零为世」
+    """
+
+    def test_ce_shu_and_yuan_hui_yun_shi(self):
+        from tongshu.engines.heluo.xian_tian_ce_shu import compute_xian_tian_ce_shu
+        r = compute_xian_tian_ce_shu("睽", "离", "兑", 1, 192)
+        self.assertEqual(r.ce_shu, 4423,
+                         "睽九二爻策数与原典 L117 不符")
+        self.assertEqual(r.yuan_hui_yun_shi, (4, 4, 2, 3),
+                         "元会运世与原典「千为元、十为会、百为运、零为世」不符")
+
+    def test_steps_record_original_figures(self):
+        """逐段数字应与原典逐条对应（3840 / 4224 / 4416 / 4423）。"""
+        from tongshu.engines.heluo.xian_tian_ce_shu import compute_xian_tian_ce_shu
+        r = compute_xian_tian_ce_shu("睽", "离", "兑", 1, 192)
+        joined = " ".join(r.steps)
+        for frag in ("3840", "4224", "4416", "4423"):
+            self.assertIn(frag, joined, f"推演步骤缺原典数字 {frag}")
+
+
+class TestCase7CeShuRefusalKept(unittest.TestCase):
+    """算例 7（起例卷之下 L115）：中孚上九爻 —— **引擎必须拒算**。
+
+    原典自身对不上：
+        「假如中孚上九爻……先下祖数一百二十九策，却以六爻六数因之，
+          下六十个百为六千，次下六十个九十为五千四百，次下六个二十为一百二十，
+          共计得**一万一千七百一十二策**。」
+    按它自己写的分解式：60×100 + 60×90 + 6×20 = **11520**，与自述 11712 **差 192**，
+    而 192 恰是**下一例（睽九二）的祖数** —— 疑为原典**串例**。
+
+    引擎据此拒算（首段基数不可复算 → 策数与元会运世一律不给）。
+    本类把**这个拒算钉死**：不得有人「好心」替它臆算出一个数来。
+    """
+
+    def test_engine_refuses_to_compute(self):
+        from tongshu.engines.heluo.xian_tian_ce_shu import compute_shangti_ce_shu
+        r = compute_shangti_ce_shu("中孚", "巽", "兑", 5, 129)
+        self.assertEqual(r.ce_shu, 0,
+                         "中孚上九一例原典自相矛盾，引擎不得给出策数")
+        self.assertEqual(r.yuan_hui_yun_shi, (0, 0, 0, 0),
+                         "拒算时元会运世也不得给出数值")
+
+    def test_refusal_states_the_reason(self):
+        """拒算必须**说明理由**（不得静默返回 0）。"""
+        from tongshu.engines.heluo.xian_tian_ce_shu import compute_shangti_ce_shu
+        r = compute_shangti_ce_shu("中孚", "巽", "兑", 5, 129)
+        self.assertTrue(r.caveat, "拒算须留下说明")
+        self.assertIn("11712", r.caveat, "拒算说明应点出原典自述数")
+        self.assertIn("11520", r.caveat, "拒算说明应点出按原文分解式算出的数")
+        self.assertIn("192", r.caveat, "拒算说明应点出差额 192（疑串例）")
+
+
+class TestNewCaseQuotesInRepo(unittest.TestCase):
+    """新增算例（起例卷之上 L62/L95/L136、起例卷之下 L115/L117）的原文在库。"""
+
+    def test_shangjuan_quotes(self):
+        raw = (Path(__file__).resolve().parents[2]
+               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之上.txt")
+        text = raw.read_text(encoding="utf-8")
+        for frag in (
+            "假令绍兴四年，甲寅，十月初四日申时生男，命未得十月节气，只作九月论",
+            "甲寅年甲戌月己卯日壬申时，天数得二十有九",
+            "地数四十有八",
+            "二篇之策演得风山渐卦是也",
+            "申时是第三个阴时",
+            "渐卦第三阴爻正是六四",
+            "假如前命得渐卦，上巽下艮，元堂在四爻，其人至四十五岁行尽",
+            "渐卦六爻气数到四十六岁，却变入后天卦",
+        ):
+            self.assertIn(frag, text, f"起例卷之上原文缺失：{frag}")
+
+    def test_xiajuan_quotes(self):
+        raw = (Path(__file__).resolve().parents[2]
+               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之下.txt")
+        text = raw.read_text(encoding="utf-8")
+        for frag in (
+            "假如中孚上九爻四阳二阴之卦",
+            "共计得一万一千七百一十二策",
+            "假如睽九二爻祖数一百九十二",
+            "共合得四千四百二十三数",
+        ):
+            self.assertIn(frag, text, f"起例卷之下原文缺失：{frag}")
+
+
 class TestOriginalCasesAreInRepo(unittest.TestCase):
     """四个算例的原文必须在库（可逐字回查）。"""
 
