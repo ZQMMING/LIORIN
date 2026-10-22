@@ -2155,6 +2155,18 @@ def judge_yue_ling_fei_shi(
 # 贵命十体·卦名吉（原文仅列示例："如泰、大有、同人、晋、豫之类是也"）→ 参考级
 GUI_MING_EXAMPLE_GUA = {"泰", "大有", "同人", "晋", "豫"}
 
+#: 贵命十体·③辞吉的吉词（**词组**口径）
+#: 原典起例卷之上 L212「三辞吉。（卦爻中有**元吉亨利**是也。）」
+#: 「元吉」「亨利」是两个完整吉词。⚠ 不可改用单字「元/吉/亨/利」匹配 ——
+#: 周易爻辞普遍含「元亨利贞」，单字匹配会让本项几乎恒中（2026-10-22 修正）。
+_GUI_JI_CI_GOOD_CHARS = ("元吉", "亨利")
+
+#: 节气月 → 该月的月令卦（十二月卦气表，原典《起例卷之中》L10-L30）
+#: 用于贵命十体④「又如正月得泰卦、九月得剥卦」的留痕文案。
+_GUA_QI_MONTH_BY_NUM: dict[int, str] = {
+    m: v[1] for m, v in GUA_QI_MONTH_TABLE.items()
+}
+
 # 得时表（原文："春震木、夏离火、秋兑金、冬坎水"）
 _SEASON_DESHI_GUA = {"春": "震", "夏": "离", "秋": "兑", "冬": "坎"}
 
@@ -2232,6 +2244,7 @@ def judge_gui_ming_shi_ti(
     yao_cis: list[str] | None = None,      # 先天六爻辞（初→上），判辞吉
     yao_lines: list[int] | None = None,    # 先天六爻序列（1阳0阴），判有援/众宗
     birth_month_branch: str = "",          # 生月支（节气月），判得时/顺时/当位
+    gua_qi_month: int | None = None,       # 本卦的卦气月（卦头自述），判「正月得泰卦」那半
     tian_shu: int = 0, di_shu: int = 0,
     year_gan: str = "", year_zhi: str = "",
 ) -> list[str]:
@@ -2256,18 +2269,42 @@ def judge_gui_ming_shi_ti(
     season = _SEASON_BY_BRANCH.get(birth_month_branch, "")
     mon = BRANCH_TO_MONTH.get(birth_month_branch)
 
-    # ① 卦名吉（参考级：原文仅列示例）
+    # ① 卦名吉（**参考级**：原文仅列示例）
+    #    原典 L210「一卦名吉。（如泰、大有、同人、晋、豫**之类**是也。）」
+    #    ——「之类」= 举例未穷举，故**不在明举例内的卦既不判吉、也不判凶**，
+    #    该体不计入十体命中数（见下方留痕）。
     if prenatal_name in GUI_MING_EXAMPLE_GUA:
         got.append("①卦名吉（泰/大有/同人/晋/豫类，参考级）")
     # ② 爻吉（元堂二五）
     if w in ("二", "五"):
         got.append("②爻吉（元堂居二五爻）")
     # ③ 辞吉（卦爻中有元吉亨利）
-    if yao_cis and any(any(k in (c or "") for k in ("元", "吉", "亨", "利")) for c in yao_cis):
+    #    原典 L212「三辞吉。（卦爻中有**元吉亨利**是也。）」
+    #    「元吉」「亨利」是**两个完整吉词**，须按词组命中。
+    #    ⚠ 不可用单字「元/吉/亨/利」匹配：实测 64 卦中单字口径命中 **60 卦
+    #    （93.8%）** —— 本项几乎恒中，贵为「几乎必中」、贱为「几乎必不中」，
+    #    贵贱十体不再对称，分级失去意义。词组口径命中 11 卦（17.2%），
+    #    且是单字口径的**子集**（不产生反向差异）。
+    if yao_cis and any(any(k in (c or "") for k in _GUI_JI_CI_GOOD_CHARS) for c in yao_cis):
         got.append("③辞吉（卦爻中有元吉亨利）")
-    # ④ 得时（春震夏离秋兑冬坎）
-    if season and _SEASON_DESHI_GUA.get(season) in (up, low):
-        got.append(f"④得时（{season}月得{_SEASON_DESHI_GUA[season]}卦）")
+    # ④ 得时（春震木、夏离火、秋兑金、冬坎水 ＋ 正月得泰卦、九月得剥卦）
+    #    原典 L213「四得时。（如春震木、夏离火、秋兑金、冬坎水之类。
+    #      **又如正月得泰卦、九月得剥卦之类皆是。**）」
+    #    后半「正月得泰卦」= 生月与该卦的**卦气月**相合，机械可判：
+    #    该卦的卦气月取自其卦头自述（gua_qi_month 入参）。
+    #    ⚠ 前半的「月份→季节」划分（_SEASON_BY_BRANCH 寅卯辰春…）是**引擎口径**：
+    #    原典只给了春/夏/秋/冬四季的代表卦，未给月份到四季的划分规则。
+    #    此处保留既有实现以免改动判词，并在守卫中如实留档。
+    _deshi_hit = bool(season and _SEASON_DESHI_GUA.get(season) in (up, low))
+    _guaqi_hit = bool(mon is not None and gua_qi_month is not None
+                      and mon == gua_qi_month)
+    if _deshi_hit or _guaqi_hit:
+        _why = []
+        if _deshi_hit:
+            _why.append(f"{season}月得{_SEASON_DESHI_GUA[season]}卦")
+        if _guaqi_hit:
+            _why.append(f"生月{mon}月=卦气月（{_GUA_QI_MONTH_BY_NUM.get(mon, '')}卦）")
+        got.append("④得时（" + "、".join(_why) + "）")
     # ⑤ 有援（元堂阳应阴 / 元堂阴应阳）
     if yy is not None and yao_lines and len(yao_lines) == 6 and w:
         idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}.get(w)
@@ -2302,7 +2339,14 @@ def judge_gui_ming_shi_ti(
                 got.append("⑩众宗（元堂一阳为五阴所宗 / 一阴为众阳所宗）")
 
     if not got:
-        return [f"贵命十体（{prenatal_name}命，元堂{yuantang_yao}）：十体均未命中"]
+        out.append(f"贵命十体（{prenatal_name}命，元堂{yuantang_yao}）：十体均未命中")
+        if prenatal_name not in GUI_MING_EXAMPLE_GUA:
+            out.append("①卦名不判（不在原文明举例「泰/大有/同人/晋/豫」内；"
+                       "原典用「之类」= 举例未穷举，未举例者不判吉亦不判凶）")
+        return out
+    if prenatal_name not in GUI_MING_EXAMPLE_GUA:
+        out.append("①卦名不判（不在原文明举例「泰/大有/同人/晋/豫」内；"
+                   "原典用「之类」= 举例未穷举，未举例者不判吉亦不判凶）")
     out.append("；".join(got))
     n = len(got)
     if n <= 2:
@@ -2325,6 +2369,7 @@ def judge_jian_ming_shi_ti(
     yao_cis: list[str] | None = None,
     yao_lines: list[int] | None = None,
     birth_month_branch: str = "",
+    gua_qi_month: int | None = None,       # 本卦的卦气月（卦头自述），判④取反
     tian_shu: int = 0, di_shu: int = 0,
     year_gan: str = "", year_zhi: str = "",
 ) -> list[str]:
@@ -2344,14 +2389,26 @@ def judge_jian_ming_shi_ti(
     season = _SEASON_BY_BRANCH.get(birth_month_branch, "")
     mon = BRANCH_TO_MONTH.get(birth_month_branch)
 
-    if prenatal_name not in GUI_MING_EXAMPLE_GUA:
-        got.append("①卦名凶（非贵命示例卦，参考级）")
+    # ① 卦名：**不判**
+    #    ⚠ 2026-10-22 修正：原实现在此产出「①卦名凶（非贵命示例卦，参考级）」。
+    #    原典 L210「一卦名吉。（如泰、大有、同人、晋、豫**之类**是也。）」
+    #    用「之类」= 举例未穷举，**并未言其余卦为凶**；L221「贱命十体皆与十贵相反」
+    #    的「取反」是把**已判**的十贵体取反，而①在未举例之卦上本就未判，
+    #    无从取反得凶。
+    #    另一条更硬的理由是**对称性**：十体是计分制（L220 分级），贵贱两侧
+    #    必须同一把尺子。若贱命侧①对 59/64 卦恒判凶，则贵为 9 项制、贱为 10 项制，
+    #    两边的分级不在同一尺度上。故该体**不判、不计入**。
     if w not in ("二", "五"):
         got.append("②爻位凶（元堂不居二五）")
-    if yao_cis and not any(any(k in (c or "") for k in ("元", "吉", "亨", "利")) for c in yao_cis):
+    # ③ 辞凶（卦爻无元吉亨利）—— 词组口径，与贵命十体③同一判据
+    if yao_cis and not any(any(k in (c or "") for k in _GUI_JI_CI_GOOD_CHARS) for c in yao_cis):
         got.append("③辞凶（卦爻无元吉亨利）")
-    if season and _SEASON_DESHI_GUA.get(season) not in (up, low):
-        got.append(f"④不得时（{season}月不得{_SEASON_DESHI_GUA[season]}卦）")
+    # ④ 不得时（两半取反：季节卦 + 卦气月）
+    _deshi_hit = bool(season and _SEASON_DESHI_GUA.get(season) in (up, low))
+    _guaqi_hit = bool(mon is not None and gua_qi_month is not None
+                      and mon == gua_qi_month)
+    if not (_deshi_hit or _guaqi_hit):
+        got.append("④不得时（既非季正卦、卦气月亦不合）")
     if yy is not None and yao_lines and len(yao_lines) == 6 and w:
         idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}.get(w)
         if idx is not None:
@@ -2380,6 +2437,9 @@ def judge_jian_ming_shi_ti(
                 got.append("⑩众嫉（非一阳五阴/一阴五阳之宗）")
 
     out = [f"贱命十体（{prenatal_name}命，元堂{yuantang_yao}，贵体取反）："]
+    if prenatal_name not in GUI_MING_EXAMPLE_GUA:
+        out.append("①卦名不判（不在原文明举例内；原典用「之类」= 举例未穷举，"
+                   "未举例者不判吉亦不判凶，故无「卦名凶」可取反）")
     if not got:
         out.append("十贱体均未命中")
         return out
@@ -2521,6 +2581,20 @@ def judge_xian_tian_hou_tian_yuan_qi(
     if not xiantian_yq and houtian_yq:
         return ["先天无元气而后天始有：先贫贱而后富贵者也（原典：先天若无后天始有）"]
     return ["先天后天元气俱无：如卦体中二者俱反，必贫穷困苦夭死者也（原典：元气化工有无论）"]
+
+
+def _kz_gua_qi_month(gua_name: str) -> int | None:
+    """该卦的**卦气月**（卦头自述「卦气属X月」），取不到返回 None。
+
+    用于贵命十体④「又如正月得泰卦、九月得剥卦之类皆是」——
+    判据是「生月与该卦的卦气月相合」，故需**本卦自己的**卦气月
+    （不是十二月卦气表里那个月的月令卦）。
+    """
+    try:
+        g = load_guajie_data().get(gua_name)
+    except Exception:
+        return None
+    return g.gua_qi_month if g else None
 
 
 def _kz_yao_cis(gua_name: str) -> list[str]:
@@ -2956,6 +3030,7 @@ def _build_kuozhan(
             yao_cis=_kz_yao_cis(prenatal),
             yao_lines=_gua_to_lines(prenatal),
             birth_month_branch=(bazi[1][1] if bazi and len(bazi) >= 2 else ""),
+            gua_qi_month=_kz_gua_qi_month(prenatal),
             tian_shu=tian, di_shu=di,
             year_gan=(bazi[0][0] if bazi else ""), year_zhi=(bazi[0][1] if bazi else ""))),
         ("jian_ming_shi_ti", lambda: judge_jian_ming_shi_ti(
@@ -2964,6 +3039,7 @@ def _build_kuozhan(
             yao_cis=_kz_yao_cis(prenatal),
             yao_lines=_gua_to_lines(prenatal),
             birth_month_branch=(bazi[1][1] if bazi and len(bazi) >= 2 else ""),
+            gua_qi_month=_kz_gua_qi_month(prenatal),
             tian_shu=tian, di_shu=di,
             year_gan=(bazi[0][0] if bazi else ""), year_zhi=(bazi[0][1] if bazi else ""))),
         ("yao_ci_bi_li", lambda: judge_yao_ci_bi_li(_kz_yao_cis(prenatal))),

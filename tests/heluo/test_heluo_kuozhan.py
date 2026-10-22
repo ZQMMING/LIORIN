@@ -498,7 +498,14 @@ class TestJianMingShiTi:
     """贱命十体（起例卷之上·贱命十体：皆与十贵相反）"""
 
     def test_duo_jian_ti_duan(self):
-        """构造贱体密集命中：非示例卦+元堂初爻+辞凶+夏月不得时+无援+不得体+位不当 → 僧道九流/吏僧孤独"""
+        """构造贱体密集命中：非示例卦+元堂初爻+辞凶+夏月不得时+无援+不得体+位不当 → 僧道九流/吏僧孤独
+
+        ⚠ 2026-10-22 依原典改「①卦名凶」→「①卦名不判」：
+        原典起例卷之上 L210「一卦名吉。（如泰、大有、同人、晋、豫**之类**是也。）」
+        用「之类」= 举例未穷举，**并未言其余卦为凶**；L221「贱命十体皆与十贵相反」
+        的「取反」是把**已判**的十贵体取反，而①在未举例之卦上本就未判，
+        无从取反得凶。故该体不判、不计入十贱体命中数。
+        """
         out = g.judge_jian_ming_shi_ti(
             prenatal_name="剥", yuantang_yao="初六",
             yao_cis=["凶", "凶", "凶", "凶", "凶", "凶"],
@@ -508,7 +515,9 @@ class TestJianMingShiTi:
         )
         joined = "；".join(out)
         assert "贵体取反" in out[0]
-        assert "①卦名凶" in joined
+        # ① 卦名：不在原文明举例内 → 不判（不判吉、亦不判凶）
+        assert "①卦名不判" in joined
+        assert "①卦名凶" not in joined, "原典「之类」= 举例未穷举，未举例之卦不得判凶"
         assert "②爻位凶" in joined
         assert "③辞凶" in joined
         assert "④不得时" in joined
