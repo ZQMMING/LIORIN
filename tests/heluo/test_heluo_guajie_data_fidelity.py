@@ -119,6 +119,21 @@ class TestGuajieDataFidelity(unittest.TestCase):
                     self.assertIn(s, self.text,
                                   f"{g['name']}{y.get('yao')} 邵曰在原典切片中找不到：{y.get('shao')}")
 
+    def test_gua_header_lines_verbatim(self):
+        """卦头断语逐字来自原典（288 条；**纳甲、旺时、卦气属月都在其中**）。
+
+        卦头是「纳甲是：…」「卦气属X月」「…得时也」等判据的载体 ——
+        纳甲又是「叶/不叶」的第二输入（年干支是否在纳甲 ✓），
+        故卦头同样必须逐字来自原典。
+        """
+        for g in self.data:
+            for i, ln in enumerate(g.get("lines") or []):
+                with self.subTest(gua=g["name"], line=i):
+                    n = _norm(str(ln))
+                    self.assertTrue(n, "卦头条目为空")
+                    self.assertIn(n, self.text,
+                                  f"{g['name']} 第{i+1}条卦头在原典切片中找不到：{ln}")
+
     def test_engine_exposes_same_data(self):
         """引擎读到的判词与数据文件一致（防止引擎另有一份副本）。"""
         from tongshu.engines.heluo import guajie as gj
