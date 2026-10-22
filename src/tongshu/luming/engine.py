@@ -1910,6 +1910,14 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
     _yr_yang_ren = _YANG_REN_BY_YEAR.get(chart.year_pillar.heavenly_stem, "")
     _year_at_yang_ren = bool(_yr_yang_ren and chart.year_pillar.earthly_branch == _yr_yang_ren)
     _hour_at_yang_ren = bool(_yr_yang_ren and chart.hour_pillar.earthly_branch == _yr_yang_ren)
+    # 天刑煞 (三命通会卷三: "子丑人乙时, 寅人庚时, 卯辰人辛时, 巳人壬时,
+    #   午未人癸时, 申人丙时(原文'甲人丙时'传抄讹, 据十二支序补申),
+    #   酉戌人丁时, 亥人戊时, 取时刑克本命; 犯者遭刑有疾")
+    _TIAN_XING = {"ZI": "YI", "CHOU": "YI", "YIN": "GENG", "MAO": "XIN", "CHEN": "XIN",
+                  "SI": "REN", "WU": "GUI", "WEI": "GUI", "SHEN": "BING", "YOU": "DING",
+                  "XU": "DING", "HAI": "WU"}
+    tian_xing = bool(_TIAN_XING.get(chart.year_pillar.earthly_branch, "")
+                     == chart.hour_pillar.heavenly_stem)
     # 四支互冲对数 (L3568"冲者无兄弟")
     _chong_pairs = 0
     _CHONG_B = {"ZI": "WU", "CHOU": "WEI", "YIN": "SHEN", "MAO": "YOU",
@@ -2390,6 +2398,7 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
         "y_shi_shang_hidden": _y_shi_shang_hidden,
         "year_at_yang_ren": _year_at_yang_ren,
         "hour_at_yang_ren": _hour_at_yang_ren,
+        "tian_xing": tian_xing,
         "chong_pairs_count": _chong_pairs,
         # ---- 五行精纪卷卅一 论寿夭 (L4112-4179) ----
         "ji_jiao_sha": _ji_jiao,

@@ -777,7 +777,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         # 每条规则都有证据
         for r in VERDICT_RULES:
             self.assertIn(r["evidence"], {v for v in LM_EV.values()})
-        self.assertEqual(len(VERDICT_RULES), 161)  # 160 + LM-F01~F06 岁运发用登记(2026-10-21, 引擎直生族)
+        self.assertEqual(len(VERDICT_RULES), 162)  # 161 + LM-S10 天刑煞(2026-10-23)
 
     def test_116_tone_scope_case_19831103(self):
         """吉凶分级 oracle: 1983-11-3 坤造.
@@ -908,7 +908,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         l_ids = {r["id"] for r in LUMING_RULES}
         # 1) 登记 ↔ 可执行: 双向覆盖 (73 条展开规则, 52 个 id)
         self.assertEqual(v_ids, l_ids)
-        self.assertEqual(len(VERDICT_RULES), 161)  # 160 + LM-F01~F06 岁运发用登记(2026-10-21, 引擎直生族)
+        self.assertEqual(len(VERDICT_RULES), 162)  # 161 + LM-S10 天刑煞(2026-10-23)
         self.assertGreaterEqual(len(LUMING_RULES), 45)
         # 2) 每条可执行规则 id 都落在判定矩阵, 且矩阵每格非空
         matrix_ids = set()
@@ -1320,7 +1320,7 @@ class TestEvidenceRegistration(unittest.TestCase):
         v31 = [v for v in lm.verdicts if v.get("rule_id") == "LM-V31" and v.get("scope") == "原局"]
         self.assertEqual(len(v31), 3)      # 三酉自刑重逢 → 3 条 (count 展开加重)
         o = lm.tone_scope["layers"]["原局"]
-        self.assertEqual(o["凶"], 1)   # 2026-10-21: 亲缘 V14华盖孤寡(未=年支华盖坐命)计入凶+1(原continue不计); V31×3 自刑平化(非四字足) → 方向中平
+        self.assertEqual(o["凶"], 2)   # V14华盖孤寡(未=年支华盖坐命)凶+1; S10天刑煞(年支未→时干癸, 午未人癸时)凶+1; V31×3 自刑平化(非四字足)
         self.assertFalse(any(v.get("rule_id") == "LM-V05" for v in lm.verdicts))
 
     def test_132_shensha_lookup_mode_switch(self):

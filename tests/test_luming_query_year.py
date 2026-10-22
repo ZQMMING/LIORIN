@@ -592,7 +592,13 @@ class TestLiuNianDimensions20261023:
         assert found is not None
         assert not any(v["rule_id"] == "LM-S07" for v in found["verdicts"])
 
-    def test_151_tian_huo_fire_disaster(self, be):
+    def test_152_tian_xing_hour_punish(self, be):
+        # 天刑煞: 1984-3-1 丑时, 年支子→时干乙(子丑人乙时), 时干刑克本命 → S10
+        c = be.compute((1984, 3, 1, 2), gender="male")
+        from tongshu.luming.engine import from_bazi_chart
+        lm = from_bazi_chart(c)
+        v = next((v for v in lm.verdicts if v["rule_id"] == "LM-S10"), None)
+        assert v is not None and v["tone"] == "凶"
         # 天火煞: 1986-6-11 午时 = 丙寅 甲午 丙戌 甲午 (寅午戌全、火透、无水)
         # 1990 庚午太岁至火生旺 → S09 触发 tone=凶
         r = _qy(be, 1986, 6, 11, 12, 1990)

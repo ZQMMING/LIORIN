@@ -175,6 +175,7 @@ RULE_SEMANTICS: dict[str, dict] = {
     "LM-V151": {"quote": "此格止有五日：甲寅、丙辰、戊辰、庚辰、壬戌……日德心善多稳厚，而作事慈祥，福必丰厚（三命通会 L2731）→ 日德五日入格（推导）", "strength": "推导", "quote_status": "complete", "topic": ["事业"]},
     "LM-V152": {"quote": "日德不喜见魁罡，化成煞曜最难当；日德……不宜见财官，及刑冲破害，空亡、魁罡会合加临，皆为大忌（三命通会 L2731）→ 日德见魁罡/空亡犯忌（推导）", "strength": "推导", "quote_status": "complete", "topic": ["健康"]},
     "LM-V153": {"quote": "凡见夹禄者，不可本禄上有岁月所占，占了则官实也，实则不能容物也。官不崇显也（珞琭子赋注 L70）→ 本禄被年月所占则滞（推导）", "strength": "推导", "quote_status": "complete", "topic": ["事业"]},
+    "LM-S10": {"quote": "天刑煞，子丑人乙时，寅人庚时，卯辰人辛时，巳人壬时，午未人癸时，申人丙时，酉戌人丁时，亥人戊时，取时刑克本命，犯者遭刑有疾（三命通会卷三·总论诸神煞）", "strength": "逐字", "quote_status": "complete", "topic": ["健康"]},
     # ================= 太岁 =================
     "LM-V26": {"quote": "凡命前五辰为宅舍……（三命钤）；太岁入宅，主家宅动摇，宅者命前五辰是也（L4411 烛神经）", "strength": "推导", "quote_status": "complete", "topic": ["岁运"]},
     "LM-V27": {"quote": "", "strength": "待补", "quote_status": "pending", "topic": ["岁运"]},
