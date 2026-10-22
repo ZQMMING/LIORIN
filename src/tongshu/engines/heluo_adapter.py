@@ -19,6 +19,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import datetime
 from typing import Optional, Union
 
@@ -188,10 +189,16 @@ class HeluoAdapter:
         if bd is not None:
             birth_year: Optional[int] = bd.year
             birth_date: Optional[str] = bd.date().isoformat()
+            era_source = "derived"          # 三元据真实出生年推导
         else:
             # 手动构造 chart 未带出生时间：年柱反推由河洛内部处理，era 回退默认
             birth_year = None
             birth_date = None
+            # ⚠ 2026-10-24 审计修：此前此处静默回落 era="zhong" 且**不留来源标记**。
+            #   era 决定寄宫对象（上元寄艮/坤、下元寄离/兑…），寄宫一变 →
+            #   先天卦变 → 元堂变 → 后天卦变 → 全链判词全变；而下游无从判别
+            #   这个 era 是真值还是兜底。现按 birth_year_source 的同一约定留痕。
+            era_source = "fallback"         # **兜底**，非真实出生年推导
 
         era = sanyuan(birth_year) if birth_year is not None else "zhong"
 
@@ -200,6 +207,7 @@ class HeluoAdapter:
             gender=chart.gender,
             birth_hour=birth_hour,
             era=era,
+            era_source=era_source,
             birth_year=birth_year,
             birth_date=birth_date,
             target_year=target_year,
@@ -208,14 +216,22 @@ class HeluoAdapter:
         )
 
         # H8: 解卦层（原典判词）挂载 — 独立于冻结的 calculate，防御性兜底
+        #
+        # ⚠ 2026-10-24 审计修：原为 `except Exception: pass` —— 解卦层失败时
+        #   result.guajie 保持 None，**下游看到「没有判词」却无法分辨**
+        #   「解卦层挂了」与「这盘本来就没判词」：缺失被当成正常，静默无痕。
+        #   现按 guajie 层自身的披露格式（guajie.py:1859 `{"error": ...}`）
+        #   挂上错误字典：不阻塞主链，但错误**显形**，调用方可据此判别。
         try:
-            from dataclasses import replace
             from .heluo.guajie import build_guajie_from_result
             result = replace(result, guajie=build_guajie_from_result(
                 result, bazi=bazi,
                 target_year=target_year, target_month=target_month,
                 target_day=target_day, huangli_provider=huangli_provider,
             ))
-        except Exception:
-            pass  # 解卦层失败不阻塞主链
+        except Exception as exc:
+            # 不阻塞主链，但必须留痕（缺失被当成正常，比答错更坏）。
+            result = replace(result, guajie={
+                "error": f"guajie 构建失败: {type(exc).__name__}: {exc}",
+            })
         return result

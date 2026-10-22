@@ -3082,6 +3082,13 @@ def _build_kuozhan(
     si_duan: list[str], target_year: int | None = None,
 ) -> dict:
     """组装扩展断法（每项独立 try，单项失败不阻塞其余）。"""
+    # ⚠ 2026-10-24 审计修：原实现**只 append 从不清空**，而本函数 docstring
+    #   与 `kuozhan_errors()` 都声称「最近一次」。实际返回的是**进程级历史累积**
+    #   —— 第一盘失败过一次，之后每一盘的 kuozhan_errors() 都带着那条陈迹，
+    #   调用方无法区分「本盘失败」与「历史上有过一盘失败」。
+    #   现于入口清空（与 diagnosis_rule_graph.build_diagnosis_graph 的
+    #   _DROPPED_RULES.clear() 同款），使语义与文档一致。
+    _KZ_ERRORS.clear()
     kz: dict = {}
 
     # 运反/流年反/数反接驳（起例卷之上·元气化工有无论 L200；2026-09-12 接驳）

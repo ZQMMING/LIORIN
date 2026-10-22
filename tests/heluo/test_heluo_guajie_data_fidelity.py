@@ -16,9 +16,16 @@
 **实测（2026-10-22）**：卦辞 64/64、爻辞 384/384、象曰 384/384、
 断语 1088/1088、邵曰 383/383 —— **全部 100% 逐字命中**。
 
-**不覆盖的字段**：`yi`（爻辞释义）与 `jingyi`/`shiyi`（精义/现代语义）
-来自 `guajie_jingyi.json`（**现代语义整理**，非原典逐字），故不作原典回查 ——
-但它们的**键集合**仍须与爻数一致（本守卫一并查）。
+**不覆盖的字段**：`jingyi`/`shiyi`（精义/现代语义）来自 `guajie_jingyi.json`
+（**现代语义整理**，非原典逐字），故不作原典回查 —— 但它们的**键集合**仍须与爻数一致
+（本守卫一并查）。
+
+**2026-10-24 修订：`yi` 字段已纳入原典回查**（此前被误列为「现代语义整理」而豁免）。
+`yi`（爻辞释义）实为**《易卦释义》原典文言**，就在 `guajie_raw/` 切片里，可逐字回查。
+实测（2026-10-24）：整串连续命中 **356/376**；其余 20 条是**从原典抽取了被省略的
+片段**（如乾初九把「凡用九之爻，初年遇阳不变…」整段并入爻释义）——
+原典文字都在，只是 `yi` 内部**跨段不相邻**。故判定用「整串命中 **或** 分句全覆盖命中」，
+实测 **376/376 全覆盖**。
 """
 from __future__ import annotations
 
@@ -32,10 +39,20 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "heluo" / "guajie_data.json"
 SLICE_DIR = ROOT / "data" / "heluo" / "guajie_raw"
 
+# 2026-10-24 补：此前本文件**从不**把 src 注入 sys.path ——
+# test_engine_exposes_same_data 里的 `from tongshu.engines.heluo import guajie`
+# 只能靠全量跑时**别的测试文件先导入过 tongshu** 才不报 ModuleNotFoundError。
+# 单跑本文件必红（隐式依赖 = 测试隔离缺陷）。现显式注入。
+sys.path.insert(0, str(ROOT / "src"))
+
 
 def _norm(s: str) -> str:
     """去全部空白（切片与数据可能跨行排版不同）。"""
     return re.sub(r"\s+", "", s or "")
+
+
+#: 句末标点（用于 `yi` 的分句回查；见 test_yi_verbatim）
+_SENT_SPLIT = re.compile(r"[。；！？]")
 
 
 def _slice_text() -> str:
@@ -133,6 +150,49 @@ class TestGuajieDataFidelity(unittest.TestCase):
                     self.assertTrue(n, "卦头条目为空")
                     self.assertIn(n, self.text,
                                   f"{g['name']} 第{i+1}条卦头在原典切片中找不到：{ln}")
+
+    def test_yi_verbatim(self):
+        """爻辞释义 `yi` 逐字来自原典（376 条非空 + 8 条底本原缺）。
+
+        2026-10-24 新增。此前本文件把 `yi` 误列为「现代语义整理」而豁免，
+        而 `yi` 实际是**《易卦释义》原典文言**（随 `to_dict()` 进入流年/流月/
+        流日/流时四层爻断的公开输出），却是唯一没有逐字回查保护的爻级字段 ——
+        改一个字、换成编造文本，守卫全绿。
+
+        判定口径：**整串连续命中** 或 **分句全覆盖命中**。
+        后者用于 20 条「从原典抽取了被省略片段」的记录（如乾初九把
+        「凡用九之爻，初年遇阳不变…」整段并入爻释义）—— 原典文字都在，
+        只是 `yi` 内部跨段不相邻。分句按句末标点切，**短于 8 字的碎句不单独要求**
+        （否则会被跨段边界处的残句误伤）。
+
+        实测：整串 356/376，分句口径 376/376（另有 8 条底本原缺，见下）。
+        """
+        empty = []
+        for g in self.data:
+            for y in g.get("yaos") or []:
+                yi = y.get("yi") or ""
+                if not yi.strip():
+                    # 底本该爻本无爻释义段 —— 记为「原典无」，不判、不造。
+                    # 这 8 条必须逐条列名，改动前须先更新本清单。
+                    empty.append((g["name"], y.get("yao")))
+                    continue
+                with self.subTest(gua=g["name"], yao=y.get("yao")):
+                    n = _norm(yi)
+                    if n in self.text:
+                        continue
+                    sents = [s for s in _SENT_SPLIT.split(yi)
+                             if len(_norm(s)) >= 8]
+                    self.assertTrue(sents,
+                                    f"{g['name']}{y.get('yao')} 爻辞释义切不出句子")
+                    for s in sents:
+                        self.assertIn(
+                            _norm(s), self.text,
+                            f"{g['name']}{y.get('yao')} 爻辞释义片段在原典切片中找不到：{s}")
+        self.assertEqual(
+            sorted(empty),
+            sorted([("坤", "六二"), ("屯", "上六"), ("需", "九二"), ("师", "上六"),
+                    ("小畜", "九三"), ("小畜", "上九"), ("履", "九二"), ("涣", "上九")]),
+            "底本原缺爻释义的爻必须是这 8 条（改动前先更新本清单）")
 
     def test_engine_exposes_same_data(self):
         """引擎读到的判词与数据文件一致（防止引擎另有一份副本）。"""

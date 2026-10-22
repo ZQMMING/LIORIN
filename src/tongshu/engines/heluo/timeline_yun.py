@@ -863,8 +863,16 @@ def _gua6_segment_to_days(seg: dict) -> list[dict]:
     """gua6 段索引 → 逐日条目（hou5 兼容形态）。
 
     段内每日激活爻：**首日从初爻起**，依次初/二/三/四/五/上（定稿口径）。
-    段本卦 = 链式 day_lines[k*6]（与 ``compute_daily_base_hex`` 同一算法），
+    段本卦 = **月卦逐爻变**（居位爻不动，见 :func:`liuri_gua6_bases`）——
+    与 ``compute_liuri_stub`` / ``compute_daily_base_hex`` 同一算法，
     故本函数与 fast path 的预置结果**逐字一致**。
+
+    ⚠ 2026-10-24 订正：本 docstring 原写「段本卦 = 链式 day_lines[k*6]」——
+      那是 2026-10-22 修正**之前**的旧口径（hou5 的链式累变），已在
+      commit 7a5ce148 改为「月卦逐爻变」。此处描述滞后于实现，
+      会误导后来者以为链式仍是 gua6 的正确口径 —— 现予订正。
+      （实测：链式在 gua6 下产出退化序列 屯/鼎/屯/鼎/屯，
+        与原典「屯、革、明夷、家人、蹇」不符。）
     """
     _dls = seg.get("day_lines") or []
     _first = int(seg.get("day_from") or 1)

@@ -314,6 +314,20 @@ class HeluoResult:
     #: 供下游（guajie / 平台）在不重复传参的情况下定位同一流日 ✓
     #: （「流日卦按当前日期自动算」契约）。
     target_date: str | None = None
+    #: 2026-10-24 审计修：era（三元）的**来源**标记。
+    #: era 决定**寄宫对象**（上元寄艮/坤、中元阳男阴女寄艮、下元寄离/兑），
+    #: 寄宫数一变 → 先天卦变 → 元堂变 → 后天卦变 → **全链判词全变**。
+    #: 但此前 era 只作入参用完即丢，下游无法判别它是真值还是兜底 ——
+    #: heluo_adapter 在 chart 无 birth_datetime 时会静默回落 "zhong"。
+    #: 现按与 birth_year_source 同一约定留痕：
+    #: ``"explicit"``（调用方传入）/ ``"derived"``（据出生年推导）/
+    #: ``"fallback"``（**兜底**，非真实出生年）。
+    era_source: str = ""
+    #: 2026-10-24 审计修：H7 元气层**计算异常**的留痕（非空即表示本层失败）。
+    #: 此前 `except Exception: yuan_qi = None` —— 下游看到的 yuan_qi=None
+    #: 无法分辨「本盘确实无元气」与「元气层抛异常了」。
+    #: 化工链路已有同类自曝（hua_gong 的「本级不可判」evidence），元气层此前没有。
+    yuan_qi_error: str = ""
 
 
 class HeluoCanonical:
@@ -373,6 +387,11 @@ class HeluoCanonical:
         target_year: int | None = None,
         target_month: int | None = None,
         target_day: int | None = None,
+        # ⚠ 2026-10-24：era_source 放在**签名末尾**，不可插在 era 之后 ——
+        #   本方法支持**位置参数**调用（如 calculate(bazi, gender, hour, era, 2013)，
+        #   插在中间会把 birth_year 的实参错位成 era_source，流年序列整体错位。
+        #   （该破坏由 tests/test_heluo_liunian_guji.py 捕获。）
+        era_source: str = "explicit",
     ) -> HeluoResult:
         """
         完整计算链：
@@ -487,6 +506,11 @@ class HeluoCanonical:
 
         # Step 6: 时间序列（大运爻位值运 + 流年卦 + 流月卦）
         # Step 5.8: H7 元气（年柱纳甲/后天宫位配先天之气）— 与化工对偶
+        # ⚠ 2026-10-24 审计修：原为 `except Exception: yuan_qi = None`，
+        #   降级不留痕 → 下游看到的 yuan_qi=None 无法分辨「本盘确实无元气」
+        #   与「元气层抛异常」。现降级仍保留（不阻塞主链），但错误写入
+        #   yuan_qi_error，由结果层携带（缺失被当成正常，比答错更坏）。
+        yuan_qi_error = ""
         try:
             from .yuan_qi import compute_yuan_qi as _cyq
             yr_stem = bazi[0][0] if (bazi and len(bazi) > 0) else ""
@@ -498,8 +522,9 @@ class HeluoCanonical:
                     prenatal.upper_gua, prenatal.lower_gua,
                     postnatal.upper_gua, postnatal.lower_gua,
                 )
-        except Exception:
+        except Exception as exc:
             yuan_qi = None
+            yuan_qi_error = f"{type(exc).__name__}: {exc}"
 
         timeline = self._build_timeline(
             prenatal, yuantang, postnatal, postnatal_yuantang, birth_year,
@@ -561,8 +586,10 @@ class HeluoCanonical:
             hua_gong=hua_gong,
 
             yuan_qi=yuan_qi,
+            yuan_qi_error=yuan_qi_error,
             seasonal_hexagram=seasonal_hex,
             era=era,
+            era_source=era_source,
             bazi=bazi,
             bazi_caliber_notes=bazi_caliber_notes,
             target_date=(
