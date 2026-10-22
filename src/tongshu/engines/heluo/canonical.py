@@ -22,7 +22,8 @@ from .numbers import (
 from .prenatal import determine_prenatal_hexagram, PrenatalHexagram
 from .yuan_tang import find_yuantang, YuanTang
 from .postnatal import compute_postnatal, PostnatalHexagram
-from .temporal import compute_timeline, Timeline
+from .temporal import Timeline  # compute_timeline 是占位桩、零调用点，不 import
+#  （谁误用它就拿到「daily_hexagram 装先天卦、date 塞 str(birth_year)」的旧 bug）
 from .timeline_yun import (
     compute_dayun_liyao,
     compute_liunian,
