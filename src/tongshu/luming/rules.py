@@ -1937,4 +1937,21 @@ YEAR_RULES = [
      "out_map_key": "gu_chen_which",
      "out": "太岁临{gu_chen_which}，主孤寡（孝服/血光）",
      "detail_tpl": "太岁{tai_b}=年支{year_branch}{gu_chen_which}位（五行精纪卷34金书命诀：太岁到孤辰必有孝服，到寡宿必有血光之灾；渊海子平论孤辰寡宿）"},
+    # ---- 灾祸: 自缢煞 (三命通会卷三"取五行反系处…大忌相克, 天元是墓,
+    #      更有天中、官符、大耗者, 定凶") — 太岁临反系支且叠加空亡/官符/岁破 → 定凶 ----
+    {"id": "LM-S07", "evidence": "E-SMTH-RID-003", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临自缢煞（{zi_yi_branch}）且会集凶神",
+     "tone": "凶",
+     "when": {"op": "eq", "k": "zi_yi_heavy", "v": True},
+     "out": "太岁临自缢煞（反系），又逢空亡、官符或岁破凶神会集，其年大凶，防自缢、意外、官非",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}反系{zi_yi_branch}（三命通会卷三：自缢煞取五行反系处，大忌相克、天元是墓，更有天中、官符、大耗者定凶）"},
+    # ---- 灾祸: 自缢煞临而无叠加 → 仅浮灾信号, 不定凶 ----
+    {"id": "LM-S08", "evidence": "E-SMTH-RID-003", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临自缢煞（{zi_yi_branch}）无凶神会集",
+     "tone": "平",
+     "when": {"op": "and", "conds": [
+         {"op": "eq", "k": "tai_zi_yi", "v": True},
+         {"op": "eq", "k": "zi_yi_heavy", "v": False}]},
+     "out": "太岁临自缢煞（反系）而无空亡、官符、岁破会集，仅作浮灾之象，不为重害",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}反系{zi_yi_branch}（三命通会：自缢煞须会集凶神方定凶，无会则轻）"},
 ]

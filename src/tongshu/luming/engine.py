@@ -3316,6 +3316,17 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     _zai_sha_b = ZAI_SHA_BY_SANHE.get(BRANCH_SANHE_GROUP.get(year_branch, frozenset()), "")
     tai_zai_sha = bool(_zai_sha_b and tb == _zai_sha_b)     # 灾煞: 三命通会"常居劫煞之前冲破将星, 主血光横死"
 
+    # 自缢煞 (三命通会卷三: "此煞取五行反系处, 戌人巳、巳人戌…大忌相克,
+    #   天元是墓, 更有天中、官符、大耗者, 定凶") — 年支→反系支, 太岁临之;
+    #   严格多条件: 须再逢空亡(天中)/官符/大耗(岁破) 方为定凶, 否则仅浮灾信号不重判
+    _ZI_YI = {"ZI": "YOU", "CHOU": "WU", "YIN": "WEI", "MAO": "SHEN", "CHEN": "HAI",
+              "SI": "XU", "WU": "CHOU", "WEI": "YIN", "SHEN": "MAO", "YOU": "ZI",
+              "XU": "SI", "HAI": "CHEN"}
+    _zi_yi_b = _ZI_YI.get(year_branch, "")
+    tai_zi_yi = bool(_zi_yi_b and tb == _zi_yi_b)
+    tai_sui_po = bool(tb == EARTHLY_BRANCHES[(_yb_i + 6) % 12])   # 大耗即岁破(太岁冲年支)
+    zi_yi_heavy = bool(tai_zi_yi and (tai_kong_wang or tai_guan_fu or tai_sui_po))
+
     # 交运年 (五行精纪 L4267-4268 珞琭子: "阴男阳女时观出入之年, 有吉凶之变";
     #         L4269 三命指掌: "凡阳男阳女, 至交运时, 主有灾滞")
     # 边界语义: start_age = 交入第1步( luck_pillars[0] )的实龄;
@@ -3487,6 +3498,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_jie_sha": tai_jie_sha, "jie_sha_branch": _jie_sha_b,
         "tai_jin_yu": tai_jin_yu, "jin_yu_branch": _jin_yu_b,
         "tai_zai_sha": tai_zai_sha, "zai_sha_branch": _zai_sha_b,
+        "tai_zi_yi": tai_zi_yi, "zi_yi_branch": _zi_yi_b, "zi_yi_heavy": zi_yi_heavy,
         "tai_sang_diao": tai_sang_diao, "sang_diao_which": sang_diao_which,
         "tai_gou_jiao": tai_gou_jiao, "gou_jiao_which": gou_jiao_which,
         "gou_jiao_note": gou_jiao_note,

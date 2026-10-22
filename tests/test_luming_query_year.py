@@ -572,3 +572,22 @@ class TestLiuNianDimensions20261023:
             r = _qy(be, 1989, 12, 26, 21, found)
             v = next(v for v in r["verdicts"] if v["rule_id"] == "LM-S05")
             assert v["tone"] == "凶"
+
+    def test_149_ziyi_heavy_needs_conjunction(self, be):
+        # 自缢煞: 1989 年支巳→反系戌; 2030 庚戌太岁戌, 官符(岁前五辰)=巳+5=戌同位
+        # → 凶神会集, S07 重档 tone=凶
+        r = _qy(be, 1989, 12, 26, 21, 2030)
+        v = next((v for v in r["verdicts"] if v["rule_id"] == "LM-S07"), None)
+        assert v is not None and v["tone"] == "凶"
+
+    def test_150_ziyi_light_without_conjunction(self, be):
+        # 子年生→反系酉; 甲子旬空亡戌亥, 酉年不空; 官符在巳、岁破在午, 均不临
+        # → 无凶神会集, 仅 S08 浮信号, 不得判 S07 重档
+        found = None
+        for qy in (1993, 2005):
+            r = _qy(be, 1984, 3, 1, 12, qy)
+            if any(v["rule_id"] == "LM-S08" for v in r["verdicts"]):
+                found = r
+                break
+        assert found is not None
+        assert not any(v["rule_id"] == "LM-S07" for v in found["verdicts"])
