@@ -20,6 +20,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 HG = ROOT / "src" / "tongshu" / "engines" / "heluo" / "hua_gong.py"
 DRG = ROOT / "src" / "tongshu" / "engines" / "heluo" / "diagnosis_rule_graph.py"
+#: 五行生克单一来源（2026-10-08 批次 G 起相克表从 hua_gong 迁到此处，
+#: hua_gong 以 `ELEMENT_OVERCOMES as _WU_KE` 引入）。变异锚点须跟着搬，
+#: 否则锚点未命中 → 变异被**静默跳过** → 演练覆盖面缩水而无人察觉。
+HS = ROOT / "src" / "tongshu" / "engines" / "heluo" / "hexagram_state.py"
 #: 本模块全部守卫文件，必须一次跑完（只跑第一个会「假存活」）
 TEST = ("tests/heluo/test_h6_hua_gong.py",
         "tests/heluo/test_full_pipeline.py",
@@ -30,16 +34,16 @@ MUTATIONS = [
     (HG, "KEZHI 分支退回 RESCUED（原典「尤凶」又变吉）",
      "            state = HuaGongState.KEZHI",
      "            state = HuaGongState.RESCUED"),
-    (HG, "五行相克表清空（水克火检测失效）",
-     '_WU_KE = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}',
-     "_WU_KE: dict[str, str] = {}"),
+    (HS, "五行相克表清空（水克火检测失效）",
+     'ELEMENT_OVERCOMES = {\n    "木": "土", "土": "水", "水": "火", "火": "金", "金": "木"\n}',
+     "ELEMENT_OVERCOMES: dict[str, str] = {}"),
     (HG, "相生判定整体失效（_wu_relation 恒返回空，克制也判不出）",
      '    if _WU_KE.get(elem_a) == elem_b or _WU_KE.get(elem_b) == elem_a:\n'
      '        return "克制"\n',
      '    if False:\n        return "克制"\n'),
-    (HG, "相克表改错一行（水克火→水生木），坎离之反不再判克制",
-     '_WU_KE = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}',
-     '_WU_KE = {"木": "土", "土": "水", "水": "木", "火": "金", "金": "木"}'),
+    (HS, "相克表改错一行（水克火→水生木），坎离之反不再判克制",
+     'ELEMENT_OVERCOMES = {\n    "木": "土", "土": "水", "水": "火", "火": "金", "金": "木"\n}',
+     'ELEMENT_OVERCOMES = {\n    "木": "土", "土": "水", "水": "木", "火": "金", "金": "木"\n}'),
     (HG, "相克判定退化为单向（只剩 A 克 B，漏 B 克 A）",
      '    if _WU_KE.get(elem_a) == elem_b or _WU_KE.get(elem_b) == elem_a:',
      '    if _WU_KE.get(elem_a) == elem_b:'),
@@ -52,14 +56,13 @@ MUTATIONS = [
      '    "兑": "震",   # L591\n    "震": "兑",   # L594\n}',
      '    "兑": "艮",\n    "震": "巽",\n    "艮": "兑",\n    "乾": "坤",\n    "坤": "乾",\n}'),
     (HG, "反卦表整体置空（反对检测完全失效）",
-     'OPPOSITE_TRIGRAM: dict[str, str] = {\n'
-     '    "坎": "离",   # L585\n',
-     'OPPOSITE_TRIGRAM: dict[str, str] = {\n'),
+     'HUAGONG_FAN_GUA: dict[str, str] = {\n    "坎": "离",   # L585\n',
+     'HUAGONG_FAN_GUA: dict[str, str] = {\n'),
     (HG, "L585 逐字出处「坎卦反离」被删（表对了但失去原典依据）",
      '#   L585「坎卦反离，主夏至以后秋分前。」\n', ''),
-    (HG, "把两套对宫混为一谈（QIANXI_DUKONG 指回 OPPOSITE_TRIGRAM）",
-     "QIANXI_DUKONG: dict[str, str] = {",
-     "QIANXI_DUKONG: dict[str, str] = OPPOSITE_TRIGRAM or {"),
+    (HG, "把两套对宫混为一谈（QIANXI_DUKONG 指回化工相反表）",
+     "from .hexagram_state import QIANXI_DUKONG  # noqa: E402",
+     "QIANXI_DUKONG = HUAGONG_FAN_GUA  # 变异：把两套对宫混为一谈"),
     # ── 月支映射 ──
     (HG, "寅月不再取震为化工卦（错一格，整季全偏）",
      '    "寅": "震", "卯": "震", "辰": "震",   # 春',
@@ -116,7 +119,7 @@ def write(p: Path, text: str) -> None:
     io.open(p, "w", encoding="utf-8", newline="").write(text.replace("\n", nl))
 
 
-for p in {HG, DRG}:
+for p in {HG, DRG, HS}:
     originals[p] = read(p)
 base = {p: sha(t) for p, t in originals.items()}
 

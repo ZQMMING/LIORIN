@@ -82,8 +82,10 @@ MUTATIONS = [
     (JH, "main_gua 回填成爻名（卦名与爻名对调）",
      "        main_gua=main_gua,", "        main_gua=yao_name,"),
     (JH, "SOLAR_TERMS 与 jiegua 的节气表脱钩（立春/惊蛰对调）",
-     '    "春分", "清明", "谷雨", "立夏", "小满", "芒种",',
-     '    "春分", "清明", "谷雨", "立夏", "小满", "惊蛰",'),
+     'from .jiegua import JIEQI_24 as SOLAR_TERMS  # noqa: E402',
+     'from .jiegua import JIEQI_24 as _JIEQI_24\n'
+     'SOLAR_TERMS = list(_JIEQI_24)\n'
+     'SOLAR_TERMS[3], SOLAR_TERMS[5] = SOLAR_TERMS[5], SOLAR_TERMS[3]  # 变异：立春/惊蛰对调'),
     (JH, "SIXTY_GUA 退回 48 项含重复的老表",
      'SIXTY_GUA: list[str] = [g for jqs in SIXTY_GUA_BY_JIEQI.values() for g in jqs]',
      'SIXTY_GUA: list[str] = ["中孚", "讼", "履", "节", "損", "兑", "困", "萃",\n'

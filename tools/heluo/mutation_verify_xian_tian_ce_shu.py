@@ -66,7 +66,15 @@ def sha(text: str) -> str:
 
 original = io.open(SRC, encoding="utf-8", newline="").read()
 base_sha = sha(original)
-assert "\r\n" not in original, "源码为 LF，无需 CRLF 转换"
+# ⚠ 2026-10-22 修：此处原有一行
+#     `assert "\r\n" not in original, "源码为 LF，无需 CRLF 转换"`
+#   ——那是**行尾前置检查**，源码后来被规范成 CRLF，断言遂失败，
+#   整个套件在跑第一条变异**之前**就崩掉（静默失效：工具看起来
+#   「有未抓住的变异」，实则一条都没跑）。现改为与其他套件一致的
+#   「读时归一为 LF、写回时还原原行尾」：多行锚点在 CRLF 文件里
+#   同样能命中，且还原后字节一致。
+NL = "\r\n" if "\r\n" in original else "\n"
+original_lf = original.replace("\r\n", "\n")
 
 cache_dir = tempfile.mkdtemp(prefix="ce_shu_mutate_pycache_")
 ENV = dict(os.environ)
@@ -91,7 +99,7 @@ def run_tests() -> tuple[bool, str]:
 
 
 def write(text: str) -> None:
-    io.open(SRC, "w", encoding="utf-8", newline="").write(text)
+    io.open(SRC, "w", encoding="utf-8", newline="").write(text.replace("\n", NL))
 
 
 print("=" * 74)
@@ -103,15 +111,15 @@ if not ok0:
     problems.append("基线未变异就不是绿的，变异验证无意义")
 
 for name, old, new in MUTATIONS:
-    if old not in original:
+    if old not in original_lf:
         print(f"[SKIP ] {name} —— 锚点未命中")
         problems.append(f"{name}（锚点未命中）")
         continue
-    write(original.replace(old, new, 1))
+    write(original_lf.replace(old, new, 1))
     try:
         green, msg = run_tests()
     finally:
-        write(original)
+        write(original_lf)
     if sha(io.open(SRC, encoding="utf-8", newline="").read()) != base_sha:
         problems.append(f"{name}（还原失败，源文件已损坏）")
         print(f"[BROKEN] {name} —— 还原失败！")
