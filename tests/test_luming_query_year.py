@@ -461,3 +461,60 @@ class TestYearDistributionSystemic:
         # 非四煞年不触发: 2023 癸卯
         r3 = _qy(be, 1983, 11, 3, 12, 2023, gender="female")
         assert not r3.get("tai_si_sha")
+
+
+class TestBiJieDuoCai20261023:
+    """2026-10-23 比劫夺财专条 (渊海子平卷三·论格局生死引用'正财偏财见比肩分夺,
+    劫财羊刃又见岁运冲合, 必死' + 杂论口诀'旺则劫财破耗') + 呼应系数/用神反转/
+    档位修正 (重≥7) 五修法落码验收.
+
+    - V90A 劫财+身旺+原局财有气=3分(有财可劫); V90B 劫财+身旺+财弱/无=2分(破耗);
+    - V90C 比肩/身弱劫财=平(帮身, 不入凶分);
+    - V90A/V90B 实祸级不可救 (尊吉卑凶不降档, 与元辰同级);
+    - Y73 本命克太岁为财: 呼应按"年命之财"(身财之旺), k<1.0 不配尊吉卑凶.
+    """
+
+    def test_140_26hai_2021_jie_cai_xiang_za(self, be):
+        # 1989-12-26 亥时 乾造(己巳 丙子 庚申 丁亥): 2021 辛丑 — 岁干辛=庚日主
+        # 劫财(异阴阳同五行), 日支申=金(身旺), 原局无木(财弱) → V90B 劫财破耗;
+        # Y73 年命木克太岁土为财但年命之财(土)呼应仅0.7 → 不配尊吉卑凶;
+        # V90 实祸不可救 → 尊吉卑凶不降档 → 厚×中 = 吉凶相杂 (原: 纯吉 —
+        #   破财合伙信号从此落地, 不再被吉面吞掉)
+        r = _qy(be, 1989, 12, 26, 21, 2021)
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert outs.get("LM-V90B")
+        assert outs.get("LM-V90B")["tone"] == "凶"
+        assert r["tone"] == "吉凶相杂"
+
+    def test_141_26zi_2021_san_xiong_xiong(self, be):
+        # 1989-12-26 子时(0时, 庚申日丙子时): 2021 辛丑 — 晦气V59(4)+空亡V61(2)
+        # +劫财V90B(2) = 8 分重 → 厚×重 = 凶 (离婚/破财凶年; 与26亥分化)
+        r = _qy(be, 1989, 12, 26, 0, 2021)
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert outs.get("LM-V90B")
+        assert r["tone"] == "凶"
+
+    def test_142_27zi_2021_bi_jian_ji(self, be):
+        # 1989-12-27 子时(0时, 辛酉日戊子时): 2021 辛丑 — 岁干辛=辛日主比肩
+        # (同干) → V90C 帮身平, 不入凶分 → 吉保持 (非劫财不误判凶)
+        r = _qy(be, 1989, 12, 27, 0, 2021)
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert outs.get("LM-V90C")
+        assert r["tone"] == "吉"
+
+    def test_143_shen_ruo_jie_cai_bu_ji(self, be):
+        # 1983 坤造(癸亥 壬戌 乙未 壬午): 2024 甲辰 — 岁干甲=乙日主劫财, 但日支
+        # 未=土(乙木身弱) → 身弱劫财帮身, 不触发 V90 → 元辰+四煞凶保持需防
+        r = _qy(be, 1983, 11, 3, 12, 2024, gender="female")
+        outs = {v["rule_id"]: v for v in r["verdicts"]}
+        assert outs.get("LM-V90B") is None
+        assert r["tone"] in ("凶", "吉凶相杂")
+
+    def test_144_deadline_anchors_kept(self, be):
+        # 五修法后死线锚不漂移: 毛1976 七凶齐集 / 周1976 发祸 / 喻1951 发祸 /
+        # 1986 2020 发祸 / 1986 2029 发祸 — 全部 tone=凶
+        for (y, m, d, h, qy) in ((1893, 12, 26, 20, 1976), (1898, 3, 5, 6, 1976),
+                                 (1913, 3, 18, 22, 1951), (1986, 8, 15, 12, 2020),
+                                 (1986, 8, 15, 12, 2029)):
+            r = _qy(be, y, m, d, h, qy)
+            assert r["tone"] == "凶", (y, qy, r["tone"])

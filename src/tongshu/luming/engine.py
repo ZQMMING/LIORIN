@@ -3749,6 +3749,82 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
                     lm.xi_ji, lm.lu_ma, lm.gui_ren))
         except Exception:
             pass
+    # 2026-10-23 五修法落码 (考据: audit_古法四层判定算法考据与引擎差距_20261022)
+    #   ① 用神反转 (渊海子平卷三·五行元理消息赋): "太岁忌逢战斗, 此日犯岁君也.
+    #      若为用神者无咎. 如壬日以丙火为财, 柱中原有财, 虽犯太岁, 反为吉也" —
+    #      V77 日犯岁君/V62 太岁犯命/V76 岁伤日干: 太岁干为日主之财(我克) 且原局
+    #      财星有气(呼应 k>=0.7) → 凶为吉兆, tone 转吉。
+    #   ② 比劫夺财专条 (渊海子平卷三·论格局生死引用): "正财偏财见比肩分夺, 劫财
+    #      羊刃又见岁运冲合, 必死" + 杂论口诀"旺则劫财破耗" — 岁干为日主劫财
+    #      (异阴阳同五行) 且日主身旺(日支五行=日主五行, 得地) → 主破财合伙;
+    #      原局财有气 k>=0.7 计 2 分(有财可劫), 无财身旺计 1 分(劫财破耗);
+    #      身弱劫财 / 比肩 不计凶 (帮身为吉, 只提示防分财)。
+    #   ③ 呼应系数 (星学大成·起小运"所逢者, 当生年有则吉凶重, 无则吉凶轻" +
+    #      五行精纪卷33"仍须察当生根基, 十分则应五分"): Y73 本命克太岁为财 —
+    #      原局财星无根则吉轻 (在 _power 后折算)。
+    _cai_k = 0.4        # 日主之财呼应 (用神反转 V77/V62/V76 + 比劫夺财)
+    _nain_k = 0.4       # 年命之财呼应 (Y73 本命克太岁为财 — 原文"以身财之旺故不为灾")
+    try:
+        _ds5 = chart.day_pillar.heavenly_stem
+        _ds5_el = STEM_ELEMENT.get(_ds5, "")
+        _wo_ke5 = _CTL4.get(_ds5_el, "") if _ds5_el else ""          # 日主之财
+        _year_el = STEM_ELEMENT.get(chart.year_pillar.heavenly_stem, "")
+        _nain_el = _CTL4.get(_year_el, "") if _year_el else ""       # 年命之财 (我克)
+        _day_b5 = chart.day_pillar.earthly_branch
+        _tai_s5 = yctx.get("tai_s", "") or ""
+
+        def _cai_state(_el: str) -> float:
+            """财星呼应 k: 透干计2 / 藏支计1 / 月令加倍; ≥4→1.0, ≥2→0.7, <2→0.4"""
+            if not _el:
+                return 0.4
+            _cnt = 0
+            for _p in (chart.year_pillar, chart.month_pillar,
+                       chart.day_pillar, chart.hour_pillar):
+                if STEM_ELEMENT.get(_p.heavenly_stem) == _el:
+                    _cnt += 2
+                if BRANCH_WX.get(_p.earthly_branch) == _el:
+                    _cnt += 1
+            if BRANCH_WX.get(chart.month_pillar.earthly_branch) == _el:
+                _cnt += 1
+            return 1.0 if _cnt >= 4 else (0.7 if _cnt >= 2 else 0.4)
+
+        if _wo_ke5:
+            _cai_k = _cai_state(_wo_ke5)
+        if _nain_el:
+            _nain_k = _cai_state(_nain_el)
+        _tai_el5 = STEM_ELEMENT.get(_tai_s5, "") if _tai_s5 else ""
+        # ① 用神反转 (凶为吉兆)
+        if _tai_el5 and _tai_el5 == _wo_ke5 and _cai_k >= 0.7:
+            for _v5 in verdicts:
+                if _v5.get("rule_id") in ("LM-V77", "LM-V62", "LM-V76") and _v5.get("tone") == "凶":
+                    _v5["tone"] = "吉"
+                    _v5["out"] = (_v5["out"]
+                                  + "（太岁为日主之财，柱中原有财，虽犯太岁反为吉——若为用神者无咎）")
+                    _v5["detail"] = _v5.get("detail", "") + "；若为用神者无咎（渊海子平卷三·五行元理消息赋）"
+        # ② 比劫夺财专条
+        _is_jie5 = bool(_tai_el5 and _tai_el5 == _ds5_el and _tai_s5 != _ds5)
+        _is_bi5 = bool(_tai_s5 and _tai_s5 == _ds5)
+        _shen_wang5 = bool(BRANCH_WX.get(_day_b5) == _ds5_el)
+        if _is_jie5 and _shen_wang5:
+            verdicts.append({
+                "rule_id": "LM-V90A" if _cai_k >= 0.7 else "LM-V90B",
+                "tone": "凶",
+                "out": f"岁干为日主劫财（{_EL_CN4.get(_ds5_el, '')}），日主身旺——"
+                       + ("原局财旺有气，劫财夺财，主破财、合伙分利、因友损财"
+                          if _cai_k >= 0.7 else "原局财弱或无，劫财破耗，防破财、合伙失利"),
+                "detail": "正财偏财见比肩分夺，劫财羊刃又见岁运冲合，必死（渊海子平卷三·论格局生死引用）；"
+                          "旺则劫财破耗（杂论口诀）",
+                "evidence": "E-YHSP-3-…", "scope": "流年", "target": "太岁",
+                "dims": ("命/财富", ["破财", "合伙"])})
+        elif _is_bi5:
+            verdicts.append({
+                "rule_id": "LM-V90C", "tone": "平",
+                "out": "岁干为日主比肩，帮身（防分财、合伙利益分配）",
+                "detail": "比肩分夺，须防财神被分（渊海子平卷三·论格局生死引用）",
+                "evidence": "E-YHSP-3-…", "scope": "流年", "target": "太岁",
+                "dims": ("命/财富", ["分财"])})
+    except Exception:
+        pass
     for v in verdicts:
         if (v.get("rule_id") or "").startswith("LM-F"):
             display_counts[v.get("tone", "平")] = display_counts.get(v.get("tone", "平"), 0) + 1
@@ -3767,6 +3843,13 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #    若用户后续裁决 F03 禄马贵人参与"尊吉卑凶"降级再单独接入)
     _power = year_power([v for v in verdicts
                          if not (v.get("rule_id", "") or "").startswith("LM-F")])
+    # ③ 呼应系数折算: Y73 本命克太岁为财(4分) — 原局财星无根则吉轻
+    #    (星学大成·起小运"当生年有则吉凶重, 无则吉凶轻" + 五行精纪卷33
+    #     "仍须察当生根基, 十分则应五分"); _cai_k 来自上文 ③ 段 (1.0/0.7/0.4)
+    if lm is not None and any(v.get("rule_id") == "LM-Y73" for v in verdicts) and _nain_k < 1.0:
+        _power["ji"] = round(_power["ji"] - 4 * (1.0 - _nain_k), 2)
+        if _power["ji"] < 0:
+            _power["ji"] = 0.0
     _dims = dim_hits_of(verdicts)
     # 2026-10-21 用户定案(古法第三层 珞琭子"尊吉卑凶, 逢灾自愈"):
     #   主断吉在场 (天月德V82/贵禄马V65/本命克太岁为财Y73/合局Y71/喜神V67/
@@ -3774,10 +3857,15 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     from .strength import _JIUXI_JI_RULES as _JXR, YEAR_XIONG as _YX
     # V60 定死 / V70 元辰 — 发祸级不可救 (珞琭子"元辰纵有吉神扶持, 不免灾祸倚伏";
     #   2026-10-21 用户定案: V70 与 V60 同级不救)
-    _NO_JIUXI = {"LM-V60", "LM-V70"}
+    # 2026-10-23: V90A/V90B 比劫夺财 — 实祸级(破财合伙)不可全救 (论格局生死引用
+    #   "正财偏财见比肩分夺, 劫财羊刃又见岁运冲合, 必死" — 分夺之祸不因吉神自愈,
+    #   只保留断语降级展示, tone 不因尊吉卑凶升档)
+    _NO_JIUXI = {"LM-V60", "LM-V70", "LM-V90A", "LM-V90B"}
     _jiu_yi = (not any(v.get("rule_id") in _NO_JIUXI and v.get("tone") == "凶"
                        for v in verdicts)) and any(
-        v.get("tone") == "吉" and v.get("rule_id") in _JXR for v in verdicts)
+        (v.get("tone") == "吉" and v.get("rule_id") in _JXR
+         and not (v.get("rule_id") == "LM-Y73" and _nain_k < 1.0))  # 2026-10-23: Y73 需"身财之旺"(k=1.0)才配尊吉
+        for v in verdicts)
     # 尊吉卑凶只减"需防级重凶集"凶分 (细累已在 year_power 归零; 普通凶如 V68 犯忌不动)
     _j_heavy = 0.0
     if _jiu_yi:
