@@ -3314,7 +3314,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     #   太岁临各神煞位, 按维度应事 (健康/官非/劫夺/婚姻/血光) — 非补丁, 古法流年全维度 ----
     _dm_gan = chart.day_pillar.heavenly_stem
     _bing_fu = EARTHLY_BRANCHES[(_yb_i - 1) % 12]       # 病符=太岁后一辰 (三命通会"病符取太岁后一辰, 犯者多疾病, 行年遇之亦然")
-    _guan_fu = EARTHLY_BRANCHES[(_yb_i + 5) % 12]      # 官符=太岁前五辰 (三命通会"官符取太岁前五辰, 日时遇之多官灾")
+    _guan_fu = EARTHLY_BRANCHES[(_yb_i + 4) % 12]      # 官符=太岁前五辰(0基+4, 子见辰) (三命通会"官符煞取太岁前五辰, 日时遇之, 多官灾")
     tai_bing_fu = bool(tb == _bing_fu)
     tai_guan_fu = bool(tb == _guan_fu)
     _ss_he = SHEN_SHA_BY_SANHE.get(BRANCH_SANHE_GROUP.get(year_branch, frozenset()), {})

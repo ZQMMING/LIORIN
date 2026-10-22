@@ -574,8 +574,8 @@ class TestLiuNianDimensions20261023:
             assert v["tone"] == "凶"
 
     def test_149_ziyi_heavy_needs_conjunction(self, be):
-        # 自缢煞: 1989 年支巳→反系戌; 2030 庚戌太岁戌, 官符(岁前五辰)=巳+5=戌同位
-        # → 凶神会集, S07 重档 tone=凶
+        # 自缢煞: 1989 年支巳→反系戌; 2030 庚戌太岁戌, 己巳在甲子旬空亡戌亥,
+        # 太岁戌临空亡(天中) → 凶神会集, S07 重档 tone=凶
         r = _qy(be, 1989, 12, 26, 21, 2030)
         v = next((v for v in r["verdicts"] if v["rule_id"] == "LM-S07"), None)
         assert v is not None and v["tone"] == "凶"
