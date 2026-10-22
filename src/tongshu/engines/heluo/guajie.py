@@ -369,6 +369,7 @@ class GuaJieResult:
     liuyue_hexagram: str = ""             # 流月卦名
     liuyue_yao: Optional[YaoDuan] = None    # 流月动爻判词（应期定位）
     liuri_hexagram: str = ""              # 流日卦名
+    liuri_lunar: Optional[dict] = None       # H9b 流日黄历标注（solar_date/lunar/day_ganzhi/day_nayin/jie_qi/yi/ji/source）
     liuri_yao: Optional[YaoDuan] = None     # 流日动爻判词（应期定位）
     liushi_hexagram: str = ""             # 流时卦名（2026-10-06 起该层已剥离，恒为 ""）
     liushi_yao: Optional[YaoDuan] = None    # 流时动爻判词（同上，恒为 None）
@@ -426,6 +427,7 @@ class GuaJieResult:
                 "jingyi": self.liuyue_yao.jingyi, "shiyi": self.liuyue_yao.shiyi,
             } if self.liuyue_yao else None,
             "liuri_hexagram": self.liuri_hexagram,
+            "liuri_lunar": self.liuri_lunar,
             "liuri_yao": {
                 "yao": self.liuri_yao.yao, "ci": self.liuri_yao.ci,
                 "xiang": self.liuri_yao.xiang, "yi": self.liuri_yao.yi,   # 2026-10-07 补，见流年模板
@@ -1479,6 +1481,7 @@ def build_guajie_from_result(
     target_hour: int | None = None,
     liuyue_hexagram: str = "",
     liuyue_yao: str = "",
+    huangli_provider: object = None,
 ) -> dict:
     """
     从 HeluoResult 构建解卦层输出（挂载到 result.guajie）。
@@ -1490,6 +1493,7 @@ def build_guajie_from_result(
     target_day: 流日应期定位（1-30），按《河洛真数》起日卦例每爻管5日，从流月 days 自动取卦。
     liuyue_hexagram/liuyue_yao: 手动指定流月（可选，优先于 target_month）。
     """
+    _lunar_anno = None  # H9b 流日黄历标注（命中日段时填充）
     try:
         prenatal = _short(result.prenatal.hexagram_name)
         postnatal = _short(result.postnatal.hexagram_name)
@@ -1563,6 +1567,17 @@ def build_guajie_from_result(
                                                 (it for it in (dseg.get("day_items") or [])
                                                  if it.get("day") == target_day), None)
                                             src = item or dseg
+                                            # H9b 河洛×黄历：流日应期段挂黄历标注（注入优先，lunar_python 兜底）
+                                            liuri_solar_date = src.get("date_from") or dseg.get("date_from") or ""
+                                            if liuri_solar_date:
+                                                try:
+                                                    hd = huangli_provider(liuri_solar_date) if callable(huangli_provider) else None
+                                                except Exception:
+                                                    hd = None
+                                                from .heluo_lunar_bridge import annotate_day as _anno
+                                                _lunar_anno = _anno(liuri_solar_date, hd) if hd is not None else _anno(liuri_solar_date)
+                                            else:
+                                                _lunar_anno = None
                                             liuri_hex_name = _short(src.get("name", ""))
                                             dl = src.get("lines") or []
                                             # 2026-10-07：起日卦改**链式累变**（原典 L390
@@ -1728,6 +1743,14 @@ def build_guajie_from_result(
         except Exception as _e:  # 参评不阻塞主链
             gj.evidence.append(f"  参评诗断：计算跳过（{_e}）")
 
+
+        # H9b 河洛×黄历：流日应期段挂黄历标注（注入优先，lunar_python 兜底）
+        if _lunar_anno is not None and gj is not None:
+            gj.liuri_lunar = _lunar_anno
+            gj.evidence.append(
+                f"流日黄历：{_lunar_anno.get('solar_date')} {_lunar_anno.get('lunar')} "
+                f"{_lunar_anno.get('day_ganzhi')} {_lunar_anno.get('day_nayin')} "
+                f"（source={_lunar_anno.get('source')}）")
         return gj.to_dict()
     except Exception as e:  # 解卦层不阻塞主链（防御性兜底）
         return {"error": f"guajie 构建失败: {e}"}

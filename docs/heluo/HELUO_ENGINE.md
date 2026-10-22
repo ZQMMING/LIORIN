@@ -278,3 +278,101 @@ python tools/heluo/quzheng_20261008/dump_natural.py      # 引擎自然输出（
 / `test_own_direction_20261008` / `test_interp_and_wiring_20261008`
 
 这些守卫在 main 上**全部存在且通过**（集成层跑），并未被删除。
+
+## 12. 算力口径定稿（2026-10-22）
+
+用户定稿的河洛理数计算规则（**一卦管 6 日、一爻一日**），本包已按此落码。
+
+### 12.1 四层口径
+
+| 层 | 定稿 | 本包落点 |
+|---|---|---|
+| **出生静态层** | 先天卦 / 后天卦 / 元堂 / 天数 / 地数，一次计算永久复用 | `HeluoCanonical.calculate`（未变） |
+| **大运层** | 只生成**元数据**，不起大运卦 | `frozen_state.dayun_summary` 落 `{start_age, end_age, ganzhi}`；`qi_phase.dayun` 仍留完整字段供 guajie 运反判定 |
+| **流年层** | 只算**近 3 年**完整流年卦，其余只存元数据 | `timeline.yearly_hexagrams`（3 条）+ `timeline.yearly_meta`（96 条 `{year, age, ganzhi}`） |
+| **流月层** | 只有**目标年**算 12 个流月卦（全算） | `timeline.monthly_hexagrams`（12 项） |
+| **流日层** | 1 个流日本卦（完整卦一次算好）+ 6 日各自激活爻 | `timeline.daily_hexagram{base_hex, daily_yao[6]}` |
+
+近 3 年之所以保留完整流年卦：guajie 的「近 3 年流年判词」
+（`guajie.py` L1779-1796）取 `yearly[].hexagram / yuantang_index / lines`，
+是既有功能，不因裁剪而丢弃。
+
+### 12.2 流日层口径（一卦管 6 日、一爻一日）
+
+定稿原文：
+> 「完整起卦：只做1次，生成流日本卦本体（本卦、互错综、基础卦气全部一次算好）
+> 　之后6日唔再起完整卦；每日只取对应爻（初爻→第1日，二爻→第2日……上爻→第6日），
+> 　单独跑该爻嘅爻变、卦气、象义运算，属于轻量爻运算。
+> 　6日用完，先至起下一个新流日卦。」
+
+落码（`timeline_yun.compute_daily_base_hex`）：
+
+- 一个月 30 日 = **5 组 × 6 日**；本任务只算**目标日所在的那一组**
+  （`group_index = (target_day - 1) // 6`）
+- 本卦：流月卦按「进一爻起」翻一爻所得（组间链式推进）；本体/互/错/综/卦气**一次算好**
+  （互错综复用 `hexagram.py` 的权威实现，不自造第二套口径）
+- 组内 6 日：共用本卦，每日只取对应爻位（初→1日 … 上→6日）做**轻量爻运算**
+  （爻变 + 卦名 + 卦气五行），不再起完整卦
+- `daily_yao` 每条含 `day_no / active_yao / yao_index / yao_nature /
+  changed_name / changed_upper / changed_lower / changed_lines / changed_element`
+
+### 12.3 与原典 L129 的关系（如实留档）
+
+原典《河洛真数·起例卷之上》L129 另一套口径：
+> 「凡起日卦……**每一爻管五日**，阳日寻阳爻位……**挨次而变，不容紊也**」
+> L130：「**六爻俱变毕，则满三十日**，是为一月之日卦」
+
+即原典是「每爻管 5 日 + 链式累变」（本包内的 `hou5` 口径），
+而定稿是「一卦管 6 日 + 一爻一日」（`gua6`）。**两者不可兼容**。
+
+本包的处理：
+- **fast-path（target_year 非 None）按定稿走 gua6**
+- **全量路径（target_year=None）保持 hou5 旧契约**（守卫
+  `test_full_path_payload_is_baseline` 钉住全量体积基线 ~2.0M，不受定稿影响）
+- `materialize_month_days` 按 days 形态自动分流：带 `day_no` → gua6 新结构；
+  不带 → hou5 stub 走旧法现算
+
+### 12.4 输出结构
+
+```
+timeline:
+  yearly_hexagrams     近 3 年完整流年卦（3 条）
+  yearly_meta          其余流年纯元数据（96 条 {year, age, ganzhi}）
+  target_year_hexagram 目标流年卦摘要（ganzhi/hexagram/yi_signal/changed_line）
+  monthly_hexagrams    目标年 12 个流月卦
+  daily_hexagram       {base_hex: 完整卦, daily_yao: 6 日激活爻}
+frozen_state:
+  dayun_summary        大运纯元数据（12 条 {start_age, end_age, ganzhi}）
+```
+
+`ganzhi` 定义：大运是「爻位值运」（阳爻 9 年 / 阴爻 6 年），不按干支轮转，
+故取该段**起始年**（虚岁 == start_age）所对应的流年干支作定位标识。
+
+### 12.5 算力实测（1983-11-03 12:00 男 / target=2026/7）
+
+| 指标 | 定稿前（批次 P） | 定稿后 |
+|---|---|---|
+| HeluoResult 总字符 | 9,934,038 | **17,593**（约 565× 压缩） |
+| timeline 子树字符 | 9,934,038 | **14,915** |
+| 耗时 | — | 23.8 ms |
+
+定稿估算「大约 2.8 万字符」——实测 1.76 万，比估算更省。
+
+### 12.6 守卫
+
+`tests/test_heluo_fastpath.py` 按定稿重写为 12 条，保留全部防退化意图：
+- yearly_hexagrams 只含近 3 年；yearly_meta 恰为 {year, age, ganzhi} 三字段
+- 非近 3 年流年禁止 yi_signal / yi_interpretation / days / hours（dead-write 不得复活）
+- 只有目标年嵌 months（12 个）
+- 顶层 monthly_hexagrams 12 项
+- 顶层 daily_hexagram 含 base_hex（完整卦）+ daily_yao（6 日，day_no 1..6，active_yao 初→上）
+- 顶层 target_year_hexagram 摘要字段齐
+- timeline 体积 < 100k
+- target_year=None 退回全量（旧契约冻结保留）
+
+### 12.7 H9b 恢复
+
+`19ea5ea7` 大删减时被一并删掉的「河洛×黄历桥接」本次恢复
+（独立包 `ec6e2214`）：`GuaJieResult.liuri_lunar` 字段 + `build_guajie_from_result`
+的 `huangli_provider` 形参 + 流日应期段挂黄历标注（注入优先，lunar_python 兜底）。
+`heluo_lunar_bridge.py` 本就在包内，本次接通。

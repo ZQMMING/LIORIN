@@ -506,6 +506,80 @@ def compute_liuri(
     return LiuRiResult(month=0, days=days)
 
 
+def compute_daily_base_hex(
+    yue_lines: list[int],
+    yue_yao_index: int,
+    group_index: int = 0,
+    rule: str = "gua6",
+) -> tuple[dict, list[dict]]:
+    """流日层（定稿 2026-10-22）：一卦管 6 日、一爻一日。
+
+    一个月 30 日 = 5 组 × 6 日（``group_index`` 0..4）。
+    本函数只算**一组**：起 1 个流日本卦（完整卦，本体/互错综/卦气一次算好），
+    之后 6 日不再起完整卦，每日只取对应爻位（初→1日 … 上→6日）做轻量爻运算。
+
+    组内 6 日共用本卦；组间链式推进（第 k 组本卦自月卦连续翻 k*6+1 爻）。
+
+    与 hou5（原典 L390「每一爻管五日、挨次而变，不容紊也」，链式累变）**不可兼容**：
+    hou5 每日之卦自前一日卦继续翻（30 日 = 6 爻 × 5 日）；
+    gua6 一卦管 6 日，6 日共用同一本卦，每日只换激活爻位。
+
+    Returns:
+        ``(base_hex, daily_yao)``
+        - ``base_hex``   完整卦字典（本体 lines/卦名/互/错/综/卦气）
+        - ``daily_yao`` 6 条：每日激活爻 + 该爻的轻量运算结果
+    """
+    from .hexagram import (  # 权威单一来源：不自造互错综与五行表
+        TRIGRAM_ELEMENT, compute_cuo_gua, compute_hu_gua, compute_zong_gua,
+    )
+
+    # 本卦：自月卦链式翻 (group_index*6 + 1) 爻
+    # （第 1 组 = 翻 1 爻，即原典「以流月卦前一爻为初一日」）
+    cur = list(yue_lines)
+    for _k in range(group_index * 6 + 1):
+        cur = _flip_line(cur, 0)  # 占位：下面按爻位链式推进
+    # 逐爻链式推进到该组首日（爻位自居位爻下一爻起，逐日阳阴位交替）
+    pos = liuri_day_positions(yue_yao_index)
+    cur = list(yue_lines)
+    for d in range(group_index * 6 + 1):
+        cur = _flip_line(cur, pos[d % len(pos)])
+    base_lines = cur
+    u, lo, name = _lines_to_hexagram(base_lines)
+
+    base_hex = {
+        "name": name, "upper": u, "lower": lo, "lines": list(base_lines),
+        "hu_name": compute_hu_gua(base_lines),
+        "cuo_name": compute_cuo_gua(u, lo),
+        "zong_name": compute_zong_gua(u, lo),
+        "element": TRIGRAM_ELEMENT.get(u, "") or TRIGRAM_ELEMENT.get(lo, ""),
+        "yue_yao_index": yue_yao_index,
+        "group_index": group_index,
+        "day_from": group_index * 6 + 1,
+        "day_to": group_index * 6 + 6,
+        "rule": rule,
+    }
+
+    # 6 日：每日取对应爻位（初→1日 … 上→6日），做轻量爻运算
+    yao_names = ("初爻", "二爻", "三爻", "四爻", "五爻", "上爻")
+    daily_yao: list[dict] = []
+    for d in range(6):
+        idx = d  # 固定序位对应：初爻→第1日 … 上爻→第6日
+        changed = _flip_line(list(base_lines), idx)
+        cu, clo, cname = _lines_to_hexagram(changed)
+        daily_yao.append({
+            "day_no": group_index * 6 + d + 1,
+            "day_in_group": d + 1,
+            "active_yao": yao_names[idx],
+            "yao_index": idx,
+            "yao_nature": "阳" if base_lines[idx] else "阴",
+            "changed_name": cname,
+            "changed_upper": cu,
+            "changed_lower": clo,
+            "changed_lines": list(changed),
+            "changed_element": TRIGRAM_ELEMENT.get(cu, "") or TRIGRAM_ELEMENT.get(clo, ""),
+        })
+    return base_hex, daily_yao
+
 def compute_liuri_stub(yue_lines: list[int], yue_yao_index: int) -> list[dict]:
     """流日六段的**廉价索引**（含六爻，不含卦名），供全量时间轴按需化使用。
 
@@ -548,27 +622,72 @@ def compute_liuri_stub(yue_lines: list[int], yue_yao_index: int) -> list[dict]:
 
 
 def materialize_month_days(month: dict) -> list[dict]:
-    """把按需化的流月条目的 ``days`` 物化成完整日段（含卦名与六爻）。
+    """把流月条目的 ``days`` 物化成完整日段（定稿 2026-10-22：gua6 口径）。
 
-    2026-10-06：``canonical._build_timeline`` 只存六段廉价定位字段
-    （见 :func:`compute_liuri_stub`），以避免 1,116 个月 × 6 次卦名换算。
-    排盘时只有**命中应期的那一个月**需要完整日段，由消费方（guajie）
-    调本函数现算。
+    定稿流日结构：**一个月 30 日 = 5 组 × 6 日**（一卦管 6 日、一爻一日）——
+        · 每组 1 个流日本卦（本体/互错综/卦气一次算好）
+        · 组内 6 日共用该本卦，每日只取对应爻位（初→1日 … 上→6日）做轻量爻运算
+        · 组间链式推进
+
+    本函数对外仍返回 **hou5 兼容形态**（day_from/day_to/segment/flip_index/
+    name/upper/lower/lines/day_items/date_from），使下游 guajie 的既有读法
+    （d_from/d_to 区间 + day_items 逐日取卦）不需改动。
 
     Args:
         month: ``_build_timeline`` 产出的单个月份 dict。
 
     Returns:
-        完整日段列表（segment/day_from/day_to/flip_index/name/upper/lower/lines），
-        与改造前逐月 ``compute_liuri(...).days`` 的内容逐字一致。
+        完整日段列表（每条对应一日）。
     """
+    _days = list(month.get("days") or [])
+    # 分流：gua6 定稿新结构（带 day_no） vs hou5 stub（无 day_no）
+    if _days and any(d.get("day_no") is not None for d in _days):
+        _date_from = _days[0].get("date_from", "")
+        return [_gua6_day_to_compat(_d, _date_from) for _d in _days]
+
+    # hou5 stub 或无预置日段 → 旧法现算（带卦名与逐日链式卦）
     lines = month.get("lines") or []
     yue_yao = month.get("yue_yao_index")
     if yue_yao is None or not lines:
-        return list(month.get("days") or [])
-    days = compute_liuri(lines, yue_yao, month.get("jie_datetime")).days
-    return days
+        return _days
+    return compute_liuri(lines, yue_yao, month.get("jie_datetime")).days
 
+
+def _gua6_day_to_compat(d: dict, date_from: str = "") -> dict:
+    """gua6 日条目 → hou5 兼容形态（day_from/day_to/segment/day_items/...）。"""
+    _no = d.get("day_no")
+    _f = _no if _no is not None else d.get("day_from", 1)
+    _t = _no if _no is not None else d.get("day_to", 6)
+    _lines = d.get("changed_lines") or d.get("lines") or []
+    _name = d.get("changed_name") or d.get("name", "")
+    _upper = d.get("changed_upper") or d.get("upper", "")
+    _lower = d.get("changed_lower") or d.get("lower", "")
+    _flip = d.get("yao_index")
+    if _flip is None:
+        _flip = d.get("day_yao_index", d.get("flip_index", 0))
+    return {
+        "day": _no if _no is not None else d.get("day", _f),
+        "day_no": _no,
+        "segment": d.get("segment", _no),
+        "day_from": _f,
+        "day_to": _t,
+        "flip_index": _flip,
+        "day_yao_index": d.get("day_yao_index", _flip),
+        "name": _name,
+        "upper": _upper,
+        "lower": _lower,
+        "lines": list(_lines),
+        "date_from": d.get("date_from", date_from),
+        "day_items": [{
+            "day": _no if _no is not None else d.get("day", _f),
+            "polarity": "阳日" if _flip % 2 == 0 else "阴日",
+            "flip_index": _flip,
+            "day_yao_index": _flip,
+            "name": _name, "upper": _upper, "lower": _lower,
+            "lines": list(_lines),
+            "date": d.get("date_from", date_from)[:10] if date_from else "",
+        }],
+    }
 
 def _parse_datetime(s: str):
     """解析 'YYYY-MM-DD HH:MM' 或 'YYYY-MM-DD' → datetime"""

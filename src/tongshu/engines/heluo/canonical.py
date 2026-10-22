@@ -28,6 +28,7 @@ from .timeline_yun import (
     compute_liunian,
     compute_liuri_stub,
     compute_liuyue,
+    compute_daily_base_hex,
 )
 
 
@@ -331,6 +332,7 @@ class HeluoCanonical:
         solar_phase: str | None = None,
         target_year: int | None = None,
         target_month: int | None = None,
+        target_day: int | None = None,
     ) -> HeluoResult:
         """
         完整计算链：
@@ -419,6 +421,7 @@ class HeluoCanonical:
         timeline = self._build_timeline(
             prenatal, yuantang, postnatal, postnatal_yuantang, birth_year,
             target_year=target_year, target_month=target_month,
+            target_day=target_day,
         )
 
         # Step 7: 卦象结构分析
@@ -486,27 +489,21 @@ class HeluoCanonical:
         birth_year: int | None,
         target_year: int | None = None,
         target_month: int | None = None,
+        target_day: int | None = None,
     ) -> Timeline:
-        """构建时间序列：大运（爻位值运）+ 流年卦 + 流月卦。
+        """时间序列卦象（定稿 2026-10-22 算力裁剪口径）。
 
-        基于 timeline_yun 模块（《河洛理数·卷之四/五》论大运/流年/流月）。
+        定稿要点：
+            · 流年层：只算**近 3 年**完整流年卦（target-2/-1/0）——近 3 年是
+              guajie「近 3 年流年判词」的数据源（guajie.py L1779-1796）；
+              其余流年只存 {year, age, ganzhi} 纯元数据（timeline.yearly_meta）。
+            · 流月层：只有**目标年**算 12 个流月卦（全算）→ 顶层 monthly_hexagrams。
+            · 流日层：目标月起 1 个流日本卦（完整卦一次算好）+ 6 日各自激活爻
+              → 顶层 daily_hexagram{base_hex, daily_yao}。
+            · 大运层：qi_phase.dayun 保留完整字段（供 guajie 运反判定），
+              frozen_state.dayun_summary 落纯元数据。
 
-        算力裁剪（2026-10-10 批次 P 第二步）：
-          当 ``target_year`` 非 None 时启用 fast-path：
-            · 大运仍全量算（依赖大运段判定）
-            · 流年 99 段骨架全量算（compute_liunian 本身依赖大运段，年段顺序定先后）
-            · **目标流年 + 上一年 2 段**才嵌入 12 流月 + 6 流日子树
-            · 其余 97 段只保留元数据（年份/虚岁/干支/卦名/六爻/元堂）
-            · 不再调 interpret_all_liunian（yearly[].yi_signal / yi_interpretation
-              全仓零消费方，是 dead-write）
-            · 顶层 monthly_hexagrams 填目标年 12 月（建立扁平路径）
-            · 顶层 daily_hexagram 填目标年目标月 6 日段（链式累变）
-            · dayun_summary 沿用 qi_phase.dayun（本就是元数据，guajie 判运反用）
-
-          ``target_year is None`` → 退回全量（保留旧契约）。
-
-          target_year 必传顶层；target_month 可选（不传时顶层 daily_hexagram 留空骨架，
-          真正的日段由 guajie 命中目标年那一段现算）。
+        target_year=None → 退回全量（旧契约冻结保留，守卫 test_fastpath 钉死）。
         """
         if birth_year is None:
             birth_year = 1984  # 未提供时占位（甲子年），后续需由调用方传入真实年份
@@ -535,20 +532,28 @@ class HeluoCanonical:
         )
 
         fast_path = target_year is not None
-        # fast-path 仅在 (target_year-1, target_year) 两段嵌入月/日子树
+        # 流年层只算近 3 年（其余流年纯元数据，不起卦）
         material_years: set[int] = set()
         if fast_path:
-            material_years = {target_year - 1, target_year}
+            material_years = {target_year - 2, target_year - 1, target_year}
 
-        # 流月卦（以流年卦为本，元堂取该流年所属大运段元堂）+ 流日卦
         yearly: list[dict] = []
-        target_months: list[dict] = []   # fast-path: 目标年 12 月字典（顶层用）
-        target_days: list[dict] = []     # fast-path: 目标年目标月 6 日段（顶层用）
+        yearly_meta: list[dict] = []
+        target_months: list[dict] = []   # 目标年 12 月（顶层）
+        target_daily: dict = {}         # 目标月 1 个流日本卦 + 6 日激活爻
+        target_year_entry: dict = {}    # 目标流年卦摘要
+
         for y in liunian.years:
             # 流年卦元堂：大运分段后取该年所属大运段元堂；无则回退先天元堂
             yyt = y.yuantang_index if y.yuantang_index >= 0 else yuantang.yuantang_index
-            # 流年卦元堂爻性（H8 解卦层：流年卦断爻=流年卦元堂，规格书"流月以流年卦元堂为本"）
             yyt_nature = y.lines[yyt] if y.lines and 0 <= yyt < len(y.lines) else None
+
+            if fast_path and y.year not in material_years:
+                # 非近 3 年流年：**纯元数据**，只存年份/虚岁/干支，不起卦。
+                yearly_meta.append({
+                    "year": y.year, "age": y.age, "ganzhi": y.ganzhi,
+                })
+                continue
 
             entry: dict = {
                 "age": y.age,
@@ -563,69 +568,99 @@ class HeluoCanonical:
                 "yuantang_nature": yyt_nature,
             }
 
-            if fast_path and y.year not in material_years:
-                # 非目标流年：只元数据。months/days/yi_* 全部不带。
-                yearly.append(entry)
-                continue
-
-            # 全量模式 或 目标/上一年：嵌入 12 月 + 6 日（廉价字段，不换卦名）
-            liuyue = compute_liuyue(y.lines, yyt)
-            months = []
-            for m in liuyue.months:
-                # 流日卦：以当月月卦为本，从居位爻下一爻起六爻俱变（每爻管5日，§6.4 裁定）
-                # 节气对齐：流日卦须从当月"节"时刻起管（《河洛真数》起日卦例）
-                jie_dt = None
-                _jie_dt_next = None
-                try:
-                    jie_dt = _jie_datetime_for_lunar_month(y.year, m["month"])
-                    _jie_dt_next = _jie_interval_for_lunar_month(y.year, m["month"])[1]
-                except Exception:
+            # 只有**目标年**算 12 个流月卦（近 3 年另两年只要流年卦本体）
+            if not (fast_path and y.year != target_year):
+                liuyue = compute_liuyue(y.lines, yyt)
+                months: list[dict] = []
+                for m in liuyue.months:
+                    # 节气对齐：流日卦须从当月"节"时刻起管（《河洛真数》起日卦例）
                     jie_dt = None
-                    _jie_dt_next = None
-                # 流日 / 流时均改按需（2026-10-06）：
-                #   · 流时：旧实现在此把 93 流年 × 12 月 × 6 日全部展开为流时卦，
-                #     共 6,696 次 compute_liushi / 80,352 条小时记录，占四层载荷 91%、
-                #     卦名换算 92%——而消费方（guajie）按 target_hour 点查，每次只需 1 条。
-                #     只记动爻 flip_index，hours 由 guajie 命中该日段时现算。
-                #   · 流日：更进一步，只记 6 段的廉价定位字段（segment/day_from/
-                #     day_to/flip_index），**不做卦名换算**。原先每月一次
-                #     compute_liuri（内含 6 次 _lines_to_hexagram），1,116 个月
-                #     合计 6,696 次，是流时之外最大的一笔开销。
-                #     flip_index 改用闭式 (yue_yao_index + 1 + k) % 6，
-                #     与原「逐爻 diff 求唯一差异爻」在 20,592 个日段上实测全等。
-                #
-                # tests/test_heluo_context.py::test_timeline_structure 只断言
-                # `len(months[0]["days"]) == 6`（引原典「六爻俱变毕，则满三十日》），
-                # **不检查日段内容**，故本改造不触碰其断言。
-                # 需要完整日段时走 materialize_month_days（仅命中月）。
-                month_entry = {
-                    "month": m["month"],
-                    "name": m["name"],
-                    "upper": m["upper"],
-                    "lower": m["lower"],
-                    "lines": m["lines"],
-                    "kind": m["kind"],
-                    "yue_yao_index": m["yue_yao_index"],
-                    "jie_datetime": jie_dt,
-                    "days": compute_liuri_stub(m["lines"], m["yue_yao_index"]),
-                }
-                months.append(month_entry)
+                    try:
+                        jie_dt = _jie_datetime_for_lunar_month(y.year, m["month"])
+                    except Exception:
+                        jie_dt = None
 
-                # fast-path：仅对目标年那段抽月卦进顶层
-                if fast_path and y.year == target_year:
-                    target_months.append(month_entry)
-                    if target_month is not None and m["month"] == target_month:
-                        target_days = month_entry["days"]
+                    days_payload: list[dict] = []
+                    if not fast_path:
+                        # 全量路径：旧的逐月展开（hou5 6 段 × 5 日链式累变）
+                        days_payload = compute_liuri_stub(m["lines"], m["yue_yao_index"])
+                    elif target_month is not None and m["month"] == target_month:
+                        # 定稿流日：1 个流日本卦（完整卦）+ 6 日各自激活爻。
+                        # 一个月 30 日 = 5 组 × 6 日；只算**目标日所在的那一组**。
+                        _td = int(target_day or 1)
+                        _grp = max(0, min(4, (_td - 1) // 6))
+                        base_hex, daily_yao_list = compute_daily_base_hex(
+                            m["lines"], m["yue_yao_index"],
+                            group_index=_grp, rule="gua6",
+                        )
+                        # 该组首日公历日期 = 当月"节"时刻 + 组偏移（节起第一组为节当日）
+                        _seg_date_from = ""
+                        if jie_dt:
+                            try:
+                                from datetime import datetime as _dt, timedelta as _td_
+                                _b0 = _dt.strptime(jie_dt, "%Y-%m-%d %H:%M")
+                                _seg_date_from = (
+                                    _b0 + _td_(days=_grp * 6)
+                                ).strftime("%Y-%m-%d %H:%M")
+                            except Exception:
+                                _seg_date_from = jie_dt
+                        days_payload = [
+                            {
+                                "day": d.get("day_no"),
+                                "day_no": d.get("day_no"),
+                                "segment": d.get("day_no"),
+                                "date_from": _seg_date_from,
+                                "active_yao": d.get("active_yao"),
+                                "flip_index": d.get("yao_index"),
+                                "day_yao_index": d.get("yao_index"),
+                                "name": d.get("changed_name"),
+                                "upper": d.get("changed_upper"),
+                                "lower": d.get("changed_lower"),
+                                "lines": d.get("changed_lines"),
+                                "changed_element": d.get("changed_element"),
+                            }
+                            for d in daily_yao_list
+                        ]
+                        target_daily = {
+                            "base_hex": base_hex,
+                            "daily_yao": daily_yao_list,
+                        }
 
-            entry["months"] = months
+                    month_entry = {
+                        "month": m["month"],
+                        "name": m["name"],
+                        "upper": m["upper"],
+                        "lower": m["lower"],
+                        "lines": m["lines"],
+                        "kind": m["kind"],
+                        "yue_yao_index": m["yue_yao_index"],
+                        "jie_datetime": jie_dt,
+                        "days": days_payload,
+                    }
+                    months.append(month_entry)
+                    if fast_path and y.year == target_year:
+                        target_months.append(month_entry)
+                entry["months"] = months
+
             yearly.append(entry)
+            if fast_path and y.year == target_year:
+                target_year_entry = {
+                    "year": y.year,
+                    "age": y.age,
+                    "ganzhi": y.ganzhi,
+                    "hexagram": entry["hexagram"],
+                    "upper": entry["upper"],
+                    "lower": entry["lower"],
+                    "lines": entry["lines"],
+                    "yuantang_index": yyt,
+                    "yuantang_nature": yyt_nature,
+                    "yi_signal": entry.get("yi_signal", ""),
+                    "changed_line": entry.get("changed_line", ""),
+                }
 
         # P1：易经解卦层 — 为每个流年卦附加 EVENT_SIGNAL
-        # fast-path 不调（yearly[].yi_signal / yi_interpretation 全仓零消费方，是
-        # dead-write——guajie 唯一读 yearly 的字段是 hexagram/lines/yuantang_index/
-        # yuantang_nature/age/year/ganzhi，以及目标那一段的 months[]）。这是
-        # 99 段里最大的开销：每次 interpret_liunian_year 要查相邻年上下卦+动爻+
-        # EVENT_SIGNAL 构造 + EVENT_SIGNAL.to_dict()，99 次都丢。
+        # fast-path 不调（yearly[].yi_signal / yi_interpretation 全仓零消费方，
+        # 是 dead-write）。
         if not fast_path:
             yearly = interpret_all_liunian(
                 yearly,
@@ -647,25 +682,11 @@ class HeluoCanonical:
 
         return Timeline(
             yearly_hexagrams=yearly,
-            # ── 2026-10-10 批次 P 第二步：flat 化月/日 ────────────────
-            # 旧实现 monthly_hexagrams 恒 [] / daily_hexagram 恒 {} 是名不副实
-            # 占位（注释自承），下游必须 yearly[].months[].days[] 嵌套定位。
-            # fast-path 下扁平到顶层：monthly_hexagrams=目标年 12 月，
-            # daily_hexagram=目标年目标月 6 日段。target_month 未传则置空骨架，
-            # guajie 由 yearly[目标年].months[] 现取。
+            yearly_meta=yearly_meta,
+            target_year_hexagram=target_year_entry,
             monthly_hexagrams=target_months if fast_path else [],
-            # daily_hexagram 在 fast-path 且 target_month 命中时填 6 段字典
-            # （每段 segment/day_from/day_to/flip_index）；未命中时 {}。
-            # H10b 兼容：另给 "daily_yao" 键（同一份 6 段），供按节气均匀切分后的
-            # 流日段查询使用——不改动既有 "segments" 契约，批次 P 的 10 条 fast-path
-            # 守卫不受影响。
             daily_hexagram=(
-                {
-                    "year": target_year,
-                    "month": target_month,
-                    "segments": target_days,
-                    "daily_yao": target_days,
-                }
+                dict(target_daily, year=target_year, month=target_month)
                 if fast_path and target_month is not None else {}
             ),
             hourly_hexagram=None,

@@ -180,7 +180,25 @@ def build_frozen_state(result: Any, calculation_policy: Optional[dict] = None) -
         yearly = getattr(timeline, 'yearly_hexagrams', [])
         liunian_count = len(yearly) if yearly else 0
         qi_phase = getattr(timeline, 'qi_phase', None) or {}
-        dayun_summary = qi_phase.get('dayun', [])
+        # 定稿（2026-10-22）：大运层只生成**元数据**，不起大运卦。
+        # qi_phase.dayun 仍保留完整字段（hexagram/line_index/phase）供 guajie
+        # 的运反判定用；此处 dayun_summary 落纯元数据 {start_age, end_age, ganzhi}。
+        #
+        # ganzhi 定义：大运是「爻位值运」（阳爻 9 年 / 阴爻 6 年），不按干支轮转，
+        # 故取该段**起始年**（虚岁 == start_age）所对应的流年干支作定位标识。
+        _ganzhi_by_age: dict = {}
+        for _e in list(getattr(result, 'timeline', None).yearly_meta or []) if getattr(result, 'timeline', None) else []:
+            _ganzhi_by_age[_e.get('age')] = _e.get('ganzhi', '')
+        for _e in list(getattr(result, 'timeline', None).yearly_hexagrams or []) if getattr(result, 'timeline', None) else []:
+            _ganzhi_by_age.setdefault(_e.get('age'), _e.get('ganzhi', ''))
+        dayun_summary = []
+        for _de in (qi_phase.get('dayun', []) or []):
+            _sa = _de.get('age_start')
+            dayun_summary.append({
+                "start_age": _sa,
+                "end_age": _de.get("age_end"),
+                "ganzhi": _ganzhi_by_age.get(_sa, ""),
+            })
 
     hua_gong = getattr(result, 'hua_gong', None)
     yuan_qi = getattr(result, 'yuan_qi', None)

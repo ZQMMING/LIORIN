@@ -69,6 +69,7 @@ class HeluoAdapter:
         target_year: Optional[int] = None,
         target_month: Optional[int] = None,
         target_day: Optional[int] = None,
+        huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
         chart = self._bazi_engine.compute(
             solar_date,
@@ -81,17 +82,19 @@ class HeluoAdapter:
             target_year=target_year,
             target_month=target_month,
             target_day=target_day,
+            huangli_provider=huangli_provider,
         )
 
     # ------------------------------------------------------------------
     # 正式链路：CalculationContext → BaziAdapter → 河洛
     # ------------------------------------------------------------------
     def compute_from_context(
-        self, ctx, gender: Optional[str] = None
+        self, ctx, gender: Optional[str] = None,
+        huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
         g = gender or ctx.subject_gender or "male"
         chart = self._bazi_adapter.compute(ctx, gender=g)
-        return self.compute_from_chart(chart)
+        return self.compute_from_chart(chart, huangli_provider=huangli_provider)
 
     # ------------------------------------------------------------------
     # BaziChart → 河洛（核心投影转发）
@@ -102,6 +105,7 @@ class HeluoAdapter:
         target_year: Optional[int] = None,
         target_month: Optional[int] = None,
         target_day: Optional[int] = None,
+        huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
         bazi = [
             (
@@ -143,13 +147,18 @@ class HeluoAdapter:
             birth_date=birth_date,
             target_year=target_year,
             target_month=target_month,
+            target_day=target_day,
         )
 
         # H8: 解卦层（原典判词）挂载 — 独立于冻结的 calculate，防御性兜底
         try:
             from dataclasses import replace
             from .heluo.guajie import build_guajie_from_result
-            result = replace(result, guajie=build_guajie_from_result(result, bazi=bazi))
+            result = replace(result, guajie=build_guajie_from_result(
+                result, bazi=bazi,
+                target_year=target_year, target_month=target_month,
+                target_day=target_day, huangli_provider=huangli_provider,
+            ))
         except Exception:
             pass  # 解卦层失败不阻塞主链
         return result

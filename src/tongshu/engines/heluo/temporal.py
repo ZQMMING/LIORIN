@@ -22,7 +22,12 @@ class Timeline:
     （``yearly_hexagrams[].months[] / .days[]``）内按需产出，
     故此处一律置空，不再保留名不副实的副本。
     """
-    yearly_hexagrams: list[dict]    # 流年卦列表
+    yearly_hexagrams: list[dict]    # 流年卦列表（定稿后仅含近 3 年）
+
+    yearly_meta: list[dict]        # 其余流年**纯元数据** {year, age, ganzhi}（不起卦）
+
+    target_year_hexagram: dict      # 目标流年卦摘要（ganzhi/hexagram/yi_signal/changed_line）
+
     monthly_hexagrams: list[dict]   # 流月卦列表（占位，恒空；真实值见 yearly[].months）
     daily_hexagram: dict             # 今日卦（占位，恒空；真实值见 yearly[].months[].days）
     hourly_hexagram: dict | None    # 时刻卦（占位，恒 None；真实值由 guajie 按 target_hour 现算）

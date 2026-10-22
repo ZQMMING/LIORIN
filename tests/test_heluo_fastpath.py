@@ -1,17 +1,25 @@
-"""Heluo 时间序列算力裁剪 fast-path 守卫（2026-10-10 批次 P 第二步）。
+"""Heluo 时间序列算力裁剪 fast-path 守卫（2026-10-22 按定稿重写）。
 
-防止裁剪回归：
-    · 97 段必须有 months 子树缺口（防"为了过时间复测把 months 全展开"）
-    · 97 段必须没有 yi_signal / yi_interpretation（dead-write 钉死不可复活）
-    · 目标/上一年 2 段必须嵌满 12 月 + 6 日（防"只嵌目标年、忘上一年对比动爻"）
+定稿（2026-10-22）要点：
+    · 流年层：只算**近 3 年**（target-2 / target-1 / target）完整流年卦
+      —— 近 3 年是 guajie「近 3 年流年判词」的数据源（guajie.py L1779-1796）；
+      其余 96 条只存 {year, age, ganzhi} 纯元数据（timeline.yearly_meta），不起卦。
+    · 流月层：只有**目标年**算 12 个流月卦（全算）→ 顶层 monthly_hexagrams。
+    · 流日层：1 个流日本卦（完整卦一次算好）+ 6 日各自激活爻（轻量爻运算）
+      → 顶层 daily_hexagram{base_hex, daily_yao}。
+    · 大运层：只生成元数据（qi_phase.dayun 仍留完整字段供 guajie 运反判定）。
+
+防回归意图（与 2026-10-10 批次 P 原始守卫一致，只换契约）：
+    · 非近 3 年流年必须是**纯元数据**（不复活 yi_signal / yi_interpretation /
+      months / days / hours —— 这些是 dead-write，仓内零消费方）
+    · 目标年必须嵌满 12 月；流月数必须是 12
     · 顶层 monthly_hexagrams 必须 12 项
-    · 顶层 daily_hexagram 必须有 6 段且 segment/day_from/day_to/flip_index 齐
+    · 顶层 daily_hexagram 必须含 base_hex（完整卦）+ daily_yao（6 日激活爻）
     · target_year=None 必须退回全量（旧契约冻结保留）
-    · 总体积 < 50k chars（1983-11-03 12:00 男 / target=2026/7）—— 锁住
-      25 倍压缩成果
+    · 总体积 < 100k chars（定稿估算 ~2.8 万，留冗余防波动）
 
-只断言调用方的**可见契约**（yearly/monthly_hexagrams/daily_hexagram 形状
-与字段集合），不绑实现细节（不测 `_build_timeline` 内部、不测哈希）。
+只断言调用方的**可见契约**（yearly / yearly_meta / monthly_hexagrams /
+daily_hexagram 形状与字段集合），不绑实现细节。
 """
 
 from __future__ import annotations
@@ -19,7 +27,6 @@ from __future__ import annotations
 import dataclasses
 import json
 import unittest
-from datetime import date
 
 from tongshu.engines.heluo.canonical import HeluoCanonical
 
@@ -28,9 +35,12 @@ _BAZI = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
 _BIRTH_YEAR = 1983
 _BIRTH_DATE = "1983-11-03"
 _TARGET_YEAR = 2026
-_TARGET_MONTH = 7  # 农历七月（黄历权威值，目标流月与日段链式累变）
+_TARGET_MONTH = 7  # 农历七月（黄历权威值）
 _BIRTH_HOUR = "午"
 _GENDER = "male"
+
+#: 近 3 年完整流年卦
+_FULL_YEARS = {_TARGET_YEAR - 2, _TARGET_YEAR - 1, _TARGET_YEAR}
 
 
 def _full_to_dict(res) -> dict:
@@ -60,66 +70,60 @@ def _build(target_year=None, target_month=None):
 class TestFastPathSkeleton(unittest.TestCase):
     """fast-path 骨架 / 体积 / 月日顶层契约。"""
 
-    def test_yearly_skeleton_preserved(self):
-        """99 流年骨架完整保留——大运段判定、年份定位都依赖它。"""
-        res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
-        yearly = res.timeline.yearly_hexagrams
-        self.assertEqual(len(yearly), 99,
-                         "流年骨架必须保留 99 段")
-        # 每年 entry 必含 10 个元数据字段；目标/上一年 2 段额外含 months
-        for e in yearly:
-            keys = set(e.keys())
-            for k in EXPECTED_META_KEYS:
-                self.assertIn(k, keys, f"流年 entry 缺 {k}")
-            # 元数据 97 段：必不含 months / yi_* / days
-            if not e.get("months"):
-                self.assertNotIn("yi_signal", keys)
-                self.assertNotIn("yi_interpretation", keys)
-                self.assertNotIn("days", keys)
-                self.assertNotIn("hours", keys)
-            else:
-                # 全量段：可以含 months（11 字段），yi_* 必须不在
-                self.assertNotIn("yi_signal", keys,
-                                 f"年份 {e['year']} 全量段含 yi_signal（dead-write）")
-                self.assertNotIn("yi_interpretation", keys,
-                                 f"年份 {e['year']} 全量段含 yi_interpretation")
+    def test_yearly_skeleton_is_last_three_years(self):
+        """yearly_hexagrams 只含近 3 年完整流年卦（其余走 yearly_meta 纯元数据）。
 
-    def test_only_target_and_prev_year_have_months(self):
-        """仅目标年 + 上一年 2 段嵌 months 子树；其余 97 段必须只有元数据。"""
+        近 3 年是 guajie「近 3 年流年判词」的数据源，必须保留完整卦。
+        """
         res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
         yearly = res.timeline.yearly_hexagrams
-        full = [e for e in yearly if e.get("months")]
-        meta = [e for e in yearly if not e.get("months")]
-        self.assertEqual(len(full), 2,
-                         f"应 2 段全量（目标+上一年），实测 {len(full)}")
-        self.assertEqual(len(meta), 97,
-                         f"应 97 段只元数据，实测 {len(meta)}")
-        self.assertEqual({_TARGET_YEAR, _TARGET_YEAR - 1},
-                         {e["year"] for e in full})
+        self.assertEqual(len(yearly), 3,
+                         f"yearly_hexagrams 应只含近 3 年，实测 {len(yearly)}")
+        self.assertEqual(_FULL_YEARS, {e["year"] for e in yearly})
+        for e in yearly:
+            for k in _EXPECTED_META_KEYS:
+                self.assertIn(k, e, f"近 3 年流年 entry 缺 {k}")
+
+    def test_yearly_meta_is_pure_metadata(self):
+        """其余流年进 yearly_meta，且**只** {year, age, ganzhi} —— 不带卦。"""
+        res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
+        meta = res.timeline.yearly_meta
+        self.assertEqual(len(meta), 96,
+                         f"yearly_meta 应含其余 96 条流年，实测 {len(meta)}")
+        for e in meta:
+            self.assertEqual(set(e.keys()), {"year", "age", "ganzhi"},
+                             f"yearly_meta entry 字段应恰为 3 个，实际 {sorted(e.keys())}")
+        years = {e["year"] for e in meta}
+        self.assertFalse(years & _FULL_YEARS,
+                         "近 3 年不得重复出现在 yearly_meta")
+        # 全部 99 年（96 + 3）应覆盖
+        all_years = years | {e["year"] for e in res.timeline.yearly_hexagrams}
+        self.assertEqual(len(all_years), 99, "流年总覆盖应为 99 年")
 
     def test_metadata_segments_have_no_yield_or_yi(self):
-        """97 段元数据禁止包含 yi_signal / yi_interpretation / months / days
+        """纯元数据 / 非目标年流年禁止 yi_signal / yi_interpretation / days / hours
         ——这些是 dead-write（仓内零消费方），必须钉死不可复活。"""
         res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
-        for e in res.timeline.yearly_hexagrams:
-            if e.get("months"):
-                continue
+        for e in list(res.timeline.yearly_hexagrams) + list(res.timeline.yearly_meta):
             self.assertNotIn("yi_signal", e,
-                             f"年份 {e['year']} 元数据竟含 yi_signal，"
-                             f"这是 dead-write 不得复活")
+                             f"年份 {e.get('year')} 含 yi_signal（dead-write 不得复活）")
             self.assertNotIn("yi_interpretation", e,
-                             f"年份 {e['year']} 元数据竟含 yi_interpretation")
-            self.assertNotIn("days", e,
-                             f"年份 {e['year']} 元数据竟含 days")
-            self.assertNotIn("hours", e,
-                             f"年份 {e['year']} 元数据竟含 hours")
+                             f"年份 {e.get('year')} 含 yi_interpretation")
+            self.assertNotIn("days", e, f"年份 {e.get('year')} 含 days")
+            self.assertNotIn("hours", e, f"年份 {e.get('year')} 含 hours")
 
-    def test_target_year_has_12_months_each_with_6_days(self):
-        """目标年段 12 月 × 每月 6 日段（廉价字段，不换卦名）。
+    def test_only_target_year_has_months(self):
+        """只有目标年嵌 months 子树（12 个流月卦）；近 3 年另两年只有流年卦本体。"""
+        res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
+        yearly = res.timeline.yearly_hexagrams
+        with_months = [e for e in yearly if e.get("months")]
+        self.assertEqual(len(with_months), 1,
+                         f"应只有目标年 1 段有 months，实测 {len(with_months)}")
+        self.assertEqual(_TARGET_YEAR, with_months[0]["year"])
+        self.assertEqual(len(with_months[0]["months"]), 12)
 
-        日段必含 segment/day_from/day_to/flip_index 四件套 + 可选 lines/positions。
-        不钉 schema 全集——避免与下游 materialize_month_days 联动字段绑死。
-        """
+    def test_target_year_has_12_months(self):
+        """目标年段 12 个流月卦，month 序号 1..12。"""
         res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
         target_yr = next(e for e in res.timeline.yearly_hexagrams
                          if e["year"] == _TARGET_YEAR)
@@ -127,11 +131,8 @@ class TestFastPathSkeleton(unittest.TestCase):
         self.assertEqual(len(months), 12)
         for i, m in enumerate(months, start=1):
             self.assertEqual(m["month"], i)
-            self.assertEqual(len(m["days"]), 6,
-                             f"第 {i} 月理应有 6 日段")
-            for d in m["days"]:
-                for k in ("segment", "day_from", "day_to", "flip_index"):
-                    self.assertIn(k, d, f"日段缺 {k}：{d}")
+            for k in ("name", "upper", "lower", "lines", "kind", "yue_yao_index"):
+                self.assertIn(k, m, f"流月缺 {k}")
 
     def test_top_level_monthly_hexagrams_filled(self):
         """顶层 monthly_hexagrams 是目标年 12 月（扁平路径）。"""
@@ -141,76 +142,89 @@ class TestFastPathSkeleton(unittest.TestCase):
         for i, x in enumerate(m, start=1):
             self.assertEqual(x["month"], i)
 
-    def test_top_level_daily_hexagram_filled(self):
-        """顶层 daily_hexagram 含 6 段 + 年/月锚。"""
+    def test_top_level_daily_hexagram_base_hex_and_daily_yao(self):
+        """顶层 daily_hexagram = {base_hex 完整卦, daily_yao 6 日激活爻} + 年/月锚。
+
+        定稿：1 个流日本卦（本体/互错综/卦气一次算好），6 日共用；
+        每日只取对应爻（初→1日 … 上→6日）做轻量爻运算。
+        """
         res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
         d = res.timeline.daily_hexagram
         self.assertEqual(d.get("year"), _TARGET_YEAR)
         self.assertEqual(d.get("month"), _TARGET_MONTH)
-        segs = d.get("segments")
-        self.assertIsInstance(segs, list)
-        self.assertEqual(len(segs), 6)
-        for s in segs:
-            self.assertIn("segment", s)
-            self.assertIn("day_from", s)
-            self.assertIn("day_to", s)
-            self.assertIn("flip_index", s)
+
+        base = d.get("base_hex")
+        self.assertIsInstance(base, dict, "daily_hexagram 缺 base_hex")
+        for k in ("name", "upper", "lower", "lines", "hu_name", "cuo_name", "zong_name"):
+            self.assertIn(k, base, f"base_hex 缺 {k}")
+
+        yao = d.get("daily_yao")
+        self.assertIsInstance(yao, list)
+        self.assertEqual(len(yao), 6, "daily_yao 应有 6 日")
+        want_yao = ("初爻", "二爻", "三爻", "四爻", "五爻", "上爻")
+        for i, x in enumerate(yao):
+            self.assertEqual(x.get("day_no"), i + 1)
+            self.assertEqual(x.get("active_yao"), want_yao[i],
+                             f"第 {i+1} 日激活爻应为 {want_yao[i]}")
+            for k in ("yao_index", "yao_nature", "changed_name", "changed_lines"):
+                self.assertIn(k, x, f"daily_yao 缺 {k}")
 
     def test_daily_hexagram_empty_when_target_month_unspecified(self):
-        """target_month 未传 → 顶层 daily_hexagram 保持空（guajie 由 yearly 现取）。"""
+        """target_month 未传 → 顶层 daily_hexagram 保持空。"""
         res = _build(target_year=_TARGET_YEAR, target_month=None)
-        d = res.timeline.daily_hexagram
-        self.assertEqual(d, {})
+        self.assertEqual(res.timeline.daily_hexagram, {})
+
+    def test_target_year_hexagram_summary(self):
+        """顶层 target_year_hexagram 是目标流年卦摘要。"""
+        res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
+        t = res.timeline.target_year_hexagram
+        self.assertEqual(t.get("year"), _TARGET_YEAR)
+        for k in ("ganzhi", "hexagram", "yi_signal", "changed_line"):
+            self.assertIn(k, t, f"target_year_hexagram 缺 {k}")
 
     def test_total_size_within_budget(self):
-        """timeline 子树 < 100k chars（基线 2.0M），锁住 20× 压缩成果。
+        """timeline 子树 < 100k chars（定稿估算 ~2.8 万），锁住算力裁剪成果。
 
-        1983-11-03 12:00 男 / target=2026/7 这盘实测 ~85k；留一倍冗余到 100k
-        防小波动。
+        1983-11-03 12:00 男 / target=2026/7 这盘实测远低于此；留冗余防波动。
         """
         res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
         tl_dict = _timeline_to_dict(res)
         s = json.dumps(tl_dict, ensure_ascii=False, default=str)
         self.assertLess(len(s), 100_000,
-                        f"timeline 体积 {len(s)} ≥ 100k（基线 2.14M）")
+                        f"timeline 体积 {len(s)} ≥ 100k")
 
 
 class TestFastPathDisabled(unittest.TestCase):
     """target_year=None 退回全量（旧契约冻结保留）。"""
 
     def test_no_target_year_means_full_payload(self):
-        """target_year 未传 → 全部 99 段都嵌 months + yi_* —— 锁旧契约。
-        防止有人"为了减少差异化"把 None 路径也走轻量。"""
+        """target_year 未传 → 全部 99 段都嵌 months + yi_* —— 锁旧契约。"""
         res = _build(target_year=None, target_month=None)
         yearly = res.timeline.yearly_hexagrams
-        # 全量路径：每段都嵌 12 月
         none_with_months = [e for e in yearly if not e.get("months")]
         self.assertEqual(len(none_with_months), 0,
                          "全量路径下所有流年段都必须有 months")
-        # 全量路径：仍调 interpret_all_liunian → 每段都带 yi_signal
         none_with_yi = [e for e in yearly if "yi_signal" not in e]
         self.assertEqual(len(none_with_yi), 0,
                          "全量路径下所有流年段都必须有 yi_signal（interpret_all_liunian）")
-        # 顶层 monthly_hexagrams 必须保持 []（旧契约：注释自承"占位恒空"）
         self.assertEqual(res.timeline.monthly_hexagrams, [])
-        # 顶层 daily_hexagram 必须 {}（旧契约）
         self.assertEqual(res.timeline.daily_hexagram, {})
 
     def test_full_path_payload_is_baseline(self):
-        """全量路径排盘结果 baseline 不变 —— 这条是关键回归保险，
-        防 fast-path 改造无意识地污染了全量路径的实现。
-        基线：1983-11-03 12:00 男 → ~2.0M chars。"""
+        """全量路径排盘结果 baseline 不变 —— 关键回归保险。
+
+        基线：1983-11-03 12:00 男 → ~2.0M chars。
+        """
         res = _build(target_year=None, target_month=None)
         full = _full_to_dict(res)
         s = json.dumps(full, ensure_ascii=False, default=str)
-        # 期望落在旧基线 2.0M 区间：允许 ±20% 抖动（其他改动可能扩/缩）
         self.assertGreater(len(s), 1_500_000,
                            f"全量路径体积 {len(s)} 跌破旧基线 1.5M（疑似被 fast-path 污染）")
         self.assertLess(len(s), 3_000_000,
                         f"全量路径体积 {len(s)} ≥ 3M（疑似引入了额外冗余）")
 
 
-EXPECTED_META_KEYS = {
+_EXPECTED_META_KEYS = {
     "age", "year", "ganzhi", "yang_year", "hexagram",
     "upper", "lower", "lines",
     "yuantang_index", "yuantang_nature",
