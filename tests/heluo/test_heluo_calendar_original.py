@@ -199,8 +199,13 @@ class TestAdapterEndToEnd(unittest.TestCase):
                 self.assertEqual(res.yuantang.yuantang, c["yuantang"],
                                  f"算例{c['no']} 元堂")
 
-    def test_case3_month_pillar_self_corrected(self):
-        """算例 3：八字引擎给亥月（7 日错位），河洛自校回子月并留痕。"""
+    def test_case3_month_pillar_correct(self):
+        """算例 3：月柱必须是子月**庚子**（原典口径）。
+
+        2026-10-22 起八字侧已修（``jd_to_datetime`` 改用儒略历），故上游直接
+        给对；河洛侧的自校此时**不触发**（它只是兜底 —— 上游一旦再错位，
+        自校会把月柱拉回河洛口径并留痕）。
+        """
         from tongshu.engines.heluo_adapter import HeluoAdapter
         import sxtwl
 
@@ -209,10 +214,30 @@ class TestAdapterEndToEnd(unittest.TestCase):
         res = HeluoAdapter().compute(
             solar_date=(solar[0], solar[1], solar[2], 21), gender="male")
         self.assertEqual(f"{res.bazi[1][0]}{res.bazi[1][1]}", "庚子",
-                         "月柱应被自校为子月（庚子）")
-        self.assertTrue(res.bazi_caliber_notes,
-                        "自校必须留痕（下游须知道输入四柱被改过）")
-        self.assertIn("月柱", " ".join(res.bazi_caliber_notes))
+                         "月柱应为子月（庚子）")
+        self.assertEqual(f"{res.bazi[2][0]}{res.bazi[2][1]}", "丙子")
+        # 自校只在**上游确实错位**时才留痕；上游已修 → 不应有留痕
+        for note in (res.bazi_caliber_notes or []):
+            self.assertIn("历法自校", note)
+
+    def test_self_correction_kicks_in_when_upstream_is_wrong(self):
+        """上游若再错位（人为喂错月柱）→ 河洛自校拉回并留痕（兜底仍有效）。"""
+        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from tongshu.engines.heluo.calendar_guard import resolve_year_month
+
+        # 1206-11-30 21:00 的大雪后子月 = 庚子；这里喂相邻的亥月（己亥）
+        bazi = [("丙", "寅"), ("己", "亥"), ("丙", "子"), ("己", "亥")]
+        fixed, notes = resolve_year_month(bazi, "1206-11-30", "亥")
+        self.assertEqual(fixed[1][0] + fixed[1][1], "庚子",
+                         "相邻月柱应被自校回子月（庚子）")
+        self.assertTrue(notes, "自校必须留痕")
+        self.assertIn("月柱", " ".join(notes))
+
+        res = HeluoCanonical().calculate(
+            bazi=bazi, gender="male", birth_hour="亥", era="zhong",
+            birth_date="1206-11-30", birth_year=1206)
+        self.assertEqual(f"{res.bazi[1][0]}{res.bazi[1][1]}", "庚子")
+        self.assertTrue(res.bazi_caliber_notes, "canonical 亦须留痕")
 
     def test_modern_date_untouched(self):
         """现代日期不得被自校改动（无据不动）。"""
@@ -260,7 +285,11 @@ class TestJulianGregorianCaliber(unittest.TestCase):
         self.assertEqual(julian_gregorian_offset(2026, 10, 22), 0)
 
     def test_sxtwl_label_is_julian_before_1582(self):
-        """sxtwl 的公历标签在改历前 = 儒略历（与 proleptic Gregorian 差 7 天）。"""
+        """sxtwl 的公历标签在改历前 = 儒略历；仓库换算必须与之同口径。
+
+        2026-10-22 起 `jd_to_datetime` 已改为「1582-10-15 前用儒略历」，
+        与 sxtwl.JD2DD 逐分钟一致（此前差 7 天 → 八字引擎古日期月柱错位）。
+        """
         import sxtwl
         from tongshu.engines.time.jd_converter import jd_to_datetime
         day = sxtwl.fromSolar(1206, 11, 30)
@@ -269,8 +298,11 @@ class TestJulianGregorianCaliber(unittest.TestCase):
         self.assertEqual(sxtwl_label, (1206, 11, 30),
                          "sxtwl 标的大雪日（儒略历标签）")
         conv = jd_to_datetime(day.getJieQiJD())
-        self.assertEqual((conv.year, conv.month, conv.day), (1206, 12, 7),
-                         "仓库 jd_to_datetime 按 proleptic Gregorian → 差 7 天")
+        self.assertEqual((conv.year, conv.month, conv.day), (1206, 11, 30),
+                         "jd_to_datetime 必须与 sxtwl 同口径（儒略历）")
+        self.assertEqual(conv.strftime("%Y-%m-%d %H:%M"),
+                         "1206-11-30 09:34",
+                         "时刻须与 sxtwl.JD2DD 逐分钟一致")
 
     def test_sxtwl_pillars_helper(self):
         p = sxtwl_pillars("1206-11-30")
