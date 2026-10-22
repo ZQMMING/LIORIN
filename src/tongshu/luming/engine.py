@@ -3531,7 +3531,8 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
             (_GAN_SHENG.get(day_stem) == _xy_stem2 or _GAN_KE.get(day_stem) == _xy_stem2))
     else:
         xy_growth = ""; xy_dead_jue = False; xy_sheng_wang = False
-        _xy_xing_hai = False; _xy_gui_ma = False; xy_nayin = ""; _xy_fu_hui = False
+        _xy_xing_hai = False; _xy_gui_ma = False; xy_gui_ma_desc = ""
+        xy_nayin = ""; _xy_fu_hui = False
 
     return {
         "tai_s": ts, "tai_b": tb, "tai_sui": ts + tb, "tai_nayin": tai_nayin,
@@ -4137,7 +4138,15 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     if "LURY-01" in _lury_tones or "LURY-02" in _lury_tones:
         year_tone = "凶"
     elif "LURY-04" in _lury_tones and _power["level"] != "重":
-        year_tone = "吉"
+        # 食伤泄秀本吉, 但流年有克身重凶集 (太岁犯命V62/五鬼V87/晦气V59/
+        #   冲运V52 等 _HEAVY_XIONG) 时, "克身之鬼贵禄马不抵"(三命提要),
+        #   食伤吉面不立纯吉, 最多降为吉凶相杂; 无重凶方升吉.
+        if any(v.get("rule_id") in _HEAVY_XIONG and v.get("tone") == "凶"
+               for v in verdicts):
+            if year_tone == "凶":
+                year_tone = "吉凶相杂"
+        else:
+            year_tone = "吉"
 
     # ========== 2026-10-21 应期与维度 (用户定案, 三字段: 引动/应期级别/主次应) ==========
     # ① 引动对象: 太岁 → 原局柱 / 大运 / 小运
