@@ -1904,8 +1904,8 @@ YEAR_RULES = [
      "scope": "流年", "target": "太岁{tai_b}临官符（{guan_fu_branch}）",
      "tone": "凶",
      "when": {"op": "eq", "k": "tai_guan_fu", "v": True},
-     "out": "太岁临官符（岁前五辰），其年防官事、词讼、文书纠纷",
-     "detail_tpl": "太岁{tai_b}=年支{year_branch}前五辰{guan_fu_branch}（三命通会卷三：官符取太岁前五辰，日时遇之多官灾；五行精纪卷34：二运见官符主斗讼）"},
+     "out": "太岁临官符（岁前五辰，即死符位·病符对冲），其年防官事、词讼、文书纠纷；无贵神解救者防凶恶",
+     "detail_tpl": "太岁{tai_b}=年支{year_branch}前五辰{guan_fu_branch}（三命通会卷三：官符取太岁前五辰，日时遇之多官灾，并羊刃乃刑徒；死符取病符对冲，无贵神解救凶恶短折；五行精纪卷34：二运见官符主斗讼）"},
     # ---- 劫夺/健康: 劫煞 (五行精纪"太岁至劫杀年主咽喉目赤之灾"; 二运见劫杀"横事失权散财") ----
     {"id": "LM-S03", "evidence": "E-YHZP-040-008", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}临劫煞（{jie_sha_branch}）",

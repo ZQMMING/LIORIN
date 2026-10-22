@@ -329,7 +329,7 @@ class TestLuckScope(unittest.TestCase):
         lm = from_bazi_chart(chart)
         self.assertEqual(lm.luck_scope["start_age"], chart.start_age)
         self.assertEqual(lm.luck_scope["luck_pillars"][0], ("YI", "HAI"))
-        self.assertEqual(lm.luck_scope["xiaoyun"], "TODO_CONSUME_SPEC_XIAOYUN_SCOPE")
+        self.assertEqual(lm.luck_scope["xiaoyun"], "")
 
     def test_51_nayin_passthrough(self):
         chart = BaziEngine().compute((1990, 1, 1, 12), gender="male")

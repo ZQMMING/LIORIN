@@ -1356,7 +1356,7 @@ def _build_luck_scope(chart: Any, current_datetime=None, lookup_mode: str = "yea
         }
         pillars_view.append(pv)
 
-    xiaoyun: Any = "TODO_CONSUME_SPEC_XIAOYUN_SCOPE"
+    xiaoyun: Any = ""
     xiaoyun_zhi = ""
     # 2026-10-21 统一口径: 小运一律用古法 xiao_yun_pillars (壬申逆/丙寅顺,
     #   用户定夺取古法) — 此前运层用醉醒子 _calc_xiaoyun_scope (从时起) 与
