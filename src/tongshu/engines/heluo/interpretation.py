@@ -104,6 +104,11 @@ class InterpretationOutput:
     interpretation_chain: List[InterpretationStep]
     warnings: List[str]
     meta: Dict[str, Any]
+    #: 本解释所依据的**原典出处**（供下游质量评分做古籍一致性比对）。
+    #: 2026-10-22 补：``metrics_v2.REQUIRED_INTERPRETATION_FIELDS`` 要求
+    #: ``classical_reference``，而本输出**从不带**该键 —— 接上质量评分时
+    #: 逻辑完整性恒缺一项（上限 4/5），且下游无从知道判据出自何处。
+    classical_reference: Dict[str, Any] = field(default_factory=dict)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -211,8 +216,34 @@ class RelationalInterpretationEngine:
                 "evidence_closure": self._compute_evidence_closure(),
                 "interpretation_type": "relational",
                 "input_summary": self._summarize_input()
-            }
+            },
+            classical_reference=self._classical_reference(),
         )
+
+    def _classical_reference(self) -> Dict[str, Any]:
+        """本解释所依据的**原典出处**。
+
+        贵命六项判据的出处逐条登记在 :data:`gui_ming_liu_ju.LIU_JU`
+        （《河洛真数·起例卷之中》L633-L648）。此处按「书 / 卷 / 条文 / 规则」
+        汇总，供下游（``metrics_v2`` 的古籍一致性比对）直接使用。
+
+        无据即不填：若判据表为空，则返回空 dict，**不编造出处**。
+        """
+        from .gui_ming_liu_ju import LIU_JU
+
+        if not LIU_JU:
+            return {}
+        items = [
+            {"name": name, "line": line, "basis": basis}
+            for name, (line, basis) in LIU_JU.items()
+        ]
+        return {
+            "book": "河洛真数",
+            "volume": "起例卷之中",
+            "paragraph": LIU_JU["卦名"][1],
+            "rule": "贵命六项判据",
+            "items": items,
+        }
     
     def _compute_factor_weights(self) -> Dict[str, float]:
         """计算各因子权重。

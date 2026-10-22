@@ -111,6 +111,15 @@ def evaluate_interpretation(
     
     # 生成警告和建议
     warnings = _generate_warnings(interpretation, classical_score, logic_score, evidence_score)
+    # ⚠ 2026-10-22：下列三项是**占位分**，不是实测结论，此前静默抬高总分
+    #   （无参考输出 → 稳定性直接给 1.0 满分），使用者无从分辨
+    #   「实测很好」与「根本没测」。现逐项留痕。
+    if not classical_source:
+        warnings.append("古籍一致性未实测（未提供 classical_source），0.5 为占位分，不得当作实测结论")
+    if not reference_outputs:
+        warnings.append("稳定性未实测（未提供 reference_outputs），1.0 为占位分，不得当作实测结论")
+    if not evidence_chain:
+        warnings.append("证据闭合度未实测（未提供 evidence_chain），占位分，不得当作实测结论")
     suggestions = _generate_suggestions(interpretation, overall)
     
     # 统计详细指标
@@ -228,9 +237,13 @@ def _calc_classical_alignment(
     interpretation: Dict,
     classical_source: Optional[Dict]
 ) -> float:
-    """计算古籍一致性得分。"""
+    """计算古籍一致性得分。
+
+    ⚠ 2026-10-22 留痕：**没有 classical_source 时返回 0.5 是占位分**，
+    不是实测结论；调用方会在 warnings 里标注该分未实测。
+    """
     if not classical_source:
-        return 0.5  # 默认中等分
+        return 0.5  # ⚠ 占位分：未实测
     
     # 检查古籍引用是否存在
     ref = interpretation.get("classical_reference", {})
@@ -286,9 +299,14 @@ def _calc_stability(
     interpretation: Dict,
     reference_outputs: Optional[List[Dict]]
 ) -> float:
-    """计算稳定性得分。"""
+    """计算稳定性得分。
+
+    ⚠ 2026-10-22 留痕：**没有参考输出时返回 1.0 是占位分，不是实测结论**
+    ——「没测过」不等于「很稳定」。调用方（:func:`evaluate_interpretation`）
+    会在 warnings 里显式标注该分未实测，不得据此下判断。
+    """
     if not reference_outputs:
-        return 1.0  # 没有参考，默认为满分
+        return 1.0  # ⚠ 占位分：未实测，非「满分」
     
     # 计算与参考输出的相似度
     similarities = []
