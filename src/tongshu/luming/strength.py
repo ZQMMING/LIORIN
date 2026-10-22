@@ -390,7 +390,11 @@ def aggregate(base: dict, power: dict, dim_hits: dict | None = None,
         elif v == "凶" and base["level"] != "薄":
             v = "吉凶相杂"
     if dim_hits:
-        heavy = any(dim_hits.get(d) for d in ("自身婚姻", "情性健康"))
+        # 排除细累规则(已在 year_power 归零, 如 V79 小运绝=细累) — 细累不构成
+        # "重维度凶信号", 不得把吉降为相杂
+        def _real_dim(d):
+            return [r for r in (dim_hits.get(d) or []) if r not in _XI_LEI_RULES]
+        heavy = any(_real_dim(d) for d in ("自身婚姻", "情性健康"))
         if heavy and eff == "轻" and v == "吉":
             v = "吉凶相杂"  # L4273 吉运中遇刑害 → 细累浮灾 (不上报重灾, 也不全吉)
     return {"verdict": v,
