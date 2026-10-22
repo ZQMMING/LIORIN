@@ -161,7 +161,8 @@ def _jie_datetime_for_lunar_month(year: int, lunar_month: int) -> str | None:
     """返回农历 lunar_month 月"节"的精确时刻（公历 YYYY-MM-DD HH:MM）。
 
     一次遍历拿到该公历年的全部12个"节"并缓存，后续查表（避免逐月重复遍历）。
-    用于流日卦节气对齐（《河洛理数》卷二下）。
+    用于流日卦节气对齐（《河洛真数·起例卷之上》L129「进一爻起节气」+ L127
+    「此说方合节气」）。
     sxtwl 不可用时缓存空表并返回 None，不重复试探 import。
     """
     global _jie_cache
