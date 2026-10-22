@@ -3781,6 +3781,10 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   其年决有大灾", 重灾占先, 贵禄马不抵 (L4409 充分条件非必要条件).
     _clean = not any(r["tai_relation"] in ("冲", "刑", "害", "压")
                      for r in yctx.get("tai_pillar_relations", []))
+    # 天干合(生时/日干合太岁)为晦气煞(必主阴灾, 五行精纪 L4419) — 不符合 L4409
+    #   "支干相合、无冲害刑克"之吉的前提; 合局吉须天干无晦气
+    _hui_qi = (yctx.get("shi_rel") == "合") or bool(yctx.get("tai_he_day_gui"))
+    _clean = _clean and not _hui_qi
     _ke_shen = yctx.get("tai_nayin_rel") == "克我"
     yctx["tai_glm_clean"] = bool(yctx.get("tai_glm") and not _ke_shen)
     # 2026-10-20 严谨复核 (L4409 完整吉面): "欲常与本命支干纳音相合，无冲害刑克…
@@ -3817,9 +3821,13 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _tone = _tone["table"].get(obj.get(_tone.get("k", "")), "平") if _m == "rel_map" else "平"
         # 2026-10-21 维度标签
         _dims = dimension_of(rule["id"], out_txt, detail, "流年")
-        # V59 按 shi_rel 区分: 克时干=身灾(身/健康); 合时干=晦气阴灾(泛灾祸, 非疾病)
-        if rule["id"] == "LM-V59" and obj.get("shi_rel") == "合":
-            _dims = ("煞/灾祸", ["身/健康"])
+        # V59 按 shi_rel 区分 dims (五行精纪 L4419-4420):
+        #   克时干=神白经"克时身灾"(身/健康); 合时干=晦气"必主阴灾"(煞/灾祸, 非疾病)
+        #   分强度保持 (晦气必主阴灾, 与空亡/劫财叠加成势 → 26子2021离婚破财判凶)
+        if rule["id"] == "LM-V59":
+            if obj.get("shi_rel") == "合":
+                _dims = ("煞/灾祸", ["身/健康", "宫/六亲"])
+            # 克时干维持表中 身/健康
         verdicts.append({"rule_id": rule["id"], "out": out_txt,
                          "evidence": rule["evidence"], "tone": _tone,
                          "scope": "流年", "target": target, "detail": detail,

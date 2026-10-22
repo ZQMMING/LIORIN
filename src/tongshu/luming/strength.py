@@ -64,8 +64,8 @@ YEAR_XIONG = {  # 凶, 负分 (绝对值 = 强度)
     "LM-V66": 4,   # 岁运临天罗地网, 官灾刑狱夭亡 (L3534)
     "LM-V70": 4,   # 太岁临元辰之岁, 内疾外难 (L3275 十年可畏)
     "LM-V52": 4,   # 太岁冲运, 其祸重, 罢官破财丧亲
-    "LM-V59": 4,   # 晦气煞, 必主阴灾, 重者死亡 (L4419)
-    "LM-V59B": 4,  # 生日与太岁干合, 晦气主阴灾 (L4419)
+    "LM-V59": 4,   # 晦气(合时干)"必主阴灾, 重者死亡"(五行精纪 L4419); 克时干身灾
+    "LM-V59B": 4,  # 晦气(合日干)必主阴灾 (五行精纪 L4419)
     "LM-V50": 4,   # 太岁冲年克本命, 深祸破祖长辈灾 (L4416)
     "LM-V51": 3,   # 太岁刑冲压害分柱 (L4423 分柱应期; 命中一柱计一条, 多柱累加)
     "LM-V56": 3,   # 返吟, 不利六亲非横破财
@@ -321,7 +321,8 @@ def year_power(verdicts) -> dict:
             if rid in _XI_LEI_RULES:
                 xi_lei_n += 1
                 continue                      # 细累单条计0, 汇总后计1
-            xiong += YEAR_XIONG.get(rid, 2)
+            _po = v.get("power_override")
+            xiong += _po if _po is not None else YEAR_XIONG.get(rid, 2)
         elif tone == "吉":
             ji += YEAR_XI.get(rid, 2)
         elif tone == "滞":
