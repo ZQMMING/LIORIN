@@ -522,6 +522,8 @@ class HeluoCanonical:
         )
 
         # 流年卦（1~100 岁，按大运爻分段）
+        # 2026-10-22 B6：dayun 已在上方算好，传进去复用（避免 compute_liunian
+        # 内部重算一遍 —— 12 段大运两次换算）。
         liunian = compute_liunian(
             prenatal_lines,
             yuantang.yuantang_index,
@@ -530,6 +532,7 @@ class HeluoCanonical:
             birth_year=birth_year,
             age_from=1,
             age_to=100,
+            dayun=dayun,
         )
 
         fast_path = target_year is not None
@@ -602,17 +605,9 @@ class HeluoCanonical:
                             next_jie_datetime=_next_jie,
                             rule="gua6",
                         )
-                        # 该组首日公历日期 = 当月"节"时刻 + 组偏移（节起第一组为节当日）
-                        _seg_date_from = ""
-                        if jie_dt:
-                            try:
-                                from datetime import datetime as _dt, timedelta as _td_
-                                _b0 = _dt.strptime(jie_dt, "%Y-%m-%d %H:%M")
-                                _seg_date_from = (
-                                    _b0 + _td_(days=_grp * 6)
-                                ).strftime("%Y-%m-%d %H:%M")
-                            except Exception:
-                                _seg_date_from = jie_dt
+                        # 该组首日公历时刻 = 段起始时刻（由 compute_daily_base_hex 给出，
+                        # 已按实际节气间隔均匀推移 —— K3-448 L491「每日添一刻七分天」）
+                        _seg_date_from = (base_hex or {}).get("date_from") or ""
                         days_payload = [
                             {
                                 "day": d.get("day_no"),
@@ -663,6 +658,10 @@ class HeluoCanonical:
                     "lines": entry["lines"],
                     "yuantang_index": yyt,
                     "yuantang_nature": yyt_nature,
+                    # yi_signal / changed_line 在 fast-path 下**恒为空串**：
+                    # 填值需跑 interpret_all_liunian（全仓零消费方的 dead-write），
+                    # fast-path 刻意不跑（批次 P 起）。定稿的 target_year_hexagram
+                    # 结构保留这两个键作占位，故此处显式落空串而非缺失键。
                     "yi_signal": entry.get("yi_signal", ""),
                     "changed_line": entry.get("changed_line", ""),
                 }

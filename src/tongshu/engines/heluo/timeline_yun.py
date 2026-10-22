@@ -162,6 +162,7 @@ def compute_liunian(
     birth_year: int,
     age_from: int = 1,
     age_to: int = 100,
+    dayun: DayunResult | None = None,
 ) -> LiuNianResult:
     """
     逐岁推演流年卦（《河洛真数》小象行年卦气，按大运爻分段）。
@@ -177,7 +178,8 @@ def compute_liunian(
     应爻关系：一四应、二五应、三六应 → 应爻 index = (yuantang + 3) % 6。
     """
     result = LiuNianResult(birth_year=birth_year)
-    dayun = compute_dayun_liyao(
+    # 2026-10-22 B6：调用方（canonical）已算好 dayun，传入复用，避免算两遍。
+    dayun = dayun if dayun is not None else compute_dayun_liyao(
         prenatal_lines, prenatal_yuantang, postnatal_lines, postnatal_yuantang
     )
     seq = dayun.sequence
@@ -524,12 +526,28 @@ def compute_daily_base_hex(
         因为节气长度并非完全均等（或不足 30 日，或超过 30 日），所以需要根据实际
         时刻来『均匀』分配，不可执定『卦六日』的死板规则。」
 
+    原著硬算例（K3-448 1632笔写本 L479-L491 逐字）：
+        L479: 日卦上支管初七日是此屯却六交从下而上一交一日自初二日至初七
+        L480: 卦二交管初盈日屯卦三交管初四日卦四交管初五日世卦五交管初六
+        L481: 六月自下交行盈上交盏取一交一日也日卦行起必须按月卦節氧方不
+        L482: 如本年七月初二日午時立缺節刚卦初儿交即徒初二日午時管起屯
+        L483: 一日共管六日也至千十四日又襄前既卦九五交岛明夷六五自下雨上
+        L488: 其餘五交五舞一卦管六日五六方三十交管三十日也随其文称宾吉色
+        L491: 以此推之则每日添一刻七分天六日
+      （K3-447 1871增补本 L1154: 日卦者每月變五卦每卦管六日方成一月五六三）
+
     落码：
-      · 当月按节时刻 T0 → 下月节时刻 T1 的**实际间隔**均匀切成 5 段
-        （段长 ≈ (T1-T0)/5，约 5.9~6.3 日，**不是固定 6 日**）
+      · **日序固定 6 日一组**：每月 5 卦 × 6 日 = 30 日（L1154 / L475 / L483
+        「一日共管六日也」）。L482-483 硬算例：七月「初二日午时」立秋起，
+        第一卦管初二~初七，「至十四日」第三卦起 —— 初二 + 12 = 十四，
+        **日序恒 6 日一组**，铁证。
+      · **时刻按实际节气间隔均匀推移**（L491「每日添一刻七分天 六日」）：
+        第 k 段起时刻 = T0 + k*(T1-T0)/5。节气非 30 日时，每日多/少推一点，
+        整月从节到节对齐 —— 这才是「不可执定『卦六日』的死板规则」的含义：
+        **六日仍是六日，但六日所跨的时刻随实际节气间隔变**。
       · 每段 1 个流日本卦（本体/互/错/综/卦气一次算好），6 日共用
       · 段内每日只取对应爻位（**首日从初爻开始**），做轻量爻运算
-      · 段间链式推进：第 k 段本卦 = 链式 day_lines[k*6]
+      · 段间链式推进：第 k 段本卦 = 链式 `day_lines[k*6]`
 
     与 hou5（原典 L129「每一爻管五日、挨次而变」）**不可兼容**。
 
@@ -545,34 +563,36 @@ def compute_daily_base_hex(
 
     n_seg = 5
     seg_len = 6
-    positions = liuri_day_positions(yue_yao_index)
+    # 2026-10-22 B4：positions 算完从不使用（30 次外循环 + 内层扫描 ≈ 90 步/盘）
+    # ——只需 day_lines 的链式结果 → 删死算。
     day_lines = liuri_day_lines(yue_lines, yue_yao_index)
 
     base_dt = _parse_datetime(jie_datetime) if jie_datetime else None
     nxt_dt = _parse_datetime(next_jie_datetime) if next_jie_datetime else None
     _uniform = base_dt is not None and nxt_dt is not None and nxt_dt > base_dt
 
-    # ── 段边界：按节气实际间隔均匀分配（非固定 6 日）──
+    # ── 段边界：日序固定 6 日一组；时刻按实际节气间隔均匀推移 ──
+    #   日序固定  ← K3-447 L1154「每月變五卦每卦管六日」+ K3-448 L483 硬算例
+    #   时刻均匀  ← K3-448 L491「以此推之则每日添一刻七分天 六日」
     segs: list[dict] = []
     for k in range(n_seg):
         d_from = k * seg_len + 1
         d_to = (k + 1) * seg_len
         date_from = ""
+        date_to = ""
         jie_span_days = None
         if _uniform:
             span = (nxt_dt - base_dt).total_seconds()
             seg_sec = span / n_seg
             b0 = base_dt + timedelta(seconds=k * seg_sec)
             b1 = base_dt + timedelta(seconds=(k + 1) * seg_sec)
-            d_from = int((b0.date() - base_dt.date()).days) + 1
-            d_to = int((b1.date() - base_dt.date()).days)
-            if k == n_seg - 1:
-                d_to = int((nxt_dt.date() - base_dt.date()).days) + 1  # 末段至下一节
             date_from = b0.strftime("%Y-%m-%d %H:%M")
+            date_to = b1.strftime("%Y-%m-%d %H:%M")
             jie_span_days = round(span / 86400.0, 4)
         segs.append({
             "segment": k + 1, "day_from": d_from, "day_to": d_to,
-            "date_from": date_from, "jie_span_days": jie_span_days,
+            "date_from": date_from, "date_to": date_to,
+            "jie_span_days": jie_span_days,
         })
 
     # ── 定位目标日所在段 ──
@@ -616,6 +636,7 @@ def compute_daily_base_hex(
             "active_yao": yao_names[idx],
             "yao_index": idx,
             "yao_nature": "阳" if base_lines[idx] else "阴",
+            "date_from": seg["date_from"],
             "changed_name": cname,
             "changed_upper": cu,
             "changed_lower": clo,

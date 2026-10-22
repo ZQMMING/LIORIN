@@ -47,14 +47,6 @@ from .jiehhou import (
     get_seasonal_hexagram, get_qi_phase, get_current_jieqi_info,
 )
 from .frozen_state import FrozenHeluoState, build_frozen_state
-from .schemas import (
-    Trigram,
-    Hexagram,
-    YuanTangResult,
-    StemNumberMap,
-    BranchNumberMap,
-    TianDiNumbers,
-)
 
 HeluoBirthInput = HeluoInput
 
@@ -71,12 +63,6 @@ __all__ = [
     "PostnatalHexagram",
     "Timeline",
     "HexagramStructure",
-    "StemNumberMap",
-    "BranchNumberMap",
-    "TianDiNumbers",
-    "Trigram",
-    "Hexagram",
-    "YuanTangResult",
     "analyze_hexagram",
     "compute_ti_yong",
     "compute_timeline",

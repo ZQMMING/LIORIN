@@ -175,44 +175,98 @@ class TestFastPathSkeleton(unittest.TestCase):
         res = _build(target_year=_TARGET_YEAR, target_month=None)
         self.assertEqual(res.timeline.daily_hexagram, {})
 
-    def test_daily_segments_follow_jie_not_fixed_six_days(self):
-        """流日段边界须按**节气实际间隔均匀分配**，不可执定「卦六日」死板规则。
+    def test_daily_segments_dayseq_fixed_six_but_time_follows_jie(self):
+        """流日段：**日序固定 6 日一组**，但**时刻按实际节气间隔均匀推移**。
 
-        原典依据（用户 2026-10-22 引）：
-            「日卦的起算必须严格遵循各月节气交接的具体时刻，而不能机械地固定每卦六日。
-              因为节气长度并非完全均等（或不足 30 日，或超过 30 日），所以需要根据
-              实际时刻来『均匀』分配，不可执定『卦六日』的死板规则。」
+        原典硬算例（K3-448 1632笔写本 L479-L491 逐字）：
+            L479: 日卦上支管初七日是此屯却六交从下而上一交一日自初二日至初七
+            L481: 六月自下交行盈上交盏取一交一日也日卦行起必须按月卦節氧方不
+            L482: 如本年七月初二日午時立缺節刚卦初儿交即徒初二日午時管起屯
+            L483: 一日共管六日也至千十四日又襄前既卦九五交岛明夷六五自下雨上
+            L488: 其餘五交五舞一卦管六日五六方三十交管三十日也
+            L491: 以此推之则每日添一刻七分天六日
+          （K3-447 1871增补本 L1154: 日卦者每月變五卦每卦管六日方成一月五六三）
 
         故断言：
-          · base_hex 记有 jie_span_days（当月节→下节的实际间隔天数）
-          · 该间隔不是整 30（节气不等长）
-          · 目标日所在段的日序区间不是固定的 6 日整数倍起点
+          · 段日序恒为 6 日一组（day_to - day_from + 1 == 6，
+            且 (day_from - 1) % 6 == 0）—— L482-483 硬算例铁证
+          · base_hex 记有 jie_span_days（当月节→下节的实际间隔天数），
+            且该间隔不等于固定 30 日（节气不等长）
+          · 段起时刻带真实时刻（date_from 含 "HH:MM"），非整日 0 点
         """
         res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH,
                      target_day=15)
         d = res.timeline.daily_hexagram
         base = d.get("base_hex") or {}
+
+        # ① 日序固定 6 日一组
+        day_from = base.get("day_from")
+        day_to = base.get("day_to")
+        self.assertIsNotNone(day_from)
+        self.assertIsNotNone(day_to)
+        self.assertEqual(day_to - day_from + 1, 6,
+                         f"段日序应恒 6 日（实测 {day_from}-{day_to}）")
+        self.assertEqual((day_from - 1) % 6, 0,
+                         f"段起点 {day_from} 应落在 6 日分组边界上"
+                         f"（L483 硬算例：初二起，十四为第三卦起）")
+
+        # ② 节气间隔真实、不等于固定 30 日
         span = base.get("jie_span_days")
         self.assertIsNotNone(span, "base_hex 缺 jie_span_days（未按节气实际间隔分段）")
         self.assertNotAlmostEqual(
             span, 30.0, delta=0.3,
-            msg=f"节气间隔应不等于固定 30 日（实测 {span}）——若恒为 30 即退回『卦六日』死板规则",
+            msg=f"节气间隔应不等于固定 30 日（实测 {span}）",
         )
-        # 段日序起点：均匀分配后不落在 1/7/13/19/25 这些固定 6 日整数倍起点
-        day_from = base.get("day_from")
-        self.assertIsNotNone(day_from)
-        self.assertNotIn(
-            (day_from - 1) % 6, (0,),
-            f"段起点 {day_from} 恰在固定 6 日分组边界上（(day_from-1) % 6 == 0），"
-            f"说明未按节气实际间隔均匀分配",
-        )
-        # 段内 6 日：首日从初爻开始
+
+        # ③ 段起时刻带真实时刻（非整日 0 点）
+        date_from = base.get("date_from") or ""
+        self.assertIn(":", date_from, f"段起应带真实时刻（实测 {date_from!r}）")
+
+        # ④ 段内 6 日：首日从初爻开始，日序连续
         yao = d.get("daily_yao") or []
         self.assertEqual(len(yao), 6)
         want = ("初爻", "二爻", "三爻", "四爻", "五爻", "上爻")
         for i, x in enumerate(yao):
             self.assertEqual(x.get("active_yao"), want[i],
                              f"段内第 {i+1} 日应取 {want[i]}（首日从初爻开始）")
+            self.assertEqual(x.get("day_no"), day_from + i,
+                             f"段内第 {i+1} 日日序应连续")
+
+    def test_date_from_is_segment_start_not_jie(self):
+        """days[*].date_from 必为**段起始时刻**（非当月节时刻）。
+
+        回归：2026-10-22 修复前，days_payload 构造引用了不存在的 `_grp`
+        → NameError 被 except 吞掉 → date_from 恒等于当月节时刻（名不符实）。
+        """
+        res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH,
+                     target_day=15)
+        d = res.timeline.daily_hexagram
+        base = d.get("base_hex") or {}
+        yao = d.get("daily_yao") or []
+        self.assertTrue(yao, "daily_yao 为空")
+        for x in yao:
+            self.assertEqual(
+                x.get("date_from"), base.get("date_from"),
+                "每日的 date_from 应等于段起始时刻（base_hex.date_from）",
+            )
+        self.assertNotEqual(
+            base.get("date_from"), base.get("jie_datetime"),
+            "段起始时刻不应等于当月节时刻（否则说明退化成整月同一起点）",
+        )
+
+    def test_target_year_hexagram_placeholder_fields_are_empty_strings(self):
+        """target_year_hexagram 的 yi_signal / changed_line 在 fast-path 下恒为空串。
+
+        理由：填值需跑 interpret_all_liunian —— 全仓零消费方的 dead-write，
+        fast-path 刻意不跑（批次 P 起）。定稿的 target_year_hexagram 结构保留
+        这两个键作占位，故断言「键存在且为空串」，防「看起来该有值却没有」的歧义。
+        """
+        res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH)
+        t = res.timeline.target_year_hexagram
+        self.assertIn("yi_signal", t)
+        self.assertIn("changed_line", t)
+        self.assertEqual(t["yi_signal"], "")
+        self.assertEqual(t["changed_line"], "")
 
     def test_target_year_hexagram_summary(self):
         """顶层 target_year_hexagram 是目标流年卦摘要。"""

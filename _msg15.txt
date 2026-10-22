@@ -1,0 +1,71 @@
+fix(heluo): 修 3 个 P0 缺陷 + 删 2 处死代码 + 算力微优化（2026-10-22 全面体检）
+
+四路独立调研（未接主链能力 / 口径矛盾 / 守卫缺口 / 数据文档一致性）
++ 原著逐字核实后落的一批修复。
+
+## P0 缺陷（3 个）
+
+1. **days[*].date_from 恒等于当月节时刻**（名不符实）
+   canonical 构造 days_payload 时引用了**不存在的 `_grp`** → NameError 被
+   except 吞掉 → 回退成 jie_dt。改为直接取 compute_daily_base_hex 给的
+   段起始时刻（base_hex.date_from），并让 daily_yao 每条也带 date_from，
+   两处口径一致。
+
+2. **target_year_hexagram 的 yi_signal / changed_line 恒空却语义含糊**
+   填值需跑 interpret_all_liunian —— 全仓零消费方的 dead-write，fast-path
+   刻意不跑（批次 P 起）。定稿的 target_year_hexagram 结构保留这两个键作
+   占位，故显式落空串 + 注释说明，并加守卫钉死「键存在且为空串」。
+
+3. **temporal.compute_timeline() 一调即炸**
+   Timeline 新增必填字段 yearly_meta / target_year_hexagram 后，该占位桩
+   未传这两个参数 → TypeError。已补齐并显式标注为占位桩（全仓零调用点）。
+
+## 死代码删除（2 处）
+
+- `hexagram_symbol.py`（153 行）：`from .models import HexagramSymbol` 引用
+  **不存在的 models 模块**（导入即崩），且 HEXAGRAM_FULL_DATA 生成循环体为
+  空 `pass`，全仓无人 import。审计报告已记其 `_get_cuo_gua`/`_get_zong_gua`
+  被 `hexagram.py` 取代。删除并在审计报告加注。
+- `schemas.py`（48 行）：Trigram/Hexagram/YuanTangResult/StemNumberMap/
+  BranchNumberMap/TianDiNumbers 六名**全仓零外部消费者**（仅 __init__ 转出）。
+  删除并清理 __init__ 的 import 与 __all__。
+
+## 算力微优化
+
+- **B4**：compute_daily_base_hex 里 `positions = liuri_day_positions(...)`
+  算完从不使用（30 次外循环 + 内层扫描 ≈ 90 步/盘）→ 删除。
+- **B6**：compute_dayun_liyao 被算两遍（canonical 直接算 + compute_liunian
+  内部再算）→ compute_liunian 增 dayun 形参，canonical 把已算好的传进去。
+
+## 流日段口径再修正（原著硬算例）
+
+《河洛理数》K3-448 1632笔写本 L479-L491 / K3-447 1871增补本 L1154 取到
+硬算例，纠正上一版「按节气均匀切日序」的错误：
+
+  L482: 如本年七月初二日午時立缺節刚卦初儿交即徒初二日午時管起屯
+  L483: 一日共管六日也至千十四日又襄前既卦九五交岛明夷六五自下雨上
+  L488: 其餘五交五舞一卦管六日五六方三十交管三十日也
+  L491: 以此推之则每日添一刻七分天六日
+  （K3-447 L1154: 日卦者每月變五卦每卦管六日方成一月五六三）
+
+  · **日序固定 6 日一组**：初二起第 1 卦（初二~初七），「至十四日」第 3 卦起
+    —— 初二 + 12 = 十四，**日序恒 6 日一组**，铁证。
+  · **时刻按实际节气间隔均匀推移**（L491「每日添一刻七分天 六日」）：
+    第 k 段起时刻 = T0 + k*(T1-T0)/5。节气非 30 日时每日多/少推一点，
+    整月从节到节对齐 —— 这才是「不可执定『卦六日』死板规则」的含义：
+    **六日仍是六日，但六日所跨的时刻随实际节气间隔变**。
+
+实测（target=2026/7/15）：第 3 段日序 13-18（固定 6 日一组），
+段起时刻 2026-08-20 06:29 ≠ 节时刻 2026-08-07 19:42，
+jie_span_days = 31.1236（实际节气间隔，非固定 30）。
+
+## 守卫（新增 3 条，共 16 条）
+
+- test_daily_segments_dayseq_fixed_six_but_time_follows_jie
+  （日序恒 6 日 + 时刻随节气推移）
+- test_date_from_is_segment_start_not_jie（防 date_from 退化成节时刻）
+- test_target_year_hexagram_placeholder_fields_are_empty_strings（占位字段语义）
+
+## 验证
+
+pytest tests/ → **938 passed / 0 failed**（排除 14 个集成层守卫）

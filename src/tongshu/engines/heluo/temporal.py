@@ -49,9 +49,16 @@ def compute_timeline(
     输出：各时间维度的卦象
 
     注意：当前实现为占位，具体时间卦计算待版本锁定后接入。
+
+    ⚠️ 本函数是**占位桩**，全仓零调用点；真正的四层时间轴计算在
+    ``canonical.HelioCanonical._build_timeline``。2026-10-22 因 Timeline
+    新增必填字段 yearly_meta / target_year_hexagram 而一度签名不匹配
+    （一调即 TypeError），现已补齐并显式标注为占位桩。
     """
     return Timeline(
         yearly_hexagrams=[],
+        yearly_meta=[],
+        target_year_hexagram={},
         monthly_hexagrams=[],
         daily_hexagram={
             'date': birth_date.isoformat(),
