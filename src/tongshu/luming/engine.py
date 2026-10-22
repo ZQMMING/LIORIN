@@ -3979,14 +3979,28 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     # ④ 分柱应期 (2026-10-21 语义修正: "应期"应含'应到谁', 非仅领域标签):
     #   古法 V51 分柱应期 (L4423: 年主父母/月主兄弟/日主己身/时主子息) —
     #   从凶断语 out 提取"主X之应", 补 zhu/ci_ying(凶灾领域)之外的分柱定位。
-    #   女命"妻妾己身"归一为"己身"。独立于上 if/else, 不覆盖 zhu/ci_ying。
+    #   独立于上 if/else, 不覆盖 zhu/ci_ying。
+    # 2026-10-22 修复(1989三例婚姻专项挖出):
+    #   a) 扫描源 _xiong_v → 全部 verdicts: V51 分柱是"应期定位"非灾级计数,
+    #      tone=平/动(不克身者变动应期) 的日柱妻宫之应此前丢失
+    #      (2019 26例 申亥害生日 V51=平 → 应到=[] 漏"妻妾");
+    #   b) 性别区分归一: 女命"妻妾己身"→"己身"(日柱=己身); 男命取"妻妾"(日柱=妻宫)。
+    #      修正正则: 原文"主妻妾己身之应", 旧式 主(?:妻妾)?(…|妻妾|己身|…) 会把
+    #      "妻妾"先被可选组吃掉 → group(1) 恒为"己身", 性别分支是死代码。
+    #      新式把"妻妾己身"作整体候选, 按性别拆解。
     import re as _re
-    _fen_zhu_pat = _re.compile(r"主(?:妻妾)?(父母|兄弟|子孙|妻妾|己身|长辈)之应")
+    _fen_zhu_pat = _re.compile(r"主(父母|兄弟|子孙|妻妾己身|妻妾|己身|长辈)之应")
+    _gen = (getattr(chart, "gender", "") or "").lower()
+    _is_female = _gen.startswith(("f", "女"))
     _ying_dui = []
-    for _v in _xiong_v:
+    for _v in verdicts:
         _m2 = _fen_zhu_pat.search(_v.get("out", ""))
         if _m2:
-            _who = "己身" if _m2.group(1) == "妻妾" else _m2.group(1)
+            _who_g = _m2.group(1)
+            if _who_g == "妻妾己身":
+                _who = "己身" if _is_female else "妻妾"
+            else:
+                _who = _who_g
             if _who not in _ying_dui:
                 _ying_dui.append(_who)
     if not _ying_dui and _ci_ying and "宫/六亲" in _ci_ying:
