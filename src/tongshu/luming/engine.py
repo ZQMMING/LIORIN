@@ -1010,7 +1010,8 @@ def _build_fayong_verdicts(chart: Any, gz_stem: str, gz_branch: str, scope: str,
     #     鬼化气: 运侧=克我(鬼) ∧ 柱有(运侧所生之行) ∧ 该行生我 → 反祸为福(吉).
     _yun_nayin_el = NAYIN_FIVE_ELEMENT.get(NAYIN_60.get((gz_stem, gz_branch), ""), "")
     _f04_hit = _f05_hit = None
-    for _y in (el for el in (_yun_nayin_el, gan_el, zhi_el) if el):
+    _f05_from_nayin = False   # 通关是否以"运纳音"为鬼 (古法运纳音为宗, 真通关)
+    for _yi, _y in enumerate(el for el in (_yun_nayin_el, gan_el, zhi_el) if el):
         if _CTL4.get(yr_el) == _y:
             # 财化鬼: 我克(财) + 运生柱 + 柱克我
             if _GEN4.get(_y) in _col_set and _CTL4.get(_GEN4.get(_y)) == yr_el:
@@ -1020,6 +1021,7 @@ def _build_fayong_verdicts(chart: Any, gz_stem: str, gz_branch: str, scope: str,
             # 鬼化气: 克我(鬼) + 运生柱 + 柱生我
             if _GEN4.get(_y) in _col_set and _GEN4.get(_GEN4.get(_y)) == yr_el:
                 _f05_hit = _y
+                _f05_from_nayin = (_yi == 0)   # 运纳音(第一判定)为鬼 = 真通关
                 break
     if _f04_hit:
         _g = _GEN4[_f04_hit]
@@ -1034,12 +1036,14 @@ def _build_fayong_verdicts(chart: Any, gz_stem: str, gz_branch: str, scope: str,
     elif _f05_hit:
         _g = _GEN4[_f05_hit]
         v.append({**_BASE, "rule_id": "LM-F05", "tone": "吉",
+                  "tongguan": ("nayin" if _f05_from_nayin else "weak"),
                   "out": f"运来{_EL_CN4.get(_f05_hit, _f05_hit)}克年命本为鬼，"
                          f"然柱有{_EL_CN4.get(_g, _g)}通关，{_EL_CN4.get(_f05_hit, _f05_hit)}"
                          f"生{_EL_CN4.get(_g, _g)}生年命——鬼化为气，反祸为福",
                   "detail": f"四柱有{_EL_CN4.get(_g, _g)}，{_EL_CN4.get(_f05_hit, _f05_hit)}"
                             f"生{_EL_CN4.get(_g, _g)}生年命{_EL_CN4.get(yr_el, yr_el)}，"
-                            "是化鬼为助气反祸为福（本是鬼运，因柱中通关而反为吉）",
+                            f"是化鬼为助气反祸为福（本是鬼运，因柱中通关而反为吉；"
+                            f"{'运纳音为鬼=真通关' if _f05_from_nayin else '运支为鬼=弱判定，通关力轻'}）",
                   "evidence": "E-WXJ-033-001~004"})
     # ---- F06: 缺行待补 (平) ----
     if xi_ji:
@@ -2769,9 +2773,35 @@ def _build_tone_scope(verdicts: tuple, luck_view: Dict | None = None,
                 + 0.5 * t.get("动", 0) - 0.5 * t.get("滞", 0)
         else:
             score = 0.0
+            # F05 通关分级 (五行精纪 L4282, 古法运纳音为宗):
+            #   真通关 = 运纳音克年命(鬼), 柱有通关五行, 运生柱、柱生年命 (如木命
+            #   行剑锋金, 柱有子亥水, 金生水水生木) → 纳音线整体转吉, V42 纳音克
+            #   抵消, F05 按"生我吉深"给 3 分;
+            #   弱判定 = 运纳音非鬼(生我/比和), 仅运干/运支为鬼 (如 1983 乙丑,
+            #   纳音海中金生水, 运支丑土克水, 靠日柱纳音金通关) → 通关力轻,
+            #   不抵消 V42, F05 仅默认 1 分.
+            _f05_tg = {(_vv.get("target", "") or ""): _vv.get("tongguan", "weak")
+                       for _vv in verdicts if _vv.get("rule_id") == "LM-F05"}
+            _f05_real = _f05_tg.get(tgt, "weak") == "nayin"
+            # F04 财化鬼 (同 L4282"财化为鬼转福成祸"): 运本为财, 因柱转化反克年命 →
+            #   纳音线整体转凶, V42 若为"我克(财)"平条不再成立, 该平条抵消.
+            _f04_pass = any(r == "LM-F04" for r, t in _items)
+            # 三刑贵神相扶降级 (三命通会·论三刑"凡见刑不可便以凶论, 须看有无吉辰、
+            #   旺相、官星、印绶、贵神、德福等物, 有此诸吉相扶相助, 刑不为害而反为用";
+            #   L3405 麒麟窟"三刑遇贵人会德全者文章清贵"): 运柱有贵人/贵神/成合/
+            #   生我/真通关等吉扶时, V41 三刑不为害 (权重降为 0, 主权柄); 弱判定
+            #   F05 不构成吉扶. 巳申本六合(合中生刑), 有扶即不为害.
+            _gui_fu = (any(t == "吉" and r in ("LM-V16", "LM-V22", "LM-V38", "LM-V45",
+                                              "LM-F03") for r, t in _items) or _f05_real)
             for rid, _tone in _items:
+                if _f05_real and rid == "LM-V42" and _tone == "凶":
+                    continue          # 真通关: 纳音克我被抵消
+                if _f04_pass and rid == "LM-V42" and _tone in ("平", "吉"):
+                    continue          # 纳音我克(财)被财化鬼转化抵消
+                if _gui_fu and rid == "LM-V41" and _tone == "凶":
+                    continue          # 三刑遇贵神相扶, 不为害反为用
                 if _tone == "吉":
-                    score += LUCK_XI.get(rid, 1.0)
+                    score += LUCK_XI.get(rid, 3.0 if rid == "LM-F05" else 1.0)
                 elif _tone == "凶":
                     # 天罗地网 L4325: 男天罗(戌亥)官符刑狱=重凶4 / 女地网(辰巳)
                     # 口舌沉疴=中凶2 (戊辰运 女命地网按 2 计, 对齐外部详批"中下平")
