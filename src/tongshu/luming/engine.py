@@ -3815,11 +3815,15 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         if isinstance(_tone, dict):
             _m = _tone.get("mode")
             _tone = _tone["table"].get(obj.get(_tone.get("k", "")), "平") if _m == "rel_map" else "平"
+        # 2026-10-21 维度标签
+        _dims = dimension_of(rule["id"], out_txt, detail, "流年")
+        # V59 按 shi_rel 区分: 克时干=身灾(身/健康); 合时干=晦气阴灾(泛灾祸, 非疾病)
+        if rule["id"] == "LM-V59" and obj.get("shi_rel") == "合":
+            _dims = ("煞/灾祸", ["身/健康"])
         verdicts.append({"rule_id": rule["id"], "out": out_txt,
                          "evidence": rule["evidence"], "tone": _tone,
                          "scope": "流年", "target": target, "detail": detail,
-                         # 2026-10-21 维度标签
-                         "dims": dimension_of(rule["id"], out_txt, detail, "流年")})
+                         "dims": _dims})
 
     for rule in YEAR_RULES:
         if rule["mode"] == "scalar":
