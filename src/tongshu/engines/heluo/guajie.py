@@ -328,8 +328,11 @@ class GuaDuan:
     name: str
     gua_ci: str         # 卦辞
     gua_qi_month: Optional[int]  # 卦气属X月
-    najia: list[str]    # 纳甲干支
+    najia: list[str]    # 纳甲干支（本卦）
     gua_lines: list[str]  # 卦头断语（含旺时/得时信息）
+    #: 原典「借用…」段的干支（借别卦之甲）。**不并入 najia**（原典语义：
+    #: 借用是另一卦的甲），但须单独留存，否则解析时会被整段丢弃。
+    jieyong: list[str] = field(default_factory=list)
     # ── 精义/释义（guajie_jingyi.json 现代语义，2026-09-15 接入） ──
     gua_ci_jingyi: str = ""            # 卦辞精义
     gua_ci_shiyi: str = ""             # 卦辞释义
@@ -522,8 +525,34 @@ def _split_duans(duans: list[str]) -> tuple[str, str, str]:
     return " ".join(ye), " ".join(buye), " ".join(suiyun)
 
 
-def _parse_gua_header(lines: list[str]) -> tuple[Optional[int], list[str]]:
-    """从卦头断语提取 卦气属X月 + 纳甲干支。"""
+_GAZHI_RE = re.compile(r"[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]")
+
+
+def _split_gz(text: str) -> list[str]:
+    """把干支串切成合法干支列表（讹字如「丙戊」自然被剔除）。"""
+    return [p for p in re.split(r"[、，,\s]+", text) if _GAZHI_RE.fullmatch(p)]
+
+
+def _parse_gua_header(lines: list[str]) -> tuple[Optional[int], list[str], list[str]]:
+    """从卦头断语提取 卦气属X月 + 纳甲干支 + 借用干支。
+
+    卦头形如：「乾宫四世卦属八月，纳甲是乙未、乙巳、乙卯、辛巳、辛卯、辛丑，
+    借用癸未、癸巳、癸卯，生于八月及纳甲本命者，大贵人也。」
+
+    ⚠ 2026-10-24 修正（此前只取「纳甲是」段、遇「借用」即 break）：
+      旧正则 `[^，。；]{2,60}` 在**第一个逗号处**就截断，而原典的「借用」段
+      前面正好跟一个逗号 —— 于是「借用」干支从未被读到，整段被静默丢弃。
+
+      现在：纳甲段与借用段**分开返回**。借用段单独存字段备查，
+      **不并入本卦 najia**、**不改「年干支在纳甲本命」的命中判定** ——
+      原典从未解释「借用」的语义（已检索《河洛真数》全书影印本与网络清本，
+      「借用」仅出现于卦头格式，未见释义），**无据不擅改口径**。
+
+      附：3 卦（比 / 小畜 / 夬）的「纳甲是」段只有内卦 3 条，其外卦 3 条
+      出现在借用段后 3 位（影印本逐页核实：比=借用段后 3 条即其外卦
+      戊申戊戌戊子）。此事实已留档（docs/heluo/纳甲异文多源对拍_20261024.md），
+      但**不据此改写 najia**（那属订正原典，须另立据）。
+    """
     text = " ".join(lines)
     month = None
     m = re.search(r"(?:卦气|宫)[^属]{0,6}属([正二三四五六七八九十腊]+)月", text)
@@ -533,17 +562,17 @@ def _parse_gua_header(lines: list[str]) -> tuple[Optional[int], list[str]]:
         m = re.search(r"属(\d+)月", text)
         if m:
             month = int(m.group(1))
-    najia = []
-    m = re.search(r"纳甲(?:是|有)[：:]?\s*([^，。；]{2,60})", text)
+    najia: list[str] = []
+    jieyong: list[str] = []
+    # 取到句号为止（跨逗号），再按「借用」切开两段
+    m = re.search(r"纳甲(?:是|有)[：:]?\s*([^。]{2,160})", text)
     if m:
         seg = m.group(1)
-        for part in re.split(r"[、，,\s]+", seg):
-            part = part.strip()
-            if re.fullmatch(r"[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]", part):
-                najia.append(part)
-            if "借用" in part or "如生" in part:
-                break
-    return month, najia
+        head, sep, tail = seg.partition("借用")
+        najia = _split_gz(head)
+        if sep:
+            jieyong = _split_gz(tail)
+    return month, najia, jieyong
 
 
 # 中华典藏网页爬取残留行（混入 guajie_data.lines，load 时过滤，保持卦象断语纯净）
@@ -571,13 +600,14 @@ def load_guajie_data() -> dict[str, GuaDuan]:
         _JINGYI_LOAD_ERROR = "%s: %s" % (type(exc).__name__, exc)
     out: dict[str, GuaDuan] = {}
     for g in raw:
-        month, najia = _parse_gua_header(g.get("lines", []))
+        month, najia, jieyong = _parse_gua_header(g.get("lines", []))
         jg = jy_raw.get(g["name"], {})
         gd = GuaDuan(
             name=g["name"],
             gua_ci=g.get("gua_ci", ""),
             gua_qi_month=month,
             najia=najia,
+            jieyong=jieyong,
             gua_lines=_filter_web_noise(g.get("lines", [])),
             gua_ci_jingyi=(jg.get("gua_ci") or {}).get("jingyi", ""),
             gua_ci_shiyi=(jg.get("gua_ci") or {}).get("shiyi", ""),
@@ -649,6 +679,10 @@ def judge_ye_buye(
         ev.append(f"年干支{year_ganzhi} {'在' if najia_hit else '不在'}纳甲[{','.join(g.najia)}]")
     elif g.najia:
         ev.append(f"未提供年干支，纳甲[{','.join(g.najia)}]不参与判定")
+    # 借用段（2026-10-24 新增披露）：原典「借用…」干支**不参与**本判定
+    # （原典未释其义，无据不擅改口径），但须显形，避免信息被静默吞掉。
+    if g.jieyong:
+        ev.append(f"原典借用[{','.join(g.jieyong)}]（借别卦之甲，不计入纳甲本命判定）")
 
     # 3. 旺时区间（卦头 lines 中的"生于X月以后X月以前者得时"）
     gua_text = " ".join(g.gua_lines)
