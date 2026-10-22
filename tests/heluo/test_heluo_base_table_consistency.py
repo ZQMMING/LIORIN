@@ -25,9 +25,10 @@
 3. **明确排除**语义不同、只名字相似的表：
    - `hexagram_state.HUAGONG_FAN_GUA`（化工相反·四季对宫）≠ 错卦表；
    - `guajie.TWELVE_XIONG_GUA`（今人整理口径，非原典）不参与任何全等断言；
-   - `guajie.ZONG_GUA`（64 条综卦对照表）语义 ≠ `hexagram.compute_zong_gua`
-     （后者只做「上下卦易位」）：二者对多数卦给出的结果不同，
-     **故不断言二者相等**，只各自断言自身自洽。
+   - `guajie.ZONG_GUA`（64 条综卦对照表）已于 2026-10-22 收敛为
+     `hexagram.compute_zong_gua` 的派生表（严格六爻倒转），
+     本文件断言二者**逐条相等**（此前是「六爻倒转」手抄表 vs「上下卦易位」
+     两套口径，64 卦中 48 卦结果不同）。
 4. **不断言 `guajie.compute_huti` 与 `hexagram.compute_hu_gua` 的名字字符串相等**
    （前者返回三画卦名、后者返回六十四卦全名，格式不同）：
    改为断言二者**取爻规则一致**（都取 lines[1:4] 作下互、lines[2:5] 作上互），
@@ -540,11 +541,13 @@ class TestBinaryToTrigramTables(unittest.TestCase):
 # ═══════════════════════════════════════════════════════════════
 
 class TestZongGuaSelfConsistency(unittest.TestCase):
-    """guajie.ZONG_GUA 的自身自洽。
+    """guajie.ZONG_GUA 的自身自洽，且与 hexagram.compute_zong_gua **一致**。
 
-    ⚠ **不断言**它与 hexagram.compute_zong_gua 相等：
-    前者是「六爻倒转」之综卦，后者是「上下卦易位」，语义不同，
-    对多数卦给出的结果也不同。混为一谈即静默判错。
+    2026-10-22：二者此前是**两套不同口径**（前者「六爻倒转」手抄表、
+    后者「上下卦易位」），对 64 卦中的 48 卦给出不同结果。现已统一为
+    严格六爻倒转（原典《六十四卦反对图》计数：上经正卦六、下经正卦二），
+    本类改为断言二者**逐条相等** —— 见
+    ``tests/heluo/test_heluo_zong_gua_original.py`` 的原典计数守卫。
     """
 
     def test_zong_gua_is_an_involution_covering_all_64(self):
@@ -560,6 +563,18 @@ class TestZongGuaSelfConsistency(unittest.TestCase):
             self.assertEqual(table[zong], short,
                              "guajie.ZONG_GUA 非对合：%r→%r→%r"
                              % (short, zong, table[zong]))
+
+    def test_zong_gua_equals_authoritative_implementation(self):
+        """综卦表必须与权威实现逐条相等（曾有第二份手抄副本，已收敛）。"""
+        mism = []
+        for (up, lo), full in numbers.SIXTY_FOUR_HEXAGRAMS.items():
+            short = numbers.short_hexagram_name(full)
+            want = numbers.short_hexagram_name(hexagram.compute_zong_gua(up, lo))
+            got = guajie.ZONG_GUA.get(short)
+            if got != want:
+                mism.append((short, got, want))
+        self.assertEqual(mism, [],
+                         "综卦表与权威实现不一致：%s" % (mism[:5],))
 
 
 if __name__ == "__main__":
