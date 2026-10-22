@@ -36,22 +36,17 @@ import os
 
 from typing import Optional
 
+from .nayin import NAYIN_TABLE, get_nayin_element as _nayin_get_nayin_element
+
 # 地支顺序（子=0）
 _BRANCH_ORDER = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
 
-# 60甲子纳音（与 guajie._NAYIN 一致，独立维护）
-_NAYIN = {
-    "甲子": "金", "乙丑": "金", "丙寅": "火", "丁卯": "火", "戊辰": "木", "己巳": "木",
-    "庚午": "土", "辛未": "土", "壬申": "金", "癸酉": "金", "甲戌": "火", "乙亥": "火",
-    "丙子": "水", "丁丑": "水", "戊寅": "土", "己卯": "土", "庚辰": "金", "辛巳": "金",
-    "壬午": "木", "癸未": "木", "甲申": "水", "乙酉": "水", "丙戌": "土", "丁亥": "土",
-    "戊子": "火", "己丑": "火", "庚寅": "木", "辛卯": "木", "壬辰": "水", "癸巳": "水",
-    "甲午": "金", "乙未": "金", "丙申": "火", "丁酉": "火", "戊戌": "木", "己亥": "木",
-    "庚子": "土", "辛丑": "土", "壬寅": "金", "癸卯": "金", "甲辰": "火", "乙巳": "火",
-    "丙午": "水", "丁未": "水", "戊申": "土", "己酉": "土", "庚戌": "金", "辛亥": "金",
-    "壬子": "木", "癸丑": "木", "甲寅": "水", "乙卯": "水", "丙辰": "土", "丁巳": "土",
-    "戊午": "火", "己未": "火", "庚申": "木", "辛酉": "木", "壬戌": "水", "癸亥": "水",
-}
+# 60甲子纳音（**单一来源** nayin.NAYIN_TABLE，2026-10-22 收敛）
+# 原为 canping 与 guajie 各存一份的同名副本，现两者共用 nayin.py 这一份。
+# `_NAYIN` 作为**别名**保留（保名不保表）：外部有引用
+# （tests/heluo/test_yuanqi_tables_fidelity.py 用 canping._NAYIN 钉死
+# 「本表 ≠ yuanqi_tables.GANZHI_GUA_GROUPS 两张表，不得合并」），故不得删名。
+_NAYIN = NAYIN_TABLE
 
 # 纳音 → 加数（岁君水火廿七加 / 木金虚度五十土）
 _NAYIN_ADD = {"水": 27, "火": 27, "金": 0, "木": 0, "土": 50}
@@ -62,8 +57,13 @@ _NAYIN_PART = {"水": "水部", "火": "火部", "木": "木部", "金": "金部
 
 
 def get_nayin_element(year_gan: str, year_zhi: str) -> str:
-    """年柱纳音五行（60甲子纳音表）。"""
-    return _NAYIN.get(year_gan + year_zhi, "")
+    """年柱纳音五行（60甲子纳音表）。
+
+    ⚠ 签名保持 **两柱分列**（year_gan, year_zhi）不变——外部有调用方
+    （hua_gong.py 延迟导入本模块的 get_nayin_element、既有测试）。
+    实际查表走 nayin.get_nayin_element（干支二字合一），此处仅转发。
+    """
+    return _nayin_get_nayin_element(year_gan + year_zhi)
 
 
 def _branch_index(branch: str) -> int:
