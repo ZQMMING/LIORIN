@@ -307,13 +307,18 @@ python tools/heluo/quzheng_20261008/dump_natural.py      # 引擎自然输出（
 
 落码（`timeline_yun.compute_daily_base_hex`）：
 
-- 一个月 30 日 = **5 组 × 6 日**；本任务只算**目标日所在的那一组**
-  （`group_index = (target_day - 1) // 6`）
-- 本卦：流月卦按「进一爻起」翻一爻所得（组间链式推进）；本体/互/错/综/卦气**一次算好**
-  （互错综复用 `hexagram.py` 的权威实现，不自造第二套口径）
-- 组内 6 日：共用本卦，每日只取对应爻位（初→1日 … 上→6日）做**轻量爻运算**
-  （爻变 + 卦名 + 卦气五行），不再起完整卦
-- `daily_yao` 每条含 `day_no / active_yao / yao_index / yao_nature /
+- **段边界按节气实际间隔均匀分配**（不可执定「卦六日」死板规则）：
+  当月按节时刻 T0 → 下月节时刻 T1 的**实际间隔**均匀切成 5 段，
+  段长 ≈ (T1-T0)/5（约 5.9~6.3 日，**不是固定 6 日**）
+  · 实测：某年 7 月 jie_span_days = 31.12 日 → 第 3 段日序 **14-19**（非固定 13-18）
+  · 段首带真实时刻（`date_from`，如 `2026-08-20 06:29`）
+- 每段 1 个流日本卦（本体/互/错/综/卦气**一次算好**）；互错综复用 `hexagram.py`
+  的权威实现，不自造第二套口径
+- 段内 6 日共用本卦，每日只取对应爻位（**首日从初爻开始**：初→1日 … 上→6日）
+  做**轻量爻运算**（爻变 + 卦名 + 卦气五行），不再起完整卦
+- 段间链式推进：第 k 段本卦 = 链式 `day_lines[k*6]`
+- 本任务只算**目标日所在的那一段**
+- `daily_yao` 每条含 `day_no / day_in_seg / active_yao / yao_index / yao_nature /
   changed_name / changed_upper / changed_lower / changed_lines / changed_element`
 
 ### 12.3 与原典 L129 的关系（如实留档）

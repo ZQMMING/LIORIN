@@ -53,7 +53,7 @@ def _timeline_to_dict(res) -> dict:
     return dataclasses.asdict(res.timeline)
 
 
-def _build(target_year=None, target_month=None):
+def _build(target_year=None, target_month=None, target_day=None):
     """单次 build（与 production path 一致：canonical.calculate 直调）。"""
     hc = HeluoCanonical()
     return hc.calculate(
@@ -64,6 +64,7 @@ def _build(target_year=None, target_month=None):
         birth_date=_BIRTH_DATE,
         target_year=target_year,
         target_month=target_month,
+        target_day=target_day,
     )
 
 
@@ -173,6 +174,45 @@ class TestFastPathSkeleton(unittest.TestCase):
         """target_month 未传 → 顶层 daily_hexagram 保持空。"""
         res = _build(target_year=_TARGET_YEAR, target_month=None)
         self.assertEqual(res.timeline.daily_hexagram, {})
+
+    def test_daily_segments_follow_jie_not_fixed_six_days(self):
+        """流日段边界须按**节气实际间隔均匀分配**，不可执定「卦六日」死板规则。
+
+        原典依据（用户 2026-10-22 引）：
+            「日卦的起算必须严格遵循各月节气交接的具体时刻，而不能机械地固定每卦六日。
+              因为节气长度并非完全均等（或不足 30 日，或超过 30 日），所以需要根据
+              实际时刻来『均匀』分配，不可执定『卦六日』的死板规则。」
+
+        故断言：
+          · base_hex 记有 jie_span_days（当月节→下节的实际间隔天数）
+          · 该间隔不是整 30（节气不等长）
+          · 目标日所在段的日序区间不是固定的 6 日整数倍起点
+        """
+        res = _build(target_year=_TARGET_YEAR, target_month=_TARGET_MONTH,
+                     target_day=15)
+        d = res.timeline.daily_hexagram
+        base = d.get("base_hex") or {}
+        span = base.get("jie_span_days")
+        self.assertIsNotNone(span, "base_hex 缺 jie_span_days（未按节气实际间隔分段）")
+        self.assertNotAlmostEqual(
+            span, 30.0, delta=0.3,
+            msg=f"节气间隔应不等于固定 30 日（实测 {span}）——若恒为 30 即退回『卦六日』死板规则",
+        )
+        # 段日序起点：均匀分配后不落在 1/7/13/19/25 这些固定 6 日整数倍起点
+        day_from = base.get("day_from")
+        self.assertIsNotNone(day_from)
+        self.assertNotIn(
+            (day_from - 1) % 6, (0,),
+            f"段起点 {day_from} 恰在固定 6 日分组边界上（(day_from-1) % 6 == 0），"
+            f"说明未按节气实际间隔均匀分配",
+        )
+        # 段内 6 日：首日从初爻开始
+        yao = d.get("daily_yao") or []
+        self.assertEqual(len(yao), 6)
+        want = ("初爻", "二爻", "三爻", "四爻", "五爻", "上爻")
+        for i, x in enumerate(yao):
+            self.assertEqual(x.get("active_yao"), want[i],
+                             f"段内第 {i+1} 日应取 {want[i]}（首日从初爻开始）")
 
     def test_target_year_hexagram_summary(self):
         """顶层 target_year_hexagram 是目标流年卦摘要。"""

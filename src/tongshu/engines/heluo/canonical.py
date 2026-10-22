@@ -586,12 +586,20 @@ class HeluoCanonical:
                         days_payload = compute_liuri_stub(m["lines"], m["yue_yao_index"])
                     elif target_month is not None and m["month"] == target_month:
                         # 定稿流日：1 个流日本卦（完整卦）+ 6 日各自激活爻。
-                        # 一个月 30 日 = 5 组 × 6 日；只算**目标日所在的那一组**。
-                        _td = int(target_day or 1)
-                        _grp = max(0, min(4, (_td - 1) // 6))
+                        # 段边界按**节气实际间隔均匀分配**（不执定「卦六日」死板规则），
+                        # 本任务只算**目标日所在的那一段**。
+                        _next_jie = None
+                        try:
+                            _next_jie = _jie_interval_for_lunar_month(
+                                y.year, m["month"])[1]
+                        except Exception:
+                            _next_jie = None
                         base_hex, daily_yao_list = compute_daily_base_hex(
                             m["lines"], m["yue_yao_index"],
-                            group_index=_grp, rule="gua6",
+                            target_day=int(target_day or 1),
+                            jie_datetime=jie_dt,
+                            next_jie_datetime=_next_jie,
+                            rule="gua6",
                         )
                         # 该组首日公历日期 = 当月"节"时刻 + 组偏移（节起第一组为节当日）
                         _seg_date_from = ""

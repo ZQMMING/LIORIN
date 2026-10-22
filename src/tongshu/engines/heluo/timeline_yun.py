@@ -509,41 +509,80 @@ def compute_liuri(
 def compute_daily_base_hex(
     yue_lines: list[int],
     yue_yao_index: int,
-    group_index: int = 0,
+    target_day: int = 1,
+    jie_datetime: str | None = None,
+    next_jie_datetime: str | None = None,
     rule: str = "gua6",
 ) -> tuple[dict, list[dict]]:
-    """流日层（定稿 2026-10-22）：一卦管 6 日、一爻一日。
+    """流日层（定稿 2026-10-22）：一卦管 6 日、一爻一日，**段边界按节气实际间隔均匀分配**。
 
-    一个月 30 日 = 5 组 × 6 日（``group_index`` 0..4）。
-    本函数只算**一组**：起 1 个流日本卦（完整卦，本体/互错综/卦气一次算好），
-    之后 6 日不再起完整卦，每日只取对应爻位（初→1日 … 上→6日）做轻量爻运算。
+    原典依据（用户 2026-10-22 引）：
+      · 「六日一变」的卦气系统：同样从节气开始，但六天更换一卦，**首日从初爻开始**。
+      · 「日卦的起算必须严格遵循各月节气交接的具体时刻，而不能机械地固定每卦六日。
+        因为节气长度并非完全均等（或不足 30 日，或超过 30 日），所以需要根据实际
+        时刻来『均匀』分配，不可执定『卦六日』的死板规则。」
 
-    组内 6 日共用本卦；组间链式推进（第 k 组本卦自月卦连续翻 k*6+1 爻）。
+    落码：
+      · 当月按节时刻 T0 → 下月节时刻 T1 的**实际间隔**均匀切成 5 段
+        （段长 ≈ (T1-T0)/5，约 5.9~6.3 日，**不是固定 6 日**）
+      · 每段 1 个流日本卦（本体/互/错/综/卦气一次算好），6 日共用
+      · 段内每日只取对应爻位（**首日从初爻开始**），做轻量爻运算
+      · 段间链式推进：第 k 段本卦 = 链式 day_lines[k*6]
 
-    与 hou5（原典 L390「每一爻管五日、挨次而变，不容紊也」，链式累变）**不可兼容**：
-    hou5 每日之卦自前一日卦继续翻（30 日 = 6 爻 × 5 日）；
-    gua6 一卦管 6 日，6 日共用同一本卦，每日只换激活爻位。
+    与 hou5（原典 L129「每一爻管五日、挨次而变」）**不可兼容**。
 
     Returns:
         ``(base_hex, daily_yao)``
-        - ``base_hex``   完整卦字典（本体 lines/卦名/互/错/综/卦气）
-        - ``daily_yao`` 6 条：每日激活爻 + 该爻的轻量运算结果
+        - ``base_hex``   目标日所在段的完整卦字典
+        - ``daily_yao`` 该段 6 日：每日激活爻 + 轻量运算结果
     """
     from .hexagram import (  # 权威单一来源：不自造互错综与五行表
         TRIGRAM_ELEMENT, compute_cuo_gua, compute_hu_gua, compute_zong_gua,
     )
+    from datetime import timedelta
 
-    # 本卦：自月卦链式翻 (group_index*6 + 1) 爻
-    # （第 1 组 = 翻 1 爻，即原典「以流月卦前一爻为初一日」）
-    cur = list(yue_lines)
-    for _k in range(group_index * 6 + 1):
-        cur = _flip_line(cur, 0)  # 占位：下面按爻位链式推进
-    # 逐爻链式推进到该组首日（爻位自居位爻下一爻起，逐日阳阴位交替）
-    pos = liuri_day_positions(yue_yao_index)
-    cur = list(yue_lines)
-    for d in range(group_index * 6 + 1):
-        cur = _flip_line(cur, pos[d % len(pos)])
-    base_lines = cur
+    n_seg = 5
+    seg_len = 6
+    positions = liuri_day_positions(yue_yao_index)
+    day_lines = liuri_day_lines(yue_lines, yue_yao_index)
+
+    base_dt = _parse_datetime(jie_datetime) if jie_datetime else None
+    nxt_dt = _parse_datetime(next_jie_datetime) if next_jie_datetime else None
+    _uniform = base_dt is not None and nxt_dt is not None and nxt_dt > base_dt
+
+    # ── 段边界：按节气实际间隔均匀分配（非固定 6 日）──
+    segs: list[dict] = []
+    for k in range(n_seg):
+        d_from = k * seg_len + 1
+        d_to = (k + 1) * seg_len
+        date_from = ""
+        jie_span_days = None
+        if _uniform:
+            span = (nxt_dt - base_dt).total_seconds()
+            seg_sec = span / n_seg
+            b0 = base_dt + timedelta(seconds=k * seg_sec)
+            b1 = base_dt + timedelta(seconds=(k + 1) * seg_sec)
+            d_from = int((b0.date() - base_dt.date()).days) + 1
+            d_to = int((b1.date() - base_dt.date()).days)
+            if k == n_seg - 1:
+                d_to = int((nxt_dt.date() - base_dt.date()).days) + 1  # 末段至下一节
+            date_from = b0.strftime("%Y-%m-%d %H:%M")
+            jie_span_days = round(span / 86400.0, 4)
+        segs.append({
+            "segment": k + 1, "day_from": d_from, "day_to": d_to,
+            "date_from": date_from, "jie_span_days": jie_span_days,
+        })
+
+    # ── 定位目标日所在段 ──
+    _td = int(target_day or 1)
+    k = next((i for i, sg in enumerate(segs)
+              if sg["day_from"] <= _td <= sg["day_to"]), None)
+    if k is None:
+        k = max(0, min(n_seg - 1, (_td - 1) // seg_len))
+    seg = segs[k]
+
+    # ── 该段本卦 = 链式 day_lines[k*6]（该段首日之卦）──
+    base_lines = list(day_lines[k * seg_len][1])
     u, lo, name = _lines_to_hexagram(base_lines)
 
     base_hex = {
@@ -553,22 +592,25 @@ def compute_daily_base_hex(
         "zong_name": compute_zong_gua(u, lo),
         "element": TRIGRAM_ELEMENT.get(u, "") or TRIGRAM_ELEMENT.get(lo, ""),
         "yue_yao_index": yue_yao_index,
-        "group_index": group_index,
-        "day_from": group_index * 6 + 1,
-        "day_to": group_index * 6 + 6,
+        "segment": seg["segment"],
+        "day_from": seg["day_from"], "day_to": seg["day_to"],
+        "date_from": seg["date_from"],
+        "jie_span_days": seg["jie_span_days"],
+        "jie_datetime": jie_datetime or "",
+        "next_jie_datetime": next_jie_datetime or "",
         "rule": rule,
     }
 
-    # 6 日：每日取对应爻位（初→1日 … 上→6日），做轻量爻运算
+    # ── 段内 6 日：固定本卦，每日取对应爻位（首日从初爻开始）──
     yao_names = ("初爻", "二爻", "三爻", "四爻", "五爻", "上爻")
     daily_yao: list[dict] = []
-    for d in range(6):
-        idx = d  # 固定序位对应：初爻→第1日 … 上爻→第6日
+    for d in range(seg_len):
+        idx = d  # 首日从初爻开始，依次初/二/三/四/五/上
         changed = _flip_line(list(base_lines), idx)
         cu, clo, cname = _lines_to_hexagram(changed)
         daily_yao.append({
-            "day_no": group_index * 6 + d + 1,
-            "day_in_group": d + 1,
+            "day_no": seg["day_from"] + d,
+            "day_in_seg": d + 1,
             "active_yao": yao_names[idx],
             "yao_index": idx,
             "yao_nature": "阳" if base_lines[idx] else "阴",
