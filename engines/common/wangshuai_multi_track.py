@@ -197,7 +197,7 @@ def _judge_pzzq(root_power, root_eff, season, support='生克平衡'):
 def _judge_dts(season, root_power, root_eff, support):
     """滴天髓轨: 体用关系 + 气势流通.
     体=日主, 用=生扶日主的力量(印比).
-    体用相生则旺, 体用相克则弱, 体用俱旺则从强, 体用俱衰则从弱.
+    体用相生则旺, 体用相克则弱, 体用俱旺则太旺, 体用俱衰则太衰.
     太旺=气势极端宜泄伤(DTS-014-002 L94「提纲太旺取印比」/016-002 L102「旺则宜泄宜伤」),
     太衰=气势极端宜帮扶(016-002 L102「衰则喜帮喜助」). 非从格四桶(AGENTS.md v3 第八节取消)."""
     effective_root = root_power if root_eff != '根拔' else '无根'

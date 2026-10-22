@@ -424,15 +424,20 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', _ban_reason2, 'SPECIAL_FAIL', None,
             '阳干从格入口拦下: ' + _ban_reason2 + '; 盘回正格路径',
             ['daymaster_root', 'wuxing_power']))
-    # ★ V7.149b 阴干/从儿通道开洞:
-    #   ① 阴干通道(PZZQ L178「五阴从势无情义」+ L4941「从财从煞其理一也」+ L4942「通根如印无根不碍相从」):
-    #      阴干(乙丁己辛癸)不受 rootless/_yin_block 门控; 仅阳干 ban 命中时关闭.
-    #   ② 从儿通道(DTS L438「从儿不管身强弱」/L440「不论日主强弱」): 食伤成势即候选, 阴干阳干均适用.
-    #   两通道均不覆盖 zhi_sha_save(制杀救应, 逆局优先级最高).
-    _dm_yin9 = day_stem in ('乙', '丁', '己', '辛', '癸')
-    _yin_channel = _dm_yin9 and not _cong_ban_entry
+    # ★ V7.155 撤 B 级阴干通道, 改立 A 级真从三条件(DTS L420【原注】, grade=A):
+    #   「日主孤立无气, 无地人元, 绝无一毫生扶之意, 财官强甚, 乃为真从也」
+    #   → _a_cong_ok = 日主无本气根(dm_ben_eff==0) ∧ 印无本气根(yin_ben_eff==0) ∧ 财官强甚
+    #   ★ V7.149 引入的「阴干通道」依 PZZQ L178-189【徐注】(grade=B), 违反公理三, 已撤:
+    #     阴干印根不碍从 -> 回到 A 级判据(PZZQ L4936「若透印则身赖印生而不从」/L4939「有印则印以化煞而不从」)
+    #   保留 _cong_er_channel: DTS L438 京图原文(A 级)「从儿不管身强弱」(顺局章正文, 非原注).
+    #   zhi_sha_save(制杀救应, 逆局)优先级仍最高.
+    _a_gs_strong = (gs_ben >= 1 or gs_stem >= 2)
+    _a_cai_strong = (cai_ben >= 1 or cai_stem >= 2)
+    _a_cong_ok = (dm_ben_eff == 0 and yin_ben_eff == 0
+                  and (_a_gs_strong or _a_cai_strong))
     _cong_er_channel = ss_pow and ss_ben >= 1 and not _cong_ban_entry
-    if (rootless_entry or _yin_channel or _cong_er_channel) and not zhi_sha_save and not _cong_ban_entry:
+    if (rootless_entry or _cong_er_channel) and not zhi_sha_save and not _cong_ban_entry \
+            and (_a_cong_ok or _cong_er_channel):
         sides = {'食伤': (ss, ss_wx), '财': (cai, cai_wx), '官杀': (gs, gs_wx)}
         shi_sides = {k: (v, wx) for k, (v, wx) in sides.items()
                      if (k == '官杀' and gs_pow) or (k != '官杀' and _shi(v))}
@@ -577,21 +582,17 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     # V7.89e 印根 ban(按最终 cong 类型): 从财/从杀/从官/从势 印有根则不从
     #   (PZZQ L4936「若透印则身赖印生而不从」/L4939「有印则印以化煞而不从」/L4942「通根, 如印无根, 不碍相从」);
     #   从儿格不受此 ban(DTS L438「从儿不管身强弱」/L440「不论日主强弱」/PZZQ L5092「印运亦忌」属行运层).
-    # ★ V7.149b 印根 ban 按日干阴阳分流(PZZQ L178/L4941/L4942 + L179/L187):
-    #   阴干: 印根不碍从, 候选 CONFIRMED; 阳干: 印根则不从, 候选撤销.
-    #   从儿格不受此 ban(DTS L438/L440).
+    # ★ V7.155 印根 ban 回归统一 A 级判据(撤 V7.149b 的阴阳分流):
+    #   PZZQ L4936「若透印则身赖印生而不从」/L4939「有印则印以化煞而不从」(正文 grade=A)
+    #   -> 印绶有根, 从格不成立, 无论阴阳干; 候选撤销, 盘回正格路径.
+    #   徐注 L180/L187(阳干印根不从而阴干不碍从)为 grade=B, 只作旁证, 不作分流依据(公理三).
+    #   从儿格不受此 ban(DTS L438 京图原文「从儿不管身强弱」, grade=A).
     if cong and cong != '从儿格' and _yin_root_any2 > 0:
-        if _dm_yin9:
-            cstate = 'CONFIRMED'
-            out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', '阴干印根不碍从(PZZQ L178/L4941/L4942)', 'SPECIAL_PASS', None,
-                '阴干(乙丁己辛癸): 印绶有根仍可从, PZZQ L178「五阴从势无情义」+ L4941「从财从煞其理一也」',
-                ['daymaster_root', 'wuxing_power']))
-        else:
-            _ban_reason = '印绶有根则不从(PZZQ L180/L187/L4936/L4939)'
-            out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', _ban_reason, 'SPECIAL_FAIL', None,
-                '阳干(甲丙戊庚壬): 印绶有根则不从, 盘回正格路径(PZZQ L179「五阳从气不从势」/L187虞和德造)',
-                ['daymaster_root', 'wuxing_power']))
-            cong = None; side = None; cstate = None
+        _ban_reason = '印绶有根则不从(PZZQ-033-001 L4936/L4939)'
+        out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', _ban_reason, 'SPECIAL_FAIL', None,
+            '印绶有根: 身赖印生而不从(PZZQ-033-001 L4936「若透印则身赖印生而不从」/L4939「有印则印以化煞而不从」); 盘回正格路径',
+            ['daymaster_root', 'wuxing_power']))
+        cong = None; side = None; cstate = None
 
     # ---------- 气候虚湿寒土假从(辰丑湿土寒冻、火印全无, 土虚不能用, 反顺旺水之财; 见火暖则土能任财而翻转, 故只CANDIDATE)----------
     if not cong and climate and 'XU_SHI_HAN_TU' in (climate.get('structure_flags') or []):  # P0-b: 移除not hua_name互斥分支
