@@ -301,6 +301,11 @@ class HeluoResult:
     #: birth_date 的公历年派生）/ ``"placeholder"``（两者皆无，**占位**）。
     #: ⚠ 占位时流年干支可能与真实出生年错位，guajie 会据此在 evidence 里留痕。
     birth_year_source: str = ""
+    #: 本次计算实际采用的**输入四柱**（(干,支) 四元组）。
+    #: 2026-10-22 新增：此前 calculate() 只把 bazi 当入参用完即丢，下游
+    #: 无法核对自己拿到的四柱与 birth_date 是否自洽。河洛侧历法口径自检
+    #: （见 calendar_guard）需要它，故在此留一份（只读引用，不做修改）。
+    bazi: list[tuple[str, str]] | None = None
 
 
 class HeluoCanonical:
@@ -535,6 +540,7 @@ class HeluoCanonical:
             yuan_qi=yuan_qi,
             seasonal_hexagram=seasonal_hex,
             era=era,
+            bazi=bazi,
         )
 
     def _build_timeline(

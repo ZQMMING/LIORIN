@@ -39,6 +39,7 @@ from .yao_xiang import scan_and_evidence as _scan_yao_xiang
 from .hexagram_state import QIANXI_DUKONG
 # 60 甲子纳音单一来源（2026-10-22 收敛；原 canping/guajie 各存一份同名副本）
 from .nayin import NAYIN_TABLE, get_nayin_element as _nayin_get_nayin_element
+from .calendar_guard import check_calendar_consistency
 
 _REPO_ROOT = Path(__file__).resolve().parents[4]
 _GUAJIE_DATA = _REPO_ROOT / "data" / "heluo" / "guajie_data.json"
@@ -1686,6 +1687,19 @@ def build_guajie_from_result(
                 "引擎以 1984 甲子年占位）——流年干支与真实出生年可能错位，"
                 "流年/流月/流日判词请谨慎采信；请补传 birth_year 或 birth_date")
 
+        # 历法口径自检留痕（2026-10-22）：把**输入四柱**与 sxtwl 自算四柱
+        # （1582 年前 = 儒略历）比对。不一致时说明上游的公历换算口径与河洛
+        # 节气链不同（如把古农历按 proleptic Gregorian 换算，1150/1206 年差 7 天），
+        # 此时日柱/支数/卦/元堂整条链会错。错位输入被当成真实输入，比答错更坏，
+        # 故在此明确留痕（详见 calendar_guard 模块）。
+        try:
+            _cal_notes = check_calendar_consistency(
+                getattr(result, "bazi", None),
+                getattr(result.input, "birth_date", "") or "")
+            gj.evidence.extend(_cal_notes)
+        except Exception as _e:            # 该条不阻塞主链
+            gj.evidence.append(f"  历法口径自检：跳过（{_e}）")
+
         # ── 生时化工（四正节卦，起例卷之下·节候卦爻） ────────────────
         try:
             bd = getattr(result.input, "birth_date", "") or ""
@@ -2063,6 +2077,23 @@ def judge_suoshu_ji_xiong(
 
 
 # 生月支 → 季（卷一·月令非时论：寅卯辰春/巳午未夏/申酉戌秋/亥子丑冬）
+#
+# 口径定性（2026-10-22 原典取证后改标）：**「依原典月令分季推衍」**，
+# 不再标注为「引擎自定」。原典**没有**把这张表写成一句，但引文链可逐环回查：
+#   ① 《起例卷之中》「阴阳二数随月令消息论」把十二**节气月**排成四个「三月」块，
+#      冠以春/夏/秋/冬，各块首月的节令为立春正月、立夏四月、立秋七月、立冬十月
+#      （起例卷之中 L8/L17/L22/L27；「自正月立春后」见 L36）。
+#   ② 《起例卷之上》L189「坤艮卦主四季**辰戌丑未**月，除正节气十二日外，各旺十八日」
+#      → 辰戌丑未为季月；L32「土旺于辰戌丑未月十八日」同义。
+#   ③ 《易卦释义·下经卷之下》L416「艮乃**丑寅**之分，**季冬孟春**之间」
+#      → 丑＝季冬、寅＝孟春；《起例卷之中》L12「**仲春**之月，气象暄和」（二月＝仲春）。
+#   ④ 由②③的季界固定在辰/巳/未/申/戌/亥六支 ⇒ 寅卯辰春、巳午未夏、申酉戌秋、亥子丑冬。
+#
+# ⚠ **不得与另两套节气锚定口径混用**（原典把它们当三个不同概念）：
+#   - 生月化工（起例卷之上 L185-L189）：震木＝**春分后～芒种**、离火＝夏至后～白露、
+#     兑金＝秋分后～大雪、坎水＝冬至后～惊蛰、坤艮＝四季辰戌丑未月 —— 以节气中段起算；
+#   - 八卦旺废图（起例卷之上 L233）：旺卦随八节更替（立春艮/春分震/立夏巽/夏至离…）。
+#   故在季初、季末两支上，本表与「化工/旺废」口径**并不一致**，各自独立使用。
 _SEASON_BY_BRANCH = {"寅": "春", "卯": "春", "辰": "春", "巳": "夏", "午": "夏", "未": "夏",
                      "申": "秋", "酉": "秋", "戌": "秋", "亥": "冬", "子": "冬", "丑": "冬"}
 
@@ -2302,9 +2333,12 @@ def judge_gui_ming_shi_ti(
     #      **又如正月得泰卦、九月得剥卦之类皆是。**）」
     #    后半「正月得泰卦」= 生月与该卦的**卦气月**相合，机械可判：
     #    该卦的卦气月取自其卦头自述（gua_qi_month 入参）。
-    #    ⚠ 前半的「月份→季节」划分（_SEASON_BY_BRANCH 寅卯辰春…）是**引擎口径**：
-    #    原典只给了春/夏/秋/冬四季的代表卦，未给月份到四季的划分规则。
-    #    此处保留既有实现以免改动判词，并在守卫中如实留档。
+    #    ⚠ 前半的「月份→季节」划分（_SEASON_BY_BRANCH 寅卯辰春…）**依原典月令
+    #    分季推衍**（引文链见 _SEASON_BY_BRANCH 上方注释）：原典未把这张表写成
+    #    一句，但「辰戌丑未为季月」「丑＝季冬、寅＝孟春」「二月＝仲春」三处
+    #    明文可逐环闭合到本表。
+    #    注：原典「得时」是**两项并列**（季节卦 + 月份卦气），另由六顺时/七得体/
+    #    八当位共同成立 —— 本函数只覆盖季节卦与卦气月两项。
     _deshi_hit = bool(season and _SEASON_DESHI_GUA.get(season) in (up, low))
     _guaqi_hit = bool(mon is not None and gua_qi_month is not None
                       and mon == gua_qi_month)

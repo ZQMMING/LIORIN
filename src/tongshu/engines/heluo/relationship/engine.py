@@ -1,19 +1,47 @@
 # -*- coding: utf-8 -*-
-"""
-Phase 5-D: Relationship State Engine 核心算法
+"""⚠️ DEPRECATED — 关系状态引擎残桩（Phase 5-D 草案）
 
-计算模块:
-- D-1: 五行互动模型
-- D-2: 卦象互动模型  
-- D-3: 时间同步模型
-- D-4: 统一输出协议
+**2026-10-22 裁定废弃**（证据：主仓 `D:\shuntian` 与本包 `src/` 内均**零生产
+import**；本包唯一引用是 `tests/heluo/test_heluo_base_table_consistency.py` 拿它
+比对两张五行生克表与 `guajie`/`hexagram_state` 是否一致；主仓
+`pipeline_stages/compute_stage.py` 已把河洛结果断链（`heluo_result` 恒为 None），
+无任何平台侧调用点）。
+
+**已知缺陷（刻意保留并由守卫钉死，勿当可用实现）**：
+
+1. `calculate_time_sync()` 里 ``any(y in ELEMENT_GEN for y in [year_a, year_b])``
+   —— `ELEMENT_GEN` 的键是「木/火/土/金/水」，而 `year_a/year_b` 是**流年干支
+   字符串**，故该分支**恒为假** → `time_sync` 实际只有「同步/异步」两值，
+   「相生」分支不可达。
+2. `calculate_hexagram_interaction()` 永不返回「冲突」→ 冲突判定是空分支。
+3. `generate_relationship_state()` 的 ``evidence.sources`` **写死**
+   ``['河洛理数', '周易', '《易经》']``，与实际计算无关 —— 属于**伪造出处**，
+   河洛引擎的证据链不容许这种写法。
+4. 本模块的「关系」判词（吉凶/建议）没有任何原典依据，属引擎自拟。
+
+**为什么保留而不删**：本包 `tests/heluo/test_heluo_base_table_consistency.py`
+仍需比对这里的 `ELEMENT_GEN` / `ELEMENT_KE` 与 `guajie.ELEMENT_GENERATES` /
+`hexagram_state.ELEMENT_OVERCOMES` 是否逐字相等（防基础表副本漂移）。
+保留文件 + 标废弃 + 钉死缺陷，比删除更安全：复活时会有告警，且不会出现
+「两套口径并存」。
+
+**生产代码请勿 import 本模块。** 关系/合盘类需求应另起模块并从
+《河洛真数》《河洛理数》原典取依据，不得沿用本残桩的判词。
 """
 from __future__ import annotations
 import logging
+import warnings
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
 from typing import Any, Dict, List, Optional
+
+warnings.warn(
+    "heluo/relationship/engine.py is deprecated (Phase 5-D 残桩，2026-10-22 裁定废弃). "
+    "生产代码请勿 import；如需关系/合盘判词，另起模块并从原典取依据。",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

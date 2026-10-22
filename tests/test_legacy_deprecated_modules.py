@@ -133,5 +133,50 @@ class TestLegacyDeprecatedModules(unittest.TestCase):
                       "time_sequence 用 (target_month+1)%12 的旧月支规则（留档）")
 
 
+class TestRelationshipEngineDeprecated(unittest.TestCase):
+    """relationship/engine.py（Phase 5-D 残桩）的废弃状态守卫（2026-10-22）。
+
+    裁定依据：主仓与本包 src 内**零生产 import**；本包唯一引用是
+    `test_heluo_base_table_consistency.py` 拿它比对两张五行表；
+    主仓 compute_stage 已把河洛结果断链。实现另有死分支与**伪造出处**。
+    """
+
+    def test_import_warns_deprecated(self):
+        _, w = _import_afresh("tongshu.engines.heluo.relationship.engine")
+        self.assertTrue(
+            any(issubclass(x.category, DeprecationWarning) for x in w),
+            "relationship/engine.py 应在 import 时发 DeprecationWarning")
+
+    def test_known_defects_still_present(self):
+        """残桩缺陷仍在（防「单方面修复残桩」造成两套口径并存）。"""
+        from tongshu.engines.heluo.relationship import engine
+
+        src = inspect.getsource(engine)
+        self.assertIn("any(y in ELEMENT_GEN for y in [year_a, year_b])", src,
+                      "time_sync 的「相生」分支仍恒为假（残桩，勿当可用实现）")
+        self.assertIn("'sources': ['河洛理数', '周易', '《易经》']", src,
+                      "伪造出处仍写死（残桩，勿当可用实现）")
+
+    def test_no_production_import(self):
+        """本包 src/ 内不得有生产代码 import 该残桩。"""
+        src_root = Path(__file__).resolve().parent.parent / "src"
+        offenders = []
+        for py in src_root.rglob("*.py"):
+            rel = py.relative_to(src_root)
+            if rel.as_posix().endswith("heluo/relationship/engine.py"):
+                continue
+            try:
+                # utf-8-sig：部分 src 文件带 BOM，直接 utf-8 读会让 ast.parse 报
+                # SyntaxError（U+FEFF），从而把「扫描」变成「崩溃」。
+                text = py.read_text(encoding="utf-8-sig")
+            except Exception:
+                continue
+            for mod, name in _ast_imports(text):
+                if name == "engine" and mod and mod.endswith("relationship"):
+                    offenders.append(str(rel))
+        self.assertEqual(offenders, [],
+                         f"生产代码不得 import 废弃残桩 relationship.engine：{offenders}")
+
+
 if __name__ == "__main__":
     unittest.main()
