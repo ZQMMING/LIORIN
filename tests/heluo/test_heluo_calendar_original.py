@@ -165,6 +165,90 @@ class TestOriginalCaseCalendarChain(unittest.TestCase):
                          "sxtwl 节气月 = 子月（庚子），与原典一致")
 
 
+class TestAdapterEndToEnd(unittest.TestCase):
+    """**端到端**：农历 → 公历 → HeluoAdapter（经八字引擎）→ 河洛判词。
+
+    这是本轮最硬的一道尺：走的是平台真正会走的入口
+    （`HeluoAdapter.compute` → 八字引擎排盘 → 河洛），而不是把原典四柱直接
+    喂进河洛。算例 3 尤其关键 —— 八字引擎在 1582 年前的「节」边界差 7 天
+    （月柱判成亥月），河洛侧按自己的 sxtwl 节气口径自校后必须回到原典的
+    子月（庚子），且天数地数/卦/元堂随之复原。
+    """
+
+    def test_adapter_end_to_end_all_cases(self):
+        from tongshu.engines.heluo_adapter import HeluoAdapter
+        import sxtwl
+
+        adapter = HeluoAdapter()
+        for c in CASES:
+            with self.subTest(case=c["no"], line=c["line"]):
+                y, m, d = c["lunar"]
+                day = sxtwl.fromLunar(y, m, d, False)
+                solar = (day.getSolarYear(), day.getSolarMonth(), day.getSolarDay())
+                hour = _SHICHEN_HOUR[c["shichen"]]
+                res = adapter.compute(solar_date=(solar[0], solar[1], solar[2], hour),
+                                      gender="male")
+                pillars = tuple(f"{g}{z}" for g, z in res.bazi)
+                self.assertEqual(pillars, c["pillars"],
+                                 f"算例{c['no']} 河洛采用的四柱应逐字等于原典")
+                self.assertEqual((res.numbers.tian_shu, res.numbers.di_shu),
+                                 (c["tian"], c["di"]),
+                                 f"算例{c['no']} 天地二数")
+                self.assertEqual(res.prenatal.hexagram_name, c["prenatal"],
+                                 f"算例{c['no']} 先天卦")
+                self.assertEqual(res.yuantang.yuantang, c["yuantang"],
+                                 f"算例{c['no']} 元堂")
+
+    def test_case3_month_pillar_self_corrected(self):
+        """算例 3：八字引擎给亥月（7 日错位），河洛自校回子月并留痕。"""
+        from tongshu.engines.heluo_adapter import HeluoAdapter
+        import sxtwl
+
+        day = sxtwl.fromLunar(1206, 10, 29, False)
+        solar = (day.getSolarYear(), day.getSolarMonth(), day.getSolarDay())
+        res = HeluoAdapter().compute(
+            solar_date=(solar[0], solar[1], solar[2], 21), gender="male")
+        self.assertEqual(f"{res.bazi[1][0]}{res.bazi[1][1]}", "庚子",
+                         "月柱应被自校为子月（庚子）")
+        self.assertTrue(res.bazi_caliber_notes,
+                        "自校必须留痕（下游须知道输入四柱被改过）")
+        self.assertIn("月柱", " ".join(res.bazi_caliber_notes))
+
+    def test_modern_date_untouched(self):
+        """现代日期不得被自校改动（无据不动）。"""
+        from tongshu.engines.heluo_adapter import HeluoAdapter
+        import sxtwl
+
+        day = sxtwl.fromSolar(2026, 10, 22)
+        res = HeluoAdapter().compute(
+            solar_date=(day.getSolarYear(), day.getSolarMonth(), day.getSolarDay(), 12),
+            gender="male")
+        self.assertEqual(res.bazi_caliber_notes, [],
+                         "现代日期不应触发自校留痕")
+
+    def test_non_adjacent_input_not_modified(self):
+        """输入四柱与日期**根本不对应**（相差不相邻）→ 不改，只留痕。
+
+        合成 fixture（bazi 与 birth_date 无关）是典型情形：河洛**不得擅自
+        改写调用方的显式输入**，否则既有行为被静默篡改。
+        """
+        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from tongshu.engines.heluo.calendar_guard import resolve_year_month
+
+        # 1983-11-03 的节气月是亥月；这里给寅月（不相邻）
+        bazi = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
+        fixed, notes = resolve_year_month(bazi, "1983-11-03", "午")
+        self.assertEqual(fixed[1], ("甲", "寅"), "不相邻时不得改动输入四柱")
+        self.assertTrue(notes, "但必须留痕（输入与日期不对应）")
+        self.assertIn("未改动", " ".join(notes))
+
+        res = HeluoCanonical().calculate(
+            bazi=bazi, gender="male", birth_hour="午", era="zhong",
+            birth_date="1983-11-03")
+        self.assertEqual(res.bazi[1], ("甲", "寅"),
+                         "canonical 亦不得改动不相邻的输入四柱")
+
+
 class TestJulianGregorianCaliber(unittest.TestCase):
     """历法口径事实守卫：1582 年前 sxtwl 用儒略历。"""
 

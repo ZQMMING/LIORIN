@@ -1700,6 +1700,12 @@ def build_guajie_from_result(
         except Exception as _e:            # 该条不阻塞主链
             gj.evidence.append(f"  历法口径自检：跳过（{_e}）")
 
+        # 历法口径自校留痕（2026-10-22）：canonical 已按河洛自己的 sxtwl 节气
+        # 口径修正了输入四柱的年/月柱（八字引擎在 1582 年前的节边界差 7 天）。
+        # 这里把「改了什么、为什么」摆到台面上，避免下游误以为输入四柱原样生效。
+        for _note in (getattr(result, "bazi_caliber_notes", None) or []):
+            gj.evidence.append(_note)
+
         # ── 生时化工（四正节卦，起例卷之下·节候卦爻） ────────────────
         try:
             bd = getattr(result.input, "birth_date", "") or ""

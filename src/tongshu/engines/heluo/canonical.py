@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from .input import HeluoInput, prepare_heluo_input
@@ -272,6 +272,7 @@ from .hexagram import analyze_hexagram, HexagramStructure
 from .yi_interpreter import interpret_all_liunian
 from .hua_gong import compute_huagong, HuaGongResult
 from .yuan_qi import compute_yuan_qi, YuanQiResult
+from .calendar_guard import resolve_year_month
 
 from .jiehhou import (get_seasonal_hexagram, get_current_jieqi_info,
                       solar_term_date, jieqi_timeline)
@@ -306,6 +307,9 @@ class HeluoResult:
     #: 无法核对自己拿到的四柱与 birth_date 是否自洽。河洛侧历法口径自检
     #: （见 calendar_guard）需要它，故在此留一份（只读引用，不做修改）。
     bazi: list[tuple[str, str]] | None = None
+    #: 历法口径自校的留痕（年/月柱与河洛节气口径不符并已修正时非空）。
+    #: 由 guajie 呈现到 evidence —— 错位输入被当成真实输入，比答错更坏。
+    bazi_caliber_notes: list[str] = field(default_factory=list)
 
 
 class HeluoCanonical:
@@ -390,6 +394,21 @@ class HeluoCanonical:
         target_month: 农历月（int，可选；1-12）。仅在 target_year 非 None 时生效。
                      命中则顶层 daily_hexagram 填目标月 6 日段字典。
         """
+        # 历法口径自校（2026-10-22）：河洛自身的农历/节气链一律以 sxtwl 为准
+        #   （1582 年前为儒略历），而输入四柱通常来自八字引擎 —— 后者用
+        #   jd_to_datetime（proleptic Gregorian）做「节」边界比较，1582 年前
+        #   **整体后移 7 天**。月支一变，地支奇偶就变 → 天数地数变 → 先天卦、
+        #   元堂、后天卦、全部判词全变。故此处按**河洛自己的口径**自校年/月柱，
+        #   不一致时以 sxtwl 为准并留痕（不是「河洛压过八字」，是让河洛内部
+        #   口径自洽：它的月令/节候卦/化工/流月链本来就全都按 sxtwl 走）。
+        #   日柱、时柱与节边界无关，不动。
+        bazi_caliber_notes: list[str] = []
+        if birth_date and bazi:
+            _fixed_bazi, _notes = resolve_year_month(bazi, birth_date, birth_hour)
+            if _fixed_bazi and _notes:
+                bazi = _fixed_bazi
+                bazi_caliber_notes = _notes
+
         # Step 1: 计算天数地数
         numbers = compute_tian_di_shu(bazi, gender)
 
@@ -541,6 +560,7 @@ class HeluoCanonical:
             seasonal_hexagram=seasonal_hex,
             era=era,
             bazi=bazi,
+            bazi_caliber_notes=bazi_caliber_notes,
         )
 
     def _build_timeline(
