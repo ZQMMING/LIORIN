@@ -158,14 +158,39 @@ class TestLiuriRuleConsistency(unittest.TestCase):
         self.assertEqual(seq, [0, 1, 2, 3, 4, 5] * 5,
                          "gua6 段内爻位应逐日顺推（初→上），五段循环")
 
-    def test_gua6_segments_chain_by_six_days(self):
-        """段间链式推进：第 k 段本卦 = 链式第 6k 日之卦。"""
-        from tongshu.engines.heluo.timeline_yun import liuri_day_lines
+    def test_gua6_segments_advance_by_month_gua_flipping_each_yao(self):
+        """段间推进：**月卦逐爻变**（居位爻不动），非链式累变。
+
+        2026-10-22 原典硬算例更正：《河洛理数》日卦定式（K3-448 L464-L491 /
+        K3-447 L1149-L1159）「日卦者每月變五卦，每卦管六日」「假如七月月得既濟六二爻，
+        **除此一爻不變**」—— 五个段本卦是月卦**各变一爻**，不是链式累变。
+        原实现取链式 `day_lines[k*6]`，产出退化序列（屯、鼎、屯、鼎、屯），与原典不合。
+        """
+        from tongshu.engines.heluo.timeline_yun import liuri_gua6_bases
         m = self.yearly[0]["months"][0]
-        chain = liuri_day_lines(m["lines"], m["yue_yao_index"])
+        bases = liuri_gua6_bases(m["lines"], m["yue_yao_index"])
         for k, seg in enumerate(m["days"]):
-            self.assertEqual(seg["lines"], list(chain[k * 6][1]),
-                             f"第{k + 1}段本卦应等于链式第{6 * k + 1}日之卦")
+            self.assertEqual(seg["lines"], list(bases[k]),
+                             f"第{k + 1}段本卦应等于月卦变第 {k + 1} 个未变之爻")
+
+    def test_gua6_original_case_five_bases(self):
+        """《河洛理数》万历二十三年七月硬算例：既济·居位二爻 → 屯、革、明夷、家人、蹇。
+
+        引文与日算互证见 ``timeline_yun._GUA6_FLIP_ORDER`` 的注释：
+          段1 變既濟九三 → 屯（L479「屯卦六爻從下而上一爻一日，自初二日至初七」）
+          段2 變既濟六四 → 革（L477「至初八日又變…為革卦」；初八 = 初二 + 6）
+          段3 變既濟九五 → 明夷（L483「至十四日…明夷六五」；十四 = 初二 + 12）
+          段4 變既濟上六 → 家人（K3-447 L1158）
+          段5 變既濟初九 → 蹇（余爻，排除法定）
+        """
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import (
+            liuri_gua6_bases, _lines_to_hexagram,
+        )
+        ji = build_six_lines("坎", "离")          # 既济（坎上离下）
+        names = [_lines_to_hexagram(b)[2] for b in liuri_gua6_bases(ji, 1)]
+        self.assertEqual(names, ["水雷屯", "泽火革", "地火明夷", "风火家人", "水山蹇"],
+                         "既济·居位二爻 的五段本卦应逐字等于原典")
 
     def test_hou5_original_rule_still_pinned_at_function_level(self):
         """hou5《起日卦例》原典规则仍在（函数级），未被口径统一删掉。

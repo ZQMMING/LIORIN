@@ -92,23 +92,27 @@ class TestLazyLiuShi(unittest.TestCase):
         """按 **gua6 定稿口径**复算第 month_no 月第 day 日的日卦名。
 
         一卦管 6 日、一爻一日、首日从初爻起：第 day 日落在第 ``k=(day-1)//6``
-        段，段本卦 = 链式第 ``6k`` 日之卦；段内第 ``d=(day-1)%6`` 日 =
+        段，段本卦 = **月卦逐爻变**的第 k 个未变之爻（居位爻不动 ——
+        《河洛理数》日卦定式「除此一爻不變」）；段内第 ``d=(day-1)%6`` 日 =
         段本卦翻第 ``d`` 爻。
 
         独立复算（不调用生产的物化函数求期望值），与
         ``tests/heluo/test_liuri_vs_original.py`` 的「第一性硬编码」同一精神。
-        链式原语 ``liuri_day_lines`` 本身已被该文件按 L390 字面五日实例钉死。
+
+        2026-10-22 更正：原先此处用链式 ``liuri_day_lines`` 复算段本卦，
+        等于把「链式累变」钉成标准；原典硬算例证明 gua6 的段本卦是
+        「月卦各变一爻」（见 timeline_yun._GUA6_FLIP_ORDER 的引文链）。
         """
         from tongshu.engines.heluo.timeline_yun import (
-            _flip_line, _lines_to_hexagram, liuri_day_lines,
+            _flip_line, _lines_to_hexagram, liuri_gua6_bases,
         )
         y2026 = next(y for y in self.res.timeline.yearly_hexagrams
                      if y["year"] == 2026)
         m = y2026["months"][month_no - 1]
-        chain = liuri_day_lines(m["lines"], m["yue_yao_index"])
         k = (day - 1) // 6
         d = (day - 1) % 6
-        cur = _flip_line(list(chain[k * 6][1]), d)
+        base = liuri_gua6_bases(m["lines"], m["yue_yao_index"])[k]
+        cur = _flip_line(list(base), d)
         # guajie 对外一律走 _short() 短名，复算须同口径
         return gj._short(_lines_to_hexagram(cur)[2])
 

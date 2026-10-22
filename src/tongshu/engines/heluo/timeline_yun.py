@@ -402,6 +402,43 @@ def _lines_to_hexagram_name(lines: list[int]) -> tuple[str, str, str]:
     return u, lo, name
 
 
+#: gua6 的**变爻序**：**爻位顺序，跳过居位爻**（月卦各变一爻，不累变）。
+#:
+#: 依据：《河洛理数》日卦定式（K3-448 1632笔写本 L464-L491 / K3-447 1871增补本
+#: L1149-L1159）：
+#:   · 「日卦者每月變五卦，每卦管六日，方成一月」—— 每月 5 卦 × 6 日 = 30 日。
+#:   · 「假如七月月得既濟六二爻，**除此一爻不變**」—— 五卦是月卦**各变一爻**
+#:     （不是链式累变），**居位爻不动**。
+#:   · 硬算例（万历二十三年七月，七月初二日午时立秋）：
+#:       段1 變既濟九三 → **屯卦**（管初二~初七；「屯卦六爻從下而上一爻一日」）
+#:       段2 變既濟六四 → **革卦**（L477「至初八日又變…為革卦，此一卦自下而上」；
+#:                             初八 = 初二 + 6 = 段2 起点 ✓）
+#:       段3 變既濟九五 → **明夷**（L483「至十四日…明夷六五」；
+#:                             十四 = 初二 + 12 = 段3 起点 ✓）
+#:       段4 變既濟上六 → **家人**（K3-447 L1158「再將月卦上六爻變為家人，管六日」）
+#:       段5 變既濟初九 → **蹇**（余下唯一未变之爻，由「除此一爻不變」排除法定）
+#:     ⇒ 变爻序 = **三、四、五、上、初**（居位=二爻时）＝ 爻位顺序跳过居位。
+#:
+#: ⚠ 诚实标注：段1/段2/段3 的**卦名与段序**有两处日算互证（初八、十四）；
+#: 段4（家人）由底本可辨名 + 段序由余位推定；段5（蹇）为排除法定。
+_GUA6_FLIP_ORDER: tuple[int, ...] = (2, 3, 4, 5, 0)
+
+
+def liuri_gua6_bases(yue_lines: list[int], yue_yao_index: int) -> list[list[int]]:
+    """gua6 的 **5 个段本卦**：月卦逐爻变（**居位爻不动**）。
+
+    原典（《河洛理数》日卦定式）：「日卦者每月變五卦，每卦管六日，方成一月」，
+    「假如七月月得既濟六二爻，除此一爻不變」—— 五卦是月卦**各变一爻**（不累变），
+    变爻序为**爻位顺序跳过居位爻**（见 :data:`_GUA6_FLIP_ORDER` 的引文链）。
+
+    ⚠ 2026-10-22 修正：原实现取链式累变的 ``day_lines[k*6]``（那是《河洛真数》
+    hou5 的链），在 gua6 口径下产出**退化序列**（既济/居位二爻 → 屯、鼎、屯、鼎、屯），
+    与原典的「屯、革、明夷、家人、蹇」不符。
+    """
+    order = [(yue_yao_index + k) % 6 for k in range(1, 6)]
+    return [_flip_line(list(yue_lines), idx) for idx in order]
+
+
 def compute_liuri(
     yue_lines: list[int],
     yue_yao_index: int,
@@ -574,7 +611,12 @@ def compute_daily_base_hex(
         **六日仍是六日，但六日所跨的时刻随实际节气间隔变**。
       · 每段 1 个流日本卦（本体/互/错/综/卦气一次算好），6 日共用
       · 段内每日只取对应爻位（**首日从初爻开始**），做轻量爻运算
-      · 段间链式推进：第 k 段本卦 = 链式 `day_lines[k*6]`
+      · 段间推进：**月卦逐爻变**（第 k 段本卦 = 月卦变第 k 个未变之爻，
+        居位爻不动 —— 《河洛理数》日卦定式：「日卦者每月變五卦，每卦管六日」
+        「除此一爻不變」；变爻序与硬算例见 :func:`liuri_gua6_bases`）
+        ⚠ 2026-10-22 修正：原实现误取《河洛真数》hou5 的链式 `day_lines[k*6]`，
+        在 gua6 口径下产出退化序列（屯、鼎、屯、鼎、屯），与原典「屯、革、明夷、
+        家人、蹇」不符。
 
     与 hou5（原典 L129「每一爻管五日、挨次而变」）**不可兼容**。
 
@@ -630,8 +672,11 @@ def compute_daily_base_hex(
         k = max(0, min(n_seg - 1, (_td - 1) // seg_len))
     seg = segs[k]
 
-    # ── 该段本卦 = 链式 day_lines[k*6]（该段首日之卦）──
-    base_lines = list(day_lines[k * seg_len][1])
+    # ── 该段本卦：gua6 = 月卦逐爻变（liuri_gua6_bases）；hou5 = 链式 day_lines ──
+    if rule == "hou5":
+        base_lines = list(day_lines[k * seg_len][1])
+    else:
+        base_lines = list(liuri_gua6_bases(yue_lines, yue_yao_index)[k])
     u, lo, name = _lines_to_hexagram(base_lines)
 
     base_hex = {
@@ -724,13 +769,13 @@ def compute_liuri_stub(
             })
         return out
 
-    # ── gua6（定稿口径）：一个月 5 段 × 6 日，首日从初爻起 ──
-    # 段本卦 = 链式 day_lines[k*6]；段内第 d 日 = 段本卦翻第 d 爻
-    # （与 compute_daily_base_hex 完全同一算法，见该函数落码说明）。
-    day_lines = liuri_day_lines(yue_lines, yue_yao_index)
+    # ── gua6（《河洛理数》日卦定式）：一个月 5 卦 × 6 日 ──
+    #   段本卦 = **月卦逐爻变**（居位爻不动，见 liuri_gua6_bases）；
+    #   段内第 d 日 = 段本卦翻第 d 爻（自下而上，一爻一日）。
+    bases = liuri_gua6_bases(yue_lines, yue_yao_index)
     out = []
     for k in range(5):
-        base = list(day_lines[k * 6][1])
+        base = list(bases[k])
         out.append({
             "segment": k + 1,
             "day_from": k * 6 + 1,

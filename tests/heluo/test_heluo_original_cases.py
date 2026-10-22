@@ -692,5 +692,64 @@ class TestOriginalCasesAreInRepo(unittest.TestCase):
                       "底本原样应保留「丙午」（逐字照抄，讹字不订正）")
 
 
+class TestCase13HeLuoLiShuLiUriCase(unittest.TestCase):
+    """算例 13（《河洛理数》卷五「日卦起例卷」K3-448/K3-447）：万历二十三年七月流日卦例。
+
+    原典（逐字，底本 OCR 讹字照录）：
+        「日卦者每月變五卦每卦管六日方成一月」（K3-447 L1154）
+        「假如七月月得既濟六二爻除此一爻不變先將既濟九三爻變為屯卦管六日
+          再將月卦上六爻變為家人管六日」（K3-447 L1153/L1158）
+        「…只將既濟九三變為屯卦…屯卦六爻從下而上一爻一日自初二日至初七
+          卦二爻管初三日屯卦三爻管初四日卦四爻管初五日卦五爻管初六日…」
+          （K3-448 L478-L480）
+        「至初八日又變前既濟卦…為革卦…此一卦自下而上」（K3-448 L477）
+        「至十四日又變前既卦九五爻為明夷六五自下而上」（K3-448 L483）
+        「如本年七月初二日午時交立秋節…日卦行起必須按月卦節氣方不[誤]」
+          （K3-448 L481-L482）
+        「以此推之則每日添一刻七分天」（K3-448 L491）
+
+    **2026-10-22 发现并修正的引擎缺陷**：流日 5 段本卦原取链式累变的
+    ``day_lines[k*6]``（《河洛真数》hou5 的链），在 gua6 口径下产出**退化序列**
+    （既济·居位二爻 → 屯、鼎、屯、鼎、屯）。原典明文：五卦是月卦**各变一爻**
+    （居位爻不动），变爻序 = 爻位顺序跳过居位（既济·二爻 → 屯、革、明夷、家人、蹇），
+    且段2/段3 的段序由日算互证（初八 = 初二+6、十四 = 初二+12）。
+    """
+
+    def test_five_bases_match_original(self):
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import (
+            liuri_gua6_bases, _lines_to_hexagram,
+        )
+        ji = build_six_lines("坎", "离")          # 既济（坎上离下）
+        names = [_lines_to_hexagram(b)[2] for b in liuri_gua6_bases(ji, 1)]
+        self.assertEqual(names,
+                         ["水雷屯", "泽火革", "地火明夷", "风火家人", "水山蹇"],
+                         "既济·居位二爻 的五段本卦应逐字等于原典")
+
+    def test_yue_yao_never_flipped(self):
+        """「除此一爻不變」：居位爻在五段中始终不变。"""
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import liuri_gua6_bases
+        ji = build_six_lines("坎", "离")
+        for base in liuri_gua6_bases(ji, 1):
+            self.assertEqual(base[1], ji[1], "居位二爻不得被变")
+
+    def test_segment_six_days_and_sequential_yao(self):
+        """每卦管六日；段内自下而上一爻一日（初二→初七 = 初九→上六）。"""
+        from tongshu.engines.heluo.numbers import build_six_lines
+        from tongshu.engines.heluo.timeline_yun import (
+            liuri_gua6_bases, _flip_line, _lines_to_hexagram,
+        )
+        ji = build_six_lines("坎", "离")
+        base = liuri_gua6_bases(ji, 1)[0]         # 段1 = 屯
+        # 段内自下而上一爻一日：段首日「屯卦初九爻」（原典「初二日午前屯卦初九爻
+        # 即从初二日午时管起」），逐日翻下一爻 → 动爻依次 初六、九二、九三、九四、
+        # 九五、上六（即 屯卦各爻取反）
+        yao_seq = [_flip_line(list(base), d)[d] for d in range(6)]
+        self.assertEqual(yao_seq, [-1, 1, 1, 1, -1, 1],
+                         "段内六日动爻应逐日取初→上（屯：初六/九二/九三/九四/九五/上六）")
+        self.assertEqual(base[0], 1, "段首日居位应为屯卦初九")
+
+
 if __name__ == "__main__":
     unittest.main()
