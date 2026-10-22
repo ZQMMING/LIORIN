@@ -315,14 +315,16 @@ class TestYearDistributionSystemic:
         assert yq.get("level") == "需防", yq
 
     def test_137_1990_2030_fa_huo_lian_dong(self, be):
-        """用户核验二②: 1990乾 2030 庚戌 — L4273发祸(大运酉=土死凶祸之运+太岁戌害酉,
-        '方主发祸') → tone=凶, 应期接发祸升需防 (不再写浮灾细累)"""
+        """1990乾 2030 庚戌 — 大运丙戌(净判偏吉, 虽带天罗), 太岁压运(伏吟),
+        小运丙午=胎(土长生申, 午为胎; 午午自刑属不和), 不构成'小运冲击死绝'
+        → L4273 降浮灾, 大运吉天花板压 tone, 最终吉凶相杂(不为重害), 应期浮灾细累.
+        (旧版误以大运为乙酉/发祸, 2030 实已交丙戌运, 据 L4273 修正)"""
         ch = _chart(be, 1990, 6, 18, 10)
         lm = _lm(be, 1990, 6, 18, 10, gender="male")
         r = query_year(ch, 2030, lm=lm)
-        assert r["tone"] == "凶", r["tone"]
+        assert r["tone"] == "吉凶相杂", r["tone"]
         yq = r.get("ying_qi") or {}
-        assert yq.get("level") == "需防", yq
+        assert yq.get("level") == "浮灾细累", yq
 
     def test_138_1983_2025_ji_you_fu_zai(self, be):
         """用户核验二③: 1983坤 2025 乙巳 — 厚基+三主断吉(V65贵禄马/Y73得财/V67喜神)

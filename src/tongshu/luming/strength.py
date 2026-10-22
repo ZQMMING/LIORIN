@@ -476,8 +476,13 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
                            if not (v.get("rule_id", "") or "").startswith("LM-F")])
         _year_ji = _pwr["ji"]
         _year_xiong = _pwr["xiong"]
-        # 小运要件: 死绝(凶2) 或 刑害(凶1) — "小运不和, 冲击死绝"方主发祸
-        _xy_bad = bool(yctx.get("xy_dead_jue") or yctx.get("xy_xing_hai"))
+        # 小运要件 (三命通会 L4273"小运不和, 冲击死绝, 方主发祸"): 小运须落在
+        #   死绝衰息之乡 (死/绝/衰/病/沐浴, 与定死"会集死绝衰息"同口径);
+        #   单纯自刑/刑害而在胎养安康 (如 1990 2030 小运午=胎, 午午自刑) 不构成
+        #   "冲击死绝", 降浮灾. 守住: 喻1951 小运辰=衰/周1976 小运申=绝 → 发祸.
+        _XY_FA = {"死", "绝", "衰", "病", "沐浴"}
+        _xy_bad = bool(yctx.get("xy_dead_jue")
+                       or yctx.get("xiao_yun_growth", "") in _XY_FA)
         if _year_ji > _year_xiong:
             out["mode"] = "浮灾"
             out["year_tone"] = year_tone   # 吉面主导之年, 尊重流年自身判定
