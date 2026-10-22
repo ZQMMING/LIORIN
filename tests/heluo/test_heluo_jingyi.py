@@ -76,7 +76,12 @@ class TestJingyiOutputLayer:
 
     @pytest.fixture(scope="class")
     def guajie_dict(self):
-        r = HeluoAdapter().compute((1980, 6, 22, 10), gender="male")
+        # 2026-10-23 起：适配器的目标日默认 = **今天**（用户裁决「流日卦按当前
+        # 日期自动算」），时间轴随之只算该年该月（fast path）。故此处必须把
+        # 目标日**显式**传给适配器，与下面 guajie 的取用日保持一致 ——
+        # 否则会拿「今天的月」去取另一个月的日段（取不到）。
+        r = HeluoAdapter().compute((1980, 6, 22, 10), gender="male",
+                                   target_date="2026-09-15")
         return build_guajie_from_result(
             r, target_year=2026, target_month=9, target_day=15, target_hour=10)
 

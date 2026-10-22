@@ -310,6 +310,10 @@ class HeluoResult:
     #: 历法口径自校的留痕（年/月柱与河洛节气口径不符并已修正时非空）。
     #: 由 guajie 呈现到 evidence —— 错位输入被当成真实输入，比答错更坏。
     bazi_caliber_notes: list[str] = field(default_factory=list)
+    #: 本次计算采用的**流日取用日**（公历 YYYY-MM-DD）；未指定目标日时为空。
+    #: 供下游（guajie / 平台）在不重复传参的情况下定位同一流日 ✓
+    #: （「流日卦按当前日期自动算」契约）。
+    target_date: str | None = None
 
 
 class HeluoCanonical:
@@ -561,6 +565,11 @@ class HeluoCanonical:
             era=era,
             bazi=bazi,
             bazi_caliber_notes=bazi_caliber_notes,
+            target_date=(
+                f"{target_year:04d}-{target_month:02d}-{target_day:02d}"
+                if (target_year is not None and target_month is not None
+                    and target_day is not None) else None
+            ),
         )
 
     def _build_timeline(

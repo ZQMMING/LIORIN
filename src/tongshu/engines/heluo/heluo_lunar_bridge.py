@@ -78,15 +78,40 @@ def _huangli_day_anno(solar_date: str, hd: dict) -> HeluoLunarAnno:
     )
 
 
-def annotate_day(solar_date: str, huangli_day: dict | None = None) -> dict:
+def _as_huangli_dict(huangli_day: object) -> dict:
+    """把黄历引擎产物统一成 dict。
+
+    主仓 `HuangliEngine.get_day(date)` 返回的是 **dataclass `HuangliDay`**，
+    而本桥接层要 dict；主仓侧**没有任何代码做这次转换**（河洛拆包后断链）。
+    故此处**直接吃对象**：有 ``to_dict()`` 就调它，兼容 dict 与 dataclass 两种形态 ——
+    平台侧接线因此只需一行 ``huangli_provider=lambda d: huangli_engine.get_day(d)``。
+    """
+    if huangli_day is None:
+        return {}
+    if isinstance(huangli_day, dict):
+        return huangli_day
+    to_dict = getattr(huangli_day, "to_dict", None)
+    if callable(to_dict):
+        try:
+            out = to_dict()
+            return out if isinstance(out, dict) else {}
+        except Exception:
+            return {}
+    return {}
+
+
+def annotate_day(solar_date: str, huangli_day: object = None) -> dict:
     """对流日段首日做黄历标注。
 
     Args:
         solar_date: 公历日期 YYYY-MM-DD
-        huangli_day: 主工作区 HuangliEngine.get_day 产物 dict（可选）；缺省 lunar_python 兜底
+        huangli_day: 黄历引擎产物 —— **dict 或 dataclass 均可**
+            （主仓 `HuangliEngine.get_day(date)` 返回 `HuangliDay` dataclass）；
+            缺省则 lunar_python 兜底。
     """
-    if huangli_day and huangli_day.get("day_ganzhi"):
-        return _huangli_day_anno(solar_date, huangli_day).to_dict()
+    hd = _as_huangli_dict(huangli_day)
+    if hd.get("day_ganzhi"):
+        return _huangli_day_anno(solar_date, hd).to_dict()
     return _lunar_python_anno(solar_date).to_dict()
 
 

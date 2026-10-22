@@ -26,6 +26,50 @@ from .bazi_adapter import BaziAdapter
 from .bazi_engine import BaziChart, BaziEngine, BRANCH_CN, STEM_CN
 from .heluo.canonical import HeluoCanonical, HeluoResult
 
+#: 河洛默认使用的时区（与 canonical 构造 HeluoInput 时一致）
+HELUO_TZ = "Asia/Shanghai"
+
+
+def now_beijing() -> datetime:
+    """当前北京时间（带 tzinfo）。
+
+    河洛的流日卦按**当前日期**自动推算，故取数须有明确时区口径，
+    避免服务器时区/夏令时造成「今天」漂移。
+    """
+    try:
+        from zoneinfo import ZoneInfo
+        return datetime.now(ZoneInfo(HELUO_TZ))
+    except Exception:                                  # pragma: no cover
+        return datetime.now()
+
+
+def resolve_target_date(
+    target_date: Optional[str] = None,
+    target_year: Optional[int] = None,
+    target_month: Optional[int] = None,
+    target_day: Optional[int] = None,
+    now: Optional[datetime] = None,
+) -> tuple[int, int, int]:
+    """解析流日卦的**目标日**（公历年, 月, 日）。
+
+    优先级：
+      1. 显式 ``target_date``（公历 ``YYYY-MM-DD``）；
+      2. 显式 ``(target_year, target_month, target_day)`` 三者齐全；
+      3. **今天**（北京时间）—— 生产默认：河洛的流日卦按当前日期自动推算。
+
+    ⚠ 只在**三者齐全**时才用第 2 条；若只给了 target_year（如 fast-path 只算
+    某年），仍以「今天」的月日为准补齐，避免「年对了、月日错位」这种半截输入。
+    """
+    if target_date:
+        y, m, d = (int(x) for x in str(target_date)[:10].split("-"))
+        return y, m, d
+    now = now or now_beijing()
+    if target_year is not None and target_month is not None and target_day is not None:
+        return target_year, target_month, target_day
+    return (target_year if target_year is not None else now.year,
+            target_month if target_month is not None else now.month,
+            target_day if target_day is not None else now.day)
+
 
 # ============================================================================
 # 三元自动推导（原典《遇五寄宫法》：上元甲子男艮女坤 / 中元甲子阴男阳女坤
@@ -69,8 +113,15 @@ class HeluoAdapter:
         target_year: Optional[int] = None,
         target_month: Optional[int] = None,
         target_day: Optional[int] = None,
+        target_date: Optional[str] = None,
         huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
+        """独立入口：公历出生日期 → 排盘（八字引擎）→ 河洛。
+
+        ``target_date``（公历 ``YYYY-MM-DD``）= **流日卦的取用日**；
+        不传则按**当前日期（北京时间）**自动推算（用户裁决：「流日卦…根据当前
+        日期自动算」）。显式 ``target_year/month/day`` 三者齐全时优先。
+        """
         chart = self._bazi_engine.compute(
             solar_date,
             gender=gender,
@@ -82,6 +133,7 @@ class HeluoAdapter:
             target_year=target_year,
             target_month=target_month,
             target_day=target_day,
+            target_date=target_date,
             huangli_provider=huangli_provider,
         )
 
@@ -105,8 +157,13 @@ class HeluoAdapter:
         target_year: Optional[int] = None,
         target_month: Optional[int] = None,
         target_day: Optional[int] = None,
+        target_date: Optional[str] = None,
         huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
+        # 流日卦的取用日：显式 target_date > 显式三元 > **今天（北京时间）**
+        _ty, _tm, _td = resolve_target_date(
+            target_date, target_year, target_month, target_day)
+        target_year, target_month, target_day = _ty, _tm, _td
         bazi = [
             (
                 STEM_CN[chart.year_pillar.heavenly_stem],

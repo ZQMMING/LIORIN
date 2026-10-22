@@ -1517,6 +1517,18 @@ def build_guajie_from_result(
     liuyue_hexagram/liuyue_yao: 手动指定流月（可选，优先于 target_month）。
     """
     _lunar_anno = None  # H9b 流日黄历标注（命中日段时填充）
+    # 目标日缺省回退：结果对象自带**流日取用日**（canonical 记录）——
+    #   「流日卦按当前日期自动算」的契约下，调用方不必再重复传一遍三元组，
+    #   也不会出现「算的是今天、问的是另一天」的时间轴不自洽。
+    if target_year is None:
+        _td = str(getattr(result, "target_date", "") or "")[:10]
+        if _td:
+            try:
+                target_year, target_month, target_day = (
+                    int(x) for x in _td.split("-"))
+            except Exception:
+                # 解析失败 → 保持「未指定」，不猜（不静默取今天）
+                target_year = None
     try:
         prenatal = _short(result.prenatal.hexagram_name)
         postnatal = _short(result.postnatal.hexagram_name)
