@@ -1548,11 +1548,13 @@ def build_guajie_from_result(
                                 ml = m.get("lines") or []
                                 if yi is not None and len(ml) > yi:
                                     liuyue_yao_name = _yao_name(yi, ml[yi])
-                                # 流日应期：当月 days 段（每爻管5日）自动定位
+                                # 流日应期：当月 days 段自动定位
                                 # 2026-10-06：days 已按需化，_build_timeline
-                                # 只存六段廉价定位字段，此处对**命中的这一个月**
+                                # 只存廉价定位字段，此处对**命中的这一个月**
                                 # 现算完整日段（含卦名/六爻），1,116 个月里
                                 # 只付这一次代价。算法口径与预展开完全一致。
+                                # 2026-10-22 口径统一：流日为 gua6（一卦管 6 日、
+                                # 一爻一日、首日从初爻起），全量与 fast path 一致。
                                 if target_day and m.get("days"):
                                     for dseg in materialize_month_days(m):
                                         d_from = dseg.get("day_from", 1)

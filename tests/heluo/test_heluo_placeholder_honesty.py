@@ -185,11 +185,14 @@ class TestTimelinePlaceholdersAreHonest(unittest.TestCase):
         self.assertIsNone(self.timeline.hourly_hexagram)
 
     def test_real_day_hexagrams_live_in_the_four_layer_axis(self):
-        """真实流月/流日仍在四层时间轴内——置空的是重复副本，不是能力。"""
+        """真实流月/流日仍在四层时间轴内——置空的是重复副本，不是能力。
+
+        2026-10-22 口径统一：流日为 gua6 定稿口径 → 每月 **5 段 × 6 日**。
+        """
         y = self.timeline.yearly_hexagrams[0]
         self.assertEqual(len(y["months"]), 12)
         for m in y["months"]:
-            self.assertEqual(len(m["days"]), 6)
+            self.assertEqual(len(m["days"]), 5)
 
     def test_no_birth_year_string_leaks_into_timeline(self):
         """'1990'/'1724' 这类裸年份串不得再作为 date 出现在时间轴。"""

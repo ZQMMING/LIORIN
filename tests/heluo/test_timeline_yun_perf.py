@@ -42,9 +42,12 @@ class TestLazyLiuShi(unittest.TestCase):
         cls.yearly = cls.res.timeline.yearly_hexagrams
 
     def test_days_carry_flip_index_not_hours(self):
-        """日段应带 flip_index，且不再预挂 hours（80,352 条全量载荷的来源）"""
+        """日段应带 flip_index，且不再预挂 hours（80,352 条全量载荷的来源）
+
+        2026-10-22 口径统一：gua6 → 每月 **5 段**（此前 hou5 是 6 段）。
+        """
         segs = [d for y in self.yearly for m in y["months"] for d in m["days"]]
-        self.assertEqual(len(segs), 6 * len([m for y in self.yearly for m in y["months"]]))
+        self.assertEqual(len(segs), 5 * len([m for y in self.yearly for m in y["months"]]))
         for d in segs:
             self.assertIn("flip_index", d)
             self.assertNotIn("hours", d, "流时卦应按需现算，不得预展开")
@@ -59,18 +62,17 @@ class TestLazyLiuShi(unittest.TestCase):
                     self.assertEqual([h["hour"] for h in hours], list(range(1, 13)))
 
     def test_flip_index_is_single_line_diff_vs_month(self):
-        """2026-10-07 起日卦改**链式累变**（原典 L390），日卦与月卦不再只差一爻。
+        """gua6 变爻位 = **段内日序**（首日从初爻起），逐日 0-5。
 
-        变爻位改由 :func:`liuri_day_positions` 的逐日序列直接给出；
-        本断言改为校验「段级 flip_index = 该段首日爻位、day_positions 逐日吻合」。
+        2026-10-22 口径统一：此前用的是 hou5 的「阳日寻阳位/阴日寻阴位」序列
+        （:func:`liuri_day_positions`）；gua6 不使用该规则。
         """
-        from tongshu.engines.heluo.timeline_yun import liuri_day_positions
         for y in self.yearly:
             for m in y["months"]:
-                pos = liuri_day_positions(m["yue_yao_index"])
                 for k, d in enumerate(m["days"]):
-                    self.assertEqual(d["flip_index"], pos[k * 5])
-                    self.assertEqual(d["day_positions"], pos[k * 5:k * 5 + 5])
+                    self.assertEqual(d["flip_index"], 0,
+                                     f"{y['year']} 第{m['month']}月第{k + 1}段首日应为初爻")
+                    self.assertEqual(d["day_positions"], [0, 1, 2, 3, 4, 5])
 
     def test_guajie_hours_layer_stripped_others_intact(self):
         """2026-10-06 流时层剥离：流时恒空，但流年/流月/流日仍须正确定位。"""
@@ -87,20 +89,26 @@ class TestLazyLiuShi(unittest.TestCase):
         self.assertEqual(out["liuri_hexagram"], self._expected_liuri_gua(6, 15))
 
     def _expected_liuri_gua(self, month_no: int, day: int) -> str:
-        """按原典 L390 复算第 month_no 月第 day 日的日卦名。
+        """按 **gua6 定稿口径**复算第 month_no 月第 day 日的日卦名。
 
-        链式累变：自月卦起，逐日翻下一爻——须从头累积到目标日，
-        不能只翻目标爻（那正是被原典否掉的「单变」口径）。
+        一卦管 6 日、一爻一日、首日从初爻起：第 day 日落在第 ``k=(day-1)//6``
+        段，段本卦 = 链式第 ``6k`` 日之卦；段内第 ``d=(day-1)%6`` 日 =
+        段本卦翻第 ``d`` 爻。
+
+        独立复算（不调用生产的物化函数求期望值），与
+        ``tests/heluo/test_liuri_vs_original.py`` 的「第一性硬编码」同一精神。
+        链式原语 ``liuri_day_lines`` 本身已被该文件按 L390 字面五日实例钉死。
         """
         from tongshu.engines.heluo.timeline_yun import (
-            _flip_line, _lines_to_hexagram, liuri_day_positions,
+            _flip_line, _lines_to_hexagram, liuri_day_lines,
         )
         y2026 = next(y for y in self.res.timeline.yearly_hexagrams
                      if y["year"] == 2026)
         m = y2026["months"][month_no - 1]
-        cur = list(m["lines"])
-        for pos in liuri_day_positions(m["yue_yao_index"])[:day]:
-            cur = _flip_line(cur, pos)
+        chain = liuri_day_lines(m["lines"], m["yue_yao_index"])
+        k = (day - 1) // 6
+        d = (day - 1) % 6
+        cur = _flip_line(list(chain[k * 6][1]), d)
         # guajie 对外一律走 _short() 短名，复算须同口径
         return gj._short(_lines_to_hexagram(cur)[2])
 
@@ -374,12 +382,15 @@ class TestLiuRiAlignDatesSwitch(unittest.TestCase):
             self.assertNotIn("date_from", d)
 
     def test_timeline_keeps_days_eagerly(self):
-        """流日层仍全量预展开：tests/test_heluo_context.py 断言 len(days)==6（既有契约）。"""
+        """流日层仍全量预展开（按需化的是卦名，不是日段本身）。
+
+        2026-10-22 口径统一：gua6 → 每月 **5 段**（此前 hou5 是 6 段）。
+        """
         res = _calc()
         y0 = res.timeline.yearly_hexagrams[0]
         self.assertEqual(len(y0["months"]), 12)
         for m in y0["months"]:
-            self.assertEqual(len(m["days"]), 6)
+            self.assertEqual(len(m["days"]), 5)
             for d in m["days"]:
                 self.assertIn("flip_index", d)
                 self.assertNotIn("hours", d)

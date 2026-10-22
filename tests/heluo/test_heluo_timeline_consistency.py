@@ -126,51 +126,63 @@ class TestLiunianAxisConsistency(unittest.TestCase):
 
 
 class TestLiuriRuleConsistency(unittest.TestCase):
-    """流日：每爻管五日 → 每月六段，满三十日。"""
+    """流日：**一卦管 6 日、一爻一日、首日从初爻起** → 每月 5 段，满三十日。
+
+    2026-10-22 口径统一：生产流日口径由 hou5（《河洛真数》L390 每爻管五日）
+    统一为 gua6（定稿口径，一卦管六日）。hou5 的「每爻管五日 / 阳日寻阳位、
+    阴日寻阴位」规则**未被删除**，仍由
+    ``tests/heluo/test_liuri_vs_original.py`` 按 L390 字面实例逐条对拍；
+    本类改为守卫 gua6 的逐日推进规则。
+    """
 
     @classmethod
     def setUpClass(cls):
         cls.yearly = _calc().timeline.yearly_hexagrams
 
-    def test_every_month_has_six_day_segments(self):
+    def test_every_month_has_five_gua6_segments(self):
         bad = [(y["year"], m["month"], len(m["days"]))
-               for y in self.yearly for m in y["months"] if len(m["days"]) != 6]
-        self.assertEqual(bad, [], "《起日卦例》六爻俱变毕，则满三十日 → 应为 6 段×5日")
+               for y in self.yearly for m in y["months"] if len(m["days"]) != 5]
+        self.assertEqual(bad, [], "一卦管六日 → 应为 5 段×6日")
 
-    def test_flip_index_starts_from_next_yao_and_wraps(self):
-        """起日卦逐日推进（原典 L390「挨次而变，不容紊也」）。
+    def test_gua6_segment_day_positions_are_sequential(self):
+        """gua6 逐日推进：段内初→二→三→四→五→上顺推，首日从初爻起。
 
-        2026-10-07 依原典改正：旧实现按「六段顺次绕回」，
-        每段固定一爻管五日；原典则是**逐日一爻**，且
-        「阳日寻阳爻位（初三五）、阴日寻阴爻位（二四上）」（见 liuri_day_positions）。
-        故「首尾相衔」应验在**逐日序列**上，不是段首 flip_index 上。
+        原典（《河洛理数》K3-448 L483 硬算例 + L488「其餘五爻五變 一卦管六日」）：
+        每卦管六日，段内六日依次取初、二、三、四、五、上爻。
         """
         first_month = self.yearly[0]["months"][0]
-        # 时间轴走按需化 stub：段内五日爻位存于 day_positions
         seq = []
         for d in first_month["days"]:
             seq.extend(d.get("day_positions") or [])
         self.assertEqual(len(seq), 30, "起日卦应覆盖 30 日")
+        self.assertEqual(seq, [0, 1, 2, 3, 4, 5] * 5,
+                         "gua6 段内爻位应逐日顺推（初→上），五段循环")
 
+    def test_gua6_segments_chain_by_six_days(self):
+        """段间链式推进：第 k 段本卦 = 链式第 6k 日之卦。"""
+        from tongshu.engines.heluo.timeline_yun import liuri_day_lines
+        m = self.yearly[0]["months"][0]
+        chain = liuri_day_lines(m["lines"], m["yue_yao_index"])
+        for k, seg in enumerate(m["days"]):
+            self.assertEqual(seg["lines"], list(chain[k * 6][1]),
+                             f"第{k + 1}段本卦应等于链式第{6 * k + 1}日之卦")
+
+    def test_hou5_original_rule_still_pinned_at_function_level(self):
+        """hou5《起日卦例》原典规则仍在（函数级），未被口径统一删掉。
+
+        「每一爻管五日」+「阳日寻阳位（初三五）/阴日寻阴位（二四上）」
+        —— 见 ``tests/heluo/test_liuri_vs_original.py`` 的字面展开守卫。
+        """
         from tongshu.engines.heluo.timeline_yun import liuri_day_positions
-        self.assertEqual(seq, liuri_day_positions(first_month["yue_yao_index"]),
-                         "逐日爻位须与原典规则复算一致")
-
-        # 挨次而变：日 n+1 的爻位必自日 n 顺推，不跳不紊
-        for a, b in zip(seq, seq[1:]):
-            self.assertEqual((a + 1) % 6, b,
-                             f"流日应挨次推进，实得 {a} -> {b}")
-
-        # 每一爻管五日：30 日内每爻恰 5 次
-        counts = [seq.count(i) for i in range(6)]
-        self.assertEqual(counts, [5] * 6,
-                         f"《起日卦例》每一爻管五日，实得 {counts}")
-
-        # 阴阳日各走各位序
-        yang = [seq[d] for d in range(30) if d % 2 == 0]
-        yin = [seq[d] for d in range(30) if d % 2 == 1]
-        self.assertTrue(all(p in (0, 2, 4) for p in yang), f"阳日应落阳位：{yang}")
-        self.assertTrue(all(p in (1, 3, 5) for p in yin), f"阴日应落阴位：{yin}")
+        for yi in range(6):
+            seq = liuri_day_positions(yi)
+            self.assertEqual(len(seq), 30)
+            self.assertEqual([seq.count(i) for i in range(6)], [5] * 6,
+                             f"居位爻 {yi}：每爻应恰管 5 日")
+            yang = [seq[d] for d in range(30) if d % 2 == 0]
+            yin = [seq[d] for d in range(30) if d % 2 == 1]
+            self.assertTrue(all(p in (0, 2, 4) for p in yang), f"阳日应落阳位：{yang}")
+            self.assertTrue(all(p in (1, 3, 5) for p in yin), f"阴日应落阴位：{yin}")
 
     def test_day_segments_carry_no_hour_data(self):
         """流时应按需现算，不得预展开（2026-10-06 性能改造）。"""

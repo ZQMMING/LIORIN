@@ -587,7 +587,10 @@ class HeluoCanonical:
 
                     days_payload: list[dict] = []
                     if not fast_path:
-                        # 全量路径：旧的逐月展开（hou5 6 段 × 5 日链式累变）
+                        # 全量路径：逐月展开**gua6 段索引**（5 段 × 6 日）。
+                        # 2026-10-22 口径统一：此前此处用 hou5（6 段 × 5 日），
+                        # 与 fast path 的 gua6 对同一 (年,月,日) 给出**不同的
+                        # 流日卦名与动爻**（实测 升/九三 vs 损/初九）。
                         days_payload = compute_liuri_stub(m["lines"], m["yue_yao_index"])
                     elif target_month is not None and m["month"] == target_month:
                         # 定稿流日：1 个流日本卦（完整卦）+ 6 日各自激活爻。
@@ -609,11 +612,12 @@ class HeluoCanonical:
                         # 该组首日公历时刻 = 段起始时刻（由 compute_daily_base_hex 给出，
                         # 已按实际节气间隔均匀推移 —— K3-448 L491「每日添一刻七分天」）
                         _seg_date_from = (base_hex or {}).get("date_from") or ""
+                        _seg_no = (base_hex or {}).get("segment")
                         days_payload = [
                             {
                                 "day": d.get("day_no"),
                                 "day_no": d.get("day_no"),
-                                "segment": d.get("day_no"),
+                                "segment": _seg_no,
                                 "date_from": _seg_date_from,
                                 "active_yao": d.get("active_yao"),
                                 "flip_index": d.get("yao_index"),
@@ -641,6 +645,9 @@ class HeluoCanonical:
                         "yue_yao_index": m["yue_yao_index"],
                         "jie_datetime": jie_dt,
                         "days": days_payload,
+                        # 显式标注流日口径（2026-10-22）：materialize_month_days
+                        # 据此分流，不再靠 payload 形状嗅探。
+                        "liuri_rule": "gua6",
                     }
                     months.append(month_entry)
                     if fast_path and y.year == target_year:

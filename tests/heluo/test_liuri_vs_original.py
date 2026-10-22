@@ -242,9 +242,15 @@ class TestComputeLiuriMatchesOriginal(TestLiuriOriginalFiveDays):
                              f"compute_liuri 初{d}日变爻名与原典不符（原文 {yao}）")
 
     def test_compute_liuri_stub_lines_equal_full_days(self):
-        """按需化路径（stub）的 day_lines 必须与全量路径逐字一致。"""
+        """按需化路径（stub）的 day_lines 必须与全量路径逐字一致。
+
+        2026-10-22 口径统一后，``compute_liuri_stub`` 默认走 **gua6**（定稿口径）；
+        本类对拍的是《河洛真数》L390 的 **hou5** 原典变体，故显式指定
+        ``rule="hou5"`` —— **原典对拍不因生产口径统一而失效**。
+        """
         full = compute_liuri(QIAN, 0)
-        stub = compute_liuri_stub(QIAN, 0)
+        stub = compute_liuri_stub(QIAN, 0, rule="hou5")
+        self.assertEqual(len(stub), 6, "hou5 原典变体是六段 × 五日")
         for k, (seg_f, seg_s) in enumerate(zip(full.days, stub), start=1):
             self.assertEqual(seg_s["flip_index"], seg_f["flip_index"], f"第{k}段")
             self.assertEqual(seg_s["lines"], seg_f["lines"], f"第{k}段段级六爻")
@@ -254,12 +260,63 @@ class TestComputeLiuriMatchesOriginal(TestLiuriOriginalFiveDays):
                 f"第{k}段逐日六爻")
 
     def test_materialize_month_days_matches_compute(self):
+        """hou5 变体的物化结果必须与 compute_liuri 逐字一致（原典对拍）。"""
         month = {"lines": QIAN, "yue_yao_index": 0, "jie_datetime": None,
-                 "days": compute_liuri_stub(QIAN, 0)}
+                 "liuri_rule": "hou5",
+                 "days": compute_liuri_stub(QIAN, 0, rule="hou5")}
         got = materialize_month_days(month)
         want = compute_liuri(QIAN, 0).days
         self.assertEqual(got, want,
                          "materialize_month_days 与 compute_liuri 不一致")
+
+
+class TestGua6AndHou5DoNotBleed(unittest.TestCase):
+    """两套流日口径必须**各自独立**，互不串味（2026-10-22 口径统一后新增）。
+
+    · hou5（《河洛真数》L390）：6 段 × 5 日，变爻位按阳日寻阳位/阴日寻阴位
+    · gua6（定稿口径，一卦管 6 日）：5 段 × 6 日，首日从初爻起
+
+    生产口径是 gua6；hou5 仅供原典对拍。二者若串味，
+    「同一问题两种答案」的缺陷就会复活。
+    """
+
+    def test_default_stub_is_gua6(self):
+        """默认即 gua6：五段 × 六日，段首日 = 初爻。"""
+        stub = compute_liuri_stub(QIAN, 0)
+        self.assertEqual(len(stub), 5, "gua6 是五段 × 六日")
+        for k, seg in enumerate(stub):
+            self.assertEqual(seg["rule"], "gua6")
+            self.assertEqual(seg["day_from"], k * 6 + 1)
+            self.assertEqual(seg["day_to"], k * 6 + 6)
+            self.assertEqual(seg["flip_index"], 0, "gua6 段首日 = 初爻")
+            self.assertEqual(seg["day_positions"], [0, 1, 2, 3, 4, 5])
+
+    def test_hou5_stub_is_still_six_by_five(self):
+        """hou5 原典变体不受影响：六段 × 五日。"""
+        stub = compute_liuri_stub(QIAN, 0, rule="hou5")
+        self.assertEqual(len(stub), 6)
+        for k, seg in enumerate(stub):
+            self.assertEqual(seg["rule"], "hou5")
+            self.assertEqual(seg["day_from"], k * 5 + 1)
+            self.assertEqual(seg["day_to"], k * 5 + 5)
+
+    def test_two_rules_give_different_hexagrams(self):
+        """两套口径对同一日给出不同卦 —— 证明它们确实不是同一算法的别名。"""
+        g_seg = compute_liuri_stub(QIAN, 0, rule="gua6")
+        h_seg = compute_liuri_stub(QIAN, 0, rule="hou5")
+        self.assertNotEqual(g_seg[0]["day_lines"], h_seg[0]["day_lines"])
+
+    def test_materialize_honours_explicit_rule(self):
+        """materialize_month_days 必须按显式 rule 分流，不得靠形状嗅探。"""
+        g_month = {"lines": QIAN, "yue_yao_index": 0, "liuri_rule": "gua6",
+                   "days": compute_liuri_stub(QIAN, 0, rule="gua6")}
+        h_month = {"lines": QIAN, "yue_yao_index": 0, "liuri_rule": "hou5",
+                   "days": compute_liuri_stub(QIAN, 0, rule="hou5")}
+        g_days = materialize_month_days(g_month)
+        h_days = materialize_month_days(h_month)
+        self.assertEqual(len(g_days), 30, "gua6 物化出 30 个逐日条目")
+        self.assertEqual(len(h_days), 6, "hou5 物化出 6 个段条目")
+        self.assertNotEqual(g_days[0].get("name"), h_days[0].get("name"))
 
 
 def _yao_name(idx: int, line: int) -> str:
