@@ -3912,10 +3912,18 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   晦气/冲运/冲年克命等) → 大运凶殃为流年吉所除, 凶降吉凶相杂不为重害
     #   (1986 2022: 贵禄马4+克太岁为财4+喜神3+天月德2 = 吉13 vs 恶8 → 吉凶相杂;
     #    守 oracle 反例: 含 4 分重灾不升, 吉力不足净胜不升)
+    # 2026-10-23 修正 (古法强弱辨证): 区分"发祸级不可除"与"晦滞/外缘可降"。
+    #   不可被吉除 (真正发祸重灾): V60定死/V66天罗/V70元辰/V52冲运/V50冲年克命/
+    #   V87五鬼/V78征太岁/V77日犯岁君/V62犯命(疾病官灾)/V90A/V90B比劫实祸/S05灾煞。
+    #   晦气 V59/V59B (阴灾晦滞, 非发祸) / 丧门 V74 / 孤寡 S06 等, 在流年强吉
+    #   净胜 (吉力 ≥ 凶力+2) 且无发祸级时 → 降为吉凶相杂 (强吉压外缘, 不判纯凶)。
+    _NO_REMOVE = {"LM-V60", "LM-V66", "LM-V70", "LM-V52", "LM-V50",
+                  "LM-V87", "LM-V78", "LM-V77", "LM-V62",
+                  "LM-V90A", "LM-V90B", "LM-S05"}
     if _agg["verdict"] == "凶":
-        _h4 = any(YEAR_XIONG.get(v.get("rule_id", ""), 1) >= 4
-                  for v in verdicts if v.get("tone") == "凶")
-        if not _h4 and _power["ji"] >= _power["xiong"] + 5:
+        _serious = any(v.get("rule_id") in _NO_REMOVE and v.get("tone") == "凶"
+                       for v in verdicts)
+        if not _serious and _power["ji"] >= _power["xiong"] + 2:
             _agg["verdict"] = "吉凶相杂"
     year_tone = _agg["verdict"]
 

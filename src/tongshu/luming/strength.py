@@ -208,31 +208,67 @@ DIM_WEIGHT = {"父母祖业": 0.8, "兄弟事业": 1.0, "自身婚姻": 1.4,
 # 三、基地福力 (L4276)
 # ============================================================================
 def base_fortune(lm) -> dict:
-    """原局基地福力: 消费 tone_scope 已校准计数 (2026-10-20).
+    """原局基地福力 (多维取证, 古法两部互证).
 
-    关键: 规则表默认 tone 未经聚合校准 (V31 未戌比和已平化/V32六害、V14华盖孤寡
-    已隔离维度/V31A-E 极凶已加权×4/V33生我吉已去重), 直接读 lm.verdicts 会
-    把"未校准凶"错计 (1983 癸亥造 V31 恃势刑被误计 -3 → 福力错判薄 → 全年凶).
-    → 福力以 lm.tone_scope.layers["原局"] 校准计数为唯一来源.
+    古法"基地厚薄"不只数福神断语条数:
+    - 阎东叟(五行精纪): "根实支茂, 得月令气象牢固, 有气无冲破废脱, 则岁运虽有
+      刑克冲战, 虽灾必解而轻" → 根气(通根) + 月令(得令) 为主体, 冲刑破害为减。
+    - 烛神经(三命通会 L4276): "十分福气/五分福气" → 福神(吉凶断) 为辅。
+    旧口径只数吉凶断条数, 把"失令根轻、刑害重但虚拱贵/纳音生我条数多"的命
+    (1983 癸亥造) 误判厚。现多维合成:
 
-    福力比 (L4276 八分/五分基准): ratio = 净优 / 总信号 = (吉×2 - 凶) / (吉+凶),
-    归一至 0..1 后分档: 厚≥0.7 (八分福) / 中≥0.35 (五分福) / 薄<0.35.
+      score = 根气基准(强0.65/中0.50/弱0.35)
+            + 得令(ling2 +0.10 / ling1 +0.05)
+            + 福神净分调整 (ratio-0.5)×0.30
+            - 冲刑破害 (三刑/六害/天罗地网, 每组-0.05, 封顶-0.15)
+      厚≥0.62 / 中≥0.42 / 薄<0.42 (宁漏勿错: 中段从宽)。
     """
     ts = ((lm.tone_scope or {}).get("layers") or {}).get("原局", {})
     ji = ts.get("吉", 0) or 0
     xiong = ts.get("凶", 0) or 0
-    if ji + xiong == 0:
-        return {"score": 0.5, "level": "中", "dims": {}, "ji": ji, "xiong": xiong}
-    net = (2 * ji - xiong) / (ji + xiong)          # -2 .. 2
-    ratio = max(0.0, min(1.0, net / 2 + 0.5))     # 0 .. 1
-    if ratio >= 0.7:
+    if ji + xiong > 0:
+        net = (2 * ji - xiong) / (ji + xiong)
+        ratio = max(0.0, min(1.0, net / 2 + 0.5))
+    else:
+        ratio = 0.5
+
+    # ① 根气 (日主旺衰)
+    ds = getattr(lm, "day_strength", {}) or {}
+    s_level = ds.get("strength", "中和")
+    base = {"强": 0.65, "中和": 0.50, "弱": 0.35}.get(s_level, 0.50)
+    ling = ds.get("ling", 0)
+    ling_bonus = 0.10 if ling >= 2 else (0.05 if ling == 1 else 0.0)
+
+    # ② 福神净分调整
+    fs_adj = (ratio - 0.5) * 0.30
+
+    # ③ 冲刑破害 (原局三刑 + 六害 + 天罗地网)
+    chong = 0
+    try:
+        chong += len(getattr(lm, "san_xing", ()) or ())
+    except Exception:
+        pass
+    try:
+        chong += len(getattr(lm, "liu_hai", ()) or ())
+    except Exception:
+        pass
+    v31g = sum(1 for v in lm.verdicts
+               if v.get("scope") == "原局" and v.get("rule_id") == "LM-V31G"
+               and v.get("tone") == "凶")
+    chong += v31g
+    chong_pen = min(0.15, 0.05 * chong)
+
+    score = base + ling_bonus + fs_adj - chong_pen
+    score = max(0.0, min(1.0, score))
+    if score >= 0.62:
         f = "厚"
-    elif ratio >= 0.35:
+    elif score >= 0.42:
         f = "中"
     else:
         f = "薄"
-    return {"score": round(ratio, 3), "level": f, "dims": {},
-            "ji": ji, "xiong": xiong, "net": round(net, 3)}
+    return {"score": round(score, 3), "level": f, "dims": {},
+            "ji": ji, "xiong": xiong, "ratio": round(ratio, 3),
+            "gen": s_level, "chong": chong}
 
 
 # ============================================================================
