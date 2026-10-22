@@ -95,6 +95,48 @@ SIXTY_FOUR_HEXAGRAMS: dict[tuple[str, str], str] = {
 
 # ========== 归一化函数（冻结规则） ==========
 
+#: 六十四卦**全名** → **简称**（卦名部分）。
+#:   · 纯卦（X为Y）取首字：「乾为天」→「乾」、「坎为水」→「坎」
+#:   · 其余取全名第 3 字起：「天水讼」→「讼」、「水火既济」→「既济」
+#: 由 SIXTY_FOUR_HEXAGRAMS 派生，不另立一份手抄表。
+HEXAGRAM_SHORT_NAMES: dict[str, str] = {
+    full: (full[0] if "为" in full else full[2:])
+    for full in SIXTY_FOUR_HEXAGRAMS.values()
+}
+
+#: 六十四卦简称 → 全名（HEXAGRAM_SHORT_NAMES 的反向）
+HEXAGRAM_FULL_NAMES: dict[str, str] = {
+    short: full for full, short in HEXAGRAM_SHORT_NAMES.items()
+}
+
+
+def short_hexagram_name(name: str) -> str:
+    """卦名归一为**简称**（判词里用的就是简称，如「讼」「既济」）。
+
+    接受三种写法：
+
+      · 卦全名「天水讼」「水火既济」→ 简称「讼」「既济」
+      · 已是简称「讼」「既济」→ 原样返回
+      · 「X上Y下」式「乾上乾下」→ 查 64 卦表得简称「乾」
+
+    认不出时返回**空串**（不猜）。判据层据此判「原典未言/不判」，
+    而不是拿一个错的卦名去比吉卦表。
+    """
+    s = (name or "").strip()
+    if not s:
+        return ""
+    if s in HEXAGRAM_SHORT_NAMES:
+        return HEXAGRAM_SHORT_NAMES[s]
+    if s in HEXAGRAM_FULL_NAMES:
+        return s
+    if "上" in s and "下" in s:
+        up, _, rest = s.partition("上")
+        low = rest.replace("下", "").strip()
+        full = SIXTY_FOUR_HEXAGRAMS.get((up, low))
+        if full:
+            return HEXAGRAM_SHORT_NAMES[full]
+    return ""
+
 def normalize_tian_shu(tian_shu: int) -> int:
     """
     天数归一化（冻结规则 HL-04）：

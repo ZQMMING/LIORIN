@@ -18,6 +18,10 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
+from .gui_ming_liu_ju import ying_yao_index
+from .numbers import short_hexagram_name
+from .yuan_tang import parse_yuantang_name
+
 log = logging.getLogger(__name__)
 
 # ═══════════════════════════════════════════════════════════════════
@@ -42,12 +46,17 @@ class HeluoInput:
     
     # 爻位信息
     line_position: Dict[str, Any]    # {active_line: 5, position_type: "尊位", yinyang: "阳"}
-    
+
     # 时间状态
     time_state: Dict[str, Any]       # {solar_term: "立秋", hour: 14, true_solar_time: True}
     
     # 大运
     da_yun_sequence: List[Dict] = field(default_factory=list)
+
+    # 本命卦六爻（1=阳, -1=阴，下标 0=初爻 … 5=上爻）。
+    # 供「五有援」判据定位**应爻爻性**（应爻 = 元堂隔三位，原典 L121/L126
+    # 两例互证）。缺失时该判据不判 —— 爻性不可由爻位推得，无据不造。
+    prenatal_lines: List[int] = field(default_factory=list)
 
 
 @dataclass
@@ -313,25 +322,39 @@ class RelationalInterpretationEngine:
         out: dict = {}
         raw_gua = (self.input.prenatal_hexagram or "").strip()
         if raw_gua:
-            # 「乾上乾下」/「乾」都收；只要能取到**不含「上/下」的那个卦名**
-            # 段里恰有一个卦名（取下卦），judge_liu_ju 只要卦名一层。
-            for seg in re.split(r"上", raw_gua):
-                seg = seg.replace("下", "").strip()
-                if seg in ("乾", "坤", "震", "巽", "坎", "离", "艮", "兑"):
-                    out["gua_name"] = seg
-                    break
+            # 「一卦名吉」判的是**卦名**（原典 L633 明举泰/大有/同人/晋/豫），
+            # 不是三画卦名。旧实现按「乾上乾下」拆出**三画卦**（乾/坤/…），
+            # 与吉卦表（全是卦名）永不相交 → 该判据恒不判。
+            # 真实入参是卦全名（「天水讼」），须先归一成简称（「讼」）。
+            short = short_hexagram_name(raw_gua)
+            if short:
+                out["gua_name"] = short
         yw = (self.input.yuan_tang or "").strip()
-        m = re.match(r"^(初|[二三四五]|上)", yw)
-        if m:
-            tok = m.group(1)
-            idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}[tok]
+        # 元堂名有两种书写（初/上爻「初六」式、二~五爻「六四」式），
+        # 两种都要认 —— 只认一种会让四/六的爻位静默漏判「二爻位」判据。
+        idx, nature = parse_yuantang_name(yw)
+        if idx is not None:
             out["yuantang_index"] = idx
-            out["yuantang_line"] = idx
+        # 元堂爻的**阴阳**（+1 阳 / -1 阴）。judge_you_yuan 要求的是阴阳，
+        # 不是爻位号：旧实现把 0-5 的爻位号塞进来，初爻(0)会让
+        # 「0 × 应爻 < 0」恒不成立，「五有援」恒判无援。
+        lines = list(getattr(self.input, "prenatal_lines", None) or [])
+        if idx is not None and len(lines) == 6:
+            nature = 1 if lines[idx] > 0 else -1
+        if nature is not None:
+            out["yuantang_line"] = nature
+        # 应爻：元堂隔三位（依起例卷之上 L121/L126 两例互证）。
+        # 应爻的阴阳取自**本卦**该爻的爻性。
+        if idx is not None and len(lines) == 6:
+            y_idx = ying_yao_index(idx)
+            out["ying_yao_index"] = y_idx
+            out["ying_yao_line"] = 1 if lines[y_idx] > 0 else -1
         lp = getattr(self.input, "line_position", None)
         if isinstance(lp, dict):
-            yao = lp.get("ying_yao") or lp.get("ying_yao_index")
-            if isinstance(yao, int):
-                out["ying_yao_line"] = yao
+            # 显式给了应爻爻性（"阳"/"阴"）才用；给的是爻位号则不采纳。
+            nat = lp.get("ying_yao_yinyang")
+            if isinstance(nat, str) and nat.strip() in ("阳", "阴"):
+                out.setdefault("ying_yao_line", 1 if nat.strip() == "阳" else -1)
         return out
     
     def _hexagram_base_score(self) -> float:

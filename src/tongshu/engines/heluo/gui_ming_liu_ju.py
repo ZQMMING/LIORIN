@@ -57,6 +57,10 @@ XIU_JU = {
     "有援": "五无援",
 }
 
+#: 爻位索引（0=初爻 … 5=上爻）→ 爻位名
+_YAO_POS_NAME = ("初爻", "二爻", "三爻", "四爻", "五爻", "上爻")
+
+
 #: 元堂爻「吉位」——原典 L636「元堂住在二五爻是也」
 JI_YAO_GOOD = (1, 4)          # 二爻、五爻（爻位 0=初 … 5=上）
 
@@ -87,8 +91,7 @@ def judge_yao_wei(yuantang_index: int) -> JuResult:
         name="爻位",
         passed=passed,
         basis=LIU_JU["爻位"][1],
-        detail=f"元堂在{'二爻' if yuantang_index == 1 else '五爻' if yuantang_index == 4 else f'{yuantang_index + 1}爻'}"
-               f"→ {'吉（二五爻）' if passed else '非二五爻'}",
+        detail=f"元堂在{_YAO_POS_NAME[yuantang_index]}→ {'吉（二五爻）' if passed else '非二五爻'}",
     )
 
 
@@ -160,6 +163,24 @@ SEASON_TRIGRAM_GUA: dict[str, str] = {
     "秋": "兑",   # 原典「秋兑金」
     "冬": "坎",   # 原典「冬坎水」
 }
+
+
+def ying_yao_index(yuantang_index: int) -> int:
+    """应爻爻位（元堂隔三位）。
+
+    原典依据（逐字，两例互证）：
+
+      · 起例卷之上 L121「假如同人九三爻是元堂……二岁取应爻，变同人上九为革上六」
+        → 同人卦九三（爻位 2）的应爻是上九（爻位 5）。
+      · 起例卷之上 L126「又假如小象是泰卦九二，卦应爻居五」
+        → 泰卦九二（爻位 1）的应爻居五（爻位 4）。
+
+    两例的爻位差都是 3，故：**应爻 = 与元堂相隔三位之爻**（六爻内互为应）。
+
+    注意：本函数只定位**爻位**；应爻的**阴阳**取自本卦该爻的爻性，
+    须由调用方传入卦的六爻（见 :func:`judge_you_yuan` 的 ``+1/-1`` 约定）。
+    """
+    return (yuantang_index + 3) % 6
 
 
 def judge_you_yuan(
@@ -293,5 +314,5 @@ __all__ = [
     "LIU_JU", "XIU_JU", "JI_YAO_GOOD", "JI_CI_GOOD_CHARS",
     "SEASON_TRIGRAM_GUA", "JuResult",
     "judge_yao_wei", "judge_yao_ci", "judge_de_shi",
-    "judge_you_yuan", "judge_shun_shi", "judge_liu_ju",
+    "judge_you_yuan", "judge_shun_shi", "judge_liu_ju", "ying_yao_index",
 ]

@@ -11,6 +11,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import Literal
 
@@ -27,6 +28,44 @@ class YuanTang:
 
 # 时辰定义（对应 0-23 小时）
 HOUR_NAMES = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥']
+
+#: 爻位名 → 爻位索引（0=初爻 … 5=上爻）
+YAO_POSITION_INDEX = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}
+
+#: 元堂名的两种书写（见 :func:`find_yuantang` 的命名规则）：
+#:   初爻/上爻 → 「初六」「上九」：爻位在前
+#:   二~五爻   → 「九二」「六四」：阴阳在前
+_YUANTANG_NAME_RE = re.compile(
+    r"^(?P<pos_a>[初二三四五上])?(?P<nat>[九六])(?P<pos_b>[初二三四五上])?$"
+)
+
+
+def parse_yuantang_name(text: str) -> tuple[int | None, int | None]:
+    """解析元堂名 → ``(爻位索引 0-5, 爻阴阳 +1 阳 / -1 阴)``。
+
+    元堂名有两种书写（见 :func:`find_yuantang` 的命名规则）：
+
+        · 初爻/上爻 → 「初六」「上九」（爻位在前）
+        · 二~五爻   → 「九二」「六四」（阴阳在前）
+
+    **两种都必须认**。只认一种会让另外三个爻位（二/三/四/五，共六个爻位
+    中的四个）的命盘在依赖元堂爻位的判据上**静默漏判**。
+
+    只含爻位、不含阴阳的写法（如「五爻」）只解出爻位，阴阳返回 ``None``
+    —— 爻阴阳不可由爻位推得，**无据即不填**（宁可该判项不判，也不造值）。
+    """
+    t = (text or "").strip()
+    if not t:
+        return None, None
+    m = _YUANTANG_NAME_RE.match(t)
+    if not m:
+        m2 = re.match(r"^(?P<pos>[初二三四五上])爻?$", t)
+        if m2:
+            return YAO_POSITION_INDEX[m2.group("pos")], None
+        return None, None
+    pos = m.group("pos_a") or m.group("pos_b")
+    nature = 1 if m.group("nat") == "九" else -1
+    return YAO_POSITION_INDEX[pos], nature
 
 # 上六时（阳时）与下六时（阴时）
 UPPER_HOURS = {0, 1, 2, 3, 4, 5}     # 子丑寅卯辰巳
