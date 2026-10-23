@@ -104,7 +104,7 @@ class TestLiuYueUsesXingNianYaoInPipeline(unittest.TestCase):
             if not months:
                 continue
             xy = e.get("xingnian_yao_index")
-            seg = e.get("yuantang_index")
+            seg = e.get("dayun_seg_yuantang_index")
             if not isinstance(xy, int) or not isinstance(seg, int):
                 continue
             if xy == seg:

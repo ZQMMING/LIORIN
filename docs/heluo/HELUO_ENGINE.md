@@ -294,7 +294,8 @@ python tools/heluo/quzheng_20261008/dump_natural.py      # 引擎自然输出（
 | **流日层** | 1 个流日本卦（完整卦一次算好）+ 6 日各自激活爻 | `timeline.daily_hexagram{base_hex, daily_yao[6]}` |
 
 近 3 年之所以保留完整流年卦：guajie 的「近 3 年流年判词」
-（`guajie.py` L1779-1796）取 `yearly[].hexagram / yuantang_index / lines`，
+（`guajie.py`）取 `yearly[].hexagram / xingnian_yao_index / lines`
+（行年爻；2026-10-24 起字段语义已分流，见 §14.35），
 是既有功能，不因裁剪而丢弃。
 
 ### 12.2 流日层口径（一卦管 6 日、一爻一日）
@@ -1724,3 +1725,93 @@ fixture**（bazi 与 birth_date 互不对应，例如 1983-11-03 配寅月）。
 #### 14.34.5 全量结果
 
 **1234 passed / 0 failed / 4653 subtests**（原 1226 → +8 项新守卫）。
+
+### 14.35 爻位字段语义拆分：`yuantang_index` 一名三义 → 各归其名（2026-10-24）
+
+#### 14.35.1 问题根源：三个爻位共用一个名字
+
+河洛里「爻位」有**三个语义完全不同**的量，此前统统叫 `yuantang_index`：
+
+| 概念 | 含义 | 变化规律 | 旧名 | 现名 |
+|---|---|---|---|---|
+| **本命元堂** | 出生时先天卦的元堂爻 | **全程唯一** | `yuantang_index` | `YuanTang.yuantang_index`（**保持不变**） |
+| **大运段元堂** | 本岁所属大运段的元堂爻 | **每段变一次，段内 9 年恒定** | `yuantang_index` | **`dayun_seg_yuantang_index`** |
+| **行年爻** | 该年小象游变变出的那一爻 | **逐年挨次变** | — | **`xingnian_yao_index`** |
+
+同名异义不是「不好看」的问题 —— 它已经**三次**导致静默错判
+（指标全绿、测试全过、功能实际取的是另一个爻）：
+
+1. **流年断爻取错**（§14.33）：取「年卦的元堂爻」= 大运段爻
+   ⇒ 同一大运段内 9 年流年判词**完全相同**（实测 2024/2025/2026 皆取「上九」）。
+2. **流月起卦基准取错**（§14.34）：起月卦基准误用大运段元堂爻
+   ⇒ 同一大运段内 9 年的流月序列完全相同。
+3. **死断「流年连三年不吉」取错**（**本轮新发现**）：死断判的正是**流年判词**，
+   却仍取大运段爻位 ⇒ 三年取同一爻位。
+
+第 3 处是本轮拆字段时顺带查出来的：`_collect_si_duan` 里
+`yyt = e.get("yuantang_index")` 与 §14.33 修过的流年断爻**口径不一致**。
+原典依据（起例卷之下·后天详说 L34）：
+
+> 「若流年连三年不吉，卦爻又不吉，本身卦不佳，重反支干元气，便可以死断之。」
+
+「流年连三年不吉」的主语是**流年**，故取流年判词即取**行年爻**。
+
+#### 14.35.2 改动
+
+**字段改名**（流年层）：
+
+| 位置 | 旧键 | 新键 |
+|---|---|---|
+| `LiuNianYear`（`timeline_yun.py`） | `yuantang_index` | `dayun_seg_yuantang_index` |
+| `timeline.yearly_hexagrams[]` 条目 | `yuantang_index` / `yuantang_nature` | `dayun_seg_yuantang_index` / `dayun_seg_yuantang_nature` |
+| `timeline.target_year_hexagram` 摘要 | 同上 | 同上（并补 `xingnian_yao_index`） |
+
+**本命元堂不动**：`YuanTang.yuantang_index` 语义唯一、无歧义，
+且是跨引擎公共契约名（主仓 `signal_engine` 的 `heluo_yuantang_index`
+经 `getattr(yuantang, "yuantang_index")` 读取）—— 改名会打断跨仓链路，
+故**保持原名**。真正的歧义只在流年层，分流即可。
+
+**取爻口径统一**（新增 `guajie._pick_liunian_yao_index`）：
+
+```
+1. xingnian_yao_index        ← 该年小象变出之爻（首选）
+2. dayun_seg_yuantang_index  ← 大运段元堂爻（旧口径，仅当 1 不可得）
+3. 与上一年流年卦的唯一差异爻 ← 独立复算口径（可自洽验证）
+4. 皆不可得 → 返回 None（调用方留痕，不静默代换一个爻）
+```
+
+流年断爻（`build_guajie_from_result`）与死断流年判词（`_collect_si_duan`）
+**改走同一函数**，两条路径口径不再可能分叉。
+
+**实证变化**（1983-11-03 午时，近 3 年死断流年判词所取之爻）：
+
+| 年 | 修前（段元堂位） | 修后（行年爻） |
+|---|---|---|
+| 2024 风天小畜 | 上九 | **九三** |
+| 2025 乾为天 | 上九 | **九四** |
+| 2026 火天大有 | 上九 | **六五** |
+
+#### 14.35.3 新增守卫：`tests/heluo/test_heluo_yao_index_naming.py`（13 项）
+
+* `LiuNianYear` 字段名不得再有裸 `yuantang_index`；
+* 流年条目 / `target_year_hexagram` 键名不得再有裸 `yuantang_index` / `yuantang_nature`；
+* 本命元堂**保持** `yuantang_index`（防过度改名）；
+* 大运段元堂在段内**恒定**、行年爻在段内**逐年变** ——
+  两者取值必须可区分，否则改名只是换了个说法；
+* 三处取爻口径一致（流年判词 / 死断流年判词 == 行年爻）；
+* `_pick_liunian_yao_index` 三级回退逐一验证 + 不可得时返回 `None`；
+* **源码静态扫描**：`timeline_yun.py` / `guajie.py` 内不得再出现裸 `yuantang_index`。
+
+**变异验证 4/4 全部抓住**：M1 条目键名退回 / M2 dataclass 字段退回 /
+M3 流年断爻改取段元堂 / M4 死断改取段元堂。
+
+#### 14.35.4 顺带修一处「侥幸通过」的守卫
+
+`tests/heluo/test_heluo_xingnian_yao.py` 原写 `_yao_name(xy, target["lines"])` ——
+`_yao_name` 第二参是**爻的阴阳值**（1/-1），误传整个 lines 列表 ⇒ 恒判「阴」。
+本盘 2026 年行年爻恰是阴爻（六五），故旧写法**侥幸通过**；换到阳爻年份即会红。
+已改为传爻值本身。
+
+#### 14.35.5 全量结果
+
+**1247 passed / 0 failed / 4662 subtests**（原 1234 → +13 项新守卫）。

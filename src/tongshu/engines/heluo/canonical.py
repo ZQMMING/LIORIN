@@ -672,9 +672,17 @@ class HeluoCanonical:
         target_year_entry: dict = {}    # 目标流年卦摘要
 
         for y in liunian.years:
-            # 流年卦元堂：大运分段后取该年所属大运段元堂；无则回退先天元堂
-            yyt = y.yuantang_index if y.yuantang_index >= 0 else yuantang.yuantang_index
-            yyt_nature = y.lines[yyt] if y.lines and 0 <= yyt < len(y.lines) else None
+            # 流年卦的两个爻位字段（**语义已分流，勿再合并**）：
+            #   - dayun_seg_yuantang_index：本年所属**大运段**的元堂爻位
+            #     （同段 9 年恒定；流年卦的「元堂爻」若取它，正是 §14.33 修掉的错）。
+            #   - xingnian_yao_index：本年**小象行年爻**（逐年挨次变；原典流年断爻
+            #     与流月起卦基准皆取此爻）。
+            # 无大运段元堂时回退本命元堂（先天卦元堂，全程唯一）。
+            seg_yt = (y.dayun_seg_yuantang_index
+                      if getattr(y, "dayun_seg_yuantang_index", -1) >= 0
+                      else yuantang.yuantang_index)
+            seg_yt_nature = (y.lines[seg_yt]
+                             if y.lines and 0 <= seg_yt < len(y.lines) else None)
 
             if fast_path and y.year not in material_years:
                 # 非近 3 年流年：**纯元数据**，只存年份/虚岁/干支，不起卦。
@@ -692,9 +700,13 @@ class HeluoCanonical:
                 "upper": y.upper,
                 "lower": y.lower,
                 "lines": y.lines,
-                "yuantang_index": yyt,
-                "yuantang_nature": yyt_nature,
-                # 2026-10-24 新增：本年「小象行年爻」（该年小象变出的那一爻）。
+                # 2026-10-24 改名：原叫 "yuantang_index"/"yuantang_nature"，
+                # 与本命元堂（YuanTang.yuantang_index）同名异义 —— 流年层
+                # 的这两个键装的其实是**大运段**元堂爻位与其爻性。
+                # 命名分流后，本命元堂/大运段元堂/行年爻三者不再共名。
+                "dayun_seg_yuantang_index": seg_yt,
+                "dayun_seg_yuantang_nature": seg_yt_nature,
+                # 本年「小象行年爻」（该年小象变出的那一爻）。
                 # 流年断爻取此爻（非「年卦的元堂爻」= 大运段爻，同段内恒定）。
                 "xingnian_yao_index": getattr(y, "xingnian_yao_index", -1),
             }
@@ -715,7 +727,8 @@ class HeluoCanonical:
                 #   错用段元堂 → 同一大运段内 9 年的流月序列完全相同，
                 #   而原典要求流月逐年不同（实测 12 个月里 10 个月卦名不同）。
                 _xy = getattr(y, "xingnian_yao_index", -1)
-                _liuyue_base = _xy if (isinstance(_xy, int) and 0 <= _xy < 6) else yyt
+                _liuyue_base = (_xy if (isinstance(_xy, int) and 0 <= _xy < 6)
+                                else seg_yt)
                 liuyue = compute_liuyue(y.lines, _liuyue_base)
                 months: list[dict] = []
                 for m in liuyue.months:
@@ -805,8 +818,9 @@ class HeluoCanonical:
                     "upper": entry["upper"],
                     "lower": entry["lower"],
                     "lines": entry["lines"],
-                    "yuantang_index": yyt,
-                    "yuantang_nature": yyt_nature,
+                    "dayun_seg_yuantang_index": seg_yt,
+                    "dayun_seg_yuantang_nature": seg_yt_nature,
+                    "xingnian_yao_index": entry.get("xingnian_yao_index", -1),
                     # yi_signal / changed_line 在 fast-path 下**恒为空串**：
                     # 填值需跑 interpret_all_liunian（全仓零消费方的 dead-write），
                     # fast-path 刻意不跑（批次 P 起）。定稿的 target_year_hexagram

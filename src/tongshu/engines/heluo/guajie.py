@@ -1537,6 +1537,44 @@ def _yao_name(idx: int, line: int) -> str:
     return f"{ch}{pos}"
 
 
+def _pick_liunian_yao_index(entry: dict, entries: list[dict]) -> int | None:
+    """取某年流年卦的**行年爻位**（该年小象游变变出的那一爻）。
+
+    原典依据（起例卷之上·小象行年卦气）：流年判词取**小象行年爻**，
+    不是「年卦的元堂爻」（= 大运段爻，同段 9 年恒定）—— 那是 §14.33
+    修掉的旧错；死断「流年连三年不吉」判的也是流年判词，故同口径。
+
+    取爻优先级（逐级回退，均为**可审计**口径）：
+      1. `xingnian_yao_index` —— 该年小象变出之爻（引擎显式落字段，首选）；
+      2. `dayun_seg_yuantang_index` —— 大运段元堂爻（旧口径，仅当 1 不可得）；
+      3. 与**上一年**流年卦的唯一差异爻（独立复算口径，可自洽验证）。
+
+    返回 None 表示三者皆不可得（调用方须留痕，不得静默代换一个爻）。
+    """
+    lines = entry.get("lines") or []
+    xy = entry.get("xingnian_yao_index")
+    if isinstance(xy, int) and 0 <= xy < len(lines):
+        return xy
+    seg = entry.get("dayun_seg_yuantang_index")
+    if isinstance(seg, int) and 0 <= seg < len(lines):
+        return seg
+    # 回退三：与上一年流年卦的唯一差异爻
+    year = entry.get("year")
+    for i, e in enumerate(entries):
+        if e.get("year") != year:
+            continue
+        if i == 0:
+            break
+        prev_lines = entries[i - 1].get("lines") or []
+        diffs = [k for k in range(6)
+                 if len(lines) > k and len(prev_lines) > k
+                 and lines[k] != prev_lines[k]]
+        if len(diffs) == 1:
+            return diffs[0]
+        break
+    return None
+
+
 def build_guajie_from_result(
     result,
     bazi: list[tuple[str, str]] | None = None,
@@ -1600,7 +1638,7 @@ def build_guajie_from_result(
         liuri_yao_name = ""
         if target_year is not None and result.timeline is not None:
             entries = result.timeline.yearly_hexagrams or []
-            for i, e in enumerate(entries):
+            for e in entries:
                 if e.get("year") == target_year:
                     liunian_hex = _short(e.get("hexagram", ""))
                     # 流年断爻：**小象行年爻** = 该年小象变出的那一爻
@@ -1612,19 +1650,12 @@ def build_guajie_from_result(
                     #   而原典要求行年爻**逐年挨次变** —— 故流年判词整层取错爻。
                     #   现优先取 xingnian_yao_index（该年变出之爻）；
                     #   缺失时回退「与上年 diff 唯一差异爻」；再回退本命元堂爻。
+                    #   取爻口径统一走 `_pick_liunian_yao_index`（与死断「流年连三年
+                    #   不吉」同一函数），杜绝两条路径口径再分叉。
                     cur_lines = e.get("lines") or []
-                    _xy = e.get("xingnian_yao_index")
-                    if isinstance(_xy, int) and 0 <= _xy < len(cur_lines):
-                        liunian_yao_name = _yao_name(_xy, cur_lines[_xy])
-                    yyt = e.get("yuantang_index")
-                    if not liunian_yao_name and yyt is not None and len(cur_lines) > yyt:
-                        # 回退一：年卦元堂爻（旧口径，仅当行年爻不可得时）
-                        liunian_yao_name = _yao_name(yyt, cur_lines[yyt])
-                    if not liunian_yao_name and i > 0:
-                        prev_lines = entries[i - 1].get("lines") or []
-                        diffs = [k for k in range(6) if len(cur_lines) > k and len(prev_lines) > k and cur_lines[k] != prev_lines[k]]
-                        if len(diffs) == 1 and len(cur_lines) > diffs[0]:
-                            liunian_yao_name = _yao_name(diffs[0], cur_lines[diffs[0]])
+                    _yao_idx = _pick_liunian_yao_index(e, entries)
+                    if _yao_idx is not None and len(cur_lines) > _yao_idx:
+                        liunian_yao_name = _yao_name(_yao_idx, cur_lines[_yao_idx])
                     if not liunian_yao_name:
                         liunian_yao_name = yuantang_yao
                     # 流月应期：从当年 months 自动定位
@@ -1924,15 +1955,24 @@ def _collect_si_duan(
     # 近3年流年判词（target_year-2 .. target_year）
     recent: list[dict] = []
     if target_year is not None and result.timeline is not None:
-        for e in (result.timeline.yearly_hexagrams or []):
+        entries = result.timeline.yearly_hexagrams or []
+        for e in entries:
             y = e.get("year")
             if y is not None and target_year - 2 <= y <= target_year:
                 hx = _short(e.get("hexagram", ""))
-                yyt = e.get("yuantang_index")
                 cur_lines = e.get("lines") or []
+                # ⚠ 2026-10-24 修正：此处原取 `e.get("yuantang_index")`
+                #   = **大运段元堂爻位**（同段 9 年恒定）—— 与 §14.33 修掉的
+                #   流年断爻旧错**同类**：死断「若流年连三年不吉」判的正是
+                #   **流年判词**，其取爻口径必须与流年断爻一致 = **行年爻**。
+                #   原典依据（起例卷之下·后天详说 L34）：
+                #     「若流年连三年不吉，卦爻又不吉，本身卦不佳，
+                #       重反支干元气，便可以死断之。」
+                #   → 「流年连三年不吉」的主语是**流年**，取流年判词即取行年爻。
+                yao_idx = _pick_liunian_yao_index(e, entries)
                 yao_name = ""
-                if yyt is not None and len(cur_lines) > yyt:
-                    yao_name = _yao_name(yyt, cur_lines[yyt])
+                if yao_idx is not None and len(cur_lines) > yao_idx:
+                    yao_name = _yao_name(yao_idx, cur_lines[yao_idx])
                 d = query_yao_duan(hx, yao_name) if yao_name else None
                 recent.append({
                     "year": y, "hexagram": hx, "yao": yao_name,

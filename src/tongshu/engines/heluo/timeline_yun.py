@@ -144,7 +144,16 @@ class LiuNianYear:
     lower: str
     lines: list[int]
     rule: str                 # 采用的规则说明
-    yuantang_index: int = -1  # 本岁所属大运段的元堂爻位（流月卦据此起）
+    #: 本岁所属**大运段**的元堂爻位（0-5）。
+    #:
+    #: ⚠ 命名警示（2026-10-24）：本字段**不是本命元堂**，也**不是行年爻**。
+    #:   - 本命元堂 = `YuanTang.yuantang_index`（出生时先天卦的元堂，全程唯一）；
+    #:   - 大运段元堂 = 本字段（每换一段大运变一次，段内恒定）；
+    #:   - 行年爻 = `xingnian_yao_index`（本字段下方，逐年挨次变）。
+    #:   三者曾共用「yuantang_index」一名，导致「该取行年爻却取了大运段爻」
+    #:   的静默错判（2026-10-24 修复流年断爻、流月起卦基准时各踩一次）。
+    #:   故流年层一律用 `dayun_seg_yuantang_index` 明确指称本字段。
+    dayun_seg_yuantang_index: int = -1
     #: 本年「小象行年爻」= 该年小象变出的那一爻（原典起例卷之上·小象行年卦气：
     #: 「一岁在同人九三（阳）爻；二岁取应爻变，同人上九为革上六；三岁复取应爻变，
     #:  革九三为随六三；然后自下而上，四岁变随九四为屯六四……」）。
@@ -270,7 +279,7 @@ def compute_liunian(
         result.years.append(LiuNianYear(
             age=age, year=year, ganzhi=ganzhi, yang_year=yang,
             hexagram_name=name, upper=upper, lower=lower,
-            lines=cur, rule=rule, yuantang_index=seg_yt,
+            lines=cur, rule=rule, dayun_seg_yuantang_index=seg_yt,
             xingnian_yao_index=flip_idx,
         ))
         prev1 = cur

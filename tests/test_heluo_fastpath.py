@@ -321,7 +321,10 @@ class TestFastPathDisabled(unittest.TestCase):
 _EXPECTED_META_KEYS = {
     "age", "year", "ganzhi", "yang_year", "hexagram",
     "upper", "lower", "lines",
-    "yuantang_index", "yuantang_nature",
+    # 2026-10-24 改名：原 "yuantang_index"/"yuantang_nature" —— 与本命元堂
+    # （YuanTang.yuantang_index）同名异义，实为大运段元堂爻位/爻性。
+    "dayun_seg_yuantang_index", "dayun_seg_yuantang_nature",
+    "xingnian_yao_index",
 }
 
 

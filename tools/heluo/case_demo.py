@@ -98,8 +98,10 @@ def dump(bz, gender, birth_hour, birth_date, target, label=""):
 
     for y2 in r.timeline.yearly_hexagrams:
         if y2.get("year") == target:
-            print(f"  {target} 流年 (虚岁{age}) : {y2['hexagram']} 元堂 idx="
-                  f"{y2['yuantang_index']} ({y2['yuantang_nature']}爻)")
+            print(f"  {target} 流年 (虚岁{age}) : {y2['hexagram']} "
+                  f"大运段元堂 idx={y2['dayun_seg_yuantang_index']} "
+                  f"({y2['dayun_seg_yuantang_nature']}爻) "
+                  f"行年爻 idx={y2['xingnian_yao_index']}")
             for m in y2.get("months", [])[:3]:
                 up, lo = m.get("upper"), m.get("lower")
                 print(f"      流月 {m.get('month')}月: {up}{lo} 上{up} 下{lo}")

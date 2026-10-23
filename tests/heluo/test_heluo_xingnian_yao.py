@@ -147,7 +147,6 @@ class TestLiunianJudgementUsesXingNianYao(unittest.TestCase):
             xy = e.get("xingnian_yao_index")
             if not isinstance(xy, int) or not (0 <= xy < len(e.get("lines") or [])):
                 continue
-            want = _yao_name(xy, e["lines"])
             with self.subTest(year=e["year"]):
                 self.assertIsNotNone(
                     e.get("xingnian_yao_index"),
@@ -160,7 +159,12 @@ class TestLiunianJudgementUsesXingNianYao(unittest.TestCase):
         self.assertIsNotNone(target, "应能定位到流年卦条目")
         xy = target.get("xingnian_yao_index")
         self.assertIsInstance(xy, int, "流年卦条目须带 xingnian_yao_index")
-        want = _yao_name(xy, target["lines"])
+        # ⚠ 2026-10-24 修：原写 `_yao_name(xy, target["lines"])` ——
+        #   _yao_name 的第二参是**爻的阴阳值**（1/-1），误传整个 lines 列表
+        #   → 恒判「阴」，期望值与实际值只在「恰好也是阴爻」时相等。
+        #   本盘 2026 年行年爻恰是阴爻（六五），故旧写法**侥幸通过**；
+        #   换成阳爻年份即会红。改为传爻值本身。
+        want = _yao_name(xy, target["lines"][xy])
         self.assertEqual(ly.get("yao"), want,
                          f"流年判词所取之爻应为行年爻 {want}，实得 {ly.get('yao')}")
 
