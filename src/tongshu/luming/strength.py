@@ -329,15 +329,27 @@ def year_power(verdicts) -> dict:
             zhi += 0.5
     if xi_lei_n >= 2:
         xiong += 1.0                          # 两条以上细累合计计1
-    # 2026-10-23 档位修正 (五行精纪 L4276 烛神经): "若五六分恶运, 只浮灾细累而已.
-    #   至七分恶运, 方有重灾" — 重灾起点 = 七分 (≥7); 6.01-6.99 属"五六分"
-    #   中档 (浮灾细累), 原口径 xiong>6 判重 把 6.01-6.99 误升重灾, 与原文不符.
-    if xiong < 4:
-        yl = "轻"      # 三四分恶运
-    elif xiong < 7:
-        yl = "中"      # 五六分恶运 (浮灾细累)
+    # 恶力档 (L4276 烛神经 "至七分恶运方有重灾"): 古法"恶运分数"是恶力本身的强度,
+    #   不是轻凶逐条凑分 — 多个2分轻凶(空亡/丧门/劫财V90B等)叠加不等于"七分重灾"。
+    #   按"最重凶级别 + 重凶数量"定级:
+    #     重 = 含≥1个4分重凶(定死/天罗/晦气/征太岁/冲年等), 或 ≥2个3分凶(重凶会集);
+    #     中 = 含3分凶, 或 2分轻凶累加≥4; 轻 = 仅少量2分/细累
+    _ws = []
+    for v in verdicts:
+        if v.get("tone") == "凶" and v.get("rule_id") not in _XI_LEI_RULES:
+            _po = v.get("power_override")
+            _ws.append(_po if _po is not None else YEAR_XIONG.get(v.get("rule_id", ""), 2))
+    _max_w = max(_ws, default=0)
+    _has4 = _max_w >= 4
+    # 重灾(L4276"七分恶运方有重灾" + L3664"灾有五期=凶会集"): 须 恶力整体≥7
+    #   且 含真正重凶(4分) — 同时排除"纯轻凶凑数"(无4分) 与"单个4分"(恶力仅4分,
+    #   只属"四分恶运"=需防中灾)。
+    if xiong >= 7 and _has4:
+        yl = "重"
+    elif xiong >= 4 or _has4:
+        yl = "中"
     else:
-        yl = "重"      # 七分及以上 (方有重灾)
+        yl = "轻"
     return {"xiong": round(xiong, 2), "ji": round(ji, 2), "zhi": zhi,
             "level": yl, "xi_lei_n": xi_lei_n}
 
@@ -442,7 +454,8 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
     if not info:
         return out
     _luck_rules = {v["rule_id"] for v in lm.verdicts
-                   if v.get("scope") == "运" and v.get("target") == yctx["luck_pillar"]}
+                   if v.get("scope") == "运" and v.get("target") == yctx["luck_pillar"]
+                   and v.get("tone") == "凶"}   # 仅取实判凶的规则 (V49-XS 凶煞在该运判吉时不构成屯蹇)
     xiong_hui = bool(_luck_rules & _XIONG_HUI_RULES)     # 屯蹇凶祸之运
     ji_tai = info["verdict"] in ("偏吉", "吉")           # 吉泰之运
     # 真实关系: 运上 冲/刑 + 命柱 relations 的 冲/刑/害/压
@@ -509,32 +522,40 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
             #   轻屯蹇(大小耗/凶煞)仍须净恶力≥7 (1986 乙丑运大小耗 6分→浮灾守住)
             _heavy_hui = bool((_luck_rules & _XIONG_HUI_RULES)
                               and not (_luck_rules & _XIONG_HUI_LIGHT))
-            if _year_xiong >= 7 or (_heavy_hui and _year_xiong >= 6):
+            # 发祸门槛统一用"恶力档" (非累加分数): 多个2分轻凶叠加(level=中)不构成
+            #   发祸重灾; 须 level=重(含4分重凶/≥2个3分重凶会集), 或 重屯蹇(天罗/
+            #   元辰犯运)且净恶力≥6 (喻1951 天罗+太岁压+小运衰 = 处决实证)
+            if _pwr["level"] == "重" or (_heavy_hui and _year_xiong >= 6):
                 out["mode"] = "发祸"
                 out["year_tone"] = "凶"   # L4273 凶祸之运遇太岁刑冲 + 小运冲击死绝 → 方可发祸
                 out["detail"] = "大运屯蹇凶祸(死绝凶杀), 太岁又见刑冲, 小运不和冲击死绝, 恶力重, 方主发祸 (五行精纪 L4273/L4276/三命通会 L943)"
             else:
                 out["mode"] = "浮灾"
                 out["year_tone"] = year_tone
-                out["detail"] = ("大运屯蹇凶祸、太岁犯命、小运不和, 然流年恶力轻中(凶强度<7,"
-                                 "七分恶运方有重灾), 细累浮灾不为重害 (五行精纪 L4276)")
-    elif ji_tai and (tai_xing or tai_hai
-                     or yctx.get("xy_xing_hai") or yctx.get("xy_dead_jue")):
-        out["mode"] = "浮灾"
-        # L4273 吉运中太岁/小运到刑害之乡 → 细累浮灾不为重害:
-        #   2026-10-21 扩小运信号 (吉泰之运+小运死绝/刑害 = 细累浮灾);
-        #   吉面不弱于凶面则保留流年自身判定 (吉面之年细累不为重害)
+                out["detail"] = ("大运屯蹇凶祸、太岁犯命、小运不和, 然流年恶力档非重(仅轻凶叠加,"
+                                 "非重凶会集), 细累浮灾不为重害 (五行精纪 L4276)")
+    elif ji_tai:
+        # 吉运浮灾 (L4273): 太岁/小运到刑害之乡 → 细累浮灾;
+        #   太岁"冲"不在"刑害之乡", 须吉面净胜 (L4416 珞琭子"癸亥生得乙巳岁,
+        #   虽巳亥冲, 以身财之旺故不为灾") 才降浮灾; 逢冲而凶面净胜 → 不浮灾, 保持凶
         _p2 = year_power([v for v in (year_verdicts or [])
                           if not (v.get("rule_id", "") or "").startswith("LM-F")])
         _j2, _x2 = _p2["ji"], _p2["xiong"]
-        if year_tone == "吉":
-            out["year_tone"] = "吉" if _j2 >= _x2 else "吉凶相杂"
-        elif year_tone == "凶":
-            _heavy4 = any(YEAR_XIONG.get(v.get("rule_id", ""), 1) >= 4
-                          for v in (year_verdicts or []) if v.get("tone") == "凶")
-            if not _heavy4:
-                out["year_tone"] = "吉凶相杂"
-        out["detail"] = "大运吉泰, 太岁/小运刑害死绝, 细累浮灾, 不为重害 (五行精纪 L4273/三命通会 L943)"
+        _tai_xh = (tai_xing or tai_hai
+                   or yctx.get("xy_xing_hai") or yctx.get("xy_dead_jue"))
+        if _tai_xh or (tai_chong and _j2 >= _x2):
+            out["mode"] = "浮灾"
+            # L4273 吉运中太岁/小运到刑害之乡 → 细累浮灾不为重害:
+            #   2026-10-21 扩小运信号 (吉泰之运+小运死绝/刑害 = 细累浮灾);
+            #   吉面不弱于凶面则保留流年自身判定 (吉面之年细累不为重害)
+            if year_tone == "吉":
+                out["year_tone"] = "吉" if _j2 >= _x2 else "吉凶相杂"
+            elif year_tone == "凶":
+                _heavy4 = any(YEAR_XIONG.get(v.get("rule_id", ""), 1) >= 4
+                              for v in (year_verdicts or []) if v.get("tone") == "凶")
+                if not _heavy4:
+                    out["year_tone"] = "吉凶相杂"
+            out["detail"] = "大运吉泰, 太岁/小运刑害(或逢冲而吉面净胜), 细累浮灾, 不为重害 (五行精纪 L4273/三命通会 L943/L4416)"
     return out
 
 

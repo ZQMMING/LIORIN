@@ -3208,8 +3208,15 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
                      or (_is_clash(tb, year_branch) and _tai_nayin_rel_l == "克我")
                      # 冲年须克本命才算"刑克" (L4416: 冲年而不克不为灾)
                      or any(r["tai_relation"] == "刑" for r in tai_pillar_relations))
+    # 太岁坐日禄 + 年命克太岁纳音为财(身财旺): 古法救应, 排除定死 —
+    #   L4416 珞琭子"癸亥生得乙巳岁, 水虽绝在巳, 而以水克火为财……以身财之旺故不为灾";
+    #   L4149 广信集"若坐当生行年禄马救神上, 但灾耳"。太岁坐日禄=日主得禄(身有气),
+    #   我克为财=身任财, 与定死"身无气"前提冲突 → 降 V60B 大凶需防 (重险有救, 非必死)
+    _day_lu = LU_BY_STEM.get(chart.day_pillar.heavenly_stem, "")
+    _lu_cai_jiu = bool(tb == _day_lu and _tai_nayin_rel_l == "我克")
     tai_death_meeting = bool(
-        dl_growth in ("死", "绝") and _xy_shuai_xi and _tai_shuai_xi and _tai_ke_chong)
+        dl_growth in ("死", "绝") and _xy_shuai_xi and _tai_shuai_xi and _tai_ke_chong
+        and not _lu_cai_jiu)
     # 未全会集 = 大运死绝 + 太岁刑克 成立但三者未全会集于衰息 (小运或太岁任一不在
     #   衰息) → V60B 大凶需防 — 2026 太岁午=胎、2030 太岁戌=冠带 均属此类 (用户核验八)
     tai_death_part = bool(
@@ -3881,16 +3888,31 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         # 2026-10-21 维度标签
         _dims = dimension_of(rule["id"], out_txt, detail, "流年")
         # V59 按 shi_rel 区分 dims (五行精纪 L4419-4420):
-        #   克时干=神白经"克时身灾"(身/健康); 合时干=晦气"必主阴灾"(煞/灾祸, 非疾病)
-        #   分强度保持 (晦气必主阴灾, 与空亡/劫财叠加成势 → 26子2021离婚破财判凶)
+        #   合时干=晦气"必主阴灾"(煞/灾祸, 4分); 克时干=神白经"克时身灾"。
+        #   克时干轻重: 气并冲合死绝(小运死绝衰息)→身灾重(4分); 单纯干克(时干有气、
+        #   无死绝)→轻身灾/灾挠(2分, L4420"轻者灾挠") — 931例单纯克旧判4分过重
+        _pov = None
         if rule["id"] == "LM-V59":
             if obj.get("shi_rel") == "合":
+                # 合时干=晦气入门(L4419): 气并(小运死绝衰息 或 太岁至空亡 等凶会集)
+                #   →身灾重(4分); 单纯合(旺, 无他凶)→门户眷属之灾/灾挠(2分, L4420)
                 _dims = ("煞/灾祸", ["身/健康", "宫/六亲"])
-            # 克时干维持表中 身/健康
+                _xy_bad = obj.get("xy_dead_jue") or obj.get("xiao_yun_growth", "") in (
+                    "死", "绝", "衰", "病", "沐浴") or obj.get("tai_kong_wang")
+                if not _xy_bad:
+                    _pov = 2
+            # 克时干=L4421"太岁克生时亦身灾", 直接身灾(4分默认), 不降级
+        elif rule["id"] == "LM-V59B":
+            # 日干合太岁(晦气入门): 气并(小运死绝 或 空亡)→身灾重(4分); 单纯合→灾挠(2分)
+            _xy_bad = obj.get("xy_dead_jue") or obj.get("xiao_yun_growth", "") in (
+                "死", "绝", "衰", "病", "沐浴") or obj.get("tai_kong_wang")
+            if not _xy_bad:
+                _pov = 2
         verdicts.append({"rule_id": rule["id"], "out": out_txt,
                          "evidence": rule["evidence"], "tone": _tone,
                          "scope": "流年", "target": target, "detail": detail,
-                         "dims": _dims})
+                         "dims": _dims,
+                         **({"power_override": _pov} if _pov is not None else {})})
 
     for rule in YEAR_RULES:
         if rule["mode"] == "scalar":
@@ -4028,15 +4050,21 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     from .strength import _JIUXI_JI_RULES as _JXR, YEAR_XIONG as _YX
     # V60 定死 / V70 元辰 — 发祸级不可救 (珞琭子"元辰纵有吉神扶持, 不免灾祸倚伏";
     #   2026-10-21 用户定案: V70 与 V60 同级不救)
-    # 2026-10-23: V90A/V90B 比劫夺财 — 实祸级(破财合伙)不可全救 (论格局生死引用
-    #   "正财偏财见比肩分夺, 劫财羊刃又见岁运冲合, 必死" — 分夺之祸不因吉神自愈,
-    #   只保留断语降级展示, tone 不因尊吉卑凶升档)
-    _NO_JIUXI = {"LM-V60", "LM-V70", "LM-V90A", "LM-V90B"}
-    _jiu_yi = (not any(v.get("rule_id") in _NO_JIUXI and v.get("tone") == "凶"
-                       for v in verdicts)) and any(
+    # 2026-10-23 修正 (L4273 发祸前提): 发祸级"不救"只认 V60定死/V70元辰。
+    #   V90A/B 比劫夺财是破财(子平比劫), 非定死/元辰级, 大运吉+流年强吉净胜时可降级;
+    #   仍以 YEAR_XIONG 3 分进恶力, 吉力不足净胜时照常判凶 (26子 2021 恶力8守住)
+    _NO_JIUXI = {"LM-V60", "LM-V70"}
+    # 尊吉卑凶自愈边界 (L3660 莹和尚"大运为尊, 太岁小运为卑, 尊吉卑凶逢灾自愈";
+    #   L3664"灾有五期=多处凶会集刑克本命"不救): 自愈只针对"非重"恶力(轻/中=浮灾细累);
+    #   恶力档=重(含4分重凶/重凶会集)不降级 — 26子 2021 晦气4分重凶+空亡+劫财
+    #   档重, 守住离婚破财; 无4分重凶(如26亥2021) 才走尊吉, 但劫财阻纯吉 → 相杂
+    _jiu_yi = (_power["level"] != "重"
+               and not any(v.get("rule_id") in _NO_JIUXI and v.get("tone") == "凶"
+                           for v in verdicts)
+               and any(
         (v.get("tone") == "吉" and v.get("rule_id") in _JXR
          and not (v.get("rule_id") == "LM-Y73" and _nain_k < 1.0))  # 2026-10-23: Y73 需"身财之旺"(k=1.0)才配尊吉
-        for v in verdicts)
+        for v in verdicts))
     # 尊吉卑凶只减"需防级重凶集"凶分 (细累已在 year_power 归零; 普通凶如 V68 犯忌不动)
     _j_heavy = 0.0
     if _jiu_yi:
@@ -4056,7 +4084,7 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   净胜 (吉力 ≥ 凶力+2) 且无发祸级时 → 降为吉凶相杂 (强吉压外缘, 不判纯凶)。
     _NO_REMOVE = {"LM-V60", "LM-V66", "LM-V70", "LM-V52", "LM-V50",
                   "LM-V87", "LM-V78", "LM-V77", "LM-V62",
-                  "LM-V90A", "LM-V90B", "LM-S05"}
+                  "LM-S05"}
     if _agg["verdict"] == "凶":
         _serious = any(v.get("rule_id") in _NO_REMOVE and v.get("tone") == "凶"
                        for v in verdicts)
@@ -4078,7 +4106,10 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         year_tone = "凶"
     elif "LM-V60" in _rids2:
         year_tone = "凶"
-    elif year_tone == "吉" and any(rid in _HEAVY_XIONG for rid in _rids2):
+    elif year_tone == "吉" and any(
+            rid in _HEAVY_XIONG or rid in ("LM-V90A", "LM-V90B")
+            for rid in _rids2):
+        # 重凶集 或 比劫夺财(破财) 在场 → 不升纯吉, 降相杂 (吉中有破财/灾)
         year_tone = "吉凶相杂"
 
     # 2026-10-21 用户定案(深挖原著): 大运定基调 — 流年 tone 的天花板/地板
@@ -4142,9 +4173,30 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _luck_verdict = (_linfo or {}).get("verdict", "")
     _luck_ji = _luck_verdict in ("吉", "偏吉")      # 吉泰之运(含吉面占先)
     _luck_xiong = _luck_verdict in ("凶", "偏凶")   # 屯蹇凶祸之运(含凶面占先)
+    # 大运吉乡流年判凶, 仅当"流年含重凶/发祸级"时保持凶 (古法依据):
+    #   ① V60定死/V70元辰 — 发祸级不救;
+    #   ② L4273 发祸 (屯蹇凶运+太岁刑冲+小运死绝);
+    #   ③ 吉运逢太岁冲且凶面净胜 (L4273 mode=无, 冲不在"刑害"浮灾保护, L4416 反面);
+    #   ④ 流年恶力档=重 (含4分重凶 或 ≥2个3分重凶会集, L3664 灾有五期; 26子2021
+    #      晦气4分+空亡+劫财 → 重, 守住离婚破财)。
+    #   仅2分轻凶(空亡/丧门/勾绞/劫财V90B等)累加, 档非重 → 降相杂 (L4273 浮灾不为重害)
+    _tai_chong_now = bool(yctx.get("tai_chong_dayun") or yctx.get("tai_chong_nian"))
+    _chong_zhong = bool(_tai_chong_now and _i4273.get("mode") == "无")
+    # 气盛之运(烛神经 L4277): 大运曾历过本命长生——年命在运支处 长生/沐浴/冠带/
+    #   临官/帝旺, 则"虽岁运来冲克者为祸不重, 运气强故也"; 气弱(长生之前, 胎/养/
+    #   墓/绝/死/病/衰)则岁运刑冲便为灾。
+    _qi_sheng = False
+    if lm is not None and yctx["luck_pillar"]:
+        _lpi = next((p for p in (lm.luck_scope or {}).get("pillars", [])
+                     if p["stem"] + p["branch"] == yctx["luck_pillar"]), None)
+        if _lpi:
+            _qi_sheng = _lpi.get("shier_gong") in (
+                "长生", "沐浴", "冠带", "临官", "帝旺")
     _fa_huo_ji = (any(v.get("rule_id") in _NO_JIUXI and v.get("tone") == "凶"
                       for v in verdicts)
-                  or _i4273.get("mode") == "发祸")   # 不救实祸(V60定死/V70元辰/V90劫财)/L4273发祸, 可突破大运吉天花板
+                  or _i4273.get("mode") == "发祸"
+                  or _chong_zhong
+                  or (_power["level"] == "重" and not _qi_sheng))
     if _luck_ji and year_tone == "凶" and not _fa_huo_ji:
         year_tone = "吉凶相杂"          # 大运吉乡: 流年刑害只细累浮灾不为重害
     elif _luck_xiong and year_tone == "吉":
