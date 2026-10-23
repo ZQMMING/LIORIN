@@ -31,8 +31,8 @@
    "row": 47,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:544",
-    "engines\\common\\special_pattern.py:556"
+    "engines\\common\\special_pattern.py:587",
+    "engines\\common\\special_pattern.py:599"
    ],
    "source_chapter": "七、天干",
    "slice_match": "EXACT_CHAPTER",
@@ -203,7 +203,7 @@
    "row": 162,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:826"
+    "engines\\common\\special_pattern.py:881"
    ],
    "source_chapter": "十、形象",
    "slice_match": "EXACT_CHAPTER",
@@ -405,9 +405,9 @@
    "ref_count": 4,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:409",
-    "engines\\common\\special_pattern.py:524",
-    "engines\\common\\special_pattern.py:649",
-    "engines\\common\\special_pattern.py:652"
+    "engines\\common\\special_pattern.py:567",
+    "engines\\common\\special_pattern.py:698",
+    "engines\\common\\special_pattern.py:701"
    ],
    "source_chapter": "二十一、官杀",
    "slice_match": "EXACT_CHAPTER",
@@ -586,7 +586,7 @@
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:329",
     "engines\\common\\ge_jie_layer.py:1437",
-    "engines\\common\\special_pattern.py:443",
+    "engines\\common\\special_pattern.py:466",
     "engines\\common\\yongyao_resolve.py:334",
     "engines\\common\\yongyao_resolve.py:338",
     "p0_v2\\bazi_gate.py:590"
@@ -604,15 +604,15 @@
    "row": 438,
    "ref_count": 9,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:448",
-    "engines\\common\\special_pattern.py:459",
-    "engines\\common\\special_pattern.py:499",
-    "engines\\common\\special_pattern.py:533",
-    "engines\\common\\special_pattern.py:590",
-    "engines\\common\\special_pattern.py:597",
-    "engines\\common\\special_pattern.py:611",
-    "engines\\common\\special_pattern.py:616",
-    "engines\\common\\special_pattern.py:657"
+    "engines\\common\\special_pattern.py:471",
+    "engines\\common\\special_pattern.py:488",
+    "engines\\common\\special_pattern.py:528",
+    "engines\\common\\special_pattern.py:576",
+    "engines\\common\\special_pattern.py:633",
+    "engines\\common\\special_pattern.py:640",
+    "engines\\common\\special_pattern.py:660",
+    "engines\\common\\special_pattern.py:665",
+    "engines\\common\\special_pattern.py:712"
    ],
    "source_chapter": "十六、顺局",
    "slice_match": "EXACT_CHAPTER",
@@ -747,7 +747,7 @@
    "row": 862,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:814"
+    "engines\\common\\special_pattern.py:869"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -769,7 +769,7 @@
    "row": 2251,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:713"
+    "engines\\common\\special_pattern.py:768"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -838,7 +838,7 @@
    "row": 178,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:446"
+    "engines\\common\\special_pattern.py:469"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -862,7 +862,7 @@
    "engine_refs": [
     "engines\\common\\special_pattern.py:418",
     "engines\\common\\special_pattern.py:425",
-    "engines\\common\\special_pattern.py:565"
+    "engines\\common\\special_pattern.py:608"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -887,7 +887,7 @@
     "engines\\common\\special_pattern.py:216",
     "engines\\common\\special_pattern.py:412",
     "engines\\common\\special_pattern.py:424",
-    "engines\\common\\special_pattern.py:554"
+    "engines\\common\\special_pattern.py:597"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1615,7 +1615,7 @@
    "ref_count": 2,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:1460",
-    "engines\\common\\special_pattern.py:790"
+    "engines\\common\\special_pattern.py:845"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1637,7 +1637,7 @@
    "row": 2413,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:545"
+    "engines\\common\\special_pattern.py:588"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2144,9 +2144,9 @@
    "ref_count": 4,
    "engine_refs": [
     "engines\\common\\special_pattern.py:249",
-    "engines\\common\\special_pattern.py:447",
-    "engines\\common\\special_pattern.py:610",
-    "engines\\common\\special_pattern.py:613"
+    "engines\\common\\special_pattern.py:470",
+    "engines\\common\\special_pattern.py:659",
+    "engines\\common\\special_pattern.py:662"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2168,9 +2168,9 @@
    "row": 5092,
    "ref_count": 3,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:590",
-    "engines\\common\\special_pattern.py:601",
-    "engines\\common\\special_pattern.py:611"
+    "engines\\common\\special_pattern.py:633",
+    "engines\\common\\special_pattern.py:644",
+    "engines\\common\\special_pattern.py:660"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2334,15 +2334,13 @@
    "book": "SFTK",
    "book_cn": "神峰通考",
    "row": 679,
-   "ref_count": 7,
+   "ref_count": 5,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:409",
     "engines\\common\\special_pattern.py:429",
-    "engines\\common\\special_pattern.py:524",
-    "engines\\common\\special_pattern.py:648",
-    "engines\\common\\special_pattern.py:652",
-    "engines\\common\\special_pattern.py:654",
-    "engines\\common\\special_pattern.py:657"
+    "engines\\common\\special_pattern.py:567",
+    "engines\\common\\special_pattern.py:697",
+    "engines\\common\\special_pattern.py:701"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2415,8 +2413,8 @@
    "row": 3671,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:458",
-    "engines\\common\\special_pattern.py:657"
+    "engines\\common\\special_pattern.py:487",
+    "engines\\common\\special_pattern.py:712"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2438,7 +2436,7 @@
    "row": 4953,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:461"
+    "engines\\common\\special_pattern.py:490"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2582,7 +2580,7 @@
    "ref_count": 2,
    "engine_refs": [
     "engines\\common\\special_pattern.py:430",
-    "engines\\common\\special_pattern.py:461"
+    "engines\\common\\special_pattern.py:490"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2602,9 +2600,11 @@
    "book": "SMTH",
    "book_cn": "三命通会",
    "row": 11450,
-   "ref_count": 1,
+   "ref_count": 3,
    "engine_refs": [
-    "engines\\common\\special_pattern.py:650"
+    "engines\\common\\special_pattern.py:553",
+    "engines\\common\\special_pattern.py:556",
+    "engines\\common\\special_pattern.py:699"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
