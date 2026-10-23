@@ -157,13 +157,31 @@ def build_platform_signals(result: Any) -> list[dict]:
                             scope, "DAILY_ACTIVATION"))
 
     # ④ 本命（基线层）：先天卦 + 元堂爻，取该爻原典爻辞
+    # ⚠ 2026-10-24 第三轮审计修：原实现读 `benming.get("prenatal") or
+    #   benming.get("gua")` 与 `benming.get("yuantang")` —— 但判词层
+    #   `compose_guajie` 落的键是 {"hexagram", "gua_ci", "gua_ci_jingyi",
+    #   "gua_ci_shiyi", "lines", "lines_jingyi", "lines_shiyi"}，
+    #   **这三个键一个都不存在** ⇒ gua/yt 恒为 "" ⇒ `if gua and yt` 恒假
+    #   ⇒ **BASELINE 层永不产出**，且无任何痕迹。
+    #   而守卫 tests/heluo/test_heluo_canonical_signals.py 只断言
+    #   `layers ⊆ {BASELINE, CYCLE_CONTEXT, DAILY_ACTIVATION}`（子集），
+    #   永不断言 BASELINE **存在** ⇒ 回灌后基线层凭空消失，无人察觉。
+    #
+    #   修法：
+    #   ① 卦名取 `benming["hexagram"]`（判词层实际落的键）；
+    #   ② 元堂爻名本判词层 benming 里**没有** → 从 result 取
+    #      （result.yuantang.yuantang 形如「六四」「初六」），
+    #      **不改公开签名**（`build_platform_signals(result)`），
+    #      直接从传入的 result 上取，不新增必填参数。
     benming = gj.get("benming") or {}
-    gua = benming.get("prenatal") or benming.get("gua") or ""
-    yt = benming.get("yuantang") or ""
+    gua = benming.get("hexagram") or benming.get("prenatal") or benming.get("gua") or ""
+    _yt_obj = getattr(result, "yuantang", None)
+    yt = (getattr(_yt_obj, "yuantang", "") or "").strip()
     if gua and yt:
         try:
             from .guajie import query_yao_duan
-            yao_duan = query_yao_duan(gua, yt)
+            from .numbers import short_hexagram_name
+            yao_duan = query_yao_duan(short_hexagram_name(gua) or gua, yt)
         except Exception:
             yao_duan = None
         if yao_duan is not None:

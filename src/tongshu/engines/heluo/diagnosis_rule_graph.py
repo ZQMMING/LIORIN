@@ -416,6 +416,7 @@ def heluo_own_direction(rule_id: str, frozen_state: Any
     try:
         from .gui_ming_liu_ju import (GUA_MING_GOOD_EXAMPLES, judge_liu_ju,
                                        judge_yao_wei)
+        from .numbers import short_hexagram_name
     except Exception as exc:                     # pragma: no cover
         return None, "六项判据不可用：%s" % exc
 
@@ -469,12 +470,23 @@ def heluo_own_direction(rule_id: str, frozen_state: Any
         name = (getattr(frozen_state, "prenatal_name", "") or "").strip()
         if not name:
             return None, "先天卦名缺失"
+        # ⚠ 2026-10-24 第三轮审计修：原实现把**全名**（如「地天泰」）直接
+        #   传给 judge_liu_ju，而 GUA_MING_GOOD_EXAMPLES 装的是**简称**
+        #   （「泰」「大有」「同人」「晋」「豫」）⇒ 精确成员判断恒不成立
+        #   ⇒ 「一卦名吉」这条原典判据**永不触发**，方向静默回落 NEUTRAL。
+        #   而 interpretation.py:360 的同一判据**已**用 short_hexagram_name 归一
+        #   —— 同一条判据两处口径不一致，本处是漏的那一处。
+        #   修法：按 interpretation.py 的同一口径归一（numbers.short_hexagram_name
+        #   是判词层单一来源，不另立手抄表）。
+        short = short_hexagram_name(name)
+        if not short:
+            return None, f"先天卦名「{name}」无法归一为简称"
         if not any(g in name for g in GUA_MING_GOOD_EXAMPLES):
             return None, ("六项·卦名：原文明举吉卦%s，本卦%s不在其列"
                           "（原文作「之类」=举例未穷举，故不判）"
                           % ("、".join(GUA_MING_GOOD_EXAMPLES), name))
         r = _dir_from_jiu_ji(
-            judge_liu_ju(gua_name=name))
+            judge_liu_ju(gua_name=short))
         if r is None:
             return None, "六项·卦名不判"
         return r, "六项·卦名：%s 在原文明举吉卦之列" % name

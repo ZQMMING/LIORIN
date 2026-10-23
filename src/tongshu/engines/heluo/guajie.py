@@ -509,15 +509,34 @@ def jingyi_load_error() -> str:
 
 
 def _split_duans(duans: list[str]) -> tuple[str, str, str]:
-    """把断语列表分成 叶吉/不叶/岁运 三类（原典措辞变体）。"""
+    """把断语列表分成 叶吉/不叶/岁运 三类（原典措辞变体）。
+
+    ⚠ 2026-10-24 第三轮审计修（**否定式优先**）：
+      原实现先判叶关键词（"叶吉","叶者","归元","入局","得时","当此爻","入贵格"）
+      再判不叶关键词（"不叶","不归元","不入局",…）。但原典的**不叶**断语
+      常写作「数卦**不叶吉**者」——「不叶吉」**包含**「叶吉」子串，
+      叶分支先命中 ⇒ 50 条不叶断语被归进**叶吉**类。
+
+      实测（原始 duans 1088 条）：50 条被误归，其中 8 个爻的
+      `_yao_buji` 判定因此翻转（False → True，即漏判了凶）。
+
+      修法：把**否定式叶术语**（不叶吉 / 不归元 / 不入局 / 难当此爻 /
+      生不及时 / 不及时 / 失正 / 失位）优先判为不叶。
+      逐条核对原典上下文确认：每条被改判的断语都紧跟在对应的
+      「数卦叶吉者如此。」之后，是**成对的不叶分支**，改判正确。
+    """
     ye, buye, suiyun = [], [], []
     for d in duans:
         if any(k in d for k in ("岁运逢", "岁运值")):
             suiyun.append(d)
-        elif any(k in d for k in ("叶吉", "叶者", "归元", "入局", "得时", "当此爻", "入贵格")):
-            ye.append(d)
-        elif any(k in d for k in ("不叶", "不归元", "不入局", "生不及时", "不及时", "难当此爻", "失正", "失位")):
+        elif any(k in d for k in ("不叶吉", "不叶者", "不叶", "不归元",
+                                 "不入局", "生不及时", "不及时",
+                                 "难当此爻", "失正", "失位")):
+            # 否定式优先（见 docstring）
             buye.append(d)
+        elif any(k in d for k in ("叶吉", "叶者", "归元", "入局", "得时",
+                                 "当此爻", "入贵格")):
+            ye.append(d)
         elif any(k in d for k in ("数凶", "寿危", "身亡")):
             suiyun.append(d)
         else:
@@ -555,9 +574,44 @@ def _parse_gua_header(lines: list[str]) -> tuple[Optional[int], list[str], list[
     """
     text = " ".join(lines)
     month = None
-    m = re.search(r"(?:卦气|宫)[^属]{0,6}属([正二三四五六七八九十腊]+)月", text)
+    # ⚠ 2026-10-24 第三轮审计修：原正则 `(?:卦气|宫)[^属]{0,6}属(...)月`
+    #   **只认「属」**。但原典坤卦卦头写的是「**卦气在十月**」
+    #   （《河洛真数·易卦释义·上经卷之上》L91 逐字：
+    #     「星辰之气。德合无疆，坤象地道也…**卦气在十月**，纳甲是乙未…」）
+    #   —— 坤卦卦头**没有**「XX宫N世卦属X月」那一段，故「宫…属」分支兜不住，
+    #   「卦气…属」分支又不认「在」⇒ 坤卦 gua_qi_month 恒为 None。
+    #   后果：坤卦十月生被判「不叶（凶象）」，而原典明写「如生于十月纳甲…
+    #   叶吉」—— 结论方向反了；evidence 只写「坤卦无卦气月记录」，
+    #   读起来像「原典没写」，**无痕**。
+    #   修法：卦气分支补「在」。**不改动**已能解析的 55 卦（宫…属分支不变）。
+    #
+    # ⚠ 2026-10-24 第三轮审计修（同一处的第二个坑）：月名字符集原为
+    #   `[正二三四五六七八九十腊]` —— **缺「一」** ⇒「十一月」「十二月」
+    #   永远匹配不上（正则吃到「十」就断，剩「一月」接不上）。
+    #   后果：小畜/贲/复/节 四卦的「属十一月」被漏掉 ⇒ gua_qi_month=None。
+    #   （「十二月」看似能捕到，实为捕到「二」+「月」，侥幸得到 12 ——
+    #   但那是靠「二」在字符集里，不是真的匹配了「十二」。）
+    #   修法：月名加「一」，并用 `十一|十二` **优先**（长的先试），
+    #   避免「十二月」被「十」抢先。
+    _MONTH_RE = r"(十一|十二|[正二三四五六七八九十腊])"
+    m = re.search(r"卦气(?:属|在)" + _MONTH_RE + r"月", text)
     if m:
         month = _CN_MONTH.get(m.group(1))
+    if month is None:
+        m = re.search(r"(?:卦气|宫)[^属]{0,6}属" + _MONTH_RE + r"月", text)
+        if m:
+            month = _CN_MONTH.get(m.group(1))
+    if month is None:
+        # ⚠ 2026-10-24 第三轮审计修（第三个坑）：**八纯卦**的卦头没有
+        #   「XX宫N世卦」也没有「卦气」二字，只有「八纯卦世在六爻属十月」
+        #   /「八纯六世卦属四月」这类句式 ⇒ 前两个分支都兜不住，
+        #   兑/坎/巽/离 四卦 gua_qi_month 恒为 None。
+        #   通用回退：直接找「属X月」。
+        #   **安全性已核**：全库 63 处「属X月」**逐一检查过**，
+        #   全部是卦气月标记（无一例外），故通用回退不会误取。
+        m = re.search(r"属" + _MONTH_RE + r"月", text)
+        if m:
+            month = _CN_MONTH.get(m.group(1))
     if month is None:
         m = re.search(r"属(\d+)月", text)
         if m:
@@ -661,6 +715,7 @@ def judge_ye_buye(
     ev: list[str] = []
     ye = False
     buye = False
+    gua_text = " ".join(g.gua_lines)
 
     # 1. 卦气月匹配
     if g.gua_qi_month is not None:
@@ -684,16 +739,19 @@ def judge_ye_buye(
     if g.jieyong:
         ev.append(f"原典借用[{','.join(g.jieyong)}]（借别卦之甲，不计入纳甲本命判定）")
 
-    # 3. 旺时区间（卦头 lines 中的"生于X月以后X月以前者得时"）
-    gua_text = " ".join(g.gua_lines)
-    m = re.search(r"生于([正二三四五六七八九十腊]+)月以后([正二三四五六七八九十腊]+)月以前[^\n，。]*得时", gua_text)
-    if m:
-        lo, hi = _CN_MONTH[m.group(1)], _CN_MONTH[m.group(2)]
-        if lo <= birth_month <= hi:
+    # 3. 旺时区间（得时/及时）—— 原典每卦措辞不同，逐条对照抽取。
+    # ⚠ 2026-10-24 第三轮审计修：此前此处只有一条正则
+    #   `生于A月以后B月以前[^\n，。]*得时`，对 64 卦实测 **0 命中**
+    #   （①的原文中间被「，」截断；其余 6 类措辞根本不认）
+    #   ⇒ 「旺时」这一原典判据**从未生效**，原文明写得时的卦被误判「不叶」。
+    #   现按 _WANGSHI_PATTERNS 逐条抽取（16 卦），未实现者见 _WANGSHI_SKIPPED。
+    wangshi_months, wangshi_src = _extract_wangshi(g.gua_lines)
+    if wangshi_months:
+        if birth_month in wangshi_months:
             ye = True
-            ev.append(f"生月{birth_month} ∈ 旺时[{lo}月,{hi}月]（{g.name}得时）")
+            ev.append(f"生月{birth_month} ∈ 旺时（{g.name}「{wangshi_src[:24]}」）→ 得时")
         else:
-            ev.append(f"生月{birth_month} ∉ 旺时[{lo}月,{hi}月]")
+            ev.append(f"生月{birth_month} ∉ 旺时（{g.name}「{wangshi_src[:24]}」）")
     m2 = re.search(r"如生(月)?不及时[^，。]*不在纳甲[^，。]*", gua_text)
     if m2:
         ev.append(f"卦头提示：{m2.group(0)}")
@@ -1526,6 +1584,127 @@ _FULL_TO_SHORT = {
 
 def _short(name: str) -> str:
     return _FULL_TO_SHORT.get(name, name)
+
+
+#: 旺时区间抽取（2026-10-24 第三轮审计新增）
+#:
+#: 原典对「旺时/及时/得时」的措辞**每卦不同**，共 7 类句式：
+#:   ① 「生于A月以后B月以前者，得时也」   （乾）
+#:   ② 「自A月至B月得时」                  （屯）
+#:   ③ 「生于A…月为及时」                  （豫/颐/丰/益/恒/大壮/小过/离/解）
+#:   ④ 「生于M月及A…月得时」               （震/归妹）
+#:   ⑤ 「若A月至B月生者及时」              （复）
+#:   ⑥ 「宜生于A月已后，B月以前及时」      （噬嗑）
+#:   ⑦ 「在冬则及时」                      （渐）
+#:
+#: ⚠ 2026-10-24 修（此前**恒假分支**）：原实现只有一条正则
+#:   `生于A月以后B月以前[^\n，。]*得时`，
+#:   而①的原文「生于二月以后八月以前者，得时也」中间被「，」截断 → **0 命中**；
+#:   其余 6 类措辞根本不认 ⇒ 「旺时」这一原典判据在 64 卦上**从未生效**。
+#:   后果：原文明写「生于二月至八月得时」的卦（屯/复/解/益/丰/恒/大壮/小过/豫…），
+#:   生在旺时却因「卦气月≠生月 + 纳甲未中」被判「不叶（凶象）」—— 方向反了，
+#:   且 evidence 无任何痕迹。
+#:
+#: **只实现原典明写的区间**，逐条对照原文；拿不准的不实现（见 _WANGSHI_SKIPPED）。
+#: 「失时」段落**不反向实现** —— 原典失时区间与及时区间未必互补
+#: （如益卦「又二月至八月生者，福力重，余月非时」措辞不同），不据推测补全。
+_WANGSHI_PATTERNS: tuple[tuple[str, str], ...] = (
+    # ① 乾：生于二月以后八月以前者，得时也
+    #   ⚠ 中间有「，」⇒ 不可用 [^，。]*（那正是旧实现恒不命中的原因）。
+    #   改为「者，得时」定界：只跨到「得时」二字为止。
+    ("生于([正二三四五六七八九十冬腊]+)月以后([正二三四五六七八九十冬腊]+)月以前[^。]{0,12}?得时", "A-B"),
+    # ② 屯：自二月至八月得时
+    ("自([正二三四五六七八九十冬腊]+)月至([正二三四五六七八九十冬腊]+)月[^，。]*得时", "A-B"),
+    # ⑤ 复：若二月至八月生者及时
+    ("若([正二三四五六七八九十冬腊]+)月至([正二三四五六七八九十冬腊]+)月生者及[时時]", "A-B"),
+    # ⑥ 噬嗑：宜生于二月已后，八月以前及时
+    ("生于([正二三四五六七八九十冬腊]+)月已后，([正二三四五六七八九十冬腊]+)月以前及[时時]", "A-B"),
+    # ③ 豫：生于二三四五六七八月为及时 / 颐：又二月至七月生者及时
+    ("(?:生于|又)([正二三四五六七八九十冬腊]+)月至([正二三四五六七八九十冬腊]+)月生?者?及[时時]", "A-B"),
+    # ③ 丰：又二月生至八月为及时
+    ("又([正二三四五六七八九十冬腊]+)月生至([正二三四五六七八九十冬腊]+)月为及[时時]", "A-B"),
+    # ③ 恒：又二三四五六七八月生为及时
+    ("又([正二三四五六七八九十冬腊]+)月生为及[时時]", "LIST"),
+    # ③ 大壮：又四五六七八月生者为及时
+    ("又([正二三四五六七八九十冬腊]+)月生者为及[时時]", "LIST"),
+    # ③ 小过：又三四五六七八月为及时
+    ("又([正二三四五六七八九十冬腊]+)月为及[时時]", "LIST"),
+    # ③ 离：如生于四月五月六月为及时（月份连写，无「至/及」）
+    ("生于([正二三四五六七八九十冬腊]+)月为及[时時]", "LIST"),
+    # ③ 离：如生于四月五月六月为及时 —— 需允许「月」重复（如「四月五月六月为及时」）
+    ("生于((?:[正二三四五六七八九十冬腊]+月){2,4})为及[时時]", "LIST2"),
+    # ③ 解：又二三四五六七八月为雷雨及时
+    ("又([正二三四五六七八九十冬腊]+)月为雷雨及[时時]", "LIST"),
+    # ③ 益：又二月至八月生者，福力重（措辞为「福力重」而非「及时」）
+    ("又([正二三四五六七八九十冬腊]+)月至([正二三四五六七八九十冬腊]+)月生者，福力重", "A-B"),
+    # ③ 随：皆宜生于二月至八月及时也
+    ("宜生于([正二三四五六七八九十冬腊]+)月至([正二三四五六七八九十冬腊]+)月及[时時]", "A-B"),
+    # ④ 震：如生于十月及二三四五六七八月得时
+    ("生于([正二三四五六七八九十冬腊]+)月及([正二三四五六七八九十冬腊]+)月[^，。]*得时", "A+LIST"),
+    # ④ 归妹：如生于七月及二三四五六七八月为及时
+    ("生于([正二三四五六七八九十冬腊]+)月及([正二三四五六七八九十冬腊]+)月为及[时時]", "A+LIST"),
+)
+
+#: 本轮**明确不实现**的旺时措辞（留档，防止后来者以为漏了）
+_WANGSHI_SKIPPED: tuple[tuple[str, str], ...] = (
+    ("渐", "「在冬则及时」—— 冬为节气区间（亥子丑），非单月；本轮不实现"),
+    ("兑", "「生于秋则及时」—— 秋季区间，非单月；本轮不实现"),
+    ("履", "「乾兑二体属金，秋正旺」—— 五行旺时，非月份区间"),
+    ("夬", "「乾兑二体属金，秋正旺」—— 同上"),
+    ("大有", "「春生和气，秋生得时，日生得地」—— 取象三类，非月份区间"),
+    ("无妄", "「宜春夏得时，秋冬不利」—— 四季区间"),
+)
+
+_CN_MONTH_CHARS = "正一二三四五六七八九十冬腊"
+
+
+def _expand_months(s: str) -> list[int]:
+    """「二三四五六七八」这类连写 → 月份列表；「十一」「十二」按整体识别。"""
+    out: list[int] = []
+    i = 0
+    while i < len(s):
+        two = s[i:i + 2]
+        if two in ("十一", "十二"):
+            out.append(11 if two == "十一" else 12)
+            i += 2
+            continue
+        ch = s[i]
+        if ch in _CN_MONTH:
+            out.append(_CN_MONTH[ch])
+        i += 1
+    return out
+
+
+def _extract_wangshi(gua_lines: list[str]) -> tuple[set[int] | None, str]:
+    """从卦头原文抽旺时月份集合。返回 (月份集合 or None, 命中的原文片段)。"""
+    text = " ".join(gua_lines)
+    for pat, kind in _WANGSHI_PATTERNS:
+        m = re.search(pat, text)
+        if not m:
+            continue
+        groups = list(m.groups())
+        if kind == "A-B":
+            a = _expand_months(groups[0])
+            b = _expand_months(groups[1])
+            if a and b:
+                return set(range(min(a[0], b[0]), max(a[-1], b[-1]) + 1)), m.group(0)
+        elif kind == "LIST":
+            a = _expand_months(groups[0])
+            if a:
+                return set(a), m.group(0)
+        elif kind == "LIST2":
+            # 「四月五月六月」：连写的「X月」序列
+            months: list[int] = []
+            for seg in re.findall(r"([正二三四五六七八九十冬腊]+)月", groups[0]):
+                months.extend(_expand_months(seg))
+            if months:
+                return set(months), m.group(0)
+        elif kind == "A+LIST":
+            a = _expand_months(groups[0])
+            b = _expand_months(groups[1])
+            if a and b:
+                return set(a) | set(b), m.group(0)
+    return None, ""
 
 
 def _yao_name(idx: int, line: int) -> str:
@@ -3291,7 +3470,11 @@ __all__ = [
     "judge_yun_liunian_shu_fan", "judge_xian_tian_hou_tian_yuan_qi",
     "structure_kuozhan", "to_structured", "KUOZHAN_META",
     "polarity_of", "dimension_of", "KUOZHAN_DIMENSION",
-    "wuming_element",
+    # ⚠ 2026-10-24 第三轮审计修：原导出 "wuming_element"（**无下划线**），
+    #   而模块里只有 `_wuming_element` ⇒ `from ...guajie import *` 直接
+    #   AttributeError（公开导出面与实现不一致）。
+    #   修法：导出实际存在的名字。
+    "_wuming_element",
     "TWELVE_XIONG_GUA", "QIANXI_DUKONG", "ZONG_GUA", "BRANCH_TO_MONTH",
     "TRIGRAM_ELEMENT", "ELEMENT_GENERATES",
 ]

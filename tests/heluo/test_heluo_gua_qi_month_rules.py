@@ -145,12 +145,32 @@ class TestPerGuaQiMonthRule(unittest.TestCase):
                                 "至少应有 10 个十二辟卦可交叉验证")
 
     def test_missing_ones_are_known(self):
-        """坤、复 的卦头未写卦气月 —— 这是**已知**状态（留档），不是意外。"""
+        """64 卦**全部**自述卦气月 —— 无一缺失。
+
+        ⚠ 2026-10-24 第三轮审计修（此前断言 `missing == {"坤", "复"}`）：
+          那条断言把**解析器的缺陷固化成了「已知状态」** ——
+          坤卦卦头原文写的是「**卦气在十月**」（原典·易卦释义·上经卷之上 L91），
+          复卦写的是「坤宫一世卦**属十一月**」；
+          两者的月名都**明写**，只是解析器的正则不认「在」、
+          且月名字符集缺「一」⇒「十一」永远匹配不上。
+          现解析器已覆盖三种句式（卦气属/卦气在/宫…属/八纯卦…属），
+          64 卦全部解析出卦气月。
+          故本断言改为「**一个都不能少**」—— 若将来某卦真的缺，
+          应先查原典原文，再改本断言（不是反过来把缺陷写成期望）。
+        """
         month_of_gua = {v[1]: m for m, v in guajie.GUA_QI_MONTH_TABLE.items()}
         missing = {g for g in month_of_gua
                    if g not in self.with_month}
-        self.assertEqual(missing, {"坤", "复"},
-                         "目前只有坤、复 的卦头未写卦气月；若变了须同步更新本断言")
+        self.assertEqual(missing, set(),
+                         f"以下卦未解析出卦气月：{sorted(missing)}；"
+                         "若原典确实未写，须先核原文再改本断言")
+
+    def test_all_64_guas_have_guaqi_month(self):
+        """全部 64 卦都应自述卦气月（与上条同源的更强断言）。"""
+        all_missing = {g.name for g in self.data.values()
+                       if g.gua_qi_month is None}
+        self.assertEqual(all_missing, set(),
+                         f"未解析出卦气月的卦：{sorted(all_missing)}")
 
     def test_rule_is_many_to_many_not_month_to_unique(self):
         """每卦卦气月是**多对多**（同月多卦），与月令表（月→唯一卦）形状不同。
