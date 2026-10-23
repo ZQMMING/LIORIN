@@ -1399,18 +1399,26 @@ def compose_guajie(
     # 三=公卿节制（1632最古刻本；通行本"公乡"为形近误刻）。
     if yuantang_yao:
         _wei = yuantang_yao[1] if len(yuantang_yao) > 1 and yuantang_yao[0] in ("九", "六") else yuantang_yao[0]
+        # ⚠ 2026-10-24 修正：下列各处原写「（原典：初为庶民，元堂居初爻者多从寒微起家）」
+        #   —— 逗号**后半段是引擎自己的释语**，不是原典话；把它并进「原典：」标注，
+        #   等于以原典的权威呈现一句并非原典的话（自撰冒引）。现只把**纯原典**部分
+        #   放进标注，引擎释语留在标注之外。原典实句见起例卷之上「六位贵贱」。
+        #   注：「初上又次之」是引擎据 1632 刻本补的（通行本「六位贵贱」段无此语），
+        #   故不进「原典：」标注，改标刻本依据。
         if _wei == "初":
-            ev.append(f"元堂居{yuantang_yao}（庶民位）：多从寒微起家（原典：初为庶民，元堂居初爻者多从寒微起家）")
+            ev.append(f"元堂居{yuantang_yao}（庶民位）：多从寒微起家（原典：初为庶民）")
         elif _wei == "二":
-            ev.append(f"元堂居{yuantang_yao}（侯牧位）：卦佳数足可牧民一方（原典：二为侯牧，惟五位为佳二次之）")
+            ev.append(f"元堂居{yuantang_yao}（侯牧位）：卦佳数足可牧民一方"
+                      f"（原典：二为侯牧；惟五位为佳，二次之）")
         elif _wei == "三":
             ev.append(f"元堂居{yuantang_yao}（公卿节制位）：掌节制之权，次五二之贵（原典：三为公卿节制）")
         elif _wei == "四":
             ev.append(f"元堂居{yuantang_yao}（近侍大臣位）：近君侍从之贵（原典：四为近侍大臣）")
         elif _wei == "五":
-            ev.append(f"元堂居{yuantang_yao}（君位）：卦名佳、二数足、化工元气得时 → 贤良上贵之命（原典：五为君位，惟五位为佳）")
+            ev.append(f"元堂居{yuantang_yao}（君位）：卦名佳、二数足、化工元气得时 → 贤良上贵之命"
+                      f"（原典：五为君位；惟五位为佳）")
         elif _wei == "上":
-            ev.append(f"元堂居{yuantang_yao}（天枢/宗庙宫庭大内/山林八极之外）：贵极为三公，否则闲散卑职（原典：六为天枢…山林八极之外）")
+            ev.append(f"元堂居{yuantang_yao}（天枢/宗庙宫庭大内/山林八极之外）：贵极为三公，否则闲散卑职（原典：六为天枢，又为宗庙宫庭大内，又为山林八极之外）")
 
     # ── 十二凶卦（命卦） ───────────────────────────────────────
     if prenatal_name in TWELVE_XIONG_GUA:
@@ -2329,8 +2337,14 @@ def judge_liu_wei_gui_jian(yuantang_yao: str) -> list[str]:
             "初": "初上又次之", "上": "初上又次之"}
     if w not in pos:
         return []
+    # ⚠ 2026-10-24 修正：原写「（原典：列贵贱者存乎位…惟五位为佳，二次之，三四又次之，
+    #   初上又次之）」—— 末句「初上又次之」是引擎据 1632 刻本补的，**通行本
+    #   「六位贵贱」段无此语**（原典止于「惟五位为佳，二次之，三四又次之」）。
+    #   把它并进「原典：」标注即自撰冒引。现只留通行本逐字可核的部分，
+    #   刻本补充另标出处。
     return [f"六位贵贱：元堂居{yuantang_yao}（{pos[w]}）——{rank[w]}"
-            f"（原典：列贵贱者存乎位…惟五位为佳，二次之，三四又次之，初上又次之）"]
+            f"（原典：列贵贱者存乎位…惟五位为佳，二次之，三四又次之；"
+            f"「初上又次之」据 1632 刻本补）"]
 
 
 def judge_gui_ming_shi_ti(
@@ -2586,9 +2600,13 @@ def judge_yao_ci_bi_li(ci_list: list[str] | None) -> list[str]:
     jp, xp = ji / total, xiong / total
     head = f"吉凶爻辞比例（本命卦六爻，吉{ji}/凶{xiong}，共{total}爻）"
     if xiong == 0:
-        return [f"{head}：全吉 → 富贵高寿（原典：全吉至富贵高寿，毫厘不爽也）"]
+        # ⚠ 2026-10-24 修正：原写「（原典：全吉至富贵高寿，毫厘不爽也）」——
+        #   原典实句是「全凶至贫贱夭寿，全吉至富贵高寿，毫厘不爽也」，
+        #   「毫厘不爽也」是**全句的收尾**，不属前半。拆用即引文不实。
+        #   现各分支只引属于自己那半的原典短句。
+        return [f"{head}：全吉 → 富贵高寿（原典：全吉至富贵高寿）"]
     if ji == 0:
-        return [f"{head}：全凶 → 贫贱夭寿（原典：全凶至贫贱夭寿，毫厘不爽也）"]
+        return [f"{head}：全凶 → 贫贱夭寿（原典：全凶至贫贱夭寿）"]
     if xp > jp:
         return [f"{head}：凶多吉少 → 僧道九流之命；有化工之气者艰难获福（原典：凶多吉少者僧道九流之命也）"]
     return [f"{head}：吉多凶少 → 浊富之人（原典：吉多凶少者浊富之人也）"]
@@ -2623,7 +2641,21 @@ def judge_xiang_sheng_wei_fu(
         sq = dsq["生气"] & {up, low}
         if dju:
             got = True
-            out.append(f"  得局：得{','.join(sorted(dju))}（原典：{wm}人得{','.join(sorted(dsq['得局']))}为得局）")
+            # ⚠ 2026-10-24 修正：原写「（原典：{wm}人得…为得局）」—— 这是引擎按
+            #   模板拼出的**概括句**（且「为得局」三字非原典措辞），标成原典引文
+            #   属自撰冒引。原典实句形如「木人得震巽为得局，坎为生气；
+            #   土人得坤艮离；金人得乾兑艮坤；水人得乾兑坎，皆是」——
+            #   现按五命分别引该句的**原典实证句**。
+            _deju_quote = {
+                "木": "木人得震巽为得局",
+                "土": "土人得坤艮离",
+                "金": "金人得乾兑艮坤",
+                "水": "水人得乾兑坎",
+            }.get(wm, "")
+            _q = f"（原典：{_deju_quote}）" if _deju_quote else \
+                ("（原典：木人得震巽为得局，坎为生气；土人得坤艮离；"
+                 "金人得乾兑艮坤；水人得乾兑坎，皆是）")
+            out.append(f"  得局：得{','.join(sorted(dju))}{_q}")
         if sq:
             got = True
             out.append(f"  生气：得{','.join(sorted(sq))}（原典：坎为生气）")
@@ -2639,7 +2671,7 @@ def judge_yun_liunian_shu_fan(
     yun_fan: bool = False, liunian_fan: bool = False, shu_fan: bool = False,
     dayun_gua: str = "", liunian_gua: str = "", age_now: int | None = None,
 ) -> list[str]:
-    """运反+流年反+数反 → 不可保（起例卷之上·元气化工有无论）：
+    """运反+流年反+数反 → 不可保（起例卷之上·化工元气有无论）：
 
     原文："如运中有之，虽流年数不吉，不为害。且如流年有之，虽月数不吉，不为害。
            若运既反，流年又反，数又反，其人不可保矣"
@@ -2652,13 +2684,20 @@ def judge_yun_liunian_shu_fan(
         (f"（虚岁{age_now}）" if age_now is not None else "")
     out = [f"元气化工组合断：{gua_info}｜运反={yun_fan}，流年反={liunian_fan}，数反={shu_fan}"]
     if yun_fan and liunian_fan and shu_fan:
-        out.append("运既反，流年又反，数又反 → 其人不可保矣（原典：元气化工有无论）")
+        out.append("运既反，流年又反，数又反 → 其人不可保矣（原典：化工元气有无论）")
     elif shu_fan and (yun_fan or liunian_fan):
         out.append("数反 + 运反或流年反 → 重，须参元气化工有无消息（原典：运中有之虽流年数不吉不为害）")
     elif liunian_fan:
         out.append("流年反而数不反 → 不为害，若月数不吉亦不为害（原典：流年有之虽月数不吉不为害）")
     else:
-        out.append("仅运反或数反一项，未至不可保（原典：三者俱反方不可保）")
+        # ⚠ 2026-10-24 修正：原标注把「三者俱反方不可保」写作原典引文 ——
+        #   但那是**引擎自撰的概括语**，原典实为
+        #   「若运既反，流年又反，数又反，其人不可保矣」（起例卷之上
+        #   化工元气有无论）。冒引原典 = 以原典的权威呈现一句并非原典的话，
+        #   比不标更坏。现改为标注引擎口径，并把原典实句并列给出（真引文，
+        #   逐字可核）。守卫见 tests/heluo/test_heluo_original_quotes.py。
+        out.append("仅运反或数反一项，未至不可保（引擎口径；原典："
+                   "「若运既反，流年又反，数又反，其人不可保矣」）")
     return out
 
 
@@ -2666,7 +2705,7 @@ def judge_xian_tian_hou_tian_yuan_qi(
     *,
     xiantian_yq: bool = False, houtian_yq: bool = False,
 ) -> list[str]:
-    """先天后天元气有无（起例卷之上·元气化工有无论）：
+    """先天后天元气有无（起例卷之上·化工元气有无论）：
 
     原文："元气化工二者最重，兼有之，若本数又吉，必功名富贵福寿人也。
            如卦体中二者俱反，必贫穷困苦夭死者也。
@@ -2674,12 +2713,12 @@ def judge_xian_tian_hou_tian_yuan_qi(
            先天若无，后天始有，此先贫贱而后富贵者也"
     """
     if xiantian_yq and houtian_yq:
-        return ["先天后天元气俱有：二者兼有，若本数又吉，必功名富贵福寿人也（原典：元气化工有无论）"]
+        return ["先天后天元气俱有：二者兼有，若本数又吉，必功名富贵福寿人也（原典：化工元气有无论）"]
     if xiantian_yq and not houtian_yq:
         return ["先天有元气而后天无：先富贵而后贫贱者也（原典：先天若有后天若无）"]
     if not xiantian_yq and houtian_yq:
         return ["先天无元气而后天始有：先贫贱而后富贵者也（原典：先天若无后天始有）"]
-    return ["先天后天元气俱无：如卦体中二者俱反，必贫穷困苦夭死者也（原典：元气化工有无论）"]
+    return ["先天后天元气俱无：如卦体中二者俱反，必贫穷困苦夭死者也（原典：化工元气有无论）"]
 
 
 def _kz_gua_qi_month(gua_name: str) -> int | None:
@@ -2752,7 +2791,7 @@ def _gua_has_yuanqi(gua_name: str, year_gan: str, year_zhi: str) -> bool:
 def _yun_liunian_fan(
     gua_name: str, year_gan: str, year_zhi: str,
 ) -> tuple[bool, list[str]]:
-    """运反/流年反判据（起例卷之上·元气化工有无论 L200 语境）：
+    """运反/流年反判据（起例卷之上·化工元气有无论 L200 语境）：
 
     原文："如卦体中二者俱反，必贫穷困苦夭死者也……如运中有之，虽流年数不吉，
            不为害。且如流年有之，虽月数不吉，不为害。
@@ -2872,12 +2911,12 @@ KUOZHAN_META: dict = {
         "level": "原典明文（火人得局生气未载，标注）",
     },
     "yun_liunian_shu_fan": {
-        "cn": "运反+流年反+数反", "source": "起例卷之上·元气化工有无论 L200",
+        "cn": "运反+流年反+数反", "source": "起例卷之上·化工元气有无论 L200",
         "origin": "如运中有之，虽流年数不吉，不为害…若运既反，流年又反，数又反，其人不可保矣",
         "level": "原典明文",
     },
     "xian_tian_hou_tian_yuan_qi": {
-        "cn": "先天后天元气变迁", "source": "起例卷之上·元气化工有无论 L200",
+        "cn": "先天后天元气变迁", "source": "起例卷之上·化工元气有无论 L200",
         "origin": "先天若有，后天若无，此先富贵而后贫贱者也。先天若无，后天始有，此先贫贱而后富贵者也；卦体中二者俱反，必贫穷困苦夭死者也",
         "level": "原典明文",
     },
@@ -3091,7 +3130,7 @@ def _build_kuozhan(
     _KZ_ERRORS.clear()
     kz: dict = {}
 
-    # 运反/流年反/数反接驳（起例卷之上·元气化工有无论 L200；2026-09-12 接驳）
+    # 运反/流年反/数反接驳（起例卷之上·化工元气有无论 L200；2026-09-12 接驳）
     def _kz_yun_liunian_kuozhan(result_, bazi_, target_year_, si_duan_):
         try:
             dayun_gua, liunian_gua, age_now, note = _kz_yun_liunian_info(
