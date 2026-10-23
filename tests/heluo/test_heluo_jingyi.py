@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-_REPO = Path(__file__).resolve().parents[3]
+_REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO / "src"))
 
 from tongshu.engines.heluo.guajie import (
@@ -96,9 +96,19 @@ class TestJingyiOutputLayer:
         assert len(bm.get("lines_shiyi") or []) == 4
 
     def test_liunian_yao_jingyi(self, guajie_dict):
+        """流年层：出爻、必带爻辞与精义/释义。
+
+        ⚠ 2026-10-24 修订：原断言硬编码「流年爻 == 六五 且 爻辞含『贲于丘园』」——
+        那是**旧口径**（流年爻 = 年卦的元堂爻 = 大运段爻，同段内恒定）下的快照。
+        流年爻改正为**小象行年爻**（该年小象变出的那一爻，原典起例卷之上
+        「一岁在同人九三（阳）爻；二岁取应爻变…」）后，本盘 2026 贲卦的
+        行年爻是**初六**（爻辞「贲其趾，舍车而徒」），六五是年卦的元堂爻。
+        正确性由 tests/heluo/test_heluo_xingnian_yao.py 按原典硬算例保证；
+        本测试只守「流年层必须带全精义/释义」这一结构契约。
+        """
         ly = guajie_dict.get("liunian_yao") or {}
-        assert ly.get("yao") == "六五"
-        assert ly.get("ci") and "贲于丘园" in ly["ci"]
+        assert ly.get("yao"), "流年层应出爻"
+        assert ly.get("ci"), "流年爻应带爻辞"
         assert ly.get("jingyi") and ly.get("shiyi")
 
     def test_liuri_yao_jingyi(self, guajie_dict):

@@ -694,6 +694,9 @@ class HeluoCanonical:
                 "lines": y.lines,
                 "yuantang_index": yyt,
                 "yuantang_nature": yyt_nature,
+                # 2026-10-24 新增：本年「小象行年爻」（该年小象变出的那一爻）。
+                # 流年断爻取此爻（非「年卦的元堂爻」= 大运段爻，同段内恒定）。
+                "xingnian_yao_index": getattr(y, "xingnian_yao_index", -1),
             }
 
             # 只有**目标年**算 12 个流月卦（近 3 年另两年只要流年卦本体）

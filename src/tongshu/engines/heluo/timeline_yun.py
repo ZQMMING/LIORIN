@@ -145,6 +145,14 @@ class LiuNianYear:
     lines: list[int]
     rule: str                 # 采用的规则说明
     yuantang_index: int = -1  # 本岁所属大运段的元堂爻位（流月卦据此起）
+    #: 本年「小象行年爻」= 该年小象变出的那一爻（原典起例卷之上·小象行年卦气：
+    #: 「一岁在同人九三（阳）爻；二岁取应爻变，同人上九为革上六；三岁复取应爻变，
+    #:  革九三为随六三；然后自下而上，四岁变随九四为屯六四……」）。
+    #: -1 = 本年未变（行年爻仍取元堂爻）。
+    #: 2026-10-24 新增：此前只把该爻位写进 rule 字符串，下游取不到 ——
+    #: 导致流年断爻恒取「年卦的元堂爻」（= 大运段爻，同段内恒定），
+    #: 而非原典的「逐年挨次变」之行年爻。
+    xingnian_yao_index: int = -1
 
 
 @dataclass
@@ -217,6 +225,12 @@ def compute_liunian(
 
         seg_yt = seg.line_index
         seg_yang_line = (seg.lines[seg_yt] == 1)
+        # ⚠ 2026-10-24：本年「小象行年爻」= 该年小象变出的那一爻
+        #   （原典起例卷之上·小象行年卦气：「一岁在同人九三（阳）爻；二岁取应爻变，
+        #   同人上九为革上六；三岁复取应爻变，革九三为随六三；然后自下而上，
+        #   四岁变随九四为屯六四……」—— 括号/主语里的那个爻即行年爻）。
+        #   原先只把 flip_idx 写进 rule 字符串，下游取不到；此处显式落字段。
+        flip_idx: Optional[int] = None
 
         if seg_yang_line:
             # 阳爻大运段（9年）：段内小象循环
@@ -224,16 +238,21 @@ def compute_liunian(
                 if seg_first_yang:
                     cur = list(seg.lines)
                     rule = "段首阳年不变"
+                    # 一岁不动 → 行年爻仍是元堂爻本身
+                    flip_idx = seg_yt
                 else:
                     cur = _flip_line(seg.lines, seg_yt)
                     rule = "段首阴年变元堂"
+                    flip_idx = seg_yt
             elif n == 2:
                 base = prev1 if prev1 is not None else list(seg.lines)
-                cur = _flip_line(base, (seg_yt + 3) % 6)
+                flip_idx = (seg_yt + 3) % 6
+                cur = _flip_line(base, flip_idx)
                 rule = "变元堂应爻"
             elif n == 3:
                 base = prev1 if prev1 is not None else list(seg.lines)
-                cur = _flip_line(base, seg_yt)
+                flip_idx = seg_yt
+                cur = _flip_line(base, flip_idx)
                 rule = "变元堂"
             else:
                 base = prev1 if prev1 is not None else list(seg.lines)
@@ -252,6 +271,7 @@ def compute_liunian(
             age=age, year=year, ganzhi=ganzhi, yang_year=yang,
             hexagram_name=name, upper=upper, lower=lower,
             lines=cur, rule=rule, yuantang_index=seg_yt,
+            xingnian_yao_index=flip_idx,
         ))
         prev1 = cur
 

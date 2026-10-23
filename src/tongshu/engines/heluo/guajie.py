@@ -1603,11 +1603,22 @@ def build_guajie_from_result(
             for i, e in enumerate(entries):
                 if e.get("year") == target_year:
                     liunian_hex = _short(e.get("hexagram", ""))
-                    # 流年卦断爻：优先取流年卦元堂爻（规格书：流年断爻=流年卦元堂，
-                    # 流月亦以流年卦元堂为本）；无则回退逐年差异动爻；再无则先天元堂
-                    yyt = e.get("yuantang_index")
+                    # 流年断爻：**小象行年爻** = 该年小象变出的那一爻
+                    # （原典起例卷之上·小象行年卦气：「一岁在同人九三（阳）爻；
+                    #   二岁取应爻变，同人上九为革上六；三岁复取应爻变，革九三为随六三；
+                    #   然后自下而上，四岁变随九四为屯六四……」—— 句中那个爻即行年爻）。
+                    # ⚠ 2026-10-24 修正：此前取「年卦的元堂爻」= **大运段爻**，
+                    #   同一大运段内 9 年恒同（实测 2024/2025/2026 皆取「上九」），
+                    #   而原典要求行年爻**逐年挨次变** —— 故流年判词整层取错爻。
+                    #   现优先取 xingnian_yao_index（该年变出之爻）；
+                    #   缺失时回退「与上年 diff 唯一差异爻」；再回退本命元堂爻。
                     cur_lines = e.get("lines") or []
-                    if yyt is not None and len(cur_lines) > yyt:
+                    _xy = e.get("xingnian_yao_index")
+                    if isinstance(_xy, int) and 0 <= _xy < len(cur_lines):
+                        liunian_yao_name = _yao_name(_xy, cur_lines[_xy])
+                    yyt = e.get("yuantang_index")
+                    if not liunian_yao_name and yyt is not None and len(cur_lines) > yyt:
+                        # 回退一：年卦元堂爻（旧口径，仅当行年爻不可得时）
                         liunian_yao_name = _yao_name(yyt, cur_lines[yyt])
                     if not liunian_yao_name and i > 0:
                         prev_lines = entries[i - 1].get("lines") or []
