@@ -221,8 +221,15 @@ python tools/heluo/quzheng_20261008/dump_natural.py      # 引擎自然输出（
 > ⚠ **2026-10-24 现状订正**（勿照上文误判为缺口）：上面这条是 §11.1 的**历史对比记录**
 > （记录独立包重建当时的差异），**不是当前状态**。
 > 现测 \HeluoResult.structure\ 已完整产出：1983-11-03 午时男 →
-> \hu_gua=泽天夬\ / \cuo_gua=水雷屯\ / \zong_gua=泽火革\r
-> （\canonical.py:536\ \nalyze_hexagram(postnatal.hexagram_name)\ → \:585\ 落 result）。
+> \hu_gua=泽天夬\ / \cuo_gua=水雷屯\ / \zong_gua=泽火革\n> （\canonical.py:536\ \nalyze_hexagram(postnatal.hexagram_name)\ → \:585\ 落 result）。
+> 即互/错/综卦**已接线**，§11.2 第 1 条「恢复互错综卦接线」已生效。
+> 本条订正由第三轮审计的现码实测得出。
+
+> ⚠ **2026-10-24 现状订正**（勿照上文误判为缺口）：上面这条是 §11.1 的**历史对比记录**
+> （记录独立包重建当时的差异），**不是当前状态**。
+> 现测 `HeluoResult.structure` 已完整产出：1983-11-03 午时男 →
+> `hu_gua=泽天夬` / `cuo_gua=水雷屯` / `zong_gua=泽火革`
+> （`canonical.py:536` `analyze_hexagram(postnatal.hexagram_name)` → `:585` 落 result）。
 > 即互/错/综卦**已接线**，§11.2 第 1 条「恢复互错综卦接线」已生效。
 > 本条订正由第三轮审计的现码实测得出。
 
@@ -1988,7 +1995,8 @@ C 的通用回退（「属X月」）**安全性已核**：全库 63 处「属X�
 
 #### 14.36.7 全量结果
 
-**1268 passed / 0 failed / 4714 subtests**（原 1252 → +16 项新守卫）。
+**1268 passed / 0 failed / 4714 subtests**（原 1252 → +16 项新守卫）。
+
 ### 14.37 真太阳时边界与死断触发率（2026-10-24 核实）
 
 #### 14.37.1 真太阳时：**河洛域内无需改动**，但入口分两种
