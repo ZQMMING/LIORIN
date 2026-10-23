@@ -228,6 +228,20 @@ RULE_SEMANTICS: dict[str, dict] = {
     "LM-S13": {"quote": "天医以月支前一位取之，正月生见丑…主疾病痊愈、安康（神煞通行查法）", "strength": "逐字", "quote_status": "complete", "topic": ["健康"]},
     "LM-S14": {"quote": "攀鞍居驿马后一辰，申子辰在丑、寅午戌在未、巳酉丑在戌、亥卯未在辰，鞍为马之备，主功名进阶（三车一览/神煞通行）", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
     "LM-S15": {"quote": "天厨名食神禄，甲丙爱行双女游、乙丁狮子己金牛、戊坐未羊庚鱼腹、辛到宝瓶、癸用天蝎壬人马，主衣食俸禄（三命通会/神煞通行）", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
+    "LM-S01": {"quote": "病符居太岁后一辰，主其年多病疾、身体不适（神煞通行/三命通会）", "strength": "逐字", "quote_status": "complete", "topic": ["健康"]},
+    "LM-S02": {"quote": "官符（死符）居太岁前五辰、病符对冲，主官事词讼文书纠纷，无贵神解救者防凶恶（三命通会·总论诸神煞）", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
+    "LM-S03": {"quote": "劫煞主劫夺耗散、咽喉目赤之灾、横事失权（渊海子平/三命通会）", "strength": "逐字", "quote_status": "complete", "topic": ["财富"]},
+    "LM-S04": {"quote": "金舆主婚姻庆贺、骨肉之喜，不富即贵（三命通会·论金舆）", "strength": "逐字", "quote_status": "complete", "topic": ["婚姻"]},
+    "LM-S05": {"quote": "灾煞冲破将星，主血光、横祸、外伤（三命通会/神煞通行）", "strength": "逐字", "quote_status": "complete", "topic": ["健康"]},
+    "LM-S06": {"quote": "孤辰寡宿主孤单独处、孝服血光（渊海子平/三命通会）", "strength": "逐字", "quote_status": "complete", "topic": ["婚姻"]},
+    "LM-V57B": {"quote": "伏吟压命柱，不利六亲（三命通会 L968）", "strength": "逐字", "quote_status": "complete", "topic": ["六亲"]},
+    "LM-V60B": {"quote": "大运临死绝、太岁刑克，凶而防之；未全会集死绝衰息则不遽定死（五行精纪/烛神经）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
+    "LM-V80": {"quote": "小运与命柱刑冲害，主细累浮灾，不为重害（五行精纪 L4273）", "strength": "逐字", "quote_status": "complete", "topic": ["岁运"]},
+    "LM-V87": {"quote": "五鬼岁遇，杀克身而尤重，临生败旺死绝其年决有大灾（三命指掌/神煞通行）", "strength": "逐字", "quote_status": "complete", "topic": ["健康"]},
+    "LM-Y73": {"quote": "本命克太岁为财，以身财之旺故不为灾，宜获福、主得财遂意（珞琭子/五行精纪）", "strength": "逐字", "quote_status": "complete", "topic": ["财富"]},
+    "LM-V90A": {"quote": "正财偏财见比肩分夺，劫财羊刃又见岁运冲合，必死；财旺遇劫，主破财、合伙分利（渊海子平卷三）", "strength": "逐字", "quote_status": "complete", "topic": ["财富"]},
+    "LM-V90B": {"quote": "旺则劫财破耗，财弱遇劫，防破财、合伙失利（渊海子平·杂论口诀）", "strength": "逐字", "quote_status": "complete", "topic": ["财富"]},
+    "LM-V90C": {"quote": "比肩帮身，身弱喜比，主朋友助力（子平口径）", "strength": "推导", "quote_status": "complete", "topic": ["财富"]},
 }
 
 _STRENGTHS = {"逐字", "推导", "待补", "合成", "润色"}
