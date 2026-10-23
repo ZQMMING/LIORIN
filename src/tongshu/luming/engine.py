@@ -2812,8 +2812,15 @@ def _build_tone_scope(verdicts: tuple, luck_view: Dict | None = None,
             #   L3405 麒麟窟"三刑遇贵人会德全者文章清贵"): 运柱有贵人/贵神/成合/
             #   生我/真通关等吉扶时, V41 三刑不为害 (权重降为 0, 主权柄); 弱判定
             #   F05 不构成吉扶. 巳申本六合(合中生刑), 有扶即不为害.
-            _gui_fu = (any(t == "吉" and r in ("LM-V16", "LM-V22", "LM-V38", "LM-V45",
-                                              "LM-F03") for r, t in _items) or _f05_real)
+            _gui_fu_other = (any(t == "吉" and r in ("LM-V16", "LM-V22", "LM-V38",
+                                                     "LM-V45", "LM-F03")
+                                 for r, t in _items) or _f05_real)
+            _gui_fu_v42 = any(t == "吉" and r == "LM-V42" for r, t in _items)
+            # V42 纳音生我(印绶)只救"两字刑"(非全); 三刑全(>=2柱相刑, 如丑戌未)
+            #   须诸吉相扶, 单 V42 不救
+            _xing_str = (luck_by_target.get(tgt) or {}).get("xing_with", "")
+            _xing_full = len([x for x in _xing_str.split("、") if x]) >= 2
+            _gui_fu = _gui_fu_other or (_gui_fu_v42 and not _xing_full)
             for rid, _tone in _items:
                 if _f05_real and rid == "LM-V42" and _tone == "凶":
                     continue          # 真通关: 纳音克我被抵消
@@ -4108,9 +4115,19 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             from .strength import LUCK_XI as _LXI2, LUCK_XIONG as _LXO2
             _nscore = 0.0
             _is_f2 = (getattr(chart, "gender", "") or "").lower().startswith(("f", "女"))
+            _gui_fu2_other = (any(t == "吉" and r in ("LM-V16", "LM-V22", "LM-V38",
+                                                     "LM-V45", "LM-F03")
+                                  for r, t in _nitems) or _f05_real2)
+            _gui_fu2_v42 = any(t == "吉" and r == "LM-V42" for r, t in _nitems)
+            # 全刑(risk 三刑信号含"、"=多柱相刑) 单 V42 不救
+            _xing_full2 = any(s.startswith("三刑") and "、" in s
+                              for s in (_linfo or {}).get("risk", []))
+            _gui_fu2 = _gui_fu2_other or (_gui_fu2_v42 and not _xing_full2)
             for _rid, _tone in _nitems:
                 if _f05_real2 and _rid == "LM-V42" and _tone == "凶":
                     continue          # 真通关: 纳音克我被抵消
+                if _gui_fu2 and _rid == "LM-V41" and _tone == "凶":
+                    continue          # 三刑遇吉相扶(印绶/贵神), 不为害反为用
                 if _tone == "吉":
                     _nscore += 3.0 if _rid == "LM-F05" else _LXI2.get(_rid, 1.0)
                 elif _tone == "凶":
