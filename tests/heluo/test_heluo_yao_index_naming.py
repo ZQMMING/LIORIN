@@ -193,9 +193,15 @@ class TestAllThreeTakeXingnianYao(unittest.TestCase):
     def test_siduan_recent_years_yao_is_xingnian_yao(self):
         """死断「近3年流年判词」所取之爻 == 各该年行年爻。
 
-        原典（起例卷之下·后天详说 L34）：
+        原典依据（起例卷之上 L369，三源逐字一致）：
+        「大象虽佳，（即所得阳爻九年，阴爻六年是也。）
+          **不若流年佳。（即小象行年爻也。）**
+          流年若佳，未有不应之者。若流年多凶，大象身爻虽佳，亦奚以为。」
+        → 原典**自注**「流年」即「小象行年爻」⇒ 流年层面取爻唯一确定。
+
+        死断原句（起例卷之下 L1555）：
         「若流年连三年不吉，卦爻又不吉，本身卦不佳，重反支干元气，便可以死断之。」
-        → 「流年连三年不吉」判的正是**流年判词**，取爻口径须与流年断爻一致。
+        → 「流年连三年不吉」判的是**流年判词**，取爻即取行年爻。
 
         做法：拦截 `judge_si_duan`，捕获它实际收到的 `recent_years`，
         再逐年比对「实际取的爻」与「该年行年爻」——**不重新实现一遍**取爻逻辑。
@@ -243,6 +249,83 @@ class TestAllThreeTakeXingnianYao(unittest.TestCase):
                     r.get("yao"), want,
                     f"{r.get('year')} 死断流年判词所取之爻应为行年爻 {want}，"
                     f"实得 {r.get('yao')}")
+
+    def test_xingnian_yao_matches_year_over_year_unique_diff(self):
+        """行年爻 == 与上一年流年卦的**唯一差异爻**（几何法独立互证）。
+
+        原典 L366 机制：一年变一卦、一年变一爻 ⇒ 本年卦与上年卦恰好差一爻，
+        该差异爻即行年爻。此断言走**完全独立**的路径（几何差分），
+        与引擎落字段互证，不靠引擎自证。
+        """
+        res = _res()
+        entries = res.timeline.yearly_hexagrams or []
+        checked = 0
+        for i in range(1, len(entries)):
+            cur = entries[i]
+            prev = entries[i - 1]
+            cl = cur.get("lines") or []
+            pl = prev.get("lines") or []
+            diffs = [k for k in range(6)
+                     if len(cl) > k and len(pl) > k and cl[k] != pl[k]]
+            xy = cur.get("xingnian_yao_index")
+            with self.subTest(year=cur.get("year")):
+                self.assertEqual(len(diffs), 1,
+                                 "本年卦与上年卦应恰好差一爻（一年变一卦一爻）")
+                self.assertEqual(diffs[0], xy,
+                                 "行年爻与几何差分法不一致")
+            checked += 1
+        self.assertGreater(checked, 0, "样本不足，无法互证")
+
+
+class TestOriginalTextBasis(unittest.TestCase):
+    """原典依据必须**逐字**在底本中（防止依据被改写/讹传）。"""
+
+    #: 原典起例卷之上 L369（三源逐字一致）——「流年」的原典自注
+    ORIGINAL_L369 = ("大象虽佳，（即所得阳爻九年，阴爻六年是也。）"
+                     "不若流年佳。（即小象行年爻也。）"
+                     "流年若佳，未有不应之者。若流年多凶，大象身爻虽佳，亦奚以为。")
+
+    #: 原典起例卷之下 L1555 —— 死断四条件
+    ORIGINAL_L1555 = ("若行后天，连三爻不吉，必多坎壈。若过了第四爻，遇凶，十死八九。"
+                      "若流年连三年不吉，卦爻又不吉，本身卦不佳，重反支干元气，"
+                      "便可以死断之。")
+
+    def _slice(self) -> str:
+        p = ROOT / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之上.txt"
+        return p.read_text(encoding="utf-8")
+
+    def test_liu_nian_is_defined_as_xingnian_yao_in_original(self):
+        """原典必须逐字含「流年佳。（即小象行年爻也。）」这一自注。
+
+        这是「流年层面取爻 = 行年爻」的**唯一**原典依据，
+        必须逐字在底本里，不容改写或讹传。
+        """
+        text = self._slice()
+        self.assertIn(
+            self.ORIGINAL_L369, text,
+            "包内原典切片未逐字含 L369「流年佳。（即小象行年爻也。）」自注 —— "
+            "取爻口径的依据已变动，须重新核实")
+
+    def test_si_duan_clause_quoted_verbatim(self):
+        """死断原句必须逐字在底本中（判词层的引文保真）。"""
+        p = ROOT / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之下.txt"
+        text = p.read_text(encoding="utf-8")
+        self.assertIn(
+            self.ORIGINAL_L1555, text,
+            "包内原典切片未逐字含 L1555 死断四条件原句")
+
+    def test_engine_source_cites_l369_basis(self):
+        """引擎死断取爻处必须引用 L369 自注（不得只引 L1555 的一半）。
+
+        只引「若流年连三年不吉」只能推出「主语是流年」，
+        推不出「取哪一爻」；取爻的唯一依据是 L369 的「即小象行年爻也」。
+        """
+        p = (ROOT / "src" / "tongshu" / "engines" / "heluo" / "guajie.py")
+        text = p.read_text(encoding="utf-8")
+        self.assertIn(
+            "即小象行年爻也", text,
+            "guajie.py 死断取爻处未引用原典 L369 自注"
+            "「流年佳。（即小象行年爻也。）」—— 取爻依据缺失")
 
 
 class TestNoBareYuantangIndexInFlowYearLayer(unittest.TestCase):
