@@ -11,18 +11,18 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.frozen_state import build_frozen_state
-from tongshu.engines.heluo.evidence_producer import HeLuoEvidenceProducer
-from tongshu.engines.heluo.diagnosis_rule_graph import (
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.frozen_state import build_frozen_state
+from heluo_engine.engines.heluo.evidence_producer import HeLuoEvidenceProducer
+from heluo_engine.engines.heluo.diagnosis_rule_graph import (
     build_diagnosis_graph,
     dropped_rules,
     HELUO_RULES,
     HUAGONG_DIRECTION,
     DiagnosisResult,
 )
-from tongshu.spec.canonical import AssertionDirection, EvidenceRef
-from tongshu.engines.heluo.hua_gong import HuaGongState
+from heluo_engine.spec.canonical import AssertionDirection, EvidenceRef
+from heluo_engine.engines.heluo.hua_gong import HuaGongState
 
 
 class TestRuleNodeRegistry(unittest.TestCase):

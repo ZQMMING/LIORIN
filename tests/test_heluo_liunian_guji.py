@@ -4,8 +4,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 import unittest
 
-from tongshu.engines.heluo.timeline_yun import compute_liunian, compute_liuyue
-from tongshu.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.timeline_yun import compute_liunian, compute_liuyue
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
 
 
 class TestLiuNianGuji(unittest.TestCase):

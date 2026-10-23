@@ -8,12 +8,12 @@
 """
 import unittest
 
-from tongshu.engines.heluo.yuan_qi import (
+from heluo_engine.engines.heluo.yuan_qi import (
     compute_yuan_qi, YuanQiState, STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM,
 )
-from tongshu.engines.heluo.canonical import HeluoResult
-from tongshu.engines.heluo.frozen_state import build_frozen_state
-from tongshu.engines.heluo_adapter import HeluoAdapter
+from heluo_engine.engines.heluo.canonical import HeluoResult
+from heluo_engine.engines.heluo.frozen_state import build_frozen_state
+from heluo_engine.adapter import HeluoAdapter
 
 
 class TestYuanQiMapping(unittest.TestCase):

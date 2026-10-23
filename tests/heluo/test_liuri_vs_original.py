@@ -36,8 +36,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
 
-from tongshu.engines.heluo.numbers import build_six_lines
-from tongshu.engines.heluo.timeline_yun import (
+from heluo_engine.engines.heluo.numbers import build_six_lines
+from heluo_engine.engines.heluo.timeline_yun import (
     _flip_line,
     _lines_to_hexagram,
     compute_liuri,
@@ -148,7 +148,7 @@ class TestLiuYaoAreLegalLineNames(unittest.TestCase):
     def test_original_text_appears_in_both_transcriptions(self):
         """本地两份转录的起日卦例必须逐字一致（排除单一录入错误）。
 
-        A = data/heluo/guajie_raw/河洛真数_起例卷之上.txt
+        A = heluo_engine/orig/河洛真数_起例卷之上.txt
         B = 用户提供的整本 txt（本轮未变，见下）
         网络核查另比对：diancang.xyz「陈图南先生河洛真数起例卷之上」
         与 shidianguji.com 影印本转录，三者起日卦例文字一致
@@ -156,7 +156,7 @@ class TestLiuYaoAreLegalLineNames(unittest.TestCase):
         """
         import os
         root = Path(__file__).resolve().parents[2]
-        raw = root / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之上.txt"
+        raw = root / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之上.txt"
         text = raw.read_text(encoding="utf-8")
         for frag in ("凡起日卦，于月中寻日",
                      "阳日寻阳爻位，（初三五为阳位。）阴日寻阴爻位。（二四上为阴位。）",

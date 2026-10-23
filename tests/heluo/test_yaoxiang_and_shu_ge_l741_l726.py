@@ -35,7 +35,7 @@ import unittest
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[2]
-_SRC = _ROOT / "src" / "tongshu" / "engines" / "heluo"
+_SRC = _ROOT / "src" / "heluo_engine" / "engines" / "heluo"
 
 
 def _strip_docstrings_and_comments(src: str) -> str:
@@ -74,7 +74,7 @@ class TestShuGeThreeNewRules(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo.yue_ling_shu_ge import (
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import (
             SHU_GE_TABLE, classify_shu_ge, shu_ge_conflicts)
         cls.TABLE = SHU_GE_TABLE
         cls._classify = staticmethod(classify_shu_ge)
@@ -209,7 +209,7 @@ class TestYaoXiangTable(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo.yao_xiang import (
+        from heluo_engine.engines.heluo.yao_xiang import (
             YAO_XIANG_TABLE, scan_yao_xiang, xiang_evidence)
         cls.T = YAO_XIANG_TABLE
         cls._scan = staticmethod(scan_yao_xiang)
@@ -275,7 +275,7 @@ class TestYaoXiangWiredIntoProduction(unittest.TestCase):
     """爻辞取象必须真的在生产链上跑，不是躺在一个没人调用的模块里。"""
 
     def _compose(self, liunian_gua="坤", liunian_yao="上六"):
-        from tongshu.engines.heluo.guajie import compose_guajie
+        from heluo_engine.engines.heluo.guajie import compose_guajie
         return compose_guajie(
             prenatal_name="乾", postnatal_name="坤", yuantang_yao="九五",
             birth_month=5, tian_shu=25, di_shu=30, year_ganzhi="庚午",
@@ -302,7 +302,7 @@ class TestYaoXiangWiredIntoProduction(unittest.TestCase):
 
     def test_to_structured_passes_through(self):
         """to_dict 有、结构化视图无 = 接上它的人静默丢掉整层取象。"""
-        from tongshu.engines.heluo.guajie import to_structured
+        from heluo_engine.engines.heluo.guajie import to_structured
         res = self._compose()
         st = to_structured(res.to_dict())
         self.assertIn("yao_xiang_hits", st)
@@ -310,7 +310,9 @@ class TestYaoXiangWiredIntoProduction(unittest.TestCase):
 
     def test_pipeline_exposes_key(self):
         """端到端：API 出口契约快照里必须有该键。"""
-        p = (_ROOT / "tests" / "test_heluo_guajie_wiring.py").read_text(encoding="utf-8")
+        # ⚠ 该契约快照所在文件是**跨仓接线测试**，2026-10-24 已迁至
+        #   tests/cross_repo/（河洛提纯为独立包后，跨仓守卫统一归置）。
+        p = (_ROOT / "tests" / "cross_repo" / "test_heluo_guajie_wiring.py").read_text(encoding="utf-8")
         block = p[p.index("_GUAJIE_KEYS = {"):p.index("}", p.index("_GUAJIE_KEYS = {"))]
         self.assertIn('"yao_xiang_hits"', block)
 

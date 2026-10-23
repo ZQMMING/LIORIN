@@ -14,8 +14,8 @@ os.environ.setdefault(
     "architecture-governance:schema-v1-arch-gov-2026;admission_registry:test-cred-hash")
 
 from tongshu.pipeline import TONGSHUPipeline  # noqa: E402
-from tongshu.engines.heluo.evidence_producer import HeLuoEvidenceProducer  # noqa: E402
-from tongshu.engines.heluo.diagnosis_rule_graph import (  # noqa: E402
+from heluo_engine.engines.heluo.evidence_producer import HeLuoEvidenceProducer  # noqa: E402
+from heluo_engine.engines.heluo.diagnosis_rule_graph import (  # noqa: E402
     HELUO_RULES, RULE_DOMAIN_MAP)
 
 out = []

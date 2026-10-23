@@ -41,12 +41,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo import guajie
-from tongshu.engines.heluo.hexagram import (
+from heluo_engine.engines.heluo import guajie
+from heluo_engine.engines.heluo.hexagram import (
     _lines_to_gua_name,
     compute_zong_gua,
 )
-from tongshu.engines.heluo.numbers import (
+from heluo_engine.engines.heluo.numbers import (
     SIXTY_FOUR_HEXAGRAMS,
     build_six_lines,
     short_hexagram_name,
@@ -129,7 +129,7 @@ class TestZongGuaIsSixLineReversal(unittest.TestCase):
         震☳ 倒转成艮☶、艮☶ 倒转成震☳、巽☴ 倒转成兑☱、兑☱ 倒转成巽☴；
         乾坤坎离自身对称，不变。
         """
-        from tongshu.engines.heluo.hexagram import _TRIGRAM_REVERSED
+        from heluo_engine.engines.heluo.hexagram import _TRIGRAM_REVERSED
         self.assertEqual(_TRIGRAM_REVERSED, {
             "乾": "乾", "坤": "坤", "坎": "坎", "离": "离",
             "震": "艮", "艮": "震", "巽": "兑", "兑": "巽",
@@ -177,7 +177,7 @@ class TestOriginalTextIsInRepo(unittest.TestCase):
 
     def test_fanduan_pianxia_contains_fandui_tu(self):
         raw = (Path(__file__).resolve().parents[2]
-               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之下.txt")
+               / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之下.txt")
         self.assertTrue(raw.exists(), f"原典文件缺失：{raw}")
         text = raw.read_text(encoding="utf-8")
         for frag in ("六十四卦反对图",

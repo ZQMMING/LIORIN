@@ -8,14 +8,14 @@ import pytest
 _REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO / "src"))
 
-from tongshu.engines.heluo.guajie import (
+from heluo_engine.engines.heluo.guajie import (
     GuaDuan,
     YaoDuan,
     build_guajie_from_result,
     load_guajie_data,
     query_yao_duan,
 )
-from tongshu.engines.heluo_adapter import HeluoAdapter
+from heluo_engine.adapter import HeluoAdapter
 
 
 class TestJingyiDataLayer:

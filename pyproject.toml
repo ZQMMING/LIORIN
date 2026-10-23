@@ -2,6 +2,7 @@
 name = "heluo-engine"
 version = "1.0.0"
 description = "河洛真数推命引擎：基于《河洛真数》的卦象/化工/元气/大运流年/断语引擎"
+readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "sxtwl>=1.0.0",
@@ -19,3 +20,22 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+# ⚠ 2026-10-24 结构性重构：顶层包名已由 `tongshu` 改为 **`heluo_engine`**。
+#   旧配置会装出顶层包 `tongshu` —— 与主仓同名 ⇒ 两个 `tongshu` 不能同时 import
+#   （实测：site-packages 在前时**主仓 32 个顶层子包全部消失**，且报错不提示
+#   装了本包 —— 静默破坏）。详见 data/heluo/河洛回灌接线决策单_20261024.md。
+include = ["heluo_engine*"]
+
+[tool.setuptools.package-data]
+# ★ 三块资源全部随包分发（随包走 ⇒ 与安装位置 / 运行目录 / CWD 全无关）
+#   data/  运行时必需：判词库 / 精义 / 扩展断语 / 参评诗断语料 / 出生地点表
+#   orig/  原典切片（判词与语料的逐字上游，守卫随包走）
+#   docs/  依据文档（定案 / 裁决 / 核定 / 对照表 / 参评考证）
+heluo_engine = [
+    "data/*.json",
+    "data/canping/*.json",
+    "orig/*.txt",
+    "orig/*.md",
+    "docs/*.md",
+    "docs/canping/*.md",
+]

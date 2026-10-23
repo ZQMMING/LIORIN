@@ -21,7 +21,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canping import (
+from heluo_engine.engines.heluo.canping import (
     CANPING_LAYERS,
     judge_canping,
     layer_lines_448,
@@ -138,8 +138,8 @@ class TestGuajieCarriesCanping(unittest.TestCase):
     """端到端：guajie 产出 canping 块。"""
 
     def test_guajie_has_canping(self):
-        from tongshu.engines.heluo.canonical import HeluoCanonical
-        from tongshu.engines.heluo.guajie import build_guajie_from_result
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.guajie import build_guajie_from_result
         r = HeluoCanonical().calculate(
             bazi=_BAZI, gender="male", birth_hour="申", era="zhong",
             birth_year=1990, birth_date="1990-05-20")
@@ -154,9 +154,9 @@ class TestGuajieCarriesCanping(unittest.TestCase):
 
     def test_canping_failure_does_not_break_guajie(self):
         """参评段抛异常时，guajie 仍须完整产出（该段是独立降级域）。"""
-        from tongshu.engines.heluo.canonical import HeluoCanonical
-        from tongshu.engines.heluo import canping as cp_mod
-        from tongshu.engines.heluo.guajie import build_guajie_from_result
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo import canping as cp_mod
+        from heluo_engine.engines.heluo.guajie import build_guajie_from_result
         r = HeluoCanonical().calculate(
             bazi=_BAZI, gender="male", birth_hour="申", era="zhong",
             birth_year=1990, birth_date="1990-05-20")

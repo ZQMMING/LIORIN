@@ -3,7 +3,7 @@
 import io
 import json
 
-d = json.load(io.open("data/heluo/guajie_data.json", encoding="utf-8"))
+d = json.load(io.open("heluo_engine/data/guajie_data.json", encoding="utf-8"))
 print("顶层类型:", type(d).__name__, "长度", len(d))
 print("首元素:", json.dumps(d[0], ensure_ascii=False)[:400])
 

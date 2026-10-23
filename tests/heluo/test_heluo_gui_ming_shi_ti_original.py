@@ -27,11 +27,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo import guajie as g
-from tongshu.engines.heluo import gui_ming_liu_ju as lmj
+from heluo_engine.engines.heluo import guajie as g
+from heluo_engine.engines.heluo import gui_ming_liu_ju as lmj
 
 _RAW = (Path(__file__).resolve().parents[2]
-        / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之上.txt")
+        / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之上.txt")
 
 
 def _text() -> str:

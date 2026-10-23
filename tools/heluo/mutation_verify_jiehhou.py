@@ -27,8 +27,8 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-JH = ROOT / "src" / "tongshu" / "engines" / "heluo" / "jiehhou.py"
-JG = ROOT / "src" / "tongshu" / "engines" / "heluo" / "jiegua.py"
+JH = ROOT / "src" / "heluo_engine" / "engines" / "heluo" / "jiehhou.py"
+JG = ROOT / "src" / "heluo_engine" / "engines" / "heluo" / "jiegua.py"
 #: 本模块的全部守卫文件。**必须一次跑完**——只跑第一个时，
 #: 其余文件里的新守卫会「假存活」（第二轮已在数格套件踩过）。
 TEST = ("tests/heluo/test_jiehhou_original_fidelity.py",

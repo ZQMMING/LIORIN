@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
 
-from tongshu.engines.time.location_registry import LocationRegistry  # noqa: E402
+from heluo_engine.engines.time.location_registry import LocationRegistry  # noqa: E402
 
 reg = LocationRegistry()
 alias = set(getattr(reg, "_by_alias", {}))

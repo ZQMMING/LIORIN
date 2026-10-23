@@ -20,7 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.jiegua import (
+from heluo_engine.engines.heluo.jiegua import (
     HOU_72_TABLE,
     JIE_GUA_DAYS_PER_TRIGRAM,
     JIE_GUA_DAYS_PER_YAO,

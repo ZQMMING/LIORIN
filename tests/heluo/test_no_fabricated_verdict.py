@@ -32,7 +32,7 @@ _ORIGINAL = Path(os.environ.get(
 def _corpus_texts():
     """全库文本语料（data/guajie_raw + 原著全文），用于伪造判词检测。"""
     texts = {}
-    base = _ROOT / "data" / "heluo" / "guajie_raw"
+    base = _ROOT / "src" / "heluo_engine" / "orig"
     if base.exists():
         for p in base.glob("*.txt"):
             with io.open(p, encoding="utf-8") as f:
@@ -59,7 +59,7 @@ class TestNoFabricatedVerdict(unittest.TestCase):
                              f"请同步撤除本断言并更新注释")
 
     def test_shu_xiong_no_longer_emits_fabricated_line(self):
-        from tongshu.engines.heluo.guajie import judge_shu_xiong
+        from heluo_engine.engines.heluo.guajie import judge_shu_xiong
         ev = judge_shu_xiong(40, 60, 11).evidence      # 阳月令 → 数凶
         joined = " ".join(ev)
         self.assertNotIn("德小者", joined, "仍在输出伪造判词")
@@ -67,7 +67,7 @@ class TestNoFabricatedVerdict(unittest.TestCase):
 
     def test_shu_xiong_cites_real_original_lines(self):
         """改后须引原典 L2274 / L2292 的明文。"""
-        from tongshu.engines.heluo.guajie import judge_shu_xiong
+        from heluo_engine.engines.heluo.guajie import judge_shu_xiong
         joined = " ".join(judge_shu_xiong(40, 60, 11).evidence)
         self.assertIn("L2274", joined, "缺原典 L2274 引文")
         self.assertIn("L2292", joined, "缺原典 L2292 引文")
@@ -78,7 +78,7 @@ class TestNoFabricatedVerdict(unittest.TestCase):
         只检查**可执行代码行**（剔除注释与 docstring），
         因为注释里为说明「此句系伪造」而引用原句是必要且正确的。
         """
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo import guajie as gj
         src = io.open(gj.__file__, encoding="utf-8").read()
         code_only = []
         for line in src.split("\n"):
@@ -96,7 +96,7 @@ class TestJieGuaUsesSingleSource(unittest.TestCase):
 
     def test_known_wrong_yao_names_are_gone(self):
         """离卦第三爻曾误作「九三」，兑卦第三爻曾误作「六三」。"""
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo import guajie as gj
         src = io.open(gj.__file__, encoding="utf-8").read()
         # 不得再有内联的爻名序列字面量
         for bad in ('"初九", "六二", "九三", "九四", "六五", "上九"',
@@ -106,7 +106,7 @@ class TestJieGuaUsesSingleSource(unittest.TestCase):
 
     def test_output_matches_original_yao_names(self):
         """实测：几个出生日应产出原典的爻名。"""
-        from tongshu.engines.heluo.guajie import judge_jiehua_gong
+        from heluo_engine.engines.heluo.guajie import judge_jiehua_gong
         cases = [
             ("2026-06-25", "夏至·初九爻"),     # 离卦初爻
             ("2026-07-10", "小暑·六二爻"),     # 离卦二爻（原典「六二小暑」）
@@ -120,7 +120,7 @@ class TestJieGuaUsesSingleSource(unittest.TestCase):
 
     def test_third_yao_is_original(self):
         """原典离卦「大暑」= 九二，兑卦「霜降」= 九三——这两条曾写错。"""
-        from tongshu.engines.heluo.jiegua import JIE_GUA_TABLE
+        from heluo_engine.engines.heluo.jiegua import JIE_GUA_TABLE
         li = [e for e in JIE_GUA_TABLE if e.trigram == "离"]
         dui = [e for e in JIE_GUA_TABLE if e.trigram == "兑"]
         self.assertEqual(li[2].yao_name, "九二", "原典「离…九二大暑」")
@@ -130,7 +130,7 @@ class TestJieGuaUsesSingleSource(unittest.TestCase):
 
     def test_jiehua_evidence_mentions_superconnect_caveat(self):
         """原典「卦爻有超接」——代码里的 15 日均分只是近似，须有登记。"""
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo import guajie as gj
         src = io.open(gj.__file__, encoding="utf-8").read()
         self.assertIn("超接", src,
                       "均分近似必须注明原典「卦爻有超接」的警告")

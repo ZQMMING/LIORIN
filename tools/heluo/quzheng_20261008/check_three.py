@@ -13,9 +13,9 @@ os.environ.setdefault(
     "TONGSHU_AUTHORITY_CREDENTIALS",
     "architecture-governance:schema-v1-arch-gov-2026;admission_registry:test-cred-hash")
 
-from tongshu.engines.heluo.frozen_state import build_frozen_state  # noqa: E402
-from tongshu.engines.heluo.guajie import judge_shu_xiong  # noqa: E402
-from tongshu.engines.heluo import diagnosis_rule_graph as dg  # noqa: E402
+from heluo_engine.engines.heluo.frozen_state import build_frozen_state  # noqa: E402
+from heluo_engine.engines.heluo.guajie import judge_shu_xiong  # noqa: E402
+from heluo_engine.engines.heluo import diagnosis_rule_graph as dg  # noqa: E402
 from tongshu.pipeline import TONGSHUPipeline  # noqa: E402
 
 out = []

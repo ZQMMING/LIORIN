@@ -16,8 +16,8 @@
 """
 import unittest
 
-from tongshu.engines.heluo.canonical import _jie_interval_for_lunar_month
-from tongshu.engines.heluo.timeline_yun import _parse_datetime, compute_liuri
+from heluo_engine.engines.heluo.canonical import _jie_interval_for_lunar_month
+from heluo_engine.engines.heluo.timeline_yun import _parse_datetime, compute_liuri
 
 
 class TestH10bJieInterval(unittest.TestCase):

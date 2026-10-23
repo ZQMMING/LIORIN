@@ -20,7 +20,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo import yuanqi_tables as Y      # noqa: E402
+from heluo_engine.engines.heluo import yuanqi_tables as Y      # noqa: E402
 
 ORIG = (Path.home() / "AppData/Local/Programs/Python").exists()
 GUAS = ("乾", "坤", "坎", "离", "震", "巽", "艮", "兑")
@@ -166,7 +166,7 @@ class TestGanzhiGuaTable(unittest.TestCase):
         """L681 原文自带「即纳音」限定，但本表给的是**卦**，与 canping._NAYIN
         （纳音→五行）是两张独立表，重合不等于同一。守卫在此钉死合并冲动。"""
         sys.path.insert(0, str(Path(Y.__file__).resolve().parents[2] / "src"))
-        from tongshu.engines.heluo import canping
+        from heluo_engine.engines.heluo import canping
         gz = "甲子"
         self.assertIn(gz, canping._NAYIN)
         self.assertEqual(Y.ganzhi_element(gz), "金")
@@ -178,7 +178,7 @@ class TestGanzhiGuaTable(unittest.TestCase):
 class TestModuleBoundary(unittest.TestCase):
     def test_dui_gua_not_same_as_huagong_opposite(self):
         """对宫（错卦）与化工相反（四季对宫）必须是两张不同的表。"""
-        from tongshu.engines.heluo.hua_gong import HUAGONG_FAN_GUA
+        from heluo_engine.engines.heluo.hua_gong import HUAGONG_FAN_GUA
         self.assertNotEqual(Y.DUI_GUA, HUAGONG_FAN_GUA,
                             "对宫与化工相反被合成了同一张表")
         self.assertEqual(set(HUAGONG_FAN_GUA), {"坎", "离", "兑", "震"})

@@ -26,7 +26,7 @@ L184 底本作「命庚午甲申**丙午**丁酉」，但：
 3. 两路独立证据互证 → 判定为**底本转录讹字**（午/申形近），非引擎缺陷。
 
 故本守卫对算例 1 使用**校正后**的四柱（丙申），并在
-`data/heluo/起例卷之下算法对照表_20261007.md` 留档。
+`heluo_engine/docs/起例卷之下算法对照表_20261007.md` 留档。
 
 ## 不对拍的部分（如实说明）
 
@@ -47,10 +47,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.numbers import build_six_lines
-from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao
-from tongshu.engines.heluo.yuan_tang import find_yuantang
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.numbers import build_six_lines
+from heluo_engine.engines.heluo.timeline_yun import compute_dayun_liyao
+from heluo_engine.engines.heluo.yuan_tang import find_yuantang
 
 #: 《起例卷之中》L184-L187 四个原典算例。
 #: - bazi        : 原典四柱（算例 1 用校正后的日柱丙申，见模块 docstring）
@@ -207,7 +207,7 @@ class TestNumberTableIsPinnedByCases(unittest.TestCase):
     """
 
     def _td(self, bazi):
-        from tongshu.engines.heluo.numbers import BRANCH_VALUES, STEM_VALUES
+        from heluo_engine.engines.heluo.numbers import BRANCH_VALUES, STEM_VALUES
         t = d = 0
         for g, z in bazi:
             allv = [STEM_VALUES[g]] + list(BRANCH_VALUES[z])
@@ -230,7 +230,7 @@ class TestNumberTableIsPinnedByCases(unittest.TestCase):
         注：只穷举**算例里出现过的**干支 —— 未出现的干（如辛）本就不影响
         四例结果，穷举它们会误判成「有人能改对」。
         """
-        from tongshu.engines.heluo.numbers import BRANCH_VALUES, STEM_VALUES
+        from heluo_engine.engines.heluo.numbers import BRANCH_VALUES, STEM_VALUES
         want = [(c["tian"], c["di"]) for c in CASES]
         used_gans = {g for c in CASES for g, _ in c["bazi"]}
         used_zhis = {z for c in CASES for _, z in c["bazi"]}
@@ -296,7 +296,7 @@ class TestOriginalCasesYuanQiTables(unittest.TestCase):
     }
 
     def test_tables_match_original_claims(self):
-        from tongshu.engines.heluo.yuan_qi import (
+        from heluo_engine.engines.heluo.yuan_qi import (
             BRANCH_TO_TRIGRAM, STEM_TO_TRIGRAM,
         )
         for c in CASES:
@@ -315,7 +315,7 @@ class TestOriginalCasesYuanQiTables(unittest.TestCase):
 
     def test_all_claimed_entries_cover_both_tables(self):
         """上述断言须**同时**用到天干表与地支表（否则可能只验到一边）。"""
-        from tongshu.engines.heluo.yuan_qi import (
+        from heluo_engine.engines.heluo.yuan_qi import (
             BRANCH_TO_TRIGRAM, STEM_TO_TRIGRAM,
         )
         stems = {gz for c in CASES for gz in self.CLAIMED[c["no"]] if gz in STEM_TO_TRIGRAM}
@@ -375,9 +375,9 @@ class TestCase6DayunSwitchL136(unittest.TestCase):
     BAZI = [("甲", "寅"), ("甲", "戌"), ("己", "卯"), ("壬", "申")]
 
     def test_dayun_switches_to_postnatal_at_46(self):
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao
-        from tongshu.engines.heluo.yuan_tang import find_yuantang
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import compute_dayun_liyao
+        from heluo_engine.engines.heluo.yuan_tang import find_yuantang
 
         res = HeluoCanonical().calculate(
             bazi=self.BAZI, gender="male", birth_hour="申", era="zhong",
@@ -420,7 +420,7 @@ class TestCase8CeShuL117(unittest.TestCase):
     """
 
     def test_ce_shu_and_yuan_hui_yun_shi(self):
-        from tongshu.engines.heluo.xian_tian_ce_shu import compute_xian_tian_ce_shu
+        from heluo_engine.engines.heluo.xian_tian_ce_shu import compute_xian_tian_ce_shu
         r = compute_xian_tian_ce_shu("睽", "离", "兑", 1, 192)
         self.assertEqual(r.ce_shu, 4423,
                          "睽九二爻策数与原典 L117 不符")
@@ -429,7 +429,7 @@ class TestCase8CeShuL117(unittest.TestCase):
 
     def test_steps_record_original_figures(self):
         """逐段数字应与原典逐条对应（3840 / 4224 / 4416 / 4423）。"""
-        from tongshu.engines.heluo.xian_tian_ce_shu import compute_xian_tian_ce_shu
+        from heluo_engine.engines.heluo.xian_tian_ce_shu import compute_xian_tian_ce_shu
         r = compute_xian_tian_ce_shu("睽", "离", "兑", 1, 192)
         joined = " ".join(r.steps)
         for frag in ("3840", "4224", "4416", "4423"):
@@ -451,7 +451,7 @@ class TestCase7CeShuRefusalKept(unittest.TestCase):
     """
 
     def test_engine_refuses_to_compute(self):
-        from tongshu.engines.heluo.xian_tian_ce_shu import compute_shangti_ce_shu
+        from heluo_engine.engines.heluo.xian_tian_ce_shu import compute_shangti_ce_shu
         r = compute_shangti_ce_shu("中孚", "巽", "兑", 5, 129)
         self.assertEqual(r.ce_shu, 0,
                          "中孚上九一例原典自相矛盾，引擎不得给出策数")
@@ -460,7 +460,7 @@ class TestCase7CeShuRefusalKept(unittest.TestCase):
 
     def test_refusal_states_the_reason(self):
         """拒算必须**说明理由**（不得静默返回 0）。"""
-        from tongshu.engines.heluo.xian_tian_ce_shu import compute_shangti_ce_shu
+        from heluo_engine.engines.heluo.xian_tian_ce_shu import compute_shangti_ce_shu
         r = compute_shangti_ce_shu("中孚", "巽", "兑", 5, 129)
         self.assertTrue(r.caveat, "拒算须留下说明")
         self.assertIn("11712", r.caveat, "拒算说明应点出原典自述数")
@@ -485,8 +485,8 @@ class TestCase9LiuYueL124(unittest.TestCase):
 
     def test_guan_month_chain(self):
         """观卦上九爻为元堂：月1 变初爻、月2 变应爻、月3 变次爻。"""
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import compute_liuyue
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import compute_liuyue
         guan = build_six_lines("巽", "艮")          # 观卦
         res = compute_liuyue(guan, 5)               # 上九 = 爻位 5
         got = {m["month"]: m for m in res.months}
@@ -511,8 +511,8 @@ class TestCase9LiuYueL124(unittest.TestCase):
         故走到居位九二的那一轮（十一月居位九二）之后，十二月双月取应爻
         1+3 = 4（五爻），与原典「卦应爻居五，双月取应爻」逐字吻合。
         """
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import compute_liuyue
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import compute_liuyue
         tai = build_six_lines("坤", "乾")           # 泰卦
         res = compute_liuyue(tai, 1)                # 九二 = 爻位 1
         got = {m["month"]: m for m in res.months}
@@ -544,8 +544,8 @@ class TestCase12HeLuoLiShuYueGua(unittest.TestCase):
     """
 
     def test_yin_yang_month_ying_yao_pairs(self):
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import compute_liuyue
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import compute_liuyue
         kun = build_six_lines("坤", "坤")           # 坤为地（纯阴，年卦本身不入判）
         res = compute_liuyue(kun, 5)               # 元堂在上爻
         got = {m["month"]: m for m in res.months}
@@ -574,8 +574,8 @@ class TestCase10LiuRiL129(unittest.TestCase):
     """
 
     def test_five_day_chain_verbatim(self):
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import (
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import (
             _lines_to_hexagram, liuri_day_lines, liuri_day_positions,
         )
         qian = build_six_lines("乾", "乾")
@@ -604,8 +604,8 @@ class TestCase11PureHexagramYuantang(unittest.TestCase):
     """
 
     def _yuan_tang(self, gua, gender, hour, phase):
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.yuan_tang import find_yuantang
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.yuan_tang import find_yuantang
         lines = build_six_lines("乾", "乾") if gua == "乾" else build_six_lines("坤", "坤")
         r = find_yuantang(six_lines=lines, birth_hour=hour, gender=gender,
                           xiantian_name=gua, solar_phase=phase)
@@ -638,7 +638,7 @@ class TestNewCaseQuotesInRepo(unittest.TestCase):
 
     def test_shangjuan_quotes(self):
         raw = (Path(__file__).resolve().parents[2]
-               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之上.txt")
+               / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之上.txt")
         text = raw.read_text(encoding="utf-8")
         for frag in (
             "假令绍兴四年，甲寅，十月初四日申时生男，命未得十月节气，只作九月论",
@@ -654,7 +654,7 @@ class TestNewCaseQuotesInRepo(unittest.TestCase):
 
     def test_xiajuan_quotes(self):
         raw = (Path(__file__).resolve().parents[2]
-               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之下.txt")
+               / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之下.txt")
         text = raw.read_text(encoding="utf-8")
         for frag in (
             "假如中孚上九爻四阳二阴之卦",
@@ -670,7 +670,7 @@ class TestOriginalCasesAreInRepo(unittest.TestCase):
 
     def test_quotes_present_verbatim(self):
         raw = (Path(__file__).resolve().parents[2]
-               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之中.txt")
+               / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之中.txt")
         text = raw.read_text(encoding="utf-8")
         self.assertIn("先贤命格假令例", text, "原典「先贤命格假令例」标题缺失")
         for c in CASES:
@@ -686,7 +686,7 @@ class TestOriginalCasesAreInRepo(unittest.TestCase):
         原文录入是**逐字照抄**，讹字照录；订正只在守卫与对照表里说明。
         """
         raw = (Path(__file__).resolve().parents[2]
-               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之中.txt")
+               / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之中.txt")
         text = raw.read_text(encoding="utf-8")
         self.assertIn("命庚午甲申丙午丁酉", text,
                       "底本原样应保留「丙午」（逐字照抄，讹字不订正）")
@@ -716,8 +716,8 @@ class TestCase13HeLuoLiShuLiUriCase(unittest.TestCase):
     """
 
     def test_five_bases_match_original(self):
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import (
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import (
             liuri_gua6_bases, _lines_to_hexagram,
         )
         ji = build_six_lines("坎", "离")          # 既济（坎上离下）
@@ -728,16 +728,16 @@ class TestCase13HeLuoLiShuLiUriCase(unittest.TestCase):
 
     def test_yue_yao_never_flipped(self):
         """「除此一爻不變」：居位爻在五段中始终不变。"""
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import liuri_gua6_bases
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import liuri_gua6_bases
         ji = build_six_lines("坎", "离")
         for base in liuri_gua6_bases(ji, 1):
             self.assertEqual(base[1], ji[1], "居位二爻不得被变")
 
     def test_segment_six_days_and_sequential_yao(self):
         """每卦管六日；段内自下而上一爻一日（初二→初七 = 初九→上六）。"""
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import (
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import (
             liuri_gua6_bases, _flip_line, _lines_to_hexagram,
         )
         ji = build_six_lines("坎", "离")
@@ -785,8 +785,8 @@ class TestCase14QiShiL124(unittest.TestCase):
 
     def test_qian_method_twelve_hours(self):
         """前法：子…巳 进数、午…亥 退数，十二时皆变爻。"""
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import compute_liushi
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import compute_liushi
         qian = build_six_lines("乾", "乾")
         r = compute_liushi(qian, 0)             # 乾初爻值日
         got = {h["hour"]: (h["name"], h["shi_yao_index"]) for h in r.hours}
@@ -797,8 +797,8 @@ class TestCase14QiShiL124(unittest.TestCase):
 
     def test_original_instance_two_hours(self):
         """原典实例：乾初爻值日 → 子时变二爻（天火同人）、午时变上爻（泽天夬）。"""
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import compute_liushi
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import compute_liushi
         r = compute_liushi(build_six_lines("乾", "乾"), 0)
         got = {h["hour"]: (h["name"], h["shi_yao_index"]) for h in r.hours}
         self.assertEqual(got[1], ("天火同人", 1), "子时应变二爻")
@@ -806,8 +806,8 @@ class TestCase14QiShiL124(unittest.TestCase):
 
     def test_hou_method_kept_as_variant(self):
         """后法（又云）留档：阳时链式变爻、阴时取应。"""
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import (
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import (
             LIUSHI_METHOD_HOU, compute_liushi,
         )
         r = compute_liushi(build_six_lines("乾", "乾"), 0,
@@ -825,8 +825,8 @@ class TestCase14QiShiL124(unittest.TestCase):
 
         传 target_hour 仍须**明确留痕**（不得静默忽略），但不产出流时卦/爻辞。
         """
-        from tongshu.engines.heluo.canonical import HeluoCanonical
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo import guajie as gj
         bazi = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
         res = HeluoCanonical().calculate(
             bazi=bazi, gender="male", birth_hour="午", era="zhong",
@@ -886,8 +886,8 @@ class TestCase15XiaoXiangL366(unittest.TestCase):
     ]
 
     def _run_chain(self, yt_index, birth_year):
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import (
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import (
             compute_dayun_liyao, compute_liunian,
         )
         lines = build_six_lines(*self.TONGREN)
@@ -946,10 +946,10 @@ class TestCase16YuanTangL98(unittest.TestCase):
     ]
 
     def test_yuantang_eleven_examples(self):
-        from tongshu.engines.heluo.numbers import (
+        from heluo_engine.engines.heluo.numbers import (
             SIXTY_FOUR_HEXAGRAMS, build_six_lines,
         )
-        from tongshu.engines.heluo.yuan_tang import find_yuantang
+        from heluo_engine.engines.heluo.yuan_tang import find_yuantang
         name2ul = {}
         for (up, lo), full in SIXTY_FOUR_HEXAGRAMS.items():
             name2ul[full[0] if "为" in full else full[2:]] = (up, lo)
@@ -974,7 +974,7 @@ class TestCase17GuaQiMonthTable(unittest.TestCase):
     """
 
     def test_twelve_month_guaqi(self):
-        from tongshu.engines.heluo.guajie import GUA_QI_MONTH_TABLE
+        from heluo_engine.engines.heluo.guajie import GUA_QI_MONTH_TABLE
         expect = {1: ("雨水", "泰"), 2: ("春分", "大壮"), 3: ("谷雨", "夬"),
                   4: ("小满", "乾"), 5: ("夏至", "姤"), 6: ("大暑", "遁"),
                   7: ("处暑", "否"), 8: ("秋分", "观"), 9: ("霜降", "剥"),
@@ -1001,8 +1001,8 @@ class TestCase18YinYaoSixYearChain(unittest.TestCase):
     EXPECT = ["乾九二", "履六三", "中孚六四", "损六五", "临上六", "师初六"]
 
     def _run(self, birth_year):
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import (
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import (
             compute_dayun_liyao, compute_liunian,
         )
         lines = build_six_lines("乾", "离")          # 同人

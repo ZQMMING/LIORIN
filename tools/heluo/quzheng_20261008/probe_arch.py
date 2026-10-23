@@ -8,10 +8,10 @@ from datetime import date, timedelta
 sys.path.insert(0, "src")
 os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
 
-from tongshu.engines.heluo.hua_gong import (HUAGONG_JIEQI_WINDOWS, huagong_by_birth_date,
+from heluo_engine.engines.heluo.hua_gong import (HUAGONG_JIEQI_WINDOWS, huagong_by_birth_date,
                                             huagong_by_jieqi)
-from tongshu.engines.heluo.jiehhou import get_current_jieqi_info
-from tongshu.engines.heluo.yue_ling_shu_ge import solar_jq_index
+from heluo_engine.engines.heluo.jiehhou import get_current_jieqi_info
+from heluo_engine.engines.heluo.yue_ling_shu_ge import solar_jq_index
 
 out = []
 

@@ -41,11 +41,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo.numbers import build_six_lines  # noqa: E402
-from tongshu.engines.heluo.timeline_yun import (  # noqa: E402
+from heluo_engine.engines.heluo.numbers import build_six_lines  # noqa: E402
+from heluo_engine.engines.heluo.timeline_yun import (  # noqa: E402
     compute_liuyue, liuri_day_positions, liuri_day_lines,
 )
-from tongshu.engines.heluo.guajie import _yao_name  # noqa: E402
+from heluo_engine.engines.heluo.guajie import _yao_name  # noqa: E402
 
 
 class TestLiuYueBaseIsXingNianYao(unittest.TestCase):
@@ -94,7 +94,7 @@ class TestLiuYueUsesXingNianYaoInPipeline(unittest.TestCase):
         原实现用段元堂爻作基准 → 该基准在同一大运段内恒定。
         本断言直接对比两种基准：两者必须不同（否则说明仍未用行年爻）。
         """
-        from tongshu.engines.heluo_adapter import HeluoAdapter
+        from heluo_engine.adapter import HeluoAdapter
         ad = HeluoAdapter()
         res = ad.compute((1983, 11, 3, 12), gender="male",
                          target_date="2026-10-23")
@@ -121,7 +121,7 @@ class TestLiuYueUsesXingNianYaoInPipeline(unittest.TestCase):
 
     def test_month_base_equals_xingnian_yao(self):
         """流月序列须由「行年爻」起（与 compute_liuyue(年卦, 行年爻) 逐字一致）。"""
-        from tongshu.engines.heluo_adapter import HeluoAdapter
+        from heluo_engine.adapter import HeluoAdapter
         ad = HeluoAdapter()
         res = ad.compute((1983, 11, 3, 12), gender="male",
                          target_date="2026-10-23")

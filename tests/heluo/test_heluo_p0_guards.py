@@ -24,11 +24,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo import metrics_v2
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.evidence_producer import HeLuoEvidenceProducer
-from tongshu.engines.heluo.frozen_state import build_frozen_state
-from tongshu.engines.heluo.guajie import judge_ye_buye, load_guajie_data
+from heluo_engine.engines.heluo import metrics_v2
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.evidence_producer import HeLuoEvidenceProducer
+from heluo_engine.engines.heluo.frozen_state import build_frozen_state
+from heluo_engine.engines.heluo.guajie import judge_ye_buye, load_guajie_data
 
 _BAZI = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
 _TARGET_YEAR = 2026
@@ -270,7 +270,7 @@ class TestMetricsV2Minimal(unittest.TestCase):
 
         修前解释层**从不带**该键，质量分接上即恒缺一项（上限 4/5）。
         """
-        from tongshu.engines.heluo.interpretation import (
+        from heluo_engine.engines.heluo.interpretation import (
             HeluoInput, RelationalInterpretationEngine,
         )
         inp = HeluoInput(

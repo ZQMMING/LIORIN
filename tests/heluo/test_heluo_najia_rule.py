@@ -39,7 +39,7 @@
   现已从不一致清单中移除。
 
 完整对拍过程、六源清单与逐页影印核验见
-`docs/heluo/纳甲异文多源对拍_20261024.md`。
+`heluo_engine/docs/纳甲异文多源对拍_20261024.md`。
 
 **覆盖**：64 卦全部纳甲项（60 卦 × 6 条 + 3 卦 × 3 条 + 1 卦 × 5 条 = 374 条）
 + 形态守卫 + **原典不一致留档**（KNOWN_INCONSISTENCIES，逐条注明，不掩盖）。
@@ -53,10 +53,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo import guajie as gj
+from heluo_engine.engines.heluo import guajie as gj
 
 _ROOT = Path(__file__).resolve().parents[2]
-_RAW = _ROOT / "data" / "heluo" / "guajie_data.json"
+_RAW = _ROOT / "src" / "heluo_engine" / "data" / "guajie_data.json"
 
 #: 合法干支（地支无「戊」—— 「丙戊」是原书讹字）
 _GAN = "甲乙丙丁戊己庚辛壬癸"

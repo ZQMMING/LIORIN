@@ -32,9 +32,9 @@ from __future__ import annotations
 import unittest
 from pathlib import Path
 
-from tongshu.engines.heluo import guajie as gj
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.timeline_yun import materialize_month_days
+from heluo_engine.engines.heluo import guajie as gj
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.timeline_yun import materialize_month_days
 
 _BAZI = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
 _BIRTH_YEAR = 1983
@@ -170,9 +170,9 @@ class TestGua6OriginalTextIsInRepo(unittest.TestCase):
     """
 
     RAW = (Path(__file__).resolve().parent.parent
-           / "data" / "heluo" / "guajie_raw" / "河洛理数_日卦起例卷.txt")
+           / "src" / "heluo_engine" / "orig" / "河洛理数_日卦起例卷.txt")
     NOTE = (Path(__file__).resolve().parent.parent
-            / "data" / "heluo" / "guajie_raw" / "河洛理数_日卦起例卷_校记.md")
+            / "src" / "heluo_engine" / "orig" / "河洛理数_日卦起例卷_校记.md")
 
     def test_raw_text_exists(self):
         self.assertTrue(self.RAW.exists(), f"《河洛理数》日卦原文切片缺失：{self.RAW}")

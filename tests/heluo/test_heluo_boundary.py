@@ -16,7 +16,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.numbers import (
+from heluo_engine.engines.heluo.numbers import (
     STEM_VALUES,
     BRANCH_VALUES,
     normalize_tian_shu,
@@ -26,10 +26,10 @@ from tongshu.engines.heluo.numbers import (
     build_six_lines,
     get_hexagram_name,
 )
-from tongshu.engines.heluo.prenatal import determine_prenatal_hexagram, resolve_middle_palace
-from tongshu.engines.heluo.yuan_tang import find_yuantang
-from tongshu.engines.heluo.postnatal import compute_postnatal
-from tongshu.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.prenatal import determine_prenatal_hexagram, resolve_middle_palace
+from heluo_engine.engines.heluo.yuan_tang import find_yuantang
+from heluo_engine.engines.heluo.postnatal import compute_postnatal
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
 
 
 # ═══════════════════════════════════════════════════════════════════

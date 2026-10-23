@@ -3,7 +3,7 @@
 
 锁死本轮修复，防止回退到卦气歌体系。
 
-背景（取证见 data/heluo/起例卷之下算法对照表_20261007.md §九）：
+背景（取证见 heluo_engine/docs/起例卷之下算法对照表_20261007.md §九）：
   《河洛真数》的节候卦只有起例卷之下 L1489–1492「节候卦爻」一节——四正卦
   （坎震离兑）节卦表，每卦总管九十日、每爻直十五日，外加七十二候表。
   旧 `jiehhou.py` 把 H11 实现成了卦气歌的「卦X爻动→变卦」链，并把它挂在
@@ -19,10 +19,10 @@ import io
 import unittest
 from pathlib import Path
 
-from tongshu.engines.heluo.jiegua import JIE_GUA_TABLE, JIEQI_24
-from tongshu.engines.heluo import jiehhou as m
+from heluo_engine.engines.heluo.jiegua import JIE_GUA_TABLE, JIEQI_24
+from heluo_engine.engines.heluo import jiehhou as m
 
-SRC = Path(__file__).resolve().parents[2] / "src" / "tongshu" / "engines" / "heluo" / "jiehhou.py"
+SRC = Path(__file__).resolve().parents[2] / "src" / "heluo_engine" / "engines" / "heluo" / "jiehhou.py"
 SRC_TEXT = SRC.read_text(encoding="utf-8")
 
 #: 旧版卦气歌表的 24 组值。任何一条出现在 H11 输出里即为回退。

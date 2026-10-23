@@ -14,8 +14,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 
-from tongshu.engines.heluo.numbers import SIXTY_FOUR_HEXAGRAMS
-from tongshu.engines.heluo.yuan_tang import find_yuantang
+from heluo_engine.engines.heluo.numbers import SIXTY_FOUR_HEXAGRAMS
+from heluo_engine.engines.heluo.yuan_tang import find_yuantang
 
 
 class TestHexagramTableIntegrity(unittest.TestCase):

@@ -18,12 +18,12 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-HG = ROOT / "src" / "tongshu" / "engines" / "heluo" / "hua_gong.py"
-DRG = ROOT / "src" / "tongshu" / "engines" / "heluo" / "diagnosis_rule_graph.py"
+HG = ROOT / "src" / "heluo_engine" / "engines" / "heluo" / "hua_gong.py"
+DRG = ROOT / "src" / "heluo_engine" / "engines" / "heluo" / "diagnosis_rule_graph.py"
 #: 五行生克单一来源（2026-10-08 批次 G 起相克表从 hua_gong 迁到此处，
 #: hua_gong 以 `ELEMENT_OVERCOMES as _WU_KE` 引入）。变异锚点须跟着搬，
 #: 否则锚点未命中 → 变异被**静默跳过** → 演练覆盖面缩水而无人察觉。
-HS = ROOT / "src" / "tongshu" / "engines" / "heluo" / "hexagram_state.py"
+HS = ROOT / "src" / "heluo_engine" / "engines" / "heluo" / "hexagram_state.py"
 #: 本模块全部守卫文件，必须一次跑完（只跑第一个会「假存活」）
 TEST = ("tests/heluo/test_h6_hua_gong.py",
         "tests/heluo/test_full_pipeline.py",

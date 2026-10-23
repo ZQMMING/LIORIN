@@ -29,21 +29,21 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.gui_ming_liu_ju import (
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.gui_ming_liu_ju import (
     GUA_MING_GOOD_EXAMPLES,
     judge_liu_ju,
     ying_yao_index,
 )
-from tongshu.engines.heluo.interpretation import (
+from heluo_engine.engines.heluo.interpretation import (
     HeluoInput,
     RelationalInterpretationEngine,
 )
-from tongshu.engines.heluo.numbers import (
+from heluo_engine.engines.heluo.numbers import (
     HEXAGRAM_SHORT_NAMES,
     short_hexagram_name,
 )
-from tongshu.engines.heluo.yuan_tang import parse_yuantang_name
+from heluo_engine.engines.heluo.yuan_tang import parse_yuantang_name
 
 _BAZI = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
 
@@ -181,7 +181,7 @@ class TestYouYuanAgainstOriginal(unittest.TestCase):
 
     def test_judge_you_yuan_polarity_contract(self):
         """judge_you_yuan：同阴阳 → 无援；反阴阳 → 有援。"""
-        from tongshu.engines.heluo.gui_ming_liu_ju import judge_you_yuan
+        from heluo_engine.engines.heluo.gui_ming_liu_ju import judge_you_yuan
         self.assertTrue(judge_you_yuan(1, -1).passed, "阳元堂 + 阴应爻 → 有援")
         self.assertTrue(judge_you_yuan(-1, 1).passed, "阴元堂 + 阳应爻 → 有援")
         self.assertFalse(judge_you_yuan(1, 1).passed, "阳元堂 + 阳应爻 → 无援")

@@ -20,7 +20,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo_adapter import (
+from heluo_engine.adapter import (
     HeluoAdapter,
     now_beijing,
     resolve_target_date,
@@ -75,7 +75,7 @@ class TestAdapterDefaultTarget(unittest.TestCase):
 
     def test_liuri_resolves_for_today(self):
         """流日卦按今天解出（不传任何目标日）。"""
-        from tongshu.engines.heluo.guajie import build_guajie_from_result
+        from heluo_engine.engines.heluo.guajie import build_guajie_from_result
         out = build_guajie_from_result(self.res)
         self.assertTrue(out.get("liuri_hexagram"), "流日卦应按今天自动解出")
         self.assertIsNotNone(out.get("liuri_yao"))
@@ -85,7 +85,7 @@ class TestAdapterDefaultTarget(unittest.TestCase):
                                      target_date="2026-09-15")
         self.assertEqual(res.target_date, "2026-09-15",
                          "显式目标日须被采用并记录在结果上")
-        from tongshu.engines.heluo.guajie import build_guajie_from_result
+        from heluo_engine.engines.heluo.guajie import build_guajie_from_result
         out = build_guajie_from_result(res)      # 不传目标 → 回退到结果自带日期
         self.assertTrue(out.get("liuri_hexagram"),
                         "回退到结果自带的取用日仍应解出流日")
@@ -95,7 +95,7 @@ class TestHuangliInjectionPoint(unittest.TestCase):
     """黄历引擎注入点：字段契约与 heluo_lunar_bridge 期望一致。"""
 
     def test_bridge_accepts_injected_huangli_day(self):
-        from tongshu.engines.heluo.heluo_lunar_bridge import annotate_day
+        from heluo_engine.engines.heluo.heluo_lunar_bridge import annotate_day
         injected = {
             "day_ganzhi": "丙申", "lunar_month": "十月", "lunar_day": "初五",
             "jie_qi": "立冬", "yi": ["出行"], "ji": ["动土"],
@@ -109,7 +109,7 @@ class TestHuangliInjectionPoint(unittest.TestCase):
 
     def test_bridge_falls_back_without_injection(self):
         """未注入时走 lunar_python 兜底（不崩、不静默空）。"""
-        from tongshu.engines.heluo.heluo_lunar_bridge import annotate_day
+        from heluo_engine.engines.heluo.heluo_lunar_bridge import annotate_day
         anno = annotate_day("2026-11-07")
         self.assertTrue(anno.get("day_ganzhi"), "兜底也须给出日柱")
         self.assertEqual(anno.get("source"), "lunar_python")
@@ -121,7 +121,7 @@ class TestHuangliInjectionPoint(unittest.TestCase):
             huangli_provider=lambda d: huangli_engine.get_day(d)
         不必再手工 ``.to_dict()``（此前主仓无任何代码做这次转换 → 河洛拆包后断链）。
         """
-        from tongshu.engines.heluo.heluo_lunar_bridge import annotate_day
+        from heluo_engine.engines.heluo.heluo_lunar_bridge import annotate_day
 
         class _HuangliDay:                       # 模拟主仓 HuangliDay 的形态
             def __init__(self):
@@ -150,7 +150,7 @@ class TestHuangliInjectionPoint(unittest.TestCase):
 
     def test_bridge_survives_broken_provider_object(self):
         """注入物形态异常时不得崩（退回兜底）。"""
-        from tongshu.engines.heluo.heluo_lunar_bridge import annotate_day
+        from heluo_engine.engines.heluo.heluo_lunar_bridge import annotate_day
         anno = annotate_day("2026-11-07", object())
         self.assertTrue(anno.get("day_ganzhi"), "异常注入应退回兜底而非崩")
 

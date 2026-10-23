@@ -67,7 +67,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.numbers import (
+from heluo_engine.engines.heluo.numbers import (
     BRANCH_VALUES,
     LUSHU_TO_TRIGRAM_NAME,
     STEM_VALUES,
@@ -155,7 +155,7 @@ class TestOriginalTextInRepo(unittest.TestCase):
 
     def test_songs_present_verbatim(self):
         raw = (Path(__file__).resolve().parents[2]
-               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之上.txt")
+               / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之上.txt")
         text = raw.read_text(encoding="utf-8")
         for frag in (
             "壬甲从乾起六偶右下", "乙癸向坤求二偶右下",

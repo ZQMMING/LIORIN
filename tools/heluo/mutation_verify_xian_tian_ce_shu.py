@@ -20,7 +20,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SRC = ROOT / "src" / "tongshu" / "engines" / "heluo" / "xian_tian_ce_shu.py"
+SRC = ROOT / "src" / "heluo_engine" / "engines" / "heluo" / "xian_tian_ce_shu.py"
 TEST = "tests/heluo/test_xian_tian_ce_shu_vs_original.py"
 
 MUTATIONS: list[tuple[str, str, str]] = [

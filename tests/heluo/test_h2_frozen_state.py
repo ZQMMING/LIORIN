@@ -11,9 +11,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.frozen_state import build_frozen_state, FrozenHeluoState
-from tongshu.engines.heluo.evidence_producer import HeLuoEvidenceProducer
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.frozen_state import build_frozen_state, FrozenHeluoState
+from heluo_engine.engines.heluo.evidence_producer import HeLuoEvidenceProducer
 
 
 class TestFrozenStateGoldenCase(unittest.TestCase):

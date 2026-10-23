@@ -33,7 +33,7 @@ try:
 except ImportError:  # pragma: no cover
     _HAS_SXTWL = False
 
-from tongshu.engines.heluo.jiehhou import (
+from heluo_engine.engines.heluo.jiehhou import (
     SOLAR_TERMS,
     _JQ_NO_JIEQI_SENTINEL,
     _JIEQI_TIMELINE,
@@ -147,7 +147,7 @@ class TestEndToEndSeasonalHexagram(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
         cls.canonical = HeluoCanonical()
         cls.pillars = [("庚", "午"), ("辛", "巳"), ("庚", "辰"), ("壬", "申")]
 
@@ -197,12 +197,12 @@ class TestCacheIsBounded(unittest.TestCase):
         self.assertLessEqual(_JIEQI_TIMELINE_MAX, 256)
 
     def test_canonical_jie_cache_has_cap(self):
-        import tongshu.engines.heluo.canonical as cn
+        import heluo_engine.engines.heluo.canonical as cn
         self.assertLessEqual(cn._JIE_CACHE_MAX, 1024)
 
     def test_canonical_jie_cache_evicts_when_over_cap(self):
         """塞满超过上限的年份，最旧的应被淘汰，总量不失控。"""
-        import tongshu.engines.heluo.canonical as cn
+        import heluo_engine.engines.heluo.canonical as cn
         saved_cache, saved_compute = cn._jie_cache, cn._compute_year_jie
         try:
             cn._jie_cache = {}

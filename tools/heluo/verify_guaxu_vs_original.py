@@ -12,7 +12,7 @@ from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.numbers import SIXTY_FOUR_HEXAGRAMS  # noqa: E402
+from heluo_engine.engines.heluo.numbers import SIXTY_FOUR_HEXAGRAMS  # noqa: E402
 
 TXT = Path(r"C:\Users\ming\.minimax\v2\assets\2026\10\06"
            r"\22-08-20-122-asset_20261006-220820-122_67b40448a1e6"
@@ -121,7 +121,7 @@ def main() -> None:
     print("=" * 78)
     print("  小畜（L255）：午未同在六四，申九五，酉上九，戌初九，亥九二")
     for up, lo in (("巽", "乾"), ("巽", "坤")):
-        from tongshu.engines.heluo.numbers import TRIGRAM_LINES, build_six_lines
+        from heluo_engine.engines.heluo.numbers import TRIGRAM_LINES, build_six_lines
         lines6 = list(TRIGRAM_LINES[lo]) + list(TRIGRAM_LINES[up])
         yin = [i for i, l in enumerate(lines6) if l == -1]
         POS = ["初", "二", "三", "四", "五", "上"]
@@ -151,7 +151,7 @@ def main() -> None:
     print("  逻辑：原典实例直接点了爻名（如「渐卦第三阴爻正是六四」），")
     print("        配合已验证的上下卦，即可反推该三画的阴阳排布，")
     print("        与代码 TRIGRAM_LINES 无关。")
-    from tongshu.engines.heluo.numbers import TRIGRAM_LINES
+    from heluo_engine.engines.heluo.numbers import TRIGRAM_LINES
     POS = ["初", "二", "三", "四", "五", "上"]
     probes = [
         # (说明, 上卦, 下卦, 断言：某 index 的阴阳及爻名)

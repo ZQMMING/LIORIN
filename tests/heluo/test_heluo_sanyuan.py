@@ -41,8 +41,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo_adapter import sanyuan, HeluoAdapter  # noqa: E402
-from tongshu.engines.heluo.prenatal import resolve_middle_palace  # noqa: E402
+from heluo_engine.adapter import sanyuan, HeluoAdapter  # noqa: E402
+from heluo_engine.engines.heluo.prenatal import resolve_middle_palace  # noqa: E402
 
 
 class TestSanyuan(unittest.TestCase):
@@ -171,7 +171,7 @@ class TestSanyuanEndToEnd(unittest.TestCase):
     def test_era_source_fallback_marked(self):
         """无出生时间时 era_source 必须是 fallback（不得静默回落成真值）。"""
         from dataclasses import replace
-        from tongshu.engines.bazi_engine import BaziEngine
+        from heluo_engine.engines.bazi_engine import BaziEngine
         chart = BaziEngine().compute((1990, 6, 15, 14), gender="male")
         # 手工剥掉 birth_datetime，模拟「上游未带出生时间」
         # （BaziChart 是 frozen dataclass，须用 replace 而非赋值）

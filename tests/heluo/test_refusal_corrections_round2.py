@@ -76,7 +76,7 @@ class TestCorrectionEvidencePresent(unittest.TestCase):
 class TestTianShuZhiRuoImplemented(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo.yue_ling_shu_ge import classify_shu_ge
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import classify_shu_ge
         cls._c = staticmethod(classify_shu_ge)
 
     def names(self, t: int, d: int) -> set[str]:
@@ -102,12 +102,12 @@ class TestTianShuZhiRuoImplemented(unittest.TestCase):
 
     def test_precedence_over_yang_shu_pian_shao(self):
         """L38 早于 L56，同数时取至弱（更极端的一档）。"""
-        from tongshu.engines.heluo.guajie import judge_shu_xiong
+        from heluo_engine.engines.heluo.guajie import judge_shu_xiong
         self.assertEqual(judge_shu_xiong(6, 30, 11).pattern, "天数至弱")
 
     def test_baseline_ambiguity_still_registered(self):
         """「天数一十有五」的基线归属仍须留在拒算表里——判据成立不等于基线定了。"""
-        from tongshu.engines.heluo.yue_ling_shu_ge import REFUSED
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import REFUSED
         joined = " ".join(c + w + n for c, w, n in REFUSED)
         self.assertIn("一十有五", joined)
         self.assertIn("天数二十五为正", joined)
@@ -119,7 +119,7 @@ class TestTianShuZhiRuoImplemented(unittest.TestCase):
 
 class TestChunQiQiOuImplemented(unittest.TestCase):
     def setUp(self):
-        from tongshu.engines.heluo.yue_ling_shu_ge import (
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import (
             judge_chun_qi_qi_ou, solar_jq_index, CHUNQI_JQ)
         self.j = judge_chun_qi_qi_ou
         self.solar = solar_jq_index
@@ -182,7 +182,7 @@ class TestChunQiQiOuEndToEnd(unittest.TestCase):
 
     def _run(self, birth_date, tian):
         from types import SimpleNamespace
-        from tongshu.engines.heluo.guajie import build_guajie_from_result
+        from heluo_engine.engines.heluo.guajie import build_guajie_from_result
         res = SimpleNamespace(
             input=SimpleNamespace(gender="male", birth_date=birth_date),
             prenatal=SimpleNamespace(hexagram_name="乾"),
@@ -224,7 +224,7 @@ class TestPoemsAgreeInDirection(unittest.TestCase):
     """两条诗断：都是「阴月令较轻、阳月令较重」，不是相反。"""
 
     def setUp(self):
-        from tongshu.engines.heluo.yue_ling_shu_ge import shu_ge_conflicts
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import shu_ge_conflicts
         self._c = shu_ge_conflicts
 
     def test_conflict_text_says_same_direction(self):
@@ -239,7 +239,7 @@ class TestPoemsAgreeInDirection(unittest.TestCase):
 
     def test_both_rules_still_reported(self):
         """重叠仍须全量披露，只是不再宣称「相反」。"""
-        from tongshu.engines.heluo.yue_ling_shu_ge import classify_shu_ge
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import classify_shu_ge
         names = {r.name for r in classify_shu_ge(24, 30)}
         self.assertIn("阳数偏少", names)
         self.assertIn("以弱敌强", names)
@@ -251,7 +251,7 @@ class TestPoemsAgreeInDirection(unittest.TestCase):
 
 class TestYouYouHuiHuiStillRefused(unittest.TestCase):
     def setUp(self):
-        from tongshu.engines.heluo.yue_ling_shu_ge import REFUSED
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import REFUSED
         self.R = REFUSED
 
     def test_registered_with_exhaustive_evidence(self):
@@ -262,7 +262,7 @@ class TestYouYouHuiHuiStillRefused(unittest.TestCase):
 
     def test_no_shu_ge_named_you_you_or_you_hui(self):
         """不得因为「有尤／有悔」听起来像数格就擅自实现一个。"""
-        from tongshu.engines.heluo.yue_ling_shu_ge import SHU_GE_TABLE
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import SHU_GE_TABLE
         names = {r.name for r in SHU_GE_TABLE}
         self.assertNotIn("太过有尤", names)
         self.assertNotIn("地数太过有悔", names)

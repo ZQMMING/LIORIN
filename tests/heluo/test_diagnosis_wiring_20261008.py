@@ -24,7 +24,7 @@ from pathlib import Path
 from typing import List
 
 _ROOT = Path(__file__).resolve().parents[2]
-_E = _ROOT / "src" / "tongshu" / "engines" / "heluo"
+_E = _ROOT / "src" / "heluo_engine" / "engines" / "heluo"
 
 
 @dataclass
@@ -50,7 +50,7 @@ class _FakeEnumSignal:
 
 class TestSignalsContractAcceptsBothShapes(unittest.TestCase):
     def setUp(self):
-        from tongshu.engines.heluo import diagnosis_rule_graph as dg
+        from heluo_engine.engines.heluo import diagnosis_rule_graph as dg
         self.dg = dg
 
     def test_sig_field_handles_dict_and_object(self):
@@ -135,7 +135,7 @@ class TestSignalsContractAcceptsBothShapes(unittest.TestCase):
 
 class TestUnmatchedIsDisclosed(unittest.TestCase):
     def test_unmatched_records_when_no_signal_matches(self):
-        from tongshu.engines.heluo import diagnosis_rule_graph as dg
+        from heluo_engine.engines.heluo import diagnosis_rule_graph as dg
 
         class _Ev:
             rule_id = "HL_TIAN_DI_SHU"
@@ -202,8 +202,8 @@ class TestGuidanceNoFabricatedRuleSet(unittest.TestCase):
         self.assertEqual(hits, [], "河洛引擎里还有可执行代码引用不存在的规则集")
 
     def test_source_ref_lists_real_rule_ids(self):
-        from tongshu.engines.heluo.guidance import HeluoGuidanceEngine
-        from tongshu.engines.heluo.diagnosis_rule_graph import AssertionDirection
+        from heluo_engine.engines.heluo.guidance import HeluoGuidanceEngine
+        from heluo_engine.engines.heluo.diagnosis_rule_graph import AssertionDirection
 
         class _A:
             direction = AssertionDirection.SUPPORTIVE

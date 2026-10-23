@@ -21,8 +21,8 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-GE = ROOT / "src" / "tongshu" / "engines" / "heluo" / "yue_ling_shu_ge.py"
-GJ = ROOT / "src" / "tongshu" / "engines" / "heluo" / "guajie.py"
+GE = ROOT / "src" / "heluo_engine" / "engines" / "heluo" / "yue_ling_shu_ge.py"
+GJ = ROOT / "src" / "heluo_engine" / "engines" / "heluo" / "guajie.py"
 #: 本模块的全部守卫文件。**必须一次跑完**——第二轮验证新增的
 #: test_refusal_corrections_round2.py 里锁着「天数至弱」「三阳奇偶合象」
 #: 等本轮新实现；只跑第一个文件时，那八条变异会「存活」，

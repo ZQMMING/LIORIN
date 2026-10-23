@@ -70,7 +70,7 @@ class TestYuParitySplitsNames(unittest.TestCase):
     """「余」的奇偶必须真正分流命��。"""
 
     def setUp(self):
-        from tongshu.engines.heluo.guajie import judge_shu_xiong
+        from heluo_engine.engines.heluo.guajie import judge_shu_xiong
         self.judge = judge_shu_xiong
 
     def _pattern(self, tian, di, month=11):
@@ -112,7 +112,7 @@ class TestNewPatternsNotAutoXiong(unittest.TestCase):
     """孤阳自偶／孤阴向阳按原典**不判凶**（原典只给诗断，未言必凶）。"""
 
     def setUp(self):
-        from tongshu.engines.heluo.guajie import judge_shu_xiong
+        from heluo_engine.engines.heluo.guajie import judge_shu_xiong
         self.judge = judge_shu_xiong
 
     def test_gu_yang_zi_ou_not_shu_xiong(self):

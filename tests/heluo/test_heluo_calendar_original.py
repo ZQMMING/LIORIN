@@ -7,7 +7,7 @@
 ## 一、历法层的真口径（此前踩过的坑）
 
 1582 年（格里历改历）**之前**，sxtwl 的节气儒略日给出的是**儒略历**日期；
-仓库通用换算 `tongshu.engines.time.jd_converter.jd_to_datetime` 按
+仓库通用换算 `heluo_engine.engines.time.jd_converter.jd_to_datetime` 按
 **proleptic Gregorian** 换算 —— 两者在 1150 / 1206 年**相差 7 天**
 （实测：大雪 1206 = sxtwl 标 1206-11-30 09:34，jd_to_datetime 标 1206-12-07 09:34）。
 
@@ -43,15 +43,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.calendar_guard import (
+from heluo_engine.engines.heluo.calendar_guard import (
     check_calendar_consistency,
     julian_gregorian_offset,
     sxtwl_pillars,
 )
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.numbers import build_six_lines, compute_tian_di_shu
-from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao
-from tongshu.engines.heluo.yuan_tang import find_yuantang
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.numbers import build_six_lines, compute_tian_di_shu
+from heluo_engine.engines.heluo.timeline_yun import compute_dayun_liyao
+from heluo_engine.engines.heluo.yuan_tang import find_yuantang
 
 #: 时辰 → 该时辰起始小时（用于取时柱）
 _SHICHEN_HOUR = {
@@ -176,7 +176,7 @@ class TestAdapterEndToEnd(unittest.TestCase):
     """
 
     def test_adapter_end_to_end_all_cases(self):
-        from tongshu.engines.heluo_adapter import HeluoAdapter
+        from heluo_engine.adapter import HeluoAdapter
         import sxtwl
 
         adapter = HeluoAdapter()
@@ -206,7 +206,7 @@ class TestAdapterEndToEnd(unittest.TestCase):
         给对；河洛侧的自校此时**不触发**（它只是兜底 —— 上游一旦再错位，
         自校会把月柱拉回河洛口径并留痕）。
         """
-        from tongshu.engines.heluo_adapter import HeluoAdapter
+        from heluo_engine.adapter import HeluoAdapter
         import sxtwl
 
         day = sxtwl.fromLunar(1206, 10, 29, False)
@@ -222,8 +222,8 @@ class TestAdapterEndToEnd(unittest.TestCase):
 
     def test_self_correction_kicks_in_when_upstream_is_wrong(self):
         """上游若再错位（人为喂错月柱）→ 河洛自校拉回并留痕（兜底仍有效）。"""
-        from tongshu.engines.heluo.canonical import HeluoCanonical
-        from tongshu.engines.heluo.calendar_guard import resolve_year_month
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.calendar_guard import resolve_year_month
 
         # 1206-11-30 21:00 的大雪后子月 = 庚子；这里喂相邻的亥月（己亥）
         bazi = [("丙", "寅"), ("己", "亥"), ("丙", "子"), ("己", "亥")]
@@ -241,7 +241,7 @@ class TestAdapterEndToEnd(unittest.TestCase):
 
     def test_modern_date_untouched(self):
         """现代日期不得被自校改动（无据不动）。"""
-        from tongshu.engines.heluo_adapter import HeluoAdapter
+        from heluo_engine.adapter import HeluoAdapter
         import sxtwl
 
         day = sxtwl.fromSolar(2026, 10, 22)
@@ -257,8 +257,8 @@ class TestAdapterEndToEnd(unittest.TestCase):
         合成 fixture（bazi 与 birth_date 无关）是典型情形：河洛**不得擅自
         改写调用方的显式输入**，否则既有行为被静默篡改。
         """
-        from tongshu.engines.heluo.canonical import HeluoCanonical
-        from tongshu.engines.heluo.calendar_guard import resolve_year_month
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.calendar_guard import resolve_year_month
 
         # 1983-11-03 的节气月是亥月；这里给寅月（不相邻）
         bazi = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
@@ -291,7 +291,7 @@ class TestJulianGregorianCaliber(unittest.TestCase):
         与 sxtwl.JD2DD 逐分钟一致（此前差 7 天 → 八字引擎古日期月柱错位）。
         """
         import sxtwl
-        from tongshu.engines.time.jd_converter import jd_to_datetime
+        from heluo_engine.engines.time.jd_converter import jd_to_datetime
         day = sxtwl.fromSolar(1206, 11, 30)
         t = sxtwl.JD2DD(day.getJieQiJD())
         sxtwl_label = (int(t.Y), int(t.M), int(t.D))

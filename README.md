@@ -4,10 +4,24 @@
 
 ## 目录结构
 
+一切都在 **`src/heluo_engine/`** 一个文件夹下 —— 独立顶层包，与主仓 `tongshu`
+命名空间完全隔离，可 `pip install` 到服务器独立运行（**零路径绑定**）。
+
 ```
-src/tongshu/
+src/heluo_engine/
+  __init__.py               对外 API 门面（惰性导出）
+  _paths.py                 ★ 统一资源定位（importlib.resources / __file__ 双通道）
+  adapter.py                HeluoAdapter（三入口）
+  data/                     ★ 运行时数据（随包）
+    guajie_data.json          卦辞/断语/邵曰（64卦×6爻，原典直录）
+    guajie_jingyi.json        现代语义精义（706 单元）
+    kuozhan_duanyu.json       扩展断语
+    locations.json            出生地点注册表
+    canping/                  参评诗断语料
+  orig/                     ★ 原典切片（判词与语料的逐字上游）
+  docs/                     ★ 依据文档（定案/裁决/核定/对照表）
   engines/
-    heluo/                 # 河洛引擎核心
+    heluo/                 # 河洛引擎核心（37 模块）
       canonical.py         # 主入口 HeluoCanonical.calculate（编排各步）
       input.py             # 输入构造（四柱/真太阳时）
       hexagram.py          # 卦象
@@ -21,18 +35,27 @@ src/tongshu/
       diagnosis_rule_graph.py  # 诊断规则图
       frozen_state.py      # 冻结态输出
       relationship/        # 关系（互体/反体/对体/纳音福力）
-    heluo_adapter.py       # 对外适配器 HeluoAdapter（三入口）
     bazi_engine.py         # 八字排盘（上游：排四柱）
     bazi_adapter.py
+    time_resolver.py       # 时间解析上游
     time/                  # 真太阳时（均时差/经度/时区/换日）
     yi/                    # 易经卦爻辞结构
   facts/  reasoning/  spec/  # 干支事实、十神、规范
-data/heluo/                # 原典数据（guajie_jingyi、guajie_raw、核证表等）
 tests/heluo/               # 河洛单元测试
-docs/heluo/HELUO_ENGINE.md # 引擎说明
+tests/cross_repo/          # 跨仓接线守卫（须在主仓环境跑；独立包内自动跳过）
+docs/heluo/                # 引擎说明（HELUO_ENGINE.md 为主文档）
 ```
 
 ## 入口
+
+```python
+from heluo_engine import HeluoAdapter
+
+r = HeluoAdapter().compute((1983, 11, 3, 12), gender="male", target_date="2026-10-23")
+r.prenatal.hexagram_name   # 风山渐
+r.yuantang.yuantang        # 初六
+r.postnatal.hexagram_name  # 火风鼎
+```
 
 `HeluoAdapter` 提供三个入口：
 
@@ -89,22 +112,32 @@ r.guajie["liuri_lunar"]  # {'solar_date': '2027-05-16', 'lunar': '十一月 初�
 ## 安装
 
 ```bash
+pip install .          # 服务器部署：装完即可用，与仓库位置/运行目录无关
+# 开发态
 pip install -e .
-# 或按 pyproject.toml 安装依赖
 ```
 
-第三方依赖：`sxtwl`（节气）、`lunar_python`、`chinese-calendar`、`pyyaml`、`pydantic`。
+第三方依赖：`sxtwl`（节气）、`lunar_python`、`chinese-calendar`、`pyyaml`、
+`jsonschema`、`pydantic`。
+
+> **独立部署**：本包不再依赖主仓仓库、不依赖 `tongshu` 命名空间、
+> 不依赖特定目录层级或 CWD —— 判词库/原典/依据文档全部**随包分发**，
+> 由 `heluo_engine._paths` 按包定位。
+> 详见 `docs/heluo/河洛引擎包结构与部署_20261024.md`。
 
 ## 运行测试
 
 ```bash
 # Windows PowerShell
 $env:PYTHONPATH = "src"
-python -m pytest tests/heluo -q
+python -m pytest tests/ -q
 ```
 
 ## 数据与依据
 
-- `data/heluo/guajie_raw/`：《河洛真数》起例卷、易卦释义、诗断秘诀原文。
-- `data/heluo/guajie_jingyi.json`：卦辞现代精义（706 单元）。
-- `data/heluo/算法原文对照核证表.md`：算法与原典逐句对照核证。
+- `heluo_engine/orig/`：《河洛真数》起例卷、《易卦释义》、《诗断秘诀》原文切片
+  —— 判词与语料的**逐字上游**（守卫会逐字回查）。
+- `heluo_engine/data/guajie_data.json`：卦辞/爻辞/象曰/断语/邵曰（64卦×6爻）。
+- `heluo_engine/data/guajie_jingyi.json`：卦辞现代精义（706 单元）。
+- `heluo_engine/docs/算法原文对照核证表.md`：算法与原典逐句对照核证。
+- `heluo_engine/docs/` 其余：定案 / 裁决 / 核定 / 对照表（判据的证据链）。

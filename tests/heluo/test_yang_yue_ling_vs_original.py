@@ -34,7 +34,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.guajie import (
+from heluo_engine.engines.heluo.guajie import (
     GUA_QI_MONTH_TABLE,
     YIN_YUE_LING,
     YANG_YUE_LING,

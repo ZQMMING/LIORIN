@@ -44,9 +44,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo_adapter import HeluoAdapter  # noqa: E402
-from tongshu.engines.heluo.evidence_producer import HeLuoEvidenceProducer  # noqa: E402
-from tongshu.engines.heluo.diagnosis_rule_graph import (  # noqa: E402
+from heluo_engine.adapter import HeluoAdapter  # noqa: E402
+from heluo_engine.engines.heluo.evidence_producer import HeLuoEvidenceProducer  # noqa: E402
+from heluo_engine.engines.heluo.diagnosis_rule_graph import (  # noqa: E402
     HELUO_RULES, RULE_DOMAIN_MAP, build_diagnosis_graph, dropped_rules,
 )
 
@@ -187,7 +187,7 @@ class TestSilentDegradationTraced(unittest.TestCase):
         而 docstring 声称「最近一次」—— 第一盘失败过一次后，
         之后每一盘都带着那条陈迹。
         """
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo import guajie as gj
         before = list(gj.kuozhan_errors())
         # 再跑一盘健康的
         self.adapter.compute((1990, 6, 15, 14), gender="male",

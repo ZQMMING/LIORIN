@@ -16,9 +16,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 import sxtwl  # noqa: E402
 
-from tongshu.engines.heluo.canonical import HeluoCanonical  # noqa: E402
-from tongshu.engines.heluo.guajie import build_guajie_from_result  # noqa: E402
-from tongshu.engines.heluo.yuan_tang import HOUR_NAMES  # noqa: E402
+from heluo_engine.engines.heluo.canonical import HeluoCanonical  # noqa: E402
+from heluo_engine.engines.heluo.guajie import build_guajie_from_result  # noqa: E402
+from heluo_engine.engines.heluo.yuan_tang import HOUR_NAMES  # noqa: E402
 
 GAN = "甲乙丙丁戊己庚辛壬癸"
 ZHI = "子丑寅卯辰巳午未申酉戌亥"

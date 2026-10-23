@@ -49,7 +49,7 @@ def section(title: str):
 # ═══════════════════════════════════════════════════════════════
 section("Rule 01 & 02: 天干地支取数（原典：起例卷上）")
 
-from tongshu.engines.heluo.numbers import (
+from heluo_engine.engines.heluo.numbers import (
     STEM_VALUES, BRANCH_VALUES,
     normalize_tian_shu, normalize_di_shu,
     compute_tian_di_shu, number_to_trigram, get_hexagram_name, build_six_lines,
@@ -140,7 +140,7 @@ check("纪晓岚地数归一", result.di_reduced, 6, "56→归一6（乾）")
 # ═══════════════════════════════════════════════════════════════
 section("Rule 04: 中宫寄宫（三元甲子）")
 
-from tongshu.engines.heluo.prenatal import resolve_middle_palace, determine_prenatal_hexagram
+from heluo_engine.engines.heluo.prenatal import resolve_middle_palace, determine_prenatal_hexagram
 
 t, d = resolve_middle_palace(5, 5, "male", True, "shang")
 check("上元男天地双5寄宫", t, 8, "天数5→艮(8)，地数5→艮(8)")
@@ -179,7 +179,7 @@ check("纪晓岚女下卦", result_f.lower_gua, "坤", "阳年女命：地下天
 # ═══════════════════════════════════════════════════════════════
 section("Rule 05: 元堂定位（N=1~5 全分支）")
 
-from tongshu.engines.heluo.yuan_tang import find_yuantang, HOUR_NAMES
+from heluo_engine.engines.heluo.yuan_tang import find_yuantang, HOUR_NAMES
 
 # 纪晓岚：地天泰 → build_six_lines('坤','乾') → [1,1,1,-1,-1,-1]
 tai_lines = build_six_lines("坤", "乾")
@@ -235,7 +235,7 @@ check("艮为山戌时男元堂idx", r.yuantang_index, 2,
 # ═══════════════════════════════════════════════════════════════
 section("Rule 06: 后天卦两步法")
 
-from tongshu.engines.heluo.postnatal import compute_postnatal
+from heluo_engine.engines.heluo.postnatal import compute_postnatal
 
 post = compute_postnatal(tai_lines, 3)
 check("纪晓岚后天卦", post.hexagram_name, "天雷无妄",
@@ -251,7 +251,7 @@ check("纪晓岚第一步", post.step1_hexagram, "雷天大壮",
 # ═══════════════════════════════════════════════════════════════
 section("Rule 09: 化工状态判定")
 
-from tongshu.engines.heluo.hua_gong import compute_huagong, HuaGongState
+from heluo_engine.engines.heluo.hua_gong import compute_huagong, HuaGongState
 
 # 春季寅月→化工卦震。卦(乾,坤,乾,坤)不含震也不含兑→UNRESOLVED
 r = compute_huagong("乾", "坤", "乾", "坤", "寅")
@@ -296,7 +296,7 @@ check("丑月化工卦=坎", r.huagong_trigram, "坎", "丑∈冬→坎")
 # ═══════════════════════════════════════════════════════════════
 section("Rule 13 & 14: 节候卦（24节气）")
 
-from tongshu.engines.heluo.jiehhou import (
+from heluo_engine.engines.heluo.jiehhou import (
     get_seasonal_hexagram, SOLAR_TERMS, JIEHOU_GUA,
     get_qi_phase, get_current_jieqi_info, SIZHENG_GUA, BI_GUA,
 )
@@ -356,11 +356,11 @@ check("节候卦条目数=24", len(JIEHOU_GUA), 24, "24节气各有节候卦")
 # ═══════════════════════════════════════════════════════════════
 section("Rule 10: 大运（爻位值运）")
 
-from tongshu.engines.heluo.timeline_yun import compute_dayun_liyao
-from tongshu.engines.heluo.postnatal import compute_postnatal as _cpn
+from heluo_engine.engines.heluo.timeline_yun import compute_dayun_liyao
+from heluo_engine.engines.heluo.postnatal import compute_postnatal as _cpn
 
 post2 = _cpn(tai_lines, 3)
-from tongshu.engines.heluo.numbers import TRIGRAM_LINES
+from heluo_engine.engines.heluo.numbers import TRIGRAM_LINES
 postnatal_final = list(TRIGRAM_LINES[post2.lower_gua]) + list(TRIGRAM_LINES[post2.upper_gua])
 check("后天卦六爻构建", postnatal_final,
       list(TRIGRAM_LINES["震"]) + list(TRIGRAM_LINES["乾"]),
@@ -378,7 +378,7 @@ check("末段age_end=93", last.age_end, 93, "先天45+后天48=93")
 # ═══════════════════════════════════════════════════════════════
 section("Rule 11: 流月卦（阳世子月起，阴世午月起）")
 
-from tongshu.engines.heluo.timeline_yun import compute_liuyue
+from heluo_engine.engines.heluo.timeline_yun import compute_liuyue
 
 liuyue = compute_liuyue(tai_lines, 3)
 check("流月卦数=12", len(liuyue.months), 12, "一年12个月")
@@ -393,27 +393,38 @@ check("正月卦≠二月卦", liuyue.months[0]["name"] != liuyue.months[1]["nam
 # ═══════════════════════════════════════════════════════════════
 section("Rule: 梅花易数起卦法")
 
-from tongshu.engines.meihua import cast_by_time, cast_by_numbers
+# ⚠ 梅花易数**不属于河洛域**，其引擎在主仓（`tongshu.engines.meihua`），
+#   不在本独立包内。河洛引擎提纯为独立包后，这一段改为**可选**：
+#   依赖缺失 ⇒ 跳过本节并留痕，不让整个文件在收集期炸掉
+#   （此前此处裸 import 导致本文件**整体**无法收集，河洛域的
+#     数百项独立计算验证被连带废掉 —— 一处他域依赖拖垮全域覆盖）。
+try:
+    from tongshu.engines.meihua import cast_by_time, cast_by_numbers
+except ModuleNotFoundError:
+    cast_by_time = cast_by_numbers = None
+    print("  [SKIP] 梅花易数段：主仓专有模块 tongshu.engines.meihua 不在"
+          "河洛独立包内（他域，不属河洛域）")
 
-r = cast_by_time(2024, 3, 15, 10)
-check("梅花时间起卦本卦有内容", len(r.ben_gua) > 0, True, "本卦应为主卦名")
-check("梅花时间起卦有变卦", r.bian_gua is not None and len(r.bian_gua) > 0, True, "应产生变卦")
-check("梅花时间起卦有互卦", r.hu_gua is not None and len(r.hu_gua) > 0, True, "应产生互卦")
-check("梅花时间起卦有体用", r.ti is not None and r.yong is not None, True, "应区分体卦和用卦")
-check("梅花时间起卦体用为卦名", r.ti in TRIGRAM_LINES and r.yong in TRIGRAM_LINES, True,
-      "体用应为八卦名之一")
+if cast_by_time is not None:
+    r = cast_by_time(2024, 3, 15, 10)
+    check("梅花时间起卦本卦有内容", len(r.ben_gua) > 0, True, "本卦应为主卦名")
+    check("梅花时间起卦有变卦", r.bian_gua is not None and len(r.bian_gua) > 0, True, "应产生变卦")
+    check("梅花时间起卦有互卦", r.hu_gua is not None and len(r.hu_gua) > 0, True, "应产生互卦")
+    check("梅花时间起卦有体用", r.ti is not None and r.yong is not None, True, "应区分体卦和用卦")
+    check("梅花时间起卦体用为卦名", r.ti in TRIGRAM_LINES and r.yong in TRIGRAM_LINES, True,
+          "体用应为八卦名之一")
 
-r = cast_by_numbers(3, 5)
-check("梅花数起(3,5)本卦", r.ben_gua, "火风鼎", "上离(3)下巽(5)→火风鼎")
-check("梅花数起(3,5)动爻1based", r.dong_yao_1based, 3, "(3+5)%6=2, 1-based=2")
+    r = cast_by_numbers(3, 5)
+    check("梅花数起(3,5)本卦", r.ben_gua, "火风鼎", "上离(3)下巽(5)→火风鼎")
+    check("梅花数起(3,5)动爻1based", r.dong_yao_1based, 3, "(3+5)%6=2, 1-based=2")
 
-r = cast_by_numbers(1, 1)
-check("梅花乾为天", r.ben_gua, "乾为天", "上下皆乾")
-check("梅花乾错卦=坤", r.cuo_gua, "坤为地", "乾(111,111)错为坤(000,000)")
-check("梅花乾综卦=乾", r.zong_gua, "乾为天", "乾自综")
+    r = cast_by_numbers(1, 1)
+    check("梅花乾为天", r.ben_gua, "乾为天", "上下皆乾")
+    check("梅花乾错卦=坤", r.cuo_gua, "坤为地", "乾(111,111)错为坤(000,000)")
+    check("梅花乾综卦=乾", r.zong_gua, "乾为天", "乾自综")
 
-r = cast_by_numbers(1, 3)
-check("同人动爻=5", r.dong_yao_1based, 5, "(1+3)%6=4, 1-based=4")
+    r = cast_by_numbers(1, 3)
+    check("同人动爻=5", r.dong_yao_1based, 5, "(1+3)%6=4, 1-based=4")
 
 
 # ═══════════════════════════════════════════════════════════════

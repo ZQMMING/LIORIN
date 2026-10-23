@@ -17,7 +17,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.hua_gong import compute_huagong, HuaGongState
+from heluo_engine.engines.heluo.hua_gong import compute_huagong, HuaGongState
 
 
 class TestHuaGongNormal(unittest.TestCase):
@@ -101,7 +101,7 @@ class TestHuaGongWuRelation(unittest.TestCase):
         本模块未接流年，该轴未实现。此处把「不可达」显式断言下来，
         免得日后有人以为漏了相生档。
         """
-        from tongshu.engines.heluo.hua_gong import (
+        from heluo_engine.engines.heluo.hua_gong import (
             HUAGONG_FAN_GUA, TRIGRAM_ELEMENT, _wu_relation)
         self.assertEqual(HUAGONG_FAN_GUA,
                          {"坎": "离", "离": "坎", "兑": "震", "震": "兑"})
@@ -115,7 +115,7 @@ class TestHuaGongWuRelation(unittest.TestCase):
 
     def test_rescued_unreachable_on_this_axis(self):
         """本轴任一组合都不得判出 RESCUED（因四组全克制）。"""
-        from tongshu.engines.heluo.hua_gong import HUAGONG_FAN_GUA
+        from heluo_engine.engines.heluo.hua_gong import HUAGONG_FAN_GUA
         for b, g in (("子", "坎"), ("午", "离"), ("寅", "震"), ("申", "兑")):
             r = compute_huagong("乾", g, HUAGONG_FAN_GUA[g], "乾", b)
             self.assertNotEqual(r.state, HuaGongState.RESCUED,
@@ -127,8 +127,8 @@ class TestHuaGongWuRelation(unittest.TestCase):
 
         原典 L582「但忌克制，尤凶」——判吉是实质错误，不是措辞问题。
         """
-        from tongshu.engines.heluo.diagnosis_rule_graph import HUAGONG_DIRECTION
-        from tongshu.spec.canonical import AssertionDirection
+        from heluo_engine.engines.heluo.diagnosis_rule_graph import HUAGONG_DIRECTION
+        from heluo_engine.spec.canonical import AssertionDirection
         self.assertEqual(HUAGONG_DIRECTION[HuaGongState.KEZHI.value],
                          AssertionDirection.CAUTION)
         self.assertNotEqual(HUAGONG_DIRECTION[HuaGongState.KEZHI.value],
@@ -213,8 +213,8 @@ class TestHuaGongThreeLevels(unittest.TestCase):
         本模块的 compute_mutual_trigram 与 guajie.compute_huti 是两份等价实现
         （hua_gong 不 import guajie 以免循环依赖），此处逐卦对拍防漂移。
         """
-        from tongshu.engines.heluo.hua_gong import compute_mutual_trigram
-        from tongshu.engines.heluo.guajie import compute_huti, trigram_to_lines
+        from heluo_engine.engines.heluo.hua_gong import compute_mutual_trigram
+        from heluo_engine.engines.heluo.guajie import compute_huti, trigram_to_lines
         self.assertEqual(compute_mutual_trigram("巽", "艮"), ("离", "坎"))
         for upper, lower in (("巽", "艮"), ("乾", "坤"), ("坎", "兑"),
                              ("震", "巽"), ("离", "艮"), ("乾", "乾")):
@@ -288,7 +288,7 @@ class TestHuaGongProvenance(unittest.TestCase):
     @staticmethod
     def _src() -> str:
         return (Path(__file__).resolve().parents[2]
-                / "src" / "tongshu" / "engines" / "heluo" / "hua_gong.py"
+                / "src" / "heluo_engine" / "engines" / "heluo" / "hua_gong.py"
                 ).read_text(encoding="utf-8")
 
     @staticmethod
@@ -305,7 +305,7 @@ class TestHuaGongProvenance(unittest.TestCase):
         """
         ok_ctx = ("0 处", "零命中", "误植", "没有", "检索")
         self_ctx = ("当作出处", "in line", "ok_ctx")
-        src = Path(__file__).resolve().parents[2] / "src" / "tongshu" / "engines" / "heluo" / "hua_gong.py"
+        src = Path(__file__).resolve().parents[2] / "src" / "heluo_engine" / "engines" / "heluo" / "hua_gong.py"
         for txt, name in ((src.read_text(encoding="utf-8"), src.name),
                           (Path(__file__).read_text(encoding="utf-8"), Path(__file__).name)):
             for n, line in enumerate(txt.splitlines(), 1):
@@ -359,7 +359,7 @@ class TestHuaGongProvenance(unittest.TestCase):
         2026-10-07 首轮把注释误订正为「先天对宫」却未动表，
         第二轮一并改回并把两套对宫彻底分开命名。
         """
-        from tongshu.engines.heluo.hua_gong import (
+        from heluo_engine.engines.heluo.hua_gong import (
             HUAGONG_FAN_GUA, QIANXI_DUKONG)
         self.assertEqual(HUAGONG_FAN_GUA["震"], "兑")
         self.assertEqual(HUAGONG_FAN_GUA["兑"], "震")

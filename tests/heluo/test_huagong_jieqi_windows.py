@@ -24,7 +24,7 @@ import unittest
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[2]
-_E = _ROOT / "src" / "tongshu" / "engines" / "heluo"
+_E = _ROOT / "src" / "heluo_engine" / "engines" / "heluo"
 HG = _E / "hua_gong.py"
 CN = _E / "canonical.py"
 
@@ -49,7 +49,7 @@ class TestJieqiWindows(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo.hua_gong import (
+        from heluo_engine.engines.heluo.hua_gong import (
             HUAGONG_FAN_JIEQI, HUAGONG_JIEQI_WINDOWS, _JQ_ORDER,
             huagong_by_jieqi)
         cls.W = HUAGONG_JIEQI_WINDOWS
@@ -63,7 +63,7 @@ class TestJieqiWindows(unittest.TestCase):
 
     def test_jq_order_matches_repo_canonical(self):
         """节气序必须与全库唯一的节气序一致，不得另立一套。"""
-        from tongshu.engines.heluo.yue_ling_shu_ge import JIE_QI_ORDER
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import JIE_QI_ORDER
         self.assertEqual(list(self.JQ), list(JIE_QI_ORDER))
 
     def test_windows_partition_the_year_with_no_gap(self):
@@ -107,7 +107,7 @@ class TestJieqiWindows(unittest.TestCase):
                          {g for g, _lo, _hi in self.W})
 
     def test_fan_table_still_agrees_with_opposite_trigram(self):
-        from tongshu.engines.heluo.hua_gong import HUAGONG_FAN_GUA
+        from heluo_engine.engines.heluo.hua_gong import HUAGONG_FAN_GUA
         for gua, fan, _lo, _hi in self.FAN:
             self.assertEqual(HUAGONG_FAN_GUA[gua], fan)
 
@@ -147,7 +147,7 @@ class TestJieqiWindows(unittest.TestCase):
                 tampered.replace("\n", nl))
             pr = subprocess.run(
                 [sys.executable, "-c",
-                 "import tongshu.engines.heluo.hua_gong"],
+                 "import heluo_engine.engines.heluo.hua_gong"],
                 cwd=_ROOT, env=env, capture_output=True,
                 text=True, encoding="utf-8", errors="replace")
         finally:
@@ -162,7 +162,7 @@ class TestKunGenEighteenDaysRefused(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo.hua_gong import HUAGONG_REFUSED
+        from heluo_engine.engines.heluo.hua_gong import HUAGONG_REFUSED
         cls.R = HUAGONG_REFUSED
 
     def test_registered_with_line_number(self):
@@ -212,7 +212,7 @@ class TestBranchSwitchedAndMustNotRegress(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo.hua_gong import HUAGONG_BRANCH_SWITCH
+        from heluo_engine.engines.heluo.hua_gong import HUAGONG_BRANCH_SWITCH
         cls.S = HUAGONG_BRANCH_SWITCH
 
     def test_switch_recorded_as_done(self):
@@ -250,7 +250,7 @@ class TestBranchSwitchedAndMustNotRegress(unittest.TestCase):
         1724 年补成 01-01 → 算出「冬至 jq=0」→ 化工凭空得到一个当令卦，
         且 evidence 不再标兜底。**缺失输入被当成真实输入，比答错更坏。**
         """
-        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
         r = HeluoCanonical().calculate(
             bazi=[("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")],
             gender="male", birth_hour="午", era="zhong", birth_year=1724)
@@ -276,7 +276,7 @@ class TestBranchSwitchedAndMustNotRegress(unittest.TestCase):
         这里钉的不是「两者答案相同」——它们本就该不同（有输入优于无输入），
         而是：给定完整输入时，答案必须与另一组测试一致（KEZHI/震）。
         """
-        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
         a = HeluoCanonical().calculate(
             bazi=[("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")],
             gender="male", birth_hour="午", era="zhong", birth_year=1724,
@@ -307,7 +307,7 @@ class TestBranchSwitchedAndMustNotRegress(unittest.TestCase):
 
     def test_evidence_says_it_reused_upstream_jq(self):
         """复用必须**可审计**：evidence 要写明未重复计算。"""
-        from tongshu.engines.heluo.hua_gong import compute_huagong
+        from heluo_engine.engines.heluo.hua_gong import compute_huagong
         r = compute_huagong("乾", "乾", "乾", "乾", "午", jieqi_index=10)
         ev = " ".join(r.evidence)
         self.assertIn("复用", ev)
@@ -326,8 +326,8 @@ class TestBranchSwitchedAndMustNotRegress(unittest.TestCase):
         self.assertNotIn("_JQ_ORDER=['冬至'", code)
 
     def test_solar_term_list_is_the_engine_one(self):
-        from tongshu.engines.heluo.hua_gong import _JQ_ORDER
-        from tongshu.engines.heluo.jiehhou import SOLAR_TERMS
+        from heluo_engine.engines.heluo.hua_gong import _JQ_ORDER
+        from heluo_engine.engines.heluo.jiehhou import SOLAR_TERMS
         self.assertIs(_JQ_ORDER, SOLAR_TERMS, "引的不是引擎那份对象")
 
     def test_window_table_is_still_original_text_not_a_duplicate(self):
@@ -341,7 +341,7 @@ class TestBranchSwitchedAndMustNotRegress(unittest.TestCase):
 
     # ── 纪律三：兜底必须自曝 ────────────────────────────────
     def test_fallback_disclosed_when_no_jq(self):
-        from tongshu.engines.heluo.hua_gong import compute_huagong
+        from heluo_engine.engines.heluo.hua_gong import compute_huagong
         r = compute_huagong("乾", "乾", "乾", "乾", "午")
         ev = " ".join(r.evidence)
         self.assertIn("兜底", ev)
@@ -350,14 +350,14 @@ class TestBranchSwitchedAndMustNotRegress(unittest.TestCase):
 
     def test_date_path_still_works_when_no_upstream_jq(self):
         """无上游 jq 时仍可由出生日换算（委托 jiehhou，零自造）。"""
-        from tongshu.engines.heluo.hua_gong import compute_huagong
+        from heluo_engine.engines.heluo.hua_gong import compute_huagong
         r = compute_huagong("乾", "乾", "乾", "乾", "午", birth_date="1724-05-22")
         ev = " ".join(r.evidence)
         self.assertIn("L558–L567", ev)
         self.assertIn("小满", ev)
 
     def test_bad_date_is_refused_not_guessed(self):
-        from tongshu.engines.heluo.hua_gong import huagong_by_birth_date
+        from heluo_engine.engines.heluo.hua_gong import huagong_by_birth_date
         gua, note = huagong_by_birth_date("not-a-date")
         self.assertEqual(gua, "")
         self.assertIn("不是合法 ISO 日期", note)

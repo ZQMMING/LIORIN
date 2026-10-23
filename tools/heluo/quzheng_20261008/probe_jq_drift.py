@@ -10,8 +10,8 @@ os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
 
 import sxtwl
 
-from tongshu.engines.heluo.jiehhou import get_current_jieqi_info
-from tongshu.engines.heluo.yue_ling_shu_ge import solar_jq_index
+from heluo_engine.engines.heluo.jiehhou import get_current_jieqi_info
+from heluo_engine.engines.heluo.yue_ling_shu_ge import solar_jq_index
 
 JQ = ("冬至", "小寒", "大寒", "立春", "雨水", "惊蛰", "春分", "清明", "谷雨", "立夏",
       "小满", "芒种", "夏至", "小暑", "大暑", "立秋", "处暑", "白露", "秋分", "寒露",

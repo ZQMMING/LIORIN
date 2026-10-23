@@ -14,7 +14,7 @@ os.environ.setdefault(
     "architecture-governance:schema-v1-arch-gov-2026;admission_registry:test-cred-hash")
 
 from tongshu.pipeline import TONGSHUPipeline  # noqa: E402
-from tongshu.engines.heluo import diagnosis_rule_graph as dg  # noqa: E402
+from heluo_engine.engines.heluo import diagnosis_rule_graph as dg  # noqa: E402
 
 out = []
 CASES = [

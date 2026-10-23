@@ -22,7 +22,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
 
 # 纪晓岚 Golden Case（1724 甲辰 辛未 丙戌 甲午，男，午时）
 _JX_BAZI = [("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")]
@@ -166,7 +166,7 @@ class TestLiuriRuleConsistency(unittest.TestCase):
         **除此一爻不變**」—— 五个段本卦是月卦**各变一爻**，不是链式累变。
         原实现取链式 `day_lines[k*6]`，产出退化序列（屯、鼎、屯、鼎、屯），与原典不合。
         """
-        from tongshu.engines.heluo.timeline_yun import liuri_gua6_bases
+        from heluo_engine.engines.heluo.timeline_yun import liuri_gua6_bases
         m = self.yearly[0]["months"][0]
         bases = liuri_gua6_bases(m["lines"], m["yue_yao_index"])
         for k, seg in enumerate(m["days"]):
@@ -183,8 +183,8 @@ class TestLiuriRuleConsistency(unittest.TestCase):
           段4 變既濟上六 → 家人（K3-447 L1158）
           段5 變既濟初九 → 蹇（余爻，排除法定）
         """
-        from tongshu.engines.heluo.numbers import build_six_lines
-        from tongshu.engines.heluo.timeline_yun import (
+        from heluo_engine.engines.heluo.numbers import build_six_lines
+        from heluo_engine.engines.heluo.timeline_yun import (
             liuri_gua6_bases, _lines_to_hexagram,
         )
         ji = build_six_lines("坎", "离")          # 既济（坎上离下）
@@ -198,7 +198,7 @@ class TestLiuriRuleConsistency(unittest.TestCase):
         「每一爻管五日」+「阳日寻阳位（初三五）/阴日寻阴位（二四上）」
         —— 见 ``tests/heluo/test_liuri_vs_original.py`` 的字面展开守卫。
         """
-        from tongshu.engines.heluo.timeline_yun import liuri_day_positions
+        from heluo_engine.engines.heluo.timeline_yun import liuri_day_positions
         for yi in range(6):
             seq = liuri_day_positions(yi)
             self.assertEqual(len(seq), 30)

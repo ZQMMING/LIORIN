@@ -26,11 +26,11 @@
 
 import unittest
 
-from tongshu.engines.heluo.numbers import (
+from heluo_engine.engines.heluo.numbers import (
     SIXTY_FOUR_HEXAGRAMS,
     build_six_lines,
 )
-from tongshu.engines.heluo.yuan_tang import find_yuantang
+from heluo_engine.engines.heluo.yuan_tang import find_yuantang
 
 _NAME2UL = {v: k for k, v in SIXTY_FOUR_HEXAGRAMS.items()}
 
@@ -165,7 +165,7 @@ class TestYuantangEngineDefinedPaths(unittest.TestCase):
         故女乾：冬半年自上爻起步往下行，夏半年自初爻起步往上行，
         两者**同为「逐时移一爻」的线性推移**，只是起点相反。
         「又一本云」重数版（L306-315）已废止，理由见 yuan_tang.py 同处裁决注
-        与 data/heluo/纯卦元堂重数规则定案_20261007.md 更正块。
+        与 heluo_engine/docs/纯卦元堂重数规则定案_20261007.md 更正块。
         """
         qian = [1] * 6
         hours = ("子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥")
@@ -181,7 +181,7 @@ class TestYuantangEngineDefinedPaths(unittest.TestCase):
         self.assertEqual(summer, [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5])
         self.assertNotEqual(winter, summer,
                             "若此断言失败，说明冬夏已同向，请更新本测试与"
-                            "data/heluo/元堂算法核验_20261007.md 的裁决记录")
+                            "heluo_engine/docs/元堂算法核验_20261007.md 的裁决记录")
         # 冬夏互为镜像：夏[h] == 5 - 冬[h]
         for w, s in zip(winter, summer):
             self.assertEqual(s, 5 - w, "冬夏两分支应为起点相反的同族线性推移")
@@ -196,7 +196,7 @@ class TestHexagramAuxiliaryGua(unittest.TestCase):
     """
 
     def _s(self, gua: str):
-        from tongshu.engines.heluo.hexagram import analyze_hexagram
+        from heluo_engine.engines.heluo.hexagram import analyze_hexagram
         return analyze_hexagram(gua)
 
     def test_hu_gua_matches_original_jian_case(self):

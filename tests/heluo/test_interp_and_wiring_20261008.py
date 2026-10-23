@@ -19,17 +19,32 @@ J. 管线接线
 """
 from __future__ import annotations
 
+import importlib.util
 import inspect
 import io
 import unittest
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[2]
-_E = _ROOT / "src" / "tongshu" / "engines" / "heluo"
+_E = _ROOT / "src" / "heluo_engine" / "engines" / "heluo"
+
+#: 主仓顶层包是否可用（跨仓接线守卫的前提）
+#: ⚠ 必须查**具体子模块**，不能只看顶层包 `tongshu`：
+#:   残留目录/命名空间包会让 `find_spec("tongshu")` 返回真，
+#:   但 `tongshu.pipeline` 并不存在 —— 实测踩过（守卫恒不生效，
+#:   跨仓测试在独立包内照样炸红）。这里查的就是本类真正要用的那个模块。
+def _module_available(name: str) -> bool:
+    try:
+        return importlib.util.find_spec(name) is not None
+    except (ImportError, ModuleNotFoundError, ValueError, AttributeError):
+        return False
+
+
+_MAIN_REPO_AVAILABLE = _module_available("tongshu.pipeline")
 
 
 def _mk(**kw):
-    from tongshu.engines.heluo.interpretation import HeluoInput
+    from heluo_engine.engines.heluo.interpretation import HeluoInput
     d = dict(prenatal_hexagram="乾上乾下", yuan_tang="五爻",
              postnatal_hexagram="乾上坤下", day_hexagram="屯上蒙下",
              year_cycle="乙巳", month_cycle="甲申", day_cycle="丙午",
@@ -43,12 +58,12 @@ def _mk(**kw):
 
 class TestInterpretationUsesOriginalCriteria(unittest.TestCase):
     def test_compute_no_longer_raises(self):
-        from tongshu.engines.heluo.interpretation import RelationalInterpretationEngine
+        from heluo_engine.engines.heluo.interpretation import RelationalInterpretationEngine
         r = RelationalInterpretationEngine(_mk()).compute()
         self.assertTrue(r.current_state)
 
     def test_base_comes_from_liuju_judgements(self):
-        from tongshu.engines.heluo.interpretation import RelationalInterpretationEngine
+        from heluo_engine.engines.heluo.interpretation import RelationalInterpretationEngine
         base, ju = RelationalInterpretationEngine(_mk())._liuju_base()
         self.assertIn("爻位", ju.get("吉", []) + ju.get("凶", []) + ju.get("不判", []),
                       "六项判据一项都没跑 —— base 恐怕不是来自原典")
@@ -59,14 +74,14 @@ class TestInterpretationUsesOriginalCriteria(unittest.TestCase):
 
         只断言「不抛异常」是不够的：把 direction 恒读成 0 也能全绿。
         """
-        from tongshu.engines.heluo.interpretation import RelationalInterpretationEngine
+        from heluo_engine.engines.heluo.interpretation import RelationalInterpretationEngine
         good = RelationalInterpretationEngine(_mk(yuan_tang="五爻"))._liuju_base()[0]
         bad = RelationalInterpretationEngine(_mk(yuan_tang="初爻"))._liuju_base()[0]
         self.assertGreater(good, 0, "五爻(二五吉) 应为正")
         self.assertLess(bad, 0, "初爻 非二五，应为负")
 
     def test_all_undecided_is_zero_and_labelled(self):
-        from tongshu.engines.heluo.interpretation import RelationalInterpretationEngine
+        from heluo_engine.engines.heluo.interpretation import RelationalInterpretationEngine
         base, ju = RelationalInterpretationEngine(
             _mk(yuan_tang="?"))._liuju_base()
         self.assertEqual(base, 0.0)
@@ -108,14 +123,14 @@ class TestInterpretationUsesOriginalCriteria(unittest.TestCase):
 
     def test_void_factors_still_raise(self):
         """两个作废函数须保留为显式拒绝点，防止有人接回去。"""
-        from tongshu.engines.heluo.interpretation import RelationalInterpretationEngine
+        from heluo_engine.engines.heluo.interpretation import RelationalInterpretationEngine
         e = RelationalInterpretationEngine(_mk())
         for fn in (e._hexagram_base_score, e._year_cycle_factor):
             with self.assertRaises(NotImplementedError):
                 fn()
 
     def test_liuju_base_is_count_ratio_not_invented_weight(self):
-        from tongshu.engines.heluo.interpretation import RelationalInterpretationEngine
+        from heluo_engine.engines.heluo.interpretation import RelationalInterpretationEngine
         base, ju = RelationalInterpretationEngine(_mk())._liuju_base()
         n = len(ju.get("吉", [])) + len(ju.get("凶", []))
         if n:
@@ -123,6 +138,11 @@ class TestInterpretationUsesOriginalCriteria(unittest.TestCase):
                                    places=4)
 
 
+@unittest.skipUnless(
+    _MAIN_REPO_AVAILABLE,
+    "跨仓接线守卫：主仓顶层包 `tongshu` 不在河洛独立包内 —— "
+    "本类测的是「主仓有没有把河洛诊断/建议接进 pipeline」，"
+    "须在主仓仓库中运行")
 class TestPipelineWiring(unittest.TestCase):
     """J：诊断与建议必须真的在管线里跑。"""
 

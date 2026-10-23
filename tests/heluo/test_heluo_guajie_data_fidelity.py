@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""判词数据（`data/heluo/guajie_data.json`）的**原典保真守卫**（2026-10-22）。
+"""判词数据（`heluo_engine/data/guajie_data.json`）的**原典保真守卫**（2026-10-22）。
 
 **为什么要有这个守卫**
 -------------------
@@ -10,7 +10,7 @@
 （表一致性、接口形状、变异演练）**全都发现不了**：数据变了，结构没变。
 
 本守卫把「判词数据逐字来自原典」变成可回归的断言：
-`data/heluo/guajie_raw/` 下的**原典切片**是唯一权威文本，
+`heluo_engine/orig/` 下的**原典切片**是唯一权威文本，
 数据里的每一个字都必须能在切片中**逐字找到**。
 
 **实测（2026-10-22）**：卦辞 64/64、爻辞 384/384、象曰 384/384、
@@ -36,11 +36,11 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA = ROOT / "data" / "heluo" / "guajie_data.json"
-SLICE_DIR = ROOT / "data" / "heluo" / "guajie_raw"
+DATA = ROOT / "src" / "heluo_engine" / "data" / "guajie_data.json"
+SLICE_DIR = ROOT / "src" / "heluo_engine" / "orig"
 
 # 2026-10-24 补：此前本文件**从不**把 src 注入 sys.path ——
-# test_engine_exposes_same_data 里的 `from tongshu.engines.heluo import guajie`
+# test_engine_exposes_same_data 里的 `from heluo_engine.engines.heluo import guajie`
 # 只能靠全量跑时**别的测试文件先导入过 tongshu** 才不报 ModuleNotFoundError。
 # 单跑本文件必红（隐式依赖 = 测试隔离缺陷）。现显式注入。
 sys.path.insert(0, str(ROOT / "src"))
@@ -196,7 +196,7 @@ class TestGuajieDataFidelity(unittest.TestCase):
 
     def test_engine_exposes_same_data(self):
         """引擎读到的判词与数据文件一致（防止引擎另有一份副本）。"""
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo import guajie as gj
         loaded = gj.load_guajie_data()
         self.assertEqual(len(loaded), 64)
         for g in self.data:

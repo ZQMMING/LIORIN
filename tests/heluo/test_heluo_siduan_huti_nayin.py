@@ -15,12 +15,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.guajie import (
+from heluo_engine.engines.heluo.guajie import (
     compute_huti, judge_nayin_yuanqi, get_nayin_element,
     judge_si_duan, judge_jiehua_gong, judge_nayin_huti,
     compose_guajie, hexagram_to_lines,
 )
-from tongshu.engines.heluo.yuan_tang import find_yuantang, HOUR_NAMES
+from heluo_engine.engines.heluo.yuan_tang import find_yuantang, HOUR_NAMES
 
 
 class TestComputeHuti(unittest.TestCase):
@@ -341,8 +341,8 @@ class TestSiDuanPhaseWiringEndToEnd(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         import sxtwl
-        from tongshu.engines.heluo.canonical import HeluoCanonical
-        from tongshu.engines.heluo.guajie import build_guajie_from_result
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.guajie import build_guajie_from_result
         gan = "甲乙丙丁戊己庚辛壬癸"
         zhi = "子丑寅卯辰巳午未申酉戌亥"
         day = sxtwl.fromSolar(1983, 11, 3)
@@ -401,7 +401,7 @@ class TestYuantangPureGuaZhengwen(unittest.TestCase):
     「又一本云」重数版（L306-315）**不采**：明标他本、编者自评「宜更详之」、
     无冬夏分支、且其自身男乾「午酉三爻」与女坤「午酉四爻」同配置而异说。
     2026-10-07 早前据该版立的「重数全表」已推翻，见
-    data/heluo/纯卦元堂重数规则定案_20261007.md 更正块。
+    heluo_engine/docs/纯卦元堂重数规则定案_20261007.md 更正块。
     """
 
     # (标签, 六爻, 性别)  —— 冬半年

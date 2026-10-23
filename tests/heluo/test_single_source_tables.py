@@ -28,7 +28,7 @@ import unittest
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[2]
-_E = _ROOT / "src" / "tongshu" / "engines" / "heluo"
+_E = _ROOT / "src" / "heluo_engine" / "engines" / "heluo"
 _MODS = ("guajie", "yuan_qi", "hexagram", "hexagram_state", "hua_gong",
          "jiegua", "jiehhou", "yue_ling_shu_ge")
 
@@ -38,7 +38,7 @@ class TestSingleSourceTables(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo import (guajie, hua_gong, hexagram,
+        from heluo_engine.engines.heluo import (guajie, hua_gong, hexagram,
                                            hexagram_state, jiegua, jiehhou,
                                            yuan_qi, yue_ling_shu_ge)
         cls.m = dict(guajie=guajie, yuan_qi=yuan_qi, hexagram=hexagram,
@@ -80,7 +80,7 @@ class TestSingleSourceTables(unittest.TestCase):
         for mod in ("jiehhou", "yue_ling_shu_ge", "hua_gong"):
             import importlib
             m = importlib.import_module(
-                "tongshu.engines.heluo.%s" % mod)
+                "heluo_engine.engines.heluo.%s" % mod)
             code = _strip(io.open(m.__file__, encoding="utf-8").read())
             self.assertNotIn(seq, code,
                              "%s 里又抄了一份二十四节气序列字面量" % mod)
@@ -102,7 +102,7 @@ class TestNoSameNameDifferentMeaning(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo import hua_gong
+        from heluo_engine.engines.heluo import hua_gong
         cls.HG = hua_gong
 
     def test_opposite_trigram_symbol_is_gone_from_the_whole_engine(self):
@@ -110,7 +110,7 @@ class TestNoSameNameDifferentMeaning(unittest.TestCase):
         import importlib
         for name in _MODS:
             mod = importlib.import_module(
-                "tongshu.engines.heluo.%s" % name)
+                "heluo_engine.engines.heluo.%s" % name)
             self.assertFalse(hasattr(mod, "OPPOSITE_TRIGRAM"),
                              "%s 仍导出 OPPOSITE_TRIGRAM —— 歧义名没消干净" % name)
 
@@ -125,7 +125,7 @@ class TestNoSameNameDifferentMeaning(unittest.TestCase):
         """旧表（四季对宫）对乾/坤/艮/巽 取 .get() 返回 None → 静默判错。
         现在这两个概念各有各的表，且**不该**再从一个表里取另一个概念的值。
         """
-        from tongshu.engines.heluo import guajie
+        from heluo_engine.engines.heluo import guajie
         self.assertEqual(guajie.QIANXI_DUKONG.get("乾"), "坤")
         # 化工相反本就不含乾：调用方必须先判存在，而不是默默拿到 None
         self.assertNotIn("乾", self.HG.HUAGONG_FAN_GUA)

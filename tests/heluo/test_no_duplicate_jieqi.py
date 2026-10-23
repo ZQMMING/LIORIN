@@ -25,7 +25,7 @@ from datetime import date
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[2]
-_E = _ROOT / "src" / "tongshu" / "engines" / "heluo"
+_E = _ROOT / "src" / "heluo_engine" / "engines" / "heluo"
 
 
 class TestJieqiLookupIsCachedNotRescanned(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestJieqiLookupIsCachedNotRescanned(unittest.TestCase):
         """逐日扫描是基准；查表必须与之逐日相等（不是「抽样像对」）。"""
         from datetime import timedelta
         import sxtwl
-        from tongshu.engines.heluo.jiehhou import solar_term_date
+        from heluo_engine.engines.heluo.jiehhou import solar_term_date
 
         def scan(y, m, jq):
             d0 = date(y, m, 1)
@@ -98,7 +98,7 @@ class TestJieqiLookupIsCachedNotRescanned(unittest.TestCase):
                          "农历月起点里又出现硬写的 00:00 —— 时刻被抹掉了")
 
     def test_jieqi_timeline_returns_time(self):
-        from tongshu.engines.heluo.jiehhou import jieqi_timeline
+        from heluo_engine.engines.heluo.jiehhou import jieqi_timeline
         rows = jieqi_timeline(2026)
         self.assertTrue(rows)
         # 首行可能是**上一年**的节气（表含跨年项），故全量校验
@@ -115,7 +115,7 @@ class TestJieqiLookupIsCachedNotRescanned(unittest.TestCase):
 
     def test_cache_actually_caches(self):
         """同一年的两次调用必须是同一对象（真命中缓存，不是重建）。"""
-        from tongshu.engines.heluo import jiehhou
+        from heluo_engine.engines.heluo import jiehhou
         a = jiehhou.jieqi_timeline(2026)
         b = jiehhou.jieqi_timeline(2026)
         self.assertIs(a, b, "第二次调用没命中缓存")

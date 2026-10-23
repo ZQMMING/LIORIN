@@ -9,8 +9,8 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
 
-from tongshu.engines.time.location_registry import LocationRegistry  # noqa: E402
-import tongshu.engines.time.location_registry as lr  # noqa: E402
+from heluo_engine.engines.time.location_registry import LocationRegistry  # noqa: E402
+import heluo_engine.engines.time.location_registry as lr  # noqa: E402
 
 out = []
 print("模块文件:", lr.__file__)

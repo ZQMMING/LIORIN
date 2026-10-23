@@ -33,7 +33,9 @@ for k in ("liunian", "liuyue", "liuri"):
 out.append("")
 out.append("== 语料统计：全库 384 爻辞里有几个字能触发取象 ==")
 import json
-d = json.load(io.open("data/heluo/guajie_jingyi.json", encoding="utf-8"))
+import pathlib
+d = json.loads((pathlib.Path(__file__).resolve().parents[3] / "src" / "heluo_engine"
+                / "data" / "guajie_jingyi.json").read_text(encoding="utf-8"))
 out.append("顶层键: %s" % (list(d)[:8],))
 keys = [k for k in d if "yao" in k.lower() or "爻" in k]
 out.append("爻辞相关键样例: %s (共%d)" % (keys[:5], len(keys)))

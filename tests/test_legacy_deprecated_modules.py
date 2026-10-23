@@ -71,7 +71,7 @@ class TestLegacyDeprecatedModules(unittest.TestCase):
 
     def test_dayu_import_warns_deprecated(self):
         """dayu.py：import 即 DeprecationWarning（防复活无察觉）。"""
-        _, w = _import_afresh("tongshu.engines.heluo.dayu")
+        _, w = _import_afresh("heluo_engine.engines.heluo.dayu")
         self.assertTrue(
             any(issubclass(x.category, DeprecationWarning) for x in w),
             "dayu.py 应在 import 时发 DeprecationWarning",
@@ -79,7 +79,7 @@ class TestLegacyDeprecatedModules(unittest.TestCase):
 
     def test_time_sequence_import_warns_deprecated(self):
         """time_sequence.py：import 即 DeprecationWarning。"""
-        _, w = _import_afresh("tongshu.engines.heluo.time_sequence")
+        _, w = _import_afresh("heluo_engine.engines.heluo.time_sequence")
         self.assertTrue(
             any(issubclass(x.category, DeprecationWarning) for x in w),
             "time_sequence.py 应在 import 时发 DeprecationWarning",
@@ -87,8 +87,8 @@ class TestLegacyDeprecatedModules(unittest.TestCase):
 
     def test_replacements_are_the_live_ones(self):
         """取代者（爻位值运 + 四层时间轴）确实在生产链上。"""
-        from tongshu.engines.heluo import timeline_yun
-        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo import timeline_yun
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
 
         # 取代者不标 DEPRECATED
         src = inspect.getsource(timeline_yun)
@@ -102,7 +102,7 @@ class TestLegacyDeprecatedModules(unittest.TestCase):
 
     def test_canonical_does_not_import_legacy_modules(self):
         """canonical 不得 import 两个废弃残桩 / 占位桩（防复活被误当生产口径）。"""
-        from tongshu.engines.heluo import canonical
+        from heluo_engine.engines.heluo import canonical
 
         imported = _ast_imports(inspect.getsource(canonical))
         self.assertNotIn(("dayu", None), imported,
@@ -116,7 +116,7 @@ class TestLegacyDeprecatedModules(unittest.TestCase):
 
     def test_dayu_stub_defects_still_present(self):
         """残桩的已知缺陷仍在（防「单方面修复残桩」造成两套口径并存）。"""
-        from tongshu.engines.heluo import dayu
+        from heluo_engine.engines.heluo import dayu
 
         src = inspect.getsource(dayu)
         self.assertIn("qi_yun_age = 3", src,
@@ -126,7 +126,7 @@ class TestLegacyDeprecatedModules(unittest.TestCase):
 
     def test_time_sequence_month_branch_rule_is_legacy(self):
         """time_sequence 的流月支规则是旧口径（与常规月支不符），仅留档。"""
-        from tongshu.engines.heluo import time_sequence
+        from heluo_engine.engines.heluo import time_sequence
 
         src = inspect.getsource(time_sequence)
         self.assertIn("target_month + 1", src,
@@ -142,14 +142,14 @@ class TestRelationshipEngineDeprecated(unittest.TestCase):
     """
 
     def test_import_warns_deprecated(self):
-        _, w = _import_afresh("tongshu.engines.heluo.relationship.engine")
+        _, w = _import_afresh("heluo_engine.engines.heluo.relationship.engine")
         self.assertTrue(
             any(issubclass(x.category, DeprecationWarning) for x in w),
             "relationship/engine.py 应在 import 时发 DeprecationWarning")
 
     def test_known_defects_still_present(self):
         """残桩缺陷仍在（防「单方面修复残桩」造成两套口径并存）。"""
-        from tongshu.engines.heluo.relationship import engine
+        from heluo_engine.engines.heluo.relationship import engine
 
         src = inspect.getsource(engine)
         self.assertIn("any(y in ELEMENT_GEN for y in [year_a, year_b])", src,

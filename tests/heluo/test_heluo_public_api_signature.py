@@ -38,9 +38,9 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo.canonical import HeluoCanonical  # noqa: E402
-from tongshu.engines.heluo_adapter import HeluoAdapter, sanyuan  # noqa: E402
-from tongshu.engines.heluo.prenatal import resolve_middle_palace  # noqa: E402
+from heluo_engine.engines.heluo.canonical import HeluoCanonical  # noqa: E402
+from heluo_engine.adapter import HeluoAdapter, sanyuan  # noqa: E402
+from heluo_engine.engines.heluo.prenatal import resolve_middle_palace  # noqa: E402
 
 
 def _positional_names(fn) -> list[str]:

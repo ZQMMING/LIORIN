@@ -1,16 +1,37 @@
 # 河洛引擎（Heluo Engine）— 接线与契约
 
-> **独立包边界（2026-10-16 提纯）**：本包为独立河洛引擎，仅含
-> `src/tongshu/engines/heluo/`、`heluo_adapter.py`，以及运行必需的上游
-> `bazi_engine`/`bazi_adapter`（排四柱）、`time/`（真太阳时）、`yi/`（易经卦爻辞结构）、
-> `facts/`、`reasoning/`、`spec/`。入口为 `heluo_adapter.HeluoAdapter`；
-> 完整 `pipeline`/`compute_stage` 属集成层，不在本包。流时卦剥离，大运/流年/流月引擎自算。
-> 以下历史文档中「compute_stage / 黄历引擎接线 / YiAdapter 跨模块不含」等描述为提纯前口径，
+> **独立包边界（2026-10-24 结构性重构，本节口径已更新）**：
+> 本包是**自包含的独立顶层包 `heluo_engine`**，一切都在
+> `src/heluo_engine/` 一个文件夹下：
+>
+> ```
+> src/heluo_engine/
+>   ├─ __init__.py   对外 API 门面（惰性导出）
+>   ├─ _paths.py     ★ 统一资源定位（零路径绑定，双通道）
+>   ├─ adapter.py    HeluoAdapter
+>   ├─ data/         ★ 运行时数据（判词库 / 精义 / 扩展断语 / 参评语料 / 地点表）
+>   ├─ orig/         ★ 原典切片（判词与语料的逐字上游）
+>   ├─ docs/         ★ 依据文档（判据的证据链）
+>   ├─ engines/      heluo/（37 模块）· time/（真太阳时）· yi/（易经爻辞）
+>   │                bazi_*.py · time_resolver.py
+>   └─ facts/  reasoning/  spec/
+> ```
+>
+> * 顶层包名由 `tongshu` 改为 **`heluo_engine`** —— 与主仓命名空间**完全隔离**
+>   （此前两个 `tongshu` 不能同时 import，实测会互相吃掉对方的顶层子包）。
+> * 数据/原典/依据文档**随包分发**，`pip install` 后即可在服务器独立运行。
+> * 入口 `heluo_engine.HeluoAdapter`；完整 `pipeline`/`compute_stage` 属集成层，
+>   **不在本包**（跨仓接线守卫在 `tests/cross_repo/`，主仓环境里才跑）。
+> * 流时卦剥离，大运/流年/流月引擎自算。
+> * 包结构、部署方式、守卫清单、旧 MD 清理口径见
+>   **`docs/heluo/河洛引擎包结构与部署_20261024.md`**。
+> * 以下历史文档中「compute_stage / 黄历引擎接线 / YiAdapter 跨模块不含」等描述为提纯前口径，
 > 实际边界以仓库根 `README.md` 与本说明为准。
 
-**状态**：v2 frozen（2026-10-10 批次 P 完成算力裁剪）
-**位置**：`src/tongshu/engines/heluo/`
-**数据**：`data/heluo/`（原典 + 取证 + 多源校对）
+**状态**：v2 frozen（2026-10-10 批次 P 完成算力裁剪）；2026-10-24 结构性重构（独立可部署）
+**位置**：`src/heluo_engine/`（顶层包 `heluo_engine`）
+**数据**：`src/heluo_engine/data/`（随包）+ `src/heluo_engine/orig/`（原典切片）
+**依据**：`src/heluo_engine/docs/`（定案 / 裁决 / 核定 / 对照表）
 **原典**：《河洛真数》（续修四库全书·天一阁本）
 
 ---
@@ -66,7 +87,7 @@
 ## 5. 模块接线
 
 ```
-src/tongshu/engines/heluo/
+src/heluo_engine/engines/heluo/
   ├─ canonical.py             主入口 HeluoCanonical.calculate()（含 _compute_year_jie 节气锚/年柱反推）
   ├─ timeline_yun.py          大运 + 流年 + 流月 + 流日 + 流时（六爻俱变；含 Timeline 数据类）
   ├─ evidence_producer.py     解卦层证据
@@ -94,21 +115,41 @@ src/tongshu/engines/heluo/
   └─ __init__.py
 ```
 
-## 6. 数据与原典
+## 6. 数据与原典（2026-10-24 起全部**随包**）
 
 ```
-data/heluo/
-  ├─ guajie_data.json         64 卦 × 6 爻判词（原典释义）
-  ├─ guajie_jingyi.json       706 单元现代语义版（卦辞+爻辞+释义）
-  ├─ yue_ling_shu_ge.json     月令数格 11 条
-  ├─ 元堂算法核验_20261007.md
-  ├─ 起例卷算法对照表_*.md
-  ├─ 河洛引擎全域审计_*.md
-  └─ ...
+src/heluo_engine/data/          ★ 运行时数据（pip install 后即可用）
+  ├─ guajie_data.json           64 卦 × 6 爻判词（原典释义）
+  ├─ guajie_jingyi.json         706 单元现代语义版（卦辞+爻辞+释义）
+  ├─ kuozhan_duanyu.json        扩展断语（原文直录）
+  ├─ locations.json             出生地点注册表（可被参数/环境变量覆盖）
+  └─ canping/                   参评诗断语料（448_duizhao / raw_shici_*）
+
+src/heluo_engine/orig/          ★ 原典切片（判词与语料的逐字上游）
+  ├─ 河洛真数_起例卷_之上/之中/之下.txt
+  ├─ 河洛理数_日卦起例卷.txt (+ _校记.md)
+  ├─ 易卦释义_*.txt（5 卷）      ← guajie_data.json 的直接上游
+  ├─ 诗断秘诀_卷_上/下.txt        ← 参评诗断语料的直接上游
+  └─ 崇祯五年刻本_卷六_识典整理.txt
+
+src/heluo_engine/docs/          ★ 依据文档（判据的证据链）
+  ├─ 死断四条件核定_20261024.md
+  ├─ 河洛回灌接线决策单_20261024.md
+  ├─ 纳甲异文多源对拍_20261024.md
+  ├─ 纯卦元堂重数规则定案_20261007.md / 元堂算法核验_20261007.md
+  ├─ 天数至弱异文核查_20261007.md / 起例卷之上原典覆盖缺口_20261007.md
+  ├─ 起例卷_中/之下算法对照表_20261007.md
+  ├─ 算法原文对照核证表.md / 定案字总表.md / 多方校对裁决表_20260915.md
+  ├─ 流月卦例多版本异文_20261007.md / 日藏本四部字证对照_20260916.md
+  ├─ 起例卷算法原文索引.md
+  └─ canping/                    参评语料考证（README + 4 份核读）
 ```
 
+定位一律走 `heluo_engine._paths`（`pkg_data` / `pkg_orig` / `pkg_doc`），
+**不再有 `data/heluo/` 这类仓库相对路径**。
+
 ```
-data/research/heluo/
+data/research/heluo/            （主仓侧研究资料，不属本包）
   ├─ 河洛理数-总集.md
   ├─ 河洛理数-流年流月流日卦推演全解.md
   └─ 河洛理数-流年卦解卦全解.md
@@ -116,9 +157,13 @@ data/research/heluo/
 
 ## 7. 守卫（tests/heluo/）
 
-- **927 passed**（`python -m pytest tests/` 全量，含 16 个河洛测试文件）
+- **1296 passed / 6 skipped / 0 failed**（`python -m pytest tests/` 全量）
+  —— 跨仓接线守卫在 `tests/cross_repo/`，主仓环境里才跑（独立包形态下整目录跳过）
 - 覆盖：H2 冻结态 / H6 化工 / H7 元气 / H9b 黄历桥接 / H10 惰性化 /
   H11 节候 / H12 诊断 / H16 独立验证 / 参评 / 卦爻辞 / 边界 / 负例 / 扩展
+- **结构与部署守卫**（2026-10-24 新增）：
+  - `tests/heluo/test_heluo_deploy_package.py` — 零路径绑定 / 随包资源 / 仓库外独立跑通
+  - `tests/heluo/test_heluo_package_identity.py` — 顶层包名隔离 / 包发现 / 零跨仓导入
 - **审计脚本**（`audit/`，一次性裁决复核，非 pytest）：
   - `audit_anchors.py` — 案例锚点批量验证（1980 / 1724 已确证锚点）
   - `audit_post_fix.py` — 化工五行判定矩阵 + 流月节锚对齐
@@ -406,7 +451,7 @@ frozen_state:
 
 ## 13. 原著逐字核实（2026-10-22）
 
-对流日卦口径做了一次**逐字回查**，结果如下（原典文库 `data/heluo/guajie_raw/`）。
+对流日卦口径做了一次**逐字回查**，结果如下（原典文库 `heluo_engine/orig/`）。
 
 ### 13.1 《河洛真数·起例卷之上》L129（流日卦主条，逐字）
 
@@ -439,7 +484,7 @@ frozen_state:
 | 项 | 结论 |
 |---|---|
 | 《河洛真数》原典的流日卦 | **只有「五日一变」一套**：每爻管五日 + 挨次而变（链式）+ 六爻俱变满三十日 + 阳日寻阳位/阴日寻阴位 + 进一爻起节气 → 本包 `hou5` 口径，**逐字吻合**。该口径**保留**为原典变体（`rule="hou5"`），仅供原典对拍，不是生产口径 |
-| 「六日一变」「首日从初爻开始」「按实际时刻均匀分配」 | 出自**晚出的《河洛理数》**（另书）。**2026-10-22 已取证**：原文切片已入库（`data/heluo/guajie_raw/河洛理数_日卦起例卷.txt`，18 条 / 271 行逐字），关键条文见 §14.2 → 本包 `gua6` 口径**由待取证转为已取证**，且已统一为**生产口径**（两条路径一致，见 §14.3） |
+| 「六日一变」「首日从初爻开始」「按实际时刻均匀分配」 | 出自**晚出的《河洛理数》**（另书）。**2026-10-22 已取证**：原文切片已入库（`heluo_engine/orig/河洛理数_日卦起例卷.txt`，18 条 / 271 行逐字），关键条文见 §14.2 → 本包 `gua6` 口径**由待取证转为已取证**，且已统一为**生产口径**（两条路径一致，见 §14.3） |
 | 「日卦起算须按节气交接时刻」 | 《河洛真数》L129「进一爻起节气…立春就从二十八日起数」+ L127「此说方合节气」**逐字支持**；L15「每五日为一节/每五日为一候」亦支持候卦以节气交接为界。《河洛理数》侧亦逐字支持（K3-448 L481「日卦行起必须按月卦節氧方不」——「節氧」为「節氣」的 OCR 讹字，照抄不改） |
 | 两书流日口径如何取舍 | **两书并存且原文未言取舍**，如实留档：见 `河洛理数_日卦起例卷_校记.md`「原文层面未解决问题」第 ① 条。本包按**用户 2026-10-22 定稿**取 gua6 为生产口径 |
 
@@ -455,9 +500,9 @@ frozen_state:
 ### 13.7 后续取证路径
 
 **✅ 2026-10-22 已完成取证**：《河洛理数》日卦起例卷原文切片已入库 ——
-`data/heluo/guajie_raw/河洛理数_日卦起例卷.txt`（18 条 / 271 行逐字原文，
+`heluo_engine/orig/河洛理数_日卦起例卷.txt`（18 条 / 271 行逐字原文，
 底本 K3-448 1632笔写本 + K3-447 1871增补本）与
-`data/heluo/guajie_raw/河洛理数_日卦起例卷_校记.md`（出处表 / OCR 疑讹 40 余条 /
+`heluo_engine/orig/河洛理数_日卦起例卷_校记.md`（出处表 / OCR 疑讹 40 余条 /
 口径要点 9 条 / **原文层面未解决问题 10 条**）。
 
 守卫 `tests/test_heluo_liuri_rule_consistency.py::TestGua6OriginalTextIsInRepo`
@@ -1230,7 +1275,7 @@ fixture**（bazi 与 birth_date 互不对应，例如 1983-11-03 配寅月）。
 
 ⇒ 变爻序 = **爻位顺序（跳过居位爻，自居位下一爻起循环）**；段起日 = 段1 + 6×(k−1)。
 存疑与未决（底本手写 OCR 栏序错乱、段4/段5 段起日为推定、其他居位无第二例可验）
-已逐条记入 `data/heluo/guajie_raw/河洛理数_日卦起例卷_校记.md` §十一。
+已逐条记入 `heluo_engine/orig/河洛理数_日卦起例卷_校记.md` §十一。
 
 #### 14.25.3 落码
 
@@ -1354,14 +1399,14 @@ fixture**（bazi 与 birth_date 互不对应，例如 1983-11-03 配寅月）。
 钉成原典级断言：今后改流年/元堂/卦气任一处，守卫会当场报警。
 ### 14.28 补上判词数据的**原典保真守卫**（2026-10-22 续）
 
-**缺口**：`data/heluo/guajie_data.json`（467 KB，64 卦 × 6 爻）是引擎**全部断语
+**缺口**：`heluo_engine/data/guajie_data.json`（467 KB，64 卦 × 6 爻）是引擎**全部断语
 输出**的唯一数据源。此前**没有任何守卫**校验它是否仍来自原典 —— 改一个字、
 删一条断语、串一行，引擎会照单全收输出**改过的判词**，而表一致性/接口形状/
 变异演练**全都发现不了**（数据变了，结构没变）。
 
 **修法**：新增 `tests/heluo/test_heluo_guajie_data_fidelity.py`（8 用例 +
 **2431 subtest**）—— 把「判词数据逐字来自原典」变成可回归的断言：
-`data/heluo/guajie_raw/` 下的原典切片是唯一权威文本，数据里的每个字都必须
+`heluo_engine/orig/` 下的原典切片是唯一权威文本，数据里的每个字都必须
 能在切片中**逐字找到**（归一化仅去空白，以跨行排版差异）。
 
 | 字段 | 条数 | 逐字命中 |
@@ -1434,7 +1479,7 @@ fixture**（bazi 与 birth_date 互不对应，例如 1983-11-03 配寅月）。
 
 用户指示「OCR 底本乱码，就去互联网搜索多维度验证确定补全」后，
 对 §14.29 的 6 处「不一致」做了**六源对拍**，结论**推翻了当时的定性**。
-完整报告：`docs/heluo/纳甲异文多源对拍_20261024.md`。
+完整报告：`heluo_engine/docs/纳甲异文多源对拍_20261024.md`。
 
 #### 14.30.1 三个前提被纠正
 
@@ -1584,7 +1629,7 @@ fixture**（bazi 与 birth_date 互不对应，例如 1983-11-03 配寅月）。
 
 #### 14.32.2 新增守卫：`tests/heluo/test_heluo_original_quotes.py`
 
-把「凡标（原典：X）者，X 须能在 `data/heluo/guajie_raw/` 原典切片中逐字命中」
+把「凡标（原典：X）者，X 须能在 `heluo_engine/orig/` 原典切片中逐字命中」
 变成可回归的断言。扫 `src/tongshu/engines/heluo/*.py`（含 `relationship/`）+
 `heluo_adapter.py` 里全部「（原典：…）」标注（实测 43 处）。
 

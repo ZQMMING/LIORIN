@@ -18,7 +18,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.xian_tian_ce_shu import (  # noqa: E402
+from heluo_engine.engines.heluo.xian_tian_ce_shu import (  # noqa: E402
     BAGUA_NUM_CONFIRMED,
     BAGUA_NUM_LUOSHU_REFERENCE,
     BAGUA_NUM_QILUO_L174,

@@ -18,12 +18,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical import HeluoCanonical, _get_sxtwl
-from tongshu.engines.heluo.timeline_yun import (
+from heluo_engine.engines.heluo.canonical import HeluoCanonical, _get_sxtwl
+from heluo_engine.engines.heluo.timeline_yun import (
     compute_liuri, compute_liushi, compute_dayun_liyao,
 )
-from tongshu.engines.heluo import yi_interpreter as yi
-from tongshu.engines.heluo import guajie as gj
+from heluo_engine.engines.heluo import yi_interpreter as yi
+from heluo_engine.engines.heluo import guajie as gj
 
 # 纪晓岚 Golden Case：甲辰 辛未 丙戌 甲午 午时 男
 BAZI = [("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")]
@@ -109,7 +109,7 @@ class TestLazyLiuShi(unittest.TestCase):
         等于把「链式累变」钉成标准；原典硬算例证明 gua6 的段本卦是
         「月卦各变一爻」（见 timeline_yun._GUA6_FLIP_ORDER 的引文链）。
         """
-        from tongshu.engines.heluo.timeline_yun import (
+        from heluo_engine.engines.heluo.timeline_yun import (
             _flip_line, _lines_to_hexagram, liuri_gua6_bases,
         )
         y2026 = next(y for y in self.res.timeline.yearly_hexagrams
@@ -210,7 +210,7 @@ class TestSxtwlLazySingleton(unittest.TestCase):
 
     def test_get_sxtwl_is_memoized(self):
         """惰性单例：进程内至多解析一次，重复调用返回同一对象。"""
-        import tongshu.engines.heluo.canonical as cn
+        import heluo_engine.engines.heluo.canonical as cn
         a = cn._get_sxtwl()
         b = cn._get_sxtwl()
         self.assertIs(a, b, "重复调用须返回同一对象，不得重新 import")
@@ -219,7 +219,7 @@ class TestSxtwlLazySingleton(unittest.TestCase):
 
     def test_failed_resolution_is_remembered(self):
         """强制失败态后不得反复走 import 机制（旧实现 1,116 次 ≈ 206 ms）。"""
-        import tongshu.engines.heluo.canonical as cn
+        import heluo_engine.engines.heluo.canonical as cn
         saved = (cn._SXTWL, cn._SXTWL_FAILED, cn._jie_cache)
         try:
             cn._SXTWL, cn._SXTWL_FAILED, cn._jie_cache = None, True, {}
@@ -234,7 +234,7 @@ class TestSxtwlLazySingleton(unittest.TestCase):
 
     def test_jie_cache_computed_once_per_year(self):
         """同一年 12 个月只应触发一次 _compute_year_jie。"""
-        import tongshu.engines.heluo.canonical as cn
+        import heluo_engine.engines.heluo.canonical as cn
         saved = (cn._jie_cache, cn._compute_year_jie)
         calls = []
         try:
@@ -253,7 +253,7 @@ class TestSxtwlLazySingleton(unittest.TestCase):
 
     def test_jie_cache_hit_skips_compute(self):
         """命中缓存时不得重算。"""
-        import tongshu.engines.heluo.canonical as cn
+        import heluo_engine.engines.heluo.canonical as cn
         saved = (cn._jie_cache, cn._compute_year_jie)
         calls = []
         try:
@@ -302,11 +302,11 @@ class TestJieBatchEquivalence(unittest.TestCase):
             self.assertEqual(len(self._call_dayscan(y)), 12)
 
     def _call_batch(self, y):
-        from tongshu.engines.heluo.canonical import _jie_by_batch
+        from heluo_engine.engines.heluo.canonical import _jie_by_batch
         return _jie_by_batch(self.sxtwl, y)
 
     def _call_dayscan(self, y):
-        from tongshu.engines.heluo.canonical import _jie_by_dayscan
+        from heluo_engine.engines.heluo.canonical import _jie_by_dayscan
         return _jie_by_dayscan(self.sxtwl, y)
 
 

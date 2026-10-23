@@ -31,8 +31,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.timeline_yun import (
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.timeline_yun import (
     compute_liuri,
     compute_liuri_stub,
     materialize_month_days,
@@ -153,7 +153,7 @@ class TestGuajieStillResolvesDayAndHour(unittest.TestCase):
     """流日须正确解出；流时已于 2026-10-06 剥离，只断言剥离行为本身。"""
 
     def test_day_still_resolves(self):
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo import guajie as gj
         out = gj.build_guajie_from_result(
             _calc(), bazi=_BAZI, target_year=1724, target_month=6,
             target_day=15, target_hour=7,
@@ -163,7 +163,7 @@ class TestGuajieStillResolvesDayAndHour(unittest.TestCase):
 
     def test_hour_layer_is_stripped(self):
         """流时层已剥离：不产卦名、不产爻辞。"""
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo import guajie as gj
         out = gj.build_guajie_from_result(
             _calc(), bazi=_BAZI, target_year=1724, target_month=6,
             target_day=15, target_hour=7,
@@ -173,7 +173,7 @@ class TestGuajieStillResolvesDayAndHour(unittest.TestCase):
 
     def test_passing_hour_leaves_visible_trace(self):
         """传了 target_hour 必须留痕——不得静默忽略。"""
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo import guajie as gj
         out = gj.build_guajie_from_result(
             _calc(), bazi=_BAZI, target_year=1724, target_month=6,
             target_day=15, target_hour=7,
@@ -182,7 +182,7 @@ class TestGuajieStillResolvesDayAndHour(unittest.TestCase):
                         "传入 target_hour 必须在 evidence 留痕")
 
     def test_hour_layer_stripped_even_without_hour_arg(self):
-        from tongshu.engines.heluo import guajie as gj
+        from heluo_engine.engines.heluo import guajie as gj
         out = gj.build_guajie_from_result(
             _calc(), bazi=_BAZI, target_year=1724, target_month=6, target_day=15)
         self.assertEqual(out["liushi_hexagram"], "")
@@ -191,7 +191,7 @@ class TestGuajieStillResolvesDayAndHour(unittest.TestCase):
 
     def test_compute_liushi_capability_preserved(self):
         """compute_liushi 本体保留在 timeline_yun，未来恢复不必重写。"""
-        from tongshu.engines.heluo.timeline_yun import compute_liushi
+        from heluo_engine.engines.heluo.timeline_yun import compute_liushi
         r = compute_liushi([1, -1, 1, -1, 1, 1], 3)
         self.assertEqual(len(r.hours), 12)
         self.assertEqual([h["hour"] for h in r.hours], list(range(1, 13)))

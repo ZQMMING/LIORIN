@@ -8,7 +8,7 @@
 """
 import unittest
 
-from tongshu.engines.heluo.heluo_lunar_bridge import annotate_day, annotate_liuri_yao
+from heluo_engine.engines.heluo.heluo_lunar_bridge import annotate_day, annotate_liuri_yao
 
 
 class TestLunarBridge(unittest.TestCase):
@@ -54,7 +54,7 @@ class TestLunarBridge(unittest.TestCase):
 class TestAdapterHuangli(unittest.TestCase):
     def test_compute_with_provider(self):
         """adapter 带 huangli_provider：target 流日段 liuri_yao 挂 lunar。"""
-        from tongshu.engines.heluo_adapter import HeluoAdapter
+        from heluo_engine.adapter import HeluoAdapter
 
         calls = []
 
@@ -84,7 +84,7 @@ class TestAdapterHuangli(unittest.TestCase):
 
     def test_compute_without_provider(self):
         """不带 provider：lunar_python 兜底，liuri_yao.lunar.source=lunar_python。"""
-        from tongshu.engines.heluo_adapter import HeluoAdapter
+        from heluo_engine.adapter import HeluoAdapter
 
         a = HeluoAdapter()
         r = a.compute(

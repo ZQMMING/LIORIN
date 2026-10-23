@@ -30,7 +30,7 @@ os.environ.setdefault(
 
 import sxtwl  # noqa: E402
 
-from tongshu.engines.heluo import (                                    # noqa: E402
+from heluo_engine.engines.heluo import (                                    # noqa: E402
     canonical, diagnosis_rule_graph, evidence_producer, frozen_state,
     guajie, gui_ming_liu_ju, hua_gong, jiegua, jiehhou, numbers,
     yuanqi_tables)
@@ -107,7 +107,7 @@ TARGETS = [
     (diagnosis_rule_graph, "heluo_own_direction", "河洛自有判据"),
     (gui_ming_liu_ju, "judge_liu_ju", "六项贵命十体"),
     (yue_ling_shu_ge_shu := __import__(
-        "tongshu.engines.heluo.yue_ling_shu_ge",
+        "heluo_engine.engines.heluo.yue_ling_shu_ge",
         fromlist=["x"]), "classify_shu_ge", "数格分类"),
     (jiehhou, "get_current_jieqi_info", "jiehhou 求节气"),
     (jiegua, "get_jie_gua", "jiegua 节卦"),

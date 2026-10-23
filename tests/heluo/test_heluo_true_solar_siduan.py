@@ -34,7 +34,7 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo_adapter import HeluoAdapter  # noqa: E402
+from heluo_engine.adapter import HeluoAdapter  # noqa: E402
 
 
 class TestTrueSolarBoundary(unittest.TestCase):
@@ -42,7 +42,7 @@ class TestTrueSolarBoundary(unittest.TestCase):
 
     def test_time_resolver_produces_true_solar(self):
         """TimeResolver 确实做真太阳时校正（经度差 + 均时差）。"""
-        from tongshu.engines.time.resolver import TimeResolver
+        from heluo_engine.engines.time.resolver import TimeResolver
         ctx = TimeResolver().resolve_context(
             birth_date=datetime(1983, 11, 3, 11, 0).date(),
             hour=11, minute=0, timezone="Asia/Shanghai",
@@ -71,9 +71,9 @@ class TestTrueSolarBoundary(unittest.TestCase):
         r_civil = ad.compute((1983, 11, 3, 11), gender="male",
                              target_date="2026-10-23")
 
-        from tongshu.engines.bazi_adapter import BaziAdapter
-        from tongshu.engines.bazi_engine import BaziEngine
-        from tongshu.engines.time.resolver import TimeResolver
+        from heluo_engine.engines.bazi_adapter import BaziAdapter
+        from heluo_engine.engines.bazi_engine import BaziEngine
+        from heluo_engine.engines.time.resolver import TimeResolver
         ctx = TimeResolver().resolve_context(
             birth_date=datetime(1983, 11, 3, 11, 0).date(),
             hour=11, minute=0, timezone="Asia/Shanghai",
@@ -96,7 +96,7 @@ class TestTrueSolarBoundary(unittest.TestCase):
         就会与上游 TimeResolver **重复校正**（双重校正）。
         """
         import inspect
-        from tongshu.engines.heluo import canonical
+        from heluo_engine.engines.heluo import canonical
         src = inspect.getsource(canonical)
         # 河洛不得出现真太阳时计算（经度/均时差）
         for forbidden in ("equation_of_time", "longitude_correction",

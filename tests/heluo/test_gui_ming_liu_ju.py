@@ -25,7 +25,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.gui_ming_liu_ju import (
+from heluo_engine.engines.heluo.gui_ming_liu_ju import (
     GUA_MING_GOOD_EXAMPLES,
     JI_CI_GOOD_CHARS,
     JI_YAO_GOOD,
@@ -170,7 +170,7 @@ class TestGuaMingLiteral(unittest.TestCase):
 
     def test_others_are_undecided_not_bad(self):
         """原文作「之类」= 举例未穷举，不在列举内不等于凶。"""
-        from tongshu.engines.heluo.gui_ming_liu_ju import judge_liu_ju
+        from heluo_engine.engines.heluo.gui_ming_liu_ju import judge_liu_ju
         r = judge_liu_ju(gua_name="乾")["卦名"]
         self.assertIsNone(r.passed, "乾不在明举例内，原典未言其凶，不应判 False")
 

@@ -22,7 +22,7 @@
 ----------------------------------------
 
 本守卫的期望方向**从《周易》原典爻辞独立推导**：
-取 `data/heluo/guajie_data.json` 的 384 条爻辞（`ci` 字段，已由
+取 `heluo_engine/data/guajie_data.json` 的 384 条爻辞（`ci` 字段，已由
 `test_heluo_guajie_data_fidelity.py` 证明逐字来自原典），按**《周易》自身的
 吉凶措辞**判定：
 
@@ -47,11 +47,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo.yi_interpreter import (  # noqa: E402
+from heluo_engine.engines.heluo.yi_interpreter import (  # noqa: E402
     _judge_direction, _judge_strength, _POSITIVE_KEYWORDS, _NEGATIVE_KEYWORDS,
 )
 
-DATA = ROOT / "data" / "heluo" / "guajie_data.json"
+DATA = ROOT / "src" / "heluo_engine" / "data" / "guajie_data.json"
 
 #: 引擎的强负面词表（用于「吉凶同现」时判 MIXED）
 _STRONG_NEG = ("不利", "蹇", "困", "否", "剥", "明夷", "大过", "征凶", "终凶")

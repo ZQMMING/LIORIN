@@ -27,8 +27,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.interpretation import HeluoInput as HL4Input
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.interpretation import HeluoInput as HL4Input
 
 _BAZI = [("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")]
 
@@ -45,7 +45,7 @@ class TestEvidenceClosureIsReal(unittest.TestCase):
 
     @staticmethod
     def _engine(line_pos, time_state, element_state):
-        from tongshu.engines.heluo.interpretation import RelationalInterpretationEngine
+        from heluo_engine.engines.heluo.interpretation import RelationalInterpretationEngine
         inp = HL4Input(
             prenatal_hexagram="乾上乾下", yuan_tang="五爻",
             postnatal_hexagram="乾上坤下",
@@ -124,7 +124,7 @@ class TestHexagramStateClaims(unittest.TestCase):
         """作废的假分数必须有**有据替代**指向，否则只是删功能。"""
         from pathlib import Path as _P
 
-        import tongshu.engines.heluo.hexagram_state as hs
+        import heluo_engine.engines.heluo.hexagram_state as hs
         mod = _P(hs.__file__).parent / "gui_ming_liu_ju.py"
         self.assertTrue(mod.exists(), "缺少有原典依据的替代实现 gui_ming_liu_ju.py")
         import inspect
@@ -135,7 +135,7 @@ class TestHexagramStateClaims(unittest.TestCase):
     def test_docstring_does_not_promise_table_read(self):
         import inspect
 
-        from tongshu.engines.heluo.hexagram_state import get_base_factors
+        from heluo_engine.engines.heluo.hexagram_state import get_base_factors
         src = inspect.getsource(get_base_factors)
         self.assertNotIn("从 hexagram_state_definitions 表读取", src)
 
@@ -151,7 +151,7 @@ class TestHexagramStateClaims(unittest.TestCase):
         本断言的**意图未变**：占位层不得再输出看似可信的假数。
         形式由「锁定捏造的数值」改为「锁定拒绝提供」。
         """
-        from tongshu.engines.heluo.hexagram_state import get_base_factors
+        from heluo_engine.engines.heluo.hexagram_state import get_base_factors
         for gua, state in (("乾为天", "静"), ("乾为天", "动"), ("坤为地", "变")):
             with self.assertRaises(NotImplementedError,
                                    msg=f"{gua}/{state} 仍在返回自拟分数"):
@@ -161,7 +161,7 @@ class TestHexagramStateClaims(unittest.TestCase):
         """旧数值若被保留，只能以「已作废、仅供考古」的形式存在。"""
         import inspect
 
-        from tongshu.engines.heluo.hexagram_state import get_base_factors_legacy
+        from heluo_engine.engines.heluo.hexagram_state import get_base_factors_legacy
         src = inspect.getsource(get_base_factors_legacy)
         self.assertIn("已作废", src)
         self.assertIn("没有原典出处", src)

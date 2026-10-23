@@ -26,8 +26,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo import guajie
-from tongshu.engines.heluo.numbers import HEXAGRAM_SHORT_NAMES
+from heluo_engine.engines.heluo import guajie
+from heluo_engine.engines.heluo.numbers import HEXAGRAM_SHORT_NAMES
 
 #: 十二辟卦的阳/阴数递增序（引擎内已登记，用于守卫「月令阴阳」）
 _YANG_BY_COUNT = guajie._YANG_MONTHS_BY_YANG_COUNT   # {阳数: 月}
@@ -77,7 +77,7 @@ class TestTwelveMonthTable(unittest.TestCase):
         行号，搬进包内后未同步 —— 已一并更正。
         """
         raw = (Path(__file__).resolve().parents[2]
-               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之中.txt")
+               / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之中.txt")
         text = raw.read_text(encoding="utf-8")
         for frag in ("三阳出于寅，三阳至而大道成",
                      "四阳生于卯，四阳盛壮",

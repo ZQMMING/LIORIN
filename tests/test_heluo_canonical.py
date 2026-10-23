@@ -7,11 +7,11 @@ from __future__ import annotations
 
 import unittest
 
-from tongshu.engines.heluo import (
+from heluo_engine.engines.heluo import (
     HeluoCanonical,
     HeluoResult,
 )
-from tongshu.engines.heluo.exceptions import ForbiddenRuleError
+from heluo_engine.engines.heluo.exceptions import ForbiddenRuleError
 
 
 class TestHeluoCanonical(unittest.TestCase):
@@ -60,7 +60,7 @@ class TestNumbersModule(unittest.TestCase):
 
     def test_stem_values(self):
         """天干取值正确性。"""
-        from tongshu.engines.heluo.numbers import STEM_VALUES
+        from heluo_engine.engines.heluo.numbers import STEM_VALUES
         self.assertEqual(STEM_VALUES["甲"], 6)
         self.assertEqual(STEM_VALUES["乙"], 2)
         self.assertEqual(STEM_VALUES["丙"], 8)
@@ -74,7 +74,7 @@ class TestNumbersModule(unittest.TestCase):
 
     def test_branch_values(self):
         """地支取值正确性。"""
-        from tongshu.engines.heluo.numbers import BRANCH_VALUES
+        from heluo_engine.engines.heluo.numbers import BRANCH_VALUES
         self.assertEqual(BRANCH_VALUES["子"], (1, 6))
         self.assertEqual(BRANCH_VALUES["丑"], (5, 10))
         self.assertEqual(BRANCH_VALUES["寅"], (3, 8))
@@ -93,7 +93,7 @@ class TestPrenatalModule(unittest.TestCase):
 
     def test_prenatal_hexagram_shangyuan_male(self):
         """上元男命测试。"""
-        from tongshu.engines.heluo.prenatal import determine_prenatal_hexagram
+        from heluo_engine.engines.heluo.prenatal import determine_prenatal_hexagram
         result = determine_prenatal_hexagram(
             tian_reduced=2,  # 坤
             di_reduced=6,    # 乾
@@ -105,7 +105,7 @@ class TestPrenatalModule(unittest.TestCase):
 
     def test_prenatal_hexagram_xiayuan_female(self):
         """下元女命测试。"""
-        from tongshu.engines.heluo.prenatal import determine_prenatal_hexagram
+        from heluo_engine.engines.heluo.prenatal import determine_prenatal_hexagram
         result = determine_prenatal_hexagram(
             tian_reduced=2,
             di_reduced=6,
@@ -122,7 +122,7 @@ class TestYuanTangModule(unittest.TestCase):
 
     def test_find_yuantang_mixed(self):
         """杂卦元堂定位。"""
-        from tongshu.engines.heluo.yuan_tang import find_yuantang
+        from heluo_engine.engines.heluo.yuan_tang import find_yuantang
         # 地天泰：六爻为 [-1, -1, -1, 1, 1, 1]（自下而上）
         lines = [-1, -1, -1, 1, 1, 1]
         result = find_yuantang(
@@ -140,7 +140,7 @@ class TestPostnatalModule(unittest.TestCase):
 
     def test_compute_postnatal_jixiaolan(self):
         """纪晓岚后天卦验证。"""
-        from tongshu.engines.heluo.postnatal import compute_postnatal
+        from heluo_engine.engines.heluo.postnatal import compute_postnatal
         # 地天泰六爻（自下而上，与原典一致）
         lines = [1, 1, 1, -1, -1, -1]  # 下乾上坤 = 地天泰
         result = compute_postnatal(
@@ -155,7 +155,7 @@ class TestHexagramModule(unittest.TestCase):
 
     def test_analyze_hexagram(self):
         """卦象结构分析。"""
-        from tongshu.engines.heluo.hexagram import analyze_hexagram
+        from heluo_engine.engines.heluo.hexagram import analyze_hexagram
         result = analyze_hexagram("地天泰")
         self.assertIsNotNone(result)
         self.assertEqual(result.upper, "坤")
@@ -167,7 +167,7 @@ class TestInputModule(unittest.TestCase):
 
     def test_prepare_heluo_input(self):
         """输入数据验证。"""
-        from tongshu.engines.heluo.input import HeluoInput, Location
+        from heluo_engine.engines.heluo.input import HeluoInput, Location
         input_data = HeluoInput(
             birth_date="2024-01-01",
             birth_time="12:00",
@@ -181,7 +181,7 @@ class TestInputModule(unittest.TestCase):
 
     def test_invalid_gender_raises(self):
         """无效性别应抛出异常。"""
-        from tongshu.engines.heluo.input import HeluoInput, Location
+        from heluo_engine.engines.heluo.input import HeluoInput, Location
         with self.assertRaises(ValueError):
             HeluoInput(
                 birth_date="2024-01-01",

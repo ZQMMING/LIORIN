@@ -24,7 +24,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-E = ROOT / "src" / "tongshu" / "engines" / "heluo"
+E = ROOT / "src" / "heluo_engine" / "engines" / "heluo"
 GJ = E / "guajie.py"          # CRLF
 HG = E / "hua_gong.py"          # F-3：四正卦节气窗口
 CN = E / "canonical.py"

@@ -160,7 +160,7 @@ if R is not None:
             out.append("  断言 %d 条" % len(d.assertions))
             out.append("  判决 %s" % (getattr(getattr(d.judgment, "domain", None),
                                           "value", None)))
-            from tongshu.engines.heluo import diagnosis_rule_graph as _dg
+            from heluo_engine.engines.heluo import diagnosis_rule_graph as _dg
             out.append("  丢弃 %s" % _dg.dropped_rules())
             out.append("  无信号可依 %s" % _dg.unmatched_evidence())
         g = getattr(R, "heluo_guidance", None)
@@ -191,14 +191,14 @@ if R is not None:
             return r
 
         try:
-            from tongshu.engines.heluo.evidence_producer import HeLuoEvidenceProducer
+            from heluo_engine.engines.heluo.evidence_producer import HeLuoEvidenceProducer
             try_layer("HeLuoEvidenceProducer 证据产出",
                       lambda: HeLuoEvidenceProducer().produce(H))
         except Exception as exc:
             gaps.append("evidence_producer 不可导入：%s" % exc)
 
         try:
-            from tongshu.engines.heluo.frozen_state import build_frozen_state
+            from heluo_engine.engines.heluo.frozen_state import build_frozen_state
             fs = try_layer("build_frozen_state 冻结态",
                            lambda: build_frozen_state(H))
         except Exception as exc:
@@ -207,13 +207,13 @@ if R is not None:
 
         DG = None
         try:
-            from tongshu.engines.heluo import diagnosis_rule_graph as dgmod
+            from heluo_engine.engines.heluo import diagnosis_rule_graph as dgmod
             DG = dgmod
             try_layer("diagnosis_rule_graph 未注册规则",
                       lambda: dgmod.dropped_rules())
             evs = []
             try:
-                from tongshu.engines.heluo.evidence_producer import (
+                from heluo_engine.engines.heluo.evidence_producer import (
                     HeLuoEvidenceProducer)
                 evs = HeLuoEvidenceProducer().produce(H)
             except Exception:
@@ -246,10 +246,10 @@ if R is not None:
             gaps.append("diagnosis_rule_graph 不可用：%s" % exc)
 
         try:
-            from tongshu.engines.heluo.guidance import HeluoGuidanceEngine
-            from tongshu.engines.heluo.evidence_producer import (
+            from heluo_engine.engines.heluo.guidance import HeluoGuidanceEngine
+            from heluo_engine.engines.heluo.evidence_producer import (
                 HeLuoEvidenceProducer)
-            from tongshu.engines.heluo.diagnosis_rule_graph import (
+            from heluo_engine.engines.heluo.diagnosis_rule_graph import (
                 build_diagnosis_graph)
 
             def _g():
@@ -282,7 +282,7 @@ if R is not None:
             gaps.append("guidance 不可用：%s" % exc)
 
         try:
-            from tongshu.engines.heluo.interpretation import (
+            from heluo_engine.engines.heluo.interpretation import (
                 RelationalInterpretationEngine)
             try_layer("interpretation 关系解释",
                       lambda: RelationalInterpretationEngine(

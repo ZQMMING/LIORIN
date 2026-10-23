@@ -15,7 +15,7 @@ from pathlib import Path
 
 ORIG = Path(r"C:\Users\ming\.minimax\v2\assets\2026\10\06"
             r"\22-08-20-122-asset_20261006-220820-122_67b40448a1e6_07333092-河洛真数——原著.txt")
-RAW = Path(__file__).resolve().parents[2] / "data" / "heluo" / "guajie_raw"
+RAW = Path(__file__).resolve().parents[2] / "src" / "heluo_engine" / "orig"
 
 lines = io.open(ORIG, encoding="utf-8").read().split("\n")
 print(f"全库 {len(lines)} 行\n")

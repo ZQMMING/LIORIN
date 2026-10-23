@@ -86,7 +86,7 @@ for label, bd, gender in CASES:
         g = h.guajie or {}
         fs = None
         try:
-            from tongshu.engines.heluo.frozen_state import build_frozen_state
+            from heluo_engine.engines.heluo.frozen_state import build_frozen_state
             fs = build_frozen_state(h)
         except Exception as exc:
             issues.append("%s: 冻结态构建失败 %s: %s" % (label,

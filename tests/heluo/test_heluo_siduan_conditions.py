@@ -33,7 +33,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo import guajie as gj  # noqa: E402
+from heluo_engine.engines.heluo import guajie as gj  # noqa: E402
 
 #: 影印原页核定：死断四条件整句
 ORIGINAL_FOUR = (
@@ -48,10 +48,10 @@ class TestSiDuanOriginalText(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.pkg_slice = (
-            ROOT / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之下.txt"
+            ROOT / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之下.txt"
         ).read_text(encoding="utf-8")
         cls.orig = (
-            ROOT / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之上.txt"
+            ROOT / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之上.txt"
         ).read_text(encoding="utf-8")
 
     def test_four_conditions_present_verbatim(self):
@@ -132,7 +132,7 @@ class TestSiDuanSecondConditionDocumented(unittest.TestCase):
           故此处**逐条证据链**各取一个**稀有**锚点（只在该条证据里出现），
           并要求**出现次数 ≥ 该条证据应有的次数**。
         """
-        p = ROOT / "data" / "heluo" / "死断四条件核定_20261024.md"
+        p = ROOT / "src" / "heluo_engine" / "docs" / "死断四条件核定_20261024.md"
         self.assertTrue(p.exists(),
                         f"缺核定留档：{p.name}")
         t = p.read_text(encoding="utf-8")
@@ -158,7 +158,7 @@ class TestSiDuanSecondConditionDocumented(unittest.TestCase):
 
     def test_trigger_text_states_the_merge(self):
         """触发语须告知下游：四条件中②与①同判据（不得让下游误读为三条件）。"""
-        from tongshu.engines.heluo.guajie import _sd
+        from heluo_engine.engines.heluo.guajie import _sd
         w = _sd(quote="「若流年连三年不吉，卦爻又不吉，本身卦不佳，"
                       "重反支干元气，便可以死断之。」",
                  trigger="近三年流年卦爻皆不吉（含「卦爻又不吉」…）",

@@ -24,7 +24,7 @@ _ORIGINAL = Path(os.environ.get(
     r"C:\Users\ming\.minimax\v2\assets\2026\10\06"
     r"\22-08-20-122-asset_20261006-220820-122_67b40448a1e6_07333092-河洛真数——原著.txt",
 ))
-_TRANSCRIPT = _ROOT / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之中.txt"
+_TRANSCRIPT = _ROOT / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之中.txt"
 
 
 def _orig() -> str:
@@ -101,7 +101,7 @@ class TestOriginalTextPresent(unittest.TestCase):
 class TestShuGeTable(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        from tongshu.engines.heluo.yue_ling_shu_ge import SHU_GE_TABLE, classify_shu_ge
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import SHU_GE_TABLE, classify_shu_ge
         cls.TABLE = SHU_GE_TABLE
         # 用 staticmethod 包一层：直接挂到类上的函数会变成绑定方法，
         # self 会被当成第一个实参传进去。
@@ -231,7 +231,7 @@ class TestOriginalConflictMustBeDisclosed(unittest.TestCase):
     """
 
     def setUp(self):
-        from tongshu.engines.heluo.yue_ling_shu_ge import shu_ge_conflicts
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import shu_ge_conflicts
         self._c = shu_ge_conflicts
 
     def test_conflict_is_reported(self):
@@ -255,7 +255,7 @@ class TestOriginalConflictMustBeDisclosed(unittest.TestCase):
         self.assertNotIn("判语相反", joined, "「判语相反」已被证伪，不得复现")
 
     def test_both_rules_actually_match(self):
-        from tongshu.engines.heluo.yue_ling_shu_ge import classify_shu_ge
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import classify_shu_ge
         names = {r.name for r in classify_shu_ge(24, 30)}
         self.assertIn("阳数偏少", names)
         self.assertIn("以弱敌强", names)
@@ -271,7 +271,7 @@ class TestOriginalConflictMustBeDisclosed(unittest.TestCase):
 
 class TestLuShu(unittest.TestCase):
     def test_four_values(self):
-        from tongshu.engines.heluo.yue_ling_shu_ge import judge_lu_shu
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import judge_lu_shu
         self.assertEqual(
             [(h.value, h.name) for h in judge_lu_shu(36, 30)],
             [(36, "老阳之禄")])
@@ -287,7 +287,7 @@ class TestLuShu(unittest.TestCase):
 
     def test_gender_direction(self):
         """L105：36/28 利男不利女；24/32 利女不利男。"""
-        from tongshu.engines.heluo.yue_ling_shu_ge import judge_lu_shu
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import judge_lu_shu
         self.assertEqual(judge_lu_shu(36, 30, "male")[0].xing_bie, "利男不利女")
         self.assertTrue(judge_lu_shu(36, 30, "male")[0].gender_fit)
         self.assertFalse(judge_lu_shu(36, 30, "female")[0].gender_fit)
@@ -297,13 +297,13 @@ class TestLuShu(unittest.TestCase):
 
     def test_no_gender_means_no_verdict(self):
         """性别未给时必须 gender_fit=None，不得按默认性别强判。"""
-        from tongshu.engines.heluo.yue_ling_shu_ge import judge_lu_shu
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import judge_lu_shu
         for h in judge_lu_shu(36, 30):
             self.assertIsNone(h.gender_fit)
 
     def test_both_sides_reported_without_picking(self):
         """原典未指明天数还是地数 → 两数各自比对，归属如实标记。"""
-        from tongshu.engines.heluo.yue_ling_shu_ge import judge_lu_shu
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import judge_lu_shu
         hits = judge_lu_shu(36, 36)
         self.assertEqual(len(hits), 2)
         self.assertEqual({h.which for h in hits}, {"天", "地"})
@@ -315,7 +315,7 @@ class TestLuShu(unittest.TestCase):
 
 class TestYouYinYang(unittest.TestCase):
     def setUp(self):
-        from tongshu.engines.heluo.yue_ling_shu_ge import judge_you_yin_yang
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import judge_you_yin_yang
         self.j = judge_you_yin_yang
 
     def test_jue_yang_when_tian_is_nine(self):
@@ -356,7 +356,7 @@ class TestYouYinYang(unittest.TestCase):
 
 class TestXingBeiAndMingWuYinYang(unittest.TestCase):
     def setUp(self):
-        from tongshu.engines.heluo.yue_ling_shu_ge import (
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import (
             judge_ming_wu_yin_yang, xingbie_xiang_bei)
         self.xb = xingbie_xiang_bei
         self.mwy = judge_ming_wu_yin_yang
@@ -405,7 +405,7 @@ class TestXingBeiAndMingWuYinYang(unittest.TestCase):
 
 class TestJudgeShuXiongIntegration(unittest.TestCase):
     def setUp(self):
-        from tongshu.engines.heluo.guajie import judge_shu_xiong
+        from heluo_engine.engines.heluo.guajie import judge_shu_xiong
         self.j = judge_shu_xiong
 
     def test_gender_is_optional_backward_compatible(self):
@@ -463,7 +463,7 @@ class TestJudgeShuXiongIntegration(unittest.TestCase):
 
 class TestRefusalRegistry(unittest.TestCase):
     def setUp(self):
-        from tongshu.engines.heluo.yue_ling_shu_ge import REFUSED
+        from heluo_engine.engines.heluo.yue_ling_shu_ge import REFUSED
         self.R = REFUSED
 
     def test_registry_non_empty_and_well_formed(self):
@@ -512,7 +512,7 @@ class TestRefusalRegistry(unittest.TestCase):
 
 class TestGenderPlumbingEndToEnd(unittest.TestCase):
     def _compose(self, gender: str):
-        from tongshu.engines.heluo.guajie import compose_guajie
+        from heluo_engine.engines.heluo.guajie import compose_guajie
         return compose_guajie(
             prenatal_name="乾", postnatal_name="坤", yuantang_yao="九三",
             birth_month=11, tian_shu=20, di_shu=30, gender=gender,
@@ -532,7 +532,7 @@ class TestGenderPlumbingEndToEnd(unittest.TestCase):
     def test_compose_guajie_default_arg_exists(self):
         """gender 必须有默认值，旧的三参调用不许被打断。"""
         import inspect
-        from tongshu.engines.heluo.guajie import compose_guajie
+        from heluo_engine.engines.heluo.guajie import compose_guajie
         sig = inspect.signature(compose_guajie)
         self.assertIn("gender", sig.parameters)
         self.assertEqual(sig.parameters["gender"].default, "")
@@ -540,7 +540,7 @@ class TestGenderPlumbingEndToEnd(unittest.TestCase):
     def test_build_guajie_from_result_reads_input_gender(self):
         """端到端：result.input.gender → judge_shu_xiong 的证据。"""
         from types import SimpleNamespace
-        from tongshu.engines.heluo.guajie import build_guajie_from_result
+        from heluo_engine.engines.heluo.guajie import build_guajie_from_result
         res = SimpleNamespace(
             input=SimpleNamespace(gender="male"),
             prenatal=SimpleNamespace(hexagram_name="乾"),

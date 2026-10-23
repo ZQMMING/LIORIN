@@ -27,7 +27,7 @@ import unittest
 from pathlib import Path
 
 _ROOT = Path(__file__).resolve().parents[2]
-_E = _ROOT / "src" / "tongshu" / "engines" / "heluo"
+_E = _ROOT / "src" / "heluo_engine" / "engines" / "heluo"
 
 
 def _code_only(path: Path) -> str:
@@ -59,7 +59,7 @@ class TestE1ToStructuredCarriesEverything(unittest.TestCase):
     """E1：结构化视图不得比原始 dict 少判词。"""
 
     def test_three_blocks_pass_through(self):
-        from tongshu.engines.heluo.guajie import to_structured
+        from heluo_engine.engines.heluo.guajie import to_structured
         gj = {
             "benming": {"hexagram": "乾", "gua_ci": "元亨利贞"},
             "canping": {"诗": "一字千金"},
@@ -74,7 +74,7 @@ class TestE1ToStructuredCarriesEverything(unittest.TestCase):
         self.assertEqual(st["evidence"], gj["evidence"])
 
     def test_missing_keys_become_empty_not_keyerror(self):
-        from tongshu.engines.heluo.guajie import to_structured
+        from heluo_engine.engines.heluo.guajie import to_structured
         st = to_structured({})
         self.assertIsNone(st["benming"])
         self.assertIsNone(st["canping"])
@@ -85,14 +85,14 @@ class TestE2KuozhanNoLongerSwallows(unittest.TestCase):
     """E2：判法失败必须留痕，不得从结果里凭空消失。"""
 
     def test_kuozhan_errors_exists_and_empty_on_healthy_run(self):
-        from tongshu.engines.heluo import guajie as g
+        from heluo_engine.engines.heluo import guajie as g
         self.assertTrue(hasattr(g, "kuozhan_errors"))
         g.kuozhan_errors()   # 调用方必须能拿到一份拷贝
         self.assertIsInstance(g.kuozhan_errors(), list)
 
     def test_returns_copy_not_the_live_list(self):
         """返回内部 list 会让调用方一个 clear() 把痕迹全抹掉。"""
-        from tongshu.engines.heluo import guajie as g
+        from heluo_engine.engines.heluo import guajie as g
         first = g.kuozhan_errors()
         self.assertIsNot(first, g._KZ_ERRORS)
         first.append("伪造一条")
@@ -124,11 +124,11 @@ class TestE3NumbersCommentMatchesCode(unittest.TestCase):
     """E3：注释不得声称一条走不到的分支。"""
 
     def test_twenty_five_goes_through_yu_branch(self):
-        from tongshu.engines.heluo.numbers import normalize_tian_shu
+        from heluo_engine.engines.heluo.numbers import normalize_tian_shu
         self.assertEqual(normalize_tian_shu(25), 5)
 
     def test_zero_is_the_reachable_tail_case(self):
-        from tongshu.engines.heluo.numbers import normalize_tian_shu
+        from heluo_engine.engines.heluo.numbers import normalize_tian_shu
         self.assertEqual(normalize_tian_shu(0), 5)
 
     #: 审计订正块在 docstring 里的起始标记。断言一律按此**切片**，
@@ -173,7 +173,7 @@ class TestE4ConfidenceNoLongerFakesAuthority(unittest.TestCase):
     """E4：confidence 是引擎自定刻度，不得包装成「原典权威度」。"""
 
     def test_conf_base_constant_exists(self):
-        from tongshu.engines.heluo import guidance as gd
+        from heluo_engine.engines.heluo import guidance as gd
         self.assertEqual(gd._CONF_BASE, 0.85)
 
     def test_no_hardcoded_confidence_literal_left(self):
@@ -200,7 +200,7 @@ class TestE5JudgmentActuallyUsed(unittest.TestCase):
             self.authorized_by = by
 
     def _overview(self, judgment):
-        from tongshu.engines.heluo.guidance import HeluoGuidanceEngine
+        from heluo_engine.engines.heluo.guidance import HeluoGuidanceEngine
         return HeluoGuidanceEngine().generate(
             assertions=[], judgment=judgment,
             source_gua="乾", target_gua="坤", yuan_tang="乾",
@@ -231,7 +231,7 @@ class TestE6OpportunityAndRiskActuallyUsed(unittest.TestCase):
     """E6：opp/risk 收下就得用。守卫同样靠换输入看输出变。"""
 
     def _run(self, strengths, severities, score):
-        from tongshu.engines.heluo.interpretation import (
+        from heluo_engine.engines.heluo.interpretation import (
             OpportunityFactor, RiskFactor, RelationalInterpretationEngine)
         eng = RelationalInterpretationEngine({})
         eng._opportunities = [
@@ -298,7 +298,7 @@ class TestE7ElementModifiersMarkedVoid(unittest.TestCase):
 
     def test_constant_itself_retained_for_continuation(self):
         """作废 ≠ 删除：留常量但不得投入判定。"""
-        from tongshu.engines.heluo.interpretation import ELEMENT_MODIFIERS
+        from heluo_engine.engines.heluo.interpretation import ELEMENT_MODIFIERS
         self.assertEqual(ELEMENT_MODIFIERS["当令"], 0.15)
         code = _code_only(_E / "interpretation.py")
         flat = re.sub(r"\s+", "", code)

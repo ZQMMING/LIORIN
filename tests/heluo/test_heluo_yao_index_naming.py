@@ -45,8 +45,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo.timeline_yun import compute_liunian  # noqa: E402
-from tongshu.engines.heluo.guajie import (  # noqa: E402
+from heluo_engine.engines.heluo.timeline_yun import compute_liunian  # noqa: E402
+from heluo_engine.engines.heluo.guajie import (  # noqa: E402
     _pick_liunian_yao_index, _yao_name,
 )
 
@@ -58,7 +58,7 @@ YUANTANG_9_3 = 2
 
 def _res():
     """1983-11-03 午时男（1983-11-03 12:00）→ 流年近 3 年。"""
-    from tongshu.engines.heluo_adapter import HeluoAdapter
+    from heluo_engine.adapter import HeluoAdapter
     ad = HeluoAdapter()
     return ad.compute((1983, 11, 3, 12), gender="male",
                        target_date="2026-10-23")
@@ -69,7 +69,7 @@ class TestFieldNaming(unittest.TestCase):
 
     def test_liunian_year_has_no_bare_yuantang_index(self):
         """LiuNianYear 不得再有裸 `yuantang_index` 字段。"""
-        from tongshu.engines.heluo.timeline_yun import LiuNianYear
+        from heluo_engine.engines.heluo.timeline_yun import LiuNianYear
         import dataclasses
         names = {f.name for f in dataclasses.fields(LiuNianYear)}
         self.assertNotIn(
@@ -206,7 +206,7 @@ class TestAllThreeTakeXingnianYao(unittest.TestCase):
         做法：拦截 `judge_si_duan`，捕获它实际收到的 `recent_years`，
         再逐年比对「实际取的爻」与「该年行年爻」——**不重新实现一遍**取爻逻辑。
         """
-        from tongshu.engines.heluo import guajie as gj_mod
+        from heluo_engine.engines.heluo import guajie as gj_mod
         res = _res()
         entries = res.timeline.yearly_hexagrams or []
         # 1983-11-03 午时男：癸亥 壬戌 乙未 壬午
@@ -291,7 +291,7 @@ class TestOriginalTextBasis(unittest.TestCase):
                       "便可以死断之。")
 
     def _slice(self) -> str:
-        p = ROOT / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之上.txt"
+        p = ROOT / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之上.txt"
         return p.read_text(encoding="utf-8")
 
     def test_liu_nian_is_defined_as_xingnian_yao_in_original(self):
@@ -308,7 +308,7 @@ class TestOriginalTextBasis(unittest.TestCase):
 
     def test_si_duan_clause_quoted_verbatim(self):
         """死断原句必须逐字在底本中（判词层的引文保真）。"""
-        p = ROOT / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之下.txt"
+        p = ROOT / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之下.txt"
         text = p.read_text(encoding="utf-8")
         self.assertIn(
             self.ORIGINAL_L1555, text,
@@ -320,7 +320,7 @@ class TestOriginalTextBasis(unittest.TestCase):
         只引「若流年连三年不吉」只能推出「主语是流年」，
         推不出「取哪一爻」；取爻的唯一依据是 L369 的「即小象行年爻也」。
         """
-        p = (ROOT / "src" / "tongshu" / "engines" / "heluo" / "guajie.py")
+        p = (ROOT / "src" / "heluo_engine" / "engines" / "heluo" / "guajie.py")
         text = p.read_text(encoding="utf-8")
         self.assertIn(
             "即小象行年爻也", text,
@@ -334,7 +334,7 @@ class TestNoBareYuantangIndexInFlowYearLayer(unittest.TestCase):
     def test_source_scan(self):
         """静态扫描：河洛包流年层不得出现裸 `yuantang_index`。"""
         import re
-        pkg = ROOT / "src" / "tongshu" / "engines" / "heluo"
+        pkg = ROOT / "src" / "heluo_engine" / "engines" / "heluo"
         # 流年层相关文件（流年/流月/流日/大运推演与流年判词）
         targets = [
             "timeline_yun.py",   # LiuNianYear 字段

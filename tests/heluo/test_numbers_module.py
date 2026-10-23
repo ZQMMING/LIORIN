@@ -14,7 +14,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from tongshu.engines.heluo.numbers import (
+from heluo_engine.engines.heluo.numbers import (
     STEM_VALUES,
     BRANCH_VALUES,
     LUSHU_TO_TRIGRAM_NAME,

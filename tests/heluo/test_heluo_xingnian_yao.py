@@ -38,10 +38,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo.timeline_yun import (  # noqa: E402
+from heluo_engine.engines.heluo.timeline_yun import (  # noqa: E402
     compute_liunian, _flip_line, _lines_to_hexagram,
 )
-from tongshu.engines.heluo.guajie import _yao_name  # noqa: E402
+from heluo_engine.engines.heluo.guajie import _yao_name  # noqa: E402
 
 #: 同人卦（天火同人）：上乾下离，自下而上 = 离(1,-1,1) + 乾(1,1,1)
 TONG_REN = [1, -1, 1, 1, 1, 1]
@@ -139,7 +139,7 @@ class TestLiunianJudgementUsesXingNianYao(unittest.TestCase):
     """端到端：流年判词所取之爻 == 该年行年爻。"""
 
     def test_guajie_liunian_yao_is_xingnian_yao(self):
-        from tongshu.engines.heluo_adapter import HeluoAdapter
+        from heluo_engine.adapter import HeluoAdapter
         ad = HeluoAdapter()
         res = ad.compute((1983, 11, 3, 12), gender="male",
                          target_date="2026-10-23")

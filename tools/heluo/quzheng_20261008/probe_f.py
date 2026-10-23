@@ -13,8 +13,8 @@ os.environ.setdefault("TONGSHU_AUTHORITY_CREDENTIALS",
                       "admission_registry:test-cred-hash")
 
 from tongshu.pipeline import TONGSHUPipeline
-from tongshu.engines.heluo.yue_ling_shu_ge import classify_shu_ge
-from tongshu.engines.heluo.yao_xiang import scan_yao_xiang
+from heluo_engine.engines.heluo.yue_ling_shu_ge import classify_shu_ge
+from heluo_engine.engines.heluo.yao_xiang import scan_yao_xiang
 
 out = []
 P = TONGSHUPipeline.for_demo(Path(".").resolve())

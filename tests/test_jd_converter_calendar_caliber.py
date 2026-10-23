@@ -25,7 +25,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 import sxtwl
-from tongshu.engines.time.jd_converter import jd_to_datetime
+from heluo_engine.engines.time.jd_converter import jd_to_datetime
 
 
 def _legacy_gregorian(jd: float) -> datetime:
@@ -104,7 +104,7 @@ class TestJDConverterCalendarCaliber(unittest.TestCase):
 
         原典《河洛真数》L186：农历 1206 十月二十九日亥时 → 月柱**庚子**（子月）。
         """
-        from tongshu.engines.bazi_engine import BaziEngine
+        from heluo_engine.engines.bazi_engine import BaziEngine
         chart = BaziEngine().compute((1206, 11, 30, 21), gender="male",
                                      skip_late_zi=False)
         p = chart.get_pillars_chinese()

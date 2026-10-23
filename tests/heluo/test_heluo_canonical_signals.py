@@ -19,12 +19,12 @@ from types import SimpleNamespace
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical_signals import (
+from heluo_engine.engines.heluo.canonical_signals import (
     _yao_index,
     build_platform_signals,
 )
-from tongshu.engines.heluo.canonical import HeluoCanonical
-from tongshu.engines.heluo.guajie import build_guajie_from_result, query_yao_duan
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.guajie import build_guajie_from_result, query_yao_duan
 
 #: 平台适配器契约的字段（signal/adapters/__init__.py:203-211）
 CONTRACT_FIELDS = ("gua", "yao", "position", "shi", "strength", "temporal_scope")

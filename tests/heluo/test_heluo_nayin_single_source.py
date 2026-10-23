@@ -23,7 +23,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo import canping, guajie, nayin, yuanqi_tables
+from heluo_engine.engines.heluo import canping, guajie, nayin, yuanqi_tables
 
 #: 《河洛真数·起例卷之下》L137「纳甲歌诀」逐组（阳干干支, 阴干干支, 纳音五行）
 #: 底本该处「甲辰己巳佛灯火」的「己」为抄刻讹（该组首字必为「甲辰」），
@@ -124,7 +124,7 @@ class TestNayinAgainstOriginalGe(unittest.TestCase):
         不自行订正 —— 歌诀的配对是「同干同支的阳干 + 阴干」，据此可正。
         """
         raw = (Path(__file__).resolve().parents[2]
-               / "data" / "heluo" / "guajie_raw" / "河洛真数_起例卷之下.txt")
+               / "src" / "heluo_engine" / "orig" / "河洛真数_起例卷之下.txt")
         text = raw.read_text(encoding="utf-8")
         self.assertIn("纳甲歌诀", text, "原典「纳甲歌诀」标题缺失")
         for frag in ("甲子乙丑海中金", "丙寅丁卯炉中火", "戊辰己巳大林木",

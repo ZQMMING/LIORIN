@@ -26,7 +26,7 @@ import dataclasses
 import time
 import unittest
 
-from tongshu.engines.heluo.canonical import HeluoCanonical
+from heluo_engine.engines.heluo.canonical import HeluoCanonical
 
 _BAZI = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
 _BIRTH_YEAR = 1983

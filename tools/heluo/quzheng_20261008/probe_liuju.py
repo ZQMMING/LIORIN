@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[3]
 sys.path.insert(0, str(ROOT / "src"))
 os.environ.setdefault("TONGSHU_ALLOW_ZIWEI_STUB", "1")
 
-from tongshu.engines.heluo.interpretation import (  # noqa: E402
+from heluo_engine.engines.heluo.interpretation import (  # noqa: E402
     HeluoInput, RelationalInterpretationEngine)
 
 out = []

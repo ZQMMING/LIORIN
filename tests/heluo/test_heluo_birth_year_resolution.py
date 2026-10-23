@@ -24,11 +24,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.canonical import (
+from heluo_engine.engines.heluo.canonical import (
     HeluoCanonical,
     _birth_year_from_ganzhi,
 )
-from tongshu.engines.heluo import guajie as gj
+from heluo_engine.engines.heluo import guajie as gj
 
 _BAZI = [("癸", "亥"), ("甲", "寅"), ("丁", "巳"), ("戊", "午")]
 _BIRTH_DATE = "1983-11-03"
@@ -87,7 +87,7 @@ class TestBirthYearResolution(unittest.TestCase):
 
     def test_reverse_covers_all_sixty_ganzhi(self):
         """60 甲子每一个干支都须能反推出年份。"""
-        from tongshu.engines.heluo.timeline_yun import BRANCHES, _year_gan
+        from heluo_engine.engines.heluo.timeline_yun import BRANCHES, _year_gan
         seen = set()
         for y in range(1900, 1960):
             seen.add((_year_gan(y), BRANCHES[(y - 4) % 12]))
@@ -103,7 +103,7 @@ class TestBirthYearPlaceholderIsFlagged(unittest.TestCase):
 
     def test_placeholder_is_flagged_in_evidence(self):
         """缺失输入被当成真实输入，比答错更坏 → 必须留痕。"""
-        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
         res = HeluoCanonical().calculate(
             bazi=_BAZI, gender="male", birth_hour="午", era="zhong")
         self.assertEqual(res.birth_year_source, "placeholder")
@@ -116,7 +116,7 @@ class TestBirthYearPlaceholderIsFlagged(unittest.TestCase):
 
     def test_explicit_and_derived_are_not_flagged(self):
         """给了 birth_year 或 birth_date → 不留占位痕。"""
-        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
         for kw, expect in (({"birth_year": 1983}, "explicit"),
                             ({}, "from_birth_date")):
             res = HeluoCanonical().calculate(
@@ -130,7 +130,7 @@ class TestBirthYearPlaceholderIsFlagged(unittest.TestCase):
 
     def test_placeholder_keeps_legacy_timeline_window(self):
         """占位时**维持既有流年区间**（不因修复而改变既有行为）。"""
-        from tongshu.engines.heluo.canonical import HeluoCanonical
+        from heluo_engine.engines.heluo.canonical import HeluoCanonical
         res = HeluoCanonical().calculate(
             bazi=_BAZI, gender="male", birth_hour="午", era="zhong")
         years = {y["year"] for y in res.timeline.yearly_hexagrams}

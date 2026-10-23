@@ -2,7 +2,7 @@
 import sys
 sys.path.insert(0, "src")
 import io
-import tongshu.engines.heluo.yuanqi_tables as t
+import heluo_engine.engines.heluo.yuanqi_tables as t
 
 O = io.open("取证_自校验结果.txt", "w", encoding="utf-8")
 O.write("导入自校验：通过\n\n")

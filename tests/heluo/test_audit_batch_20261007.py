@@ -17,21 +17,21 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo import guajie as G                      # noqa: E402
-from tongshu.engines.heluo.canonical import HeluoCanonical          # noqa: E402
-from tongshu.engines.heluo.diagnosis_rule_graph import (             # noqa: E402
+from heluo_engine.engines.heluo import guajie as G                      # noqa: E402
+from heluo_engine.engines.heluo.canonical import HeluoCanonical          # noqa: E402
+from heluo_engine.engines.heluo.diagnosis_rule_graph import (             # noqa: E402
     HELUO_RULES, RULE_DOMAIN_MAP, build_diagnosis_graph, dropped_rules,
 )
-from tongshu.engines.heluo.evidence_producer import HeLuoEvidenceProducer  # noqa: E402
-from tongshu.engines.heluo.frozen_state import build_frozen_state     # noqa: E402
-from tongshu.engines.heluo.guidance import (                         # noqa: E402
+from heluo_engine.engines.heluo.evidence_producer import HeLuoEvidenceProducer  # noqa: E402
+from heluo_engine.engines.heluo.frozen_state import build_frozen_state     # noqa: E402
+from heluo_engine.engines.heluo.guidance import (                         # noqa: E402
     HUAGONG_ACTION_TEMPLATES, HUAGONG_ADVICE, HeluoGuidanceEngine,
 )
-from tongshu.engines.heluo.hua_gong import (                         # noqa: E402
+from heluo_engine.engines.heluo.hua_gong import (                         # noqa: E402
     HuaGongState, compute_huagong,
 )
 
-ENGINE = Path(__file__).resolve().parents[2] / "src" / "tongshu" / "engines" / "heluo"
+ENGINE = Path(__file__).resolve().parents[2] / "src" / "heluo_engine" / "engines" / "heluo"
 
 BAZI = [("癸", "亥"), ("乙", "丑"), ("戊", "午"), ("丙", "午")]
 JXL = [("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")]     # 纪晓岚盘
@@ -453,12 +453,12 @@ class TestMechanismCleanup(unittest.TestCase):
                          "假别名仍在，误用者会拿到 None")
 
     def test_real_alias_importable(self):
-        from tongshu.engines.heluo.yuan_tang import resolve_yuantang
+        from heluo_engine.engines.heluo.yuan_tang import resolve_yuantang
         self.assertTrue(callable(resolve_yuantang))
 
     def test_tuple_actually_imported(self):
         import typing
-        from tongshu.engines.heluo import hexagram_state as hs
+        from heluo_engine.engines.heluo import hexagram_state as hs
         self.assertIs(typing.get_type_hints(hs.get_base_factors).get("return"),
                       typing.Tuple[float, float],
                       "Tuple 未真正导入，get_type_hints 运行时内省会失败")
@@ -473,7 +473,7 @@ class TestMechanismCleanup(unittest.TestCase):
     def test_no_op_weight_fixes_removed(self):
         """两处恒等于无操作的权重修正必须已删除（删掉即恢复静默空转）。"""
         import inspect
-        from tongshu.engines.heluo.interpretation import (
+        from heluo_engine.engines.heluo.interpretation import (
             RelationalInterpretationEngine as R,
         )
         body = _strip(inspect.getsource(R._compute_factor_weights))

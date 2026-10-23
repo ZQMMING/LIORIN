@@ -15,7 +15,7 @@
   原典实为「若运既反，流年又反，数又反，其人不可保矣」。
   仍标注「（原典：…）」→ 属**自撰冒引**，须改标注（见 KNOWN_SELF_WRITTEN）。
 
-本守卫把「凡标（原典：X）者，X 须能在 `data/heluo/guajie_raw/` 原典切片中逐字命中」
+本守卫把「凡标（原典：X）者，X 须能在 `heluo_engine/orig/` 原典切片中逐字命中」
 变成可回归的断言 —— 引擎侧新增/改写任一引文而未对原典，即刻红。
 
 **判定口径**
@@ -30,7 +30,7 @@
 
 **覆盖**
 --------
-`src/tongshu/engines/heluo/*.py`（含 `relationship/`）+ `heluo_adapter.py` 里
+`src/heluo_engine/engines/heluo/*.py`（含 `relationship/`）+ `heluo_adapter.py` 里
 全部「（原典：…）」标注（实测 43 处）。
 """
 from __future__ import annotations
@@ -43,8 +43,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-RAW = ROOT / "data" / "heluo" / "guajie_raw"
-SRC = ROOT / "src" / "tongshu" / "engines" / "heluo"
+RAW = ROOT / "src" / "heluo_engine" / "orig"
+SRC = ROOT / "src" / "heluo_engine" / "engines" / "heluo"
 
 #: 「（原典：…）」标注的提取
 _PAREN = re.compile(r"（原典[:：]\s*([^）]{1,160})）")
@@ -88,7 +88,7 @@ def _corpus() -> str:
 def _source_files() -> list[Path]:
     files = sorted(SRC.glob("*.py"))
     files += sorted(SRC.glob("relationship/*.py"))
-    files.append(ROOT / "src" / "tongshu" / "engines" / "heluo_adapter.py")
+    files.append(ROOT / "src" / "heluo_engine" / "adapter.py")
     return [f for f in files if f.exists()]
 
 

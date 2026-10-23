@@ -45,10 +45,10 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo import (guajie, hexagram, hexagram_state, hua_gong,
+from heluo_engine.engines.heluo import (guajie, hexagram, hexagram_state, hua_gong,
                                    numbers, timeline_yun, yuanqi_tables)
-from tongshu.engines.heluo.relationship import engine as rel_engine
-from tongshu.engines.yi import core as yi_core
+from heluo_engine.engines.heluo.relationship import engine as rel_engine
+from heluo_engine.engines.yi import core as yi_core
 
 # ═══════════════════════════════════════════════════════════════
 # 公共常量

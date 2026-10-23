@@ -12,10 +12,10 @@ from pathlib import Path
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
-from tongshu.engines.heluo.numbers import (  # noqa: E402
+from heluo_engine.engines.heluo.numbers import (  # noqa: E402
     SIXTY_FOUR_HEXAGRAMS, TRIGRAM_LINES, build_six_lines,
 )
-from tongshu.engines.heluo.yuan_tang import (  # noqa: E402
+from heluo_engine.engines.heluo.yuan_tang import (  # noqa: E402
     HOUR_NAMES, find_yuantang,
 )
 

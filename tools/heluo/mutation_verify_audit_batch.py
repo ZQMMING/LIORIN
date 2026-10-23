@@ -20,7 +20,7 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-E = ROOT / "src" / "tongshu" / "engines" / "heluo"
+E = ROOT / "src" / "heluo_engine" / "engines" / "heluo"
 HG = E / "hua_gong.py"
 GD = E / "guidance.py"
 GJ = E / "guajie.py"

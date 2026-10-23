@@ -33,11 +33,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "src"))
 
-from tongshu.engines.heluo import guajie as gj  # noqa: E402
-from tongshu.engines.heluo.gui_ming_liu_ju import (  # noqa: E402
+from heluo_engine.engines.heluo import guajie as gj  # noqa: E402
+from heluo_engine.engines.heluo.gui_ming_liu_ju import (  # noqa: E402
     GUA_MING_GOOD_EXAMPLES, judge_liu_ju,
 )
-from tongshu.engines.heluo.numbers import short_hexagram_name  # noqa: E402
+from heluo_engine.engines.heluo.numbers import short_hexagram_name  # noqa: E402
 
 
 class TestGuaQiMonthParsing(unittest.TestCase):
@@ -195,10 +195,10 @@ class TestGuaMingJudgeConsistency(unittest.TestCase):
           必须返回**方向**（而非 None）——
           这正是修复前恒不触发的那条路径。
         """
-        from tongshu.engines.heluo.diagnosis_rule_graph import (
+        from heluo_engine.engines.heluo.diagnosis_rule_graph import (
             heluo_own_direction,
         )
-        from tongshu.engines.heluo.frozen_state import FrozenHeluoState
+        from heluo_engine.engines.heluo.frozen_state import FrozenHeluoState
 
         def _state(prenatal_name: str) -> FrozenHeluoState:
             base = dict(
@@ -259,7 +259,7 @@ class TestNegativeLeafPriority(unittest.TestCase):
         """全库 1088 条原始断语：含否定式叶术语的不得进叶类。"""
         import json
         raw = json.loads(
-            (ROOT / "data" / "heluo" / "guajie_data.json").read_text(encoding="utf-8"))
+            (ROOT / "src" / "heluo_engine" / "data" / "guajie_data.json").read_text(encoding="utf-8"))
         neg = ("不叶吉", "不叶者", "不叶", "不归元", "不入局",
                "生不及时", "不及时", "难当此爻", "失正", "失位")
         bad = []
@@ -290,8 +290,8 @@ class TestBaselineLayerExists(unittest.TestCase):
     """④：平台信号出口的 BASELINE 层必须真的产出（此前恒不产出）。"""
 
     def test_baseline_layer_present(self):
-        from tongshu.engines.heluo_adapter import HeluoAdapter
-        from tongshu.engines.heluo.canonical_signals import build_platform_signals
+        from heluo_engine.adapter import HeluoAdapter
+        from heluo_engine.engines.heluo.canonical_signals import build_platform_signals
         ad = HeluoAdapter()
         res = ad.compute((1983, 11, 3, 12), gender="male",
                          target_date="2026-10-23")
@@ -305,8 +305,8 @@ class TestBaselineLayerExists(unittest.TestCase):
 
     def test_baseline_yao_matches_yuantang(self):
         """BASELINE 的爻须是**本命元堂爻**（与 result.yuantang 一致）。"""
-        from tongshu.engines.heluo_adapter import HeluoAdapter
-        from tongshu.engines.heluo.canonical_signals import build_platform_signals
+        from heluo_engine.adapter import HeluoAdapter
+        from heluo_engine.engines.heluo.canonical_signals import build_platform_signals
         ad = HeluoAdapter()
         res = ad.compute((1983, 11, 3, 12), gender="male",
                          target_date="2026-10-23")
