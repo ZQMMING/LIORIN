@@ -4145,7 +4145,9 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             lc = info["counts"]
             risk_n = len(info.get("risk") or [])
             combined = {"luck_pillar": yctx["luck_pillar"],
-                        "luck_verdict": info["verdict"], "luck_counts": lc,
+                        "luck_verdict": info["verdict"],
+                        "luck_verdict_net": _luck_verdict,
+                        "luck_counts": lc,
                         "luck_risk": list(info.get("risk") or []),
                         "year_counts": counts,
                         "year_tone": year_tone, "l4276": _agg,
@@ -4177,6 +4179,10 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
                for v in verdicts):
             if year_tone == "凶":
                 year_tone = "吉凶相杂"
+        elif _power["xiong"] >= 4:
+            # 2026-10-23 修正: 中档凶(恶力4-6, 如刑时V51/本命相克Y72C/四煞V88)
+            #   在场, 食伤泄秀不抬纯吉, 降为吉凶相杂(吉中有凶, 非无凶)
+            year_tone = "吉凶相杂"
         else:
             year_tone = "吉"
 
