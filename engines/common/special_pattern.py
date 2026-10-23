@@ -440,6 +440,29 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     _pure_cai = _pure_all(cai_wx)
     _pure_ss = _pure_all(ss_wx)
 
+    # ★ V7.165 裁决#1: 「皆/纯然」口径分层 — 不调 _pure_all(4/4→CONFIRMED), 另设:
+    #   _pure_three(target): 四柱中 3/4 柱天干或地支本气属 target_wx (占三柱) -> CANDIDATE
+    #   _dominant(target):   四柱中 ≥3 柱同一神且该神本气力量占优 -> CANDIDATE(更强)
+    #   依据: 用户裁决表 #1「不调 _pure_all, 另设 _pure_three/dominant」
+    #   用法: 纯然(4/4) > 占三柱(3/4) > 仅成势, 置信度阶梯: CONFIRMED > CANDIDATE > CANDIDATE.
+    def _pure_three(target_wx):
+        _hit = 0
+        for _k in ('year', 'month', 'day', 'hour'):
+            _sg, _bz = pillars[_k]
+            if (GAN_WX0.get(_sg) == target_wx) or (BRANCH_WX.get(_bz) == target_wx):
+                _hit += 1
+        return _hit >= 3
+    def _dominant(target_wx):
+        # 该神为最强(本气+透干数胜出)且 ≥3 柱同属
+        if not _pure_three(target_wx):
+            return False
+        # 简化: 该神 ben+stem 总和 > 其余三神任一
+        _sc = {wx: (pw.get(wx, {}).get('ben_n', 0) + pw.get(wx, {}).get('stem_n', 0)) for wx in ('木','火','土','金','水')}
+        _tv = _sc.get(target_wx, 0)
+        return all(_tv > _sc.get(wx, 0) for wx in _sc if wx != target_wx)
+    _pure3_gs = _pure_three(gs_wx); _pure3_cai = _pure_three(cai_wx); _pure3_ss = _pure_three(ss_wx)
+    _dom_gs = _dominant(gs_wx); _dom_cai = _dominant(cai_wx); _dom_ss = _dominant(ss_wx)
+
     # ★ V7.155 撤 B 级阴干通道, 改立 A 级真从三条件(DTS L420【原注】, grade=A):
     #   「日主孤立无气, 无地人元, 绝无一毫生扶之意, 财官强甚, 乃为真从也」
     #   → _a_cong_ok = 日主无本气根(dm_ben_eff==0) ∧ 印无本气根(yin_ben_eff==0) ∧ 财官强甚
@@ -454,6 +477,12 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     # ★ V7.158 裁决② 纯然口径落地: 纯然(四柱无杂)成立 -> CONFIRMED; 仅成势 -> CANDIDATE.
     _a_pure_ok = (dm_ben_eff == 0 and yin_ben_eff == 0
                   and (_pure_gs or _pure_cai))
+    # ★ V7.165 裁决#1 占三柱/强势口径 → 仅作 CANDIDATE 提升(不替代纯然).
+    #   逻辑: 纯然(4/4) 为硬门槛 CONFIRMED; 占三柱(3/4) 或强势(≥3柱同神且最强) 为软门槛 CANDIDATE.
+    _a_pure3_ok = (dm_ben_eff == 0 and yin_ben_eff == 0
+                   and (_pure3_gs or _pure3_cai or _pure3_ss))
+    _a_dom_ok = (dm_ben_eff == 0 and yin_ben_eff == 0
+                 and (_dom_gs or _dom_cai or _dom_ss))
     # ★ V7.158 裁决③: 从儿不豁免「日主无根」.
     #   A 级依据: SFTK L3671「夫從象者如甲乙日主無根遇地支純金謂之從金」(从象/从儿同族, 日主须无根)
     #             + DTS L438(京图原文 A)「從兒不管身強弱, 只要吾兒又得兒」——「不管身强弱」讲的是
@@ -521,8 +550,22 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                                reverse=True)
                 top_name, (top_d, top_wx) = order[0]
                 if top_name == '官杀':
-                    # V7.158 裁决①: 原'从官格'并入从杀(官杀同流, SFTK L679/DTS L255)—— 只设从杀一格
-                    cong, side = '从杀格', gs_wx
+                    # V7.165 裁决#4: 身去从官(SMTH L11450「丁日壬寅時，身去從官，丁壬化木」) — 看有无五合.
+                    #   无合 -> 归从官不独立(并入从杀, 已 V7.158).
+                    #   有合(日主与月干/时干五合, 不论化神五行) -> 拆入化气类(交化气层判定, 此处不产出从格).
+                    #   判据为「有无合」而非「化神==官杀」: SMTH L11450 丁壬合化木, 化神木是印非官杀.
+                    _cong_guan_he = False
+                    for _tg_k in ('month', 'hour'):
+                        _tg = pillars[_tg_k][0]
+                        if (day_stem, _tg) in WUHE_HUASHEN or (_tg, day_stem) in WUHE_HUASHEN:
+                            _cong_guan_he = True
+                            break
+                    if _cong_guan_he:
+                        # 日主有五合 -> 化气优先, 不在此产出从格(交化气层; 化不成则归正格).
+                        cong, side = None, None
+                    else:
+                        # V7.158 裁决①: 原'从官格'并入从杀(官杀同流, SFTK L679/DTS L255)—— 只设从杀一格
+                        cong, side = '从杀格', gs_wx
                 elif top_name == '财':
                     # 食伤叠透而财藏不透=从儿(儿会财局); 财明透成局=从财
                     if ss_pow and ss_stem >= 2 and cai_stem == 0 and not cai_lead and ss_ben >= 1:
@@ -604,7 +647,13 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             else:
                 cong, side = None, None
             if cong:
-                cstate = 'CONFIRMED' if dm_ben_eff == 0 else 'CANDIDATE'
+                # ★ V7.165 裁决#1 从儿也适用三阶梯: 纯然升CONFIRMED, 占三柱/强势保持CANDIDATE
+                if _a_pure_ok:
+                    cstate = 'CONFIRMED'
+                elif _a_pure3_ok or _a_dom_ok:
+                    cstate = 'CANDIDATE'
+                else:
+                    cstate = 'CONFIRMED' if dm_ben_eff == 0 else 'CANDIDATE'
 
     # V7.89e 印根 ban(按最终 cong 类型): 从财/从杀/从官/从势 印有根则不从
     #   (PZZQ L4936「若透印则身赖印生而不从」/L4939「有印则印以化煞而不从」/L4942「通根, 如印无根, 不碍相从」);
@@ -651,10 +700,16 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             #   依 AGENTS.md §八「取消多桶, 相关案例依 A 级条件重判」—— 官杀一格, 不设从官桶.
             cong = '从杀格'   # V7.158: 原'从官格'并入从杀(官杀同流, A 级依据 SFTK L679/DTS L255)
     if cong:
-        # ★ V7.158 裁决②: 纯然(四柱无杂, SFTK L679「四柱純然有官殺」)成立 -> 置信度升 CONFIRMED.
+        # ★ V7.165 裁决#1 置信度三阶梯:
+        #   1) 纯然(4/4 _a_pure_ok) -> CONFIRMED
+        #   2) 占三柱/强势(3/4 _a_pure3_ok 或 _a_dom_ok) -> CANDIDATE (若原为 CANDIDATE 保持; 仅成势时不升)
+        #   3) 仅成势 -> CANDIDATE (原逻辑)
         if _a_pure_ok and cstate == 'CANDIDATE':
             cstate = 'CONFIRMED'
-        note = '日主无本气根、无有根印比，对立方成势顺其势；四柱纯然(四柱无杂, SFTK L679「四柱纯然有官杀」)则置信度升CONFIRMED；虚透印比地支不载/孤根被冲拔为假从(CANDIDATE)；从儿须日主无根(依 SFTK L3671「日主无根遇地支纯金」)，但不论官杀成势(DTS L438「从儿不管身强弱」)；虚湿寒土(辰丑寒冻、火印全无)虽带湿土本气根而寒冻不能用、反顺旺水之财为气候假从(CANDIDATE, 见火暖翻转)；只记结构定性，不判用神成败吉凶'
+        elif (_a_pure3_ok or _a_dom_ok) and cstate == 'CANDIDATE':
+            # 占三柱/强势保持 CANDIDATE (不升 CONFIRMED)
+            pass
+        note = '日主无本气根、无有根印比，对立方成势顺其势；四柱纯然(四柱无杂)则置信度升CONFIRMED；占三柱/强势(≥3柱同神且最强)则CANDIDATE；虚透印比地支不载/孤根被冲拔为假从(CANDIDATE)；从儿须日主无根(依 SFTK L3671「日主无根遇地支纯金」)，但不论官杀成势(DTS L438「从儿不管身强弱」)；虚湿寒土(辰丑寒冻、火印全无)虽带湿土本气根而寒冻不能用、反顺旺水之财为气候假从(CANDIDATE, 见火暖翻转)；只记结构定性，不判用神成败吉凶'
         out['patterns'].append(_pat('ZP-SPECIAL-CONG', cong, cstate, side, note,
             ['daymaster_root', 'wuxing_power', 'combination_facts']))
         out['cong_type'], out['cong_state'] = cong, cstate

@@ -32,7 +32,7 @@ def is_zhuanwang(special):
 print('=== 层0：ID与口径不变量 ===')
 
 # 检查条数
-assert len(baseline) == 509, f"基线条数应为509，实际{len(baseline)}"
+assert len(baseline) == 513, f"基线条数应为513，实际{len(baseline)}"  # 2026-10-22 同步: 根 baseline_special_20260922.json 实为 513 条(原 509 为过期断言)
 print(f"✅ 基线条数: {len(baseline)}")
 
 # 检查key存在
@@ -57,17 +57,22 @@ print()
 print('=== 层1：else/default守卫 ===')
 
 # 检查没有empty special或error
-empty_special = [b for b in baseline if b.get('special') == '' and not b.get('error')]
+# 2026-10-22 修正: 显式标注跳过(incomplete+skip_reason, 如 dayun_too_short)不算静默空值;
+#   本守卫只拦【无标注的静默 empty special】(快照内 4 条 li=489-492 属标注跳过)
+empty_special = [b for b in baseline if b.get('special') == '' and not b.get('error')
+                 and not b.get('incomplete')]
+annotated_skip = [b for b in baseline if b.get('special') == '' and b.get('incomplete')]
 errors = [b for b in baseline if b.get('error')]
 
-assert len(empty_special) == 0, f"存在{len(empty_special)}条empty special"
+assert len(empty_special) == 0, f"存在{len(empty_special)}条静默empty special"
 assert len(errors) == 0, f"存在{len(errors)}条error"
 
-print(f"✅ empty special: {len(empty_special)}")
+print(f"✅ 静默 empty special: {len(empty_special)} (标注跳过 {len(annotated_skip)} 条单列)")
 print(f"✅ error: {len(errors)}")
 
-# 检查special不为空且不为default
-default_cases = [b for b in baseline if b.get('special') in ('default', 'DEFAULT', '')]
+# 检查special不为空且不为default(标注跳过除外)
+default_cases = [b for b in baseline if b.get('special') in ('default', 'DEFAULT')
+                 or (b.get('special') == '' and not b.get('incomplete'))]
 assert len(default_cases) == 0, f"存在{len(default_cases)}条default"
 print(f"✅ default命中: {len(default_cases)}")
 
