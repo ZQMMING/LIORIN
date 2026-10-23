@@ -701,7 +701,22 @@ class HeluoCanonical:
 
             # 只有**目标年**算 12 个流月卦（近 3 年另两年只要流年卦本体）
             if not (fast_path and y.year != target_year):
-                liuyue = compute_liuyue(y.lines, yyt)
+                # ⚠ 2026-10-24 修正：流月卦的起卦基准应是**该年流年卦的行年爻**
+                #   （小象行年爻），此前误用**大运段元堂爻**（yyt）。
+                #   原典依据（起例卷之上·起月卦例 L125，三源逐字一致）：
+                #     「凡起月卦，**就年卦中前一位起**，单月变爻，双月变应爻。
+                #       假如**观卦上九爻流年**，进一位从初爻变起。」
+                #     「又假如**小象是泰卦九二**，卦应爻居五，双月取应爻。」
+                #   → 「年卦」= 流年卦（小象行年卦），其「前一位」从**行年爻**起；
+                #     「观卦上九爻流年」的「上九」正是那一年的**行年爻**
+                #     （小象游变到的那一爻），非大运段元堂爻。
+                #   compute_liuyue 的第二参数语义本就是「行年爻」
+                #   （既有守卫 test_heluo_original_cases.py 的观/泰/坤三例皆如此用）。
+                #   错用段元堂 → 同一大运段内 9 年的流月序列完全相同，
+                #   而原典要求流月逐年不同（实测 12 个月里 10 个月卦名不同）。
+                _xy = getattr(y, "xingnian_yao_index", -1)
+                _liuyue_base = _xy if (isinstance(_xy, int) and 0 <= _xy < 6) else yyt
+                liuyue = compute_liuyue(y.lines, _liuyue_base)
                 months: list[dict] = []
                 for m in liuyue.months:
                     # 节气对齐：流日卦须从当月"节"时刻起管（《河洛真数》起日卦例）

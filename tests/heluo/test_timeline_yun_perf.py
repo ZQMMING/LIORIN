@@ -84,7 +84,13 @@ class TestLazyLiuShi(unittest.TestCase):
         self.assertIsNone(out["liushi_yao"])
         # 剥离流时不得牵连其余三层
         self.assertEqual(out["liunian_hexagram"], "困")
-        self.assertEqual(out["liuyue_hexagram"], "蛊")
+        # ⚠ 2026-10-24：流月值由「蛊」改为「既济」——
+        #   流月起卦基准改为**该年流年卦的行年爻**（原典起月卦例「就年卦中前一位起」
+        #   ＋「假如观卦上九爻流年」——「上九」是那一年的行年爻），
+        #   此前误用**大运段元堂爻**（同段内 9 年恒定）。
+        #   本盘 2026 年 = 泽水困、行年爻=初爻 → 六月阴月取应爻变 → 水火既济。
+        #   正确性由 tests/heluo/test_heluo_liuyue_riuri_yao.py 按原典硬算例保证。
+        self.assertEqual(out["liuyue_hexagram"], "既济")
         # 流日：2026-10-07 起按原典 L390 逐日一爻规则复算，不再硬编码卦名
         self.assertEqual(out["liuri_hexagram"], self._expected_liuri_gua(6, 15))
 
