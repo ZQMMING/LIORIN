@@ -1,0 +1,761 @@
+{
+ "note": "真实命例回归样本：引擎必须从「公历日期+时辰」复现命例已排定的四柱。每条都经 1681 例全量对拍验证（路径A 复现率 100%）。本文件随包分发 ⇒ 服务器部署后同样可跑该守卫。",
+ "caliber": "时辰取命例时柱区间的代表小时；四柱按**标准时**（不做真太阳时）复现 —— 因公开命例本身多按北京时间排定。",
+ "count": 58,
+ "samples": [
+  {
+   "id": 1161,
+   "date": [
+    1942,
+    2,
+    13
+   ],
+   "hour": 0,
+   "gender": "male",
+   "bazi": "壬午 壬寅 丁酉 庚子",
+   "address": "重庆",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1777,
+   "date": [
+    1937,
+    6,
+    1
+   ],
+   "hour": 3,
+   "gender": "male",
+   "bazi": "丁丑 乙巳 己未 丙寅",
+   "address": "阿拉斯加",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1613,
+   "date": [
+    1937,
+    12,
+    11
+   ],
+   "hour": 5,
+   "gender": "male",
+   "bazi": "丁丑 壬子 壬申 癸卯",
+   "address": "山东济南",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1404,
+   "date": [
+    1941,
+    10,
+    18
+   ],
+   "hour": 7,
+   "gender": "male",
+   "bazi": "辛巳 戊戌 己亥 戊辰",
+   "address": "安徽",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1504,
+   "date": [
+    1939,
+    5,
+    24
+   ],
+   "hour": 7,
+   "gender": "female",
+   "bazi": "己卯 己巳 辛酉 壬辰",
+   "address": "重庆",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1850,
+   "date": [
+    1932,
+    10,
+    5
+   ],
+   "hour": 13,
+   "gender": "male",
+   "bazi": "壬申 己酉 己亥 辛未",
+   "address": "福建",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1036,
+   "date": [
+    1975,
+    11,
+    22
+   ],
+   "hour": 0,
+   "gender": "male",
+   "bazi": "乙卯 丁亥 壬申 庚子",
+   "address": "天津市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 689,
+   "date": [
+    1977,
+    9,
+    28
+   ],
+   "hour": 0,
+   "gender": "female",
+   "bazi": "丁巳 己酉 戊子 壬子",
+   "address": "河北",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1020,
+   "date": [
+    1975,
+    1,
+    16
+   ],
+   "hour": 1,
+   "gender": "male",
+   "bazi": "甲寅 丁丑 壬戌 辛丑",
+   "address": "山东",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1032,
+   "date": [
+    1970,
+    1,
+    30
+   ],
+   "hour": 1,
+   "gender": "female",
+   "bazi": "己酉 丁丑 庚戌 丁丑",
+   "address": "辽宁省抚顺市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 862,
+   "date": [
+    1971,
+    9,
+    30
+   ],
+   "hour": 3,
+   "gender": "male",
+   "bazi": "辛亥 丁酉 戊午 甲寅",
+   "address": "浙江",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1289,
+   "date": [
+    1959,
+    4,
+    10
+   ],
+   "hour": 3,
+   "gender": "female",
+   "bazi": "己亥 戊辰 壬戌 壬寅",
+   "address": "广东茂名",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1469,
+   "date": [
+    1977,
+    4,
+    26
+   ],
+   "hour": 5,
+   "gender": "male",
+   "bazi": "丁巳 甲辰 癸丑 乙卯",
+   "address": "云南",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1203,
+   "date": [
+    1974,
+    1,
+    21
+   ],
+   "hour": 5,
+   "gender": "female",
+   "bazi": "癸丑 乙丑 壬戌 癸卯",
+   "address": "广东省湛江市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1081,
+   "date": [
+    1964,
+    3,
+    23
+   ],
+   "hour": 7,
+   "gender": "male",
+   "bazi": "甲辰 丁卯 辛未 壬辰",
+   "address": "吉林省通化市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 133,
+   "date": [
+    1974,
+    2,
+    23
+   ],
+   "hour": 7,
+   "gender": "female",
+   "bazi": "甲寅 丙寅 乙未 庚辰",
+   "address": "山西省临汾市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 599,
+   "date": [
+    1977,
+    1,
+    6
+   ],
+   "hour": 9,
+   "gender": "male",
+   "bazi": "丙辰 辛丑 癸亥 丁巳",
+   "address": "山东",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 100,
+   "date": [
+    1976,
+    9,
+    22
+   ],
+   "hour": 9,
+   "gender": "female",
+   "bazi": "丙辰 丁酉 丁丑 乙巳",
+   "address": "浙江省温州市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 8,
+   "date": [
+    1983,
+    3,
+    18
+   ],
+   "hour": 0,
+   "gender": "male",
+   "bazi": "癸亥 乙卯 乙巳 丙子",
+   "address": "福建省福州市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 195,
+   "date": [
+    1989,
+    6,
+    15
+   ],
+   "hour": 0,
+   "gender": "female",
+   "bazi": "己巳 庚午 丙午 戊子",
+   "address": "江西省吉安市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 56,
+   "date": [
+    1994,
+    8,
+    14
+   ],
+   "hour": 1,
+   "gender": "male",
+   "bazi": "甲戌 壬申 壬申 辛丑",
+   "address": "山东省淄博市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 39,
+   "date": [
+    1993,
+    9,
+    16
+   ],
+   "hour": 1,
+   "gender": "female",
+   "bazi": "癸酉 辛酉 庚子 丁丑",
+   "address": "湖南省衡阳市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 158,
+   "date": [
+    1988,
+    10,
+    20
+   ],
+   "hour": 3,
+   "gender": "male",
+   "bazi": "戊辰 壬戌 戊申 甲寅",
+   "address": "青海省西宁市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 69,
+   "date": [
+    1995,
+    12,
+    24
+   ],
+   "hour": 3,
+   "gender": "female",
+   "bazi": "乙亥 戊子 己丑 丙寅",
+   "address": "河南省安阳市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 208,
+   "date": [
+    1986,
+    8,
+    25
+   ],
+   "hour": 5,
+   "gender": "male",
+   "bazi": "丙寅 丙申 辛丑 辛卯",
+   "address": "天津",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 111,
+   "date": [
+    1994,
+    12,
+    10
+   ],
+   "hour": 5,
+   "gender": "female",
+   "bazi": "甲戌 丙子 庚午 己卯",
+   "address": "河南省洛阳市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 216,
+   "date": [
+    1989,
+    2,
+    1
+   ],
+   "hour": 7,
+   "gender": "male",
+   "bazi": "戊辰 乙丑 壬辰 甲辰",
+   "address": "湖北省襄樊市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 109,
+   "date": [
+    1988,
+    4,
+    7
+   ],
+   "hour": 7,
+   "gender": "female",
+   "bazi": "戊辰 丙辰 壬辰 甲辰",
+   "address": "黑龙江省齐齐哈尔市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 635,
+   "date": [
+    1988,
+    1,
+    24
+   ],
+   "hour": 9,
+   "gender": "male",
+   "bazi": "丁卯 癸丑 戊寅 丁巳",
+   "address": "山东",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 215,
+   "date": [
+    1985,
+    2,
+    12
+   ],
+   "hour": 9,
+   "gender": "female",
+   "bazi": "乙丑 戊寅 壬午 乙巳",
+   "address": "河北省沧州市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 358,
+   "date": [
+    1992,
+    7,
+    31
+   ],
+   "hour": 11,
+   "gender": "male",
+   "bazi": "壬申 丁未 戊申 戊午",
+   "address": "贵州省黔南布依族苗族自治州",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 249,
+   "date": [
+    1989,
+    10,
+    29
+   ],
+   "hour": 11,
+   "gender": "female",
+   "bazi": "己巳 甲戌 壬戌 丙午",
+   "address": "辽宁省锦州市凌海市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 838,
+   "date": [
+    1986,
+    7,
+    12
+   ],
+   "hour": 13,
+   "gender": "male",
+   "bazi": "丙寅 乙未 丁巳 丁未",
+   "address": "湖北",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 347,
+   "date": [
+    1992,
+    7,
+    15
+   ],
+   "hour": 13,
+   "gender": "female",
+   "bazi": "壬申 丁未 壬辰 丁未",
+   "address": "浙江省",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 721,
+   "date": [
+    1994,
+    10,
+    25
+   ],
+   "hour": 15,
+   "gender": "male",
+   "bazi": "甲戌 甲戌 甲申 壬申",
+   "address": "江西省赣州市龙南县",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 344,
+   "date": [
+    1984,
+    9,
+    13
+   ],
+   "hour": 15,
+   "gender": "female",
+   "bazi": "甲子 癸酉 庚戌 甲申",
+   "address": "港澳台香港",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 836,
+   "date": [
+    1987,
+    2,
+    14
+   ],
+   "hour": 17,
+   "gender": "male",
+   "bazi": "丁卯 壬寅 甲午 癸酉",
+   "address": "安徽",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 367,
+   "date": [
+    1985,
+    4,
+    17
+   ],
+   "hour": 17,
+   "gender": "female",
+   "bazi": "乙丑 庚辰 丙戌 丁酉",
+   "address": "河南省信阳市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1698,
+   "date": [
+    1988,
+    2,
+    6
+   ],
+   "hour": 19,
+   "gender": "male",
+   "bazi": "戊辰 甲寅 辛卯 戊戌",
+   "address": "山东",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 514,
+   "date": [
+    1993,
+    7,
+    28
+   ],
+   "hour": 19,
+   "gender": "female",
+   "bazi": "癸酉 己未 庚戌 丙戌",
+   "address": "山东省日照市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 807,
+   "date": [
+    1989,
+    7,
+    6
+   ],
+   "hour": 21,
+   "gender": "male",
+   "bazi": "己巳 庚午 丁卯 辛亥",
+   "address": "山东",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 702,
+   "date": [
+    1994,
+    10,
+    24
+   ],
+   "hour": 21,
+   "gender": "female",
+   "bazi": "甲戌 甲戌 癸未 癸亥",
+   "address": "山东省",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1367,
+   "date": [
+    2001,
+    5,
+    12
+   ],
+   "hour": 0,
+   "gender": "female",
+   "bazi": "辛巳 癸巳 乙亥 丙子",
+   "address": "内蒙",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1487,
+   "date": [
+    2002,
+    8,
+    2
+   ],
+   "hour": 1,
+   "gender": "male",
+   "bazi": "壬午 丁未 壬寅 辛丑",
+   "address": "广西",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1855,
+   "date": [
+    2001,
+    12,
+    6
+   ],
+   "hour": 1,
+   "gender": "female",
+   "bazi": "辛巳 己亥 癸卯 癸丑",
+   "address": "广西南宁",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1619,
+   "date": [
+    2001,
+    7,
+    21
+   ],
+   "hour": 5,
+   "gender": "male",
+   "bazi": "辛巳 乙未 乙酉 己卯",
+   "address": "广东深圳",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1326,
+   "date": [
+    2002,
+    10,
+    29
+   ],
+   "hour": 5,
+   "gender": "female",
+   "bazi": "壬午 庚戌 庚午 己卯",
+   "address": "安徽宣城",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1623,
+   "date": [
+    2000,
+    9,
+    24
+   ],
+   "hour": 7,
+   "gender": "male",
+   "bazi": "庚辰 乙酉 乙酉 庚辰",
+   "address": "贵州",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1557,
+   "date": [
+    2000,
+    10,
+    7
+   ],
+   "hour": 9,
+   "gender": "male",
+   "bazi": "庚辰 乙酉 戊戌 丁巳",
+   "address": "湖南省邵东市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1721,
+   "date": [
+    2021,
+    1,
+    10
+   ],
+   "hour": 11,
+   "gender": "male",
+   "bazi": "庚子 己丑 戊午 戊午",
+   "address": "贵州",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1232,
+   "date": [
+    2024,
+    5,
+    17
+   ],
+   "hour": 13,
+   "gender": "male",
+   "bazi": "甲辰 己巳 辛巳 乙未",
+   "address": "河南省开封市",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1476,
+   "date": [
+    2000,
+    12,
+    1
+   ],
+   "hour": 13,
+   "gender": "female",
+   "bazi": "庚辰 丁亥 癸巳 己未",
+   "address": "湖北、江苏、山西",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1583,
+   "date": [
+    2017,
+    4,
+    16
+   ],
+   "hour": 15,
+   "gender": "male",
+   "bazi": "丁酉 甲辰 癸酉 庚申",
+   "address": "陕西渭南",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1369,
+   "date": [
+    2002,
+    6,
+    27
+   ],
+   "hour": 17,
+   "gender": "female",
+   "bazi": "壬午 丙午 丙寅 丁酉",
+   "address": "云南",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1330,
+   "date": [
+    2004,
+    8,
+    13
+   ],
+   "hour": 19,
+   "gender": "male",
+   "bazi": "甲申 壬申 甲子 甲戌",
+   "address": "湖北省襄阳市枣阳",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1412,
+   "date": [
+    2000,
+    1,
+    17
+   ],
+   "hour": 19,
+   "gender": "female",
+   "bazi": "己卯 丁丑 甲戌 甲戌",
+   "address": "青海",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1147,
+   "date": [
+    2023,
+    4,
+    20
+   ],
+   "hour": 21,
+   "gender": "male",
+   "bazi": "癸卯 丙辰 戊申 癸亥",
+   "address": "山西太原",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  },
+  {
+   "id": 1797,
+   "date": [
+    2000,
+    3,
+    10
+   ],
+   "hour": 21,
+   "gender": "female",
+   "bazi": "庚辰 己卯 丁卯 辛亥",
+   "address": "重庆云阳",
+   "source": "GitHub命例案例/bazi-case-list/bazi_cases_full.json（八字实战擂台赛公开反馈）"
+  }
+ ]
+}
