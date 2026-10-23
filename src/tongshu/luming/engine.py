@@ -4093,15 +4093,26 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         #   (发用=应事标注, 只进展示计数; 计入会把凶祸之运抬成吉泰之运 —
         #   毛1976 丙辰运 F05 鬼化气吉条把大运抬偏吉 → 流年七凶齐集被
         #   "大运吉天花板"降为相杂, 违反 L4276 厚福+重恶=凶 的 oracle)
+        # F05 真通关(纳音通关)是真实的纳音线转吉, 须计入大运基调 — 与 _verdict
+        #   口径一致; 仅剔除 F04 等"应事标注"发用. (2026-10-23 修复: 旧逻辑把
+        #   LM-F 全剔, 致癸酉运 F05 真通关(剑锋金生子水子水生大林木)被误判偏凶,
+        #   2025 吉运内 V62 太岁犯命等未降为相杂, 违反 L4427"大运吉处不能为大灾")
+        _f05_src = getattr(lm, "verdicts", None) or verdicts
+        _f05_tg2 = {(_vv.get("target", "") or ""): _vv.get("tongguan", "weak")
+                    for _vv in _f05_src if _vv.get("rule_id") == "LM-F05"}
+        _f05_real2 = _f05_tg2.get(yctx["luck_pillar"], "weak") == "nayin"
         _nitems = [x for x in ((_linfo or {}).get("counts") or {}).get("items", [])
-                   if not x[0].startswith("LM-F")]
+                   if (not x[0].startswith("LM-F"))
+                   or (_f05_real2 and x[0] == "LM-F05")]
         if _nitems:
             from .strength import LUCK_XI as _LXI2, LUCK_XIONG as _LXO2
             _nscore = 0.0
             _is_f2 = (getattr(chart, "gender", "") or "").lower().startswith(("f", "女"))
             for _rid, _tone in _nitems:
+                if _f05_real2 and _rid == "LM-V42" and _tone == "凶":
+                    continue          # 真通关: 纳音克我被抵消
                 if _tone == "吉":
-                    _nscore += _LXI2.get(_rid, 1.0)
+                    _nscore += 3.0 if _rid == "LM-F05" else _LXI2.get(_rid, 1.0)
                 elif _tone == "凶":
                     _nscore -= _LXO2.get(_rid, 1.0) if not (_rid == "LM-V124" and _is_f2) else 2.0
                 elif _tone == "动":
@@ -4114,9 +4125,9 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _luck_verdict = (_linfo or {}).get("verdict", "")
     _luck_ji = _luck_verdict in ("吉", "偏吉")      # 吉泰之运(含吉面占先)
     _luck_xiong = _luck_verdict in ("凶", "偏凶")   # 屯蹇凶祸之运(含凶面占先)
-    _fa_huo_ji = (any(v.get("rule_id") in ("LM-V60", "LM-V70") and v.get("tone") == "凶"
+    _fa_huo_ji = (any(v.get("rule_id") in _NO_JIUXI and v.get("tone") == "凶"
                       for v in verdicts)
-                  or _i4273.get("mode") == "发祸")   # L4273发祸同属发祸级, 可突破大运吉天花板
+                  or _i4273.get("mode") == "发祸")   # 不救实祸(V60定死/V70元辰/V90劫财)/L4273发祸, 可突破大运吉天花板
     if _luck_ji and year_tone == "凶" and not _fa_huo_ji:
         year_tone = "吉凶相杂"          # 大运吉乡: 流年刑害只细累浮灾不为重害
     elif _luck_xiong and year_tone == "吉":
