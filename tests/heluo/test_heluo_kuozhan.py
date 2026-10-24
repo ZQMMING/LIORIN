@@ -12,8 +12,8 @@
 """
 import pytest
 
-from src.heluo_engine.engines.heluo import canping as cp
-from src.heluo_engine.engines.heluo import guajie as g
+from heluo_engine.engines.heluo import canping as cp
+from heluo_engine.engines.heluo import guajie as g
 
 
 # ── ① 金锁银匙歌起数（卷十·原典三例复算） ──────────────────────
@@ -378,7 +378,7 @@ class TestHeluoZhenshu:
     def test_shaoxing_jialing_tiandi_shu(self):
         """河洛真数假令(绍兴四年甲寅年甲戌月己卯日壬申时)：
         天数29(奇数3+5+9+3+9)、地数48(偶数6+8+6+10+8+6+4)——引擎取数表逐字复算"""
-        from src.heluo_engine.engines.heluo.numbers import compute_tian_di_shu
+        from heluo_engine.engines.heluo.numbers import compute_tian_di_shu
         r = compute_tian_di_shu([("甲", "寅"), ("甲", "戌"), ("己", "卯"), ("壬", "申")], "male")
         assert r.tian_shu == 29 and r.di_shu == 48
         assert r.tian_reduced == 4   # 29-25=4 → 巽
@@ -386,7 +386,7 @@ class TestHeluoZhenshu:
 
     def test_shaoxing_jialing_fengshan_jian(self):
         """假令：阳命男天数卦巽在外、地数卦艮在内 → 风山渐（河洛真数原文）"""
-        from src.heluo_engine.engines.heluo.prenatal import determine_prenatal_hexagram
+        from heluo_engine.engines.heluo.prenatal import determine_prenatal_hexagram
         ph = determine_prenatal_hexagram(tian_reduced=4, di_reduced=8, gender="male",
                                          birth_year_yang=True)
         assert ph.hexagram_name == "风山渐"
@@ -394,7 +394,7 @@ class TestHeluoZhenshu:
 
     def test_guoshi_buyong(self):
         """过十不用：十去九即用一、二十即用二、三十即用三；余18只用8"""
-        from src.heluo_engine.engines.heluo.numbers import normalize_tian_shu, normalize_di_shu
+        from heluo_engine.engines.heluo.numbers import normalize_tian_shu, normalize_di_shu
         assert normalize_tian_shu(31) == 6     # 31-25=6
         assert normalize_di_shu(42) == 2       # 42-30=12 → 2
         assert normalize_di_shu(48) == 8       # 18 → 8
@@ -403,7 +403,7 @@ class TestHeluoZhenshu:
 
     def test_jigong_san_dang(self):
         """遇五寄宫三档（河洛真数原文）：上元男艮女坤/中元阳男阴女艮阴男阳女坤/下元男离女兑"""
-        from src.heluo_engine.engines.heluo.prenatal import resolve_middle_palace as rmp
+        from heluo_engine.engines.heluo.prenatal import resolve_middle_palace as rmp
         assert rmp(5, 8, "male", True, "shang") == (8, 8)      # 上元男寄艮
         assert rmp(5, 8, "female", True, "shang") == (2, 8)    # 上元女寄坤
         assert rmp(5, 8, "male", True, "zhong") == (8, 8)      # 中元阳男寄艮
@@ -415,7 +415,7 @@ class TestHeluoZhenshu:
     def test_xiaoxiang_tongren_yangnian_jiunian(self):
         """小象行年(河洛真数 同人九三阳年例)：
         第1-9年卦序 = 同人/革/随/屯/复/颐/剥/蒙/蛊（逐字对照原文）"""
-        from src.heluo_engine.engines.heluo.timeline_yun import compute_liunian
+        from heluo_engine.engines.heluo.timeline_yun import compute_liunian
         # 天火同人 = 离下(阳阴阳→1,-1,1) + 乾上(111→1,1,1)；元堂九三 = index2；爻值 ±1（1阳/-1阴）
         res = compute_liunian(
             prenatal_lines=[1, -1, 1, 1, 1, 1], prenatal_yuantang=2,

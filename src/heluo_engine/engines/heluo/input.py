@@ -10,7 +10,11 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from src.heluo_engine.engines.time.calculation_context import CalculationContext
+    # ⚠ 2026-10-24 订正：原为 ``from src.heluo_engine.engines.time...``。
+    #   ``src`` **不是包**（它是打包根目录），只有源码树里恰好以 cwd 运行时
+    #   ``src.heluo_engine`` 才碰巧可解析 ⇒ 装成 wheel 后该 import 失效，
+    #   类型检查/IDE 也会报错。正确形态是**顶层包名** ``heluo_engine.*``。
+    from heluo_engine.engines.time.calculation_context import CalculationContext
 
 
 @dataclass(frozen=True)
