@@ -1972,6 +1972,20 @@ def build_guajie_from_result(
             gj.evidence.append("  生月：调用方未传 birth_month，已按正月(1)兜底——"
                                "叶/不叶、kuozhan 相关项结果随之改变")
 
+        # ⚠ 2026-10-24 显式化：目标年**不在流年序列**时（超出一轮大运覆盖），
+        #   流年卦与流年判词为空 —— 平台层会因此**不产出该年信号**。
+        #   此前只有 evidence 里一句「timeline 无 YYYY 年流年卦」，
+        #   summary/用户侧看不见 ⇒ 等于静默缺失。
+        #   大运口径本身**不改**（《河洛理数·卷之四》只走一轮：
+        #   先天卦 6 段 + 后天卦 6 段，覆盖到 ~75 岁视阴阳爻组合而定），
+        #   这里只把「为什么没有」说清楚。
+        if target_year is not None and not liunian_hex:
+            _why = (f"目标年 {target_year} 不在本命大运覆盖内"
+                    f"（大运按《河洛理数·卷之四》只走一轮：先天6段+后天6段），"
+                    f"故该年无流年卦/流年判词，该年相关信号不产出")
+            gj.summary.insert(0, "⚠ " + _why)
+            gj.evidence.append("  流年：" + _why)
+
         # ── 三阳奇偶合象（L99 / L714 平行印证）────────────────────
         # 该条按节气窗口「冬至后至雨水前」判，**必须有出生公历日**。
         # compose_guajie 只有 birth_month，故在此处补判——

@@ -139,6 +139,31 @@ class TestAdminAddressResolution(unittest.TestCase):
         with self.assertRaises(LocationError):
             self.tr.lookup("不存在的地点ZZZZ")
 
+    def test_target_year_outside_dayun_is_explicit(self):
+        """★ 目标年**不在流年序列**时，必须**显式标注**，不得静默返回空串。
+
+        大运按《河洛理数·卷之四》只走一轮（先天6段+后天6段），
+        覆盖到 ~75 岁视阴阳爻组合而定 ⇒ 高龄命主的某些目标年**本就没有**流年卦。
+
+        此前这种情况：判词层流年卦为空串、平台层**不产出**该年信号，
+        而提示只藏在 evidence 里一句话 ⇒ 用户侧看不见 = 静默缺失。
+        故断言 summary 里必须出现明确说明。
+        """
+        from heluo_engine.adapter import HeluoAdapter
+        # 1942-11-22 生（壬午年），其大运覆盖不到 2026 年（85 岁）
+        res = HeluoAdapter().compute((1942, 2, 13, 0), gender="male",
+                                     target_date="2026-10-23")
+        g = res.guajie or {}
+        if g.get("liunian_hexagram"):
+            self.skipTest("该命例目标年已在大运覆盖内（构造失效）")
+        summary = " ".join(g.get("summary") or [])
+        self.assertIn("大运", summary,
+                      "目标年不在流年序列时，summary 必须说明原因")
+        self.assertIn("2026", summary,
+                      "summary 的说明里必须点明是哪个目标年")
+        self.assertTrue(any("流年" in e for e in (g.get("evidence") or [])),
+                        "evidence 里也须留痕")
+
 
 if __name__ == "__main__":
     unittest.main()
