@@ -949,6 +949,10 @@ class HeluoCanonical:
                                 "day_no": d.get("day_no"),
                                 "segment": _seg_no,
                                 "date_from": _seg_date_from,
+                                # 该日**自身**的时刻（原典 L491「每日添一刻七分天」）
+                                # —— 与 date_from（段首时刻）不同，下游按目标日
+                                # 出黄历/发平台信号时必须用这个。
+                                "date": d.get("date") or "",
                                 "active_yao": d.get("active_yao"),
                                 "flip_index": d.get("yao_index"),
                                 "day_yao_index": d.get("yao_index"),

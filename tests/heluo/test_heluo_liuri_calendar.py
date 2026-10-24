@@ -326,3 +326,44 @@ class TestAdapterUsesJieqiCaliber:
         summary = " ".join(gj.get("summary") or [])
         assert "超出" in summary and "30" in summary, (
             f"第 31 日未显式留痕（静默夹取）—— summary: {summary[:200]}")
+
+    @pytest.mark.parametrize("tgt", ["2026-10-23", "2026-08-08"])
+    def test_lunar_anno_is_target_date_not_segment_start(self, tgt):
+        """流日黄历标注必须是**目标日**，不是所在段的首日。
+
+        原典 L491「每日添一刻七分天」给出**逐日**时刻。此前一律用段首时刻，
+        导致黄历标注的是别的日的农历日/日柱/宜忌（目标 10-23 却标 10-20）。
+        """
+        y, m, d = (int(x) for x in tgt.split("-"))
+        r = self.ADAPTER.compute(self.BIRTH, gender="male", target_date=tgt)
+        base = (r.timeline.daily_hexagram or {}).get("base_hex") or {}
+        seg_start = (base.get("date_from") or "")[:10]
+        anno = ((r.guajie or {}).get("liuri_lunar") or {}).get("solar_date") or ""
+        assert anno[:10] == f"{y:04d}-{m:02d}-{d:02d}", (
+            f"黄历标注日期应为目标日 {tgt}，实测 {anno!r}"
+            f"（段首日 = {seg_start}）")
+        # 且与独立第三方读数一致（lunar_python 的农历日）
+        from lunar_python import Solar
+        lunar = Solar.fromYmd(y, m, d).getLunar()
+        anno_lunar = ((r.guajie or {}).get("liuri_lunar") or {}).get("lunar") or ""
+        assert lunar.getDayInChinese() in anno_lunar, (
+            f"黄历农历日与独立读数不一致：{anno_lunar!r} vs "
+            f"{lunar.getDayInChinese()}")
+
+    @pytest.mark.parametrize("tgt", ["2026-10-23", "2026-08-08"])
+    def test_platform_daily_signal_falls_on_target_date(self, tgt):
+        """平台 DAILY 信号必须落在**目标日**（不是日段首日）。
+
+        `canonical_signals` 取 `liuri_lunar.solar_date` 的日号作为
+        `start_day/end_day` ⇒ 黄历标注若用段首日，平台信号就会落到错的日期上。
+        """
+        from heluo_engine.engines.heluo.canonical_signals import build_platform_signals
+        y, m, d = (int(x) for x in tgt.split("-"))
+        r = self.ADAPTER.compute(self.BIRTH, gender="male", target_date=tgt)
+        daily = [s for s in build_platform_signals(r)
+                 if (s.get("temporal_scope") or {}).get("granularity") == "DAILY"]
+        assert daily, "未产出 DAILY 层平台信号"
+        for s in daily:
+            sc = s["temporal_scope"]
+            assert sc.get("start_day") == d and sc.get("end_day") == d, (
+                f"DAILY 信号应落在目标日 {d} 日，实测 scope={sc}")

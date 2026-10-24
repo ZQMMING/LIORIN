@@ -51,6 +51,12 @@ MUTATIONS = [
         "                ((f\"{target_year:04d}-{target_month:02d}-{target_day:02d}\")\n"
         "                 if True\n",
     ),
+    (
+        "M5 逐日时刻退化成段首时刻（黄历/平台信号落回段首日）",
+        CANON,
+        "                                \"date\": d.get(\"date\") or \"\",\n",
+        "                                \"date\": d.get(\"date_from\") or \"\",\n",
+    ),
 ]
 
 

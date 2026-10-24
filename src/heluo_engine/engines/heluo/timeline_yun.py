@@ -744,23 +744,46 @@ def compute_daily_base_hex(
     # ── 段内 6 日：固定本卦，每日取对应爻位（首日从初爻开始）──
     yao_names = ("初爻", "二爻", "三爻", "四爻", "五爻", "上爻")
     daily_yao: list[dict] = []
+    # ⚠ 2026-10-24 新增：每日的**真实时刻**（原典 L491「以此推之则每日添一刻七分天」）。
+    #   推法：第 n 日的时刻 = 节时刻 + (n-1) × (节气间隔 / 30) ——
+    #   与段边界「节 + k×(间隔/5)」**逐位自洽**
+    #   （第 6k+1 日 = 节 + 6k×间隔/30 = 节 + k×间隔/5 ✓）。
+    #   此前 daily_yao 只带「段首时刻」(date_from)，导致：
+    #     ① 黄历标注显示的是**段首日**而非目标日（目标 10-23 却标 10-20）；
+    #     ② 平台层 DAILY 信号按**段首日**发（canonical_signals 取
+    #        liuri_lunar.solar_date 的日号）⇒ 事件落在错误的日期上。
+    _day_sec = (nxt_dt - base_dt).total_seconds() / 30.0 if _uniform else None
     for d in range(seg_len):
         idx = d  # 首日从初爻开始，依次初/二/三/四/五/上
         changed = _flip_line(list(base_lines), idx)
         cu, clo, cname = _lines_to_hexagram(changed)
+        _no = seg["day_from"] + d
+        _day_dt = ""
+        if _day_sec is not None:
+            _day_dt = (base_dt + timedelta(seconds=(_no - 1) * _day_sec)
+                       ).strftime("%Y-%m-%d %H:%M")
         daily_yao.append({
-            "day_no": seg["day_from"] + d,
+            "day_no": _no,
             "day_in_seg": d + 1,
             "active_yao": yao_names[idx],
             "yao_index": idx,
             "yao_nature": "阳" if base_lines[idx] else "阴",
             "date_from": seg["date_from"],
+            # 该日的**真实时刻**（原典 L491「每日添一刻七分天」）；
+            # date_from 仍保留**段首时刻**（旧消费方按段读，不改语义）。
+            "date": _day_dt,
             "changed_name": cname,
             "changed_upper": cu,
             "changed_lower": clo,
             "changed_lines": list(changed),
             "changed_element": TRIGRAM_ELEMENT.get(cu, "") or TRIGRAM_ELEMENT.get(clo, ""),
         })
+    # 目标日本身的时刻（平台层按目标日发信号，不按段首日）
+    if _day_sec is not None:
+        base_hex["target_date"] = (
+            base_dt + timedelta(seconds=(_td - 1) * _day_sec)
+        ).strftime("%Y-%m-%d %H:%M")
+        base_hex["target_day_no"] = _td
     return base_hex, daily_yao
 
 def compute_liuri_stub(
@@ -964,6 +987,9 @@ def _gua6_day_to_compat(d: dict, date_from: str = "") -> dict:
     _flip = d.get("yao_index")
     if _flip is None:
         _flip = d.get("day_yao_index", d.get("flip_index", 0))
+    # ⚠ 2026-10-24：优先用**该日自己的时刻**（原典 L491「每日添一刻七分天」
+    #   推出的逐日时刻）；缺失时退回段首时刻（旧行为）。
+    _day_date = d.get("date") or d.get("date_from", date_from)
     return {
         "day": _no if _no is not None else d.get("day", _f),
         "day_no": _no,
@@ -977,6 +1003,7 @@ def _gua6_day_to_compat(d: dict, date_from: str = "") -> dict:
         "lower": _lower,
         "lines": list(_lines),
         "date_from": d.get("date_from", date_from),
+        "date": _day_date,
         "day_items": [{
             "day": _no if _no is not None else d.get("day", _f),
             "polarity": "阳日" if _flip % 2 == 0 else "阴日",
@@ -984,7 +1011,7 @@ def _gua6_day_to_compat(d: dict, date_from: str = "") -> dict:
             "day_yao_index": _flip,
             "name": _name, "upper": _upper, "lower": _lower,
             "lines": list(_lines),
-            "date": d.get("date_from", date_from)[:10] if date_from else "",
+            "date": _day_date[:10] if _day_date else "",
         }],
     }
 

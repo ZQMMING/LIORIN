@@ -1566,8 +1566,10 @@ BRANCH_TO_MONTH = {"寅": 1, "卯": 2, "辰": 3, "巳": 4, "午": 5, "未": 6,
 #   阴气：五月夏至  「一阴始生于午」→ 十月      「六阴生于亥，乃纯阴之时」
 #
 # 故阳月令 = 11、12、1、2、3、4；阴月令 = 5、6、7、8、9、10。
-# 注：此处月份为**节气月**（寅月=正月=雨水后），非农历月，
-#     与 BRANCH_TO_MONTH 一致。
+# 注：此处月份为**节气月**（建寅），与 BRANCH_TO_MONTH 一致。
+#     ⚠ 2026-10-24 订正：原注释写「寅月=正月=**雨水后**」——
+#     建寅的正月自**立春**起（雨水后已是卯月），差一个月。
+#     BRANCH_TO_MONTH 的**代码是对的**（寅=1 … 丑=12），错的只是这句说明。
 YANG_YUE_LING = frozenset({11, 12, 1, 2, 3, 4})
 YIN_YUE_LING = frozenset({5, 6, 7, 8, 9, 10})
 
@@ -1818,8 +1820,17 @@ def build_guajie_from_result(
     bazi: 中文四柱 [(年干,年支),(月干,月支),(日干,日支),(时干,时支)]，
           缺省时退化为仅命卦判词（无流年解）。
     target_year: 指定解某公历流年（缺省解命卦基础判词）。
-    target_month: 流月应期定位（1-12，农历月），从该流年 timeline.months 自动取卦。
-    target_day: 流日应期定位（1-30），按《河洛真数》起日卦例每爻管5日，从流月 days 自动取卦。
+    target_month: 流月应期定位（1-12）—— **节气月序**（农历月序，建寅：
+                 正月=立春月、七月=立秋月…），**不是公历月**。
+                 从该流年 timeline.months 自动取卦。
+                 ⚠ 2026-10-24：公历 → (节气月序, 节后日序) 的换算见
+                 canonical.resolve_jieqi_window；adapter 层已自动换算，
+                 直调本函数者须用**同一口径**（否则取到别的月）。
+    target_day: 流日应期定位（1-30）—— **自节起的日序**（1 = 节当日），
+             按《河洛理数》日卦定式「每月變五卦每卦管六日」（gua6 口径）
+             从流月 days 自动取卦。
+             ⚠ 原 docstring 写「每爻管5日」是《河洛真数》L390 的 hou5 旧法，
+             生产口径已于 2026-10-22 统一为 gua6。
     liuyue_hexagram/liuyue_yao: 手动指定流月（可选，优先于 target_month）。
     """
     _lunar_anno = None  # H9b 流日黄历标注（命中日段时填充）
@@ -1942,7 +1953,17 @@ def build_guajie_from_result(
                                                  if it.get("day") == target_day), None)
                                             src = item or dseg
                                             # H9b 河洛×黄历：流日应期段挂黄历标注（注入优先，lunar_python 兜底）
-                                            liuri_solar_date = src.get("date_from") or dseg.get("date_from") or ""
+                                            # ⚠ 2026-10-24：取**目标日自身**的时刻，
+                                            #   而非段首日 —— 原典 L491「每日添一刻七分天」
+                                            #   给出逐日时刻。此前一律用 date_from（段首日），
+                                            #   导致：① 黄历标注的是**别的日**的农历日/日柱/宜忌；
+                                            #   ② 平台层 DAILY 信号按**段首日**发
+                                            #      （canonical_signals 取 liuri_lunar.solar_date）
+                                            #   ⇒ 用户问 23 号，信号却落在 20 号。
+                                            liuri_solar_date = (
+                                                src.get("date") or item.get("date")
+                                                or src.get("date_from")
+                                                or dseg.get("date_from") or "")
                                             if liuri_solar_date:
                                                 try:
                                                     hd = huangli_provider(liuri_solar_date) if callable(huangli_provider) else None
