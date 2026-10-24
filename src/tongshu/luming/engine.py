@@ -949,9 +949,13 @@ def check_ghost_tongguan(chart: Any, gz_stem: str, gz_branch: str) -> str:
                 # 吉神(通关五行)被太岁合去 → 反吉为凶 (三命通会 L2553: "吉神有物合去
                 #   则反吉为凶"): 通关五行的地支本气根若被太岁支六合绊走, 且无透干
                 #   本气、无未合地支本气, 则通关五行无力化鬼 (26子2021 子被丑合).
-                _zhi_free = [b for b in _el_zhi.get(_mid, [])
+                _zhi_roots = _el_zhi.get(_mid, [])
+                _zhi_free = [b for b in _zhi_roots
                              if _he_partner(b) != gz_branch]
-                if not _el_gan.get(_mid) and not _zhi_free:
+                # 合去: 通关五行【原有】地支本气根但全被太岁六合绊走, 且无透干
+                #   → 不立 (26子2021 子被丑合). 若通关本无干支本气根(仅纳音,
+                #   如 2028 日柱沙中金), 不属"被合去", 交下面有气检查.
+                if not _el_gan.get(_mid) and _zhi_roots and not _zhi_free:
                     continue
                 # 通关五行须有气 (L4416"身财之旺故不为灾"同例): 在太岁支非死绝,
                 #   或原局有干支本气强根; 仅孤立纳音、又在太岁死绝 → 无力化鬼.
