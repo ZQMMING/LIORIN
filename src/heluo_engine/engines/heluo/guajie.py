@@ -361,6 +361,55 @@ class YeBuYeResult:
     evidence: list[str] = field(default_factory=list)
 
 
+class TaggedEvidence(list):
+    """**带维度标签**的证据列表（2026-10-24）。
+
+    为什么要它
+    ----------
+    判词层的 ``evidence`` 此前是**平铺**的字符串列表：下游只能靠**解析中文**
+    才能知道某条判词属于哪个人生领域（12 域 / 41 子维度，见
+    ``docs/heluo/统一维度表_河洛细粒度落位_20261024.md``）——
+    这是「维度视图」迟迟落不了地的根因。
+
+    而 ``evidence`` 被**大量**消费方当作 ``list[str]`` 使用
+    （诊断规则图、冻结态、数十个守卫）⇒ **不能改条目类型**。
+
+    ⇒ 本类在**保持 list[str] 语义**的前提下，额外记录逐条维度：
+
+        ev.append("流年卦豫 九四爻：…")                  # 默认 UNCLASSIFIED
+        ev.append("流年卦豫 九四爻：…", dim="TIMELINE.02")  # 显式标注
+        ev.extend(gen, dim="HEALTH.02")                 # 整段标注
+
+    ⚠ 未标注的条目**不静默**：``coverage()`` 会把条数报出，
+      守卫亦据此断言「不得有判据证据漏标」（见 tests/heluo/
+      test_heluo_dimensions.py）。
+    """
+
+    def __init__(self, iterable=(), dims=None) -> None:
+        super().__init__(iterable)
+        #: 逐条维度 id（与列表**一一对应**）
+        self.dims: list[str] = list(dims) if dims is not None else []
+
+    def append(self, item, dim: str = "UNCLASSIFIED") -> None:
+        super().append(item)
+        self.dims.append(dim)
+
+    def extend(self, items, dim: str = "UNCLASSIFIED") -> None:
+        for it in items:
+            self.append(it, dim)
+
+    def insert(self, index: int, item, dim: str = "UNCLASSIFIED") -> None:
+        super().insert(index, item)
+        self.dims.insert(index, dim)
+
+    def copy(self) -> "TaggedEvidence":
+        return TaggedEvidence(list(self), list(self.dims))
+
+    def to_plain(self) -> list[str]:
+        """退化为普通 ``list[str]``（给只认 list 的消费方）。"""
+        return list(self)
+
+
 @dataclass
 class ShuXiongResult:
     """数之凶吉判定结果（起例卷·数足不足论）。"""
@@ -405,10 +454,35 @@ class GuaJieResult:
     kuozhan: dict = field(default_factory=dict)  # 扩展断法（K3-447卷一：四体八体/福力/五命得卦/余数断/四时五行/数极）
     canping: Optional[dict] = None  # 参评诗断（K3-447卷十·金锁银匙歌，2026-10-06 接入）
     summary: list[str] = field(default_factory=list)  # 综合判词（人话）
-    evidence: list[str] = field(default_factory=list)
+    #: 判据证据链（**仍是 list[str]**，消费方无感；逐条维度见 :attr:`evidence_dims`）
+    evidence: list[str] = field(default_factory=TaggedEvidence)
     #: 爻辞取象命中（原典 L741「近取诸身，远取诸物，如言龙则必贵……」），
     #: 2026-10-08 接入生产链。元素为 yao_xiang.YaoXiangHit。
     yao_xiang_hits: list = field(default_factory=list)
+
+    # ── 维度视图（2026-10-24）────────────────────────────────────────
+    @property
+    def evidence_dims(self) -> list[str]:
+        """逐条证据的维度 id（与 :attr:`evidence` **一一对应**）。
+
+        ⚠ 若 ``evidence`` 被整体替换成普通 list（外部赋值），此处退化为
+        全部 ``UNCLASSIFIED`` —— **显式**暴露「维度不可信」，
+        而非静默给出错误维度。
+        """
+        dims = getattr(self.evidence, "dims", None)
+        if dims is None or len(dims) != len(self.evidence):
+            return ["UNCLASSIFIED"] * len(self.evidence)
+        return list(dims)
+
+    def by_dimension(self) -> dict:
+        """按**统一维度表**归组证据（12 域 / 41 子维度 + PROCESS/UNCLASSIFIED）。"""
+        from .dimensions import build_by_dimension
+        return build_by_dimension(list(self.evidence), self.evidence_dims)
+
+    def dimension_coverage(self) -> dict:
+        """维度覆盖率（未标注条数**显式报出**，不静默）。"""
+        from .dimensions import coverage
+        return coverage(list(self.evidence), self.evidence_dims)
 
     def to_dict(self) -> dict:
         return {
@@ -490,6 +564,13 @@ class GuaJieResult:
             "canping": self.canping,
             "summary": self.summary,
             "evidence": self.evidence,
+            # ── 维度视图（2026-10-24 新增）──────────────────────────
+            # 判据证据此前是**平铺**的，下游只能靠**解析中文**判断某条属于
+            # 哪个人生领域 ⇒ 12 域视图落不了地。现按统一维度表逐条打标签，
+            # 并给出 by_dimension（按维度归组，items 只带 index 回指 evidence）
+            # 与 dimension_coverage（未标注条数**显式报出**）。
+            "by_dimension": self.by_dimension(),
+            "dimension_coverage": self.dimension_coverage(),
             # 2026-10-08 补：爻辞取象命中的结构化输出（原典 L741）。
             # 逐条给 key/verdict/条件/是否参与判定，下游不必回解析 evidence 文本。
             "yao_xiang_hits": [
@@ -1405,18 +1486,19 @@ def compose_guajie(
         y = query_yao_duan(liunian_hexagram, liunian_yao)
         if y:
             res.liunian_yao = y
-            ev.append(f"流年卦{liunian_hexagram} {liunian_yao}爻：{y.ci}")
+            ev.append(f"流年卦{liunian_hexagram} {liunian_yao}爻：{y.ci}",
+                      dim="TIMELINE.02")
             if y.ye:
-                ev.append(f"  叶者：{y.ye}")
+                ev.append(f"  叶者：{y.ye}", dim="TIMELINE.02")
             if y.buye:
-                ev.append(f"  不叶者：{y.buye}")
+                ev.append(f"  不叶者：{y.buye}", dim="TIMELINE.02")
             if y.suiyun:
-                ev.append(f"  岁运逢之：{y.suiyun}")
+                ev.append(f"  岁运逢之：{y.suiyun}", dim="TIMELINE.01")
         # 叶/不叶
         yb = judge_ye_buye(liunian_hexagram, birth_month, year_ganzhi)
         if yb:
             res.liunian_ye_buye = yb
-            ev.extend(f"  叶/不叶：{e}" for e in yb.evidence)
+            ev.extend((f"  叶/不叶：{e}" for e in yb.evidence), dim="TIMELINE.02")
         # 正对反对（流年卦 vs 先天卦 / vs 后天卦）——两次配对的 other 各不相同，
         # 本身合法；但先天卦与后天卦可能同名，故此处去重（保持原序）。
         # 十二凶卦是流年卦自身的属性，调一次、标签写「流年卦」（见 P1-a）。
@@ -1425,21 +1507,21 @@ def compose_guajie(
                 + check_twelve_xiong(liunian_hexagram, "流年卦"))
         zdfd = list(dict.fromkeys(zdfd))   # 去重且保序
         res.zhengdui_fandui = zdfd
-        ev.extend(f"  正对反对：{w}" for w in zdfd)
+        ev.extend((f"  正对反对：{w}" for w in zdfd), dim="PATTERN.01")
 
     # ── 流月应期 ──────────────────────────────────────────────
     if liuyue_hexagram and liuyue_yao:
         y = query_yao_duan(liuyue_hexagram, liuyue_yao)
         if y:
             res.liuyue_yao = y
-            ev.append(f"流月卦{liuyue_hexagram} {liuyue_yao}爻：{y.ci}")
+            ev.append(f"流月卦{liuyue_hexagram} {liuyue_yao}爻：{y.ci}", dim="TIMELINE.03")
             if y.suiyun:
-                ev.append(f"  岁运逢之：{y.suiyun}")
+                ev.append(f"  岁运逢之：{y.suiyun}", dim="TIMELINE.01")
 
     # ── 数凶 ──────────────────────────────────────────────────
     sx = judge_shu_xiong(tian_shu, di_shu, birth_month, gender)
     res.shu_xiong = sx
-    ev.extend(f"  数之凶吉：{e}" for e in sx.evidence)
+    ev.extend((f"  数之凶吉：{e}" for e in sx.evidence), dim="PATTERN.02")
 
     # ── 爻辞取象（原典 L741，2026-10-08 接入）─────────────────────
     # 原典「凡看爻辞依不得周易正解……文王作易，近取诸身，远取诸物，
@@ -1469,32 +1551,33 @@ def compose_guajie(
         for _h in _hits:
             res.yao_xiang_hits.append(_h)
         ev.append(f"  {_tag}爻辞取象（{len(_hits)} 条）："
-                  + "、".join(f"言{h.key}" for h in _hits))
-        ev.extend(f"    {e}" for e in _evs)
+                  + "、".join(f"言{h.key}" for h in _hits), dim="HEALTH.02")
+        ev.extend((f"    {e}" for e in _evs), dim="HEALTH.02")
 
 
     # ── 元气化工（流年遇） ─────────────────────────────────────
     if yuan_qi_trigrams:
         res.yuan_qi_hit = bool(yuan_qi_trigrams)
         if res.yuan_qi_hit:
-            ev.append("流年遇元气 → 必然得财利")
+            ev.append("流年遇元气 → 必然得财利", dim="WEALTH.01")
     if hua_gong_trigram:
         res.hua_gong_hit = True
-        ev.append(f"流年遇化工（{hua_gong_trigram}）→ 中举中进士生贵子")
+        ev.append(f"流年遇化工（{hua_gong_trigram}）→ 中举中进士生贵子",
+                      dim="CAREER.01")
 
     # ── 纳音五行元气（互体亦算，起例卷之上） ─────────────────────
     if year_ganzhi and len(year_ganzhi) == 2:
         nayin_ev = judge_nayin_yuanqi(year_ganzhi[0], year_ganzhi[1], prenatal_name)
         if nayin_ev:
             res.nayin_yuanqi.extend(nayin_ev)
-            ev.extend(f"  纳音元气：{e}" for e in nayin_ev)
+            ev.extend((f"  纳音元气：{e}" for e in nayin_ev), dim="HEALTH.01")
         huti_ev: list[str] = []
         for g in (prenatal_name, postnatal_name):
             if g in COMPOUND_GUA:
                 pass  # 互体需六爻序列，主链另行挂载（build 层）
         if huti_ev:
             res.nayin_yuanqi.extend(huti_ev)
-            ev.extend(f"  互体纳音：{e}" for e in huti_ev)
+            ev.extend((f"  互体纳音：{e}" for e in huti_ev), dim="HEALTH.01")
 
     # ── 元堂断语（六位贵贱，起例卷之上） ───────────────────────
     # 原典："初为庶民，二为侯牧，三为公卿节制，四为近侍大臣，
@@ -1511,24 +1594,29 @@ def compose_guajie(
         #   注：「初上又次之」是引擎据 1632 刻本补的（通行本「六位贵贱」段无此语），
         #   故不进「原典：」标注，改标刻本依据。
         if _wei == "初":
-            ev.append(f"元堂居{yuantang_yao}（庶民位）：多从寒微起家（原典：初为庶民）")
+            ev.append(f"元堂居{yuantang_yao}（庶民位）：多从寒微起家（原典：初为庶民）",
+                      dim="CAREER.03")
         elif _wei == "二":
             ev.append(f"元堂居{yuantang_yao}（侯牧位）：卦佳数足可牧民一方"
-                      f"（原典：二为侯牧；惟五位为佳，二次之）")
+                      f"（原典：二为侯牧；惟五位为佳，二次之）", dim="CAREER.03")
         elif _wei == "三":
-            ev.append(f"元堂居{yuantang_yao}（公卿节制位）：掌节制之权，次五二之贵（原典：三为公卿节制）")
+            ev.append(f"元堂居{yuantang_yao}（公卿节制位）：掌节制之权，次五二之贵（原典：三为公卿节制）",
+                      dim="CAREER.03")
         elif _wei == "四":
-            ev.append(f"元堂居{yuantang_yao}（近侍大臣位）：近君侍从之贵（原典：四为近侍大臣）")
+            ev.append(f"元堂居{yuantang_yao}（近侍大臣位）：近君侍从之贵（原典：四为近侍大臣）",
+                      dim="CAREER.03")
         elif _wei == "五":
             ev.append(f"元堂居{yuantang_yao}（君位）：卦名佳、二数足、化工元气得时 → 贤良上贵之命"
-                      f"（原典：五为君位；惟五位为佳）")
+                      f"（原典：五为君位；惟五位为佳）", dim="CAREER.03")
         elif _wei == "上":
-            ev.append(f"元堂居{yuantang_yao}（天枢/宗庙宫庭大内/山林八极之外）：贵极为三公，否则闲散卑职（原典：六为天枢，又为宗庙宫庭大内，又为山林八极之外）")
+            ev.append(f"元堂居{yuantang_yao}（天枢/宗庙宫庭大内/山林八极之外）：贵极为三公，否则闲散卑职（原典：六为天枢，又为宗庙宫庭大内，又为山林八极之外）",
+                      dim="CAREER.03")
 
     # ── 十二凶卦（命卦） ───────────────────────────────────────
     if prenatal_name in TWELVE_XIONG_GUA:
         res.twelve_xiong = True
-        ev.append(f"先天命卦{prenatal_name}属十二凶卦之一 → 不吉（相生或与月卦相投可去凶）")
+        ev.append(f"先天命卦{prenatal_name}属十二凶卦之一 → 不吉（相生或与月卦相投可去凶）",
+                      dim="PATTERN.01")
 
     # ── 综合判词（人话摘要） ───────────────────────────────────
     s = res.summary
@@ -2018,14 +2106,14 @@ def build_guajie_from_result(
             gj.summary.append("⚠ 未取得出生月，叶/不叶与部分扩展断法按正月兜底，"
                               "相关结论不可尽信（生月缺失已影响判定）")
             gj.evidence.append("  生月：调用方未传 birth_month，已按正月(1)兜底——"
-                               "叶/不叶、kuozhan 相关项结果随之改变")
+                               "叶/不叶、kuozhan 相关项结果随之改变", dim="PROCESS")
 
         # ⚠ 2026-10-24 显式化：流日**日历口径**异常时的留痕
         #   （如节气表不可用而退回公历月日口径 —— 此时流日取用月/日不可信）。
         #   口径异常若只藏在代码里，等于「用错口径的结果被当成正常结果交付」。
         if _cal_note:
             gj.summary.insert(0, _cal_note)
-            gj.evidence.append("  流日口径：" + _cal_note.lstrip("⚠ "))
+            gj.evidence.append("  流日口径：" + _cal_note.lstrip("⚠ "), dim="PROCESS")
 
         # ⚠ 2026-10-24 显式化：目标日**超出「五卦×六日 = 30 日」的卦月模型**。
         #   节气月实测 29–32 日（1900–2100：31 日 923 个、32 日 225 个），
@@ -2041,7 +2129,7 @@ def build_guajie_from_result(
                 f"（该段覆盖该月最后一日），流日结果与第 30 日同段"
             )
             gj.summary.insert(0, _of)
-            gj.evidence.append("  流日：" + _of.lstrip("⚠ "))
+            gj.evidence.append("  流日：" + _of.lstrip("⚠ "), dim="PROCESS")
 
         # ⚠ 2026-10-24 显式化：目标年**不在流年序列**时（超出一轮大运覆盖），
         #   流年卦与流年判词为空 —— 平台层会因此**不产出该年信号**。
@@ -2055,7 +2143,7 @@ def build_guajie_from_result(
                     f"（大运按《河洛理数·卷之四》只走一轮：先天6段+后天6段），"
                     f"故该年无流年卦/流年判词，该年相关信号不产出")
             gj.summary.insert(0, "⚠ " + _why)
-            gj.evidence.append("  流年：" + _why)
+            gj.evidence.append("  流年：" + _why, dim="PROCESS")
 
         # ── 三阳奇偶合象（L99 / L714 平行印证）────────────────────
         # 该条按节气窗口「冬至后至雨水前」判，**必须有出生公历日**。
@@ -2068,9 +2156,9 @@ def build_guajie_from_result(
             if gj.shu_xiong is not None:
                 gj.shu_xiong.chun_qi_qi_ou = (_cq_note, _cq_ok)
             if _cq_ok is not None:
-                gj.evidence.append(f"  三阳奇偶合象（L99/L714）：{_cq_note}")
+                gj.evidence.append(f"  三阳奇偶合象（L99/L714）：{_cq_note}", dim="TIMELINE.05")
         except Exception as _e:            # 该条不阻塞主链
-            gj.evidence.append(f"  三阳奇偶合象：计算跳过（{_e}）")
+            gj.evidence.append(f"  三阳奇偶合象：计算跳过（{_e}）", dim="PROCESS")
 
         # 流日判词（应期定位，独立查询不并入综合判词）
         if liuri_hex_name and liuri_yao_name:
@@ -2078,14 +2166,15 @@ def build_guajie_from_result(
             gj.liuri_yao = query_yao_duan(liuri_hex_name, liuri_yao_name)
             gj.evidence.append(
                 f"流日定位：{liuri_hex_name}{liuri_yao_name}"
-                f"（原典起日卦例·**逐日一爻**，段内五日各变一次；本行为第{target_day}日）")
+                f"（原典起日卦例·**逐日一爻**，段内五日各变一次；本行为第{target_day}日）",
+                dim="TIMELINE.04")
         # 流时层已剥离（2026-10-06）：起时卦例的推演整段摘除。
         # 若调用方仍传 target_hour，**明确留痕**而不是静默忽略——
         # 静默忽略会让调用方以为该层已生效，正是本轮反复清理的那类缺陷。
         if target_hour is not None:
             gj.evidence.append(
                 f"  流时：已剥离，不产出（传入 target_hour={target_hour} 被忽略；"
-                f"原典起时卦例层待引擎能力就绪后恢复）")
+                f"原典起时卦例层待引擎能力就绪后恢复）", dim="PROCESS")
 
         # 出生年占位留痕（2026-10-22）：调用方既未传 birth_year、也未传
         # birth_date 时，引擎用 1984（甲子年）作占位推流年 —— 与真实出生年
@@ -2095,7 +2184,8 @@ def build_guajie_from_result(
             gj.evidence.append(
                 "  出生年：占位推流年（未传 birth_year 且无 birth_date，"
                 "引擎以 1984 甲子年占位）——流年干支与真实出生年可能错位，"
-                "流年/流月/流日判词请谨慎采信；请补传 birth_year 或 birth_date")
+                "流年/流月/流日判词请谨慎采信；请补传 birth_year 或 birth_date",
+                dim="PROCESS")
 
         # 历法口径自检留痕（2026-10-22）：把**输入四柱**与 sxtwl 自算四柱
         # （1582 年前 = 儒略历）比对。不一致时说明上游的公历换算口径与河洛
@@ -2106,15 +2196,15 @@ def build_guajie_from_result(
             _cal_notes = check_calendar_consistency(
                 getattr(result, "bazi", None),
                 getattr(result.input, "birth_date", "") or "")
-            gj.evidence.extend(_cal_notes)
+            gj.evidence.extend(_cal_notes, dim="PROCESS")
         except Exception as _e:            # 该条不阻塞主链
-            gj.evidence.append(f"  历法口径自检：跳过（{_e}）")
+            gj.evidence.append(f"  历法口径自检：跳过（{_e}）", dim="PROCESS")
 
         # 历法口径自校留痕（2026-10-22）：canonical 已按河洛自己的 sxtwl 节气
         # 口径修正了输入四柱的年/月柱（八字引擎在 1582 年前的节边界差 7 天）。
         # 这里把「改了什么、为什么」摆到台面上，避免下游误以为输入四柱原样生效。
         for _note in (getattr(result, "bazi_caliber_notes", None) or []):
-            gj.evidence.append(_note)
+            gj.evidence.append(_note, dim="PROCESS")
 
         # ── 生时化工（四正节卦，起例卷之下·节候卦爻） ────────────────
         try:
@@ -2122,11 +2212,11 @@ def build_guajie_from_result(
             if bd:
                 jh = judge_jiehua_gong(bd)
                 gj.jiehua_gong = jh
-                gj.evidence.extend(f"  节候卦化工：{e}" for e in jh)
+                gj.evidence.extend((f"  节候卦化工：{e}" for e in jh), dim="TIMELINE.05")
                 if jh and "化工" in jh[0]:
                     gj.summary.append(jh[0])
         except Exception as _e:
-            gj.evidence.append(f"  节候卦化工：跳过（{_e}）")
+            gj.evidence.append(f"  节候卦化工：跳过（{_e}）", dim="PROCESS")
 
         # ── 互体纳音元气（起例卷之上：互体有兑亦是纳音元气） ─────────
         try:
@@ -2134,9 +2224,9 @@ def build_guajie_from_result(
                 hn = judge_nayin_huti(bazi[0][0], bazi[0][1], prenatal, postnatal)
                 if hn:
                     gj.nayin_yuanqi.extend(hn)
-                    gj.evidence.extend(f"  互体纳音：{e}" for e in hn)
+                    gj.evidence.extend((f"  互体纳音：{e}" for e in hn), dim="HEALTH.01")
         except Exception as _e:
-            gj.evidence.append(f"  互体纳音：跳过（{_e}）")
+            gj.evidence.append(f"  互体纳音：跳过（{_e}）", dim="PROCESS")
 
         # ── 死断诸法（起例卷之下·后天详说） ─────────────────────────
         try:
@@ -2147,7 +2237,7 @@ def build_guajie_from_result(
                 year_ganzhi=year_ganzhi,
             )
             gj.si_duan = si
-            gj.evidence.extend(f"  死断：{w}" for w in si)
+            gj.evidence.extend((f"  死断：{w}" for w in si), dim="LIFESPAN.03")
             # summary 走改写表述，不放原典硬断原句。
             # 原句仍在 si_duan / evidence 中完整留档可回溯，但直出到
             # summary 就会被下游 LLM 当成结论复述——「到此必死」「定死无疑」
@@ -2163,7 +2253,7 @@ def build_guajie_from_result(
                     "两存待考。原句与触发条件见 evidence 中「死断」各条；"
                     "此为术数立断语，不作寿命事实断言。")
         except Exception as _e:  # 死断不阻塞主链
-            gj.evidence.append(f"  死断：计算跳过（{_e}）")
+            gj.evidence.append(f"  死断：计算跳过（{_e}）", dim="PROCESS")
 
         # ── 扩展断法（K3-447卷一：四体八体/福力/五命得卦/余数断/四时五行/数极） ──
         try:
@@ -2177,9 +2267,14 @@ def build_guajie_from_result(
             )
             for _k, _v in gj.kuozhan.items():
                 if isinstance(_v, list):
-                    gj.evidence.extend(f"  {_k}：{e}" for e in _v)
+                    # 扩展断法含 13 类**不同**机制 ⇒ 逐 key 定维度
+                    # （映射表见 dimensions.KUOZHAN_DIM，附各判法的原典出处）。
+                    from .dimensions import KUOZHAN_DIM as _KZD
+                    _kd = _KZD.get(_k, "PATTERN.01")
+                    for _e in _v:
+                        gj.evidence.append(f"  {_k}：{_e}", dim=_kd)
         except Exception as _e:  # 扩展断法不阻塞主链
-            gj.evidence.append(f"  扩展断法：计算跳过（{_e}）")
+            gj.evidence.append(f"  扩展断法：计算跳过（{_e}）", dim="PROCESS")
 
         # ── 参评诗断（K3-447卷十·金锁银匙歌起参评例）────────────────
         # 2026-10-06 接入。canping.py 此前有完整的起数算法与逐页转录语料，
@@ -2199,13 +2294,13 @@ def build_guajie_from_result(
                         f"  参评诗断：金锁银匙歌起数得 {cp['total']}"
                         f"（{cp.get('part_cn') or '—'}，第 {cp.get('page')} 页），"
                         f"{cp['layer']}层："
-                        + "／".join(cp.get("lines") or []))
+                        + "／".join(cp.get("lines") or []), dim="PATTERN.02")
                     for _ln in (cp.get("lines") or []):
                         gj.summary.append(f"参评·{cp['layer']}：{_ln}")
                 else:
-                    gj.evidence.append(f"  参评诗断：{cp.get('note', '起数失败')}")
+                    gj.evidence.append(f"  参评诗断：{cp.get('note', '起数失败')}", dim="PATTERN.02")
         except Exception as _e:  # 参评不阻塞主链
-            gj.evidence.append(f"  参评诗断：计算跳过（{_e}）")
+            gj.evidence.append(f"  参评诗断：计算跳过（{_e}）", dim="PROCESS")
 
 
         # H9b 河洛×黄历：流日应期段挂黄历标注（注入优先，lunar_python 兜底）
@@ -2214,7 +2309,7 @@ def build_guajie_from_result(
             gj.evidence.append(
                 f"流日黄历：{_lunar_anno.get('solar_date')} {_lunar_anno.get('lunar')} "
                 f"{_lunar_anno.get('day_ganzhi')} {_lunar_anno.get('day_nayin')} "
-                f"（source={_lunar_anno.get('source')}）")
+                f"（source={_lunar_anno.get('source')}）", dim="TIMELINE.04")
         return gj.to_dict()
     except Exception as e:  # 解卦层不阻塞主链（防御性兜底）
         return {"error": f"guajie 构建失败: {e}"}
