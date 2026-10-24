@@ -1826,15 +1826,42 @@ def build_guajie_from_result(
     # 目标日缺省回退：结果对象自带**流日取用日**（canonical 记录）——
     #   「流日卦按当前日期自动算」的契约下，调用方不必再重复传一遍三元组，
     #   也不会出现「算的是今天、问的是另一天」的时间轴不自洽。
+    #
+    # ⚠ 2026-10-24 口径修复：target_date 有**两种口径**（见 HeluoResult.target_date_caliber）：
+    #   "solar" = 公历 YYYY-MM-DD → 须先过 resolve_jieqi_window 换成
+    #             (节气月序, 自节起的日序) 才能定位流月/流日；
+    #   "jieqi" = (年, 节气月序, 节后日序) 的伪日期 → 直接用。
+    #   此前**一律按公历拆三段**再当节气月序用 ⇒ 公历 10 月被当成十月（立冬月），
+    #   流日取到别的月（真缺陷，实测 target_date=2026-10-23 取到 date_from=2026-11-25）。
+    _cal_note = str(getattr(result, "target_date_note", "") or "")
     if target_year is None:
+        _cal = str(getattr(result, "target_date_caliber", "") or "")
         _td = str(getattr(result, "target_date", "") or "")[:10]
         if _td:
             try:
-                target_year, target_month, target_day = (
-                    int(x) for x in _td.split("-"))
+                _y, _m, _d = (int(x) for x in _td.split("-"))
             except Exception:
                 # 解析失败 → 保持「未指定」，不猜（不静默取今天）
                 target_year = None
+            else:
+                if _cal == "jieqi":
+                    # 已是 (年, 节气月序, 节后日序)
+                    target_year, target_month, target_day = _y, _m, _d
+                else:
+                    from .canonical import resolve_jieqi_window as _rjw
+                    _w = _rjw(_y, _m, _d)
+                    if _w.get("ok"):
+                        target_year = _y
+                        target_month = int(_w["month"])
+                        target_day = int(_w["day"])
+                    else:
+                        # 换算失败 → 保持「未指定」并留痕（不静默取今天）
+                        target_year = None
+                        _cal_note = (
+                            (_cal_note + " " if _cal_note else "")
+                            + f"⚠ 流日取用日 { _td } 无法换算为节气窗口"
+                              f"（{_w.get('error') or '未知原因'}），流月/流日未定位"
+                        )
     try:
         prenatal = _short(result.prenatal.hexagram_name)
         postnatal = _short(result.postnatal.hexagram_name)
@@ -1971,6 +1998,29 @@ def build_guajie_from_result(
                               "相关结论不可尽信（生月缺失已影响判定）")
             gj.evidence.append("  生月：调用方未传 birth_month，已按正月(1)兜底——"
                                "叶/不叶、kuozhan 相关项结果随之改变")
+
+        # ⚠ 2026-10-24 显式化：流日**日历口径**异常时的留痕
+        #   （如节气表不可用而退回公历月日口径 —— 此时流日取用月/日不可信）。
+        #   口径异常若只藏在代码里，等于「用错口径的结果被当成正常结果交付」。
+        if _cal_note:
+            gj.summary.insert(0, _cal_note)
+            gj.evidence.append("  流日口径：" + _cal_note.lstrip("⚠ "))
+
+        # ⚠ 2026-10-24 显式化：目标日**超出「五卦×六日 = 30 日」的卦月模型**。
+        #   节气月实测 29–32 日（1900–2100：31 日 923 个、32 日 225 个），
+        #   故每年约 8 天的日序 > 30 —— 原典的卦月只有 30 日
+        #   （K3-447 L1154「日卦者每月變五卦每卦管六日方成一月」），
+        #   超出部分**无卦可取**。引擎按时间把它归入**末段**
+        #   （实测末段时间范围确实覆盖该月最后一日），但这属于**模型外延用**，
+        #   必须说明，否则「第 31 日」与「第 30 日」返回同一卦会被当成正常。
+        if target_day and int(target_day) > 30:
+            _of = (
+                f"⚠ 目标日为该节气月第 {int(target_day)} 日，超出「五卦×六日 = 30 日」"
+                f"的卦月模型（原典 K3-447 L1154），已按时间归入本月末段"
+                f"（该段覆盖该月最后一日），流日结果与第 30 日同段"
+            )
+            gj.summary.insert(0, _of)
+            gj.evidence.append("  流日：" + _of.lstrip("⚠ "))
 
         # ⚠ 2026-10-24 显式化：目标年**不在流年序列**时（超出一轮大运覆盖），
         #   流年卦与流年判词为空 —— 平台层会因此**不产出该年信号**。

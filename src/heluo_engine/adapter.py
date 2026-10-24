@@ -25,7 +25,9 @@ from typing import Optional, Union
 
 from .engines.bazi_adapter import BaziAdapter
 from .engines.bazi_engine import BaziChart, BaziEngine, BRANCH_CN, STEM_CN
-from .engines.heluo.canonical import HeluoCanonical, HeluoResult
+from .engines.heluo.canonical import (
+    HeluoCanonical, HeluoResult, resolve_jieqi_window,
+)
 
 #: 河洛默认使用的时区（与 canonical 构造 HeluoInput 时一致）
 HELUO_TZ = "Asia/Shanghai"
@@ -164,7 +166,30 @@ class HeluoAdapter:
         # 流日卦的取用日：显式 target_date > 显式三元 > **今天（北京时间）**
         _ty, _tm, _td = resolve_target_date(
             target_date, target_year, target_month, target_day)
-        target_year, target_month, target_day = _ty, _tm, _td
+        # ⚠ 2026-10-24 真缺陷修复：resolve_target_date 返回的是**公历**月日，
+        #   而河洛日卦层的内部契约是**节气月序 + 自节起的日序**
+        #   （canonical.calculate 的 target_month/target_day 即此义）。
+        #   两者口径不同：公历 10 月 ≠ 节气/农历十月（十月 = 立冬月，11/7 起）。
+        #   此前 adapter 直接透传 ⇒ 顶层 daily_hexagram 取的是**别的月**的日卦：
+        #   实测 target_date=2026-10-23（寒露后第 16 日，属九月/寒露月）
+        #   被算成**十月/立冬月**的段，date_from=2026-11-25 —— 与目标日相差 33 天。
+        #   现按节气窗口换算（换算规则与原典依据见 canonical.resolve_jieqi_window）。
+        _solar_date = f"{_ty:04d}-{_tm:02d}-{_td:02d}"
+        _win = resolve_jieqi_window(_ty, _tm, _td)
+        _cal_note = ""
+        target_jie_year: Optional[int] = None
+        if _win.get("ok"):
+            target_month = int(_win["month"])
+            target_day = int(_win["day"])
+            target_jie_year = int(_win["year"])
+        else:
+            # 节气表不可用（sxtwl 缺失）⇒ 无法换算。
+            # 不静默换口径：退回旧口径并**显式留痕**（缺失被当成正常，比答错更坏）。
+            _cal_note = (
+                "⚠ 节气表不可用，流日层退回公历月日口径"
+                f"（{_win.get('error') or '未知原因'}）—— 流日取用月/日不可信"
+            )
+        target_year = _ty
         bazi = [
             (
                 STEM_CN[chart.year_pillar.heavenly_stem],
@@ -213,6 +238,10 @@ class HeluoAdapter:
             target_year=target_year,
             target_month=target_month,
             target_day=target_day,
+            # 公历原值 + 窗口所属年 + 口径留痕（2026-10-24）
+            target_solar_date=_solar_date,
+            target_jie_year=target_jie_year,
+            target_date_note=_cal_note,
         )
 
         # H8: 解卦层（原典判词）挂载 — 独立于冻结的 calculate，防御性兜底

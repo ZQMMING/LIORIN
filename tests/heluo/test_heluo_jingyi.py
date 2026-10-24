@@ -16,6 +16,7 @@ from heluo_engine.engines.heluo.guajie import (
     query_yao_duan,
 )
 from heluo_engine.adapter import HeluoAdapter
+from heluo_engine.engines.heluo.canonical import resolve_jieqi_window
 
 
 class TestJingyiDataLayer:
@@ -80,10 +81,20 @@ class TestJingyiOutputLayer:
         # 日期自动算」），时间轴随之只算该年该月（fast path）。故此处必须把
         # 目标日**显式**传给适配器，与下面 guajie 的取用日保持一致 ——
         # 否则会拿「今天的月」去取另一个月的日段（取不到）。
+        #
+        # ⚠ 2026-10-24 口径修复：日卦层的 target_month/target_day 是
+        #   **节气月序 + 自节起的日序**，不是公历月日（公历 9 月 ≠ 节气九月：
+        #   九月 = 寒露月，10/8 起）。适配器已按 resolve_jieqi_window 换算，
+        #   这里直调 guajie 必须用**同一口径**，故由同一函数换算得出，
+        #   不写死数字（写死会在历法规则变化时静默取错月）。
+        _target = "2026-09-15"
         r = HeluoAdapter().compute((1980, 6, 22, 10), gender="male",
-                                   target_date="2026-09-15")
+                                   target_date=_target)
+        _w = resolve_jieqi_window(2026, 9, 15)
+        assert _w.get("ok"), "节气窗口换算应当成功"
         return build_guajie_from_result(
-            r, target_year=2026, target_month=9, target_day=15, target_hour=10)
+            r, target_year=2026, target_month=int(_w["month"]),
+            target_day=int(_w["day"]), target_hour=10)
 
     def test_benming_present(self, guajie_dict):
         bm = guajie_dict.get("benming") or {}

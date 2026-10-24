@@ -153,15 +153,29 @@ def _jie_interval_for_lunar_month(year: int, lunar_month: int) -> tuple[str | No
     流日卦段边界须按"节→下节"实际间隔（约 29~31 日不等）均匀切分，
     不可机械固定每段日数。
 
-    月编号与节的实际时序（实测 2027 年）：
-        lm=1 子月=雨水 02-04   lm=7 午月=立秋 08-08
-        lm=2 丑月=惊蛰 03-06   lm=8 未月=白露 09-08
-        lm=3 寅月=清明 04-05   lm=9 申月=寒露 10-08
-        lm=4 卯月=立夏 05-06   lm=10 酉月=立冬 11-07
-        lm=5 辰月=芒种 06-06   lm=11 戌月=大雪 12-07
-        lm=6 巳月=小暑 07-07   lm=12 亥月=小寒 01-05（**在年初**）
-    故循环序为 12 → 1 → 2 → … → 11 → 12，**跨年点在 lm=11 → lm=12**
+    ⚠ 2026-10-24 **订正本 docstring 的月支标注与节气名**（原两处皆错，
+    会被后来者照着推演出错误结论）：
+      · 原写「lm=1 子月=雨水 02-04 … lm=12 亥月=小寒 01-05」——
+        其中「lm=1 = **雨水**」错：实测 lm=1 的窗口起点是 **立春**
+        （2026-02-04 04:01；雨水在 2/18–2/19）。lm=2 才是惊蛰。
+        月支标注（子/丑/…/亥）也整体错位一支：引擎 lm 序 = **农历月序**
+        （建寅），正确月支为
+            lm=1 寅(立春)  lm=2 卯(惊蛰)  lm=3 辰(清明)  lm=4 巳(立夏)
+            lm=5 午(芒种)  lm=6 未(小暑)  lm=7 申(立秋)  lm=8 酉(白露)
+            lm=9 戌(寒露)  lm=10 亥(立冬) lm=11 子(大雪)  lm=12 丑(小寒)
+        （与本文件 `_LUNAR_MONTH_JIE` 的注释一致 —— 正月=立春(3)…十二月=小寒(1)，
+          即**建寅**：正月建寅，故正月自立春起。）
+
+    实测 2026 年 12 个窗口（lm ↔ 起点节气）：
+        lm=1 立春 02-04   lm=2 惊蛰 03-05   lm=3 清明 04-05   lm=4 立夏 05-05
+        lm=5 芒种 06-05   lm=6 小暑 07-07   lm=7 立秋 08-07   lm=8 白露 09-07
+        lm=9 寒露 10-08   lm=10 立冬 11-07  lm=11 大雪 12-07  lm=12 小寒 01-05
+    ⇒ 同一公历年内的 12 个窗口首尾相接，**跨年点在 lm=11 → lm=12**
     （大雪 12-07 → 次年小寒 01-05）；lm=12 → lm=1 仍在同一年内。
+    ⚠ 术语：严格说这些月界取的是二十四**气**（中气），而「节」另指
+      冬至/大寒/雨水/…；本引擎沿用「节」这一称呼（术语略松），
+      但**取的时刻完全正确**，且与原典「正月节气…立春就从二十八日起数」
+      （《河洛真数·起例卷之上》L129）一致。
     """
     t0 = _jie_datetime_for_lunar_month(year, lunar_month)
     if t0 is None:
@@ -193,6 +207,105 @@ def _jie_datetime_for_lunar_month(year: int, lunar_month: int) -> str | None:
             for stale in list(_jie_cache)[:len(_jie_cache) - _JIE_CACHE_MAX]:
                 _jie_cache.pop(stale, None)
     return _jie_cache[year].get(lunar_month)
+
+
+# ═══════════════════════════════════════════════════════════════════
+# 公历 → 节气月窗口换算（2026-10-24 新增）
+#
+# ⚠ 这是**真缺陷修复**的核心。河洛日卦层的内部契约是
+#   「**节气月序**（农历月序）+ **自节起的日序**」，
+#   而 adapter 层传进来的是**公历**月日 —— 两者口径不同，
+#   公历 10 月 ≠ 农历/节气十月 ⇒ 流日卦取的是**别的月**的日卦。
+#   实测（修复前）：target_date=2026-10-23（农历九月十四）被算成
+#   **农历十月**的段，date_from=2026-11-25 —— 与目标日相差 33 天。
+#
+# 原典依据（逐字，包内切片《河洛真数_起例卷之上》L129/L133）：
+#   L129「假如正月节气在十二月小尽二十八日，**立春就从二十八日起数**是也。」
+#        ⇒ 正月的「节」= **立春**；日序自**节的当日**起算（1 = 节当日）。
+#   L133「但**子寅辰午申戌居左**，变爻用点，**丑卯巳未酉亥居右**取应」
+#        ⇒ 阳月为奇数月、阴月为偶数月（建寅：正月=寅月）。
+#   K3-448 修正版 L482 硬算例「如本年**七月初二日午時立[秋]節**…」
+#        ⇒ 七月 = 立秋月，日序自初二（节当日）起算。
+#   《河洛真数》L384「但要从所生之月**准正月起**…数至十二月毕…**此说方合节气**」
+#        ⇒ 月卦序列自**正月**起 ⇒ 月序编号 = **农历月序号**（建寅）。
+#
+# 月序 ↔ 节 的对应（引擎既有 _jie_datetime_for_lunar_month，**勿改**）：
+#     lm=1 正月(立春)  lm=2 二月(惊蛰)  lm=3 三月(清明)  lm=4 四月(立夏)
+#     lm=5 五月(芒种)  lm=6 六月(小暑)  lm=7 七月(立秋)  lm=8 八月(白露)
+#     lm=9 九月(寒露)  lm=10 十月(立冬) lm=11 十一月(大雪) lm=12 十二月(小寒)
+#   同一公历年内的 12 个窗口按**节**首尾相接：
+#     小寒(1月) → 立春(2月) → … → 大雪(12月) → 次年小寒
+#   ⇒ 公历年 Y 的窗口覆盖 [小寒(Y)-01-05, 小寒(Y+1)-01-05)；
+#     **1/1–1/4 落在上一年的十一月窗口**（大雪(Y-1) → 小寒(Y)）。
+# ═══════════════════════════════════════════════════════════════════
+def resolve_jieqi_window(year: int, month: int, day: int) -> dict:
+    """公历日期 → 节气月窗口（**节气月序** + **自节起的日序**）。
+
+    这是河洛日卦层的**日历口径入口**：adapter 拿到的是公历日期，
+    日卦层要的是「哪个节后第几天」，故必须先过这一道换算。
+
+    Args:
+        year/month/day: **公历**年月日。
+
+    Returns:
+        dict：
+          · ``ok``        —— 是否命中窗口（False = 节气表不可用等）
+          · ``year``      —— 窗口所属年（该窗口「节」所在的公历年；
+                             1/1–1/4 的跨年边界情形为 year-1）
+          · ``month``     —— **节气月序**（农历月序，1–12）
+          · ``day``       —— **自节起的日序**（1 = 节的当日，1–30）
+          · ``jie_datetime`` / ``next_jie_datetime`` —— 该窗口的节/下节时刻
+          · ``solar_date`` —— 原公历日期（ISO）
+          · ``error``      —— 未命中时的原因
+    """
+    from datetime import date as _date, datetime as _dt
+
+    _err = ""
+    try:
+        _d = _date(int(year), int(month), int(day))
+    except Exception as exc:
+        return {
+            "ok": False, "year": int(year), "month": 0, "day": 0,
+            "jie_datetime": "", "next_jie_datetime": "",
+            "solar_date": "", "error": f"日期非法: {exc}",
+        }
+
+    # 本年 12 个窗口 + 上一年的 11 月（跨年边界 1/1–1/4）。
+    # 两组窗口首尾相接、**不重不漏**：
+    #     … 大雪(Y-1)→小寒(Y) → 小寒(Y)→立春(Y) → … → 大雪(Y)→小寒(Y+1) …
+    for _wyear in (int(year), int(year) - 1):
+        for _lm in range(1, 13):
+            _t0, _t1 = _jie_interval_for_lunar_month(_wyear, _lm)
+            if not _t0 or not _t1:
+                continue
+            try:
+                _a = _dt.strptime(_t0, "%Y-%m-%d %H:%M")
+                _b = _dt.strptime(_t1, "%Y-%m-%d %H:%M")
+            except Exception:
+                continue
+            # 窗口归属按**日历日**判：节的当日 = 日序 1，
+            # 下节的当日即属下一窗口（原典 L129「立春就从二十八日起数」：
+            # 节当日即起数，不因节在当日某时刻而后延一天）。
+            if _a.date() <= _d < _b.date():
+                return {
+                    "ok": True,
+                    "year": _wyear,
+                    "month": _lm,
+                    "day": (_d - _a.date()).days + 1,
+                    "jie_datetime": _t0,
+                    "next_jie_datetime": _t1,
+                    "solar_date": _d.isoformat(),
+                    "error": "",
+                }
+
+    _err = "该日未落入任何节气窗口（节气表不可用？）"
+    if not _jie_datetime_for_lunar_month(int(year), 1):
+        _err = "节气表不可用（sxtwl 缺失或初始化失败）"
+    return {
+        "ok": False, "year": int(year), "month": 0, "day": 0,
+        "jie_datetime": "", "next_jie_datetime": "",
+        "solar_date": _d.isoformat(), "error": _err,
+    }
 
 
 def _jie_by_batch(sxtwl, year: int) -> dict[int, tuple] | None:
@@ -313,7 +426,16 @@ class HeluoResult:
     #: 本次计算采用的**流日取用日**（公历 YYYY-MM-DD）；未指定目标日时为空。
     #: 供下游（guajie / 平台）在不重复传参的情况下定位同一流日 ✓
     #: （「流日卦按当前日期自动算」契约）。
+    #: ⚠ 2026-10-24：口径由 :attr:`target_date_caliber` 标注 ——
+    #:   "solar" 时是公历日期；"jieqi" 时是 (年, 节气月序, 节后日序) 的伪日期
+    #:   （直调 canonical 且未给公历原值时的兼容形态，**不可当公历日期解读**）。
     target_date: str | None = None
+    #: ⚠ 2026-10-24 新增：target_date 的口径标注（"solar" / "jieqi" / ""）。
+    #: 见 :attr:`target_date` 说明 —— 两种口径解读方式不同，混用会取错流日。
+    target_date_caliber: str = ""
+    #: ⚠ 2026-10-24 新增：流日**日历口径**的留痕（非空即表示口径有异常，
+    #:   如节气表不可用而退回公历月日口径 —— 此时流日结果不可信）。
+    target_date_note: str = ""
     #: 2026-10-24 审计修：era（三元）的**来源**标记。
     #: era 决定**寄宫对象**（上元寄艮/坤、中元阳男阴女寄艮、下元寄离/兑），
     #: 寄宫数一变 → 先天卦变 → 元堂变 → 后天卦变 → **全链判词全变**。
@@ -387,6 +509,16 @@ class HeluoCanonical:
         target_year: int | None = None,
         target_month: int | None = None,
         target_day: int | None = None,
+        # ⚠ 2026-10-24 新增：目标日的**公历**原值（ISO YYYY-MM-DD）。
+        #   target_month/target_day 是**节气月序 + 自节起的日序**（日卦层内部契约），
+        #   与公历月日**不是一回事** ⇒ 记录「本次算的是哪一天」必须另存公历原值，
+        #   否则结果里的 target_date 会是「年-节气月-日序」的伪日期。
+        target_solar_date: str | None = None,
+        # 2026-10-24 新增：目标月窗口所属的**年**（节气表取哪一年的）。
+        #   正常 = target_year；跨年边界（1/1–1/4 落在上一年的十一月窗口）为 target_year-1。
+        target_jie_year: int | None = None,
+        # 2026-10-24 新增：流日日历口径的留痕（非空 = 口径有异常，如节气表不可用）。
+        target_date_note: str = "",
         # ⚠ 2026-10-24：era_source 放在**签名末尾**，不可插在 era 之后 ——
         #   本方法支持**位置参数**调用（如 calculate(bazi, gender, hour, era, 2013)，
         #   插在中间会把 birth_year 的实参错位成 era_source，流年序列整体错位。
@@ -414,8 +546,23 @@ class HeluoCanonical:
         target_year: 公历年（int，可选）。批次 P 第二步（2026-10-10）新增 fast-path 门控：
                      传值时启用算力裁剪（见 _build_timeline 头部注释）；None 退回全量
                      （保留旧契约，避免冻结回归）。
-        target_month: 农历月（int，可选；1-12）。仅在 target_year 非 None 时生效。
-                     命中则顶层 daily_hexagram 填目标月 6 日段字典。
+        target_month: **节气月序**（int，可选；1-12）—— 即**农历月序号**
+                     （建寅：正月=寅月=立春月、七月=申月=立秋月…），**不是公历月**。
+                     仅在 target_year 非 None 时生效；命中则顶层 daily_hexagram
+                     填目标月 6 日段字典。
+        target_day: **自节起的日序**（int，可选；1-30）—— 1 = 该月「节」的当日。
+                     ⚠ 不是公历日号，也不是农历日号：《河洛真数》L129
+                     「正月节气在十二月小尽二十八日，**立春就从二十八日起数**是也」
+                     ⇒ 日序自**节**起算。
+                     ⚠ 2026-10-24：公历 → (节气月序, 日序) 的换算见
+                     :func:`resolve_jieqi_window`；**adapter 层必须先换算再传入**
+                     （此前 adapter 直接透传公历月日 ⇒ 公历 10 月 vs 农历九月
+                     ⇒ 流日卦取的是别的月的日卦，实测 2026-10-23 被算成
+                     农历十月的段，date_from=2026-11-25，相差 33 天）。
+        target_solar_date: 目标日的**公历**原值（ISO）。仅用于结果记录
+                     （result.target_date）与口径标注，不参与算法。
+        target_jie_year: 目标月窗口所属的年（节气表取哪一年）。正常 = target_year；
+                     跨年边界（1/1–1/4 属上一年的十一月窗口）为 target_year-1。
         """
         # 历法口径自校（2026-10-22）：河洛自身的农历/节气链一律以 sxtwl 为准
         #   （1582 年前为儒略历），而输入四柱通常来自八字引擎 —— 后者用
@@ -529,7 +676,7 @@ class HeluoCanonical:
         timeline = self._build_timeline(
             prenatal, yuantang, postnatal, postnatal_yuantang, birth_year,
             target_year=target_year, target_month=target_month,
-            target_day=target_day,
+            target_day=target_day, target_jie_year=target_jie_year,
         )
 
         # Step 7: 卦象结构分析
@@ -593,10 +740,27 @@ class HeluoCanonical:
             bazi=bazi,
             bazi_caliber_notes=bazi_caliber_notes,
             target_date=(
-                f"{target_year:04d}-{target_month:02d}-{target_day:02d}"
-                if (target_year is not None and target_month is not None
-                    and target_day is not None) else None
+                # ⚠ 2026-10-24：优先用**公历原值**（target_solar_date）。
+                #   target_month/target_day 是节气月序 + 自节起的日序，
+                #   拼出来的「YYYY-MM-DD」是**伪日期**（如 2026-09-16 其实是
+                #   2026-10-23），用它记录「本次算的是哪一天」会误导下游。
+                (target_solar_date
+                 if target_solar_date
+                 else (f"{target_year:04d}-{target_month:02d}-{target_day:02d}"
+                       if (target_year is not None and target_month is not None
+                           and target_day is not None) else None))
             ),
+            # ⚠ 2026-10-24：target_date 的**口径**标注。
+            #   "solar" = 公历 YYYY-MM-DD；"jieqi" = (年, 节气月序, 节后日序)
+            #   的伪日期（直调 canonical、未给公历原值时的兼容形态）。
+            #   下游（guajie）据此决定如何解读 target_date —— 两种口径
+            #   解读方式不同，混用会把流日定位到别的月。
+            target_date_caliber=(
+                "solar" if target_solar_date
+                else ("jieqi" if (target_year is not None and target_month is not None
+                                 and target_day is not None) else "")
+            ),
+            target_date_note=target_date_note,
         )
 
     def _build_timeline(
@@ -609,6 +773,7 @@ class HeluoCanonical:
         target_year: int | None = None,
         target_month: int | None = None,
         target_day: int | None = None,
+        target_jie_year: int | None = None,
     ) -> Timeline:
         """时间序列卦象（定稿 2026-10-22 算力裁剪口径）。
 
@@ -733,9 +898,20 @@ class HeluoCanonical:
                 months: list[dict] = []
                 for m in liuyue.months:
                     # 节气对齐：流日卦须从当月"节"时刻起管（《河洛真数》起日卦例）
+                    #
+                    # ⚠ 2026-10-24 跨年边界：公历年 Y 的 12 个窗口覆盖
+                    #   [小寒(Y)-01-05, 小寒(Y+1)-01-05)，**1/1–1/4 落在上一年的
+                    #   十一月窗口**（大雪(Y-1) → 小寒(Y)）。此时目标月的节气须取
+                    #   **上一年的表**（target_jie_year），否则该月的流日卦会按
+                    #   本年大雪起算 ⇒ 日期整体偏一年。
+                    _jie_year = y.year
+                    if (target_jie_year is not None and target_month is not None
+                            and m["month"] == target_month
+                            and int(target_jie_year) != int(y.year)):
+                        _jie_year = int(target_jie_year)
                     jie_dt = None
                     try:
-                        jie_dt = _jie_datetime_for_lunar_month(y.year, m["month"])
+                        jie_dt = _jie_datetime_for_lunar_month(_jie_year, m["month"])
                     except Exception:
                         jie_dt = None
 
@@ -753,7 +929,7 @@ class HeluoCanonical:
                         _next_jie = None
                         try:
                             _next_jie = _jie_interval_for_lunar_month(
-                                y.year, m["month"])[1]
+                                _jie_year, m["month"])[1]
                         except Exception:
                             _next_jie = None
                         base_hex, daily_yao_list = compute_daily_base_hex(
