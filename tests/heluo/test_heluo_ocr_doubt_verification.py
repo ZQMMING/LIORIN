@@ -86,6 +86,17 @@ class TestEngineCitedLinesAreInPackage:
             assert _flat(line) in _flat(txt), (
                 f"S7 段缺引擎引用的原典句：{line}")
 
+    def test_duan_three_branch_in_source(self):
+        """★ 判词库的**三支体例**（叶者 / 不叶者 / 岁运逢之）必须有原典可回查。
+
+        判词库 `data/guajie_data.json` 的每个爻都按这三支组织断语 ——
+        这不是引擎自定的结构，而是《河洛理数》卷二经文的体例。
+        ⇒ 经文切片（**S8/S10** = 卷二经文上/下经）里必须能查到这三个词。
+        """
+        txt = _flat(SLICE.read_text(encoding="utf-8"))
+        for kw in ("叶者", "不叶者", "岁运逢之"):
+            assert kw in txt, f"经文切片里查不到「{kw}」—— 判词库三支体例无原典可回查"
+
 
 class TestDoubtRegisterIsClosed:
     """疑讹登记必须**有定论状态**（不留裸疑点）。"""

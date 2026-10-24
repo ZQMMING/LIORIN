@@ -326,5 +326,14 @@ def build_interpretation(result: Any) -> dict:
     out["dimension_view"] = guajie.get("by_dimension") or {}
     out["dimension_coverage"] = guajie.get("dimension_coverage") or {}
 
+    # ── ⑧ 平台 17 类**候选证据**（河洛只给候选，最终裁定属平台）────
+    try:
+        from .dimensions import build_event_candidates
+        out["event_candidates"] = build_event_candidates(
+            out["dimension_view"], guajie)
+    except Exception as exc:
+        out["event_candidates"] = {}
+        warnings.append(f"平台事件候选未产出（{type(exc).__name__}: {exc}）")
+
     out["warnings"] = warnings
     return out

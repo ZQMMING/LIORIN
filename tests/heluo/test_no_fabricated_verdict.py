@@ -51,12 +51,55 @@ class TestNoFabricatedVerdict(unittest.TestCase):
         if not self.corpus:
             self.skipTest("语料不可用")
 
-    def test_fragments_absent_from_corpus(self):
-        """这两个半句在全库中零命中——即伪造的铁证。"""
+    def test_fragments_traceable_to_source(self):
+        """★ 2026-10-24 **订正**：这两个半句**不是伪造** —— 它们是原典原句。
+
+        旧断言是「全库零命中 ⇒ 伪造的铁证」。该断言**成立过**（当时包内
+        切片**不含《河洛理数》卷二经文** ⇒ 检索不到），
+        但 2026-10-24 补切经文（``orig/河洛理数_年卦月卦切片.txt`` S8/S10 段）
+        后，在**卷二经文·震卦**断语里查到：
+
+            「…山身亡但**德小者不能之**」  （OCR 形态；正字疑为「德小者不能当之」，
+            「当」字被 OCR 漏识）
+
+        ⇒ 「零命中」只是**切片缺口**，不是「原典没有」——
+        这正是「不得用『包内检索不到』当作『原典没有』」的又一次实证。
+
+        现断言改为：**这两个词必须能在包内经文切片回查**（防止将来误删真原典），
+        且**不得**出现在别处（说明它只属这一条经文语境）。
+        """
+        corpus = self.corpus
+        for frag in ("德小者", "不能之"):
+            self.assertIn(frag, corpus,
+                          f"「{frag}」竟在语料中查不到 —— 它是卷二经文震卦的原句"
+                          "（正字「德小者不能当之」），不得误删真原典")
+        # 它只出现在这一处语境：不得被引擎当成**通用**数凶判词输出
+        from heluo_engine.engines.heluo.guajie import judge_shu_xiong
+        joined = " ".join(judge_shu_xiong(40, 60, 11).evidence)
+        self.assertNotIn("德小者", joined,
+                         "数凶判词不得直接输出经文里的「德小者不能当之」"
+                         "（那是震卦的条件式断语，脱离卦语境即失真）")
+        self.assertNotIn("不能当之", joined,
+                         "数凶判词不得直接输出经文里的「德小者不能当之」")
+
+    def test_shu_xiong_cites_real_original_lines(self):
+        """数凶判词须引原典明文（L2274 / L2292 / L741），不拼造整句。"""
+        from heluo_engine.engines.heluo.guajie import judge_shu_xiong
+        joined = " ".join(judge_shu_xiong(40, 60, 11).evidence)
+        self.assertIn("L2274", joined, "缺原典 L2274 引文")
+        self.assertIn("L2292", joined, "缺原典 L2292 引文")
+
+    def test_source_comment_does_not_call_it_fabricated(self):
+        """源码注释**不得**再把这两句称作「伪造」——它有原典出处。"""
+        src = (_ROOT / "src" / "heluo_engine" / "engines" / "heluo" /
+               "guajie.py").read_text(encoding="utf-8")
         for frag in ("德小者", "不能当之"):
-            self.assertNotIn(frag, self.corpus,
-                             f"「{frag}」竟出现在语料中；若已补入原典转录，"
-                             f"请同步撤除本断言并更新注释")
+            for line in src.splitlines():
+                if frag in line and ("伪造" in line or "证伪" in line
+                                     or "拼凑" in line):
+                    raise AssertionError(
+                        f"guajie.py 仍把「{frag}」称作伪造/拼凑 —— "
+                        "它实为《河洛理数》卷二经文震卦的原句（补切经文后可见）")
 
     def test_shu_xiong_no_longer_emits_fabricated_line(self):
         from heluo_engine.engines.heluo.guajie import judge_shu_xiong

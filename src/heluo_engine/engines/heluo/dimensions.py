@@ -183,6 +183,175 @@ DIM_TO_RULE: dict[str, str] = {
 }
 
 
+#: 平台 17 类事件本体（**镜像**，2026-10-24）
+#:
+#: ⚠ 这是平台本体 ``src/tongshu/spec/event_ontology_v1.py`` 的**只读镜像** ——
+#: 河洛包**不得** import 主仓（独立包原则），故在此镜像一份。
+#: **本表只用于「候选证据」的分组**，不构成裁定：
+#:   · 平台的 ``direction`` 是**默认方向**；原典方向随卦/爻/叶不叶/岁运变
+#:     ⇒ **方向由河洛判词层另给**（见 :func:`build_event_candidates` 的
+#:     ``heluo_direction``），两者可能不同（不同即留痕，不强行对齐）。
+#:   · 「河洛不得臆造跨引擎语义、不得自定方向」是硬纪律。
+EVENT_TYPES: dict[str, dict[str, str]] = {
+    # EDUCATION (4)
+    "EXAM": {"domain": "EDUCATION", "default_direction": "NEUTRAL", "granularity": "MONTHLY"},
+    "ADMISSION": {"domain": "EDUCATION", "default_direction": "POSITIVE", "granularity": "YEARLY"},
+    "GRADUATION": {"domain": "EDUCATION", "default_direction": "POSITIVE", "granularity": "YEARLY"},
+    "DEGREE": {"domain": "EDUCATION", "default_direction": "POSITIVE", "granularity": "YEARLY"},
+    # CAREER (5)
+    "PROMOTION": {"domain": "CAREER", "default_direction": "POSITIVE", "granularity": "YEARLY"},
+    "JOB_CHANGE": {"domain": "CAREER", "default_direction": "CHANGE", "granularity": "YEARLY"},
+    "RESIGNATION": {"domain": "CAREER", "default_direction": "CHANGE", "granularity": "YEARLY"},
+    "DEMOTION": {"domain": "CAREER", "default_direction": "NEGATIVE", "granularity": "YEARLY"},
+    "MAJOR_INCOME": {"domain": "CAREER", "default_direction": "POSITIVE", "granularity": "YEARLY"},
+    # FAMILY (5)
+    "MARRIAGE": {"domain": "FAMILY", "default_direction": "POSITIVE", "granularity": "YEARLY"},
+    "DIVORCE": {"domain": "FAMILY", "default_direction": "NEGATIVE", "granularity": "YEARLY"},
+    "CHILD_BIRTH": {"domain": "FAMILY", "default_direction": "POSITIVE", "granularity": "YEARLY"},
+    "PARENT_DEATH": {"domain": "FAMILY", "default_direction": "NEGATIVE", "granularity": "YEARLY"},
+    "FAMILY_HARMONY": {"domain": "FAMILY", "default_direction": "POSITIVE", "granularity": "YEARLY"},
+    # LIFE_EVENT (3)
+    "RELOCATION": {"domain": "LIFE_EVENT", "default_direction": "CHANGE", "granularity": "YEARLY"},
+    "HEALTH_ISSUE": {"domain": "LIFE_EVENT", "default_direction": "NEGATIVE", "granularity": "YEARLY"},
+    "LEGAL_ISSUE": {"domain": "LIFE_EVENT", "default_direction": "NEGATIVE", "granularity": "YEARLY"},
+}
+
+#: 维度 → 平台 17 类**候选**（依据《统一维度表》L5 列；空 = 无候选）
+#: ``ALL`` = 时间轴维度（**触发器**，不作独立事件候选，只作时间上下文）
+DIM_TO_EVENT: dict[str, tuple[str, ...]] = {
+    "SELF.01": ("DEGREE",),
+    "SELF.03": ("HEALTH_ISSUE",),
+    "HEALTH.01": ("HEALTH_ISSUE",),
+    "HEALTH.02": ("HEALTH_ISSUE",),
+    "HEALTH.03": ("HEALTH_ISSUE",),
+    "WEALTH.01": ("MAJOR_INCOME",),
+    "WEALTH.02": ("MAJOR_INCOME",),
+    "WEALTH.03": ("MAJOR_INCOME",),
+    "WEALTH.04": ("MAJOR_INCOME",),
+    "CAREER.01": ("ADMISSION", "DEGREE"),
+    "CAREER.02": ("PROMOTION",),
+    "CAREER.03": ("PROMOTION",),
+    "MARRIAGE.01": ("MARRIAGE",),
+    "MARRIAGE.02": ("MARRIAGE",),
+    "MARRIAGE.03": ("DIVORCE",),
+    "CHILDREN.01": ("CHILD_BIRTH",),
+    "CHILDREN.03": ("CHILD_BIRTH",),
+    "PARENTS.01": ("PARENT_DEATH",),
+    "PARENTS.02": ("PARENT_DEATH",),
+    "SOCIAL.02": ("RELOCATION",),
+    "LIFESPAN.01": ("HEALTH_ISSUE",),
+    "LIFESPAN.02": ("HEALTH_ISSUE",),
+    "LIFESPAN.03": ("HEALTH_ISSUE",),
+    "LIFESPAN.04": ("HEALTH_ISSUE",),
+    "PATTERN.03": ("PROMOTION", "MAJOR_INCOME"),
+    "TIMELINE.01": ("ALL",),
+    "TIMELINE.02": ("ALL",),
+    "TIMELINE.03": ("ALL",),
+    "TIMELINE.04": ("ALL",),
+    "TIMELINE.05": ("ALL",),
+}
+
+#: 河洛侧**有据**的方向判定（来源可回查，不给自拟分数）
+#:   · 遇元气/遇化工 → 吉（原典「遇元气必然得财利」「遇化工中举中进士生贵子」）
+#:   · 数凶 → 凶（原典「数凶则当以不吉祥断」；「若数凶，寿何可久」）
+#:   · 叶 / 不叶 → 吉 / 凶（叶 = 卦气相合，不叶 = 不合）
+#:   · 死断命中 → **条件式**（阴骘两支并陈，不得径取一支）⇒ 不给确定方向
+def heluo_direction(guajie: dict) -> tuple[str, str]:
+    """从判词层给**有据**方向。
+
+    Returns:
+        ``(direction, basis)``；direction ∈ POSITIVE / NEGATIVE / NEUTRAL /
+        UNKNOWN；``basis`` 写明依据（可回查原典）。
+        ⚠ 判不出就返回 ``UNKNOWN`` —— **不给「看起来有结果」的猜测**。
+    """
+    if not isinstance(guajie, dict) or not guajie:
+        return "UNKNOWN", "无判词层结果"
+    hits = []
+    if guajie.get("hua_gong_hit"):
+        hits.append(("POSITIVE", "流年遇化工（原典：遇化工中举中进士生贵子）"))
+    if guajie.get("yuan_qi_hit"):
+        hits.append(("POSITIVE", "流年遇元气（原典：遇元气必然得财利）"))
+    sx = guajie.get("shu_xiong") or {}
+    if isinstance(sx, dict) and sx.get("shu_xiong"):
+        hits.append(("NEGATIVE", "数凶（原典：数凶则当以不吉祥断）"))
+    yb = guajie.get("liunian_ye_buye") or {}
+    if isinstance(yb, dict):
+        if yb.get("ye"):
+            hits.append(("POSITIVE", "流年卦叶（叶 = 卦气相合）"))
+        elif yb.get("buye"):
+            hits.append(("NEGATIVE", "流年卦不叶（不叶 = 卦气不合）"))
+    if guajie.get("si_duan"):
+        hits.append(("UNKNOWN",
+                     "命中死断条 —— 原典为**条件式立断**（阴骘两支并陈），"
+                     "不得径取一支作方向"))
+    if not hits:
+        return "UNKNOWN", "判词层未给出可判方向的名目"
+    pos = [h for h in hits if h[0] == "POSITIVE"]
+    neg = [h for h in hits if h[0] == "NEGATIVE"]
+    unk = [h for h in hits if h[0] == "UNKNOWN"]
+    if unk and not (pos or neg):
+        return "UNKNOWN", unk[0][1]
+    if pos and not neg:
+        return "POSITIVE", pos[0][1]
+    if neg and not pos:
+        return "NEGATIVE", neg[0][1]
+    return "UNKNOWN", "多判据方向相冲（" + "；".join(h[1] for h in hits) + "）"
+
+
+def build_event_candidates(by_dimension: dict, guajie: dict) -> dict:
+    """按平台 17 类归组河洛的**候选证据**（不裁定、不给分数）。
+
+    Args:
+        by_dimension: 判词层的 ``by_dimension`` 视图（维度 → items）。
+        guajie: 判词层结果（用于给**有据**方向）。
+
+    Returns:
+        ``{"candidates": {event_type: {...}}, "coverage": {...},
+        "heluo_direction": (direction, basis)}``
+    """
+    direction, basis = heluo_direction(guajie)
+    cands: dict[str, dict] = {}
+    for dim, node in (by_dimension or {}).items():
+        if dim in (DIM_PROCESS, DIM_UNCLASSIFIED):
+            continue
+        for et in DIM_TO_EVENT.get(dim, ()):
+            if et == "ALL":
+                continue          # 时间轴维度只作上下文，不作独立事件候选
+            if et not in EVENT_TYPES:
+                continue
+            c = cands.setdefault(et, {
+                "event_type": et,
+                "domain": EVENT_TYPES[et]["domain"],
+                "platform_default_direction": EVENT_TYPES[et]["default_direction"],
+                "heluo_direction": direction,
+                "heluo_direction_basis": basis,
+                "strength_note": "以「证据条数 + 判据出处」表达，**不给 0–1 分数**"
+                                 "（原典只给吉凶不给数值）",
+                "dimensions": [],
+                "items": [],
+            })
+            c["dimensions"].append(dim)
+            for it in node.get("items", []):
+                c["items"].append({
+                    "index": it.get("index"),
+                    "dimension": dim,
+                    "dimension_label": node.get("label", ""),
+                    "text": it.get("text", ""),
+                })
+    hit = sorted(cands)
+    return {
+        "candidates": cands,
+        "heluo_direction": {"direction": direction, "basis": basis},
+        "coverage": {
+            "event_types_total": len(EVENT_TYPES),
+            "event_types_with_candidate": len(hit),
+            "event_types_without_candidate": sorted(set(EVENT_TYPES) - set(hit)),
+            "note": "「无候选」= 河洛判词层**未产出**该类证据（能力缺口），"
+                    "不等于该类事件不可能发生。",
+        },
+    }
+
+
 def is_known(dim: str) -> bool:
     """维度 id 是否在表内（含两个非领域维度）。"""
     return dim in DIMENSIONS or dim in _PSEUDO_LABELS

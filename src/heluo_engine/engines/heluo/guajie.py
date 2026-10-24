@@ -350,6 +350,20 @@ class GuaDuan:
     yaos: dict[str, YaoDuan] = field(default_factory=dict)
 
 
+def _collect_liuqin_hits(yao: object) -> list[dict]:
+    """一个爻的断语中命中的**六亲/婚育/寿夭**意象（2026-10-24 新增）。
+
+    委托 :mod:`liuqin_tagger`；此处只做**惰性导入**（避免判词层加载期多一个依赖）
+    与**异常隔离**（标注失败不得影响主链 —— 缺失被当成正常，比答错更坏，
+    但这里是「锦上添花」的附加维度，失败就不产出，不留半截数据）。
+    """
+    try:
+        from .liuqin_tagger import collect_from_yao
+        return collect_from_yao(yao)
+    except Exception:
+        return []
+
+
 @dataclass
 class YeBuYeResult:
     """叶/不叶判定结果。"""
@@ -1120,15 +1134,25 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int,
         ev.append("数不足 → 主夭贫贱薄（虚贫之象），须参元气化工与卦爻断")
     # 2026-10-07 更正：本行原为
     #   「判词：数凶者身亡，但德小者不能当之」
-    # 经 20158 行全库检索，「**德小者**」「**不能当之**」两段**零命中**——
-    # 该判词是**拼凑半句伪造**的，且已污染 guajie.py:1039 的下游 summary 输出。
-    # 原典中数凶之判分散在多处，且随「数」与「月令」而异，摘录如下：
+    # 当时的判断是「经 20158 行全库检索，『德小者』『不能当之』两段**零命中**，
+    # 该判词是拼凑半句伪造的」——
+    # ⚠ **2026-10-24 再订正**：该判断**错了**（错在方法，不在结论）。
+    #   补切《河洛理数》**卷二经文**后，在**震卦**断语里查到原句：
+    #     「…山身亡但**德小者不能之**」（OCR 形态；正字疑为「德小者不能当之」，
+    #     「当」字被 OCR 漏识）⇒ **它有原典出处，不是拼凑**。
+    #   原判断错在：把「**包内切片里检索不到**」当成了「**原典没有**」——
+    #   当时包内**不含卷二经文**（切片缺口）⇒ 零命中是必然的。
+    #   ⇒ 这正是「不得用『包内检索不到』当作『原典没有』」的又一次实证。
+    #
+    # 引擎**行为不变、仍不引用它**，理由改为（原判的理由是错的）：
+    #   「山身亡但德小者不能当之」是**震卦的特定语境**下的**条件式**断语，
+    #   脱离「震卦 + 数凶 + 士庶女命分层」的语境即失真；
+    #   而数凶的通用判据须**按卦随原典分条**列出，不拼造整句：
     #   L2274「岁运逢之，皆当如此处之，数凶则当以不吉祥断。」
     #   L2292「岁运逢之，居家见服，在仕防谗，去仕不遑，是非难辨，
     #         若数凶，寿何可久？」
     #   L741  「如卦数凶，此走空浮薄之夫。」
     #   L956  「……若阳不足，则非所困而困焉，名必辱……」——合时不足之凶
-    # 故按原典分条列出，不拼造整句。
     ev.append("判词（据原典分条，非整句）："
               "L2274「数凶则当以不吉祥断」；L2292「若数凶，寿何可久」；"
               "L741「如卦数凶，此走空浮薄之夫」")
@@ -1484,6 +1508,14 @@ def compose_guajie(
             "lines_jingyi": bm.lines_jingyi,
             "lines_shiyi": bm.lines_shiyi,
         }
+        # ★ 2026-10-24：命卦层的**卦头断语**同样扫描六亲/婚育/寿夭意象。
+        #   命卦断语是**本命层**（非流年），但它落在的**人生领域**不变
+        #   （维度表 L2 是「领域」，不是「时间层」）⇒ 仍归对应子维度。
+        #   命卦断语是**条件式**的（「数卦不叶…」「岁运逢之…」）⇒ 原句带条件一并留。
+        for _hit in _collect_liuqin_hits(bm):
+            ev.append(
+                f"  本命卦{_hit['category']}（{_hit['keyword']}）：{_hit['quote']}",
+                dim=_hit["dimension"])
 
     # ── 流年动爻判词（查询式字典） ──────────────────────────────
     if liunian_hexagram and liunian_yao:
@@ -1498,6 +1530,17 @@ def compose_guajie(
                 ev.append(f"  不叶者：{y.buye}", dim="TIMELINE.02")
             if y.suiyun:
                 ev.append(f"  岁运逢之：{y.suiyun}", dim="TIMELINE.01")
+            # ★ 2026-10-24 六亲/婚育/寿夭意象接入（维度缺口补齐）：
+            #   判词库原句里本就有「免克绝子孙」「亲眷刑伤，婚嗣孤克」
+            #   「或生子孙」「兄弟之忧」等断语，此前**只按卦名归位、不断语归位**
+            #   ⇒ 「婚姻/子女/父母/手足/夭横」几格维度从不出现在证据链里。
+            #   现按**原句匹配**（不生成新断语、不改一字）产出带维度的证据；
+            #   断语是**条件式**的（「岁运逢之…」「数卦不叶…」）⇒ 原句连同
+            #   条件一并带出，脱离条件引用即失真。
+            for _hit in _collect_liuqin_hits(y):
+                ev.append(
+                    f"  {_hit['category']}（{_hit['keyword']}）：{_hit['quote']}",
+                    dim=_hit["dimension"])
         # 叶/不叶
         yb = judge_ye_buye(liunian_hexagram, birth_month, year_ganzhi)
         if yb:
@@ -1521,6 +1564,11 @@ def compose_guajie(
             ev.append(f"流月卦{liuyue_hexagram} {liuyue_yao}爻：{y.ci}", dim="TIMELINE.03")
             if y.suiyun:
                 ev.append(f"  岁运逢之：{y.suiyun}", dim="TIMELINE.01")
+            # ★ 2026-10-24：流月层同样接入六亲/婚育/寿夭意象（见流年处说明）
+            for _hit in _collect_liuqin_hits(y):
+                ev.append(
+                    f"  {_hit['category']}（{_hit['keyword']}）：{_hit['quote']}",
+                    dim=_hit["dimension"])
 
     # ── 数凶 ──────────────────────────────────────────────────
     sx = judge_shu_xiong(tian_shu, di_shu, birth_month, gender)
@@ -1633,8 +1681,12 @@ def compose_guajie(
             s.append(f"岁运逢之：{res.liunian_yao.suiyun}")
     if sx.shu_xiong:
         # 2026-10-07 更正：原为「→ 数凶者身亡，但德小者不能当之」，
-        # 该整句经全库检索证伪（「德小者」「不能当之」零命中，系拼凑伪造）。
         # 改引原典 L2274 / L2292 两条明文。
+        # ⚠ 2026-10-24 再订正：**该整句并非伪造** —— 它是《河洛理数》卷二经文
+        #   震卦的原句（「…山身亡但德小者不能之」，OCR 漏识「当」字）；
+        #   当时判「伪造」是因**包内切片不含经文**（把切片缺口当成原典缺口）。
+        #   仍不引用它的理由：那是**震卦特定语境**的条件式断语，脱离该语境即失真；
+        #   数凶的通用判据须**按卦随原典分条**列出。
         s.append(f"数凶（{sx.pattern}：天{sx.tian_shu}/{sx.di_shu}）"
                  f"→ 原典 L2274「数凶则当以不吉祥断」；L2292「若数凶，寿何可久」")
     if res.zhengdui_fandui:
