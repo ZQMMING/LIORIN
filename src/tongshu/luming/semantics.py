@@ -228,6 +228,7 @@ RULE_SEMANTICS: dict[str, dict] = {
     "LM-S13": {"quote": "天医以月支前一位取之，正月生见丑…主疾病痊愈、安康（神煞通行查法）", "strength": "逐字", "quote_status": "complete", "topic": ["健康"]},
     "LM-S14": {"quote": "攀鞍居驿马后一辰，申子辰在丑、寅午戌在未、巳酉丑在戌、亥卯未在辰，鞍为马之备，主功名进阶（三车一览/神煞通行）", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
     "LM-S15": {"quote": "天厨名食神禄，甲丙爱行双女游、乙丁狮子己金牛、戊坐未羊庚鱼腹、辛到宝瓶、癸用天蝎壬人马，主衣食俸禄（三命通会/神煞通行）", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
+    "LM-S16": {"quote": "甲人蛇口乙猪头，丙狗丁龙戊向猴，己午庚寅辛未贵，六壬卯位癸逢牛（五行精纪 L2010 文昌贵），主文名科甲文章", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
     "LM-S01": {"quote": "病符居太岁后一辰，主其年多病疾、身体不适（神煞通行/三命通会）", "strength": "逐字", "quote_status": "complete", "topic": ["健康"]},
     "LM-S02": {"quote": "官符（死符）居太岁前五辰、病符对冲，主官事词讼文书纠纷，无贵神解救者防凶恶（三命通会·总论诸神煞）", "strength": "逐字", "quote_status": "complete", "topic": ["事业"]},
     "LM-S03": {"quote": "劫煞主劫夺耗散、咽喉目赤之灾、横事失权（渊海子平/三命通会）", "strength": "逐字", "quote_status": "complete", "topic": ["财富"]},

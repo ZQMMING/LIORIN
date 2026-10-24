@@ -341,8 +341,9 @@ _YANG_STEMS = frozenset({"JIA", "BING", "WU", "GENG", "REN"})
 #   V59 晦气阴灾 / V62 犯命 / V66 天罗地网 / V70 元辰 / V77 日犯岁君 /
 #   V78 征太岁 / V87 五鬼克身
 _HEAVY_XIONG = frozenset({"LM-V60", "LM-V60B", "LM-V52", "LM-V55", "LM-V58",
-                          "LM-V59", "LM-V62", "LM-V66", "LM-V70", "LM-V77",
-                          "LM-V78", "LM-V87"})
+                          "LM-V59", "LM-V59B", "LM-V50", "LM-V62", "LM-V66",
+                          "LM-V70", "LM-V77", "LM-V78", "LM-V87",
+                          "LM-S05", "LM-S07"})
 
 
 def _calc_yuan_chen(chart: Any) -> str:
@@ -906,6 +907,100 @@ _FAYONG_DIRECTION = {
     "比肩": ("帮身", "身弱欲运引进旺乡"),
     "劫财": ("帮身", "身弱欲运引进旺乡；旺则劫财破耗"),
 }
+
+
+def check_ghost_tongguan(chart: Any, gz_stem: str, gz_branch: str) -> str:
+    """克我(鬼)被原局通关五行化掉 → 鬼化助 (五行精纪 L4282: "五行俱以此为例").
+
+    原文: "水命四柱有金, 至土运是鬼运却反为吉者, 以土生金, 金生水, 是化鬼为助气,
+      反为福也." 流年太岁同理 (外来五行克我, 原局通关).
+    链三段: 太岁(克我)生 柱(通关五行), 柱再生 年命.
+    返回 "nayin"(真通关: 太岁纳音为鬼, 古法纳音为宗) / "weak"(支/干为鬼) / ""(不成立).
+    """
+    yr_el = (chart.nayin_five_element or {}).get("year", "")
+    if not yr_el:
+        return ""
+    _yun_nayin_el = NAYIN_FIVE_ELEMENT.get(
+        NAYIN_60.get((gz_stem, gz_branch), ""), "")
+    _gz_set: set = set()      # 原局干支五行 (强根)
+    _col_set: set = set()     # 原局干支∪纳音 (L4282"柱有X"含纳音)
+    _el_gan: dict = {}        # 五行 -> 透干本气 (L2553 合去查验)
+    _el_zhi: dict = {}        # 五行 -> 地支本气 (L2553 合去查验)
+    for _pl in (chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar):
+        _se = STEM_ELEMENT.get(_pl.heavenly_stem, "")
+        _be = BRANCH_WX.get(_pl.earthly_branch, "")
+        _gz_set.add(_se); _gz_set.add(_be)
+        _col_set.add(_se); _col_set.add(_be)
+        _el_gan.setdefault(_se, []).append(_pl.heavenly_stem)
+        _el_zhi.setdefault(_be, []).append(_pl.earthly_branch)
+    if isinstance(chart.nayin, dict):
+        for _k in ("year", "month", "day", "hour"):
+            _n5 = NAYIN_FIVE_ELEMENT.get(chart.nayin.get(_k, ""), "")
+            if _n5:
+                _col_set.add(_n5)
+    for _yi, _y in enumerate((_yun_nayin_el,
+                              STEM_ELEMENT.get(gz_stem, ""),
+                              BRANCH_WX.get(gz_branch, ""))):
+        if not _y:
+            continue
+        if _CTL4.get(_y) == yr_el:            # _y 克我 = 鬼
+            _mid = _GEN4.get(_y)              # 鬼生 _mid
+            if _mid in _col_set and _GEN4.get(_mid) == yr_el:  # _mid 生我 = 通关
+                # 吉神(通关五行)被太岁合去 → 反吉为凶 (三命通会 L2553: "吉神有物合去
+                #   则反吉为凶"): 通关五行的地支本气根若被太岁支六合绊走, 且无透干
+                #   本气、无未合地支本气, 则通关五行无力化鬼 (26子2021 子被丑合).
+                _zhi_free = [b for b in _el_zhi.get(_mid, [])
+                             if _he_partner(b) != gz_branch]
+                if not _el_gan.get(_mid) and not _zhi_free:
+                    continue
+                # 通关五行须有气 (L4416"身财之旺故不为灾"同例): 在太岁支非死绝,
+                #   或原局有干支本气强根; 仅孤立纳音、又在太岁死绝 → 无力化鬼.
+                _mid_stage = _growth_stage(_mid, gz_branch)
+                if _mid_stage in ("死", "绝") and _mid not in _gz_set:
+                    continue
+                return "nayin" if _yi == 0 else "weak"
+    return ""
+
+
+def tai_sui_main_relation(chart: Any, ts: str, tb: str, tg: str) -> tuple:
+    """太岁对年命【主关系】(三才: 纳音/干/支) → (生扶|克害|中和, 明细).
+
+    古法以年命纳音为主体 (五行精纪 L4200 李虚中"以年为主"; L4409"太岁所至之宫,
+    欲与本命支干纳音相合, 无冲害刑克"; L4410"太岁与本命相生/相克...").
+    三才各 -1/0/+1:
+      纳音: 克我(鬼)无通关=-1; 真通关(nayin)鬼化助 / 生我 / 比和 = +1; 我克财 / 我生泄 = 0
+      干:   太岁干 克我=-1; 生我 / 比和=+1; 我克 / 我生=0
+      支:   年命在太岁支 死绝=-1; 长生/临官/帝旺=+1; 余(沐浴冠带衰病胎养墓)=0
+    合计 ≥2 生扶 / ≤-2 克害 / 余 中和.
+    """
+    yr_el = (chart.nayin_five_element or {}).get("year", "")
+    if not yr_el:
+        return "中和", {"score": 0}
+    tai_ny = NAYIN_60.get((ts, tb), "")
+    ny_rel = _nayin_relation(chart.nayin.get("year", ""), tai_ny)
+    if ny_rel == "克我":
+        n_ny = 1 if tg == "nayin" else -1
+    elif ny_rel in ("生我", "比和"):
+        n_ny = 1
+    else:
+        n_ny = 0
+    s_el = STEM_ELEMENT.get(ts, "")
+    if s_el == yr_el or _GEN4.get(s_el) == yr_el:
+        n_gan, gan_rel = 1, ("比和" if s_el == yr_el else "生我")
+    elif _CTL4.get(s_el) == yr_el:
+        n_gan, gan_rel = -1, "克我"
+    else:
+        n_gan, gan_rel = 0, ("我克" if _CTL4.get(yr_el) == s_el else "我生")
+    gong = _growth_stage(yr_el, tb)
+    if gong in ("长生", "临官", "帝旺"):
+        n_zhi = 1
+    elif gong in ("死", "绝"):
+        n_zhi = -1
+    else:
+        n_zhi = 0
+    total = n_ny + n_gan + n_zhi
+    rel = "生扶" if total >= 2 else ("克害" if total <= -2 else "中和")
+    return rel, {"score": total, "nayin": ny_rel, "gan": gan_rel, "zhi": gong}
 
 
 def _build_fayong_verdicts(chart: Any, gz_stem: str, gz_branch: str, scope: str,
@@ -3148,12 +3243,15 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
             or _sheng(ts_el, dm_el)))             # 生我=印
         sui_yun_mode = "凶" if (is_yang_ren or qisha) else ("吉" if cai_guan_yin else "平")
 
-    # 真太岁: 太岁干支 = 命局任一柱
+    # 真太岁: 太岁干支 = 命局任一柱 (记录柱位, 用于消除 V57/V57B 地支伏吟重复计分)
     zhen_tai_sui = False
-    for attr in ("year_pillar", "month_pillar", "day_pillar", "hour_pillar"):
+    zhen_tai_sui_pos = ""
+    for attr, _pos in (("year_pillar", "年"), ("month_pillar", "月"),
+                       ("day_pillar", "日"), ("hour_pillar", "时")):
         p = getattr(chart, attr)
         if p.heavenly_stem == ts and p.earthly_branch == tb:
             zhen_tai_sui = True
+            zhen_tai_sui_pos = _pos
             break
 
     # ---- V58 真太岁分流 (三命通会 L953: 相和相顺则吉, 刑冲破害战克则凶) ----
@@ -3271,10 +3369,16 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     lu_branch = LU_BY_STEM.get(year_stem, "")
     tai_glm = bool(tb in gui_branches or (lu_branch and tb == lu_branch)
                    or (ma_branch and tb == ma_branch))
+    # 太岁临文昌 (五行精纪 L2010 年干文昌表; 流年神煞通用原则 L4426"所至逢禄马贵人则吉")
+    _wen_chang_b = WEN_CHANG_BY_YEAR.get(year_stem, "")
+    tai_wen_chang = bool(_wen_chang_b and tb == _wen_chang_b)
 
     # 纳音生克 / 十二宫
     tai_nayin = NAYIN_60.get((ts, tb), "")
     tai_nayin_rel = _nayin_relation(year_nayin, tai_nayin) if tai_nayin else ""
+    # 鬼化助通关 (L4282 五行俱以此为例): 太岁纳音克我为鬼, 原局通关五行, 鬼化助.
+    #   真通关(nayin) → 克身之鬼不成立, Y72C/V87/V51克身 不判凶 (与大运 F05 同口径).
+    tai_ghost_tongguan = check_ghost_tongguan(chart, ts, tb) if (ts and tb) else ""
 
     # V51 动态判定 (2026-10-20 系统性根治, 原著深挖):
     #   珞琭子 L4416"掩冲岁临尚不为灾……相生则吉相克则凶" — 冲/压(返吟伏吟)
@@ -3286,7 +3390,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     #     刑/害不克身 = 平 (细累浮灾不为重害 L4273);
     #     冲/压不克身 = 动 (掩冲岁临不为灾, 主变动应期).
     for _pr in tai_pillar_relations:
-        if tai_nayin_rel == "克我":
+        if tai_nayin_rel == "克我" and not tai_ghost_tongguan:
             _pr["v51_tone"] = "凶"
         elif _pr["tai_relation"] in ("刑", "害"):
             _pr["v51_tone"] = "平"
@@ -3300,7 +3404,7 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     _tai_nayin_el = NAYIN_FIVE_ELEMENT.get(tai_nayin, "") if tai_nayin else ""
     _tai_wu_gui_stage = _growth_stage(_tai_nayin_el, tb) if _tai_nayin_el else ""
     tai_wu_gui = bool(
-        tai_nayin_rel == "克我" and
+        tai_nayin_rel == "克我" and not tai_ghost_tongguan and
         _tai_wu_gui_stage in ("长生", "沐浴", "帝旺", "死", "绝"))
     # 四煞 (珞琭子三命消息赋: "四煞轻, 五鬼重…运逢之轻, 岁遇之重"; 双取法互证:
     #   莹和尚/徐子平/三命通会 L14009: "辰戌丑未谓之四煞, 亦云三丘之地, 各以
@@ -3569,6 +3673,17 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         _xy_xing_hai = False; _xy_gui_ma = False; xy_gui_ma_desc = ""
         xy_nayin = ""; _xy_fu_hui = False
 
+    # 天干在太岁支/小运支的十二宫 (晦气 L4420"旺则门户眷属, 气并冲合死绝主身灾"
+    #   — 主体是被合的日干/时干, 用天干十二宫, 非年命纳音)
+    _day_g_tai = _growth_stage_stem(day_stem, tb) if day_stem else ""
+    _day_g_xy = _growth_stage_stem(day_stem, _xy_branch) if (day_stem and _xy_branch) else ""
+    _hour_g_tai = _growth_stage_stem(hour_stem, tb) if hour_stem else ""
+    _hour_g_xy = _growth_stage_stem(hour_stem, _xy_branch) if (hour_stem and _xy_branch) else ""
+
+    # 灾煞福神 (SMTH L1727 "灾煞主血光横死; 若有福神相助多是武权"): 流年灾煞临
+    #   天月德/贵禄马(贵人或临禄)/金舆 → 凶不为甚, 反主武权; 无福神方主血光
+    zai_sha_fu = bool(tai_tian_yue_de or tai_glm or tai_jin_yu)
+
     return {
         "tai_s": ts, "tai_b": tb, "tai_sui": ts + tb, "tai_nayin": tai_nayin,
         "tai_nayin_el": NAYIN_FIVE_ELEMENT.get(tai_nayin, ""),
@@ -3595,7 +3710,8 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "sui_yun_mode": sui_yun_mode, "zhen_tai_sui_mode": zhen_tai_sui_mode,
         "tai_fan_yin": tai_fan_yin, "tai_fu_yin": tai_fu_yin,
         "tai_he_ju": tai_he_ju, "tai_he_ju_str": _he_ju_str(tb, _fb4),
-        "zhen_tai_sui": zhen_tai_sui, "tai_fan_shi_gan": tai_fan_shi_gan,
+        "zhen_tai_sui": zhen_tai_sui, "zhen_tai_sui_pos": zhen_tai_sui_pos,
+        "tai_fan_shi_gan": tai_fan_shi_gan,
         "shi_rel": shi_rel, "tai_he_day_gui": tai_he_day_gui,
         "tai_death_meeting": tai_death_meeting, "tai_death_part": tai_death_part,
         "tai_growth": _tai_growth,
@@ -3610,8 +3726,11 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "tai_bing_fu": tai_bing_fu, "bing_fu_branch": _bing_fu,
         "tai_guan_fu": tai_guan_fu, "guan_fu_branch": _guan_fu,
         "tai_jie_sha": tai_jie_sha, "jie_sha_branch": _jie_sha_b,
+        "tai_wen_chang": tai_wen_chang, "wen_chang_branch": _wen_chang_b,
         "tai_jin_yu": tai_jin_yu, "jin_yu_branch": _jin_yu_b,
         "tai_zai_sha": tai_zai_sha, "zai_sha_branch": _zai_sha_b,
+        "zai_sha_fu": zai_sha_fu,
+        "tai_ghost_tongguan": tai_ghost_tongguan,
         "tai_zi_yi": tai_zi_yi, "zi_yi_branch": _zi_yi_b, "zi_yi_heavy": zi_yi_heavy,
         "tai_hong_luan": tai_hong_luan, "hong_luan_branch": _hong_luan_b,
         "tai_tian_xi": tai_tian_xi, "tian_xi_branch": _tian_xi_b,
@@ -3636,6 +3755,9 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
         "xy_sheng_wang": xy_sheng_wang, "xy_xing_hai": _xy_xing_hai,
         "xy_gui_ma": _xy_gui_ma, "xy_gui_ma_desc": xy_gui_ma_desc,
         "xy_fu_hui": _xy_fu_hui,
+        # 天干十二宫 (晦气旺/气并判据)
+        "day_g_tai": _day_g_tai, "day_g_xy": _day_g_xy,
+        "hour_g_tai": _hour_g_tai, "hour_g_xy": _hour_g_xy,
     }
 
 
@@ -3832,6 +3954,12 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     yctx = _build_year_scope(chart, year)
     verdicts = []
 
+    # 太岁对年命【主关系】(三才: 纳音/干/支; 古法以年命为主体)
+    _main_rel, _main_det = tai_sui_main_relation(
+        chart, yctx["tai_s"], yctx["tai_b"], yctx["tai_ghost_tongguan"])
+    yctx["main_relation"] = _main_rel
+    yctx["main_relation_det"] = _main_det
+
     # 太岁纳音对原局喜忌响应 (V67/V68): 喜/忌命中键注入
     _EL_CN2 = {"WOOD": "木", "FIRE": "火", "EARTH": "土", "METAL": "金", "WATER": "水"}
     yctx["tai_xi_hit"] = False
@@ -3892,22 +4020,39 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         #   克时干轻重: 气并冲合死绝(小运死绝衰息)→身灾重(4分); 单纯干克(时干有气、
         #   无死绝)→轻身灾/灾挠(2分, L4420"轻者灾挠") — 931例单纯克旧判4分过重
         _pov = None
+        # 晦气"旺/气并"判据 (L4420): 主体是被合的【日干/时干】, 看其在太岁支/小运支
+        #   的【天干十二宫】, 不是年命纳音在小运 (旧口径错误: 戊日干在小运巳本为临官
+        #   得禄=旺, 却因年命纳音土在巳=绝误判气并身灾)。
+        #   气并(死绝)或太岁空亡→身灾重(4分); 干旺(非死绝)→门户眷属之灾(2分)。
+        _SI_JUE = ("死", "绝")
         if rule["id"] == "LM-V59":
             if obj.get("shi_rel") == "合":
-                # 合时干=晦气入门(L4419): 气并(小运死绝衰息 或 太岁至空亡 等凶会集)
-                #   →身灾重(4分); 单纯合(旺, 无他凶)→门户眷属之灾/灾挠(2分, L4420)
                 _dims = ("煞/灾祸", ["身/健康", "宫/六亲"])
-                _xy_bad = obj.get("xy_dead_jue") or obj.get("xiao_yun_growth", "") in (
-                    "死", "绝", "衰", "病", "沐浴") or obj.get("tai_kong_wang")
-                if not _xy_bad:
+                _gan_bing = (obj.get("hour_g_tai", "") in _SI_JUE
+                             or obj.get("hour_g_xy", "") in _SI_JUE
+                             or obj.get("tai_kong_wang"))
+                if not _gan_bing:
                     _pov = 2
-            # 克时干=L4421"太岁克生时亦身灾", 直接身灾(4分默认), 不降级
+            else:
+                # 克时干 (L4421 太岁克生时亦身灾): 轻重随【时干旺衰】(L4420 同例):
+                #   时干在太岁/小运处死绝(气并)或太岁空亡 → 身灾重(4分);
+                #   时干有气(非死绝)、单纯干克 → 门户眷属/轻身灾(2分, L4420"轻者灾挠")
+                _dims = ("身/健康", ["煞/灾祸", "宫/六亲"])
+                _gan_bing = (obj.get("hour_g_tai", "") in _SI_JUE
+                             or obj.get("hour_g_xy", "") in _SI_JUE
+                             or obj.get("tai_kong_wang"))
+                if not _gan_bing:
+                    _pov = 2
         elif rule["id"] == "LM-V59B":
-            # 日干合太岁(晦气入门): 气并(小运死绝 或 空亡)→身灾重(4分); 单纯合→灾挠(2分)
-            _xy_bad = obj.get("xy_dead_jue") or obj.get("xiao_yun_growth", "") in (
-                "死", "绝", "衰", "病", "沐浴") or obj.get("tai_kong_wang")
-            if not _xy_bad:
+            _gan_bing = (obj.get("day_g_tai", "") in _SI_JUE
+                         or obj.get("day_g_xy", "") in _SI_JUE
+                         or obj.get("tai_kong_wang"))
+            if not _gan_bing:
                 _pov = 2
+        elif rule["id"] == "LM-V77":
+            # 日犯岁君: 古法 L1474"五阳干则重, 五阴干则轻" — 阳干→3分, 阴干→2分(默认)
+            if obj.get("day_fan_weight") == "重":
+                _pov = 3
         verdicts.append({"rule_id": rule["id"], "out": out_txt,
                          "evidence": rule["evidence"], "tone": _tone,
                          "scope": "流年", "target": target, "detail": detail,
@@ -3919,7 +4064,10 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _emit(rule, yctx)
         elif rule["mode"] == "per_pillar":
             for pr in yctx["tai_pillar_relations"]:
-                _emit(rule, {**yctx, **pr})
+                _po = {**yctx, **pr}
+                _po["this_pos_zhen_tai"] = bool(
+                    pr.get("pos") == yctx.get("zhen_tai_sui_pos"))
+                _emit(rule, _po)
 
     counts = {"吉": 0, "动": 0, "平": 0, "滞": 0, "凶": 0}
     # 2026-10-21 深度审计BUG-1: 发用规则族(LM-F)不参与吉凶算术(用户定案),
@@ -4187,16 +4335,50 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   墓/绝/死/病/衰)则岁运刑冲便为灾。
     _qi_sheng = False
     if lm is not None and yctx["luck_pillar"]:
-        _lpi = next((p for p in (lm.luck_scope or {}).get("pillars", [])
-                     if p["stem"] + p["branch"] == yctx["luck_pillar"]), None)
-        if _lpi:
-            _qi_sheng = _lpi.get("shier_gong") in (
-                "长生", "沐浴", "冠带", "临官", "帝旺")
-    _fa_huo_ji = (any(v.get("rule_id") in _NO_JIUXI and v.get("tone") == "凶"
+        # L4277 烛神经原文: "大运曾历过本命长生处者, 谓之气盛之运, 虽岁运来冲克,
+        #   为祸不重, 运气强故也; 未经长生, 岁运刑冲克破便为灾" —
+        #   口径=大运顺序中当前运(含)之前是否经过本命长生 (非当前运支十二宫;
+        #   旧口径在长生之后的死绝运误判气弱, 与原文"曾历过"不符)
+        _cs_branch = ELEMENT_CHANG_SHENG.get(
+            (chart.nayin_five_element or {}).get("year", ""), "")
+        _lbs = [p.get("branch", "")
+                for p in (lm.luck_scope or {}).get("pillars", [])]
+        _cur_b = yctx.get("dayun_branch", "")
+        if _cs_branch and _cur_b in _lbs:
+            _qi_sheng = _cs_branch in _lbs[:_lbs.index(_cur_b) + 1]
+    # 克身之鬼 (太岁对年命直接克, L4427"更带克身之鬼, 其年决有大灾"):
+    #   太岁纳音克我(无nayin通关) / 太岁干克我(无nayin通关; weak通关化不尽).
+    #   2026-10-24: F04 财化鬼(太岁生鬼间接克身)**移出**独立克身鬼 — 它已以 2 分
+    #   进 YEAR_XIONG/power, 属"转化之凶", 不再独立触发"运吉也发祸"(L4427 运吉
+    #   太岁凶止当年不利; 间接克身尤不应盖过大运吉底色).
+    _tg_now = yctx.get("tai_ghost_tongguan", "")
+    _ke_nayin = yctx.get("tai_nayin_rel") == "克我" and _tg_now != "nayin"
+    _ke_gan = _main_det.get("gan") == "克我" and _tg_now != "nayin"
+    _ke_shen_gui = _ke_nayin or _ke_gan
+    # 岁运并临 (三命通会 L1005: "流年又是…运, 谓之岁运并临, 独羊刃七煞为凶"):
+    #   大运干支=太岁干支, 且流年恶力重 → 发祸级, 不因大运吉降 (毛1976 丙辰运
+    #   逢丙辰岁 real_xiong15 守住); 非岁运并临的重档, 大运吉时仍按 L4273"刑害只
+    #   浮灾"降相杂. (旧"重档+主关系非生扶"过宽, 把吉运流年大批误升凶, 全局凶率
+    #   31.2%→38.2%, 已收窄)
+    _sui_yun_bl = (bool(yctx.get("luck_pillar"))
+                   and yctx.get("luck_pillar") == yctx.get("tai_sui"))
+    # 结构性发祸 (大运吉也不降级): V60定死/V70元辰(不救,"纵有吉神不免灾祸")/
+    #   l4273发祸(已含大运凶杀: 天罗/元辰犯运+太岁刑冲+小运死绝+恶力重)/
+    #   岁运并临+羊刃重档 (L1005"独羊刃七煞为凶")
+    _struct_fa = (any(v.get("rule_id") in _NO_JIUXI and v.get("tone") == "凶"
                       for v in verdicts)
                   or _i4273.get("mode") == "发祸"
-                  or _chong_zhong
-                  or (_power["level"] == "重" and not _qi_sheng))
+                  or (_sui_yun_bl and _power["level"] == "重"))
+    # 大运凶时, 克身鬼/冲重/重档非气盛 发祸; 大运吉时按 L4427"大运在吉处,
+    #   太岁小运到凶位, 不能为大灾, 止当年不利" → 不阻 L4360 天花板, 降相杂
+    _dayun_fa = ((not _luck_ji)
+                 and (_ke_shen_gui or _chong_zhong
+                      or (_power["level"] == "重" and not _qi_sheng)))
+    # 流年克身鬼 + 重档会集, 运吉亦发祸 (L4273 保护仅"太岁到刑害之乡"; 太岁干/纳音
+    #   克我、吉神(通关)又被合去, 不在"刑害"浮灾保护内): 26子2021 太岁辛金克木,
+    #   通关子被丑合去, 晦气+空亡+劫财 → 重, 守住离婚破财凶年.
+    _ke_shen_fa = _ke_shen_gui and _power["level"] == "重"
+    _fa_huo_ji = _struct_fa or _ke_shen_fa or _dayun_fa
     if _luck_ji and year_tone == "凶" and not _fa_huo_ji:
         year_tone = "吉凶相杂"          # 大运吉乡: 流年刑害只细累浮灾不为重害
     elif _luck_xiong and year_tone == "吉":
@@ -4279,6 +4461,11 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   / V62 犯命 / V66 天罗地网 / V70 元辰 / V77 日犯岁君 / V78 征太岁 / V87 五鬼克身。
     _rids = [v.get("rule_id", "") for v in verdicts]
     _HEAVY = _HEAVY_XIONG   # 模块级重凶集 (L3344 尊吉卑凶同源)
+    from .strength import _XI_LEI_RULES as _XLR
+    def _real_w(v):
+        # 实际权重 (power_override 优先; 与 year_power 口径一致)
+        _po = v.get("power_override")
+        return _po if _po is not None else YEAR_XIONG.get(v.get("rule_id", ""), 2)
     # 婚姻引动(喜): 太岁合/害日支夫妻宫(非冲克, v51_tone≠凶) + 喜庆吉神
     #   (金舆/红鸾/天喜/合局/贵人禄马) — 古法"夫妻宫引动+喜庆"主婚嫁之喜
     #   (五行精纪金舆"主婚姻庆贺"; 三命通会红鸾天喜"主婚嫁"; 太岁合日柱为合局)
@@ -4288,19 +4475,42 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     _hun_dong = (_day_row.get("tai_relation") in ("合", "害")
                  and _day_row.get("v51_tone") != "凶"
                  and any(r in _rids for r in _HUN_XI_RULES))
+    # 实际4分重凶 (含 power_override; V50冲年/V59B合晦气/S05灾煞/S07自缢 等不漏)
+    _heavy4 = [v for v in verdicts if v.get("tone") == "凶"
+               and v.get("rule_id") not in _XLR and _real_w(v) >= 4]
     _heavy_hit = [v for v in verdicts if v.get("rule_id") in _HEAVY and v.get("tone") == "凶"]
+    # F04 财化鬼 (助鬼, L1556 主阻滞/骨肉破斗): 太岁财生柱鬼克我, 即使强吉
+    #   (Y73得财/V67喜神)在场, 亦有"当年不利" → 应期至少浮灾, 不标纯吉.
+    _has_f04 = "LM-F04" in _rids
     if "LM-V60" in _rids:
         _yq_level = "定死/大凶"
     elif _i4273.get("mode") == "发祸":
         _yq_level = "需防"     # 2026-10-21 核验二: 发祸(凶祸之运+太岁刑冲)接应期需防
+    elif _heavy4 or _power["level"] == "重":
+        # 实际4分重凶在场, 或 恶力档=重(多个3分会集, L3664 灾有五期) → 需防
+        _yq_level = "需防"
     elif _heavy_hit:
         _yq_level = "需防"
-    elif year_tone == "凶" or counts.get("凶", 0) > 0:
+    elif year_tone == "凶" or counts.get("凶", 0) > 0 or _has_f04:
         _yq_level = "浮灾细累"
     elif counts.get("吉", 0) > 0:
         _yq_level = "吉"
     else:
         _yq_level = "无"
+    # 大运基调闸门 (L4427 陈访: "小大灾福皆以大运为之主"):
+    #   大运吉处, 太岁小运到凶位"不能为大灾, 止当年不利" → 非"真重凶"者,
+    #   应期由"需防"降为"浮灾细累"。运吉亦硬保需防的"真重凶"= 四者任一:
+    #   ① 结构性发祸 _struct_fa (V60定死/V70元辰/岁运并临);
+    #   ② 克身鬼+重档会集 _ke_shen_fa (通关被合, 太岁克身);
+    #   ③ 恶力档=重 (real_xiong≥7含4分, 重凶会集, L3664 灾有五期);
+    #   ④ V60B 大运死绝+太岁刑克 (yctx.tai_death_part, L4275 大运到死绝乡).
+    #   单个岁伤(V62)/晦气(V59)/咸池等轻凶, 运吉不硬保, 降浮灾.
+    #   (万民英丁巳运 xi_ji_tone=平、食伤泄气+刑害日柱+病地, 本属偏凶, 故
+    #    L6915 岁冲运罢官丧母不在此降列, 与 L4427 不悖)
+    _hard_keep = (_struct_fa or _ke_shen_fa or _power["level"] == "重"
+                  or yctx.get("tai_death_part"))
+    if _luck_ji and not _hard_keep and _yq_level == "需防":
+        _yq_level = "浮灾细累"
     # ③ 主/次应维度: 重凶断语优先 (煞/身系 > 其余, 同强度下原文权重更高) —
     #    2026-10-21 修订(核验⑧): 五鬼克身"决有大灾"比冲运"其祸重"更重, 主应不能取到禄/事业;
     #    无重凶时按凶断语中凶力最强(YEAR_XIONG)的主维度。
@@ -4388,7 +4598,8 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     guidance = build_guidance(chart, verdicts, year_tone, ying_qi, combined, yctx)
 
     return {"year": year, "tai_sui": yctx["tai_sui"], "age": round(yctx["age"], 2),
-            "luck_pillar": yctx["luck_pillar"], "verdicts": verdicts,
+            "luck_pillar": yctx["luck_pillar"], "luck_verdict": _luck_verdict,
+            "verdicts": verdicts,
             "tone": year_tone, "counts": counts, "combined": combined,
             "lury": _lury,
             "er_yun_hits": _er_yun_hits_calc(chart, yctx.get("dayun_branch", ""),
@@ -4412,6 +4623,13 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "tai_mu": yctx.get("tai_mu", False),
             "tai_wu_gui": yctx.get("tai_wu_gui", False),
             "tai_wu_gui_stage": yctx.get("tai_wu_gui_stage", ""),
+            "tai_ghost_tongguan": yctx.get("tai_ghost_tongguan", ""),
+            "main_relation": yctx.get("main_relation", ""),
+            "main_relation_det": yctx.get("main_relation_det", {}),
+            "zai_sha_fu": yctx.get("zai_sha_fu", False),
+            "qi_sheng": _qi_sheng,
+            "ke_shen_gui": _ke_shen_gui,
+            "fa_huo_ji": _fa_huo_ji,
             "tai_si_sha": yctx.get("tai_si_sha", False),
             "tai_si_sha_chong": yctx.get("tai_si_sha_chong", False),
             "dl_guan_di_wang": yctx.get("dl_guan_di_wang", False),

@@ -55,6 +55,7 @@ YEAR_XI = {  # 吉, 正分
     "LM-S13": 2,   # 天医 病愈安康
     "LM-S14": 2,   # 攀鞍 功名进阶
     "LM-S15": 2,   # 天厨 食禄福禄
+    "LM-S16": 2,   # 文昌 文名考试文书 (五行精纪 L2010)
 }
 YEAR_XIONG = {  # 凶, 负分 (绝对值 = 强度)
     "LM-V60": 4,   # 二运会集死绝衰息, 灾限相应定死 (L4275 死绝=骨肉死丧)
@@ -114,6 +115,11 @@ YEAR_XIONG = {  # 凶, 负分 (绝对值 = 强度)
     "LM-S07": 4,   # 自缢煞(反系)会集空亡/官符/岁破 定凶 (三命通会卷三 — 重灾)
     "LM-S09": 3,   # 天火煞(寅午戌全无水)火生旺引动 防火灾 (三命通会卷三)
     # S08 自缢煞无会集 tone=平, 不进 XIONG
+    # 2026-10-24 F04 财化鬼纳入流年权重 (五行精纪 L4282"财化为鬼, 转福成祸"):
+    #   太岁本为我克之财, 然生柱中鬼、鬼克我 — 太岁生鬼间接克身, 属"转化之凶",
+    #   计 2 分(同空亡/勾绞, 低于直接克身 V62/V87=3~4); 其级别再由大运闸门定
+    #   (L4427 运吉→止当年不利/浮灾, 运凶死败绝→方大灾), 不独立触发运吉发祸.
+    "LM-F04": 2,
 }
 YEAR_PING = {"LM-V69"}  # 交运灾滞 (滞, 0.5 级, 见滞权重)
 
@@ -203,6 +209,10 @@ DIMENSION = {
     "LM-V85": "综合贵贱", "LM-V86": "综合贵贱", "LM-V87": "综合贵贱",
     "LM-V88": "综合贵贱", "LM-V89": "父母祖业",
     "LM-Y73": "综合贵贱", "LM-V57B": "自身婚姻",
+    # 岁运发用 F04 财化鬼 (太岁财生鬼克我, 转福成祸): 综合贵贱
+    #   dim_hits 不收录"综合贵贱" → F04 不机械触发"重维度降相杂"; 它在大运吉时
+    #   只导致"当年不利"(L4427), 由应期(浮灾)体现, 整体 tone 交全局力量对比.
+    "LM-F04": "综合贵贱",
     # 原局: 六亲/情性维度 (不计贵贱福分, 映射层仍输出)
     "LM-V14": "情性健康", "LM-V20": "情性健康", "LM-V32": "兄弟事业",
     "LM-V103": "自身婚姻", "LM-V104": "自身婚姻", "LM-V105": "自身婚姻",
@@ -291,7 +301,9 @@ def base_fortune(lm) -> dict:
 #   V63"败乡酒色级细累") 却未归零, 与用户定案口径不一致;
 #   实测 5 例 55 年归零 tone/应期零漂移 (应期由 _HEAVY 重凶集决定, 不靠计分).
 _XI_LEI_RULES = frozenset({"LM-V80", "LM-V88", "LM-V64",
-                            "LM-V79", "LM-V60B", "LM-V63"})   # 小运刑害/四煞轻凶/岁压稽滞/小运死绝/大运绝/咸池
+                            "LM-V79", "LM-V63"})   # 小运刑害/四煞轻凶/岁压稽滞/小运死绝/咸池
+# 注: V60B(大运死绝+太岁刑克, 重险有救) 不入细累 — 它是"大运到死绝乡+太岁刑克"
+#   (L4275"大运到死绝乡骨肉死丧自身衰祸" + L4273 凶运逢刑克), 立需防, 非浮灾.
 
 # 主断吉集 (珞琭子"尊吉卑凶, 逢灾自愈" — 救应降级权):
 #   临天月德/贵人禄马/本命克太岁为财/合局/喜神/小运禄马贵/福会/临官帝旺
@@ -320,37 +332,35 @@ def year_power(verdicts) -> dict:
         if tone == "凶":
             if rid in _XI_LEI_RULES:
                 xi_lei_n += 1
-                continue                      # 细累单条计0, 汇总后计1
+                continue                      # 细累单条计0, 不进档位
             _po = v.get("power_override")
             xiong += _po if _po is not None else YEAR_XIONG.get(rid, 2)
         elif tone == "吉":
             ji += YEAR_XI.get(rid, 2)
         elif tone == "滞":
             zhi += 0.5
-    if xi_lei_n >= 2:
-        xiong += 1.0                          # 两条以上细累合计计1
-    # 恶力档 (L4276 烛神经 "至七分恶运方有重灾"): 古法"恶运分数"是恶力本身的强度,
-    #   不是轻凶逐条凑分 — 多个2分轻凶(空亡/丧门/劫财V90B等)叠加不等于"七分重灾"。
-    #   按"最重凶级别 + 重凶数量"定级:
-    #     重 = 含≥1个4分重凶(定死/天罗/晦气/征太岁/冲年等), 或 ≥2个3分凶(重凶会集);
-    #     中 = 含3分凶, 或 2分轻凶累加≥4; 轻 = 仅少量2分/细累
+    # 细累额外 (两条以上合计计1, 仅作显示, 不进档位)
+    xi_lei_add = 1.0 if xi_lei_n >= 2 else 0.0
+    total_xiong = round(xiong + xi_lei_add, 2)
     _ws = []
     for v in verdicts:
         if v.get("tone") == "凶" and v.get("rule_id") not in _XI_LEI_RULES:
             _po = v.get("power_override")
             _ws.append(_po if _po is not None else YEAR_XIONG.get(v.get("rule_id", ""), 2))
-    _max_w = max(_ws, default=0)
-    _has4 = _max_w >= 4
-    # 重灾(L4276"七分恶运方有重灾" + L3664"灾有五期=凶会集"): 须 恶力整体≥7
-    #   且 含真正重凶(4分) — 同时排除"纯轻凶凑数"(无4分) 与"单个4分"(恶力仅4分,
-    #   只属"四分恶运"=需防中灾)。
+    _has4 = max(_ws, default=0) >= 4
+    # 档位基于【真正凶分数】(L4276 烛神经 "三四分/五六分/七分恶运" 是真凶整体强度,
+    #   不含细累浮灾): 无=真凶<3(仅细累/无) / 轻=3-4 / 中=5-6 / 重=7+且含4分重凶。
+    #   排除"纯轻凶凑数"(7+无4分=中) 与"单个4分"(真凶=4=四分恶运=轻)。
     if xiong >= 7 and _has4:
         yl = "重"
-    elif xiong >= 4 or _has4:
+    elif xiong >= 5:
         yl = "中"
-    else:
+    elif xiong >= 3:
         yl = "轻"
-    return {"xiong": round(xiong, 2), "ji": round(ji, 2), "zhi": zhi,
+    else:
+        yl = "无"
+    return {"xiong": total_xiong, "real_xiong": round(xiong, 2),
+            "ji": round(ji, 2), "zhi": zhi,
             "level": yl, "xi_lei_n": xi_lei_n}
 
 
@@ -359,13 +369,16 @@ def year_power(verdicts) -> dict:
 # ============================================================================
 # 档位: 吉 / 吉凶相杂 / 凶 (原著语境措辞)
 L4276_TABLE = {
-    # (福力, 恶力) → 判定
+    # (福力, 真凶档) → 判定
+    ("厚", "无"): "吉",        # 八分福 + 无真凶(仅细累) → 福厚不觉
     ("厚", "轻"): "吉",        # 八分福 + 三四分恶 → 不觉其凶
     ("厚", "中"): "吉凶相杂",  # 八分福 + 五六分恶 → 浮灾细累
     ("厚", "重"): "凶",        # 八分福 + 七分恶 → 方有重灾
-    ("中", "轻"): "吉凶相杂",  # 五分福 + 三四分恶 → 福中可抵轻恶
-    ("中", "中"): "凶",        # 五分福 + 五六分恶 → 凶甚切
+    ("中", "无"): "吉",        # 五分福 + 无真凶(仅细累) → 福可抵浮灾
+    ("中", "轻"): "凶",        # 五分福 + 三四分恶 → 凶甚切 (L4276 原文)
+    ("中", "中"): "凶",        # 五分福 + 四五分恶 → 须死, 基地不牢固
     ("中", "重"): "凶",
+    ("薄", "无"): "吉凶相杂",  # 薄基 + 无真凶(仅细累) → 基薄不全吉
     ("薄", "轻"): "凶",        # 薄基 + 三四分恶 → 凶甚切
     ("薄", "中"): "凶",        # 薄基 + 四五分恶 → 须死
     ("薄", "重"): "凶",
@@ -394,9 +407,9 @@ def aggregate(base: dict, power: dict, dim_hits: dict | None = None,
     xiong = power["xiong"]
     if jiu_yi:
         xiong = round(xiong - jiu_yi_heavy * 0.5, 2)
-        eff = {"重": "中", "中": "轻", "轻": "轻"}[eff]
+        eff = {"重": "中", "中": "轻", "轻": "无", "无": "无"}[eff]
     v = L4276_TABLE.get((base["level"], eff), "凶")
-    if power["ji"] >= 4 and eff == "轻":
+    if power["ji"] >= 4 and eff in ("无", "轻"):
         if v == "吉凶相杂":
             v = "吉"
         elif v == "凶" and base["level"] != "薄":
@@ -407,7 +420,7 @@ def aggregate(base: dict, power: dict, dim_hits: dict | None = None,
         def _real_dim(d):
             return [r for r in (dim_hits.get(d) or []) if r not in _XI_LEI_RULES]
         heavy = any(_real_dim(d) for d in ("自身婚姻", "情性健康"))
-        if heavy and eff == "轻" and v == "吉":
+        if heavy and eff in ("无", "轻") and v == "吉":
             v = "吉凶相杂"  # L4273 吉运中遇刑害 → 细累浮灾 (不上报重灾, 也不全吉)
     return {"verdict": v,
             "base_level": base["level"], "base_score": base["score"],
@@ -551,7 +564,10 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
             if year_tone == "吉":
                 out["year_tone"] = "吉" if _j2 >= _x2 else "吉凶相杂"
             elif year_tone == "凶":
-                _heavy4 = any(YEAR_XIONG.get(v.get("rule_id", ""), 1) >= 4
+                def _real_w(v):
+                    _po = v.get("power_override")
+                    return _po if _po is not None else YEAR_XIONG.get(v.get("rule_id", ""), 1)
+                _heavy4 = any(_real_w(v) >= 4
                               for v in (year_verdicts or []) if v.get("tone") == "凶")
                 if not _heavy4:
                     out["year_tone"] = "吉凶相杂"

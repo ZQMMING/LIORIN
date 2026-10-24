@@ -31,8 +31,49 @@ from __future__ import annotations
 
 from typing import Any, Dict, List
 
-from ..facts.bazi_facts import LU_BY_STEM
-from ..reasoning.bazi_ten_gods import ten_god
+from ..facts.bazi_facts import LU_BY_STEM, STEM_ELEMENT, GENERATES, CONTROLS
+from ..reasoning.bazi_ten_gods import ten_god, hidden_main_stem
+
+
+def _wuxing_you_qi(chart: Any, el: str) -> bool:
+    """某五行在原局是否有气 (多维取证, 非只看透干).
+
+    判据 (滴天髓"根之重者长生禄旺; 干多不如根重" + 月令提纲):
+      ① 天干透此五行, 且在其坐支非死绝 (有根之透);
+      ② 地支本气为此五行, 且其十二宫为 长生/临官/帝旺 (本气强根);
+      ③ 月令本气为此五行 (得令, 提纲).
+    """
+    if not el:
+        return False
+    from .engine import _growth_stage, _is_clash
+    _strong = ("长生", "临官", "帝旺")
+    _pillars = (chart.year_pillar, chart.month_pillar, chart.day_pillar, chart.hour_pillar)
+    _branches = [p.earthly_branch for p in _pillars]
+
+    def _root_broken(b: str) -> bool:
+        # 根支被原局他支冲 (如子午冲、巳亥冲) → 根动不立
+        return any(_is_clash(b, b2) for b2 in _branches if b2 != b)
+
+    for p in _pillars:
+        s, b = p.heavenly_stem, p.earthly_branch
+        if STEM_ELEMENT.get(s) == el and _growth_stage(el, b) not in ("死", "绝") \
+                and not _root_broken(b):
+            return True              # 透干且坐支有根不被冲
+        if STEM_ELEMENT.get(hidden_main_stem(b)) == el and _growth_stage(el, b) in _strong \
+                and not _root_broken(b):
+            return True              # 支本气强根 (长生/临官/帝旺) 不被冲
+    return False
+
+
+def _ke_tongguan(chart: Any, ke_el: str, target_el: str) -> bool:
+    """ke_el 克 target_el 时, 原局有无通关五行 (ke_el 生 mid, mid 生 target_el, mid 有气)."""
+    if not ke_el or not target_el or CONTROLS.get(ke_el) != target_el:
+        return False
+    mid = GENERATES.get(ke_el, "")
+    if GENERATES.get(mid) == target_el:
+        return _wuxing_you_qi(chart, mid)
+    return False
+
 
 # 帝旺 (十二长生) — 用户口径"刃 = 日主帝旺之地", 含阴干 (主流羊刃仅取阳干,
 # 此处按用户母法取帝旺全表, 输出注明口径).
@@ -74,6 +115,10 @@ def calc_lu_ren_yin(chart: Any) -> Dict[str, Any]:
     shi = [s for s in stems if ten_god(dm, s) in _SHI]
     count = int(bool(lu_b) and lu_b in branches) + int(bool(ren_b) and ren_b in branches) + int(bool(yin))
     strong = {0: "中和", 1: "强", 2: "过强", 3: "极强"}[count]
+    # 制化五行 (地支本气亦查, 不只透干): 食伤=我生, 官杀=克我
+    _dm_el = STEM_ELEMENT.get(dm, "")
+    _shi_el = GENERATES.get(_dm_el, "")
+    _guan_el = next((e for e in CONTROLS if CONTROLS[e] == _dm_el), "")
     return {
         "day_master": dm,
         "lu_branch": lu_b, "lu_in_chart": lu_b in branches,
@@ -81,6 +126,9 @@ def calc_lu_ren_yin(chart: Any) -> Dict[str, Any]:
         "yin_stems": yin, "yin_in_chart": bool(yin),
         "jie_stems": jie,
         "guan_stems": guan, "shi_stems": shi,
+        "guan_el": _guan_el, "shi_el": _shi_el,
+        "guan_you_qi": _wuxing_you_qi(chart, _guan_el),
+        "shi_you_qi": _wuxing_you_qi(chart, _shi_el),
         "count": count, "strong": strong,
     }
 
@@ -118,12 +166,24 @@ def check_year_lury(chart: Any, y_stem: str, y_branch: str) -> List[Dict[str, An
     dm = f["day_master"]
     hits: List[Dict[str, Any]] = []
 
-    # 制化查: 命局透干 官杀/食伤 + 流年干支 官杀/食伤
+    # 制化查 (多维取证, 非只看透干):
+    #   原局: 天干透 官杀/食伤 或 地支本气有气 (强根);
+    #   流年: 流年干/支 官杀/食伤;
+    #   通关: 流年印克原局食伤时, 若有比劫通关 (印→比→食伤, 比有气), 食伤不被克.
     yt = _year_ten_gods(chart, y_stem, y_branch)
-    guan_all = f["guan_stems"] + yt["guan"]      # 刃之制
-    shi_all = f["shi_stems"] + yt["shi"]          # 印/刃之泄
-    has_zhi = bool(guan_all)                      # 有制
-    has_xie = bool(shi_all)                       # 有泄
+    natal_zhi = bool(f["guan_stems"]) or f["guan_you_qi"]
+    natal_xie = bool(f["shi_stems"]) or f["shi_you_qi"]
+    # 流年是否为印 (克食伤): 干或支本气十神属印
+    _yin_tg = [s for s in (y_stem, hidden_main_stem(y_branch))
+               if ten_god(dm, s) in _YIN]
+    _xie_blocked = False
+    if _yin_tg and natal_xie:
+        # 流年印克食伤, 须有通关方不被制; 任一无通关则食伤被克
+        _yin_el = STEM_ELEMENT.get(_yin_tg[0], "")
+        if not _ke_tongguan(chart, _yin_el, f["shi_el"]):
+            _xie_blocked = True
+    has_zhi = natal_zhi or bool(yt["guan"])            # 有制
+    has_xie = (natal_xie and not _xie_blocked) or bool(yt["shi"])  # 有泄
     ji = "凶兆" if f["count"] == 3 else "凶"
 
     # 流年凑齐要素 (命局缺何, 流年补何)
@@ -177,7 +237,7 @@ def check_year_lury(chart: Any, y_stem: str, y_branch: str) -> List[Dict[str, An
             })
     elif f["ren_in_chart"] and not f["jie_stems"] and f["yin_in_chart"] and (yt["shi"] or yt["bi"]):
         # 情形2: 命局带刃不透劫财 + 带印 + 流年食伤 → 吉 (身旺喜泄)
-        if shi_all or yt["shi"]:
+        if yt["shi"]:
             hits.append({
                 "rule_id": "LURY-04", "tone": "吉", "scope": "流年",
                 "target": "日主",

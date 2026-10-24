@@ -1576,7 +1576,9 @@ YEAR_RULES = [
     {"id": "LM-V57", "evidence": "E-SMTH-015-001", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}伏吟日支{day_branch}",
      "tone": "凶",
-     "when": {"op": "eq", "k": "tai_fu_yin", "v": True},
+     "when": {"op": "and", "conds": [
+         {"op": "eq", "k": "tai_fu_yin", "v": True},
+         {"op": "not", "cond": {"op": "eq", "k": "zhen_tai_sui_pos", "v": "日"}}]},
      "out": "岁运压日（伏吟），不利六亲",
      "detail_tpl": "太岁{tai_b}=日支{day_branch}（伏吟）"},
     # ---- 伏吟压年/月/时柱 (三命通会 L968: 返吟伏吟不利六亲) ----
@@ -1591,7 +1593,8 @@ YEAR_RULES = [
      "tone": "凶",
      "when": {"op": "and", "conds": [
          {"op": "eq", "k": "tai_relation", "v": "压"},
-         {"op": "not", "cond": {"op": "eq", "k": "pos", "v": "日"}}]},
+         {"op": "not", "cond": {"op": "eq", "k": "pos", "v": "日"}},
+         {"op": "not", "cond": {"op": "eq", "k": "this_pos_zhen_tai", "v": True}}]},
      "out_map": {"年": "太岁伏吟压年柱（返吟伏吟不利六亲），主父母辈动变不利",
                  "月": "太岁伏吟压月柱（返吟伏吟不利六亲），主兄弟僚友动变不利",
                  "时": "太岁伏吟压时柱（返吟伏吟不利六亲），主子孙动变不利"},
@@ -1706,7 +1709,10 @@ YEAR_RULES = [
     {"id": "LM-Y72C", "evidence": "E-WXJ-034-009", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}克年命",
      "tone": "凶",
-     "when": {"op": "eq", "k": "tai_nayin_rel", "v": "克我"},
+     "when": {"op": "and", "conds": [
+        {"op": "eq", "k": "tai_nayin_rel", "v": "克我"},
+        {"op": "not", "cond": {"op": "not_empty", "k": "tai_ghost_tongguan"}},
+        {"op": "not", "cond": {"op": "eq", "k": "tai_wu_gui", "v": True}}]},
      "out": "太岁与本命相克年，宜防上人怒责（L4410）",
      "detail_tpl": "太岁{tai_b}纳音{tai_nayin}克年命{year_nayin}"},
     # ---- 本命克太岁为财 (珞琭子 L4416 王氏注: 癸亥生得乙巳岁, 水克火为财,
@@ -1931,9 +1937,12 @@ YEAR_RULES = [
     # ---- 血光/健康: 灾煞 (三命通会"灾煞常居劫煞之前冲破将星, 主血光横死") ----
     {"id": "LM-S05", "evidence": "E-SMTH-014-001", "mode": "scalar",
      "scope": "流年", "target": "太岁{tai_b}临灾煞（{zai_sha_branch}）",
-     "tone": "凶",
+     "tone": {"mode": "rel_map", "k": "zai_sha_fu", "table": {True: "平", False: "凶"}},
      "when": {"op": "eq", "k": "tai_zai_sha", "v": True},
      "out": "太岁临灾煞（冲破将星），其年防血光、横祸、外伤",
+     "out_map_key": "zai_sha_fu",
+     "out_map": {True: "灾煞临而有福神相助（天月德/贵禄/金舆），凶不为甚，多主武权、伤而不险",
+                 False: "太岁临灾煞（冲破将星），其年防血光、横祸、外伤"},
      "detail_tpl": "太岁{tai_b}=年支{year_branch}灾煞位{zai_sha_branch}（三命通会：灾煞常居劫煞之前冲破将星，主血光横死；有福神相助多为武权）"},
     # ---- 六亲/健康: 孤辰寡宿 (五行精纪"太岁到孤辰必有孝服, 到寡宿必有血光") ----
     {"id": "LM-S06", "evidence": "E-YHZP-040-010", "mode": "scalar",
@@ -2006,6 +2015,13 @@ YEAR_RULES = [
      "when": {"op": "eq", "k": "tai_tian_chu", "v": True},
      "out": "太岁临天厨（食神禄），其年主食禄、福禄、衣食丰足",
      "detail_tpl": "太岁{tai_b}=日干{day_stem}天厨位{tian_chu_branch}（天厨为食神之禄，甲丙巳、乙丁午、戊申、己酉、庚亥、辛子、壬寅、癸卯，宜食禄）"},
+    # ---- 文昌 (五行精纪 L2010 年干文昌表; 流年吉神通用原则 L4426) ----
+    {"id": "LM-S16", "evidence": "E-WXJ-013-001", "mode": "scalar",
+     "scope": "流年", "target": "太岁{tai_b}临文昌（{wen_chang_branch}）",
+     "tone": "吉",
+     "when": {"op": "eq", "k": "tai_wen_chang", "v": True},
+     "out": "太岁临文昌，其年利文名、考试、文书、签约、学业进益",
+     "detail_tpl": "太岁{tai_b}=年干{year_stem}文昌位{wen_chang_branch}（五行精纪 L2010：甲人蛇口乙猪头，丙狗丁龙戊向猴，己午庚寅辛未贵，六壬卯位癸逢牛；文昌为文星贵神）"},
     # ---- 比劫夺财 (engine 动态生成, 注册以闭合结构; 不在标准 eval 触发) ----
     {"id": "LM-V90A", "evidence": "E-YHSP-3", "mode": "dynamic",
      "scope": "流年", "target": "岁干劫财·身旺·原局财旺",

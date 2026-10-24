@@ -286,13 +286,14 @@ class TestYearDistributionSystemic:
 
     def test_134_1986_kun_2027_zun_ji_bei_xiong(self, be):
         """用户回算①: 1986乾 2027 丁未 — Y71合局主断吉触发尊吉卑凶 → 吉凶相杂(偏凶),
-        非纯凶. (V61空亡需防级降浮灾; 合局=午未合, 未非刑冲害引动为空)"""
+        非纯凶. 然未同时为年命自缢位(寅→未)与官符位(寅前五辰), 且丁未天河水克年命
+        炉中火, S07 自缢+官符会集(三命通会"更有官符者定凶") → 应期需防."""
         ch = _chart(be, 1986, 8, 15, 12)
         lm = _lm(be, 1986, 8, 15, 12, gender="male")
         r = query_year(ch, 2027, lm=lm)
         assert r["tone"] == "吉凶相杂", r["tone"]
         yq = r.get("ying_qi") or {}
-        assert yq.get("level") == "浮灾细累", yq
+        assert yq.get("level") == "需防", yq
 
     def test_135_1990_qian_2024_ji_xiong_xiang_za(self, be):
         """用户回算②: 1990乾 2024 甲辰 — Y72生本命主断吉触发尊吉卑凶 →
@@ -341,13 +342,13 @@ class TestYearDistributionSystemic:
         """凶年必须信号可回指 (重灾4分: 晦气/死绝/元辰/冲运/克身)."""
         ch = _chart(be, 1983, 11, 3, 12, gender="female")
         lm = _lm(be, 1983, 11, 3, 12)
+        from tongshu.luming.strength import YEAR_XIONG
+        _heavy4 = {rid for rid, w in YEAR_XIONG.items() if w == 4}
         for yr in range(2020, 2031):
             r = query_year(ch, yr, lm=lm)
             if r["tone"] != "凶":
                 continue
-            heavy = any(v.get("tone") == "凶" and v["rule_id"] in
-                        ("LM-V59", "LM-V59B", "LM-V60", "LM-V66", "LM-V70",
-                         "LM-V52", "LM-V50", "LM-Y72C")
+            heavy = any(v.get("tone") == "凶" and v["rule_id"] in _heavy4
                         for v in r["verdicts"])
             assert heavy, f"{yr} {r['tai_sui']} 判凶但无重灾4分信号"
 
