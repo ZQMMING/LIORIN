@@ -49,6 +49,8 @@ SLICE_LOCK = {
     "易卦释义_下经卷之中.txt": (562, "f8dfb7897432143f"),
     "河洛理数_日卦起例卷.txt": (332, "bf0082baf1b972f0"),
     "河洛理数_关键条文切片.txt": (3072, "e0d5231fcabeee31"),
+    # 2026-10-24 新增（批次 P1/P4）：年卦/月卦/爻位-节气对照
+    "河洛理数_年卦月卦切片.txt": (752, "95a66d3a62920cec"),
     "河洛真数_起例卷之上.txt": (279, "9c97489abb122270"),
     "河洛真数_起例卷之下.txt": (143, "4231253574c50b5f"),
     "河洛真数_起例卷之中.txt": (213, "1d0b226ff807050a"),
@@ -292,6 +294,21 @@ class TestEngineCriteriaHaveOriginalSource(unittest.TestCase):
         ("金银匙歌",        ["金銀匙歌"]),
         ("时刻法",          ["它時刻法"]),
         ("起月卦/起日卦",   ["起月卦之式", "起日卦之式"]),
+        # ── 2026-10-24 批次 P1/P4 新增（年卦/月卦/爻位-节气对照）──
+        ("卷一·年卦篇目",     ["年卦"]),
+        ("卷一·起月卦定式",   ["起月卦定式"]),
+        ("卷一·十二月辟卦",   ["十二月辟卦", "十二月辟"]),
+        ("卷五·月卦排布表",   ["月卦終", "月卦"]),
+        ("世应月卦",          ["世應月卦"]),
+        ("小象阳爻九阳运行例", ["小象陽交九年運行例"]),
+        # 日卦「一卦管六日」的**双本**依据：
+        #   K3-447「日卦者每月變五卦每卦管六日方成一月五六三」
+        ("日卦六日制",        ["日卦者每月變五卦每卦管六日", "六十卦每一卦冬管六日"]),
+        # 「每日添一刻七分天」的 K3-447 本句（底本实写「目」＝「日」之讹）
+        ("每日添一刻七分天",   ["刻七分六目数過一時"]),
+        # 十二辟卦/六十卦的**爻位-节气对照**（底本实写「文」＝「爻」之讹）
+        ("爻位-节气对照",      ["坎一初文起冬至", "小過初六起立春"]),
+        ("卷十·起流年",       ["起流年"]),
     ]
 
     @classmethod
@@ -339,6 +356,98 @@ class TestLineMapConsistency(unittest.TestCase):
                 if sl > n:
                     bad.append(f"{cut_name} 切片 L{sl} > 实际 {n} 行")
         self.assertEqual(bad, [], "行号映射表与切片不一致：\n  " + "\n  ".join(bad))
+
+
+class TestNianGuaYueGuaSlice(unittest.TestCase):
+    """★ 批次 P1/P4：年卦/月卦/爻位-节气对照切片的**结构**与**留证**（2026-10-24）。
+
+    这批切片由 `tools/heluo/extract_orig_slice.py` **机械抽取**（逐行原样拷贝），
+    故其正确性靠两件事保证：
+      ① **段头行号区间**钉死 —— 每段须声明底本与 L起-L止，可回源核对；
+      ② **影印核定**留证 —— 校记须记下逐字核定到的正字与讹字。
+
+    ⚠ 特别防一种回归：切片里若混进**未经影印核定的「订正文」**，
+    就会把 OCR 讹字悄悄改成推测正字 ⇒ 破坏「底本忠实」原则。
+    故校记里必须**同时**有「影印核定」节与「疑讹登记」节。
+    """
+
+    SLICE = ORIG / "河洛理数_年卦月卦切片.txt"
+    NOTE = ORIG / "河洛理数_年卦月卦切片_校记.md"
+
+    #: 段号 → (底本文件名, 起行, 止行)
+    SECTIONS = {
+        "S1": ("K3-448_修正版", 2878, 3165),
+        "S2": ("K3-447_修正版", 165, 320),
+        "S3": ("K3-447_修正版", 1090, 1160),
+        "S4": ("K3-447_修正版", 1196, 1295),
+        "S5": ("K3-447_修正版", 20967, 21010),
+        "S6": ("K3-447_修正版", 21226, 21260),
+    }
+
+    def test_sections_declared_with_source_ranges(self):
+        text = self.SLICE.read_text(encoding="utf-8")
+        for sid, (_tag, lo, hi) in self.SECTIONS.items():
+            with self.subTest(section=sid):
+                pat = rf"^# 【{sid} .*? L{lo}-L{hi}】"
+                self.assertIsNotNone(re.search(pat, text, re.M),
+                                     f"{sid} 段头缺失或行号区间不符（应 L{lo}-L{hi}）")
+
+    def test_sections_are_contiguous_and_non_empty(self):
+        """每段必须有实际内容 —— 防止「段头在、正文空」的假切片。"""
+        lines = self.SLICE.read_text(encoding="utf-8").splitlines()
+        heads = [(i, l) for i, l in enumerate(lines, 1) if l.startswith("# 【S")]
+        self.assertEqual(len(heads), len(self.SECTIONS),
+                         f"段数应为 {len(self.SECTIONS)}，实测 {len(heads)}")
+        for idx, (i, head) in enumerate(heads):
+            end = heads[idx + 1][0] - 1 if idx + 1 < len(heads) else len(lines)
+            body = [x for x in lines[i:end]
+                    if x.strip() and not x.startswith("#")
+                    and not x.startswith("-" * 10)]
+            self.assertGreater(len(body), 20,
+                               f"{head[:20]}… 段正文过少（{len(body)} 行）")
+
+    def test_slice_header_declares_ocr_base_and_bases(self):
+        head = "\n".join(self.SLICE.read_text(encoding="utf-8").splitlines()[:26])
+        self.assertIn("OCR", head, "页眉必须声明底本是 OCR 文本")
+        self.assertIn("底本", head, "页眉必须列出底本")
+        self.assertIn("K3-448", head)
+        self.assertIn("K3-447", head)
+
+    def test_note_has_scan_verification_and_doubt_register(self):
+        note = self.NOTE.read_text(encoding="utf-8")
+        self.assertIn("影印", note, "校记必须含影印核定的记录")
+        self.assertRegex(note, r"L\d{2,5}", "校记必须带底本行号，便于回源定位")
+        self.assertIn("疑讹", note, "校记必须含未核定部分的疑讹登记")
+        # 影印核定的正字必须被记下来（不是只说「已核定」）
+        for z in ("康節", "邵雍", "希夷", "陳摶", "月卦終"):
+            self.assertIn(z, note, f"校记缺影印核定的正字「{z}」")
+
+    def test_note_has_required_sections(self):
+        """★ 校记的**章节结构**必须钉死（不只查关键词在不在）。
+
+        **为什么要有这一项**（2026-10-24 变异演练实测）
+        变异 M4「把校记的『影印核定结果』标题换成别的」、
+        M5「把『P1 定位订正』章节标题换成别的」—— **原守卫全绿**！
+        原因：守卫只查「『影印』『疑讹』『卷四』等词出现在文件里」，
+        而这些词在**正文**里仍然存在 ⇒ **恒绿陷阱**。
+
+        ⇒ 改为检查**行首标题**里必须出现指定短语：
+        章节被删或被改名 ⇒ 守卫变红。
+        """
+        lines = self.NOTE.read_text(encoding="utf-8").splitlines()
+        heads = [l for l in lines if l.startswith("## ")]
+        for phrase in ("影印核定结果", "疑讹登记", "体例定位", "订正"):
+            with self.subTest(section=phrase):
+                self.assertTrue(
+                    any(phrase in h for h in heads),
+                    f"校记缺章节「{phrase}」—— 现有章节：{heads}")
+
+    def test_p1_location_correction_is_recorded(self):
+        """体检报告 P1 的卷次定位有误 —— 订正必须落在校记里（不得只改切片）。"""
+        note = self.NOTE.read_text(encoding="utf-8")
+        self.assertIn("卷四", note, "校记须记录 P1 卷次定位的订正")
+        self.assertIn("月日卦上經三十", note,
+                      "校记须写明 K3-447 卷四/卷五 实为「月日卦上/下经」")
 
 
 if __name__ == "__main__":
