@@ -47,7 +47,7 @@ SLICE_LOCK = {
     "易卦释义_下经卷之上.txt": (608, "b7bdd0f5d287fe21"),
     "易卦释义_下经卷之下.txt": (559, "e2794159cc107a36"),
     "易卦释义_下经卷之中.txt": (562, "f8dfb7897432143f"),
-    "河洛理数_日卦起例卷.txt": (329, "9f6bec9847d0f81c"),
+    "河洛理数_日卦起例卷.txt": (332, "bf0082baf1b972f0"),
     "河洛真数_起例卷之上.txt": (279, "9c97489abb122270"),
     "河洛真数_起例卷之下.txt": (143, "4231253574c50b5f"),
     "河洛真数_起例卷之中.txt": (213, "1d0b226ff807050a"),
@@ -222,6 +222,38 @@ class TestKeyAnchorsInPackage(unittest.TestCase):
         self.assertEqual(missing, [],
                          "以下判据层关键依据在包内切片查不到（包外依赖）：\n  "
                          + "\n  ".join(missing))
+
+
+class TestSliceHeaderDeclaresOcrBase(unittest.TestCase):
+    """★ 切片**必须**如实声明底本是 OCR 文本（2026-10-24 影印核定后新增）。
+
+    **为什么要有这个守卫**
+
+    影印原件（`河洛理数_藏书阁K3-448_1632_OCR/.../p0035.png`、`p0037.png`）逐字核定后确认：
+    切片的**行序 / 分栏顺序 / 断句位置 / 页标**与影印**完全一致**，
+    差异**只在字形层** —— 底本是 **OCR 文本**，且经过**繁简转换**（简繁混排）。
+
+    ⇒ 切片里的「错讹一仍其旧」指的是**保留 OCR 讹字**，**不是**保留原书错字。
+    若页眉写成「原文逐字照抄」，读者会误以为它与影印原件逐字相同 ⇒ **误导**。
+
+    故钉死：页眉须写明「OCR 底本」，且校记须有「影印核定」节。
+    """
+
+    SLICE = ORIG / "河洛理数_日卦起例卷.txt"
+    NOTE = ORIG / "河洛理数_日卦起例卷_校记.md"
+
+    def test_slice_header_says_ocr_base(self):
+        head = "\n".join(self.SLICE.read_text(encoding="utf-8").splitlines()[:16])
+        self.assertIn("OCR", head,
+                      "切片页眉必须声明底本是 OCR 文本（否则读者会误以为与影印原件逐字相同）")
+        self.assertIn("底本", head, "切片页眉必须列出底本")
+
+    def test_caliber_note_has_scan_verification(self):
+        note = self.NOTE.read_text(encoding="utf-8")
+        self.assertIn("影印", note,
+                      "校记必须含影印核定的记录（原件级验证）")
+        self.assertRegex(note, r"L\d{2,4}",
+                         "校记必须带底本行号，便于回源定位")
 
 
 class TestLineMapConsistency(unittest.TestCase):
