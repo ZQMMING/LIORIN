@@ -1846,10 +1846,15 @@ def _build_verdicts(chart: Any, sy: Dict, lm_: Dict, gr: Dict, ss: Dict, hq: Dic
             _p["yuan_chen_fan_yun_by"] = yuan_chen_cn
         # ---- 五行精纪卷卅三 限运八限 (L4300-4329) 切片 ----
         # 运入天罗地网 L4325: 男行年至天罗(戌亥)官符刑狱, 女行年至地网(辰巳)口舌沉疴
+        # 2026-10-24 年命条件修正 (三命通会 L1549"男怕天罗女怕地网, 中间又分火命人有
+        #   天罗、水土命人有地网, 余金木二命无之; 行运至此亦如之"): 网支须为年命之
+        #   墓绝方立 — 火在戌墓亥绝(天罗)/ 水土在辰墓巳绝(地网); 金木在网支非墓绝
+        #   (金在戌衰亥病、辰养巳长生; 木在戌养亥长生、辰衰巳病), 不立.
         _is_male = (chart.gender or "").lower().startswith(("m", "男"))
+        _luo_sg = _growth_stage(sy["shen"]["element"], _pb) if _pb else ""
         _p["tian_luo_di_wang"] = bool(
-            (_is_male and _pb in ("XU", "HAI")) or
-            (not _is_male and _pb in ("CHEN", "SI")))
+            (_is_male and _pb in ("XU", "HAI") and _luo_sg in ("墓", "绝")) or
+            (not _is_male and _pb in ("CHEN", "SI") and _luo_sg in ("墓", "绝")))
         # 运入大小耗 L4326: 太岁前五辰为大耗, 前六辰为小耗, 入之主诸事耗散
         _N5 = {"ZI": "SI", "CHOU": "WU", "YIN": "WEI", "MAO": "SHEN", "CHEN": "YOU", "SI": "XU",
                "WU": "HAI", "WEI": "ZI", "SHEN": "CHOU", "YOU": "YIN", "XU": "MAO", "HAI": "CHEN"}
@@ -3507,7 +3512,15 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     _zi_yi_b = _ZI_YI.get(year_branch, "")
     tai_zi_yi = bool(_zi_yi_b and tb == _zi_yi_b)
     tai_sui_po = bool(tb == EARTHLY_BRANCHES[(_yb_i + 6) % 12])   # 大耗即岁破(太岁冲年支)
-    zi_yi_heavy = bool(tai_zi_yi and (tai_kong_wang or tai_guan_fu or tai_sui_po))
+    # 定凶须"太岁克身(大忌相克/五行来克身)或天元坐墓" + 更逢空亡/官符/大耗
+    #   (五行精纪 L3205/L3208, 三命通会 L1577): 太岁与年命比和、天元不墓,
+    #   仅自缢临空亡, 不"定凶" (如壁上土 2029 己酉).
+    _zi_yi_gan_el = STEM_ELEMENT.get(ts, "")
+    _zi_yi_ke = bool(tai_nayin_rel == "克我" and not tai_ghost_tongguan) or \
+        bool(_CTL4.get(_zi_yi_gan_el) == year_nayin_el)
+    _zi_yi_mu = bool(_growth_stage_stem(year_stem, tb) == "墓")
+    zi_yi_heavy = bool(tai_zi_yi and (_zi_yi_ke or _zi_yi_mu)
+                       and (tai_kong_wang or tai_guan_fu or tai_sui_po))
 
     # 天火煞 (三命通会卷三: "此煞取寅午戌全而天干有丙丁, 五位中全不见水者是,
     #   有水则非; 若年运至火气生旺处, 当防火灾") — 原局火局条件严格, 太岁火生旺引动
@@ -3684,9 +3697,18 @@ def _build_year_scope(chart: Any, year: int) -> Dict[str, Any]:
     _hour_g_tai = _growth_stage_stem(hour_stem, tb) if hour_stem else ""
     _hour_g_xy = _growth_stage_stem(hour_stem, _xy_branch) if (hour_stem and _xy_branch) else ""
 
-    # 灾煞福神 (SMTH L1727 "灾煞主血光横死; 若有福神相助多是武权"): 流年灾煞临
-    #   天月德/贵禄马(贵人或临禄)/金舆 → 凶不为甚, 反主武权; 无福神方主血光
-    zai_sha_fu = bool(tai_tian_yue_de or tai_glm or tai_jin_yu)
+    # 日干在大运支的十二宫 (与 _day_g_tai 合看日干在岁运是否有气)
+    _day_g_luck = _growth_stage_stem(day_stem, dl_branch) if (day_stem and dl_branch) else ""
+    # 日干有气(生旺): 长生/冠带/临官/帝旺. 三命通会 L1525 灾煞"亦如劫煞之类,
+    #   要见官星、印绶、生旺处为佳"; L1425 劫煞"生旺与贵煞建禄并则吉, 死绝与恶煞并则凶";
+    #   L1525 神白经"灾煞畏乎克, 生处却为祥". 日干死绝无气, 贵人不能化煞为武权, 反主克身横死
+    _DAY_YOU_QI = {"长生", "冠带", "临官", "帝旺"}
+    day_you_qi = bool(_day_g_tai in _DAY_YOU_QI or _day_g_luck in _DAY_YOU_QI)
+
+    # 灾煞福神 (SMTH L1525 "灾煞主血光横死; 若有福神相助多是武权, 亦如劫煞,
+    #   要见官星印绶生旺处为佳"): 吉神(天月德/贵禄马/金舆) 且 日干有气(生旺) → 武权;
+    #   日干衰绝无气, 虽有吉神亦不立 (官星变鬼克身), 无福神/无气方主血光横死
+    zai_sha_fu = bool((tai_tian_yue_de or tai_glm or tai_jin_yu) and day_you_qi)
 
     return {
         "tai_s": ts, "tai_b": tb, "tai_sui": ts + tb, "tai_nayin": tai_nayin,
@@ -4382,7 +4404,11 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
     #   克我、吉神(通关)又被合去, 不在"刑害"浮灾保护内): 26子2021 太岁辛金克木,
     #   通关子被丑合去, 晦气+空亡+劫财 → 重, 守住离婚破财凶年.
     _ke_shen_fa = _ke_shen_gui and _power["level"] == "重"
-    _fa_huo_ji = _struct_fa or _ke_shen_fa or _dayun_fa
+    # 吉运逢太岁冲且凶面净胜 (L4273 冲不在刑害浮灾保护, l4273 mode=无; L4416 反面):
+    #   周1976 大运壬戌偏吉, 太岁辰冲运+征太岁, 凶面净胜 → 发祸 (罢官丧母), 不被
+    #   大运吉降相杂. 太岁冲但吉面净胜(_j2>=_x2)者已在 l4273 浮灾, _chong_zhong=False.
+    _jiyun_chong_fa = _luck_ji and _chong_zhong
+    _fa_huo_ji = _struct_fa or _ke_shen_fa or _dayun_fa or _jiyun_chong_fa
     if _luck_ji and year_tone == "凶" and not _fa_huo_ji:
         year_tone = "吉凶相杂"          # 大运吉乡: 流年刑害只细累浮灾不为重害
     elif _luck_xiong and year_tone == "吉":
@@ -4631,6 +4657,9 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             "main_relation": yctx.get("main_relation", ""),
             "main_relation_det": yctx.get("main_relation_det", {}),
             "zai_sha_fu": yctx.get("zai_sha_fu", False),
+            "day_you_qi": yctx.get("day_you_qi", False),
+            "day_g_tai": yctx.get("_day_g_tai", ""),
+            "day_g_luck": yctx.get("_day_g_luck", ""),
             "qi_sheng": _qi_sheng,
             "ke_shen_gui": _ke_shen_gui,
             "fa_huo_ji": _fa_huo_ji,

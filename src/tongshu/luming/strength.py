@@ -556,7 +556,11 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
         _j2, _x2 = _p2["ji"], _p2["xiong"]
         _tai_xh = (tai_xing or tai_hai
                    or yctx.get("xy_xing_hai") or yctx.get("xy_dead_jue"))
-        if _tai_xh or (tai_chong and _j2 >= _x2):
+        # 2026-10-24 修正: 太岁"冲"且凶面净胜(_x2>_j2) → 冲不在"刑害之乡"浮灾保护
+        #   (L448 原文浮灾只列刑害; L4416 反面"身财不旺则冲为灾"), 不浮灾, 交 engine
+        #   按"吉运逢冲凶面净胜"判凶 (周1976 辰戌冲+V78 凶面12>吉面6 → 罢官丧母).
+        _chong_xiong = tai_chong and _x2 > _j2
+        if (not _chong_xiong) and (_tai_xh or (tai_chong and _j2 >= _x2)):
             out["mode"] = "浮灾"
             # L4273 吉运中太岁/小运到刑害之乡 → 细累浮灾不为重害:
             #   2026-10-21 扩小运信号 (吉泰之运+小运死绝/刑害 = 细累浮灾);
