@@ -88,6 +88,8 @@ DIMENSIONS: dict[str, tuple[str, str, str, str]] = {
     # L1-11 整体格局
     "PATTERN.01": ("PATTERN", "定局机制", "元堂取法 + 纳甲 + 天元/地元/元气",
                    "《起例卷之上》全卷"),
+    "PATTERN.04": ("PATTERN", "正对反对（先后天卦）", "先天卦/后天卦正对反对判定",
+                   "《起例卷之上》换后天卦例"),
     "PATTERN.02": ("PATTERN", "格局结论", "断语（富贵/贫贱/贤愚/寿夭）", "判词库断语"),
     "PATTERN.03": ("PATTERN", "位阶层次", "十体分级（贵命十体/下十体）", "原书 L1145"),
     # L1-12 时间轴与岁运触发
@@ -125,6 +127,59 @@ KUOZHAN_DIM: dict[str, str] = {
     "xiang_sheng_wei_fu": "PATTERN.01", # 相生为福·得体·得局生气（五行配合）
     "yun_liunian_shu_fan": "TIMELINE.01",   # 运反/流年反/数反（大运与流年）
     "xian_tian_hou_tian_yuan_qi": "SELF.03",  # 先后天元气（天元/地元）
+}
+
+
+#: 维度 id → **诊断规则图的机制 rule_id**（2026-10-24）
+#:
+#: ⚠ 维度（L2 子维度）与 rule_id（**机制**）**不是一回事**：
+#:   rule_id 回答「这条结论由哪条机制算出」，维度回答「它落在哪个人生领域」。
+#:   ⇒ 诊断图的**节点是机制**，维度放在 ``EngineEvidence.attributes`` 里。
+#:
+#: 映射依据：各判据的实际计算来源（见统一维度表 L3 河洛载体列）。
+#: 留空 = 该维度暂无对应机制规则 ⇒ 其证据**不进诊断图**
+#:（由 diagnosis_rule_graph 的 dropped_rules 留痕，不硬塞）。
+DIM_TO_RULE: dict[str, str] = {
+    "SELF.01": "HL_PRENATAL_HEXAGRAM",
+    "SELF.02": "HL_YUANTANG",
+    "SELF.03": "HL_HUA_GONG",
+    "SELF.04": "HL_PRENATAL_HEXAGRAM",
+    "HEALTH.01": "HL_TIAN_DI_SHU",
+    "HEALTH.02": "HL_PRENATAL_HEXAGRAM",
+    "HEALTH.03": "HL_TIAN_DI_SHU",
+    "WEALTH.01": "HL_HUA_GONG",
+    "WEALTH.02": "HL_PRENATAL_HEXAGRAM",
+    "WEALTH.03": "HL_TIAN_DI_SHU",
+    "WEALTH.04": "HL_PRENATAL_HEXAGRAM",
+    "CAREER.01": "HL_HUA_GONG",
+    "CAREER.02": "HL_PRENATAL_HEXAGRAM",
+    "CAREER.03": "HL_YUANTANG",
+    "MARRIAGE.01": "HL_TIAN_DI_SHU",
+    "MARRIAGE.02": "HL_PRENATAL_HEXAGRAM",
+    "MARRIAGE.03": "HL_PRENATAL_HEXAGRAM",
+    "CHILDREN.01": "HL_PRENATAL_HEXAGRAM",
+    "CHILDREN.02": "HL_HUA_GONG",
+    "CHILDREN.03": "HL_YUANTANG",
+    "PARENTS.01": "HL_YUANTANG",
+    "PARENTS.02": "HL_HUA_GONG",
+    "SIBLINGS.01": "HL_YUANTANG",
+    "SIBLINGS.02": "HL_PRENATAL_HEXAGRAM",
+    "SOCIAL.01": "HL_TIAN_DI_SHU",
+    "SOCIAL.02": "HL_TIAN_DI_SHU",
+    "SOCIAL.03": "",          # 三刑六列：原典有载、引擎未实现 ⇒ 无机制规则
+    "LIFESPAN.01": "HL_DAYUN",
+    "LIFESPAN.02": "HL_JIEHOU_GUA",
+    "LIFESPAN.03": "HL_DAYUN",
+    "LIFESPAN.04": "HL_DAYUN",
+    "PATTERN.01": "HL_TIAN_DI_SHU",
+    "PATTERN.04": "HL_POSTNATAL_HEXAGRAM",
+    "PATTERN.02": "HL_TIAN_DI_SHU",
+    "PATTERN.03": "HL_TIAN_DI_SHU",
+    "TIMELINE.01": "HL_DAYUN",
+    "TIMELINE.02": "HL_LIUNIAN_GUA",
+    "TIMELINE.03": "HL_YUEGUA",
+    "TIMELINE.04": "HL_RIGUA",
+    "TIMELINE.05": "HL_JIEHOU_GUA",
 }
 
 

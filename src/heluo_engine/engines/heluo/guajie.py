@@ -571,6 +571,10 @@ class GuaJieResult:
             # 与 dimension_coverage（未标注条数**显式报出**）。
             "by_dimension": self.by_dimension(),
             "dimension_coverage": self.dimension_coverage(),
+            # 逐条维度 id（与 evidence 一一对应）——
+            # 解读层编排（interpretation_pipeline）据此把证据转成
+            # V13 EngineEvidence（规则节点 = 维度 id）⇒ 维度标签不能丢。
+            "evidence_dims": self.evidence_dims,
             # 2026-10-08 补：爻辞取象命中的结构化输出（原典 L741）。
             # 逐条给 key/verdict/条件/是否参与判定，下游不必回解析 evidence 文本。
             "yao_xiang_hits": [
@@ -1507,7 +1511,7 @@ def compose_guajie(
                 + check_twelve_xiong(liunian_hexagram, "流年卦"))
         zdfd = list(dict.fromkeys(zdfd))   # 去重且保序
         res.zhengdui_fandui = zdfd
-        ev.extend((f"  正对反对：{w}" for w in zdfd), dim="PATTERN.01")
+        ev.extend((f"  正对反对：{w}" for w in zdfd), dim="PATTERN.04")
 
     # ── 流月应期 ──────────────────────────────────────────────
     if liuyue_hexagram and liuyue_yao:

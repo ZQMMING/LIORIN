@@ -59,7 +59,9 @@ class TestDimensionTable:
     def test_domains_are_twelve_and_ids_unique(self):
         assert len(DOMAINS) == 12, f"L1 领域应为 12 个，实测 {len(DOMAINS)}"
         assert len(set(DOMAINS)) == len(DOMAINS), "L1 领域 id 重复"
-        assert len(DIMENSIONS) == 41, f"L2 子维度应为 41 个，实测 {len(DIMENSIONS)}"
+        # 42 = 文档初版 41 + 2026-10-24 增补「正对反对（先后天卦）」
+        # （诊断规则图需要 HL_POSTNATAL_HEXAGRAM 有维度可映射，否则该机制收不到证据）
+        assert len(DIMENSIONS) == 42, f"L2 子维度应为 42 个，实测 {len(DIMENSIONS)}"
 
     def test_every_dimension_has_known_domain(self):
         bad = [d for d, v in DIMENSIONS.items() if v[0] not in DOMAINS]

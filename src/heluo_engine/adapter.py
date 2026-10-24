@@ -263,4 +263,16 @@ class HeluoAdapter:
             result = replace(result, guajie={
                 "error": f"guajie 构建失败: {type(exc).__name__}: {exc}",
             })
+
+        # ★ 2026-10-24 解读层接线：六模块编排（平台信号/解读/指引/诊断/指标/卦象状态）
+        #   此前这 6 个模块在 src/ 内**零生产调用方** —— 逻辑与单测都在，
+        #   但生产链从不产出它们的输出 ⇒ 下游拿不到解读层结果。
+        #   任一子块失败不阻塞主链，失败原因写入 interpretation["warnings"]。
+        try:
+            from .engines.heluo.interpretation_pipeline import build_interpretation
+            result = replace(result, interpretation=build_interpretation(result))
+        except Exception as exc:
+            result = replace(result, interpretation={
+                "warnings": [f"解读层编排失败: {type(exc).__name__}: {exc}"],
+            })
         return result

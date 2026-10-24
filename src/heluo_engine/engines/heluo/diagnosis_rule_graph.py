@@ -83,6 +83,14 @@ HELUO_RULES: Dict[str, RuleNode] = {
         "HL_DAYUN", "大运爻位值运",
         "起例卷上·小象阳爻九年运行例", confidence=1.0, is_authorized=True,
     ),
+    # 2026-10-24 新增：引擎**有**流年层（timeline 流年卦 + 小象行年爻断语），
+    #   但注册表**缺**流年规则节点 ⇒ 流年证据无法进诊断图（静默丢失）。
+    #   出处：《河洛真数·起例卷之上》小象阳爻九年运行例（L133 起）
+    #   「一岁在同人九三（阳）爻；二岁取应爻变…」—— 与 HL_DAYUN 同源。
+    "HL_LIUNIAN_GUA": RuleNode(
+        "HL_LIUNIAN_GUA", "流年卦（小象行年爻）",
+        "起例卷上·小象阳爻九年运行例", confidence=1.0, is_authorized=True,
+    ),
     "HL_YUEGUA": RuleNode(         # TODO(证据未接入): 已注册未产出，见上
         "HL_YUEGUA", "流月卦",
         "起例卷下·论月卦从世应起诀", confidence=0.95, is_authorized=True,
@@ -107,6 +115,8 @@ RULE_DOMAIN_MAP: Dict[str, str] = {
     "HL_YUANTANG": "FAMILY",
     "HL_HUA_GONG": "FAMILY",
     "HL_DAYUN": "CAREER",
+    # 2026-10-24 新增：流年卦（引擎有流年层，此前无规则节点 ⇒ 流年证据进不了图）
+    "HL_LIUNIAN_GUA": "CAREER",
     "HL_YUEGUA": "CAREER",
     "HL_RIGUA": "DAILY",
     "HL_JIEHOU_GUA": "LIFE_EVENT",

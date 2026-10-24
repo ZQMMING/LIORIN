@@ -289,20 +289,17 @@ def generate_interpretation(
 
 
 if __name__ == "__main__":
-    # 测试
-    result = calculate_hexagram_state(
-        hexagram="乾上乾下",
-        state_type="动",
-        element_state={"木": 0.6, "火": 0.8, "土": 0.3, "金": 0.5, "水": 0.7},
-        month_branch="午"
+    # ⚠ 2026-10-24：原此处是 `calculate_hexagram_state(...)` 的演示调用 ——
+    #   而该函数**已作废**（恒抛 NotImplementedError），演示块只会抛异常，
+    #   且会让人误以为「跑一下这个模块就能拿到状态分数」。
+    #   现改为**只说明作废状态与有据替代路径**，不再调用无依据的分数函数。
+    print(
+        "本模块的 calculate_hexagram_state / get_base_factors / "
+        "calculate_element_modifier 已于 2026-10-07 作废"
+        "（自拟浮点分数无原典依据，恒抛 NotImplementedError）。\n"
+        "有据替代路径：\n"
+        "  · 静/动/变/互的机会风险 → gui_ming_liu_ju.judge_liu_ju()"
+        "（起例卷之中 L630–L648 六项原典判据，给吉/凶/不判）\n"
+        "  · 五行旺衰 → judge_element_state()（起例卷之上 L102）\n"
+        "解读层接线见 heluo_engine/engines/heluo/interpretation_pipeline.py。"
     )
-    
-    print(json.dumps({
-        "hexagram": result.hexagram,
-        "state_type": result.state_type,
-        "opportunity": result.opportunity,
-        "risk": result.risk,
-        "element_modifier": result.element_modifier,
-        "net_factor": result.net_factor,
-        "interpretation": result.interpretation
-    }, ensure_ascii=False, indent=2))

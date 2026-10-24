@@ -450,6 +450,12 @@ class HeluoResult:
     #: 无法分辨「本盘确实无元气」与「元气层抛异常了」。
     #: 化工链路已有同类自曝（hua_gong 的「本级不可判」evidence），元气层此前没有。
     yuan_qi_error: str = ""
+    #: ★ 2026-10-24 新增：**解读层统一输出**（六模块编排，见
+    #: ``engines/heluo/interpretation_pipeline.py``）。
+    #: 结构：``{platform_signals, interpretation, guidance, diagnosis, metrics,
+    #: hexagram_state, dimension_view, dimension_coverage, warnings}``。
+    #: 任一子块失败**不阻塞主链**，失败原因写入 ``warnings``。
+    interpretation: dict | None = None
 
 
 class HeluoCanonical:
