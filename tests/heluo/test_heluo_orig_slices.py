@@ -48,6 +48,7 @@ SLICE_LOCK = {
     "易卦释义_下经卷之下.txt": (559, "e2794159cc107a36"),
     "易卦释义_下经卷之中.txt": (562, "f8dfb7897432143f"),
     "河洛理数_日卦起例卷.txt": (332, "bf0082baf1b972f0"),
+    "河洛理数_关键条文切片.txt": (3072, "e0d5231fcabeee31"),
     "河洛真数_起例卷之上.txt": (279, "9c97489abb122270"),
     "河洛真数_起例卷之下.txt": (143, "4231253574c50b5f"),
     "河洛真数_起例卷之中.txt": (213, "1d0b226ff807050a"),
@@ -254,6 +255,65 @@ class TestSliceHeaderDeclaresOcrBase(unittest.TestCase):
                       "校记必须含影印核定的记录（原件级验证）")
         self.assertRegex(note, r"L\d{2,4}",
                          "校记必须带底本行号，便于回源定位")
+
+
+class TestEngineCriteriaHaveOriginalSource(unittest.TestCase):
+    """★ 引擎**判据依赖的关键原典**必须能在包内 `orig/` 回查（2026-10-24 体检新增）。
+
+    **为什么要有这个守卫**
+
+    2026-10-24 齐全度体检发现：《河洛理数》三本（18 册 / 1912 页）原先只切了
+    「日卦起例卷」一段 ⇒ 引擎最核心的判据 —— **大运只走一轮**、**元堂取法**、
+    **天数地数诸格**、**合婚例**、**三刑六列** —— 在包内**没有原典可回查**。
+
+    更严重的一次教训：曾因「包内检索不到」而判定「河洛原典无三刑六害/合婚」，
+    实则《河洛理数·卷一》目次明载「詳河洛合婚例」「三刑六列」
+    ⇒ **把切片缺口误判成原典缺口**。本守卫把「判据的原典在不在包里」变成硬断言。
+
+    ⚠ 关键词一律用**底本实际写法**（含 OCR 讹字），
+    不用推测正字 —— 否则守卫会因为「底本写的是讹字」而误报缺失。
+    """
+
+    #: (判据, 必须在包内出现的底本实际写法)
+    REQUIRED = [
+        ("元堂取法",        ["起元堂", "群元堂"]),
+        ("大运（只走一轮）", ["起大運例", "起小運", "起八字法"]),
+        ("流年例",          ["起流年例"]),
+        ("合婚例",          ["合婚例"]),
+        ("三刑六害",        ["三刑六列"]),
+        ("卦气歌/候卦定局", ["定御候卦", "使卦定局", "卦氣歌"]),
+        ("化工/元气相反",   ["化工元氯", "逢元氰", "元氯相反"]),
+        ("十吉/十不吉",     ["青命十吉", "命十不吉"]),
+        ("天数地数诸格",    ["孤阴向陽數", "输以弱敢强", "地敗不足",
+                          "陽數太過", "醫數太通", "得中數"]),
+        ("大易数妙义",      ["大易数妙羲", "其用合其時"]),
+        ("互体四体八体",    ["互體四體八體", "六十四卦互體", "內卦出外例"]),
+        ("五行约音",        ["五行約音"]),
+        ("金银匙歌",        ["金銀匙歌"]),
+        ("时刻法",          ["它時刻法"]),
+        ("起月卦/起日卦",   ["起月卦之式", "起日卦之式"]),
+    ]
+
+    @classmethod
+    def setUpClass(cls):
+        cls.flat = re.sub(r"\s+", "", "\n".join(
+            p.read_text(encoding="utf-8", errors="replace")
+            for p in sorted(ORIG.glob("*.txt"))))
+
+    def test_engine_criteria_have_original_source(self):
+        missing = []
+        for name, kws in self.REQUIRED:
+            if not any(re.sub(r"\s+", "", k) in self.flat for k in kws):
+                missing.append(f"{name}（{'/'.join(kws)}）")
+        self.assertEqual(missing, [],
+                         "以下引擎判据在包内 orig/ 找不到原典依据（切片缺口）：\n  "
+                         + "\n  ".join(missing))
+
+    def test_heluo_lishu_slices_present(self):
+        """《河洛理数》两批切片都要在（关键条文 + 日卦起例卷）。"""
+        for name in ("河洛理数_关键条文切片.txt", "河洛理数_日卦起例卷.txt"):
+            with self.subTest(slice=name):
+                self.assertTrue((ORIG / name).exists(), f"缺切片 {name}")
 
 
 class TestLineMapConsistency(unittest.TestCase):
