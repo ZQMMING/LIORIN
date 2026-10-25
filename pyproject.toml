@@ -42,6 +42,9 @@ dependencies = [
 dev = [
     "pytest>=8.0",
     "pytest-cov>=5.0",
+    # ⚠ pytest-timeout：守卫必须有超时保护（某些代码缺陷会让测试**挂死**
+    #   而非失败 —— 没有它时一条缺陷能拖垮整轮测试且看不出是哪条）。
+    "pytest-timeout>=2.3",
     "build>=1.2",
     "ruff>=0.6",
     "mypy>=1.11",
@@ -100,7 +103,13 @@ minversion = "8.0"
 testpaths = ["tests"]
 # ⚠ 不设 --cov 默认开启：覆盖率是「看」的，不是「门槛」；
 #   门槛化会在覆盖率自然波动时制造无意义的红灯。
-addopts = "-ra --strict-markers"
+addopts = "-ra --strict-markers --timeout=60"
+# ⚠ 2026-10-25：全局超时 60 秒 —— **守卫必须有超时保护**。
+#   原因（实测）：某些代码缺陷（如某个条件写反）会让测试**挂死**而非失败，
+#   没有超时保护时，一条缺陷就能把整轮测试拖到几十分钟，且看不出是哪条。
+#   有了它，挂起会被立刻判为失败 ⇒ 定位到具体用例。
+timeout = 60
+timeout_method = "thread"
 filterwarnings = [
     "ignore::DeprecationWarning:pytest_pyfunc_call",
 ]
