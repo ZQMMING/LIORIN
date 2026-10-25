@@ -225,10 +225,23 @@ class TestNoStrayOutput(unittest.TestCase):
         )
         env = dict(os.environ)
         env["PYTHONPATH"] = str(_REPO / "src")
-        p = subprocess.run([sys.executable, "-c", code], capture_output=True,
+        # ⚠ 2026-10-25 修正：原先**构造了 env 却没传给 subprocess.run**
+        #   ⇒ 子进程走的是**父进程的环境**。后果：
+        #     · 本机（未 pip install）⇒ heluo_engine 不可导入 ⇒ rc=1 ⇒ 假红；
+        #     · CI（`pip install -e .`）⇒ 包全局可导入 ⇒ 假绿。
+        #   而这条测试真正要验的是「**导入引擎本身**不产生 stdout 噪声」，
+        #   不是「环境里装没装包」⇒ 必须把 env 传下去。
+        p = subprocess.run([sys.executable, "-c", code], env=env,
+                           capture_output=True,
                            text=True, encoding="utf-8", errors="replace")
-        self.assertEqual(p.returncode, 0,
-                         "import 期间有 stdout 噪声：%s" % p.stdout)
+        # ⚠ 失败原因要分清：「导入失败」≠「有 stdout 噪声」——
+        #   混在一起报会让人误以为引擎有噪声，实际是环境问题。
+        self.assertEqual(
+            p.returncode, 0,
+            "import 期间失败（rc=%d）\nstdout: %s\nstderr: %s"
+            % (p.returncode, p.stdout, (p.stderr or "")[-1500:]))
+        self.assertIn("SILENT", p.stdout or "",
+                      "导入引擎产生了 stdout 噪声：%r" % (p.stdout or "")[:300])
 
 
 if __name__ == "__main__":

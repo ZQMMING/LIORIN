@@ -34,6 +34,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import time
 from pathlib import Path
 from typing import Iterable, List, Optional, Tuple
 
@@ -114,10 +115,13 @@ class Mutation:
 
 
 #: 常量类变异：把字面量换成另一个「同类」字面量
-LITERAL_SWAPS = {
-    True: False, False: True,
-    0: 1, 1: 0,
-}
+#:
+#: ⚠ 2026-10-25 删除：原 ``LITERAL_SWAPS`` 表**从未被使用**（死代码），
+#:   且表本身是错的 —— Python 里 ``True == 1``、``False == 0``，
+#:   所以 ``{True: False, False: True, 0: 1, 1: 0}`` 的键**塌成两个**
+#:   （``0`` 覆盖 ``False``、``1`` 覆盖 ``True``）⇒ ruff F601 报重复键。
+#:   实际字面量替换逻辑在 ``_swap_literal`` 里（按类型分别处理），
+#:   不需要这张表。保留它只会让后来者以为「表驱动」是实际机制。
 
 
 def _lit_repr(node: ast.AST) -> Optional[str]:
@@ -222,7 +226,7 @@ def _mutate_source(path: Path, text: str) -> List[Mutation]:
         if lineno in skip_lines:
             continue
         # 整行都在 skip 集合里（如多行字符串的后续行）也跳过
-        if isinstance(node, (ast.Constant, ast.Str)):
+        if isinstance(node, ast.Constant):
             continue
         # ── 字面量 ──
         sw = _swap_literal(node)
@@ -321,10 +325,19 @@ class Runner:
                 bad.append(str(p))
         return bad
 
-    def run_tests(self, cache_dir: str, timeout: int = 45) -> Tuple[int, str]:
+    def run_tests(self, cache_dir: str, timeout: int = 45):
+        """跑守卫。
+
+        Returns:
+            (rc, 输出尾部, 是否**子进程**超时, 耗时秒)
+            ⚠ **超时必须单独返回**：把超时当成「失败」会把
+              「守卫自身太慢 / 挂起」误判成「变异被抓住」⇒ **掩盖真盲区**。
+              故超时一律由调用方单独处理。
+        """
         env = dict(os.environ)
         env["PYTHONPATH"] = str(ROOT / "src")
         env["PYTHONPYCACHEPREFIX"] = cache_dir
+        t0 = time.time()
         try:
             p = subprocess.run(
                 [sys.executable, "-m", "pytest", *self.test_paths,
@@ -332,9 +345,15 @@ class Runner:
                 cwd=str(ROOT), env=env, capture_output=True, text=True,
                 encoding="utf-8", errors="replace", timeout=timeout)
         except subprocess.TimeoutExpired:
-            # ⚠ 超时 = 挂起 = **也算被抓住**（守卫会让它挂起或超时 ⇒ 不是盲区）
-            return 1, "TIMEOUT (视为已抓住)"
-        return p.returncode, (p.stdout or "")[-1500:]
+            # ⚠ 超时 = 挂起（**不是**普通失败）⇒ 交由调用方区分
+            return 1, "TIMEOUT", True, time.time() - t0
+        return p.returncode, (p.stdout or "")[-1500:], False, time.time() - t0
+
+
+#: pytest-timeout 失败在输出里的痕迹（用于区分「真的断言失败」
+#: 与「用例被 pytest-timeout 判超时」——后者不能直接当「变异被抓住」，
+#: 因为守卫文件**本身**慢也会这样 ⇒ 须升级到慢筛复核）。
+_TIMEOUT_MARKERS = ("Timeout", "timeout >", "Timeout >", "timed out")
 
 
 def main() -> int:
@@ -386,12 +405,87 @@ def main() -> int:
 
     runner = Runner([args.tests])
     runner.snapshot({p for m in muts for p in [m.path]})
-    baseline_rc, _ = runner.run_tests(tempfile.mkdtemp(prefix="mutbase_"))
+
+    # ⚠⚠ **中断必还原**（2026-10-25 加）：扫描是**原地改 src/** 的。
+    #   一旦进程被 Ctrl-C / 被杀 / 抛异常 ⇒ 源码会**残留变异**，
+    #   而残留的变异可能恰好让测试绿 ⇒ **下一个使用者拿到的是被污染的源码**。
+    #   实测踩过：手动取消扫描后 ``time_layer_judgment._yao_ci_from_guajie``
+    #   残留了 ``return None``（原为 ``return ("", "")``）⇒ 靠 ``git diff``
+    #   才抓到。⇒ 必须注册 finally + 信号处理器，无条件还原。
+    _restored = {"done": False}
+
+    def _force_restore():
+        if _restored["done"]:
+            return
+        _restored["done"] = True
+        try:
+            runner.restore()
+            bad = runner.verify_restored()
+            if bad:
+                _log("⚠⚠ 强制还原后哈希仍不符：%s" % bad)
+            else:
+                _log("⚠ 已强制还原源码（扫描被中断）")
+        except Exception as exc:
+            _log("⚠⚠ 强制还原失败：%s" % exc)
+
+    def _sig_handler(signum, frame):
+        _force_restore()
+        raise KeyboardInterrupt("扫描被信号 %d 中断" % signum)
+
+    import signal
+    for _sig in (getattr(signal, "SIGINT", None),
+                 getattr(signal, "SIGTERM", None),
+                 getattr(signal, "SIGBREAK", None)):
+        if _sig is None:
+            continue
+        try:
+            signal.signal(_sig, _sig_handler)
+        except (ValueError, OSError, RuntimeError):
+            pass          # 非主线程 / 平台不支持 ⇒ 忽略
+
+    try:
+        return _run_sweep(args, targets, muts, runner, base_snap=None)
+    finally:
+        _force_restore()
+        for _sig in (getattr(signal, "SIGINT", None),
+                     getattr(signal, "SIGTERM", None),
+                     getattr(signal, "SIGBREAK", None)):
+            if _sig is None:
+                continue
+            try:
+                signal.signal(_sig, signal.SIG_DFL)
+            except (ValueError, OSError, RuntimeError):
+                pass
+
+
+def _run_sweep(args, targets, muts, runner, base_snap=None) -> int:
+    """真正的扫描流程。**中断还原由调用方 main() 的 finally 负责**。"""
+    baseline_rc, _, _base_to, baseline_to = runner.run_tests(
+        tempfile.mkdtemp(prefix="mutbase_"), timeout=180)
     _log("基线（未变异）rc=%d %s"
           % (baseline_rc, "OK" if baseline_rc == 0 else "❌ 基线就红，先修基线"))
     if baseline_rc != 0:
-        runner.restore()
         return 1
+
+    # ⚠ 超时预算必须**按基线实际耗时**定，不能拍脑袋。
+    #   拍脑袋 ⇒ 两种错法：
+    #     · 预算过小 ⇒ 基线自己就超时 ⇒ 全部变异被误判成「挂起」；
+    #     · 预算过大 ⇒ 真挂起的变异要等很久才判死，扫描慢到跑不完。
+    #   ⇒ 慢筛预算 = max(120, 基线耗时 × 4)。
+    #
+    # ⚠ 为何要 **120s** 下限（本仓 pytest addopts 里有 ``--timeout=60``）：
+    #   真挂起的变异 ⇒ pytest-timeout 会在 **60s** 处把该用例判失败 ⇒
+    #   pytest 返回 rc≠0（**不是** subprocess 超时）⇒ 我们能干净地
+    #   把它归为「被抓住（挂起）」。
+    #   若 subprocess 预算比 60s 还小 ⇒ subprocess 先超时 ⇒ 拿不到
+    #   pytest 的失败结论 ⇒ 只能笼统说「挂起」，反而丢失了
+    #   「pytest-timeout 确实抓得住」这个**有价值**的信息。
+    slow_timeout = max(120, int(baseline_to * 4))
+    # 快筛也要够大：快筛超时**不代表**变异被抓住（可能是守卫文件本身慢）
+    # ⇒ 快筛超时的变异一律**升级到慢筛**重新判，不在快筛阶段下结论。
+    fast_timeout = max(60, int(baseline_to * 3))
+    _log("快筛超时预算: %ds ／ 慢筛超时预算: %ds（基线耗时 %.1fs）"
+         % (fast_timeout, slow_timeout, baseline_to))
 
     # ── 基线行为快照（用于区分「等价变异」与「真盲区」）──
     base_snap = _behaviour_snapshot(tempfile.mkdtemp(prefix="snapbase_"))
@@ -429,21 +523,30 @@ def main() -> int:
         rel_guards = fast_map.get(m.path, [])
         if rel_guards:
             runner.test_paths = rel_guards
-            rc, _ = runner.run_tests(cache, timeout=15)
+            rc, out, timed_out, _ = runner.run_tests(cache, timeout=fast_timeout)
             fast_checked += 1
-            if rc != 0:
-                killed += 1
-                runner.test_paths = [args.tests]
-                runner.restore()
-                if i % 10 == 0:
-                    _log("    ... %d/%d（已杀 %d，存活 %d）"
-                         % (i, len(muts), killed, len(survived)))
-                continue
+            if rc != 0 and not timed_out:
+                # ⚠ 只有「**确实失败**」才能在快筛阶段定罪。
+                #   快筛超时 ⇒ 可能是守卫文件本身慢 ⇒ 升级到慢筛复核。
+                #   快筛失败但输出带 pytest-timeout 痕迹 ⇒ 同理，升级复核。
+                if not any(mk in out for mk in _TIMEOUT_MARKERS):
+                    killed += 1
+                    runner.test_paths = [args.tests]
+                    runner.restore()
+                    if i % 10 == 0:
+                        _log("    ... %d/%d（已杀 %d，存活 %d）"
+                             % (i, len(muts), killed, len(survived)))
+                    continue
         # ② 慢速确认：跑全量
         runner.test_paths = [args.tests]
-        rc, out = runner.run_tests(cache, timeout=45)
+        rc, out, timed_out, _ = runner.run_tests(cache, timeout=slow_timeout)
         runner.restore()
-        if rc == 0:
+        if timed_out:
+            # ⚠ 子进程层面的超时（连 pytest-timeout 都没能收住）⇒
+            #   归为「挂起型」：引擎被变异逼进死循环 ⇒ 不是盲区。
+            hung.append(m)
+            _log("  [挂起] %-52s %s" % (m.label, m))
+        elif rc == 0:
             # 存活 ⇒ 再看**行为**是否真的变了
             mut_snap = _behaviour_snapshot(cache)
             if mut_snap is _HANG:

@@ -30,6 +30,14 @@ phase*_output.txt
 *.tmp
 *.bak
 
+# ⚠ 变异扫描 / 行为快照的**运行期产物**（2026-10-25）
+#   —— 扫描是**原地改 src/** 的工具，运行期必然产生日志与临时文件；
+#      这些**不是**源码，必须排除，否则每次扫描都污染 git 状态。
+mutation_sweep.log
+mutation_sweep_summary.txt
+_snap_*.json
+_mut_*.txt
+
 # Large data files (optional - uncomment if needed)
 # audit/*.jsonl
 # data/*.json
