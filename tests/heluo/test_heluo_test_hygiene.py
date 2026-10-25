@@ -28,7 +28,16 @@ from collections import defaultdict
 from pathlib import Path
 
 _REPO = Path(__file__).resolve().parents[2]
-_TESTS = _REPO / "tests"
+
+#: ⚠ 只扫**河洛域**的测试（``tests/heluo/``），不扫全仓 ``tests/``。
+#:
+#: 理由（职责边界）：本包在主仓里是 **vendor 副本**，主仓 ``tests/`` 下还有
+#: ziwei / bazi / blind / platform 等**他域**的测试文件。实测主仓有 21 个
+#: 带 BOM（U+FEFF）的测试文件 —— 那是**主仓的既有问题**，属他域责任。
+#: 本守卫若扫全仓，就会把**他域**的问题拉进河洛的 CI ⇒ 越界且不可修
+#: （改了也超出河洛域）。
+#: ⇒ 河洛域只守自己的测试；主仓侧由主仓自己的治理负责。
+_TESTS = _REPO / "tests" / "heluo"
 
 
 def _collect_duplicates():
