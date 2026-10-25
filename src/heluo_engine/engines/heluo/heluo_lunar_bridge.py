@@ -12,7 +12,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date
 
 
 @dataclass(frozen=True)
@@ -44,7 +43,6 @@ def _lunar_python_anno(solar_date: str) -> HeluoLunarAnno:
     """lunar_python 兜底产黄历标注。"""
     try:
         from lunar_python import Solar
-        from datetime import date as _d
         y, m, d = map(int, solar_date.split("-")[:3])
         s = Solar.fromYmdHms(y, m, d, 12, 0, 0)
         l = s.getLunar()

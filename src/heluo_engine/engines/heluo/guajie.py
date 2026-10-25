@@ -28,7 +28,6 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Optional
 
 from .yuan_qi import STEM_TO_TRIGRAM, BRANCH_TO_TRIGRAM
@@ -36,7 +35,7 @@ from .timeline_yun import materialize_month_days
 from .jiehhou import solar_term_date  # 批次 L：带缓存的节气查表
 from .yao_xiang import scan_and_evidence as _scan_yao_xiang
 # 错卦（先天方位对宫）单一来源；批次 G 起本模块不再自存一份。
-from .hexagram_state import QIANXI_DUKONG
+from .hexagram_state import QIANXI_DUKONG  # noqa: F401
 # 60 甲子纳音单一来源（2026-10-22 收敛；原 canping/guajie 各存一份同名副本）
 from .nayin import NAYIN_TABLE, get_nayin_element as _nayin_get_nayin_element
 from .calendar_guard import check_calendar_consistency
@@ -164,9 +163,9 @@ def judge_nayin_yuanqi(
     # 水火相克相反（极忌）
     for el in (el_upper, el_lower):
         if el == "水" and nayin == "火":
-            ev.append(f"得水卦而纳音火 → 极忌相反（原典：得水火卦者极忌相反）")
+            ev.append("得水卦而纳音火 → 极忌相反（原典：得水火卦者极忌相反）")
         if el == "火" and nayin == "水":
-            ev.append(f"得火卦而纳音水 → 极忌相反（原典：得水火卦者极忌相反）")
+            ev.append("得火卦而纳音水 → 极忌相反（原典：得水火卦者极忌相反）")
     return ev
 
 
@@ -225,7 +224,7 @@ def judge_jiehua_gong(birth_date: str) -> list[str]:
     import datetime as _dt
     cur = _dt.date(y, m, d)
     # 节卦爻名取自 jiegua.JIE_GUA_TABLE（单一来源，已由原典逐条校验）
-    from .jiegua import JIE_GUA_TABLE, get_jie_gua
+    from .jiegua import JIE_GUA_TABLE
     for sm, sd, gua in _JIE_GUA_START:
         for yy in (y - 1, y):
             start = _dt.date(yy, sm, sd)
@@ -2700,9 +2699,8 @@ def _solar_phase(birth_date: str) -> str:
     修正月支近似在午月初（夏至前）/子月初（冬至前）的节气误差。
     """
     from datetime import date as _date
-    from datetime import timedelta
     try:
-        import sxtwl
+        import sxtwl  # noqa: F401  (可用性探测，非未用 import)
     except ImportError:
         return ""
     try:

@@ -5,7 +5,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from .numbers import SIXTY_FOUR_HEXAGRAMS
 
@@ -149,12 +149,20 @@ _NATURE_TO_TRIGRAM: dict[str, str] = {
 }
 
 # 从 yi.core 导入六十四卦映射（打破循环依赖）
+#:
+#: ⚠ 2026-10-25：``SIXTY_FOUR_MAP`` 与 ``compute_ti_yong_relation`` 是
+#:   **有意的重导出**（不是未用 import）——
+#:   守卫 ``test_heluo_base_table_consistency.py`` 要求
+#:   ``hexagram._SIXTY_FOUR_MAP is yi.core.SIXTY_FOUR_MAP``（**同一对象**），
+#:   以确保「六十四卦表只有一份」。
+#:   ⇒ 必须加「noqa: F401」标注（见下方各行），否则任何「清理未用 import」的
+#:     工具都会删掉它（实测：Ruff F401 删掉它 ⇒ 守卫立刻变红）。
 from ..yi.core import (
-    SIXTY_FOUR_MAP as _SIXTY_FOUR_MAP,
+    SIXTY_FOUR_MAP as _SIXTY_FOUR_MAP,  # noqa: F401
     NAME_TO_TRIGRAMS as _NAME_TO_TRIGRAMS,
     TRIGRAM_LINES as _TRIGRAM_LINES,
     NATURE_TO_TRIGRAM as _NATURE_TO_TRIGRAM,
-    compute_ti_yong_relation as _compute_ti_yong,
+    compute_ti_yong_relation as _compute_ti_yong,  # noqa: F401
 )
 
 

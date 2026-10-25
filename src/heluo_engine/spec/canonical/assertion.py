@@ -9,8 +9,8 @@ P1.2-A — CanonicalAssertion Contract (V13 §三)
 from __future__ import annotations
 
 import enum
-from dataclasses import dataclass, field
-from typing import Dict, Any, List, Optional
+from dataclasses import dataclass
+from typing import Any, Optional
 
 
 class AssertionDirection(str, enum.Enum):

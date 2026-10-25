@@ -38,3 +38,8 @@ phase*_output.txt
 Thumbs.db
 .DS_Store
 node_modules/
+.lint_backup/
+.prune_backup/
+.prune_bk/
+.verify_venv/
+.verify_cwd/

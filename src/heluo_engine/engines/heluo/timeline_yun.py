@@ -19,7 +19,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional
 
-from .numbers import get_hexagram_name, build_six_lines, TRIGRAM_LINES
+from .numbers import get_hexagram_name
 
 # ═══════════════════════════════════════════════════════════════════
 # 基础工具

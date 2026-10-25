@@ -15,7 +15,7 @@ V13 §二对齐：
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from ...spec.canonical import (
@@ -316,7 +316,6 @@ def build_diagnosis_graph(
         hexagram = _sig_field(sig, "hexagram", "")
         confidence = _sig_field(sig, "confidence", 0.5)
         time_scope = _sig_field(sig, "time_scope", {})
-        evidence_list = _sig_field(sig, "evidence", [])
 
         dir_val = AssertionDirection.NEUTRAL
         if direction_str == "POSITIVE":
@@ -420,7 +419,7 @@ def build_diagnosis_graph(
 # 取不到（河洛判据判不了）时**回落信号层**，再取不到才是不判并登记。
 
 
-def _dir_from_jiu_ji(result) -> AssertionDirection | None:
+def _dir_from_jiu_ji(result: Any) -> AssertionDirection | None:
     """六项判据的**单项** JuResult → 断言方向；「不判」返回 None。
 
     ⚠ 这里必须收单项，不能收 ``judge_liu_ju()`` 返回的整张 dict
@@ -525,6 +524,14 @@ def heluo_own_direction(rule_id: str, frozen_state: Any
                     _bm = int(_bd[5:7])
                 except ValueError:
                     _bm = None
+            # ⚠ 2026-10-25 审计修（真实缺陷）：``judge_shu_xiong`` 的
+            #   ``birth_month`` 是**必填 int**，内部用它做「阳月/阴月」判定
+            #   （``birth_month in YANG_YUE_LING`` 等）。
+            #   原先此处取不到生月就传 ``None`` ⇒ 落进「既非阳月也非阴月」的
+            #   隐式分支 ⇒ **静默判错**（缺失被当成正常，比答错更坏）。
+            #   ⇒ 取不到生月就**不判数格**，并把理由写进依据。
+            if _bm is None:
+                return None, "数格未产出：缺生月（数格判据须按阳月/阴月加减，缺生月不猜）"
             sx = judge_shu_xiong(frozen_state.tian_shu,
                                  frozen_state.di_shu, _bm,
                                  frozen_state.gender or "")

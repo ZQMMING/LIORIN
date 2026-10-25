@@ -77,7 +77,7 @@ def _json_default(o: Any) -> Any:
     return str(o)
 
 
-def _cmd_compute(args) -> int:
+def _cmd_compute(args: argparse.Namespace) -> int:
     from heluo_engine import HeluoAdapter
 
     y, m, d, h_from_birth = _parse_birth(args.birth)
@@ -135,7 +135,7 @@ def _cmd_compute(args) -> int:
     return 0
 
 
-def _cmd_interpret(args) -> int:
+def _cmd_interpret(args: argparse.Namespace) -> int:
     from heluo_engine import HeluoAdapter
 
     y, m, d, h_from_birth = _parse_birth(args.birth)
@@ -152,7 +152,7 @@ def _cmd_interpret(args) -> int:
     return 0
 
 
-def _cmd_gua(args) -> int:
+def _cmd_gua(args: argparse.Namespace) -> int:
     from heluo_engine.engines.heluo.guajie import query_yao_duan
 
     y = query_yao_duan(args.name, args.yao)
@@ -166,7 +166,7 @@ def _cmd_gua(args) -> int:
     return 0
 
 
-def _cmd_doctor(args) -> int:
+def _cmd_doctor(args: argparse.Namespace) -> int:
     """部署自检：确认包内资源齐备、可定位。"""
     import heluo_engine
     from heluo_engine._paths import pkg_data, pkg_orig, pkg_doc

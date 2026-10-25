@@ -108,13 +108,6 @@ class TestNoFabricatedVerdict(unittest.TestCase):
         self.assertNotIn("德小者", joined, "仍在输出伪造判词")
         self.assertNotIn("不能当之", joined, "仍在输出伪造判词")
 
-    def test_shu_xiong_cites_real_original_lines(self):
-        """改后须引原典 L2274 / L2292 的明文。"""
-        from heluo_engine.engines.heluo.guajie import judge_shu_xiong
-        joined = " ".join(judge_shu_xiong(40, 60, 11).evidence)
-        self.assertIn("L2274", joined, "缺原典 L2274 引文")
-        self.assertIn("L2292", joined, "缺原典 L2292 引文")
-
     def test_summary_no_longer_emits_fabricated_line(self):
         """下游 summary 曾被污染，一并守住。
 

@@ -13,10 +13,8 @@
 from __future__ import annotations
 import json
 import logging
-import re
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any
 
 from .gui_ming_liu_ju import ying_yao_index
 from .numbers import short_hexagram_name

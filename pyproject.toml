@@ -1,11 +1,34 @@
 [project]
 name = "heluo-engine"
-version = "1.0.0"
-description = "河洛真数推命引擎：基于《河洛真数》的卦象/化工/元气/大运流年/断语引擎"
+version = "1.1.0"
+description = "《河洛真数》推命引擎：先天卦/化工/元堂/大运流年/卦辞断语"
 readme = "README.md"
 requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "顺天系统 · 河洛引擎" }]
+keywords = [
+    "河洛", "邵雍", "河洛真数", "命理", "元堂", "化工", "大运", "流年",
+    "奇门", "周易", "bazi", "chinese-metaphysics",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Natural Language :: Chinese (Simplified)",
+    "Typing :: Typed",
+]
 dependencies = [
-    "sxtwl>=1.0.0",
+    # ★ 硬依赖：节气窗口 / 节气月序 / 真太阳时都基于 sxtwl。
+    #   缺失时引擎不崩，但相关层会显式留痕（target_date_note）。
+    "sxtwl>=2.0.0",
     "lunar_python>=1.4.8",
     "chinese-calendar>=1.10.0",
     "pyyaml>=6.0",
@@ -13,6 +36,27 @@ dependencies = [
     "pydantic>=2.0",
     "tzdata>=2024.1; sys_platform == 'win32'",
 ]
+
+[project.optional-dependencies]
+# 开发/测试依赖：pip install -e ".[dev]"
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "build>=1.2",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+# 类型检查全量（可选，比 dev 重）
+typing = [
+    "mypy>=1.11",
+    "types-PyYAML>=6.0",
+    "types-jsonschema>=4.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/ZQMMING/LIORIN"
+Repository = "https://github.com/ZQMMING/LIORIN"
+Issues = "https://github.com/ZQMMING/LIORIN/issues"
 
 # ★ 2026-10-25：命令行入口 —— 装完即可在服务器上直接调用，无需写代码。
 #   heluo-engine compute --birth 1983-11-03 --time 12:00 --target 2026-10-23
@@ -27,16 +71,16 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools.packages.find]
 where = ["src"]
 # ⚠ 2026-10-24 结构性重构：顶层包名已由 `tongshu` 改为 **`heluo_engine`**。
-#   旧配置会装出顶层包 `tongshu` —— 与主仓同名 ⇒ 两个 `tongshu` 不能同时 import
-#   （实测：site-packages 在前时**主仓 32 个顶层子包全部消失**，且报错不提示
-#   装了本包 —— 静默破坏）。详见 data/heluo/河洛回灌接线决策单_20261024.md。
+#   旧配置：装出顶层包 `tongshu` ⇒ 与主仓同名，两个 `tongshu` 不能同时 import
+#   （实测：site-packages 在前时，主仓 32 个顶层子包全部消失，且报错不提示
+#    装了本包 ⇒ 静默破坏）。详见 data/heluo/河洛回灌接线决策单_20261024.md。
 include = ["heluo_engine*"]
 
 [tool.setuptools.package-data]
-# ★ 三块资源全部随包分发（随包走 ⇒ 与安装位置 / 运行目录 / CWD 全无关）
-#   data/  运行时必需：判词库 / 精义 / 扩展断语 / 参评诗断语料 / 出生地点表
-#   orig/  原典切片（判词与语料的逐字上游，守卫随包走）
-#   docs/  依据文档（定案 / 裁决 / 核定 / 对照表 / 参评考证）
+# ⚠ 三块资源全部随包分发（随包 ⇒ 与安装位置 / 运行时目录 / CWD 全无关）：
+#   data/  运行时必需：判词库 / 精义 / 扩展断语 / 参评语料 / 出生地点表
+#   orig/  原典切片：判词与语料的**逐字上游**，守卫随包走
+#   docs/  依据文档：定案 / 裁决 / 核定 / 对照表 / 参评考证
 heluo_engine = [
     "data/*.json",
     "data/canping/*.json",
@@ -44,4 +88,201 @@ heluo_engine = [
     "orig/*.md",
     "docs/*.md",
     "docs/canping/*.md",
+    "py.typed",
 ]
+
+# ═══════════════════════════════════════════════════════════════════
+# 工具配置
+# ═══════════════════════════════════════════════════════════════════
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+# ⚠ 不设 --cov 默认开启：覆盖率是「看」的，不是「门槛」；
+#   门槛化会在覆盖率自然波动时制造无意义的红灯。
+addopts = "-ra --strict-markers"
+filterwarnings = [
+    "ignore::DeprecationWarning:pytest_pyfunc_call",
+]
+
+[tool.coverage.run]
+branch = true
+source = ["heluo_engine"]
+# 排除：__init__ 的惰性导出门面、__main__ 守卫、纯类型声明
+omit = [
+    "*/__init__.py",
+    "*/tests/*",
+    "*/tools/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+# ⚠ 覆盖率**不设 fail_under 硬门槛**：
+#   本包的未覆盖行大多是「已作废模块」与「防御性 except 分支」，
+#   硬门槛会把「工程化」变成「刷数字」⇒ 反而掩盖真缺口。
+#   缺口由**具名守卫**（tests/heluo/test_heluo_degradation_contracts.py 等）守。
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests", "tools"]
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle
+    "F",    # pyflakes  ← **真 bug 来源**（未定义名 / 重定义 / 未用变量）
+    "B",    # bugbear
+    "C4",   # comprehensions
+]
+ignore = [
+    "E501",    # 行长由 formatter 管
+    "E402",    # 模块级 import 不在文件头（本包多处为避免循环依赖而就地 import）
+    "E741",    # 变量名 l/I/O（工具脚本里沿用数学记号）
+    "E701",    # 同行多语句（判据表紧凑写法）
+    "E401",    # 逗号导入
+    "W605",    # 无效转义序列
+    "B008",    # 函数默认值里的调用（本包在 __init__ 惰性导出里用到）
+    "B905",    # zip 不加 strict（判据层大量 zip 用法）
+    "B007",    # 未使用的循环变量
+    "B033",    # 集合里重复的元素
+    "B017",    # assertRaises(Exception)（测试里需要宽泛捕获）
+    "B018",    # 无意义的表达式（测试里刻意触发异常）
+    "B009",    # getattr(x, "const")
+    "B904",    # raise without from
+    "C408",    # dict() 调用
+    "C416",    # 冗余的 list 推导
+    "C402",    # 冗余的生成器
+    "C420",    # 冗余的 dict 推导
+]
+# ⚠ 2026-10-25 工程化取舍（重要，勿轻易放开）：
+#
+#   **不启用 F401（未用 import）与 I001（import 排序）**。
+#   原因：本仓大量「未用 import」其实是**有意的重导出** ——
+#   例如 ``hua_gong`` 重新导出 ``QIANXI_DUKONG``、``guajie`` 重新导出
+#   若干单例表，守卫（test_single_source_tables.py）要求它们与源头
+#   是**同一个对象**（``assertIs``）⇒ 一旦「清理」未用 import，
+#   这些重导出消失、对象不再同一 ⇒ **守卫立刻变红**。
+#   实测 2026-10-25：ruff --fix 删掉 5 处重导出 ⇒ 5 条守卫失败。
+#   ⇒ 未用 import 由**人工**判断（有意重导出 vs 真垃圾），
+#      不交给自动化工具批量删。
+#
+#   **保留 F821（未定义名）** —— 实测 bazi_engine.py 用了 Optional/date
+#   却没 import，靠 ``from __future__ import annotations`` 掩盖
+#   （注解不求值）⇒ 运行时不报错，但任何 typing.get_type_hints() /
+#   IDE / 文档工具都会 NameError。**这是真缺陷，必须守住。**
+#
+#   **保留 F822（__all__ 里的悬空导出）** —— 实测 canonical.py 的
+#   __all__ 列了只作为类属性存在的 GOLDEN_CASES ⇒
+#   ``from ... import *`` 会 ImportError。**真缺陷。**
+
+[tool.ruff.lint.per-file-ignores]
+# 测试里允许长断言行与魔法数字
+"tests/*" = ["E501", "B011", "B015", "E741", "E402", "F401", "F841"]
+# 工具脚本：历史取证脚本，改动价值低于风险
+"tools/*" = ["E501", "E741", "E402", "F401", "F841", "F541"]
+# 原典切片类模块：逐字照抄，不做风格改写
+"src/heluo_engine/engines/heluo/guajie.py" = ["E501", "C901"]
+"src/heluo_engine/engines/heluo/canonical.py" = ["E501", "C901"]
+"src/heluo_engine/engines/bazi_engine.py" = ["E501", "C901"]
+"src/heluo_engine/engines/bazi_l1_facts.py" = ["E501", "C901", "E402"]
+# 已废弃的关系/合盘残桩（2026-10-22 裁定废弃）：
+#   保留未完成算法里的中间量，便于将来若重启该模块时能读懂推导链。
+"src/heluo_engine/engines/heluo/relationship/engine.py" = ["E501", "F841"]
+# __init__ 的 re-export 门面：F401 是**有意**的
+"src/heluo_engine/__init__.py" = ["E402", "F401"]
+"src/heluo_engine/engines/heluo/__init__.py" = ["E402", "F401"]
+"src/heluo_engine/engines/__init__.py" = ["E402", "F401"]
+"src/heluo_engine/engines/time/__init__.py" = ["E402", "F401"]
+"src/heluo_engine/spec/canonical/__init__.py" = ["F401"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["heluo_engine"]
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+no_implicit_optional = true
+strict_equality = true
+check_untyped_defs = false
+# ⚠ 不开 disallow_untyped_defs：原典判据层大量函数是「逐字照抄原典 + 中文注释」，
+#   强加完整类型标注会诱发大规模无价值改写，且掩盖原典文本。
+ignore_missing_imports = true
+# ⚠ 2026-10-25 工程化取舍（重要）：
+#   mypy **不作为 CI 门禁**，理由是实测错误分布（158 个）高度集中在
+#   几个「原典大模块」上：
+#     guajie.py 63 / evidence_producer.py 20 / canonical.py 15 /
+#     timeline_yun.py 13 / bazi_engine.py 8 …
+#   这些模块以「逐字照抄原典 + 动态属性访问」为主，全面标注的收益远低于
+#   改写风险（且改写会与「原典逐字照抄」纪律冲突）。
+#   ⇒ 策略：**对已类型化的核心小模块开严格检查，其余豁免**；
+#     真正的类型缺陷由**具名守卫**守（如 test_heluo_public_api.py 的签名冻结、
+#     test_heluo_evidence_values.py 的值一致性）。
+#   ⇒ 若将来要把 mypy 升级为门禁，先按 [[tool.mypy.overrides]] 逐模块推进。
+
+# 核心小模块：严格（这些是「接线层」，类型错了会真出问题）
+[[tool.mypy.overrides]]
+module = [
+    "heluo_engine.adapter",
+    "heluo_engine.cli",
+    "heluo_engine._paths",
+    "heluo_engine.spec.canonical.*",
+    "heluo_engine.engines.heluo.time_layer_judgment",
+    "heluo_engine.engines.heluo.interpretation_pipeline",
+    "heluo_engine.engines.heluo.diagnosis_rule_graph",
+    "heluo_engine.engines.heluo.evidence_producer",
+    "heluo_engine.engines.heluo.dimensions",
+    "heluo_engine.engines.heluo.canonical_signals",
+]
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+
+# 原典大模块：只做基本检查
+[[tool.mypy.overrides]]
+module = [
+    "heluo_engine.engines.heluo.guajie",
+    "heluo_engine.engines.heluo.canonical",
+    "heluo_engine.engines.bazi_engine",
+    "heluo_engine.engines.bazi_l1_facts",
+    "heluo_engine.engines.heluo.interpretation",
+    "heluo_engine.engines.heluo.timeline_yun",
+    "heluo_engine.engines.heluo.yuanqi_tables",
+    "heluo_engine.engines.heluo.yi_interpreter",
+    "heluo_engine.engines.heluo.metrics_v2",
+    "heluo_engine.engines.heluo.calendar_guard",
+    "heluo_engine.engines.heluo.guidance",
+    "heluo_engine.engines.heluo.yue_ling_shu_ge",
+    "heluo_engine.engines.heluo.relationship.engine",
+    "heluo_engine.engines.heluo.dayu",
+    "heluo_engine.engines.heluo.time_sequence",
+    "heluo_engine.engines.heluo.input",
+    "heluo_engine.engines.heluo.hexagram",
+    "heluo_engine.engines.heluo.hua_gong",
+    "heluo_engine.engines.heluo.frozen_state",
+    "heluo_engine.engines.heluo.hexagram_state",
+    "heluo_engine.engines.time.resolver",
+    "heluo_engine.engines.time.timezone_resolver",
+    "heluo_engine.engines.time.location_registry",
+    "heluo_engine.engines.time.calculation_context",
+    "heluo_engine.engines.yi.core",
+    "heluo_engine.engines.yi.models",
+    "heluo_engine.engines.yi.classical_text",
+    "heluo_engine.engines.yi.yao_ci_data",
+    "heluo_engine.engines.yi.yao_ci_meanings",
+    "heluo_engine.reasoning.bazi_ten_gods",
+    "heluo_engine.facts.bazi_facts",
+]
+check_untyped_defs = false
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+# 原典模块里大量「动态属性访问」（如 result.numbers）与「跨模块表格类型不一致」
+# （如 TRIGRAM_LINES 在两处类型标注不同但内容相同）⇒ 关掉这些噪声码。
+# ⚠ 保留 name-defined / no-redef / unused-ignore 等**真缺陷**类错误码。
+disable_error_code = ["attr-defined", "arg-type", "call-arg", "index",
+                      "union-attr", "assignment", "return-value", "operator",
+                      "var-annotated", "misc", "override", "dict-item",
+                      "no-untyped-def", "no-untyped-call"]
+

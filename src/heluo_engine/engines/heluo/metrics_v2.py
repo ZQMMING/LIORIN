@@ -11,7 +11,6 @@ S6-03: Interpretation Quality Score 评估体系
 目标: 为每个解释输出提供可量化的质量评分
 """
 from __future__ import annotations
-import json
 import logging
 from dataclasses import dataclass, field
 from typing import List, Optional, Dict, Any
@@ -539,12 +538,12 @@ if __name__ == "__main__":
     print("=" * 50)
     print(f"总分: {score.overall_score:.4f}")
     print(f"质量等级: {score.quality_level}")
-    print(f"\n维度得分:")
+    print("\n维度得分:")
     print(f"  古籍一致性: {score.classical_alignment:.4f}")
     print(f"  逻辑完整性: {score.logic_completeness:.4f}")
     print(f"  稳定性: {score.stability_score:.4f}")
     print(f"  证据闭合度: {score.evidence_closure:.4f}")
-    print(f"\n详细指标:")
+    print("\n详细指标:")
     print(f"  古籍匹配: {score.classical_sources_matched}/{score.classical_sources_total}")
     print(f"  字段完整: {score.required_fields_present}/{score.required_fields_total}")
     print(f"  证据完整: {score.evidence_chains_complete}/{score.evidence_chains_total}")

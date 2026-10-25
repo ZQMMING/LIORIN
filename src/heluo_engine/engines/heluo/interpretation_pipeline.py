@@ -30,6 +30,35 @@ from .dimensions import DIM_PROCESS, DIM_UNCLASSIFIED, DOMAINS, label_of
 _YAO_POS = ("初爻", "二爻", "三爻", "四爻", "五爻", "上爻")
 
 
+def _safe_getattr(obj: Any, name: str, default: Any = None,
+                  on_error: Any = None) -> Any:
+    """安全取属性：**属性访问本身抛异常**时返回默认值。
+
+    ⚠ 2026-10-25 审计修（真实缺陷）：``getattr(obj, name, default)`` 的
+      ``default`` **只对「属性不存在」生效**；若属性访问**本身抛异常**
+      （代理对象 / 惰性属性 / ``__getattr__`` 抛错），异常会**穿透**。
+      实测：解读层因此成为「唯一能让主链崩掉的入口」，
+      违反本模块的降级原则（任一子块失败不阻塞主链）。
+      ⇒ 对 result 的取值一律走本助手。
+
+    Args:
+        obj:      取属性的对象。
+        name:     属性名。
+        default:  取不到时的默认值。
+        on_error: 属性访问**抛异常**时的回调（可调用）。
+                  传它是为了让失败**留痕** —— 缺失被当成正常，比答错更坏。
+    """
+    try:
+        return getattr(obj, name, default)
+    except Exception as exc:
+        if callable(on_error):
+            try:
+                on_error(exc)
+            except Exception:
+                pass
+        return default
+
+
 def _plain(obj: Any) -> Any:
     """任意对象 → 可 JSON 序列化的结构（不丢信息、不造值）。"""
     import dataclasses
@@ -139,16 +168,15 @@ def _hexagram_state_block(result: Any) -> tuple[dict, list[str]]:
     """
     warnings: list[str] = []
     block: dict[str, Any] = {}
-    gua = getattr(getattr(result, "prenatal", None), "hexagram_name", "") or ""
+    gua = getattr(_safe_getattr(result, "prenatal", None), "hexagram_name", "") or ""
     try:
         from .gui_ming_liu_ju import judge_liu_ju
-        pre = getattr(result, "prenatal", None)
-        yt = getattr(result, "yuantang", None)
-        gj = getattr(result, "guajie", None) or {}
+        yt = _safe_getattr(result, "yuantang", None)
+        gj = _safe_getattr(result, "guajie", None) or {}
         benming = gj.get("benming") if isinstance(gj, dict) else None
         yb = gj.get("liunian_ye_buye") if isinstance(gj, dict) else None
-        nums = getattr(result, "numbers", None)
-        bazi = getattr(result, "bazi", None) or []
+        nums = _safe_getattr(result, "numbers", None)
+        bazi = _safe_getattr(result, "bazi", None) or []
         j = judge_liu_ju(
             gua_name=gua,
             gua_ci=str((benming or {}).get("gua_ci", "") or ""),
@@ -165,7 +193,7 @@ def _hexagram_state_block(result: Any) -> tuple[dict, list[str]]:
         warnings.append(f"卦象状态·六项判据未产出（{type(exc).__name__}: {exc}）")
     try:
         from .hexagram_state import judge_element_state
-        bazi = getattr(result, "bazi", None) or []
+        bazi = _safe_getattr(result, "bazi", None) or []
         month_branch = bazi[1][1] if len(bazi) > 1 else ""
         els = {}
         for el in ("木", "火", "土", "金", "水"):
@@ -197,7 +225,19 @@ def build_interpretation(result: Any) -> dict:
     out: dict[str, Any] = {}
     warnings: list[str] = []
 
-    guajie = getattr(result, "guajie", None) or {}
+    # ⚠ 2026-10-25 审计修（真实缺陷）：原为
+    #     ``guajie = getattr(result, "guajie", None) or {}``
+    #   —— ``getattr`` 的**默认值只对「属性不存在」生效**；若属性访问**本身抛异常**
+    #   （如代理对象 / 惰性属性 / __getattr__ 抛错），异常会**穿透**到调用方
+    #   ⇒ 解读层变成「唯一能让主链崩掉的入口」，违反「任一子块失败不阻塞主链」。
+    #   实测：喂一个 __getattr__ 抛 RuntimeError 的对象即崩。
+    #   现改为：经 _safe_getattr 取值，并把失败**留痕**在 warnings
+    #   （缺失被当成正常，比答错更坏）。
+    def _note_attr_error(exc: Exception) -> None:
+        warnings.append(f"判词层读取失败（{type(exc).__name__}: {exc}）")
+
+    guajie = _safe_getattr(result, "guajie", None,
+                           on_error=_note_attr_error) or {}
     if not isinstance(guajie, dict):
         guajie = {}
     evidence = list(guajie.get("evidence") or [])
@@ -218,13 +258,13 @@ def build_interpretation(result: Any) -> dict:
     try:
         from .interpretation import HeluoInput as _IInput
         from .interpretation import interpret as _interpret
-        pre = getattr(result, "prenatal", None)
-        post = getattr(result, "postnatal", None)
-        yt = getattr(result, "yuantang", None)
-        tl = getattr(result, "timeline", None)
+        pre = _safe_getattr(result, "prenatal", None)
+        post = _safe_getattr(result, "postnatal", None)
+        yt = _safe_getattr(result, "yuantang", None)
+        tl = _safe_getattr(result, "timeline", None)
         ty = (getattr(tl, "target_year_hexagram", None) or {}) if tl else {}
         daily = ((getattr(tl, "daily_hexagram", None) or {}).get("base_hex") or {}) if tl else {}
-        m_ganzhi, d_ganzhi = _ganzhi_of(getattr(result, "target_date", None))
+        m_ganzhi, d_ganzhi = _ganzhi_of(_safe_getattr(result, "target_date", None))
         _inp = _IInput(
             prenatal_hexagram=_gua_full_name(getattr(pre, "upper_gua", ""),
                                             getattr(pre, "lower_gua", "")),
@@ -244,7 +284,7 @@ def build_interpretation(result: Any) -> dict:
                 "yinyang": getattr(yt, "yao_nature", "") or "",
             },
             time_state={
-                "solar_term": str((getattr(result, "seasonal_hexagram", None) or {})
+                "solar_term": str((_safe_getattr(result, "seasonal_hexagram", None) or {})
                                    .get("jieqi", "") or ""),
                 "hour": 0,
                 "true_solar_time": False,
@@ -284,12 +324,12 @@ def build_interpretation(result: Any) -> dict:
     # ── ④ 行动指引（guidance）────────────────────────────────────
     try:
         from .guidance import generate_guidance
-        pre = getattr(result, "prenatal", None)
-        post = getattr(result, "postnatal", None)
-        yt = getattr(result, "yuantang", None)
-        tl = getattr(result, "timeline", None)
+        pre = _safe_getattr(result, "prenatal", None)
+        post = _safe_getattr(result, "postnatal", None)
+        yt = _safe_getattr(result, "yuantang", None)
+        tl = _safe_getattr(result, "timeline", None)
         ty = (getattr(tl, "target_year_hexagram", None) or {}) if tl else {}
-        hg = getattr(result, "hua_gong", None)
+        hg = _safe_getattr(result, "hua_gong", None)
         _g = generate_guidance(
             assertions, judgment,
             source_gua=str(getattr(pre, "hexagram_name", "") or ""),

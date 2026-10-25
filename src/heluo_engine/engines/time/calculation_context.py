@@ -31,7 +31,6 @@ from datetime import date, datetime, timedelta, timezone
 from typing import Optional
 
 from .day_boundary import DAY_BOUNDARY, traditional_hour_name
-from .eot import equation_of_time
 from .longitude_offset import MIN_PER_DEGREE
 
 

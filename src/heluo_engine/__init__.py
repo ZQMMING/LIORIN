@@ -44,7 +44,7 @@ print(res.prenatal.hexagram_name, res.yuantang.yuantang, res.postnatal.hexagram_
 """
 from __future__ import annotations
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 
 __all__ = [
     "HeluoAdapter",

@@ -23,7 +23,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Literal, Optional
 
-from ..yi.yao_ci_data import YAO_CI, get_yao_ci, get_all_yao_ci
+from ..yi.yao_ci_data import YAO_CI, get_yao_ci
 from ..yi.yao_ci_meanings import YAO_CI_MEANINGS
 from ..yi.classical_text import get_classical_text
 
@@ -309,7 +309,6 @@ def interpret_liunian_year(
         changed_line_idx = _compute_changed_line_for_year(liunian_years, year)
 
     if changed_line_idx is not None:
-        is_yang = resolved in YAO_CI and len(YAO_CI.get(resolved, [])) > changed_line_idx
         # 判断爻性（阳爻=1, 阴爻=-1）
         # 从 yao_ci_data 中的 position name 判断
         yao_list = YAO_CI.get(resolved, [])

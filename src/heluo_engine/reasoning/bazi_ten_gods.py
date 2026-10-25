@@ -13,39 +13,20 @@ controls me / I control), modulated by 阴阳同异.
 
 from __future__ import annotations
 
-# 五行相生链
-GENERATES = {
-    "WOOD": "FIRE",
-    "FIRE": "EARTH",
-    "EARTH": "METAL",
-    "METAL": "WATER",
-    "WATER": "WOOD",
-}
+# ⚠ 2026-10-25：五行相生/相克/地支藏干表**不在此处手抄** ——
+#   下方「Reuse bazi_facts tables to keep single source of truth」的 import
+#   会用 ``facts.bazi_facts`` 里的权威表**覆盖**同名本地定义。
+#   原来两份都在（手抄在前、import 在后）⇒ 手抄那份是**死代码**，
+#   且会给人「这里才是定义处」的错觉 ⇒ 删除，只留单一来源。
+#   （另：Ruff F811 报的就是这个「重定义」。）
 
-# 五行相克链
-CONTROLS = {
-    "WOOD": "EARTH",
-    "EARTH": "WATER",
-    "WATER": "FIRE",
-    "FIRE": "METAL",
-    "METAL": "WOOD",
-}
 
-# 地支藏干 (主气 first). Standard table.
-BRANCH_HIDDEN_STEMS = {
-    "ZI": [("GUI", "main")],
-    "CHOU": [("JI", "main"), ("GUI", "middle"), ("XIN", "residual")],
-    "YIN": [("JIA", "main"), ("BING", "middle"), ("WU", "residual")],
-    "MAO": [("YI", "main")],
-    "CHEN": [("WU", "main"), ("YI", "middle"), ("GUI", "residual")],
-    "SI": [("BING", "main"), ("WU", "middle"), ("GENG", "residual")],
-    "WU": [("DING", "main"), ("JI", "middle")],
-    "WEI": [("JI", "main"), ("DING", "middle"), ("YI", "residual")],
-    "SHEN": [("GENG", "main"), ("REN", "middle"), ("WU", "residual")],
-    "YOU": [("XIN", "main")],
-    "XU": [("WU", "main"), ("XIN", "middle"), ("DING", "residual")],
-    "HAI": [("REN", "main"), ("JIA", "middle")],
-}
+# ⚠ 2026-10-25：五行相生/相克表**不在此处手抄** ——
+#   下方「Reuse bazi_facts tables to keep single source of truth」的 import
+#   会用 ``facts.bazi_facts`` 里的权威表**覆盖**同名本地定义。
+#   原来两份都在（手抄在前、import 在后）⇒ 手抄那份是**死代码**，
+#   且会给人「这里才是定义处」的错觉 ⇒ 删除，只留单一来源。
+#   （另：Ruff F811 报的就是这个「重定义」。）
 
 # 季节 by 月支
 SEASON_BY_BRANCH = {

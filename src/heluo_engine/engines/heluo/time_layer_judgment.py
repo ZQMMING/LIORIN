@@ -56,7 +56,7 @@
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from .gui_ming_liu_ju import LIU_JU, JI_CI_GOOD_CHARS
@@ -236,7 +236,8 @@ def judge_time_layer_by_ci(
             passed=True,
             basis=_CI_BASIS,
             detail="该卦爻辞含吉词「%s」⇒ 吉（原典 L212「卦爻中有元吉亨利是也」；"
-                   "判据为**卦级**，按**词组**匹配）" % good_hit,
+                   "判据为**卦级**，按**词组**匹配；样本口径：%s）"
+                   % (good_hit, scope),
             source_ref=src,
         )
 
@@ -246,7 +247,8 @@ def judge_time_layer_by_ci(
         basis=_CI_BASIS,
         detail="该卦爻辞无「元吉/亨利」⇒ **不判**"
                "（原典 L257「若拘拘于爻辞吉凶，则失之矣」——"
-               "不得由「没命中吉辞」反推为凶；门槛窄是原典实况，不得放宽）",
+               "不得由「没命中吉辞」反推为凶；门槛窄是原典实况，不得放宽；"
+               "样本口径：%s）" % scope,
         source_ref=src,
     )
 
@@ -310,13 +312,17 @@ def _gua_ci_list(guajie: Any, gua_name: str) -> List[str]:
     return out
 
 
-#: 元堂爻位索引（0=初爻 … 5=上爻）→ 爻位名（与 gui_ming_liu_ju 同表）
+#: 爻位索引（0=初爻 … 5=上爻）→ 爻位名。
+#:
+#: ⚠ 2026-10-25 合并：此前本文件有**两张内容完全相同**的表
+#:   （``_YAO_NAME_BY_IDX`` 与 ``_YAO_NAME_BY_IDX_FULL``），
+#:   且 ``_YAO_NAME_BY_IDX`` 还被**重复定义**了两次
+#:   —— Ruff F811 / mypy no-redef 都报了。
+#:   另：原注释写「取自判词层的爻名表（判词层单一来源）」**与事实不符**
+#:   （本表内容就是「初爻…上爻」，并非判词层的「初九/六二…」爻名），
+#:   注释会误导后来者以为存在一个「判词层爻名表」被依赖。
+#:   ⇒ 合并为一张表，注释改为如实描述。
 _YAO_NAME_BY_IDX: Dict[int, str] = {
-    0: "初爻", 1: "二爻", 2: "三爻", 3: "四爻", 4: "五爻", 5: "上爻",
-}
-
-#: 爻位索引 → 爻名（初九/六二…）。取自判词层的爻名表（判词层单一来源）。
-_YAO_NAME_BY_IDX_FULL: Dict[int, str] = {
     0: "初爻", 1: "二爻", 2: "三爻", 3: "四爻", 4: "五爻", 5: "上爻",
 }
 
@@ -363,10 +369,19 @@ def collect_time_layer_judgments(
     Returns:
         list[TimeLayerJudgment]（顺序：流年 → 流月 → 流日）。
     """
+    # ⚠ 2026-10-25：``getattr`` 的默认值只对「属性不存在」生效；
+    #   属性访问**本身抛异常**时会穿透 ⇒ 本模块自己兜住，
+    #   免得把异常甩给调用方（缺失被当成正常，比答错更坏）。
     if guajie is None:
-        guajie = getattr(result, "guajie", None)
+        try:
+            guajie = getattr(result, "guajie", None)
+        except Exception:
+            guajie = None
 
-    tl = getattr(result, "timeline", None)
+    try:
+        tl = getattr(result, "timeline", None)
+    except Exception:
+        tl = None
     out: List[TimeLayerJudgment] = []
 
     # ── 流年 ──────────────────────────────────────────────────────
@@ -378,7 +393,7 @@ def collect_time_layer_judgments(
     if not y_yao:
         _idx = y_row.get("xingnian_yao_index")
         if _idx is not None:
-            y_yao = _YAO_NAME_BY_IDX_FULL.get(int(_idx), "") or ""
+            y_yao = _YAO_NAME_BY_IDX.get(int(_idx), "") or ""
     out.append(judge_time_layer_by_ci(
         "HL_LIUNIAN_GUA",
         hexagram=y_gua, yao=y_yao, ci=y_ci,
@@ -397,7 +412,7 @@ def collect_time_layer_judgments(
                 m_gua = m.get("name", "") or ""
                 _mi = m.get("yue_yao_index")
                 if not m_yao and _mi is not None:
-                    m_yao = _YAO_NAME_BY_IDX_FULL.get(int(_mi), "") or ""
+                    m_yao = _YAO_NAME_BY_IDX.get(int(_mi), "") or ""
                 break
     out.append(judge_time_layer_by_ci(
         "HL_YUEGUA",
@@ -442,7 +457,10 @@ def collect_dayun_judgment(
     Returns:
         TimeLayerJudgment（``passed`` 恒为 None）。
     """
-    tl = getattr(result, "timeline", None)
+    try:
+        tl = getattr(result, "timeline", None)
+    except Exception:
+        tl = None
     hexagram = ""
     yao = ""
     detail = "大运层无吉凶判据（原典只给取法不给门槛）⇒ 不判"
@@ -468,7 +486,3 @@ def collect_dayun_judgment(
     )
 
 
-#: 元堂爻位索引（0=初爻 … 5=上爻）→ 爻位名（与 gui_ming_liu_ju 同表）
-_YAO_NAME_BY_IDX: Dict[int, str] = {
-    0: "初爻", 1: "二爻", 2: "三爻", 3: "四爻", 4: "五爻", 5: "上爻",
-}

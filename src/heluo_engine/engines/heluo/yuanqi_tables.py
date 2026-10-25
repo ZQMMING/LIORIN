@@ -69,7 +69,7 @@ from dataclasses import dataclass
 #:
 #: 2026-10-22：本表原先是 QIANXI_DUKONG 的**内容副本**（第四份），改引用
 #: 权威单一来源，保名不保表 —— 避免同内容双公开名各自漂移。
-from .hexagram_state import QIANXI_DUKONG as DUI_GUA
+from .hexagram_state import QIANXI_DUKONG as DUI_GUA  # noqa: F401
 
 # ── 说一：纳表（L474/L477）卦 → 干支组 ───────────────────────────
 #: 原典逐字：

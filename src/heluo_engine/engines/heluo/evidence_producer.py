@@ -11,9 +11,15 @@ V13 §五硬约束：EngineEvidence 只保留事实/数值/结构/位置/时间
 from __future__ import annotations
 
 import uuid
-from typing import List, Optional
+from typing import TYPE_CHECKING, List, Optional
 
 from ...spec.canonical import EngineEvidence, EngineName, TemporalScope
+
+if TYPE_CHECKING:                     # pragma: no cover
+    # ⚠ 只用于**类型标注**：运行时 import canonical 会造成循环依赖
+    #   （canonical → … → 本模块）。``from __future__ import annotations``
+    #   使注解不求值 ⇒ 运行期无影响，mypy/IDE 仍能拿到真类型。
+    from .canonical import HeluoResult
 
 
 class HeLuoEvidenceProducer:
@@ -28,7 +34,7 @@ class HeLuoEvidenceProducer:
 
     def produce(
         self,
-        heluo_result: object,
+        heluo_result: "HeluoResult",
         birth_year: Optional[int] = None,
     ) -> List[EngineEvidence]:
         """从 HeluoResult 提取纯事实证据。

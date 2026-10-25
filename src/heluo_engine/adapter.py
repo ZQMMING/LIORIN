@@ -21,13 +21,19 @@ from __future__ import annotations
 
 from dataclasses import replace
 from datetime import datetime
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Literal, Optional
 
 from .engines.bazi_adapter import BaziAdapter
 from .engines.bazi_engine import BaziChart, BaziEngine, BRANCH_CN, STEM_CN
 from .engines.heluo.canonical import (
     HeluoCanonical, HeluoResult, resolve_jieqi_window,
 )
+
+if TYPE_CHECKING:                     # pragma: no cover
+    from .engines.time.calculation_context import CalculationContext
+
+#: 性别类型（下游八字引擎只接受这两个字面量）
+Gender = Literal["male", "female"]
 
 #: 河洛默认使用的时区（与 canonical 构造 HeluoInput 时一致）
 HELUO_TZ = "Asia/Shanghai"
@@ -93,6 +99,40 @@ def sanyuan(year: int) -> str:
     return "xia"
 
 
+#: 合法的性别取值（下游八字引擎只接受这两个）
+GENDERS = ("male", "female")
+
+#: 常见别名 → 规范值（大小写/简写容错，避免在深处才炸）
+_GENDER_ALIASES = {
+    "male": "male", "m": "male", "man": "male", "boy": "male", "男": "male",
+    "female": "female", "f": "female", "woman": "female", "girl": "female",
+    "女": "female",
+}
+
+
+def _normalize_gender(gender: Optional[str]) -> Gender:
+    """性别值归一 + **显式报错**。
+
+    ⚠ 2026-10-25：本层签名是 ``gender: str``，而下游八字引擎只接受
+      ``Literal["male", "female"]`` ⇒ 传 ``"Male"`` / ``"M"`` / ``""`` 会在
+      **深处**才出错，报错与真正的错因相距很远（难以定位）。
+      ⇒ 在**入口**归一并对非法值显式报错。
+
+    Raises:
+        ValueError: 性别值既非规范值也无已知别名。
+    """
+    if gender is None:
+        return "male"
+    raw = str(gender).strip().lower()
+    if raw in _GENDER_ALIASES:
+        norm: Gender = _GENDER_ALIASES[raw]      # type: ignore[assignment]
+        return norm
+    raise ValueError(
+        "性别值不合法：%r（合法值 %s；常见别名如 M/F/男/女 亦可）"
+        % (gender, "/".join(GENDERS))
+    )
+
+
 class HeluoAdapter:
     """八字排盘 → 河洛理数 串接适配器。"""
 
@@ -124,10 +164,16 @@ class HeluoAdapter:
         ``target_date``（公历 ``YYYY-MM-DD``）= **流日卦的取用日**；
         不传则按**当前日期（北京时间）**自动推算（用户裁决：「流日卦…根据当前
         日期自动算」）。显式 ``target_year/month/day`` 三者齐全时优先。
+
+        ⚠ ``gender`` 在本层**显式校验**（见 :func:`_normalize_gender`）：
+          下游八字引擎只接受 ``"male"`` / ``"female"``，而本层签名是 ``str``
+          ⇒ 传 ``"Male"`` / ``"M"`` / ``"unknown"`` 会在**深处**才炸，
+          报错信息与真正的错因（性别值不合法）相距很远。
+          ⇒ 归一 + 显式报错（缺失被当成正常，比答错更坏）。
         """
         chart = self._bazi_engine.compute(
             solar_date,
-            gender=gender,
+            gender=_normalize_gender(gender),
             skip_late_zi=False,  # 独立入口由 BaziEngine 内部处理夜子时
             birth_datetime=birth_datetime,
         )
@@ -144,10 +190,11 @@ class HeluoAdapter:
     # 正式链路：CalculationContext → BaziAdapter → 河洛
     # ------------------------------------------------------------------
     def compute_from_context(
-        self, ctx, gender: Optional[str] = None,
+        self, ctx: "CalculationContext", gender: Optional[str] = None,
         huangli_provider: Optional[object] = None,
     ) -> HeluoResult:
-        g = gender or ctx.subject_gender or "male"
+        g = _normalize_gender(gender or getattr(ctx, "subject_gender", None)
+                              or "male")
         chart = self._bazi_adapter.compute(ctx, gender=g)
         return self.compute_from_chart(chart, huangli_provider=huangli_provider)
 

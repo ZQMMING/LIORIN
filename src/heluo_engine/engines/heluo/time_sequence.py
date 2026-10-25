@@ -11,9 +11,8 @@ warnings.warn(
     stacklevel=2,
 )
 import logging
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
 
 log = logging.getLogger(__name__)
 
@@ -155,7 +154,6 @@ def compute_liu_ri(input_data: LiuRiInput) -> LiuRiResult:
 # 主入口
 # ═══════════════════════════════════════════════════════════════════
 if __name__ == "__main__":
-    import json
     
     # 测试 HL-10
     ln_input = LiuNianInput(birth_year=1990, target_year=2025, gender="male")

@@ -335,7 +335,7 @@ def _gz60_index(ganzhi: str) -> int | None:
     g, z = ganzhi[0], ganzhi[1]
     if g not in _GAN or z not in _ZHI:
         return None
-    gi, zi = _GAN.index(g), _ZHI.index(z)
+    _gi, _zi = _GAN.index(g), _ZHI.index(z)
     for n in range(60):
         if _GAN[n % 10] == g and _ZHI[n % 12] == z:
             return n

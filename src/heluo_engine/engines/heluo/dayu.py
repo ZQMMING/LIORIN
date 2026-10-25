@@ -13,8 +13,7 @@ warnings.warn(
 import json
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime
-from typing import List, Optional, Tuple
+from typing import List
 
 log = logging.getLogger(__name__)
 
@@ -219,7 +218,6 @@ def generate_da_yun_sequence(input_data: HeluoBirthInput, qi_yun_age: int) -> Li
 def calculate_dayun_element(stem_idx: int, branch_idx: int) -> str:
     """计算大运五行。"""
     stem_element = STEM_ELEMENTS[STEMS[stem_idx]]
-    branch_element = BRANCH_ELEMENTS[BRANCHES[branch_idx]]
     # 取天干五行作为大运主五行
     return stem_element
 

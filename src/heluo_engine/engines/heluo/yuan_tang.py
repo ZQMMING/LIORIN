@@ -168,6 +168,7 @@ def find_yuantang(
     # None（未给节气）时按**冬半年**处理，与旧行为一致，向后兼容。
 
     if _is_pure_yang(six_lines):
+        yao_nature: Literal["阳", "阴"]
         if gender == "male":
             # 男得乾：十二时皆自下而行上，子午皆在初爻（正文 L297）
             target_idx = hour_idx % 6

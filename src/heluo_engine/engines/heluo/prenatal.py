@@ -91,7 +91,7 @@ def determine_prenatal_hexagram(
        - 阴年女命：天数在上，地数在下
        - 阴年男命：天数在下，地数在上
     """
-    from .numbers import LUSHU_TO_TRIGRAM_NAME, get_hexagram_name, TRIGRAM_ELEMENT, TRIGRAM_NATURE
+    from .numbers import LUSHU_TO_TRIGRAM_NAME, get_hexagram_name
 
     # 处理中宫寄宫
     tian_gua_num, di_gua_num = resolve_middle_palace(

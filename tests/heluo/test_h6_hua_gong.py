@@ -294,7 +294,17 @@ class TestHuaGongProvenance(unittest.TestCase):
     @staticmethod
     def _slice(text: str, start: str, end: str | None = None) -> str:
         i = text.index(start)
-        j = text.index(end, i) if end else len(text)
+        if not end:
+            return text[i:]
+        # ⚠ 2026-10-25：end 用「**行首**」匹配，而非整行文本 ——
+        #   源码里那行 import 后来加了「noqa: F401」标注（有意重导出必须加，
+        #   否则会被「清理未用 import」工具删掉）⇒ 整行文本不再精确匹配，
+        #   原实现直接 ValueError ⇒ **守卫被一句注释搞失效**。
+        #   ⇒ 改为：找到以 end 开头的**行**，切到该行行尾。
+        j = text.index("\n" + end, i) if ("\n" + end) in text[i:] else -1
+        if j < 0:
+            j = text.index(end, i)
+            j = text.index("\n", j)
         return text[i:j]
 
     def test_no_phantom_section_name(self):

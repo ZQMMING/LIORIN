@@ -49,7 +49,7 @@ BRANCH_TO_TRIGRAM: dict[str, str] = {
 }
 
 # 错卦（先天方位对宫，六爻全变）—— 引用单一来源，不再自存一份
-from .hexagram_state import QIANXI_DUKONG
+from .hexagram_state import QIANXI_DUKONG  # noqa: F401
 
 
 @dataclass(frozen=True)

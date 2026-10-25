@@ -7,17 +7,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
 
-from .input import HeluoInput, prepare_heluo_input
+from .input import HeluoInput
 from .numbers import (
     compute_tian_di_shu,
     TianDiShu,
-    STEM_VALUES,
-    BRANCH_VALUES,
     build_six_lines,
-    TRIGRAM_ELEMENT,
-    TRIGRAM_NATURE,
 )
 from .prenatal import determine_prenatal_hexagram, PrenatalHexagram
 from .yuan_tang import find_yuantang, YuanTang
@@ -87,9 +82,8 @@ def _solar_phase_for_date(birth_date: str) -> str | None:
     summer: 夏至后至冬至前（含夏至日、不含冬至日）→ 女乾/男坤自下而上
     """
     from datetime import date as _date
-    from datetime import timedelta
     try:
-        import sxtwl
+        import sxtwl  # noqa: F401  (可用性探测，非未用 import)
     except ImportError:
         return None
     try:
@@ -384,10 +378,10 @@ def _compute_year_jie(year: int, sxtwl=None) -> dict[int, str]:
 from .hexagram import analyze_hexagram, HexagramStructure
 from .yi_interpreter import interpret_all_liunian
 from .hua_gong import compute_huagong, HuaGongResult
-from .yuan_qi import compute_yuan_qi, YuanQiResult
+from .yuan_qi import YuanQiResult
 from .calendar_guard import resolve_year_month
 
-from .jiehhou import (get_seasonal_hexagram, get_current_jieqi_info,
+from .jiehhou import (get_current_jieqi_info,
                       solar_term_date, jieqi_timeline)
 
 
@@ -689,7 +683,6 @@ class HeluoCanonical:
         structure = analyze_hexagram(postnatal.hexagram_name)
 
         # 构建 HeluoInput（DISPUTE-HL-03：落真实出生日期，不再用误导占位）
-        from datetime import date
         # ⚠ 2026-10-08：下方会把缺失的 birth_date 补成 f"{yr}-01-01" 喂 HeluoInput。
         #   那个占位日期**只许喂 HeluoInput**，不得流进节气链路：
         #   节气窗口（L558–L567）按节气切，补出来的 1 月 1 日会算成「冬至 jq=0」，
@@ -705,7 +698,7 @@ class HeluoCanonical:
             birth_date=birth_date,
             birth_time=birth_hour,
             gender=gender,
-            location=None,  # type: ignore
+            location=None,
             timezone="Asia/Shanghai",
             true_solar_datetime=true_solar_datetime,
             day_boundary="23:00",
@@ -1199,5 +1192,9 @@ __all__ = [
     "HeluoCanonical",
     "HeluoResult",
     "heluo_calculate",
-    "GOLDEN_CASES",
+    # ⚠ 2026-10-25 订正：原先此处列了 "GOLDEN_CASES" —— 但它**只作为类属性**
+    #   存在（``HeluoCanonical.GOLDEN_CASES``），**模块级并没有这个名字**
+    #   ⇒ ``from ...canonical import *`` 会抛 ImportError（悬空导出）。
+    #   Ruff F822 抓到。若确实需要模块级访问，用
+    #   ``HeluoCanonical.GOLDEN_CASES``。
 ]

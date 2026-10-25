@@ -13,7 +13,7 @@ Migrated from: engines/time_resolver.py:resolve() 内部的 ZoneInfo 分支
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from .exceptions import TimezoneError

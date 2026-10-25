@@ -34,7 +34,7 @@ import warnings
 from dataclasses import dataclass
 from datetime import date
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict
 
 warnings.warn(
     "heluo/relationship/engine.py is deprecated (Phase 5-D 残桩，2026-10-22 裁定废弃). "

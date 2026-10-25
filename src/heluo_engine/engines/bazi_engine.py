@@ -12,8 +12,8 @@ from the four pillars and gender — no new facts introduced.
 
 from __future__ import annotations
 from dataclasses import dataclass, field
-from typing import Literal
-from datetime import datetime
+from typing import Literal, Optional
+from datetime import date, datetime
 from zoneinfo import ZoneInfo
 
 # P0-FNDR-03 (R-09 ⑦ 十神 audit fix): 重构依赖方向
@@ -1314,7 +1314,7 @@ class BaziEngine:
     def __init__(self):
         self._has_sxtwl = False
         try:
-            import sxtwl
+            import sxtwl  # noqa: F401  (可用性探测，非未用 import)
             self._has_sxtwl = True
         except ImportError:
             self._has_sxtwl = False
@@ -1479,15 +1479,10 @@ class BaziEngine:
         # solar_hour/minute/second 必须用传入的 hour (effective_hour)，而非 birth_civil_datetime.hour
         # V2.7 fix: 否则 23:00 换日场景下 (civil=00:10, effective=23:00) 会传 hour=0 给 sxtwl
         # 导致 hour_pillar 算成甲子 (solar_hour=0) 而不是丙子 (solar_hour=23)
-        if birth_civil_datetime is not None:
-            solar_year = birth_civil_datetime.year
-            solar_month = birth_civil_datetime.month
-            solar_day = birth_civil_datetime.day
-            solar_minute = birth_civil_datetime.minute
-            solar_second = birth_civil_datetime.second
-        else:
-            solar_year, solar_month, solar_day = year, month, day
-            solar_minute, solar_second = minute, second
+        # ⚠ 2026-10-25：原先此处把 solar_year/month/day/minute/second 逐个
+        #   赋值（以及 else 分支的解包）—— 但这五个变量**从未被读取**
+        #   （真正被用的是 solar_hour，见下方与 L1688）。
+        #   ⇒ 整段删除，保留 solar_hour 的赋值。
         # hour 总是用传入的 effective hour
         solar_hour = hour
 
@@ -1727,7 +1722,7 @@ class BaziEngine:
                     # 节气前：使用前一个月的月柱
                     gz_month = day_obj.getMonthGZ()
                     month_branch = EARTHLY_BRANCHES[gz_month.dz]
-                    prev_branch_idx = (month_branch_idx := EARTHLY_BRANCHES.index(month_branch)) - 1
+                    prev_branch_idx = EARTHLY_BRANCHES.index(month_branch) - 1
                     prev_month_branch = EARTHLY_BRANCHES[prev_branch_idx % 12]
 
                     year_stem_idx = day_obj.getYearGZ().tg
@@ -1824,7 +1819,6 @@ class BaziEngine:
 
         # H17-P0: 从 day 0（出生当天）开始搜索，而非 day 1
         nearest_jieqi_dt = None
-        days_diff = 0
 
         # P0-FNDR-08: 使用常量 MAX_JIEQI_SEARCH_DAYS (33 = 安全上界, 任意两"节"间隔 < 33)
         for i in range(0, MAX_JIEQI_SEARCH_DAYS + 1):  # 包括当天
@@ -1854,7 +1848,6 @@ class BaziEngine:
                     continue  # 未到或本节时刻, 跳过
 
                 nearest_jieqi_dt = jieqi_dt
-                days_diff = i
                 break
 
         if nearest_jieqi_dt is None:

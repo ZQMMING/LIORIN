@@ -25,12 +25,10 @@ from .calculation_context import (
     SubjectContext,
     VALID_GENDERS,
 )
-from .day_boundary import DAY_BOUNDARY
 from .eot import equation_of_time
 from .exceptions import LocationError
 from .location_registry import DEFAULT_LOCATIONS_PATH, LocationEntry, LocationRegistry
 from .longitude_offset import (
-    MIN_PER_DEGREE,
     longitude_correction_minutes,
     ref_meridian_from_offset,
 )

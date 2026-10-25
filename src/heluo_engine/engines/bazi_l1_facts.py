@@ -15,7 +15,7 @@ Adapter 只负责: 输入 → 规范化 → 输出统一字段
 """
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import List, Optional
 
 
 # ============================================================
@@ -72,8 +72,6 @@ TIAN_GAN_TWELVE_GROWTH = {
 # 本表为派生视图 (适配 L1 中文键格式), 不再持有独立事实数据.
 # 依赖图: facts.bazi_facts → reasoning.bazi_ten_gods → engines.bazi_l1_facts
 from ..facts.bazi_facts import BRANCH_HIDDEN_STEMS as _FACTS_BRANCH_HIDDEN_STEMS
-from ..facts.bazi_facts import EARTHLY_BRANCHES as _FACTS_EARTHLY_BRANCHES
-from ..facts.bazi_facts import HEAVENLY_STEMS as _FACTS_HEAVENLY_STEMS
 from ..facts.bazi_facts import STEM_ELEMENT as _FACTS_STEM_ELEMENT
 from ..facts.bazi_facts import EVIDENCE_IDS as _FACTS_EVIDENCE_IDS
 
@@ -595,12 +593,12 @@ def main():
     print("=" * 80)
     print(f"  十二长生 L1 接入: {'✅' if growth_audit['passed'] else '❌'}")
     print(f"  完整藏干 L1 接入: {'✅' if hidden_audit['passed'] else '❌'}")
-    print(f"  GitHub库作为implementation source: ✅")
-    print(f"  零旺衰判断: ✅")
-    print(f"  零强弱判断: ✅")
-    print(f"  零评分: ✅")
-    print(f"  零阈值: ✅")
-    print(f"  零身强/身弱推导: ✅")
+    print("  GitHub库作为implementation source: ✅")
+    print("  零旺衰判断: ✅")
+    print("  零强弱判断: ✅")
+    print("  零评分: ✅")
+    print("  零阈值: ✅")
+    print("  零身强/身弱推导: ✅")
     print(f"  Negative Tests: {passed}/{len(tests)} PASS")
 
     print("\n" + "=" * 80)

@@ -51,7 +51,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Literal
 
 
 class HuaGongState(str, Enum):
@@ -153,7 +152,16 @@ TRIGRAM_ELEMENT: dict[str, str] = {
 #: 而两者含义不同（本表八项先天对宫；化工相反四项四季对宫）。
 #: 谁 `from … import HUAGONG_FAN_GUA` 拿错了就是**静默判错**——
 #: 对乾/坤/艮/巽 取 .get() 直接返回 None。故一并消歧义，且错卦只留一份数据。
-from .hexagram_state import QIANXI_DUKONG  # noqa: E402
+#:
+#: ⚠ 2026-10-25：下面是**有意的重导出**（不是未用 import）——
+#:   守卫 ``test_single_source_tables.py`` 要求
+#:   ``hua_gong.QIANXI_DUKONG is hexagram_state.QIANXI_DUKONG``（**同一对象**），
+#:   ``test_heluo_base_table_consistency.py`` 同理。
+#:   ⇒ 必须加「noqa: F401」标注（见下一行），否则任何「清理未用 import」的
+#:     工具都会把它删掉（实测：Ruff F401 删掉它 ⇒ 守卫立刻变红）。
+#:   ⇒ 位置放在**本注释块之后**：守卫 test_h6_hua_gong 按「注释块 → import 行」
+#:   切片取源码文本，import 必须在它之后才切得到。
+from .hexagram_state import QIANXI_DUKONG  # noqa: F401
 
 
 

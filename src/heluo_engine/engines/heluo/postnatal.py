@@ -67,9 +67,7 @@ def compute_postnatal(
     zun_tri = xiantian_name in ("坎为水", "水雷屯", "水山蹇")
     zun_idx = yuantang_index in (4, 5)
     swap = True  # 是否执行第二步（上下互换）
-    zun_applied = False
     if zun_tri and zun_idx and birth_month_yang is not None:
-        zun_applied = True
         if yuantang_index == 4:   # 元堂九五（阳爻）
             # 生阴月：不换（只变爻）；生阳月：换（两步法）
             swap = birth_month_yang
