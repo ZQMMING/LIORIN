@@ -79,7 +79,11 @@ HELUO_RULES: Dict[str, RuleNode] = {
     #   以为已接入。引擎侧算法本身在 timeline_yun / guajie 里确实存在，只是
     #   **没有对应的 EngineEvidence**。如实标注而不擅自删除（注册表即授权面，
     #   删了等于放弃授权）；接入证据时删掉本段注释即可。
-    "HL_DAYUN": RuleNode(          # TODO(证据未接入): 已注册未产出，见上
+    #
+    # ✅ 2026-10-25 已接入：``evidence_producer`` 现产出这三条（及 HL_LIUNIAN_GUA）
+    #   的证据，方向取自原典爻辞判据（起例卷之上 L212「三辞吉」），
+    #   判不出时为「不判」（None）。实现见 ``time_layer_judgment`` 模块。
+    "HL_DAYUN": RuleNode(          # 2026-10-25 已接入证据
         "HL_DAYUN", "大运爻位值运",
         "起例卷上·小象阳爻九年运行例", confidence=1.0, is_authorized=True,
     ),
@@ -91,17 +95,32 @@ HELUO_RULES: Dict[str, RuleNode] = {
         "HL_LIUNIAN_GUA", "流年卦（小象行年爻）",
         "起例卷上·小象阳爻九年运行例", confidence=1.0, is_authorized=True,
     ),
-    "HL_YUEGUA": RuleNode(         # TODO(证据未接入): 已注册未产出，见上
+    "HL_YUEGUA": RuleNode(         # 2026-10-25 已接入证据
         "HL_YUEGUA", "流月卦",
         "起例卷下·论月卦从世应起诀", confidence=0.95, is_authorized=True,
     ),
-    "HL_RIGUA": RuleNode(          # TODO(证据未接入): 已注册未产出，见上
+    "HL_RIGUA": RuleNode(          # 2026-10-25 已接入证据
         "HL_RIGUA", "流日卦",
         "起例卷下·起日卦定式", confidence=0.95, is_authorized=True,
     ),
     "HL_JIEHOU_GUA": RuleNode(
         "HL_JIEHOU_GUA", "节候卦",
         "易冒引河洛理数", confidence=0.9, is_authorized=True,
+    ),
+    # ✅ 2026-10-25 补注册：此前 ``evidence_producer`` **产出**了这条证据，
+    #   但注册表里没有 ⇒ 被诊断图当作「未注册」**静默丢弃**
+    #   （虽由 dropped_rules() 披露，但仍是能力损失）。
+    #   卦体（正体/互体/伏体）是原典**核心概念**，非边角：
+    #     · L140「凡卦有互体，有伏体，以正体内外卦除初上二爻，用中四爻，
+    #       交互成卦，谓之互体…本卦如正体互体无取，而其中各含一卦隐而不见者，
+    #       谓之伏体」——正体/互体/伏体的**定义**；
+    #     · L161「正体若无，须看互体，互体又无，推及伏体，妙在通变，不可执一」
+    #       ——**看卦次序**；
+    #     · L107「非独正体得之为佳，**互体得之尤贵**」——互体之吉凶地位。
+    "HL_HEXAGRAM_STRUCTURE": RuleNode(
+        "HL_HEXAGRAM_STRUCTURE", "卦体（正体/互体/伏体）",
+        "起例卷之上·卦体互体伏体（L140 定义 / L161 看卦次序）",
+        confidence=0.9, is_authorized=True,
     ),
 }
 
@@ -120,6 +139,9 @@ RULE_DOMAIN_MAP: Dict[str, str] = {
     "HL_YUEGUA": "CAREER",
     "HL_RIGUA": "DAILY",
     "HL_JIEHOU_GUA": "LIFE_EVENT",
+    # 2026-10-25 补登记：卦体（正体/互体/伏体）——原典核心概念，
+    #   此前证据被产出却因未注册而被丢弃。归入「人生事件」（本命盘结构事实）。
+    "HL_HEXAGRAM_STRUCTURE": "LIFE_EVENT",
 }
 
 
@@ -210,7 +232,19 @@ def build_diagnosis_graph(
         domain = RULE_DOMAIN_MAP.get(ev.rule_id, "LIFE_EVENT")
 
         # 方向：先问河洛自己的判据，问不到才回落信号层（批次 K）
+        #
+        # ⚠ 2026-10-25 新增：**时间层规则**（大运/流年/流月/流日）的方向
+        #   不来自 frozen_state（那里没有时间层数据），而来自**证据自身**：
+        #   证据生产器已用原典爻辞判据（起例卷之上 L212「三辞吉」）判过，
+        #   结果放在 ``ev.attributes["passed"]``（True=吉 / False=凶 / None=不判）。
+        #   ⇒ 先从证据取；取不到（不判）再走 frozen_state / 信号层。
         direction, own_basis = heluo_own_direction(ev.rule_id, frozen_state)
+        if direction is None and ev.rule_id in _TIME_LAYER_RULE_IDS:
+            _d, _b = _time_layer_direction_from_evidence(ev)
+            if _d is not None:
+                direction = _d
+                own_basis = _b
+                _HELUO_OWN_BASIS[ev.rule_id] = _b
         if direction is None:
             direction = _signal_direction_for_evidence(ev, signals)
         else:
@@ -411,6 +445,45 @@ def _dir_from_jiu_ji(result) -> AssertionDirection | None:
         return None
     return (AssertionDirection.SUPPORTIVE if passed
             else AssertionDirection.CAUTION)
+
+
+#: 时间层规则 id（方向取自**证据自身**，不走 frozen_state）
+#: ⚠ 2026-10-25：此前这四条「注册了却从不产出证据」；现由
+#   ``evidence_producer`` 产出（事实 + 有据方向），见
+#   ``time_layer_judgment`` 模块。
+_TIME_LAYER_RULE_IDS = frozenset({
+    "HL_DAYUN", "HL_LIUNIAN_GUA", "HL_YUEGUA", "HL_RIGUA",
+})
+
+
+def _time_layer_direction_from_evidence(
+    ev: EngineEvidence,
+) -> tuple[AssertionDirection | None, str]:
+    """时间层证据 → (方向, 依据)。**判不出就返回 (None, 理由)**。
+
+    方向取自证据生产器写入的 ``attributes["passed"]``：
+      · ``True``  → SUPPORTIVE（吉，原典 L212「三辞吉」）
+      · ``False`` → CAUTION（凶）
+      · ``None``  → **不判**（原典未言 / 门槛不满足 ⇒ 宁可不判）
+
+    ⚠ 该三态由 ``time_layer_judgment`` 判定并附原典依据；本函数**只做搬运**，
+      不自行推断方向，也不产生任何数值分数。
+    """
+    attrs = getattr(ev, "attributes", None) or {}
+    if not isinstance(attrs, dict):
+        return None, "证据无 attributes ⇒ 时间层不判"
+    if "passed" not in attrs:
+        return None, "证据无 passed 字段 ⇒ 时间层不判"
+    passed = attrs.get("passed")
+    detail = str(attrs.get("detail", "") or "")
+    basis = str(attrs.get("basis", "") or "")
+    if passed is True:
+        return (AssertionDirection.SUPPORTIVE,
+                "爻辞判吉（%s）%s" % (basis, detail))
+    if passed is False:
+        return (AssertionDirection.CAUTION,
+                "爻辞判凶（%s）%s" % (basis, detail))
+    return None, "时间层判据**不判**（%s）%s" % (basis, detail)
 
 
 def heluo_own_direction(rule_id: str, frozen_state: Any

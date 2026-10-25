@@ -141,3 +141,63 @@ python -m pytest tests/ -q
 - `heluo_engine/data/guajie_jingyi.json`：卦辞现代精义（706 单元）。
 - `heluo_engine/docs/算法原文对照核证表.md`：算法与原典逐句对照核证。
 - `heluo_engine/docs/` 其余：定案 / 裁决 / 核定 / 对照表（判据的证据链）。
+
+## 命令行入口（2026-10-25 新增）
+
+装完即可直接调用，无需写代码：
+
+```bash
+# 部署自检（确认包内资源齐备、CWD 无标准库同名 .py 干扰）
+heluo-engine doctor
+
+# 排盘（JSON 输出）
+heluo-engine compute --birth 1983-11-03 --time 12:00 --gender male \
+    --target 2026-10-23
+
+# 只看关键字段
+heluo-engine compute --birth 1983-11-03 --time 12:00 --brief
+
+# 解读层（平台信号 / 诊断 / 指引 / 维度视图 / 事件候选）
+heluo-engine interpret --birth 1983-11-03 --time 12:00 --target 2026-10-23
+
+# 查判词
+heluo-engine gua --name 观 --yao 初六
+
+# 版本 / 安装位置
+heluo-engine --version
+heluo-engine --where
+```
+
+退出码：`0` 成功，`1` 参数或运行错误（便于 shell 判成败）。
+
+## 部署到服务器
+
+```bash
+# 构建 wheel
+pip install build && python -m build --wheel
+#   产物：dist/heluo_engine-1.0.0-py3-none-any.whl
+
+# 安装
+pip install dist/heluo_engine-1.0.0-py3-none-any.whl
+
+# 自检
+heluo-engine doctor
+```
+
+或用仓库内的**一键构建 + 验证**脚本（建临时 venv 装包并跑完整自检，
+不污染当前环境）：
+
+```bash
+python tools/heluo/build_and_verify.py --venv
+```
+
+**部署须知**
+
+* Python ≥ 3.11；`sxtwl` 是**硬依赖**（节气窗口/节气月序/真太阳时都基于它）。
+  缺失时引擎**不会崩**，但相关层会显式留痕（如 `target_date_note` 写明
+  「节气表不可用，流日层退回公历月日口径」）—— 缺失被当成正常，比答错更坏。
+* **务必在干净目录里运行**：Python 会把 CWD 放进 `sys.path[0]`，
+  CWD 里若有 `inspect.py` / `json.py` 这类与标准库同名的 `.py`，
+  会**替换**标准库模块 ⇒ import 期报错且错误极具误导性
+  （本项目 2026-10-25 实测踩过）。`heluo-engine doctor` 会显式检出并报 FAIL。
+* 完整部署指南见 `docs/heluo/独立部署指南_20261025.md`。

@@ -404,17 +404,42 @@ class TestRuleRegistryConsistency(unittest.TestCase):
 
         不能只查「文件里有没有 TODO」——三条里删掉一条，另外两条仍能过，
         那等于没查。必须按 rule_id 定位到它自己的那一行。
+
+        ⚠ 2026-10-25：四条时间层规则（大运/流年/流月/流日）现已**产出证据**
+          （见 ``time_layer_judgment``），故本守卫在其产出场景下不再要求
+          TODO 标注。
+          ⚠ 但**直调** ``HeluoCanonical.calculate()``（无 target_date）时，
+            时序层只算年不算月/日 ⇒ ``HL_YUEGUA`` / ``HL_RIGUA`` 确实不产出。
+            这**不是**「规则未接入」，而是「该场景本就无月/日可算」⇒
+            守卫改用**带 target_date 的** adapter 路径判定（生产链路径），
+            并另设一条守卫钉住「直调场景的例外」不被误当成缺陷。
         """
-        c = HeluoCanonical()
-        res = c.calculate(BAZI, "male", "午", birth_year=1983, birth_date="1983-11-03")
+        from heluo_engine.adapter import HeluoAdapter
+        res = HeluoAdapter().compute(
+            (1983, 11, 3, 12), gender="male", target_date="2026-10-23")
         produced = {e.rule_id for e in HeLuoEvidenceProducer().produce(res)}
         src = _src("diagnosis_rule_graph.py")
-        for rid in ("HL_DAYUN", "HL_RIGUA", "HL_YUEGUA"):
+        for rid in ("HL_DAYUN", "HL_LIUNIAN_GUA", "HL_YUEGUA", "HL_RIGUA"):
             if rid in HELUO_RULES and rid not in produced:
                 line = [x for x in src.split("\n") if '"%s": RuleNode(' % rid in x]
                 self.assertEqual(len(line), 1, "%s 定位不到唯一注册行" % rid)
                 self.assertIn("TODO(证据未接入)", line[0],
                               "%s 已注册未产出却无标注：%r" % (rid, line[0]))
+
+    def test_time_layer_rules_produce_evidence_with_target_date(self):
+        """★ 四条时间层规则在**生产链路径**（带 target_date）必须产出证据。
+
+        这是 ``test_dead_rules_are_marked`` 的**反向**守卫：防止将来
+        「又变回注册了却不产出」而没人发现。
+        """
+        from heluo_engine.adapter import HeluoAdapter
+        res = HeluoAdapter().compute(
+            (1983, 11, 3, 12), gender="male", target_date="2026-10-23")
+        produced = {e.rule_id for e in HeLuoEvidenceProducer().produce(res)}
+        for rid in ("HL_DAYUN", "HL_LIUNIAN_GUA", "HL_YUEGUA", "HL_RIGUA"):
+            with self.subTest(rule=rid):
+                self.assertIn(rid, produced,
+                              "%s 在生产链路径未产出证据（应已接入）" % rid)
 
 
 class TestJudgmentAuthorization(unittest.TestCase):

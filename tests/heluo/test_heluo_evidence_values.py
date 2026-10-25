@@ -51,11 +51,22 @@ from heluo_engine.engines.heluo.diagnosis_rule_graph import (  # noqa: E402
 )
 
 #: 证据产出但**未接入**诊断图的 rule_id（已披露，留档）。
-#: 镜像于 diagnosis_rule_graph.py:82-93 记的「已注册未产出」三条。
-KNOWN_PRODUCED_NOT_LINKED = {"HL_HEXAGRAM_STRUCTURE"}
+#:
+#: ⚠ 2026-10-25：原为 ``{"HL_HEXAGRAM_STRUCTURE"}`` —— 该条（卦体）证据
+#:   一直**在产出**，只是注册表里没有 ⇒ 被诊断图当作「未注册」静默丢弃。
+#:   现已补注册（起例卷之上 L140 卦体互体伏体定义 / L161 看卦次序），
+#:   故本集合**清空**（空集合仍被本守卫钉住：将来若再有「产出但未接入」的
+#:   rule_id，本守卫会变红，逼人显式登记而不是让它静默丢）。
+KNOWN_PRODUCED_NOT_LINKED: set = set()
 
-#: 已注册但**证据层不产出**的 rule_id（留档，见 diagnosis_rule_graph.py:82-93）。
-KNOWN_REGISTERED_NOT_PRODUCED = {"HL_DAYUN", "HL_YUEGUA", "HL_RIGUA"}
+#: 已注册但**证据层不产出**的 rule_id（留档）。
+#:
+#: ⚠ 2026-10-25：原为 ``{"HL_DAYUN", "HL_YUEGUA", "HL_RIGUA"}``（三条
+#:   「注册了却从不产出」的空授权）。现证据生产器**已产出**这三条
+#:   （见 time_layer_judgment），故本集合清空。
+#:   注：``HL_RIGUA``（流日）在**无 target_date** 的直调场景下确实不产出
+#:   （引擎不算日卦）—— 但那不是「规则未接入」，故不入本清单。
+KNOWN_REGISTERED_NOT_PRODUCED: set = set()
 
 
 class TestEvidenceValues(unittest.TestCase):
@@ -83,11 +94,20 @@ class TestEvidenceValues(unittest.TestCase):
                                  f"HL_JIEHOU_GUA.attributes[{key}] 与结果不一致")
 
     def test_all_seven_evidence_rules_produced(self):
-        """七条证据必须都产出（此前只有 6 条被断言，第 7 条漏网）。"""
+        """证据 rule_id 集合必须**精确相等**（新增/删除一条都会被抓）。
+
+        ⚠ 2026-10-25：新增四条**时间层**证据（大运/流年/流月/流日）。
+        原断言名为 "seven"（7 条），现为 11 条 —— 名字保留是为了让历史
+        git blame 可追，但期望集合已按实码更新。
+        ⚠ 集合**不是**包含关系：新加一条而忘记改本断言 ⇒ 变红（正是本守卫
+          的用意：守住「证据集合与断言同步」这件事）。
+        """
         expected = {
             "HL_TIAN_DI_SHU", "HL_PRENATAL_HEXAGRAM", "HL_YUANTANG",
             "HL_POSTNATAL_HEXAGRAM", "HL_HEXAGRAM_STRUCTURE", "HL_HUA_GONG",
             "HL_JIEHOU_GUA",
+            # 2026-10-25 时间层（详见 time_layer_judgment 模块）
+            "HL_DAYUN", "HL_LIUNIAN_GUA", "HL_YUEGUA", "HL_RIGUA",
         }
         self.assertEqual(set(self.by_rule), expected,
                          "证据 rule_id 集合与期望不符（新增/删除一条都会被抓）")

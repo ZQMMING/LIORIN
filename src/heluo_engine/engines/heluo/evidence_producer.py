@@ -210,4 +210,85 @@ class HeLuoEvidenceProducer:
                 )
             )
 
+        # 8. 时间层证据（2026-10-25 新增）
+        #
+        # ⚠ 此前 ``HL_DAYUN`` / ``HL_LIUNIAN_GUA`` / ``HL_YUEGUA`` / ``HL_RIGUA``
+        #   四条诊断规则**注册了却从不产出证据** —— 「注册了却不存在」的空授权
+        #   （见 diagnosis_rule_graph.HELUO_RULES 的 TODO 注释）。
+        #   引擎侧数据本已齐备（timeline 的流年/流月/流日 + 判词层的动爻爻辞），
+        #   缺的只是「把时间层数据接到证据环」这一环。
+        #
+        # 方向来自**原典爻辞判据**（起例卷之上 L212「三辞吉：卦爻中有元吉亨利是也」），
+        #   判不出时给 ``passed=None``（**不判**），绝不给 0–1 分数。
+        try:
+            from .time_layer_judgment import (
+                collect_dayun_judgment, collect_time_layer_judgments,
+            )
+            # ⚠ 判词层可能**未挂载**：``HeluoCanonical.calculate()`` 只算卦，
+            #   判词层是由 adapter（或调用方）另行挂上的 ``result.guajie``。
+            #   实测：直调 canonical（生产链之外的常见用法，如守卫直调）时
+            #   guajie 为 None ⇒ 流年/流月/流日取不到爻辞 ⇒ 判不出。
+            #   故此处**自行兜底构建**判词层（只在本层需要时构建，
+            #   已有则直接用，避免重复计算）。
+            _gj = getattr(heluo_result, "guajie", None)
+            if not _gj:
+                try:
+                    from .guajie import build_guajie_from_result
+                    _gj = build_guajie_from_result(heluo_result)
+                except Exception:
+                    _gj = None
+            _judgments = collect_time_layer_judgments(heluo_result, _gj)
+            _judgments.append(collect_dayun_judgment(heluo_result))
+        except Exception as exc:                     # pragma: no cover
+            _judgments = []
+            evidences.append(
+                EngineEvidence(
+                    evidence_id=f"{self.RULE_PREFIX}-TIME-ERR-{uuid.uuid4().hex[:8]}",
+                    engine=EngineName.HE_LUO,
+                    rule_id=f"{self.RULE_PREFIX}_TIME_LAYER_ERROR",
+                    value={"error": f"{type(exc).__name__}: {exc}"},
+                    temporal_scope=TemporalScope.DAY,
+                    attributes={"error": True},
+                    source_rule_ref="（时间层证据构建失败，非原典判据）",
+                    source_field="time_layer_judgment",
+                    calculation_version=self.CALC_VERSION,
+                    contract_version=self.CONTRACT_VERSION,
+                )
+            )
+
+        for _j in _judgments:
+            # 只在「该层确实有卦」时产出（无卦的层不硬造证据）
+            if not _j.hexagram and _j.rule_id != "HL_DAYUN":
+                continue
+            evidences.append(
+                EngineEvidence(
+                    evidence_id=f"{self.RULE_PREFIX}-{_j.rule_id}-{uuid.uuid4().hex[:8]}",
+                    engine=EngineName.HE_LUO,
+                    rule_id=_j.rule_id,
+                    # value 只放**事实**（卦名/爻位/爻辞），方向另存 attributes
+                    value={
+                        "hexagram": _j.hexagram,
+                        "yao": _j.yao,
+                        "ci": _j.ci,
+                    },
+                    temporal_scope=TemporalScope.DAY,
+                    attributes={
+                        "hexagram": _j.hexagram,
+                        "yao": _j.yao,
+                        # ⚠ direction 用三态字符串表示，不给数值分数
+                        "judgment": ("吉" if _j.passed is True
+                                     else "凶" if _j.passed is False
+                                     else "不判"),
+                        "passed": _j.passed,
+                        "basis": _j.basis,
+                        "detail": _j.detail,
+                        "source_ref": _j.source_ref,
+                    },
+                    source_rule_ref=_j.source_ref or "（时间层）",
+                    source_field="time_layer",
+                    calculation_version=self.CALC_VERSION,
+                    contract_version=self.CONTRACT_VERSION,
+                )
+            )
+
         return evidences

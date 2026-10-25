@@ -61,7 +61,10 @@ class TestDimensionTable:
         assert len(set(DOMAINS)) == len(DOMAINS), "L1 领域 id 重复"
         # 42 = 文档初版 41 + 2026-10-24 增补「正对反对（先后天卦）」
         # （诊断规则图需要 HL_POSTNATAL_HEXAGRAM 有维度可映射，否则该机制收不到证据）
-        assert len(DIMENSIONS) == 42, f"L2 子维度应为 42 个，实测 {len(DIMENSIONS)}"
+        # 43 = 2026-10-25 增补「卦体（正体/互体/伏体）」
+        # （同上：HL_HEXAGRAM_STRUCTURE 此前**证据被产出却未注册**，
+        #   在诊断图里被静默丢弃；补维度后才有归属可映）
+        assert len(DIMENSIONS) == 43, f"L2 子维度应为 43 个，实测 {len(DIMENSIONS)}"
 
     def test_every_dimension_has_known_domain(self):
         bad = [d for d, v in DIMENSIONS.items() if v[0] not in DOMAINS]
