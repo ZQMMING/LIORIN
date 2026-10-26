@@ -38,6 +38,25 @@ DEFAULT_MAIN = Path(r"D:\shuntian\.wt-jd")
 SKIP_SUFFIX = {".pyc", ".pyo"}
 SKIP_DIR = {"__pycache__", ".pytest_cache"}
 
+#: ★ 随包带去主仓的**河洛工具**（2026-10-26 新增）。
+#:
+#: 为什么需要：主仓也要跑**河洛专属的 CI**（测试 + 守卫盲区扫描），
+#: 而扫描器必须能在**主仓的 vendor 副本**上就地运行
+#: （扫描是**原地改源码**的工具 ⇒ 只能在「被扫的那份代码」所在处跑）。
+#:
+#: 这三个文件是**纯工具**：
+#:   · 只依赖 ``src/heluo_engine``（vendor 镜像）+ pytest；
+#:   · 不含任何业务判据、不含原典文本；
+#:   · 与主仓其他引擎**零耦合** ⇒ 放进主仓**不会波及其他引擎**。
+#:
+#: ⚠ 边界：主仓的公共声明（如 ``pyproject.toml`` 的依赖）**不动** ——
+#:   那是跨引擎的公共契约，改它会影响 ziwei/bazi/blind/platform 等所有引擎。
+TOOL_FILES = [
+    "mutation_sweep.py",
+    "behaviour_snapshot.py",
+    "mutation_sweep_batch.py",
+]
+
 
 def _files(root: Path) -> dict[str, Path]:
     out: dict[str, Path] = {}
@@ -71,6 +90,42 @@ def _same(a: Path, b: Path) -> bool:
         return _norm(a) == _norm(b)
     except OSError:
         return False
+
+
+def _sync_tools(main_root: Path, apply: bool) -> None:
+    """把**河洛工具**同步到主仓 ``tools/heluo/``（主仓的河洛 CI 需要它们）。
+
+    只同步 ``TOOL_FILES`` 里显式登记的文件 ⇒ **不会**把独立包的其它工具
+    （含只服务独立包的脚本）带进主仓。
+    """
+    src_dir = REPO / "tools" / "heluo"
+    dst_dir = main_root / "tools" / "heluo"
+    added, changed, missing = [], [], []
+    for name in TOOL_FILES:
+        s = src_dir / name
+        d = dst_dir / name
+        if not s.exists():
+            missing.append(name)
+            continue
+        if not d.exists():
+            added.append(name)
+        elif not _same(s, d):
+            changed.append(name)
+    print(f"\n河洛工具 → 主仓 {dst_dir}")
+    print(f"  新增 {len(added)} / 内容不同 {len(changed)} / 源缺失 {len(missing)}")
+    for n in added:
+        print(f"   + {n}")
+    for n in changed:
+        print(f"   ~ {n}")
+    for n in missing:
+        print(f"   ! {n}（独立包里没有，跳过）")
+    if not apply:
+        return
+    for name in added + changed:
+        s, d = src_dir / name, dst_dir / name
+        d.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(s, d)
+    print(f"  ✔ 工具同步完成：写入 {len(added) + len(changed)} 文件")
 
 
 def main() -> int:
@@ -113,6 +168,7 @@ def main() -> int:
 
     if not args.apply:
         print("\n(--check 模式：未写任何文件；加 --apply 执行同步)")
+        _sync_tools(main_root, apply=False)
         return 0
 
     for rel in removed:
@@ -123,6 +179,7 @@ def main() -> int:
         d.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(s, d)
     print(f"\n✔ 同步完成：写入 {len(added) + len(changed)} 文件，删除 {len(removed)} 文件")
+    _sync_tools(main_root, apply=True)
     return 0
 
 

@@ -52,11 +52,23 @@ CORE_MODULES = [
 ]
 
 
-def _run_module(name: str, out_dir: Path, timeout: int) -> dict:
-    """跑一个模块的扫描，返回该模块的结果记录。"""
+def _run_module(name: str, out_dir: Path, timeout: int,
+                tests: str = "") -> dict:
+    """跑一个模块的扫描，返回该模块的结果记录。
+
+    Args:
+        name:   模块文件名（如 ``hua_gong.py``）。
+        out_dir: 逐模块结果 JSON 的输出目录。
+        timeout: 单模块扫描超时秒数。
+        tests:  **守卫生效范围**（传给扫描器的 ``--tests``）。
+                ⚠ 必须显式传 —— 主仓与独立包的守卫目录**同名但内容不同**
+                （主仓多了 ``tongshu`` 侧的接线守卫）⇒ 不能靠默认值。
+    """
     out_json = out_dir / ("%s.json" % name.replace(".py", ""))
     cmd = [sys.executable, "-u", str(SWEEP), "--module", name,
            "--json-out", str(out_json)]
+    if tests:
+        cmd += ["--tests", tests]
     t0 = time.time()
     try:
         p = subprocess.run(cmd, cwd=str(ROOT), capture_output=True,
@@ -91,6 +103,8 @@ def main() -> int:
                     help="单模块扫描超时秒数（默认 3600）")
     ap.add_argument("--modules", default="",
                     help="逗号分隔的模块名；缺省 = 全部核心模块")
+    ap.add_argument("--tests", default="tests/heluo",
+                    help="守卫生效范围（传给扫描器的 --tests；缺省 tests/heluo）")
     ap.add_argument("--summary-json", default="",
                     help="汇总 JSON 路径（默认 <out-dir>/summary.json）")
     args = ap.parse_args()
@@ -104,7 +118,7 @@ def main() -> int:
     records = []
     for i, name in enumerate(modules, 1):
         print("[%d/%d] 扫描 %s ..." % (i, len(modules), name), flush=True)
-        rec = _run_module(name, out_dir, args.timeout)
+        rec = _run_module(name, out_dir, args.timeout, tests=args.tests)
         res = rec.get("result") or {}
         print("      → rc=%s 杀=%s 盲区=%s 等价=%s 还原=%s (%.0fs)"
               % (rec["rc"], res.get("killed", "?"),
