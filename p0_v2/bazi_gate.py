@@ -860,7 +860,10 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         #   导致离散三边拓扑与安全检查结果全丢 —— 「有输出不投影」。
         #   本次只补投影, 不改 yongyao_resolve 任何计算; primary/ji_shen 原样保留。
         #   注: 三键在无主病盘为 None(上游本就返回空 / NO_BING), 属正常。
-        "yongyao": {"primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),
+        "yongyao": {"state": yy.get("state"),   # ★ V7.168 投影: YONGYAO_RESOLVED/TIAOHOU_HARD_WINNER/GE_FALLBACK/NO_BING(_GE_XIJI), 下游可分「有药/调候硬情形/无病不裁」
+                    "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),
+                    "primary_detail": yy.get("primary_medicine"),
+                    "ge_fallback_source": yy.get("ge_fallback_source"),
                     "ji_shen": yy.get("ji_shen", []),
                     "all_edges": yy.get("all_edges"),
                     "auxiliary_medicine": yy.get("auxiliary_medicine"),

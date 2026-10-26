@@ -451,6 +451,53 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                 rejected_climate.append({'stem': stem, 'wuxing': cwx, 'reason': reason})
 
     if not bw:
+        # ★ V7.168 调候硬情形优先(修 38/2106 盘「路由判调候赢而 primary 空」断层):
+        #   _yongshen_routing L362 已依 DTS L298/L295 判「寒燥极偏枯」为硬情形, winner_route=调候,
+        #   但本无病分支原先不消费该 winner, 直接掉进格体喜神→查表→源5, 而 source5 只认
+        #   帮身/泄伤方向 —— 调候硬情形盘 primary_medicine 空手而归(顶层 yongyao.primary='')。
+        #   A 级依据: DTS L298「过于湿者过于燥者皆偏枯」+ QTBJ 十干逐月候干表(调候=第一顺位用神);
+        #   架构§2.8.2 无病各路并行时, 硬情形 winner 应落实为用药方向。
+        #   修法: 无病分支最前查 _rt.winner_route=='调候' 且 winner_shen 非空
+        #     -> 候神升 primary_medicine(kind=调候), 喜忌闲三桶照 _rt 派生(不另造)。
+        _rt_wr = (_rt.get('winner_route') or '')
+        _rt_ws = (_rt.get('winner_shen') or '')
+        if _rt_wr == '调候' and _rt_ws:
+            _xjj_th = _rt.get('xiji_xian') or {}
+            _xi_bkt_th = [w for w in (_xjj_th.get('xi_wx') or []) if w]
+            if _rt_ws not in _xi_bkt_th:
+                _xi_bkt_th.append(_rt_ws)
+            _ji_bkt_th = [w for w in (_xjj_th.get('ji_wx') or []) if w]
+            if _rt_ws in _ji_bkt_th:
+                _ji_bkt_th = [x for x in _ji_bkt_th if x != _rt_ws]  # 药不入忌(用神不自相矛盾)
+            _conflict_th = [w for w in _ji_bkt_th if w in _xi_bkt_th]
+            _xi_bkt_th = [w for w in _xi_bkt_th if w not in _conflict_th]
+            _ji_bkt_th = [w for w in _ji_bkt_th if w not in _conflict_th]
+            _xian_bkt_th = list(_conflict_th)
+            _wp_el_th = (facts.get('wuxing_power') or {}).get('wuxing_power') or {}
+            _present_th = [w for w in ('木', '火', '土', '金', '水')
+                           if (_wp_el_th.get(w) or {}).get('stem_n', 0)
+                           or (_wp_el_th.get(w) or {}).get('ben_n', 0)
+                           or (_wp_el_th.get(w) or {}).get('zhong_n', 0)
+                           or (_wp_el_th.get(w) or {}).get('yu_n', 0)]
+            for w in _present_th:
+                if w in _xi_bkt_th or w in _ji_bkt_th or w in _xian_bkt_th or w == _rt_ws:
+                    continue
+                _xian_bkt_th.append(w)
+            return {'layer': 'YONGYAO_RESOLVE', 'state': 'TIAOHOU_HARD_WINNER',
+                    'primary_medicine': {'wuxing': _rt_ws, 'gan': list(WX_GAN.get(_rt_ws, ())),
+                                          'function': '调候硬情形用药(寒燥极偏枯, 候神为第一顺位)',
+                                          'kind': '调候',
+                                          'classic': 'DTS L298「过于湿者过于燥者皆偏枯」/L295「寒之甚暖之至必无好处」+ QTBJ 候干表',
+                                          'blocked': None},
+                    'auxiliary_medicine': [],
+                    'ji_shen': _ji_bkt_th,
+                    'xiji_xian': {'xi_wx': _xi_bkt_th, 'ji_wx': _ji_bkt_th, 'xian_wx': _xian_bkt_th,
+                                  'basis': 'PZZQ L3208/L2319 格局×旺衰喜忌查表(_GEJU_XIJI_WS)+破格忌; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
+                    'rejected_climate': rejected_climate,
+                    'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
+                    'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
+                    'routing': _rt,   # ★ 第4层 程级路由
+                    'boundary_note': 'V7.168: 无病盘路由层已判调候硬情形赢(DTS L298/L295), 候神升 primary; 喜忌闲三桶照 _rt 派生; 源2/3/4/5 不再走(调候硬情形优先于格体喜神)'}
         # [2026-10-08 PATCH-GE2YO] 源1(病药主病)空 → fallback 源2(格体喜神 xi_wx) + 源3(格局所需神)
         #   架构 §2.9: 用神层 = 五域药方 + L4 格体喜神 取用神。
         #   源1 空(病0→无主病)时, 走 ge_cheng.xi_wx(格成喜神) / ge_cheng.zhi_wx(格破救应神)。
