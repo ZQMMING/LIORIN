@@ -133,6 +133,26 @@ $env:PYTHONPATH = "src"
 python -m pytest tests/ -q
 ```
 
+## 守卫盲区扫描（变异测试，2026-10-26 新增）
+
+普通测试验「代码现在对不对」；**变异扫描**验「**守卫本身有没有效**」——
+自动注入已知错误（AST 生成），看有没有守卫能发现。
+存活的且**行为确实改变**的变异 = ★**守卫盲区**。
+
+```bash
+# 扫单个模块（分钟级；判据层改完就跑这个）
+python tools/heluo/mutation_sweep.py --module hua_gong
+
+# 批跑核心 22 个模块（约 2 小时；产出机器可读 JSON）
+python tools/heluo/mutation_sweep_batch.py --out-dir mutation_report
+
+# 核心模块里有真盲区 ⇒ 退出码 2（CI 直接红）
+```
+
+CI 已接入（`.github/workflows/mutation-sweep.yml`）：
+PR 跑**分钟级快档**（有盲区即红），夜间跑**全量档**（22 模块 / 6 分片并行）。
+详见 `docs/heluo/守卫盲区扫描方法_20261025.md`。
+
 ## 数据与依据
 
 - `heluo_engine/orig/`：《河洛真数》起例卷、《易卦释义》、《诗断秘诀》原文切片
