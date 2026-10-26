@@ -278,20 +278,32 @@ def _mutate_source(path: Path, text: str) -> List[Mutation]:
 # 执行
 # ══════════════════════════════════════════════════════════════════
 
-def _module_guard_map(targets: List[Path]) -> dict:
+def _module_guard_map(targets: List[Path], tests_dir: str) -> dict:
     """被测模块 → 提到它的守卫文件（用于快速筛）。
 
     只用**文本引用**做粗筛（快）；粗筛放过的不代表真盲区，
     后面还会跑全量确认。
+
+    ⚠ 2026-10-25 修正：**必须跟随 ``--tests`` 指定的范围**。
+      原实现硬编码 ``tests/heluo`` ⇒ 当 ``--tests`` 指向别处时，
+      快筛仍会跑**范围外**的守卫 ⇒ 那些守卫把变异杀掉 ⇒
+      「这个范围内有没有守卫」的问题被**范围外的守卫**回答了
+      ⇒ 结论与「守卫生效范围」这个前提**不一致**。
+      ⇒ 现在快筛与慢筛用**同一个** tests_dir。
     """
     import re as _re
-    tests_dir = ROOT / "tests" / "heluo"
-    tfiles = []
-    for dp, dns, fns in os.walk(tests_dir):
-        dns[:] = [d for d in dns if d != '__pycache__']
-        for fn in sorted(fns):
-            if fn.startswith('test_') and fn.endswith('.py'):
-                tfiles.append(os.path.join(dp, fn))
+    root = Path(tests_dir)
+    if not root.exists():
+        return {p: [] for p in targets}
+    if root.is_file():
+        tfiles = [str(root)]
+    else:
+        tfiles = []
+        for dp, dns, fns in os.walk(root):
+            dns[:] = [d for d in dns if d != '__pycache__']
+            for fn in sorted(fns):
+                if fn.startswith('test_') and fn.endswith('.py'):
+                    tfiles.append(os.path.join(dp, fn))
     out: dict = {}
     for p in targets:
         short = p.stem
@@ -370,6 +382,8 @@ def main() -> int:
                     help="跳过前 N 条变异（分批扫描全量时用）")
     ap.add_argument("--tests", default="tests/heluo",
                     help="守卫生效范围（默认 tests/heluo）")
+    ap.add_argument("--json-out", default="",
+                    help="把结果写成**机器可读 JSON**（CI 用）")
     args = ap.parse_args()
 
     targets: List[Path] = []
@@ -414,7 +428,15 @@ def main() -> int:
     #   才抓到。⇒ 必须注册 finally + 信号处理器，无条件还原。
     _restored = {"done": False}
 
-    def _force_restore():
+    def _force_restore(interrupted: bool = False):
+        """还原源码。
+
+        ⚠ ``interrupted=True`` 才打「扫描被中断」——
+          正常跑完时也会走 finally ⇒ 若无条件打这句，
+          **每次正常扫描的日志末尾都会出现「中断」字样** ⇒
+          看日志的人会以为扫描是被打断的（假警报），
+          而且真出事时反而被淹没。
+        """
         if _restored["done"]:
             return
         _restored["done"] = True
@@ -423,13 +445,13 @@ def main() -> int:
             bad = runner.verify_restored()
             if bad:
                 _log("⚠⚠ 强制还原后哈希仍不符：%s" % bad)
-            else:
+            elif interrupted:
                 _log("⚠ 已强制还原源码（扫描被中断）")
         except Exception as exc:
             _log("⚠⚠ 强制还原失败：%s" % exc)
 
     def _sig_handler(signum, frame):
-        _force_restore()
+        _force_restore(interrupted=True)
         raise KeyboardInterrupt("扫描被信号 %d 中断" % signum)
 
     import signal
@@ -443,10 +465,19 @@ def main() -> int:
         except (ValueError, OSError, RuntimeError):
             pass          # 非主线程 / 平台不支持 ⇒ 忽略
 
+    _interrupted = {"flag": False}
     try:
         return _run_sweep(args, targets, muts, runner, base_snap=None)
+    except KeyboardInterrupt:
+        _interrupted["flag"] = True
+        _log("⚠ 扫描被中断")
+        return 130
+    except BaseException:
+        # ⚠ 任何异常都必须还原源码（否则留下污染的 src/）
+        _interrupted["flag"] = True
+        raise
     finally:
-        _force_restore()
+        _force_restore(interrupted=_interrupted["flag"])
         for _sig in (getattr(signal, "SIGINT", None),
                      getattr(signal, "SIGTERM", None),
                      getattr(signal, "SIGBREAK", None)):
@@ -494,7 +525,7 @@ def _run_sweep(args, targets, muts, runner, base_snap=None) -> int:
     # ── 两级筛：先跑「与被测模块相关的单个守卫文件」（快），
     #    疑似存活的再跑全量（准）──
     #    否则每条变异都跑全量（~5s），几百条要跑几十分钟。
-    fast_map = _module_guard_map(targets)
+    fast_map = _module_guard_map(targets, args.tests)
 
     survived: List[Mutation] = []
     equivalent: List[Mutation] = []
@@ -585,6 +616,47 @@ def _run_sweep(args, targets, muts, runner, base_snap=None) -> int:
             _log("  [%s]  %d 条" % (name, len(by_mod[name])))
             for m in by_mod[name][:12]:
                 _log("      %-52s L%d" % (m.label, m.lineno))
+
+    # ── 机器可读结果（CI 用）──
+    # ⚠ 为什么要有它：CI 判定「有没有真盲区」不能靠 grep 日志文本
+    #   （文案一改 grep 就失效 ⇒ 又变成恒绿陷阱）。
+    #   ⇒ 输出**稳定的字段名 + 稳定的结构**，CI 只认这些字段。
+    if args.json_out:
+        import json as _json
+        payload = {
+            "schema": 1,
+            "targets": [p.name for p in targets],
+            "mutations_total": len(muts),
+            "killed": killed,
+            "blind_spots": [
+                {
+                    "module": m.path.name,
+                    "label": m.label,
+                    "line": m.lineno,
+                    "old": m.old[:200],
+                    "new": m.new[:200],
+                }
+                for m in survived
+            ],
+            "equivalent": len(equivalent),
+            "hung": len(hung),
+            "unknown": len(unknown),
+            "skipped": skipped,
+            "restore_ok": not bad,
+            "restore_failures": list(bad),
+            "baseline_ok": baseline_rc == 0,
+        }
+        out_path = Path(args.json_out)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(
+            _json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8")
+        _log("机器可读结果已写入: %s" % out_path)
+
+        # ⚠ **有真盲区 ⇒ 退出码非 0** ⇒ CI 直接红。
+        #   不靠 CI 再去解析文本（避免"解析失败=通过"的静默通过）。
+        if survived or bad or baseline_rc != 0:
+            return 2
     return 0
 
 

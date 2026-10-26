@@ -93,7 +93,18 @@ def compute_yuan_qi(
     has_qi = (tian in all_trigrams) or (di in all_trigrams)
     has_fan = (tian_fan in all_trigrams) or (di_fan in all_trigrams)
 
-    evidence.append(f"先天/后天卦含元气卦: {has_qi}（{all_trigrams}）")
+    # ⚠ 2026-10-25 修正：**必须 sorted()**。
+    #   原先直接插值 ``{all_trigrams}`` ⇒ Python **set 的字符串表示顺序**
+    #   依赖**进程哈希种子**（PYTHONHASHSEED 随机）⇒ 同一次排盘的证据文本
+    #   每次运行都不同（如「{'坤','巽','坎'}」vs「{'巽','坎','坤'}」）。
+    #   后果：
+    #     · 证据**不可复现**（审计留痕无法比对、无法回归）；
+    #     · 行为快照**非确定** ⇒ 变异扫描的「等价 vs 真盲区」判定**全错**
+    #       （基线与变异快照永远不同 ⇒ 所有存活变异都被误判成真盲区）。
+    #   ⇒ 一律用 ``sorted()`` 输出**稳定顺序**。
+    #   （同类修法见 ``hua_gong.py`` 的 ``sorted(zhengti)``。）
+    evidence.append("先天/后天卦含元气卦: %s（%s）"
+                    % (has_qi, "、".join(sorted(all_trigrams))))
     if has_fan:
         evidence.append(f"卦中含元反卦: {has_fan}（{tian_fan}/{di_fan}）")
 
