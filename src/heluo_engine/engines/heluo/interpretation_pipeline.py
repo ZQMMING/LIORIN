@@ -64,11 +64,23 @@ def _plain(obj: Any) -> Any:
     import dataclasses
     if obj is None or isinstance(obj, (str, int, float, bool)):
         return obj
+    # ⚠⚠ 2026-10-26 修（变异扫描抓到的真实缺陷）：
+    #   **类对象**（type）必须**在最前面**排除。
+    #   原因：dataclass 的**字段默认值**是写在**类**上的属性 ⇒
+    #   `vars(SomeDataclass)` 会直接拿到那些默认值 ⇒
+    #   把类对象展开成 `{'a': 1, 'b': 'x'}` ⇒ **造值**
+    #   （那不是任何实例的真实数据！）。
+    #   原实现只在 dataclass 分支上写了 `not isinstance(obj, type)`，
+    #   但**后面的 `hasattr(obj, "__dict__")` 分支照样把类展开了**
+    #   ⇒ 那道防线形同虚设（实测 `_plain(_D)` → `{'a': 1, 'b': 'x'}`）。
+    #   ⇒ 现在提到最前面统一处理：类对象一律转字符串表示。
+    if isinstance(obj, type):
+        return str(obj)
     if isinstance(obj, dict):
         return {str(k): _plain(v) for k, v in obj.items()}
     if isinstance(obj, (list, tuple, set)):
         return [_plain(v) for v in obj]
-    if dataclasses.is_dataclass(obj) and not isinstance(obj, type):
+    if dataclasses.is_dataclass(obj):
         return {f.name: _plain(getattr(obj, f.name))
                 for f in dataclasses.fields(obj)}
     if hasattr(obj, "to_dict"):
