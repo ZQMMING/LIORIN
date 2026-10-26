@@ -35,6 +35,8 @@ phase*_output.txt
 #      这些**不是**源码，必须排除，否则每次扫描都污染 git 状态。
 mutation_sweep.log
 mutation_sweep_summary.txt
+mutation_report/
+mutation_report_*/
 _snap_*.json
 _mut_*.txt
 
