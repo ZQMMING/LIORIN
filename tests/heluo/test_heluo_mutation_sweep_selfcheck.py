@@ -73,7 +73,8 @@ def _make_sandbox() -> Path:
     return sandbox
 
 
-def _run_sweep_in_sandbox(sandbox: Path, tests_dir: Path, out_json: Path):
+def _run_sweep_in_sandbox(sandbox: Path, tests_dir: Path, out_json: Path,
+                          module: str = "prenatal.py"):
     """在**副本**里跑一次扫描（绝不触碰真实源码）。"""
     env = dict(os.environ)
     env["PYTHONPATH"] = str(sandbox / "src")
@@ -83,7 +84,7 @@ def _run_sweep_in_sandbox(sandbox: Path, tests_dir: Path, out_json: Path):
     env[_SELFTEST_ENV] = "1"
     p = subprocess.run(
         [sys.executable, "-X", "utf8", str(sandbox / _SWEEP_REL),
-         "--module", "frozen_state.py",
+         "--module", module,
          "--tests", str(tests_dir),
          "--json-out", str(out_json),
          "--limit", "6"],
@@ -102,6 +103,16 @@ class TestMutationSweepSelfCheck(unittest.TestCase):
             self.skipTest("自检熔断：本次运行处在扫描器的慢速确认里")
 
     def test_sweep_detects_a_planted_blind_spot(self):
+        """一次跑完：造盲区 → 必须被抓到 + 退出码 2 + 字段稳定 + 真源码未被动。
+
+        ⚠ **合并成一个用例**（2026-10-26）：
+          原先是 3 个用例、3 份沙箱 ⇒ 耗时 ~120 秒 ⇒
+          扫描的「慢速确认」跑全量时基线从 26 秒涨到 150 秒。
+          ⇒ 合并为 1 次沙箱扫描 + 1 组断言 ⇒ 耗时降到 ~1/3。
+        """
+        before = {p: p.read_bytes() for p in
+                  sorted((_REPO / "src" / "heluo_engine").rglob("*.py"))
+                  if "__pycache__" not in p.parts}
         sandbox = _make_sandbox()
         try:
             # 只含恒真用例 ⇒ 任何变异都抓不住
@@ -114,19 +125,24 @@ class TestMutationSweepSelfCheck(unittest.TestCase):
                 encoding="utf-8")
             out_json = sandbox / "result.json"
 
-            p = _run_sweep_in_sandbox(sandbox, tests_dir, out_json)
+            # ⚠ 用**变异数最少**的模块（prenatal.py 只有 2 条）⇒ 跑得快
+            p = _run_sweep_in_sandbox(sandbox, tests_dir, out_json,
+                                      module="prenatal.py")
 
+            # ① 必须产出结果
             self.assertTrue(out_json.exists(),
                             "扫描器未产出结果 JSON（工具坏了？）：%s"
                             % ((p.stdout or "") + (p.stderr or ""))[-1500:])
             data = json.loads(out_json.read_text(encoding="utf-8"))
 
+            # ② 基线与还原必须正常
             self.assertTrue(data["baseline_ok"],
                             "基线（未变异）就没通过 ⇒ 工具状态不对")
             self.assertTrue(
                 data["restore_ok"],
                 "扫描后源码未还原（工具坏了）⇒ 绝不能信任其结论")
 
+            # ③ ★ 必须抓到真盲区（这是本守卫存在的全部理由）
             blind = data["blind_spots"]
             self.assertTrue(
                 blind,
@@ -136,33 +152,15 @@ class TestMutationSweepSelfCheck(unittest.TestCase):
                 "（结论一律不可信）。当前统计：killed=%s equivalent=%s"
                 % (data["killed"], data["equivalent"]))
 
-            # ⚠ 退出码必须非 0（CI 靠它判红）
+            # ④ 退出码必须非 0 且为 2（CI 靠它判红）
             self.assertNotEqual(
                 p.returncode, 0,
                 "发现了 %d 条真盲区，但扫描器退出码是 0 ⇒ "
                 "CI 会判绿 ⇒ 守卫的洞被静默放过" % len(blind))
             self.assertEqual(p.returncode, 2,
                              "真盲区场景下退出码应为 2，实际 %d" % p.returncode)
-        finally:
-            shutil.rmtree(sandbox, ignore_errors=True)
 
-    def test_sweep_result_schema_is_stable(self):
-        """扫描结果 JSON 的**字段名**必须稳定（CI 只认这些字段）。"""
-        sandbox = _make_sandbox()
-        try:
-            tests_dir = sandbox / "trivial_tests"
-            tests_dir.mkdir()
-            (tests_dir / "test_always_passes.py").write_text(
-                "# -*- coding: utf-8 -*-\n"
-                "def test_always_passes():\n"
-                "    assert True\n",
-                encoding="utf-8")
-            out_json = sandbox / "r.json"
-            p = _run_sweep_in_sandbox(sandbox, tests_dir, out_json)
-            self.assertTrue(out_json.exists(),
-                            "未产出 JSON：%s"
-                            % ((p.stdout or "") + (p.stderr or ""))[-1200:])
-            data = json.loads(out_json.read_text(encoding="utf-8"))
+            # ⑤ 结果 JSON 的字段名必须稳定（CI 只认这些字段）
             for key in ("schema", "killed", "blind_spots", "equivalent",
                         "hung", "unknown", "skipped", "restore_ok",
                         "restore_failures", "baseline_ok", "mutations_total"):
@@ -171,20 +169,7 @@ class TestMutationSweepSelfCheck(unittest.TestCase):
         finally:
             shutil.rmtree(sandbox, ignore_errors=True)
 
-    def test_real_repo_source_is_untouched(self):
-        """自检**绝不能**碰真实 src/（否则会污染仓库、且与扫描并发 ⇒ 结果全错）。"""
-        before = {p: p.read_bytes() for p in
-                  sorted((_REPO / "src" / "heluo_engine").rglob("*.py"))
-                  if "__pycache__" not in p.parts}
-        sandbox = _make_sandbox()
-        try:
-            tests_dir = sandbox / "trivial_tests"
-            tests_dir.mkdir()
-            (tests_dir / "test_always_passes.py").write_text(
-                "def test_always_passes():\n    assert True\n", encoding="utf-8")
-            _run_sweep_in_sandbox(sandbox, tests_dir, sandbox / "r.json")
-        finally:
-            shutil.rmtree(sandbox, ignore_errors=True)
+        # ⑥ ★ 自检**绝不能**碰真实 src/（否则会污染仓库；与扫描并发时结果全错）
         after = {p: p.read_bytes() for p in before}
         changed = [p.name for p in before if before[p] != after.get(p)]
         self.assertEqual(

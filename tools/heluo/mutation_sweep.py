@@ -80,6 +80,12 @@ def _behaviour_snapshot(cache_dir: str):
     env = dict(os.environ)
     env["PYTHONPATH"] = str(ROOT / "src")
     env["PYTHONPYCACHEPREFIX"] = cache_dir
+    # ⚠ 声明「本次运行处在**扫描**中」⇒ 工具自检守卫会**跳过**
+    #   （否则：扫描 → 慢速确认跑全量 tests/heluo → 自检守卫 →
+    #     又一个扫描 ⇒ 无限套娃 + 并发改同一份 src/ ⇒ 结果全错）。
+    #   实测踩过：自检守卫没跳 ⇒ 基线从 26 秒涨到 150 秒，
+    #   且扫描期间真实 src/ 被污染（残留 frozen_state / hua_gong 变异）。
+    env["HELUO_SWEEP_SELFTEST"] = "1"
     # ⚠⚠ **必须固定 PYTHONHASHSEED**（2026-10-26 加固）。
     #   原因：set / dict 的字符串表示顺序依赖 PYTHONHASHSEED（默认**每进程随机**）
     #   ⇒ 若基线快照与变异快照拿到**不同 seed**，两者在**任何** set/dict 插值处
@@ -357,6 +363,11 @@ class Runner:
         env = dict(os.environ)
         env["PYTHONPATH"] = str(ROOT / "src")
         env["PYTHONPYCACHEPREFIX"] = cache_dir
+        # ⚠ 声明「本次 pytest 处在**扫描**中」⇒ 工具自检守卫会跳过。
+        #   （自检守卫在 tests/heluo/ 里 ⇒ 扫描的「慢速确认」跑全量时
+        #     会把它也跑起来 ⇒ 它又启动一个扫描 ⇒ 无限套娃 + 并发污染。
+        #     实测踩过：基线从 26 秒涨到 150 秒，且真实 src/ 被污染。）
+        env["HELUO_SWEEP_SELFTEST"] = "1"
         t0 = time.time()
         try:
             p = subprocess.run(
