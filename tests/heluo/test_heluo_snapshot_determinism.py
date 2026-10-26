@@ -45,8 +45,13 @@ sys.path.insert(0, str(_REPO / "src"))
 _SNAPSHOT = _REPO / "tools" / "heluo" / "behaviour_snapshot.py"
 
 
-def _run_snapshot() -> dict:
+def _run_snapshot(hash_seed: str | None = None) -> dict:
     """跑一次快照（**独立子进程**）。
+
+    Args:
+        hash_seed: 传给子进程的 ``PYTHONHASHSEED``。
+            ⚠ **必须显式指定不同的 seed**（见类文档）。
+            ``None`` = 不设（由 Python 随机分配）。
 
     ⚠ 必须显式传 ``env``（含 ``PYTHONPATH=src``）：
       否则子进程走父进程环境 ⇒ 本机未 pip install 时**导入失败**、
@@ -56,6 +61,10 @@ def _run_snapshot() -> dict:
     env = dict(os.environ)
     env["PYTHONPATH"] = str(_REPO / "src")
     env["PYTHONUTF8"] = "1"
+    if hash_seed is None:
+        env.pop("PYTHONHASHSEED", None)
+    else:
+        env["PYTHONHASHSEED"] = hash_seed
     p = subprocess.run(
         [sys.executable, "-X", "utf8", str(_SNAPSHOT)],
         cwd=str(_REPO), env=env, capture_output=True, text=True,
@@ -93,8 +102,16 @@ class TestBehaviourSnapshotDeterministic(unittest.TestCase):
     """行为快照必须跨进程确定。"""
 
     def test_snapshot_is_stable_across_processes(self):
-        a = _run_snapshot()
-        b = _run_snapshot()
+        # ⚠⚠ **必须显式用两个不同的 PYTHONHASHSEED**。
+        #   原因（2026-10-26 实测）：set / dict 的字符串表示顺序依赖
+        #   PYTHONHASHSEED ⇒ **若两次跑拿到同一个 seed，非确定性就检不出来**。
+        #   实测：把 PYTHONHASHSEED 固定为 0 后，即使源码里有
+        #   ``f"...（{all_trigrams}）"`` 这种 set 插值，守卫**仍然全绿**
+        #   ⇒ 典型的「恒绿陷阱」（CI 里只要固定了 seed 就永远抓不到）。
+        #   ⇒ 显式用 "0" 与 "1" 两个 seed ⇒ 无论外部环境如何设，
+        #   本守卫**必然**能暴露 set/dict 顺序依赖。
+        a = _run_snapshot(hash_seed="0")
+        b = _run_snapshot(hash_seed="1")
         diffs = _diff(a, b)
         self.assertEqual(
             diffs, [],

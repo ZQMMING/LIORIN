@@ -80,6 +80,14 @@ def _behaviour_snapshot(cache_dir: str):
     env = dict(os.environ)
     env["PYTHONPATH"] = str(ROOT / "src")
     env["PYTHONPYCACHEPREFIX"] = cache_dir
+    # ⚠⚠ **必须固定 PYTHONHASHSEED**（2026-10-26 加固）。
+    #   原因：set / dict 的字符串表示顺序依赖 PYTHONHASHSEED（默认**每进程随机**）
+    #   ⇒ 若基线快照与变异快照拿到**不同 seed**，两者在**任何** set/dict 插值处
+    #   都必然不同 ⇒ **所有存活变异都会被误判成「真盲区」** ⇒ 盲区清单全是噪音。
+    #   ⇒ 固定同一个 seed ⇒ 顺序稳定 ⇒ 只有**真正的行为差异**才会被看到。
+    #   （配套守卫：tests/heluo/test_heluo_snapshot_determinism.py
+    #     用**两个不同 seed** 验证快照本身确实确定。）
+    env["PYTHONHASHSEED"] = "0"
     out_file = Path(cache_dir) / "snap.json"
     try:
         p = subprocess.run(
@@ -571,6 +579,15 @@ def _run_sweep(args, targets, muts, runner, base_snap=None) -> int:
         # ② 慢速确认：跑全量
         runner.test_paths = [args.tests]
         rc, out, timed_out, _ = runner.run_tests(cache, timeout=slow_timeout)
+        # ⚠⚠⚠ **必须先取快照，再还原源码**（2026-10-26 修正，**致命顺序错误**）。
+        #   原顺序是「先 restore() 再取快照」⇒ 快照子进程读到的是**已还原**的源码
+        #   ⇒ 快照**必然**等于基线 ⇒ **每一个存活变异都被判成「等价变异」**
+        #   ⇒ **真盲区被系统性掩盖**（扫描报告「盲区 0」但其实根本没测）。
+        #   ⇒ 正确顺序：先在**变异态**下取快照，再还原。
+        mut_snap = None
+        if not timed_out and rc == 0:
+            # 存活 ⇒ 再看**行为**是否真的变了
+            mut_snap = _behaviour_snapshot(cache)
         runner.restore()
         if timed_out:
             # ⚠ 子进程层面的超时（连 pytest-timeout 都没能收住）⇒
@@ -578,8 +595,6 @@ def _run_sweep(args, targets, muts, runner, base_snap=None) -> int:
             hung.append(m)
             _log("  [挂起] %-52s %s" % (m.label, m))
         elif rc == 0:
-            # 存活 ⇒ 再看**行为**是否真的变了
-            mut_snap = _behaviour_snapshot(cache)
             if mut_snap is _HANG:
                 hung.append(m)           # 引擎挂起 ⇒ 挂起型，不算盲区
                 _log("  [挂起] %-52s %s" % (m.label, m))

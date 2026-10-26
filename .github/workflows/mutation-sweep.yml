@@ -22,15 +22,27 @@ name: 变异扫描（守卫盲区体检）
 
 on:
   push:
-    branches: ["feature/heluo-engine-package-20261011"]
+    # ⚠ **全分支**（与 ci.yml 一致）：不限定分支 ⇒ 任何分支的推送
+    #   都会体检守卫盲区。
+    #   ⚠ 代价：每个分支 push 都要跑一遍快速档（2～4 分钟）。
+    #   ⚠ `paths-ignore` 排除纯文档改动 —— 文档不影响判据逻辑。
+    branches: ["**"]
     paths-ignore:
       - "docs/**"
       - "**/*.md"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - ".gitignore"
   pull_request:
-    branches: ["feature/heluo-engine-package-20261011"]
+    branches: ["**"]
     paths-ignore:
       - "docs/**"
       - "**/*.md"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - ".gitignore"
   schedule:
     # 夜间全量（UTC 02:00 ≈ 北京 10:00）
     - cron: "0 18 * * *"
@@ -49,6 +61,12 @@ env:
   PYTHONUTF8: "1"
   FORCE_COLOR: "1"
   PYTHONPYCACHEPREFIX: ${{ github.workspace }}/.mutcache
+  # ⚠ **固定 PYTHONHASHSEED**（2026-10-26）：set / dict 的字符串表示顺序
+  #   依赖它（默认每进程随机）⇒ 同一提交两次跑出的文本可能不同
+  #   ⇒ CI 结果不可复现、行为快照不可比。
+  #   ⚠ 注意：确定性守卫（test_heluo_snapshot_determinism.py）**显式用
+  #     两个不同 seed** 跑自己的子进程 ⇒ 不受这里影响，仍能抓出 set 插值。
+  PYTHONHASHSEED: "0"
 
 jobs:
   # ── PR 快速档：两个小模块，几分钟出结论 ──────────────────────
@@ -63,12 +81,15 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: pyproject.toml
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-ci.txt
 
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
+          # ⚠ 用**锁定文件**安装（保证可复现）：见 requirements-ci.txt
+          python -m pip install -c requirements-ci.txt -e ".[dev]"
 
       - name: 跑变异扫描（frozen_state / jiegua）
         run: |
@@ -115,12 +136,15 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: pyproject.toml
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-ci.txt
 
       - name: 安装依赖
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
+          # ⚠ 用**锁定文件**安装（保证可复现）：见 requirements-ci.txt
+          python -m pip install -c requirements-ci.txt -e ".[dev]"
 
       - name: 跑本分片的变异扫描
         # ⚠ 用**取模分片**把 22 个模块切成 6 份。
