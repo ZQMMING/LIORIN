@@ -49,7 +49,7 @@ on:
   workflow_dispatch:
     inputs:
       full:
-        description: "跑全量 22 模块（否则只跑 PR 快速档）"
+        description: "变异扫描跑全量 22 模块（false = 只跑 2 个模块的快速档）"
         type: boolean
         default: true
 
@@ -74,6 +74,10 @@ jobs:
     name: 变异扫描（快速档）
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    # ⚠ PR / push ⇒ 跑快速档；
+    #   手动触发且 ``full=false`` ⇒ 也跑快速档；
+    #   手动触发且 ``full=true`` / 夜间 ⇒ 交给下面的全量档（避免重复跑）。
+    if: github.event_name != 'schedule' && !(github.event_name == 'workflow_dispatch' && inputs.full)
     steps:
       - uses: actions/checkout@v4
 
@@ -123,7 +127,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     # ⚠ 只有手动触发或夜间定时才跑全量；PR 上只跑快速档
-    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.full)
     strategy:
       fail-fast: false
       matrix:
