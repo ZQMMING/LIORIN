@@ -923,7 +923,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     #   实证反判: PZ-0022 癸酉癸亥戊子丁巳 水 ben=2 stem=2(财极旺)仍被判
                     #   「财轻比重」, 与原断「财向日主, 故为富格」明确不破格相左。
                     #   「财轻」在 PZZQ/SFTK 无可量化口径, 须案例反标定(见 TODO-17), 不落码。
-                    'po_ge': [{'type':'组合','match':'ANY','required':['七杀']}],  # PZZQ258: 财透七煞
+                    'po_ge': [{'type':'组合','match':'ANY','required':['七杀'],'gate':'tou'}],  # PZZQ258: 财透七煞(V7.169 gate=tou 只认透干, L1145「透」字口径)
                     'rule': 'PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)',
                 }
                 return _attach_ge_evidence(facts)
@@ -939,7 +939,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'ge': '财格', 'xi_wx': _xi_def, 'ti_wx': _ti_def,
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
-                'po_ge': [{'type':'组合','match':'ANY','required':['七杀']}],  # PATCH-POGE-1 同源, 见上
+                'po_ge': [{'type':'组合','match':'ANY','required':['七杀'],'gate':'tou'}],  # PATCH-POGE-1 同源(V7.169 gate=tou 只认透干), 见上
                 'rule': 'PZZQ255: 财格; 财是格体; 喜食伤(财不忌伤, 伤官制比劫护财); 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)',
             }
             return _attach_ge_evidence(facts)
@@ -951,7 +951,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             'ti_wx': [facts.get('month_qi_element', '')],
             'overpower_combo': 6,
             'zhi_wx': [], 'hua_wx': [],
-            'po_ge': [{'type': '组合', 'match': 'ANY', 'required': ['七杀']}],
+            'po_ge': [{'type': '组合', 'match': 'ANY', 'required': ['七杀'], 'gate': 'tou'}],
             'rule': 'PZZQ255/V7.81: 财格(财透七煞=败格, 格名仍存, PZZQ L1145「财透七煞, 财格败也」/L1151「财不为我用而党煞」); 破格: 财透煞',
         }
         return _attach_ge_evidence(facts)
@@ -1645,10 +1645,17 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     #   present_strong= 透干 + 本气（中余不计）——三条件门控【有力】判据（未启用时仅登记）
     # 依据修正：QT-0728 财格 ANY[七杀] 漏命中——七杀己在午中为【中气】，
     #   断语「官煞混杂，财煞太旺」明证存在性须含中气；原 present 只取本气 = 存在性误用有力口径。
+    # ★ V7.169 透干集合 present_tou 新增:
+    #   A 级: PZZQ L1145「财轻比重, 财【透】七煞, 财格败也」/L1243「【透】庚金七煞而格破」/
+    #        L1246「用己土财星而【透】庚金, 皆为破格」/L1492「而【透】煞则财去党煞」
+    #        ——「财透七煞」破格的原文明文口径 = 七煞透【天干】; 藏支中余气七杀非「透」,
+    #          不构成财格之败(反例: 毛状元造 L3487 午中丁火藏支为制神, 非破格源)。
+    #   po_ge 模板可带 gate='tou' 标记 -> 用 present_tou 求值(只认透干); 无标记走 present_all 不变。
     present_all, present_strong = set(), set()
+    present_tou = set()
     for pos in ('year', 'month', 'hour'):
         _g = ten_god(dg, pillars[pos][0])
-        present_all.add(_g); present_strong.add(_g)
+        present_all.add(_g); present_strong.add(_g); present_tou.add(_g)
     for pos in ('year', 'month', 'day', 'hour'):
         hd = hidden.get(pos) or []
         bgan = hd[0] if hd else ZHI_BEN_GAN.get(pillars[pos][1], '')
@@ -1670,9 +1677,13 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
         ok = False
         if t == '组合':
             req = tpl.get('required') or []
-            hit_gods = [r for r in req if r in present_all]
+            # ★ V7.169 gate='tou' -> 只认透干(A 级「透」字口径, 见 present_tou 注释);
+            #   默认(无 gate)保持 present_all 存在性口径(QT-0728 修正不变).
+            _gate = tpl.get('gate') or ''
+            _pool = present_tou if _gate == 'tou' else present_all
+            hit_gods = [r for r in req if r in _pool]
             if match == 'ALL':
-                ok = all(r in present_all for r in req) and len(req) > 0
+                ok = all(r in _pool for r in req) and len(req) > 0
             else:
                 ok = len(hit_gods) > 0
         elif t == '地支':
