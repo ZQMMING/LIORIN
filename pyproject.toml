@@ -66,6 +66,19 @@ Issues = "https://github.com/ZQMMING/LIORIN/issues"
 #   heluo-engine doctor        # 部署自检：确认包内资源齐备
 [project.scripts]
 heluo-engine = "heluo_engine.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+# ⚠ 2026-10-26 集成仓说明（main）：本仓是**多引擎集成仓**，
+#   · 河洛独立包   → `src/heluo_engine/`（**本文件只打包它**，可独立 pip install）
+#   · 子平八字引擎 → `engines/`（顶层目录，不参与本文件打包）
+#   · 黄历引擎     → `src/tongshu/engines/`（独立切片在 feature/huangli-engine 分支）
+#   ⇒ `include = ["heluo_engine*"]` **刻意只装河洛**：
+#     装了 `tongshu` 会与主仓同名冲突（两个 tongshu 不能同时 import）。
+[tool.setuptools.packages.find]
+where = ["src"]
 # ⚠ 2026-10-24 结构性重构：顶层包名已由 `tongshu` 改为 **`heluo_engine`**。
 #   旧配置：装出顶层包 `tongshu` ⇒ 与主仓同名，两个 `tongshu` 不能同时 import
 #   （实测：site-packages 在前时，主仓 32 个顶层子包全部消失，且报错不提示
@@ -287,3 +300,4 @@ disable_error_code = ["attr-defined", "arg-type", "call-arg", "index",
                       "union-attr", "assignment", "return-value", "operator",
                       "var-annotated", "misc", "override", "dict-item",
                       "no-untyped-def", "no-untyped-call"]
+
