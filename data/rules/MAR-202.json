@@ -1,0 +1,49 @@
+{
+  "rule_id": "MAR-202",
+  "title": "女命官星入日支 → 夫星得力",
+  "rule_type": "婚姻断事",
+  "source": {
+    "work": "三命通会",
+    "chapter": "论夫星",
+    "location": "官星入夫妻宫"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "gender",
+        "op": "eq",
+        "value": "female"
+      },
+      {
+        "field": "day_branch_main_ten_god",
+        "op": "in",
+        "value": ["正官", "七杀"]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《三命通会·论夫星》: 女命以官为夫，官星坐夫妻宫（日支），主夫星得力，婚姻有靠。",
+    "produces_layer_output_template": {
+      "direction": "INCREASE",
+      "polarity": "opportunity"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "MARRIAGE_OPPORTUNITY",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-009"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "SANMING-TONGHUI",
+  "scope": "婚姻断事 / 女命官星入夫妻宫"
+}

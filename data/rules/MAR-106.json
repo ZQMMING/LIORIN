@@ -1,0 +1,31 @@
+{
+  "rule_id": "MAR-106",
+  "title": "日支为桃花(子午卯酉) → 感情机会多",
+  "rule_type": "婚姻断事",
+  "source": {
+    "work": "渊海子平",
+    "chapter": "论桃花",
+    "location": "咸池"
+  },
+  "conditions": {
+    "all": [
+      { "field": "peach_blossom", "op": "eq", "value": true }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "日支坐桃花，咸池位也，主异性缘佳，感情机会多。",
+    "produces_layer_output_template": { "direction": "INCREASE", "polarity": "opportunity" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "MARRIAGE_OPPORTUNITY",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-010"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 3,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "YUANHAI-ZIPING",
+  "scope": "婚姻断事 / 日支桃花"
+}

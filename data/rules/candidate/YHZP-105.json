@@ -1,0 +1,56 @@
+{
+  "rule_id": "CAND-YHZP-105",
+  "engine": "YUHAI_ZIPING",
+  "source_ids": [
+    "P-YHZP-YANGREN",
+    "YHZP-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "八字格局判定(阳刃透杀制伏)",
+  "subject": "阳刃",
+  "predicate": "阳刃透杀制伏(阳刃 + 透七杀)→ SUPPORT",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "day_master_absolute_month",
+        "operator": "eq",
+        "value": true
+      },
+      {
+        "field": "transparent_ten_gods",
+        "operator": "contains",
+        "value": "七杀"
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "SUPPORT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "STABILITY"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESOURCE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "ENDURANCE"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 YHZP-105",
+  "created_at": "2026-09-13T21:19:41.871152",
+  "metadata": {
+    "original_rule_id": "YHZP-105",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

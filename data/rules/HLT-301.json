@@ -1,0 +1,56 @@
+{
+  "rule_id": "HLT-301",
+  "title": "本命子午冲 + 流年引动 → 该年心血疾病",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "三命通会",
+    "chapter": "地支六冲",
+    "location": "子午冲应期"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "branch_clash_map",
+        "op": "has_any",
+        "value": [
+          [
+            "ZI",
+            "WU"
+          ]
+        ]
+      },
+      {
+        "field": "flow_year_branch",
+        "op": "in",
+        "value": [
+          "ZI",
+          "WU"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命子午水火相冲主心血病，流年再逢子/午引动则当年发作。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "心"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-011"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "SANMING-TONGHUI",
+  "precedence": 9,
+  "scope": "健康应期 / 子午冲流年引动",
+  "spec_decisions_ref": [
+    "DECISION-301"
+  ]
+}

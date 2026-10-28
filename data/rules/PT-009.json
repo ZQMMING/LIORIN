@@ -1,0 +1,63 @@
+{
+  "rule_id": "PT-009",
+  "title": "从格判定(日主无根从强/从弱)",
+  "rule_type": "格局判定",
+  "source": {
+    "work": "滴天髓",
+    "edition": "通行本(任铁樵《滴天髓阐微》)",
+    "chapter": "通神论·格局",
+    "location": "从格判据"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "daymaster_root",
+        "op": "absent"
+      },
+      {
+        "any": [
+          {
+            "field": "dominant_force",
+            "op": "eq",
+            "value": "strong"
+          },
+          {
+            "field": "daymaster_strength",
+            "op": "eq",
+            "value": "extreme_weak"
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "从格判定:日主无根无助，气势偏于一方，当从其势。《滴天髓》云:\"阳干从气不从势，阴干从势无情义\"，阳干须有根方论从，阴干无根即可论从。从强格取旺神为用，从弱格取克泄耗为用。",
+    "produces_semantic_atoms": [
+      "FOLLOW_STRUCTURE",
+      "DOMINANT_FORCE",
+      "SPECIAL_PATTERN"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [
+    "FI-DTS-CONGGE-001"
+  ],
+  "evidence_refs": [
+    "E-DTS-CONGGE-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-015"
+  ],
+  "version": "0.1.0",
+  "precedence": 10,
+  "created_at": "2026-09-08T17:40:00Z",
+  "book_id": "DITIANSUI",
+  "passage_id": "P-DTS-CONGGE",
+  "concept_id": "从格",
+  "principle_id": "PRINCIPLE-CONGGE",
+  "scope": "特殊格局判定(从格)"
+}

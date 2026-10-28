@@ -1,0 +1,56 @@
+{
+  "rule_id": "CAND-ZPZ-118",
+  "engine": "ZIPING_ZHENQUAN",
+  "source_ids": [
+    "P-ZPZ-YONGSHEN",
+    "ZPZ-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "natal",
+  "subject": "格局",
+  "predicate": "偏财当令且主气透干 → RESOURCE(格显性确认)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "eq",
+        "value": "偏财"
+      },
+      {
+        "field": "month_hidden_main_ten_god_transparent",
+        "operator": "eq",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "RESOURCE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "WEALTH"
+    },
+    {
+      "field": "judgment_value",
+      "value": "ASSET"
+    },
+    {
+      "field": "judgment_value",
+      "value": "ABUNDANCE"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 ZPZ-118",
+  "created_at": "2026-09-13T21:19:41.885515",
+  "metadata": {
+    "original_rule_id": "ZPZ-118",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

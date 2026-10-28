@@ -1,0 +1,44 @@
+{
+  "rule_id": "ZPZ-001",
+  "title": "木日主基线 → SUPPORT",
+  "rule_type": "十神定性",
+  "source": {
+    "work": "工程种子",
+    "chapter": "demo baseline",
+    "location": "v1.0 种子规则(非经典原文直引)"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "day_master_element",
+        "op": "eq",
+        "value": "WOOD"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "五常说:木主仁,性情平和生发,故定 SUPPORT 基调(工程基线)。",
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-ZPZ-001-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-17T00:00:00Z"
+}

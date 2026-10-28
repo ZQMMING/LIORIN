@@ -1,0 +1,67 @@
+{
+  "rule_id": "MK-102",
+  "title": "库宜开墓宜闭:库中被调用资源需开库",
+  "rule_type": "旺衰判定",
+  "source": {
+    "work": "滴天髓",
+    "chapter": "通神论·衰旺",
+    "location": "生方怕动库宜开"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "in",
+        "value": [
+          "正财",
+          "偏财",
+          "正官",
+          "七杀",
+          "正印",
+          "偏印"
+        ]
+      },
+      {
+        "field": "month_branch",
+        "op": "in",
+        "value": [
+          "CHEN",
+          "XU",
+          "CHOU",
+          "WEI"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《滴天髓》:生方怕动库宜开,败地逢冲仔细推。库宜开(调用资源),墓宜闭(收藏)。",
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-MK-102-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "DITIANSUI",
+  "passage_id": "P-MK-KUMU",
+  "concept_id": "库墓",
+  "principle_id": "PRINCIPLE-WANGSHUAI",
+  "scope": "八字旺衰判定(库墓开闭判据)"
+}

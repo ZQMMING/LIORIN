@@ -1,0 +1,68 @@
+{
+  "rule_id": "ZPZ-107",
+  "title": "七杀格 → CONSTRAINT",
+  "rule_type": "格局判定",
+  "source": {
+    "work": "子平真诠",
+    "edition": "通行本",
+    "chapter": "论七杀",
+    "location": "月令七杀取格"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "eq",
+        "value": "七杀"
+      },
+      {
+        "any": [
+          {
+            "field": "month_branch",
+            "op": "nin",
+            "value": [
+              "CHEN",
+              "XU",
+              "CHOU",
+              "WEI"
+            ]
+          },
+          {
+            "field": "month_hidden_main_ten_god_transparent",
+            "op": "eq",
+            "value": true
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "月令七杀,煞气攻身,取 CONSTRAINT 基调(§5.1 偏 ACTION)。",
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-ZPZ-107-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006"
+  ],
+  "version": "0.2.0",
+  "precedence": 1,
+  "created_at": "2026-08-17T00:00:00Z",
+  "book_id": "ZIPING-ZHENQUAN",
+  "passage_id": "P-ZPZ-YONGSHEN",
+  "concept_id": "格局",
+  "principle_id": "PRINCIPLE-MONTH-PIVOT"
+}

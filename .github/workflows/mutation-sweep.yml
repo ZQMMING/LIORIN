@@ -1,0 +1,191 @@
+name: 变异扫描（守卫盲区体检）
+
+# ⚠ 这个 workflow 的定位
+#   普通 CI 验「代码当前是否正确」；
+#   本 workflow 验「**守卫是否有效**」——
+#   主动注入缺陷（AST 自动生成），看有没有守卫能发现。
+#   存活且**行为改变**的变异 = ★真盲区 = 守卫的洞。
+#
+# ⚠ 为什么**不**放进主 CI 的必需门禁
+#   全量扫 22 个核心模块约需 **2 小时**（本机实测 6736 秒），
+#   放进 PR 门禁会让每个 PR 等两小时 ⇒ 实际会被绕过。
+#   ⇒ 分成两档：
+#     · **PR 快速档**：只跑 2 个小模块（约 2～4 分钟）⇒ 有真盲区就红；
+#     · **夜间全量档**：跑完 22 个模块，把报告作为 artifact 留档，
+#       并在**有真盲区**时把该 job 标红（可见但不阻塞日常）。
+#
+# ⚠ 分片并行
+#   变异扫描是**原地改 src/** 的 ⇒ **同一个 workspace 内绝不能并行**
+#   （两个进程会互相污染：A 还原源码时 B 正在变异）。
+#   ⇒ 矩阵的每个分片是**独立的 job**（各自独立 checkout）⇒ 天然隔离。
+#   ⇒ 同一 job 内仍然**串行**跑模块。
+
+on:
+  push:
+    # ⚠ **全分支**（与 ci.yml 一致）：不限定分支 ⇒ 任何分支的推送
+    #   都会体检守卫盲区。
+    #   ⚠ 代价：每个分支 push 都要跑一遍快速档（2～4 分钟）。
+    #   ⚠ `paths-ignore` 排除纯文档改动 —— 文档不影响判据逻辑。
+    branches: ["**"]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - ".gitignore"
+  pull_request:
+    branches: ["**"]
+    paths-ignore:
+      - "docs/**"
+      - "**/*.md"
+      - "README.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - ".gitignore"
+  schedule:
+    # 夜间全量（UTC 02:00 ≈ 北京 10:00）
+    - cron: "0 18 * * *"
+  workflow_dispatch:
+    inputs:
+      full:
+        description: "变异扫描跑全量 22 模块（false = 只跑 2 个模块的快速档）"
+        type: boolean
+        default: true
+
+concurrency:
+  group: mutation-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUTF8: "1"
+  FORCE_COLOR: "1"
+  PYTHONPYCACHEPREFIX: ${{ github.workspace }}/.mutcache
+  # ⚠ **固定 PYTHONHASHSEED**（2026-10-26）：set / dict 的字符串表示顺序
+  #   依赖它（默认每进程随机）⇒ 同一提交两次跑出的文本可能不同
+  #   ⇒ CI 结果不可复现、行为快照不可比。
+  #   ⚠ 注意：确定性守卫（test_heluo_snapshot_determinism.py）**显式用
+  #     两个不同 seed** 跑自己的子进程 ⇒ 不受这里影响，仍能抓出 set 插值。
+  PYTHONHASHSEED: "0"
+
+jobs:
+  # ── PR 快速档：两个小模块，几分钟出结论 ──────────────────────
+  sweep-quick:
+    name: 变异扫描（快速档）
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # ⚠ PR / push ⇒ 跑快速档；
+    #   手动触发且 ``full=false`` ⇒ 也跑快速档；
+    #   手动触发且 ``full=true`` / 夜间 ⇒ 交给下面的全量档（避免重复跑）。
+    if: github.event_name != 'schedule' && !(github.event_name == 'workflow_dispatch' && inputs.full)
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-ci.txt
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          # ⚠ 用**锁定文件**安装（保证可复现）：见 requirements-ci.txt
+          python -m pip install -c requirements-ci.txt -e ".[dev]"
+
+      - name: 跑变异扫描（frozen_state / jiegua）
+        run: |
+          python tools/heluo/mutation_sweep_batch.py \
+            --modules frozen_state.py,jiegua.py \
+            --out-dir mutation_report \
+            --summary-json mutation_report/summary.json
+
+      - name: 确认源码已完整还原
+        # ⚠ 扫描是原地改 src/ 的 ⇒ 这一步是**第二道保险**：
+        #   万一还原逻辑失效，CI 会在这里红，而不是带着被污染的源码继续。
+        run: |
+          if ! git diff --quiet -- src/; then
+            echo "::error::扫描后 src/ 仍有差异（变异未还原）"
+            git diff -- src/ | head -50
+            exit 1
+          fi
+          echo "src/ 已完整还原"
+
+      - name: 上传报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report-quick
+          path: mutation_report/
+          if-no-files-found: warn
+
+  # ── 夜间全量档：分片并行 ────────────────────────────────────
+  sweep-full:
+    name: 变异扫描（全量 · 分片 ${{ matrix.shard }}/${{ matrix.total }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    # ⚠ 只有手动触发或夜间定时才跑全量；PR 上只跑快速档
+    if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.full)
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2, 3, 4, 5]
+        total: [6]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-ci.txt
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          # ⚠ 用**锁定文件**安装（保证可复现）：见 requirements-ci.txt
+          python -m pip install -c requirements-ci.txt -e ".[dev]"
+
+      - name: 跑本分片的变异扫描
+        # ⚠ 用**取模分片**把 22 个模块切成 6 份。
+        #   批跑器内部**串行**执行 ⇒ 同一 job 内不会互相污染。
+        run: |
+          MODS=$(python - <<'PY'
+          import sys
+          sys.path.insert(0, "tools/heluo")
+          from mutation_sweep_batch import CORE_MODULES
+          shard, total = ${{ matrix.shard }}, ${{ matrix.total }}
+          mods = [m for i, m in enumerate(CORE_MODULES) if i % total == shard]
+          print(",".join(mods))
+          PY
+          )
+          echo "本分片模块: $MODS"
+          if [ -z "$MODS" ]; then
+            echo "（本分片为空）"
+            exit 0
+          fi
+          python tools/heluo/mutation_sweep_batch.py \
+            --modules "$MODS" \
+            --out-dir "mutation_report/shard-${{ matrix.shard }}" \
+            --summary-json "mutation_report/shard-${{ matrix.shard }}/summary.json"
+
+      - name: 确认源码已完整还原
+        run: |
+          if ! git diff --quiet -- src/; then
+            echo "::error::扫描后 src/ 仍有差异（变异未还原）"
+            git diff -- src/ | head -50
+            exit 1
+          fi
+          echo "src/ 已完整还原"
+
+      - name: 上传分片报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mutation-report-shard-${{ matrix.shard }}
+          path: mutation_report/
+          if-no-files-found: warn

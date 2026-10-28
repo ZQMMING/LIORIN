@@ -1,0 +1,51 @@
+{
+  "rule_id": "CAND-YHZP-103",
+  "engine": "YUHAI_ZIPING",
+  "source_ids": [
+    "P-YHZP-WUSHUDUN",
+    "YHZP-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "时柱定干(五鼠遁,引擎已实现标注)",
+  "subject": "透干",
+  "predicate": "五鼠遁起时(时柱天干由日干推导,引擎已实现)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "hour_stem",
+        "operator": "exists",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "SUPPORT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "STABILITY"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESOURCE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "ENDURANCE"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 YHZP-103",
+  "created_at": "2026-09-13T21:19:41.869906",
+  "metadata": {
+    "original_rule_id": "YHZP-103",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

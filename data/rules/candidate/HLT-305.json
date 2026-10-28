@@ -1,0 +1,38 @@
+{
+  "rule_id": "CAND-HLT-305",
+  "engine": "HLT_ENGINE",
+  "source_ids": [
+    "HLT-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "健康应期 / 五行失衡流年加重",
+  "subject": "unknown",
+  "predicate": "本命五行失衡 + 流年为失衡旺五行 → 该年对应脏器发作",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "five_element_imbalance",
+        "operator": "present",
+        "value": true
+      },
+      {
+        "field": "flow_year_branch_main_element_clash",
+        "operator": "eq",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.1.0",
+  "notes": "迁移自旧规则 HLT-305",
+  "created_at": "2026-09-13T21:19:41.843744",
+  "metadata": {
+    "original_rule_id": "HLT-305",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

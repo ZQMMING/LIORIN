@@ -1,0 +1,123 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PYTHONUTF8: "1"        # Windows 上中文输出/参数一律 UTF-8
+  FORCE_COLOR: "1"
+  # ⚠ **固定 PYTHONHASHSEED**（2026-10-26）：set / dict 的字符串表示顺序
+  #   依赖它（默认每进程随机）⇒ 同一提交两次跑出的文本可能不同
+  #   ⇒ CI 结果不可复现。
+  PYTHONHASHSEED: "0"
+
+jobs:
+  test:
+    name: 测试 (py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          # ⚠ 缓存键要跟**锁定文件**一起算 ⇒ 依赖变了缓存自动失效
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-ci.txt
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          # ⚠ 用**锁定文件**安装（保证可复现）：见 requirements-ci.txt
+          python -m pip install -c requirements-ci.txt -e ".[dev]"
+
+      # ⚠ 必须 pyproject 的 pytest 配置生效（testpaths / addopts）
+      - name: 跑测试
+        run: python -m pytest -q
+
+      - name: 覆盖率报告
+        run: python -m pytest -q --cov=heluo_engine --cov-report=xml --cov-report=term
+        continue-on-error: true
+
+      - name: 上传覆盖率
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-py${{ matrix.python-version }}-${{ matrix.os }}
+          path: coverage.xml
+          if-no-files-found: ignore
+
+  lint:
+    name: 静态检查
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-ci.txt
+      - name: 安装依赖（锁定版本）
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -c requirements-ci.txt -e ".[dev]"
+
+      - name: ruff check
+        run: python -m ruff check src tests tools
+
+      # ⚠ 2026-10-25：**不**加 `ruff format --check`。
+      #   实测 ruff 0.17.2 在本仓源码上**直接 panic**
+      #   （Annotation range 0..1106 is beyond the end of buffer 1103）
+      #   —— 本仓含大量中文/全角字符的注释与原典文本，触发了 ruff formatter
+      #   的 source-map 缺陷。加进 CI 只会让流水线**恒红**，且与「本仓以
+      #   逐字照抄原典 + 中文注释为先」的取舍冲突。
+      #   ⇒ 格式化**不作为门禁**；风格靠 per-file-ignores 放宽。
+
+  package:
+    name: 构建 + 部署自检
+    runs-on: ubuntu-latest
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            pyproject.toml
+            requirements-ci.txt
+
+      - name: 安装依赖
+        run: |
+          python -m pip install --upgrade pip
+          # ⚠ 用**锁定文件**安装（保证可复现）：见 requirements-ci.txt
+          python -m pip install -c requirements-ci.txt -e ".[dev]"
+
+      # ★ 关键：把 wheel 装进**干净 venv**、从**无关目录**跑一次，
+      #   确认「装完即用」不依赖仓库、不依赖 CWD。
+      - name: 构建 + 安装 + 自检
+        run: python tools/heluo/build_and_verify.py --venv
+
+      - name: 上传 wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: heluo-engine-wheel
+          path: dist/*.whl
+          if-no-files-found: error

@@ -1,0 +1,43 @@
+{
+  "rule_id": "CRR-101",
+  "title": "流年正官/七杀当值 → 事业变动压力",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "子平真诠",
+    "chapter": "论官杀",
+    "location": "流年官杀"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "flow_year_branch_main_ten_god",
+        "op": "in",
+        "value": [
+          "正官",
+          "七杀"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "流年官杀当值，主事业变动、晋升压力、职责加重。",
+    "produces_layer_output_template": {
+      "direction": "VOLATILE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "CHANGE",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-DAYUN-002"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "ZIPING-ZHENQUAN",
+  "spec_decisions_ref": [
+    "DECISION-101"
+  ]
+}

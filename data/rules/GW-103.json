@@ -1,0 +1,50 @@
+{
+  "rule_id": "GW-103",
+  "title": "日柱=自我/夫妻宫/身体/居住(中年)",
+  "rule_type": "十神定性",
+  "source": {
+    "work": "渊海子平",
+    "chapter": "论四柱宫位",
+    "location": "日柱宫位"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "day_master",
+        "op": "exists",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《渊海子平》《五行精纪》:日柱为己身夫妻宫,主中年心性定型。",
+    "produces_semantic_atoms": [
+      "REFLECTION",
+      "AWARENESS",
+      "INSIGHT",
+      "CONTEMPLATION"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "REFLECTION",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-GW-103-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "YUANHAI-ZIPING",
+  "passage_id": "P-GW-RIZHU",
+  "concept_id": "四柱宫位",
+  "principle_id": "PRINCIPLE-GONGWEI",
+  "scope": "四柱宫位(日柱)"
+}

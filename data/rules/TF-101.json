@@ -1,0 +1,46 @@
+{
+  "rule_id": "TF-101",
+  "title": "偏印强于正印出玄学天赋;偏印不可临正官",
+  "rule_type": "神煞判定",
+  "source": {
+    "work": "工程种子",
+    "chapter": "玄学天赋正解",
+    "location": "偏印正印对比"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "eq",
+        "value": "偏印"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "字幕《玄学天赋正解》:偏印强于正印出玄学天赋;偏印不可临正官(格局破)。",
+    "produces_layer_output_template": {
+      "direction": "INCREASE",
+      "polarity": "opportunity"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-TF-101-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 3,
+  "created_at": "2026-08-26T18:00:00Z",
+  "passage_id": "P-TF-XUANXUE",
+  "concept_id": "玄学天赋",
+  "principle_id": "PRINCIPLE-TALENT",
+  "scope": "玄学天赋(偏印判定)",
+  "scenario": "SELF_AWAKENING_TALENT"
+}

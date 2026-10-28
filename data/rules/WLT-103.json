@@ -1,0 +1,48 @@
+{
+  "rule_id": "WLT-103",
+  "title": "流年财星且日主得地 → 能担财",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "三命通会",
+    "chapter": "论财",
+    "location": "身强胜财"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "flow_year_branch_main_ten_god",
+        "op": "in",
+        "value": [
+          "正财",
+          "偏财"
+        ]
+      },
+      {
+        "field": "day_master_absolute_month",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "日主得地身强，流年财星可担，财运佳。",
+    "produces_layer_output_template": {
+      "direction": "INCREASE",
+      "polarity": "opportunity"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "SANMING-TONGHUI",
+  "evidence_refs": [
+    "E-K2G-SHIPI-000"
+  ],
+  "spec_decisions_ref": [
+    "DECISION-103"
+  ]
+}

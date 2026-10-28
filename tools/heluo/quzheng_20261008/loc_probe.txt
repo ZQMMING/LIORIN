@@ -1,0 +1,73 @@
+别名总数: 2461
+前 40 个别名: [' saigon', 'aba', 'abidjan', 'abobo', 'abu dhabi', 'abuja', 'accra', 'ad_andorra_la_vella', 'adamstown', 'adana', 'addis ababa', 'adelaide', 'aden', 'ae_abu_dhabi', 'ae_dubai', 'ae_sharjah', 'af_kabul', "ag_saint_john's", 'agra', 'ahmedabad', 'ai_the_valley', 'al mawsil al jadidah', 'al mawşil al jadīdah', 'al_tirana', 'aleppo', 'alexandria', 'algiers', 'almaty', 'alofi', 'am_yerevan', 'amman', 'amritsar', 'amsterdam', 'andorra la vella', 'ankara', 'anshan', 'antalya', 'antananarivo', 'antwerp', 'antwerpen']
+
+  含「中山」: ['中山']
+  含「广东」: ['广东', '广东潮汕', '广东潮汕，中国', '广东省', '广东，中国']
+  含「广州」: ['广州']
+  含「深圳」: 无
+  含「珠海」: ['珠海']
+  含「佛山」: 无
+  含「东莞」: ['东莞']
+  含「惠州」: 无
+
+=== 数据来源 ===
+   1| """出生地点 registry（加载 locations.json + 索引）。
+   2| 
+   3| 数据源：backend/data/locations.json（schema_version 跟随 repo）。
+   4| 索引：id / name_zh / alias，大小写不敏感。
+   5| 
+   6| 依赖：exceptions。
+   7| 
+   8| Version: 1.0.0
+   9| Created: 2026-08-20 (Phase 2 / Step 7)
+  10| Migrated from: engines/time_resolver.py:DEFAULT_LOCATIONS_PATH + LocationEntry + TimeResolver._load
+  11| """
+  12| 
+  13| from __future__ import annotations
+  14| 
+  15| import json
+  16| from dataclasses import dataclass
+  17| from pathlib import Path
+  18| 
+  19| from .exceptions import LocationError
+  20| 
+  21| 
+  22| # backend/data/locations.json（repo-local registry）
+  23| DEFAULT_LOCATIONS_PATH: Path = Path(__file__).resolve().parents[4] / "data" / "locations.json"
+  24| 
+  25| 
+  26| @dataclass(frozen=True)
+  27| class LocationEntry:
+  28|     """One city in the birth-location registry."""
+  29|     id: str
+  30|     name_zh: str
+  31|     country: str
+  32|     timezone: str
+  33|     longitude: float
+  34|     latitude: float
+  35|     aliases: tuple[str, ...] = ()
+  36| 
+  37| 
+  38| class LocationRegistry:
+  39|     """加载 locations.json + 提供 id/name_zh/alias 索引。"""
+  40| 
+  41|     def __init__(self, locations_path: Path | None = None) -> None:
+  42|         self._locations_path: Path = Path(locations_path) if locations_path else DEFAULT_LOCATIONS_P
+  43|         self._locations: list[LocationEntry] = []
+  44|         self._by_alias: dict[str, LocationEntry] = {}
+  45|         self._load()
+  46| 
+  47|     def _load(self) -> None:
+  48|         with open(self._locations_path, encoding="utf-8") as f:
+  49|             data = json.load(f)
+  50|         for raw in data["locations"]:
+  51|             loc = LocationEntry(
+  52|                 id=raw["id"],
+  53|                 name_zh=raw["name_zh"],
+  54|                 country=raw["country"],
+  55|                 timezone=raw["timezone"],
+  56|                 longitude=float(raw["longitude"]),
+  57|                 latitude=float(raw["latitude"]),
+  58|                 aliases=tuple(raw.get("aliases") or ()),
+  59|             )
+  60|             self._locations.append(loc)

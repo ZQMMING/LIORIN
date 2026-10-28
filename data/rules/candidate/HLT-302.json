@@ -1,0 +1,52 @@
+{
+  "rule_id": "CAND-HLT-302",
+  "engine": "HLT_ENGINE",
+  "source_ids": [
+    "HLT-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "健康应期 / 丑未辰戌冲流年引动",
+  "subject": "unknown",
+  "predicate": "本命丑未辰戌冲 + 流年引动 → 该年脾胃疾病",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "branch_clash_map",
+        "operator": "has_any",
+        "value": [
+          [
+            "CHOU",
+            "WEI"
+          ],
+          [
+            "CHEN",
+            "XU"
+          ]
+        ]
+      },
+      {
+        "field": "flow_year_branch",
+        "operator": "in",
+        "value": [
+          "CHOU",
+          "WEI",
+          "CHEN",
+          "XU"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.1.0",
+  "notes": "迁移自旧规则 HLT-302",
+  "created_at": "2026-09-13T21:19:41.842742",
+  "metadata": {
+    "original_rule_id": "HLT-302",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "rule_id": "WLT-104",
+  "title": "流年支冲日支 → 财运波动",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "滴天髓",
+    "chapter": "流年",
+    "location": "流年冲日"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "flow_year_branch_clash_day_branch",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "流年地支冲日支，财运/家宅波动大，宜守。",
+    "produces_layer_output_template": {
+      "direction": "VOLATILE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "CHANGE",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-DAYUN-002"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "DITIANSUI",
+  "spec_decisions_ref": [
+    "DECISION-104"
+  ]
+}

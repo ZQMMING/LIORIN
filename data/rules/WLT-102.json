@@ -1,0 +1,40 @@
+{
+  "rule_id": "WLT-102",
+  "title": "流年劫财当值 → 破财/竞争",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "渊海子平",
+    "chapter": "论劫财",
+    "location": "流年劫财"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "flow_year_branch_main_ten_god",
+        "op": "eq",
+        "value": "劫财"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "流年劫财当值，主破财、竞争、合伙分利。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "CHANGE",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-DAYUN-002"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "YUANHAI-ZIPING",
+  "spec_decisions_ref": [
+    "DECISION-102"
+  ]
+}

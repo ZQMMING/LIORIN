@@ -1,0 +1,69 @@
+{
+  "rule_id": "CAND-MK-104",
+  "engine": "MK_ENGINE",
+  "source_ids": [
+    "P-MK-ZAGI",
+    "MK-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "八字旺衰判定(杂气透干)",
+  "subject": "杂气格",
+  "predicate": "库中财官印透干→不需再冲",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_branch",
+        "operator": "in",
+        "value": [
+          "CHEN",
+          "XU",
+          "CHOU",
+          "WEI"
+        ]
+      },
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "nin",
+        "value": [
+          "比肩",
+          "劫财"
+        ]
+      },
+      {
+        "field": "unknown",
+        "operator": "equals",
+        "value": []
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "SUPPORT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "STABILITY"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESOURCE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "ENDURANCE"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 MK-104",
+  "created_at": "2026-09-13T21:19:41.853947",
+  "metadata": {
+    "original_rule_id": "MK-104",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "rule_id": "MAR-201",
+  "title": "男命财星入日支 → 妻星得力",
+  "rule_type": "婚姻断事",
+  "source": {
+    "work": "三命通会",
+    "chapter": "论妻财",
+    "location": "财星入夫妻宫"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "gender",
+        "op": "eq",
+        "value": "male"
+      },
+      {
+        "field": "day_branch_main_ten_god",
+        "op": "in",
+        "value": ["正财", "偏财"]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《三命通会·论妻财》: 男命以财为妻，财星坐夫妻宫（日支），主妻星得力，婚姻缘份深厚。",
+    "produces_layer_output_template": {
+      "direction": "INCREASE",
+      "polarity": "opportunity"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "MARRIAGE_OPPORTUNITY",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-009"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "SANMING-TONGHUI",
+  "scope": "婚姻断事 / 男命财星入夫妻宫"
+}

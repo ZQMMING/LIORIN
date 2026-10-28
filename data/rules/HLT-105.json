@@ -1,0 +1,31 @@
+{
+  "rule_id": "HLT-105",
+  "title": "地支六害 → 对应脏器受损",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "渊海子平",
+    "chapter": "地支六害",
+    "location": "六害表"
+  },
+  "conditions": {
+    "all": [
+      { "field": "branch_harm_map", "op": "present", "value": true }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "六害伤损，按组合对应脾胃/心/肝胆等脏器。",
+    "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-015"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 6,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "YUANHAI-ZIPING",
+  "scope": "健康断事 / 地支六害"
+}

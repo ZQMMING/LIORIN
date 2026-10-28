@@ -1,0 +1,31 @@
+{
+  "rule_id": "MAR-104",
+  "title": "日支被刑/害 → 婚姻宫损 → 感情纠葛",
+  "rule_type": "婚姻断事",
+  "source": {
+    "work": "滴天髓",
+    "chapter": "婚姻",
+    "location": "日支刑害"
+  },
+  "conditions": {
+    "all": [
+      { "field": "day_branch_harm", "op": "eq", "value": true }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "日支被刑害，婚姻宫受损，感情多纠葛。",
+    "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "MARRIAGE_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-008"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 8,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "DITIANSUI",
+  "scope": "婚姻断事 / 日支被害"
+}

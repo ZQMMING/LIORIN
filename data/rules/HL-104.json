@@ -1,0 +1,46 @@
+{
+  "rule_id": "HL-104",
+  "title": "本命卦五行火(离)过旺 → 心/小肠健康风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "河洛真数",
+    "chapter": "八卦五行归属",
+    "location": "火→心"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "heluo_benming_guawuxing",
+        "op": "eq",
+        "value": "火"
+      },
+      {
+        "field": "heluo_wuxing_imbalance",
+        "op": "eq",
+        "value": "over"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命卦五行火过旺，心与小肠易受损。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "心"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "status": "draft",
+  "version": "0.1.0",
+  "book_id": "SANMING-TONGHUI",
+  "spec_decisions_ref": [
+    "DECISION-104"
+  ],
+  "evidence_refs": [
+    "E-K2G-SHIPI-000"
+  ]
+}

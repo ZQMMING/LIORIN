@@ -1,0 +1,56 @@
+{
+  "rule_id": "CAND-MK-103",
+  "engine": "MK_ENGINE",
+  "source_ids": [
+    "P-MK-KAIKU",
+    "MK-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "八字旺衰判定(开库方式判据)",
+  "subject": "开库",
+  "predicate": "开库方式:刑开库缓慢代价大,冲开库高效冲突明显",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "unknown",
+        "operator": "equals",
+        "value": []
+      },
+      {
+        "field": "unknown",
+        "operator": "equals",
+        "value": []
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "CHANGE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "TRANSFORMATION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "VOLATILITY"
+    },
+    {
+      "field": "judgment_value",
+      "value": "DISRUPTION"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 MK-103",
+  "created_at": "2026-09-13T21:19:41.852442",
+  "metadata": {
+    "original_rule_id": "MK-103",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

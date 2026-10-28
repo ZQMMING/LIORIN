@@ -1,0 +1,39 @@
+{
+  "rule_id": "CAND-SMTH-105",
+  "engine": "SANMING_TONGHUI",
+  "source_ids": [
+    "P-SMTH-TIANYI",
+    "SMTH-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "神煞判定(天乙贵人温和降级)",
+  "subject": "天乙贵人",
+  "predicate": "天乙贵人逢冲/空亡→SUPPORT降级为LIKELY",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "tianyi_guiren_branches",
+        "operator": "exists",
+        "value": true
+      },
+      {
+        "field": "day_branch_clash",
+        "operator": "eq",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.1.0",
+  "notes": "迁移自旧规则 SMTH-105",
+  "created_at": "2026-09-13T21:19:41.859418",
+  "metadata": {
+    "original_rule_id": "SMTH-105",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

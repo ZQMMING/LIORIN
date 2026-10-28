@@ -1,0 +1,66 @@
+{
+  "rule_id": "CAND-MK-101",
+  "engine": "MK_ENGINE",
+  "source_ids": [
+    "P-MK-WANGSHUAI",
+    "MK-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "八字旺衰判定(四库旺衰判据)",
+  "subject": "四库",
+  "predicate": "四库旺衰判据:旺者为库衰者为墓",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "in",
+        "value": [
+          "正印",
+          "偏印",
+          "比肩",
+          "劫财"
+        ]
+      },
+      {
+        "field": "day_branch_main_ten_god",
+        "operator": "in",
+        "value": [
+          "正印",
+          "偏印",
+          "比肩",
+          "劫财"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "CONSTRAINT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "DISCIPLINE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RULE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESPONSIBILITY"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 MK-101",
+  "created_at": "2026-09-13T21:19:41.851441",
+  "metadata": {
+    "original_rule_id": "MK-101",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

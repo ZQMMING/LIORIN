@@ -1,0 +1,65 @@
+{
+  "rule_id": "YONG-003",
+  "title": "身弱取印比",
+  "rule_type": "用神取用",
+  "source": {
+    "work": "子平真诠",
+    "edition": "沈孝瞻原著",
+    "chapter": "用神轻重成败章",
+    "location": "身弱用印比"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "daymaster_strength",
+        "op": "eq",
+        "value": "weak"
+      },
+      {
+        "any": [
+          {
+            "field": "month_opposes_daymaster",
+            "op": "eq",
+            "value": true
+          },
+          {
+            "field": "daymaster_root_empty",
+            "op": "eq",
+            "value": true
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "身弱宜用印比:日主衰弱，当取印绶生扶、比劫帮身，不可再行克泄耗。《子平真诠》云:\"身弱用印，印为生气之源;身弱用比，比为同气之助。\"",
+    "produces_semantic_atoms": [
+      "WEAK_DAYMASTER",
+      "PRINT_SELL",
+      "SUPPORT_PATTERN"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE",
+    "CYCLE_CONTEXT"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [
+    "FI-ZP-YONG-003"
+  ],
+  "evidence_refs": [
+    "E-SMTH-YONG-003"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "SD-003"
+  ],
+  "version": "0.1.0",
+  "precedence": 5,
+  "created_at": "2026-09-08T17:40:00Z",
+  "book_id": "ZIPINGZHENQUAN",
+  "passage_id": "P-ZP-YONG003",
+  "concept_id": "身弱用印比",
+  "principle_id": "PRINCIPLE-YONG",
+  "scope": "用神选取(身弱用印比)"
+}

@@ -1,0 +1,37 @@
+{
+  "rule_id": "CAND-SUY-101",
+  "engine": "SUY_ENGINE",
+  "source_ids": [
+    "SUY-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "应期断事 / 岁运并临喜用",
+  "subject": "unknown",
+  "predicate": "岁运并临且主气十神为喜用(比印) → 吉信号放大",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "flow_year_branch_main_ten_god",
+        "operator": "in",
+        "value": [
+          "比肩",
+          "偏印",
+          "正印"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 SUY-101",
+  "created_at": "2026-09-13T21:19:41.860418",
+  "metadata": {
+    "original_rule_id": "SUY-101",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

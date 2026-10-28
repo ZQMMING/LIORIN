@@ -1,0 +1,32 @@
+{
+  "rule_id": "MAR-105",
+  "title": "男命财星弱/无根 → 妻星不显 → 婚姻迟滞",
+  "rule_type": "婚姻断事",
+  "source": {
+    "work": "三命通会",
+    "chapter": "论妻财",
+    "location": "财星弱"
+  },
+  "conditions": {
+    "all": [
+      { "field": "gender", "op": "eq", "value": "male" },
+      { "field": "spouse_star_strength", "op": "in", "value": ["weak", "rootless"] }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "男命财星弱而无根，妻星不显，婚姻迟滞。",
+    "produces_layer_output_template": { "direction": "STABLE", "polarity": "passive" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "MARRIAGE_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-009"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "SANMING-TONGHUI",
+  "scope": "婚姻断事 / 男命财星弱"
+}

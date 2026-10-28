@@ -1,0 +1,41 @@
+{
+  "rule_id": "CAND-MAR-202",
+  "engine": "MAR_ENGINE",
+  "source_ids": [
+    "MAR-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "婚姻断事 / 女命官星入夫妻宫",
+  "subject": "unknown",
+  "predicate": "女命官星入日支 → 夫星得力",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "gender",
+        "operator": "eq",
+        "value": "female"
+      },
+      {
+        "field": "day_branch_main_ten_god",
+        "operator": "in",
+        "value": [
+          "正官",
+          "七杀"
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 MAR-202",
+  "created_at": "2026-09-13T21:19:41.850440",
+  "metadata": {
+    "original_rule_id": "MAR-202",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

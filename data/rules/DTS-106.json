@@ -1,0 +1,61 @@
+{
+  "rule_id": "DTS-106",
+  "title": "得令但月令被围克→身弱",
+  "rule_type": "旺衰判定",
+  "source": {
+    "work": "滴天髓",
+    "edition": "通行本(任铁樵《滴天髓阐微》)",
+    "chapter": "通神论·衰旺",
+    "location": "月令被围克"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "in",
+        "value": [
+          "正印",
+          "偏印",
+          "比肩",
+          "劫财"
+        ]
+      },
+      {
+        "field": "day_branch_clash",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《滴天髓》:生方怕动库宜开,败地逢冲仔细推。月令虽得令但被围克(如午月被子水围克),得令不成立,反断身弱。",
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-DTS-106-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "DITIANSUI",
+  "passage_id": "P-DTS-SHUAIWANG",
+  "concept_id": "旺衰",
+  "principle_id": "PRINCIPLE-WANGSHUAI",
+  "scope": "八字旺衰判定(月令被围克修正)"
+}

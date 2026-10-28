@@ -1,0 +1,51 @@
+{
+  "rule_id": "CAND-GW-103",
+  "engine": "GW_ENGINE",
+  "source_ids": [
+    "P-GW-RIZHU",
+    "GW-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "四柱宫位(日柱)",
+  "subject": "四柱宫位",
+  "predicate": "日柱=自我/夫妻宫/身体/居住(中年)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "day_master",
+        "operator": "exists",
+        "value": true
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "REFLECTION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "AWARENESS"
+    },
+    {
+      "field": "judgment_value",
+      "value": "INSIGHT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "CONTEMPLATION"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 GW-103",
+  "created_at": "2026-09-13T21:19:41.819916",
+  "metadata": {
+    "original_rule_id": "GW-103",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

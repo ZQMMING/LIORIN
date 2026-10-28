@@ -1,0 +1,31 @@
+{
+  "rule_id": "HLT-103",
+  "title": "寅申/卯酉冲 → 肝胆疾病风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "三命通会",
+    "chapter": "地支六冲",
+    "location": "寅申/卯酉冲"
+  },
+  "conditions": {
+    "all": [
+      { "field": "branch_clash_map", "op": "has_any", "value": [["YIN","SHEN"],["MAO","YOU"]] }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "金木相冲，主肝胆疾病、出行变动。",
+    "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "health_organ": "肝胆" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-013"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 8,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "SANMING-TONGHUI",
+  "scope": "健康断事 / 寅申卯酉冲肝胆"
+}

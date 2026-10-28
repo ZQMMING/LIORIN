@@ -1,0 +1,32 @@
+{
+  "rule_id": "MAR-102",
+  "title": "女命官杀混杂 → 夫星不专 → 婚姻风险",
+  "rule_type": "婚姻断事",
+  "source": {
+    "work": "渊海子平",
+    "chapter": "论女命",
+    "location": "官杀混杂"
+  },
+  "conditions": {
+    "all": [
+      { "field": "gender", "op": "eq", "value": "female" },
+      { "field": "officer_mixed", "op": "eq", "value": true }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "女命官杀混杂，夫星不专，感情多波折。",
+    "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "MARRIAGE_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-006"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 10,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "YUANHAI-ZIPING",
+  "scope": "婚姻断事 / 女命官杀混杂"
+}

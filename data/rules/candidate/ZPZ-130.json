@@ -1,0 +1,56 @@
+{
+  "rule_id": "CAND-ZPZ-130",
+  "engine": "ZIPING_ZHENQUAN",
+  "source_ids": [
+    "P-ZPZ-YONGSHEN",
+    "ZPZ-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "natal",
+  "subject": "透干",
+  "predicate": "非当令七杀透干 → CONSTRAINT(透则显)",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "transparent_ten_gods",
+        "operator": "contains",
+        "value": "七杀"
+      },
+      {
+        "field": "month_hidden_main_ten_god",
+        "operator": "ne",
+        "value": "七杀"
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "CONSTRAINT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "DISCIPLINE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RULE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "RESPONSIBILITY"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 ZPZ-130",
+  "created_at": "2026-09-13T21:19:41.891687",
+  "metadata": {
+    "original_rule_id": "ZPZ-130",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

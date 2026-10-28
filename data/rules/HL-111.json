@@ -1,0 +1,46 @@
+{
+  "rule_id": "HL-111",
+  "title": "地数有余+生于不利时节 → 数凶（流年卦凶爻应灾）",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "河洛真数",
+    "chapter": "天地数吉凶",
+    "location": "地数有余·谷雨到芒种不可妄行致凶"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "heluo_dishu_youyu",
+        "op": "eq",
+        "value": true
+      },
+      {
+        "field": "heluo_birth_season_unfavorable",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "地数有余为凶数，生于谷雨到芒种之候不可妄行，数凶者流年卦逢凶爻应灾。此为数凶基础判定，不可单独断死亡，必须流年卦+流月卦逐层定位应期。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "CHANGE",
+  "forbidden_inferences": [],
+  "status": "draft",
+  "version": "0.1.0",
+  "book_id": "HELUO-LISHU",
+  "spec_decisions_ref": [
+    "DECISION-111"
+  ],
+  "evidence_refs": [
+    "E-K2G-SHIPI-000"
+  ],
+  "created_at": "2026-08-27T15:33:02Z"
+}

@@ -1,0 +1,52 @@
+{
+  "rule_id": "CAND-YONG-003",
+  "engine": "YONG_ENGINE",
+  "source_ids": [
+    "P-ZP-YONG003",
+    "YONG-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "用神选取(身弱用印比)",
+  "subject": "身弱用印比",
+  "predicate": "身弱取印比",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "daymaster_strength",
+        "operator": "eq",
+        "value": "weak"
+      },
+      {
+        "field": "unknown",
+        "operator": "equals",
+        "value": []
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "WEAK_DAYMASTER"
+    },
+    {
+      "field": "judgment_value",
+      "value": "PRINT_SELL"
+    },
+    {
+      "field": "judgment_value",
+      "value": "SUPPORT_PATTERN"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.1.0",
+  "notes": "迁移自旧规则 YONG-003",
+  "created_at": "2026-09-13T21:19:41.871152",
+  "metadata": {
+    "original_rule_id": "YONG-003",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

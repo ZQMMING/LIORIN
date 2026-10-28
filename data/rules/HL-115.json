@@ -1,0 +1,43 @@
+{
+  "rule_id": "HL-115",
+  "title": "本命卦坤宫 → 关注家庭、健康领域",
+  "rule_type": "体用辨析",
+  "source": {
+    "work": "河洛真数",
+    "chapter": "各宫位代表领域",
+    "location": "坤宫→家庭、健康"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "heluo_benming_gong",
+        "op": "eq",
+        "value": "坤"
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "河洛定象：坤宫主家庭、健康，本命卦落此宫则人生重点在此领域。 重点领域：家庭、健康。",
+    "produces_semantic_atoms": [
+      "OUTPUT",
+      "EXPRESSION",
+      "CREATIVITY",
+      "VISIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "OUTPUT",
+  "forbidden_inferences": [],
+  "status": "draft",
+  "version": "0.2.0",
+  "book_id": "HELUO-LISHU",
+  "spec_decisions_ref": [
+    "DECISION-115"
+  ],
+  "evidence_refs": [
+    "E-K2G-SHIPI-000"
+  ],
+  "created_at": "2026-08-27T15:33:02Z"
+}

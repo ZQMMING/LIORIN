@@ -1,0 +1,44 @@
+{
+  "rule_id": "SUY-102",
+  "title": "岁运并临且主气十神为忌神(食伤财官) → 凶信号放大",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "工程种子",
+    "chapter": "论大运流年",
+    "location": "岁运并临忌神"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "flow_year_branch_main_ten_god",
+        "op": "in",
+        "value": ["食神", "伤官", "正财", "偏财", "正官", "七杀"]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《三命通会·论大运》: 岁运并临，天地同力。主气十神为食伤财官(忌神)则当年凶势汇聚，坎厄加重。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "CHANGE",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-DAYUN-002"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-105"
+  ],
+  "version": "1.0.0",
+  "precedence": 7,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "SANMING-TONGHUI",
+  "scope": "应期断事 / 岁运并临忌神"
+}

@@ -1,0 +1,50 @@
+{
+  "rule_id": "CAND-ZPZ-003",
+  "engine": "ZIPING_ZHENQUAN",
+  "source_ids": [
+    "ZPZ-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "natal",
+  "subject": "unknown",
+  "predicate": "土日主基线 → REFLECTION",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "day_master_element",
+        "operator": "eq",
+        "value": "EARTH"
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "REFLECTION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "AWARENESS"
+    },
+    {
+      "field": "judgment_value",
+      "value": "INSIGHT"
+    },
+    {
+      "field": "judgment_value",
+      "value": "CONTEMPLATION"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 ZPZ-003",
+  "created_at": "2026-09-13T21:19:41.873348",
+  "metadata": {
+    "original_rule_id": "ZPZ-003",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

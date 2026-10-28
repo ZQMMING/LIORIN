@@ -1,0 +1,62 @@
+{
+  "rule_id": "HLT-303",
+  "title": "本命寅申卯酉冲 + 流年引动 → 该年肝胆疾病",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "三命通会",
+    "chapter": "地支六冲",
+    "location": "寅申卯酉冲应期"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "branch_clash_map",
+        "op": "has_any",
+        "value": [
+          [
+            "YIN",
+            "SHEN"
+          ],
+          [
+            "MAO",
+            "YOU"
+          ]
+        ]
+      },
+      {
+        "field": "flow_year_branch",
+        "op": "in",
+        "value": [
+          "YIN",
+          "SHEN",
+          "MAO",
+          "YOU"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命金木相冲主肝胆病，流年再逢寅申卯酉引动则当年发作。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "肝胆"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-013"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "SANMING-TONGHUI",
+  "precedence": 9,
+  "scope": "健康应期 / 寅申卯酉冲流年引动",
+  "spec_decisions_ref": [
+    "DECISION-303"
+  ]
+}

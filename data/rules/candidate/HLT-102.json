@@ -1,0 +1,42 @@
+{
+  "rule_id": "CAND-HLT-102",
+  "engine": "HLT_ENGINE",
+  "source_ids": [
+    "HLT-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "健康断事 / 丑未辰戌冲脾胃",
+  "subject": "unknown",
+  "predicate": "丑未/辰戌冲 → 脾胃疾病风险",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "branch_clash_map",
+        "operator": "has_any",
+        "value": [
+          [
+            "CHOU",
+            "WEI"
+          ],
+          [
+            "CHEN",
+            "XU"
+          ]
+        ]
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 HLT-102",
+  "created_at": "2026-09-13T21:19:41.835222",
+  "metadata": {
+    "original_rule_id": "HLT-102",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

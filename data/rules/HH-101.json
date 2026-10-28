@@ -1,0 +1,54 @@
+{
+  "rule_id": "HH-101",
+  "title": "合化需得令(化神得月令旺气)",
+  "rule_type": "格局判定",
+  "source": {
+    "work": "三命通会",
+    "chapter": "论十神化气",
+    "location": "化气格成格条件"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "day_master_stage_month",
+        "op": "in",
+        "value": [
+          "临官",
+          "帝旺",
+          "长生"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《三命通会》论十神化气:甲己化土非辰戌丑未月不化,丁壬化木非寅卯月不化。合化必须得令。",
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-HH-101-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "SANMING-TONGHUI",
+  "passage_id": "P-HH-HUAQI",
+  "concept_id": "化气格",
+  "principle_id": "PRINCIPLE-HUAQI",
+  "scope": "格局判定(合化得令)"
+}

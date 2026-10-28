@@ -1,0 +1,50 @@
+{
+  "rule_id": "HLT-204",
+  "title": "金元素过弱 → 肺大肠失养风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "工程种子",
+    "chapter": "素问·阴阳应象大论",
+    "location": "金→肺大肠藏象"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "five_element_imbalance",
+        "op": "present",
+        "value": true
+      },
+      {
+        "field": "day_master_element",
+        "op": "nin",
+        "value": ["METAL"]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《素问·阴阳应象大论》: '西方生燥，燥生金，金生辛，辛生肺'。金气过弱则肺气不足，皮肤干燥，反复外感。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution",
+      "health_organ": "肺大肠"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-016"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "HUANGDI-NEIJING",
+  "scope": "健康断事 / 金弱肺大肠"
+}

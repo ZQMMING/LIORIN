@@ -1,0 +1,50 @@
+{
+  "rule_id": "YHZP-101",
+  "title": "阳刃格(月支为日主帝旺位)→ CONSTRAINT",
+  "rule_type": "格局判定",
+  "source": {
+    "work": "渊海子平",
+    "edition": "通行本",
+    "chapter": "卷一·论阳刃",
+    "location": "阳刃/帝旺判据"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "day_master_absolute_month",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "月支为日主帝旺位即阳刃,其性刚烈,取 CONSTRAINT 基调;阳刃格取用须制伏。",
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-YHZP-101-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-19T00:00:00Z",
+  "book_id": "YUANHAI-ZIPING",
+  "passage_id": "P-YHZP-YANGREN",
+  "concept_id": "阳刃",
+  "scope": "八字格局判定(阳刃格)"
+}

@@ -102,8 +102,6 @@ ipython_config.py
 
 # poetry
 #   Similar to Pipfile.lock, it is generally recommended to include poetry.lock in version control.
-#   This is especially recommended for binary packages to ensure reproducibility, and is more
-#   commonly ignored for libraries.
 #   https://python-poetry.org/docs/basic-usage/#commit-your-poetrylock-file-to-version-control
 # poetry.lock
 # poetry.toml
@@ -216,3 +214,48 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+# Secrets
+*.key
+
+# Python
+*.py[cod]
+
+# Virtual Environment
+.venv/
+
+# Testing
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary scripts and outputs
+_temp_*.py
+_tmp_*.py
+phase*_output.txt
+*.tmp
+*.bak
+
+# ⚠ 变异扫描 / 行为快照的**运行期产物**（2026-10-25）
+#   —— 扫描是**原地改 src/** 的工具，运行期必然产生日志与临时文件；
+#      这些**不是**源码，必须排除，否则每次扫描都污染 git 状态。
+mutation_sweep.log
+mutation_sweep_summary.txt
+mutation_report/
+mutation_report_*/
+_snap_*.json
+_mut_*.txt
+
+# Large data files (optional - uncomment if needed)
+# audit/*.jsonl
+# data/*.json
+
+# OS
+Thumbs.db
+.DS_Store
+node_modules/
+.lint_backup/
+.prune_backup/
+.prune_bk/
+.verify_venv/
+.verify_cwd/

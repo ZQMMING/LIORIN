@@ -1,0 +1,93 @@
+{
+  "rule_id": "SX-102",
+  "title": "三刑方向区分:各刑取象破坏根基",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "五行精纪",
+    "chapter": "卷廿五·论三刑",
+    "location": "三刑方向"
+  },
+  "conditions": {
+    "any": [
+      {
+        "all": [
+          {
+            "field": "day_branch",
+            "op": "eq",
+            "value": "YIN"
+          },
+          {
+            "field": "month_branch",
+            "op": "in",
+            "value": [
+              "SI",
+              "SHEN"
+            ]
+          }
+        ]
+      },
+      {
+        "all": [
+          {
+            "field": "day_branch",
+            "op": "eq",
+            "value": "SI"
+          },
+          {
+            "field": "month_branch",
+            "op": "in",
+            "value": [
+              "YIN",
+              "SHEN"
+            ]
+          }
+        ]
+      },
+      {
+        "all": [
+          {
+            "field": "day_branch",
+            "op": "eq",
+            "value": "SHEN"
+          },
+          {
+            "field": "month_branch",
+            "op": "in",
+            "value": [
+              "YIN",
+              "SI"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《五行精纪》:三刑方向区分,寅刑巳取巳中金土,巳刑寅取寅中土火,各破坏根基。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-SX-102-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-013"
+  ],
+  "version": "1.0.0",
+  "precedence": 5,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "WUXINGJINGJI",
+  "passage_id": "P-SX-FANGXIANG",
+  "concept_id": "三刑",
+  "principle_id": "PRINCIPLE-XINGCHONG",
+  "scope": "健康断事 / 三刑方向",
+  "scenario": "MARRIAGE_HEALTH"
+}

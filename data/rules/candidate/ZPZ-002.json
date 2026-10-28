@@ -1,0 +1,50 @@
+{
+  "rule_id": "CAND-ZPZ-002",
+  "engine": "ZIPING_ZHENQUAN",
+  "source_ids": [
+    "ZPZ-SOURCE-001"
+  ],
+  "rule_type": "definition",
+  "scope": "natal",
+  "subject": "unknown",
+  "predicate": "火日主基线 → ACTION",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "day_master_element",
+        "operator": "eq",
+        "value": "FIRE"
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [
+    {
+      "field": "judgment_value",
+      "value": "ACTION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "EXECUTION"
+    },
+    {
+      "field": "judgment_value",
+      "value": "INITIATIVE"
+    },
+    {
+      "field": "judgment_value",
+      "value": "MOVEMENT"
+    }
+  ],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "0.2.0",
+  "notes": "迁移自旧规则 ZPZ-002",
+  "created_at": "2026-09-13T21:19:41.873348",
+  "metadata": {
+    "original_rule_id": "ZPZ-002",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

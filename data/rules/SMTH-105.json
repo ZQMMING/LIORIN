@@ -1,0 +1,54 @@
+{
+  "rule_id": "SMTH-105",
+  "title": "天乙贵人逢冲/空亡→SUPPORT降级为LIKELY",
+  "rule_type": "神煞判定",
+  "source": {
+    "work": "三命通会",
+    "edition": "通行本(十二卷)",
+    "chapter": "论天乙贵人",
+    "location": "贵人逢冲"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "tianyi_guiren_branches",
+        "op": "exists",
+        "value": true
+      },
+      {
+        "field": "day_branch_clash",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "《三命通会》:天乙者乃天上之神,一切凶煞隐然而避。但贵人逢冲则力减半,温和降级为LIKELY(不引入逢冲转凶硬编码)。",
+    "produces_layer_output_template": {
+      "direction": "STABLE",
+      "polarity": "active"
+    }
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-SMTH-104V2-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "1.1.0",
+  "precedence": 3,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "SANMING-TONGHUI",
+  "passage_id": "P-SMTH-TIANYI",
+  "concept_id": "天乙贵人",
+  "principle_id": "PRINCIPLE-SHENSHA",
+  "scope": "神煞判定(天乙贵人温和降级)"
+}

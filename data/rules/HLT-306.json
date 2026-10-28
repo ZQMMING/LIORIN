@@ -1,0 +1,47 @@
+{
+  "rule_id": "HLT-306",
+  "title": "本命六害 + 流年引动 → 该年受损",
+  "rule_type": "流年触发",
+  "source": {
+    "work": "渊海子平",
+    "chapter": "地支六害",
+    "location": "六害应期"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "branch_harm_map",
+        "op": "present",
+        "value": true
+      },
+      {
+        "field": "flow_year_branch_harm_day_branch",
+        "op": "eq",
+        "value": true
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "本命六害主脏器受损，流年再害日支则该年受损发作。",
+    "produces_layer_output_template": {
+      "direction": "DECLINE",
+      "polarity": "caution"
+    }
+  },
+  "applies_to_layers": [
+    "EVENT_TOPIC"
+  ],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-K2G-SHIPI-015"
+  ],
+  "status": "active",
+  "version": "0.1.0",
+  "book_id": "YUANHAI-ZIPING",
+  "precedence": 6,
+  "scope": "健康应期 / 六害流年引动",
+  "spec_decisions_ref": [
+    "DECISION-306"
+  ]
+}

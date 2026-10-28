@@ -1,0 +1,31 @@
+{
+  "rule_id": "HLT-102",
+  "title": "丑未/辰戌冲 → 脾胃疾病风险",
+  "rule_type": "健康断事",
+  "source": {
+    "work": "三命通会",
+    "chapter": "地支六冲",
+    "location": "丑未/辰戌冲"
+  },
+  "conditions": {
+    "all": [
+      { "field": "branch_clash_map", "op": "has_any", "value": [["CHOU","WEI"],["CHEN","XU"]] }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "土土相冲，主脾胃疾病、财务波动。",
+    "produces_layer_output_template": { "direction": "DECLINE", "polarity": "caution", "health_organ": "脾胃" }
+  },
+  "applies_to_layers": ["EVENT_TOPIC"],
+  "produces_signal_type": "HEALTH_RISK",
+  "forbidden_inferences": [],
+  "evidence_refs": ["E-K2G-SHIPI-012"],
+  "status": "active",
+  "spec_decisions_ref": ["DECISION-013"],
+  "version": "1.0.0",
+  "precedence": 8,
+  "created_at": "2026-08-26T00:00:00Z",
+  "author": "RULES-EXPANSION-001",
+  "book_id": "SANMING-TONGHUI",
+  "scope": "健康断事 / 丑未辰戌冲脾胃"
+}

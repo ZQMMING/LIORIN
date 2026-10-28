@@ -1,0 +1,33 @@
+{
+  "rule_id": "CAND-QTB-014",
+  "engine": "QIONGTONG_BAOJIAN",
+  "source_ids": [
+    "QTB-SOURCE-001"
+  ],
+  "rule_type": "activation",
+  "scope": "natal",
+  "subject": "unknown",
+  "predicate": "己日 → DAILY ACTION",
+  "preconditions": {
+    "type": "conjunction",
+    "conditions": [
+      {
+        "field": "analysis_day_stem",
+        "operator": "eq",
+        "value": "JI"
+      }
+    ]
+  },
+  "operation": "emit",
+  "outputs": [],
+  "evidence_requirement": "A",
+  "status": "CANDIDATE",
+  "version": "1.0.0",
+  "notes": "迁移自旧规则 QTB-014",
+  "created_at": "2026-09-13T21:19:41.855954",
+  "metadata": {
+    "original_rule_id": "QTB-014",
+    "migration_status": "draft",
+    "needs_approval": true
+  }
+}

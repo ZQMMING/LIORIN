@@ -1,0 +1,68 @@
+{
+  "rule_id": "ZPZ-108",
+  "title": "正印格 → SUPPORT",
+  "rule_type": "格局判定",
+  "source": {
+    "work": "子平真诠",
+    "edition": "通行本",
+    "chapter": "论正印",
+    "location": "月令正印取格"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "eq",
+        "value": "正印"
+      },
+      {
+        "any": [
+          {
+            "field": "month_branch",
+            "op": "nin",
+            "value": [
+              "CHEN",
+              "XU",
+              "CHOU",
+              "WEI"
+            ]
+          },
+          {
+            "field": "month_hidden_main_ten_god_transparent",
+            "op": "eq",
+            "value": true
+          }
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "月令正印,生我以护身,取 SUPPORT 基调。",
+    "produces_semantic_atoms": [
+      "SUPPORT",
+      "STABILITY",
+      "RESOURCE",
+      "ENDURANCE"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "SUPPORT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-ZPZ-108-001"
+  ],
+  "status": "active",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006"
+  ],
+  "version": "0.2.0",
+  "precedence": 1,
+  "created_at": "2026-08-17T00:00:00Z",
+  "book_id": "ZIPING-ZHENQUAN",
+  "passage_id": "P-ZPZ-YONGSHEN",
+  "concept_id": "格局",
+  "principle_id": "PRINCIPLE-MONTH-PIVOT"
+}

@@ -1,0 +1,61 @@
+{
+  "rule_id": "HH-102",
+  "title": "合化需双方能量相当,差距大则合绊",
+  "rule_type": "格局判定",
+  "source": {
+    "work": "三命通会",
+    "chapter": "论化气",
+    "location": "化气格通论"
+  },
+  "conditions": {
+    "all": [
+      {
+        "field": "month_hidden_main_ten_god",
+        "op": "in",
+        "value": [
+          "正印",
+          "偏印",
+          "比肩",
+          "劫财",
+          "正官",
+          "七杀",
+          "正财",
+          "偏财",
+          "食神",
+          "伤官"
+        ]
+      }
+    ]
+  },
+  "conclusion": {
+    "rationale_classical": "化气格通论:合化需双方能量相当;差距大则只合不化(合绊)。",
+    "produces_semantic_atoms": [
+      "CONSTRAINT",
+      "DISCIPLINE",
+      "RULE",
+      "RESPONSIBILITY"
+    ]
+  },
+  "applies_to_layers": [
+    "BASELINE"
+  ],
+  "produces_signal_type": "CONSTRAINT",
+  "forbidden_inferences": [],
+  "evidence_refs": [
+    "E-HH-102-001"
+  ],
+  "status": "draft",
+  "spec_decisions_ref": [
+    "DECISION-002",
+    "DECISION-006",
+    "DECISION-009"
+  ],
+  "version": "0.2.0",
+  "precedence": 0,
+  "created_at": "2026-08-26T18:00:00Z",
+  "book_id": "SANMING-TONGHUI",
+  "passage_id": "P-HH-HEBAN",
+  "concept_id": "合绊",
+  "principle_id": "PRINCIPLE-HUAQI",
+  "scope": "格局判定(合化能量均衡)"
+}
