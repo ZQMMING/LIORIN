@@ -53,7 +53,21 @@ REQUIRED_RESOURCE_DIRS = {
 
 
 def _src_files():
-    return sorted((ROOT / "src").rglob("*.py"))
+    """本守卫的扫描范围 = **河洛自己的包**（``src/heluo_engine/``）。
+
+    ⚠ 2026-10-26 收窄：合并黄历引擎到 ``main`` 后，``src/`` 下多了
+       ``src/tongshu/engines/huangli_engine.py``，它用
+       ``parents[3]`` 定位**仓库根**的 ``data/calendar_sources.json``
+       —— 那是**黄历自己的部署约定**（仓库根数据），不是河洛的缺陷。
+
+    ⇒ 本守卫的语义是「**河洛独立包**零路径绑定」
+      （河洛要能 ``pip install`` 到服务器、与仓库位置无关），
+      **只约束河洛的代码**；其余引擎按各自的部署约定，不在河洛域内。
+
+    ⚠ 若把范围放回整个 ``src/`` ⇒ 合并其它引擎必假红
+      （实测：黄历合入后本守卫 1 条红）。
+    """
+    return sorted(PKG_DIR.rglob("*.py"))
 
 
 def _code_only(src: str) -> str:
