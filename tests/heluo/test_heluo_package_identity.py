@@ -48,6 +48,33 @@ TOP_PACKAGE = "heluo_engine"
 #: 主仓顶层包名 —— 本包**不得**再占用
 MAIN_TOP_PACKAGE = "tongshu"
 
+#: ★ 集成仓判定（2026-10-26）。
+#:
+#: 本守卫的前提「``src/tongshu/`` 必须不存在」**只对独立包仓成立**：
+#: 独立包仓只装河洛一个引擎 ⇒ 留着 ``src/tongshu/`` 会与主仓抢命名空间。
+#:
+#: 而在**集成仓**（``main``，多引擎共存：河洛独立包 + 子平八字引擎）里：
+#:   · ``engines/`` 是子平八字引擎的代码根；
+#:   · ``src/tongshu/__init__.py`` 是子平线的 **import 锚点**
+#:     （实测有 10+ 处 ``import tongshu``，含 ``engines/l0_paipan.py``
+#:       与河洛自己的 ``src/heluo_engine/facts/bazi_facts.py``）
+#:     ⇒ 删掉它会让整条子平线**无法 import**。
+#:
+#: ⇒ 故按「仓形态」分别断言（见 ``_is_integrated_repo``）。
+#:   ⚠ 两种形态下**都不允许**「空壳占位」：
+#:     集成仓里 ``src/tongshu/`` 必须是**能 import 的真包**。
+
+
+def _is_integrated_repo() -> bool:
+    """本仓是否为**集成仓**（多引擎共存）。
+
+    判据：顶层存在 ``engines/``（子平八字引擎的代码根）。
+    ⚠ 不用 ``pyproject.toml`` 的 name 判定 ——
+      集成仓的 pyproject 沿用河洛独立包的（``heluo-engine``），
+      因为**河洛要能独立 pip install**；而子平八字不在 ``src/`` 下、不参与打包。
+    """
+    return (ROOT / "engines").is_dir()
+
 #: 主仓**专有**的顶层子包 —— 本包 src/ 内若出现这些绝对导入，
 #: 说明某处误从主仓取模块（在本包独立环境里会 ModuleNotFoundError，
 #: 在主仓环境里则会静默用主仓的版本 —— 正是「同名不同源」陷阱）。
@@ -78,19 +105,45 @@ class TestPackageIdentity(unittest.TestCase):
                         f"src/{TOP_PACKAGE}/ 不存在")
 
     def test_main_repo_namespace_not_occupied(self):
-        """★ `src/tongshu/` **必须不存在**。
+        """★ `src/tongshu/` 的存在性 —— **按仓形态分别断言**。
 
-        ⚠ 不只是「没有源码」—— **空目录也不行**：
-        Python 会把无 `__init__.py` 的目录当成**命名空间包**，
-        于是 `import tongshu` **成功**、但 `tongshu.pipeline` 等子模块全缺
-        （实测踩过：残留 `src/tongshu/__pycache__` 导致跨仓守卫
-        「主仓可用」的判定恒真，跨仓测试照样在独立包内炸红）。
+        ⚠ 两种形态的**前提不同**，不能一刀切：
+
+        **独立包仓**（只装河洛）：`src/tongshu/` **必须不存在**。
+          不只是「没有源码」—— **空目录也不行**：
+          Python 会把无 `__init__.py` 的目录当成**命名空间包**，
+          于是 `import tongshu` **成功**、但 `tongshu.pipeline` 等子模块全缺
+          （实测踩过：残留 `src/tongshu/__pycache__` 导致跨仓守卫
+          「主仓可用」的判定恒真，跨仓测试照样在独立包内炸红）。
+
+        **集成仓**（河洛 + 子平八字共存）：`src/tongshu/` **必须存在且可用**
+          —— 它是子平线的 import 锚点（10+ 处 `import tongshu`）。
+          ⇒ 但**不许是空壳占位**：必须能真正 import。
         """
         legacy = ROOT / "src" / MAIN_TOP_PACKAGE
-        self.assertFalse(legacy.exists(),
-                         f"src/{MAIN_TOP_PACKAGE}/ 仍存在 —— 本包已改用顶层包 "
-                         f"`{TOP_PACKAGE}`，留着它会与主仓抢命名空间"
-                         "（空目录亦会被 Python 当成命名空间包）")
+        if not _is_integrated_repo():
+            self.assertFalse(legacy.exists(),
+                             f"src/{MAIN_TOP_PACKAGE}/ 仍存在 —— 本包已改用顶层包 "
+                             f"`{TOP_PACKAGE}`，留着它会与主仓抢命名空间"
+                             "（空目录亦会被 Python 当成命名空间包）")
+            return
+
+        # ── 集成仓：必须是「能 import 的真包」 ──
+        self.assertTrue(legacy.is_dir(),
+                        f"集成仓里 src/{MAIN_TOP_PACKAGE}/ 必须存在 —— "
+                        "它是子平八字引擎的 import 锚点"
+                        "（engines/ 与 src/heluo_engine/facts/bazi_facts.py "
+                        "都 import 它）")
+        self.assertTrue((legacy / "__init__.py").exists(),
+                        f"src/{MAIN_TOP_PACKAGE}/ 缺 __init__.py —— "
+                        "空目录会被 Python 当成命名空间包，"
+                        "`import tongshu` 会成功但子模块全缺")
+        import importlib
+        importlib.invalidate_caches()
+        mod = importlib.import_module(MAIN_TOP_PACKAGE)
+        self.assertTrue(getattr(mod, "__version__", None),
+                        f"import {MAIN_TOP_PACKAGE} 成功但无 __version__ "
+                        "⇒ 说明它只是个空壳占位，不是真包")
 
     def test_packages_find_targets_only_own_package(self):
         """★ 包发现只认 `heluo_engine*`，不得装出 `tongshu`。"""
