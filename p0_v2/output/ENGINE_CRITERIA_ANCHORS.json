@@ -1,10 +1,10 @@
 {
  "purpose": "AGENTS.md v3 公理三落地: 引擎判据 -> 原典章节 -> 切片ID 锚点对照(不改判定)",
- "total_anchor_groups": 119,
- "total_refs": 379,
+ "total_anchor_groups": 122,
+ "total_refs": 397,
  "match_modes": {
-  "EXACT_CHAPTER": 36,
-  "CHAPTER": 83
+  "EXACT_CHAPTER": 38,
+  "CHAPTER": 84
  },
  "anchors": [
   {
@@ -219,6 +219,46 @@
   {
    "book": "DTS",
    "book_cn": "滴天髓",
+   "row": 170,
+   "ref_count": 3,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:343",
+    "engines\\common\\yongyao_resolve.py:357",
+    "engines\\common\\yongyao_resolve.py:555"
+   ],
+   "source_chapter": "十、形象",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.10_十、形象_01",
+    "DTS_LB.上篇.10_十、形象_02",
+    "DTS_LB.上篇.10_十、形象_03",
+    "DTS_LB.上篇.10_十、形象_04",
+    "DTS_LB.上篇.10_十、形象_05"
+   ],
+   "slice_count": 5
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
+   "row": 172,
+   "ref_count": 1,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:355"
+   ],
+   "source_chapter": "十、形象",
+   "slice_match": "EXACT_CHAPTER",
+   "slice_ids": [
+    "DTS_LB.上篇.10_十、形象_01",
+    "DTS_LB.上篇.10_十、形象_02",
+    "DTS_LB.上篇.10_十、形象_03",
+    "DTS_LB.上篇.10_十、形象_04",
+    "DTS_LB.上篇.10_十、形象_05"
+   ],
+   "slice_count": 5
+  },
+  {
+   "book": "DTS",
+   "book_cn": "滴天髓",
    "row": 183,
    "ref_count": 1,
    "engine_refs": [
@@ -242,8 +282,8 @@
    "ref_count": 5,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:1264",
-    "engines\\common\\ge_jie_layer.py:1547",
-    "engines\\common\\ge_jie_layer.py:1568",
+    "engines\\common\\ge_jie_layer.py:1548",
+    "engines\\common\\ge_jie_layer.py:1569",
     "p0_v2\\bazi_gate.py:348",
     "p0_v2\\pzzq_align.py:325"
    ],
@@ -264,13 +304,13 @@
     "engines\\common\\ge_jie_layer.py:1312",
     "engines\\common\\ge_jie_layer.py:1346",
     "engines\\common\\yongshen_multi_track.py:416",
-    "engines\\common\\yongyao_resolve.py:389",
-    "engines\\common\\yongyao_resolve.py:553",
-    "engines\\common\\yongyao_resolve.py:554",
-    "engines\\common\\yongyao_resolve.py:567",
-    "engines\\common\\yongyao_resolve.py:572",
-    "engines\\common\\yongyao_resolve.py:596",
-    "engines\\common\\yongyao_resolve.py:604"
+    "engines\\common\\yongyao_resolve.py:408",
+    "engines\\common\\yongyao_resolve.py:665",
+    "engines\\common\\yongyao_resolve.py:666",
+    "engines\\common\\yongyao_resolve.py:679",
+    "engines\\common\\yongyao_resolve.py:684",
+    "engines\\common\\yongyao_resolve.py:708",
+    "engines\\common\\yongyao_resolve.py:716"
    ],
    "source_chapter": "十三、体用",
    "slice_match": "EXACT_CHAPTER",
@@ -316,10 +356,10 @@
    "ref_count": 8,
    "engine_refs": [
     "engines\\common\\yongyao_resolve.py:188",
-    "engines\\common\\yongyao_resolve.py:619",
-    "engines\\common\\yongyao_resolve.py:641",
-    "engines\\common\\yongyao_resolve.py:643",
-    "engines\\common\\yongyao_resolve.py:647",
+    "engines\\common\\yongyao_resolve.py:731",
+    "engines\\common\\yongyao_resolve.py:753",
+    "engines\\common\\yongyao_resolve.py:755",
+    "engines\\common\\yongyao_resolve.py:759",
     "p0_v2\\bazi_gate.py:518",
     "p0_v2\\bazi_gate.py:521",
     "p0_v2\\bazi_gate.py:621"
@@ -340,8 +380,8 @@
     "engines\\common\\bingyao_layer.py:37",
     "engines\\common\\bingyao_layer.py:1062",
     "engines\\common\\bingyao_layer.py:1197",
-    "engines\\common\\yongyao_resolve.py:367",
-    "engines\\common\\yongyao_resolve.py:376"
+    "engines\\common\\yongyao_resolve.py:386",
+    "engines\\common\\yongyao_resolve.py:395"
    ],
    "source_chapter": "十八、中和",
    "slice_match": "EXACT_CHAPTER",
@@ -362,8 +402,8 @@
     "engines\\common\\yongyao_resolve.py:244",
     "engines\\common\\yongyao_resolve.py:259",
     "engines\\common\\yongyao_resolve.py:264",
-    "engines\\common\\yongyao_resolve.py:382",
-    "p0_v2\\bazi_gate.py:871",
+    "engines\\common\\yongyao_resolve.py:401",
+    "p0_v2\\bazi_gate.py:874",
     "p0_v2\\jiu_ying.py:93"
    ],
    "source_chapter": "十九、源流",
@@ -387,7 +427,7 @@
     "engines\\common\\topology_paths.py:450",
     "engines\\common\\topology_paths.py:536",
     "engines\\common\\topology_paths.py:542",
-    "engines\\common\\yongyao_resolve.py:385",
+    "engines\\common\\yongyao_resolve.py:404",
     "p0_v2\\bazi_gate.py:538",
     "p0_v2\\bazi_gate.py:561"
    ],
@@ -402,9 +442,10 @@
    "book": "DTS",
    "book_cn": "滴天髓",
    "row": 255,
-   "ref_count": 4,
+   "ref_count": 5,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:409",
+    "engines\\common\\ge_jie_layer.py:722",
     "engines\\common\\special_pattern.py:567",
     "engines\\common\\special_pattern.py:698",
     "engines\\common\\special_pattern.py:701"
@@ -463,7 +504,7 @@
     "engines\\common\\yongshen_engine.py:599",
     "engines\\common\\yongyao_resolve.py:269",
     "engines\\common\\yongyao_resolve.py:282",
-    "engines\\common\\yongyao_resolve.py:351"
+    "engines\\common\\yongyao_resolve.py:370"
    ],
    "source_chapter": "二十九、寒暖",
    "slice_match": "EXACT_CHAPTER",
@@ -476,11 +517,15 @@
    "book": "DTS",
    "book_cn": "滴天髓",
    "row": 298,
-   "ref_count": 3,
+   "ref_count": 7,
    "engine_refs": [
-    "engines\\common\\yongyao_resolve.py:341",
-    "engines\\common\\yongyao_resolve.py:342",
-    "engines\\common\\yongyao_resolve.py:364"
+    "engines\\common\\yongyao_resolve.py:360",
+    "engines\\common\\yongyao_resolve.py:361",
+    "engines\\common\\yongyao_resolve.py:383",
+    "engines\\common\\yongyao_resolve.py:474",
+    "engines\\common\\yongyao_resolve.py:477",
+    "engines\\common\\yongyao_resolve.py:509",
+    "engines\\common\\yongyao_resolve.py:519"
    ],
    "source_chapter": "三十、燥湿",
    "slice_match": "EXACT_CHAPTER",
@@ -554,20 +599,20 @@
    "book": "DTS",
    "book_cn": "滴天髓",
    "row": 404,
-   "ref_count": 23,
+   "ref_count": 25,
    "engine_refs": [
     "engines\\common\\yongyao_resolve.py:308",
-    "engines\\common\\yongyao_resolve.py:410",
-    "engines\\common\\yongyao_resolve.py:412",
-    "engines\\common\\yongyao_resolve.py:479",
-    "engines\\common\\yongyao_resolve.py:534",
-    "engines\\common\\yongyao_resolve.py:540",
-    "engines\\common\\yongyao_resolve.py:547",
-    "engines\\common\\yongyao_resolve.py:576",
-    "engines\\common\\yongyao_resolve.py:582",
-    "engines\\common\\yongyao_resolve.py:600",
-    "engines\\common\\yongyao_resolve.py:604",
-    "engines\\common\\yongyao_resolve.py:610"
+    "engines\\common\\yongyao_resolve.py:429",
+    "engines\\common\\yongyao_resolve.py:431",
+    "engines\\common\\yongyao_resolve.py:514",
+    "engines\\common\\yongyao_resolve.py:560",
+    "engines\\common\\yongyao_resolve.py:591",
+    "engines\\common\\yongyao_resolve.py:646",
+    "engines\\common\\yongyao_resolve.py:652",
+    "engines\\common\\yongyao_resolve.py:659",
+    "engines\\common\\yongyao_resolve.py:688",
+    "engines\\common\\yongyao_resolve.py:694",
+    "engines\\common\\yongyao_resolve.py:712"
    ],
    "source_chapter": "十一、闲神",
    "slice_match": "EXACT_CHAPTER",
@@ -585,7 +630,7 @@
    "ref_count": 6,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:329",
-    "engines\\common\\ge_jie_layer.py:1437",
+    "engines\\common\\ge_jie_layer.py:1438",
     "engines\\common\\special_pattern.py:466",
     "engines\\common\\yongyao_resolve.py:334",
     "engines\\common\\yongyao_resolve.py:338",
@@ -814,9 +859,9 @@
    "row": 170,
    "ref_count": 3,
    "engine_refs": [
-    "engines\\common\\ge_jie_layer.py:1416",
-    "engines\\common\\ge_jie_layer.py:1461",
-    "engines\\common\\yongyao_resolve.py:478"
+    "engines\\common\\ge_jie_layer.py:1417",
+    "engines\\common\\ge_jie_layer.py:1462",
+    "engines\\common\\yongyao_resolve.py:590"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1216,6 +1261,31 @@
   {
    "book": "PZZQ",
    "book_cn": "子平真诠",
+   "row": 960,
+   "ref_count": 4,
+   "engine_refs": [
+    "engines\\common\\yongyao_resolve.py:357",
+    "engines\\common\\yongyao_resolve.py:555",
+    "engines\\common\\yongyao_resolve.py:560",
+    "engines\\common\\yongyao_resolve.py:565"
+   ],
+   "source_chapter": "",
+   "slice_match": "CHAPTER",
+   "slice_ids": [
+    "PZZQ.论十干十二支.一气五行",
+    "PZZQ.论十干十二支.十干阴阳",
+    "PZZQ.论十干十二支.天干地支",
+    "PZZQ.论十干十二支.干支动静旺衰",
+    "PZZQ.论阴阳生克.生克同功",
+    "PZZQ.论阴阳生克.生克阴阳异同",
+    "PZZQ.论阴阳生克.官煞阴阳之辨",
+    "PZZQ.论阴阳生死.生旺墓绝之由"
+   ],
+   "slice_count": 323
+  },
+  {
+   "book": "PZZQ",
+   "book_cn": "子平真诠",
    "row": 1034,
    "ref_count": 2,
    "engine_refs": [
@@ -1430,13 +1500,14 @@
    "book": "PZZQ",
    "book_cn": "子平真诠",
    "row": 1145,
-   "ref_count": 5,
+   "ref_count": 6,
    "engine_refs": [
     "engines\\common\\bingyao_layer.py:611",
     "engines\\common\\ge_jie_layer.py:779",
     "engines\\common\\ge_jie_layer.py:795",
     "engines\\common\\ge_jie_layer.py:947",
-    "engines\\common\\ge_jie_layer.py:955"
+    "engines\\common\\ge_jie_layer.py:955",
+    "engines\\common\\ge_jie_layer.py:1650"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1525,7 +1596,7 @@
    "row": 1226,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\yongyao_resolve.py:475",
+    "engines\\common\\yongyao_resolve.py:587",
     "p0_v2\\jiu_ying.py:373"
    ],
    "source_chapter": "",
@@ -1614,7 +1685,7 @@
    "row": 2412,
    "ref_count": 2,
    "engine_refs": [
-    "engines\\common\\ge_jie_layer.py:1460",
+    "engines\\common\\ge_jie_layer.py:1461",
     "engines\\common\\special_pattern.py:845"
    ],
    "source_chapter": "",
@@ -1702,20 +1773,20 @@
    "book": "PZZQ",
    "book_cn": "子平真诠",
    "row": 3208,
-   "ref_count": 20,
+   "ref_count": 21,
    "engine_refs": [
     "engines\\common\\yongyao_resolve.py:36",
     "engines\\common\\yongyao_resolve.py:308",
-    "engines\\common\\yongyao_resolve.py:410",
-    "engines\\common\\yongyao_resolve.py:412",
-    "engines\\common\\yongyao_resolve.py:479",
-    "engines\\common\\yongyao_resolve.py:534",
-    "engines\\common\\yongyao_resolve.py:540",
-    "engines\\common\\yongyao_resolve.py:547",
-    "engines\\common\\yongyao_resolve.py:552",
-    "engines\\common\\yongyao_resolve.py:576",
-    "engines\\common\\yongyao_resolve.py:600",
-    "engines\\common\\yongyao_resolve.py:604"
+    "engines\\common\\yongyao_resolve.py:429",
+    "engines\\common\\yongyao_resolve.py:431",
+    "engines\\common\\yongyao_resolve.py:514",
+    "engines\\common\\yongyao_resolve.py:591",
+    "engines\\common\\yongyao_resolve.py:646",
+    "engines\\common\\yongyao_resolve.py:652",
+    "engines\\common\\yongyao_resolve.py:659",
+    "engines\\common\\yongyao_resolve.py:664",
+    "engines\\common\\yongyao_resolve.py:688",
+    "engines\\common\\yongyao_resolve.py:712"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -1892,7 +1963,7 @@
    "row": 3717,
    "ref_count": 1,
    "engine_refs": [
-    "engines\\common\\yongyao_resolve.py:800"
+    "engines\\common\\yongyao_resolve.py:912"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",
@@ -2071,8 +2142,8 @@
    "row": 4652,
    "ref_count": 4,
    "engine_refs": [
-    "engines\\common\\ge_jie_layer.py:1547",
-    "engines\\common\\ge_jie_layer.py:1568",
+    "engines\\common\\ge_jie_layer.py:1548",
+    "engines\\common\\ge_jie_layer.py:1569",
     "p0_v2\\bazi_gate.py:348",
     "p0_v2\\pzzq_align.py:325"
    ],
@@ -2094,12 +2165,13 @@
    "book": "PZZQ",
    "book_cn": "子平真诠",
    "row": 4882,
-   "ref_count": 4,
+   "ref_count": 5,
    "engine_refs": [
     "engines\\common\\ge_jie_layer.py:817",
     "engines\\common\\ge_jie_layer.py:854",
     "engines\\common\\suiyun_validate.py:328",
-    "engines\\common\\suiyun_validate.py:422"
+    "engines\\common\\suiyun_validate.py:422",
+    "engines\\common\\yongyao_resolve.py:522"
    ],
    "source_chapter": "",
    "slice_match": "CHAPTER",

@@ -3,7 +3,7 @@
 
 [1] 黄金套件
   test_yuanjuan_matrix               PASS  矩阵结果: PASS=293 FAIL=0
-  test_criteria_anchors              PASS  结果: PASS=126 FAIL=0
+  test_criteria_anchors              PASS  结果: PASS=129 FAIL=0
   test_special_pattern_golden        PASS  TOTAL 67 FAILS 0
   test_bingyao_layer_golden          PASS  
   test_yongshen_geju_golden          PASS  FAILS = 0
@@ -21,19 +21,19 @@
 
 [3] 回归闸门(100盘基线)
   100pan: ge_diff=0 xi_diff=0 winner_diff=0 (expect 0/0/0)
-  病机: {'YIN_DUO_MAI_ZI': 140, 'CAI_DUO_SHEN_RUO': 138, 'BIJIE_CHENG_DANG': 67, 'BIJIE_DUO_CAI': 35, 'XIE_QI_TAI_ZHONG': 30, 'SHA_ZHONG_SHEN_QING': 13, 'ZHI_SHA_TAI_GUO': 5, 'XIAO_DUO_SHI': 2}
+  病机: {'YIN_DUO_MAI_ZI': 140, 'CAI_DUO_SHEN_RUO': 138, 'BIJIE_CHENG_DANG': 67, 'BIJIE_DUO_CAI': 35, 'XIE_QI_TAI_ZHONG': 30, 'SHA_ZHONG_SHEN_QING': 7, 'ZHI_SHA_TAI_GUO': 5, 'XIAO_DUO_SHI': 2}
   报告: D:\shuntian-ziping-p0\p0_v2\output\REGRESSION_LATEST.txt
 
 [4] 判据锚点(公理三)
-  引擎原典引用点: 119 组 / 386 次
-  结果: PASS=126 FAIL=0
+  引擎原典引用点: 122 组 / 397 次
+  结果: PASS=129 FAIL=0
 
 [5] 分布快照
-  病机: {'YIN_DUO_MAI_ZI': 140, 'CAI_DUO_SHEN_RUO': 138, 'BIJIE_CHENG_DANG': 67, 'BIJIE_DUO_CAI': 35, 'XIE_QI_TAI_ZHONG': 30, 'SHA_ZHONG_SHEN_QING': 13, 'ZHI_SHA_TAI_GUO': 5, 'XIAO_DUO_SHI': 2}
-  primary: {'火': 639, '水': 554, '金': 329, '木': 317, '土': 234, 'None': 33}
+  病机: {'YIN_DUO_MAI_ZI': 140, 'CAI_DUO_SHEN_RUO': 138, 'BIJIE_CHENG_DANG': 67, 'BIJIE_DUO_CAI': 35, 'XIE_QI_TAI_ZHONG': 30, 'SHA_ZHONG_SHEN_QING': 7, 'ZHI_SHA_TAI_GUO': 5, 'XIAO_DUO_SHI': 2}
+  primary: {'火': 631, '水': 543, '木': 329, '金': 322, '土': 235, 'None': 46}
   格局: {'财格': 305, '建禄月劫格': 223, '正官格': 177, 'None': 166, '印格': 158, '食神格': 153, '七煞格': 145, '阳刃格': 130, '伤官格': 127, '印格(印多逢财)': 124, '印格(印轻逢煞)': 91, '从儿格': 50}
   形态: {'None/None': 406, '七煞格/食制': 214, '食神格/生财': 153, '印格/用官': 125, '印格/用食伤': 109, '印格/用官带伤食': 96, '财格/用食生': 94, '伤官格/用财': 94, '印格/印绶': 89, '伤官格/佩印': 86, '财格/佩印': 83, '建禄月劫格/同官格': 73, '阳刃格/用官': 57, '建禄
-  大运吉凶: {'凶': 353, '平': 215, '吉': 96, '平偏凶': 92, '平偏吉': 44}
+  大运吉凶: {'凶': 351, '平': 215, '吉': 96, '平偏凶': 94, '平偏吉': 44}
 
 ==========================================================================
 总判定: 全部通过

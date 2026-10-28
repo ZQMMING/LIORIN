@@ -338,6 +338,25 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
                        "basis": "DTS L420「既从矣当论所从之神, 从财只以财为主」",
                        "note": "喜用=所从之神(由L4格判)"}
         routes.append(hard_winner)
+    # ★ V7.174 专旺硬情形(PZZQ 用神五法 L960「(四)专旺。四柱之气势, 偏于一方其势不可逆,
+    #   惟有顺其气势为用」+ L4882 徐注「只可顺其气势, 引其性情以取用, 若强制之, 反激而成患」
+    #   + DTS L170-172「独象喜行化地」【原注】「所生者为化神, 化神宜旺」):
+    #   special 层已判 zhuanwang(曲直/炎上/稼穑/从革/润下) 且 日主旺极(当令+根气厚)
+    #   -> 顺气势取【日主所生=化神】为用, 压过调候(逆势候神=「强制之反激而成患」).
+    #   真值: DT盘 癸酉甲子癸亥辛酉(润下水旺极) 原断「大取金水运, 不取火土」——
+    #   旧链调候取丙火(逆势)与原断相反; 专旺通道顺化神(木)与顺势金水不悖(金生水亦顺).
+    _sp_zw = (facts.get("special") or {})
+    _zw_name = _sp_zw.get("zhuanwang") or ""
+    _dm_wx_zw = facts.get("daymaster_element", "") or ""
+    _dm_row_zw = (_wp_el_pre := ((facts.get("wuxing_power") or {}).get("wuxing_power") or {})).get(_dm_wx_zw) or {}
+    _dm_ling_zw = _dm_row_zw.get("ling_state") == "旺"
+    _dm_mass_zw = sum(int(_dm_row_zw.get(k, 0) or 0) for k in ("ben_n", "zhong_n", "yu_n", "stem_n"))
+    if _zw_name and _dm_ling_zw and _dm_mass_zw >= 3 and not hard_winner:
+        _hua_zw = SHENG.get(_dm_wx_zw, "")   # 化神=日主所生(DTS L172)
+        hard_winner = {"route": "专旺", "shen": _hua_zw,
+                       "basis": "PZZQ L960「(四)专旺。四柱之气势偏于一方其势不可逆, 惟有顺其气势为用」+ L4882 徐注「若强制之, 反激而成患」+ DTS L170-172「独象喜行化地」",
+                       "note": "专旺势成, 顺气势取化神(%s所生=%s); 逆势候神/克泄皆忌" % (_dm_wx_zw, _hua_zw)}
+        routes.append(hard_winner)
     # 寒燥极偏枯: 调候方向命中 且 局偏枯 → DTS L298 明文硬情形
     #   偏枯判据(DTS L298「过于燥/湿皆偏枯」): 候神 mass 小于局最旺五行 → 候神被压需调候;
     #   候神=局最旺(不偏枯)则不判调候(如 DT-0437 局火旺, 归格局/扶抑), 防调候抢格局
@@ -498,6 +517,52 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
                     'routing': _rt,   # ★ 第4层 程级路由
                     'boundary_note': 'V7.168: 无病盘路由层已判调候硬情形赢(DTS L298/L295), 候神升 primary; 喜忌闲三桶照 _rt 派生; 源2/3/4/5 不再走(调候硬情形优先于格体喜神)'}
+        # ★ V7.174 专旺硬情形消费(路由层 winner_route=='专旺', 化神须落 primary):
+        #   无病分支同调候一样消费专旺 winner —— 顺气势化神升 primary(kind=专旺),
+        #   忌桶=克泄日主与克化神者(逆势=「强制之反激而成患」, PZZQ L4882);
+        #   喜桶=化神+日主同类(顺气势); 三桶照 _rt 派生不另造.
+        if _rt_wr == '专旺' and _rt_ws:
+            _dm_zw = facts.get('daymaster_element', '') or ''
+            _xjj_zw = _rt.get('xiji_xian') or {}
+            _xi_bkt_zw = [w for w in (_xjj_zw.get('xi_wx') or []) if w]
+            if _rt_ws not in _xi_bkt_zw:
+                _xi_bkt_zw.append(_rt_ws)
+            if _dm_zw and _dm_zw not in _xi_bkt_zw:
+                _xi_bkt_zw.append(_dm_zw)   # 日主同类亦顺势(从旺喜比劫禄刃)
+            _ji_bkt_zw = [w for w in (_xjj_zw.get('ji_wx') or []) if w]
+            # 逆势忌: 克日主者(KE_BACK[dm]) + 克化神者(KE_BACK[hua]) 入忌
+            for _bad_zw in (KE_BACK.get(_dm_zw, ''), KE_BACK.get(_rt_ws, '')):
+                if _bad_zw and _bad_zw not in _ji_bkt_zw and _bad_zw != _rt_ws and _bad_zw != _dm_zw:
+                    _ji_bkt_zw.append(_bad_zw)
+            _conflict_zw = [w for w in _ji_bkt_zw if w in _xi_bkt_zw]
+            _xi_bkt_zw = [w for w in _xi_bkt_zw if w not in _conflict_zw]
+            _ji_bkt_zw = [w for w in _ji_bkt_zw if w not in _conflict_zw]
+            _xian_bkt_zw = list(_conflict_zw)
+            _wp_el_zw = (facts.get('wuxing_power') or {}).get('wuxing_power') or {}
+            _present_zw = [w for w in ('木', '火', '土', '金', '水')
+                           if (_wp_el_zw.get(w) or {}).get('stem_n', 0)
+                           or (_wp_el_zw.get(w) or {}).get('ben_n', 0)
+                           or (_wp_el_zw.get(w) or {}).get('zhong_n', 0)
+                           or (_wp_el_zw.get(w) or {}).get('yu_n', 0)]
+            for w in _present_zw:
+                if w in _xi_bkt_zw or w in _ji_bkt_zw or w in _xian_bkt_zw or w == _rt_ws:
+                    continue
+                _xian_bkt_zw.append(w)
+            return {'layer': 'YONGYAO_RESOLVE', 'state': 'ZHUANWANG_HARD_WINNER',
+                    'primary_medicine': {'wuxing': _rt_ws, 'gan': list(WX_GAN.get(_rt_ws, ())),
+                                          'function': '专旺顺气势化神(独象喜行化地, 化神要昌)',
+                                          'kind': '专旺',
+                                          'classic': 'PZZQ L960「(四)专旺。四柱之气势偏于一方其势不可逆, 惟有顺其气势为用」+ L4882「若强制之, 反激而成患」+ DTS L170-172「独象喜行化地」',
+                                          'blocked': None},
+                    'auxiliary_medicine': [],
+                    'ji_shen': _ji_bkt_zw,
+                    'xiji_xian': {'xi_wx': _xi_bkt_zw, 'ji_wx': _ji_bkt_zw, 'xian_wx': _xian_bkt_zw,
+                                  'basis': 'PZZQ L960 专旺顺气势 + L3208/L2319 查表; DTS L404 闲=局中余集'},
+                    'rejected_climate': rejected_climate,
+                    'yuanliu_yongshen': _yl,
+                    'tiaohou_yongshen': _th,
+                    'routing': _rt,
+                    'boundary_note': 'V7.174: 专旺势成, 路由层顺气势取化神赢(PZZQ L960), 化神升 primary; 忌=克日主/克化神(逆势); 源2/3/4/5 不再走'}
         # [2026-10-08 PATCH-GE2YO] 源1(病药主病)空 → fallback 源2(格体喜神 xi_wx) + 源3(格局所需神)
         #   架构 §2.9: 用神层 = 五域药方 + L4 格体喜神 取用神。
         #   源1 空(病0→无主病)时, 走 ge_cheng.xi_wx(格成喜神) / ge_cheng.zhi_wx(格破救应神)。

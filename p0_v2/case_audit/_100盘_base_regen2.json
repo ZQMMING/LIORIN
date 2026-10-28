@@ -6,7 +6,7 @@
       "gender": null,
       "ge": "阳刃格",
       "xi_wx": [],
-      "winner_shen": null
+      "winner_shen": "火"
     },
     {
       "cid": "QT-0327",
@@ -314,7 +314,7 @@
       "gender": null,
       "ge": "阳刃格",
       "xi_wx": [],
-      "winner_shen": "水"
+      "winner_shen": "土"
     },
     {
       "cid": "DT-0062",
@@ -755,7 +755,7 @@
       "xi_wx": [
         "水"
       ],
-      "winner_shen": null
+      "winner_shen": "水"
     },
     {
       "cid": "QT-0519",
@@ -953,6 +953,6 @@
       "winner_shen": null
     }
   ],
-  "note": "V7.163 基线重生成(三项待裁裁决落地: 从官格并入从杀/四柱纯然口径/从儿须无根), 变更 11 盘",
+  "note": "V7.174 基线重生成(专旺硬情形通道: zhuanwang+日主旺极 -> 顺气势化神升 primary), 变更 3 盘",
   "tree": "commit after 055ea7fa"
 }
