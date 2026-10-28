@@ -1,0 +1,29 @@
+﻿==== PATCH-023C Conflict Namespace Registry ====
+
+==== 概念拆分 ====
+  strength: DTS.strength_relation, PZZQ.strength_condition, QTBJ.climate_condition
+  wang: DTS.wang_relation, YHZP.wang_expression；QTBJ(forbidden:wang_state)
+  qiang: PZZQ.strength_condition, DTS.strength_relation
+  用: PZZQ.use_god, SFTK.qu_yong, QTBJ.climate_use
+  病: SFTK.problem, DTS.problem_concept
+  清: PZZQ.qing_za, DTS.qing_zhuo
+  浊: PZZQ.qing_za, DTS.qing_zhuo
+
+==== 1983-1103 namespace 解析 ====
+  DTS.strength [trend]: allowed={"trend_state": "PENDING", "support_relation": "SUPPORT_PRESENT(水透三)", "control_relation": "CONTROL_PRESENT(戌辛)", "drain_relation": "DRAIN_PRESENT(午丁泄/戌未土耗)", "root_relation": "WEAK_ROOT(亥甲+未乙)", "order_state": "NOT_GET_ORDER"}
+      forbidden(未消费): 无
+  PZZQ.strength [structure]: allowed={"order_state": "NOT_GET_ORDER", "month_order": "戌", "ten_god_relation": "偏印正印比肩正印", "structure_relation": "UNDETERMINED", "root_relation": "WEAK_ROOT(亥甲+未乙)"}
+      forbidden(未消费): 无
+  QTBJ.strength [climate]: allowed={"seasonal_state": "QTBJ_REQUIRED", "month_order": "戌", "daymaster": "乙木", "climate_relation": "UNDETERMINED"}
+      forbidden(未消费): ['strength_state', 'wang_state', 'qiang_state']
+
+==== Rule Matcher 前置校验 ====
+  R1: inputs=['DTS.strength_relation', 'PZZQ.strength_condition'] → ok=['DTS.strength_relation', 'PZZQ.strength_condition'] bad=[]
+  R2: inputs=['QTBJ.climate_condition'] → ok=['QTBJ.climate_condition'] bad=[]
+  R3: inputs=['strength'] → ok=[] bad=[('strength', 'REJECT: 裸 surface 未带经典 namespace 前缀')]
+  R4: inputs=['water_many'] → ok=[] bad=[('water_many', 'REJECT: 裸 surface 未带经典 namespace 前缀')]
+  R5: inputs=['印多'] → ok=[] bad=[('印多', 'REJECT: 裸 surface 未带经典 namespace 前缀')]
+
+==== 全局禁令 ====
+  水三透=身强 → REJECT（现象→结论未过 namespace 推理链）
+  乙木戌月=乙木弱 → REJECT（QTBJ 禁读 strength/wang/qiang）

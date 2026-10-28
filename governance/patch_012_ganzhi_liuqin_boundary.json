@@ -1,0 +1,70 @@
+{
+  "contract_id": "PATCH-012",
+  "name": "Ganzhi/六亲/神煞·命例 边界与 Rule Modeling",
+  "status": "FROZEN_DRAFT",
+  "purpose": "PATCH-012：干支组合 Rule Candidate（YHZP/PZZQ/QTBJ/SFTK）+ 六亲 Rule Candidate（六书配属，DTS 反局六亲独立）+ 神煞 EXCLUDED + 命例 REFERENCE_ONLY 边界冻结。所有 Rule Candidate PENDING_GOLDEN。",
+  "parent": "PATCH-011（1e05ae5f）",
+  "section_A_ganzhi": {
+    "concept_boundaries": {
+      "COMBO_RULE": {
+        "definition": "干支组合断语（看日主→提纲→财官；刑冲会合；地支成局）——日时断语为条件变量，不得作组合总纲",
+        "primary_sources": ["YHZP-131-001（A）", "PZZQ-005-006（A 刑冲会合）", "QTBJ-048-002（A 地支成局）", "SFTK-119-002（A 入墓冲/刑冲）"],
+        "forbidden": ["日时断语→通用规则", "SMTH-030-002（黨盛為強）引用不实不得再入"]
+      }
+    },
+    "rule_candidates": [
+      {"rule_id": "RULE-G-001", "status": "PENDING_GOLDEN", "classical_scope": "YHZP", "source_ids": ["YHZP-131-001"], "condition": "看日主→提纲→财官（原文逐字）", "output": "ganzhi_combo_candidate", "excluded": ["断语泛化"]},
+      {"rule_id": "RULE-G-002", "status": "PENDING_GOLDEN", "classical_scope": "PZZQ", "source_ids": ["PZZQ-005-006"], "condition": "刑冲会合定义（原文逐字）", "output": "xing_chong_hui_candidate", "excluded": ["刑冲=直接吉凶"]},
+      {"rule_id": "RULE-G-003", "status": "PENDING_GOLDEN", "classical_scope": "QTBJ", "source_ids": ["QTBJ-048-002"], "condition": "地支成局组合（条件断语原文）", "output": "di_zhi_cheng_ju_candidate", "excluded": ["成局=贵 泛化"]},
+      {"rule_id": "RULE-G-004", "status": "PENDING_GOLDEN", "classical_scope": "SFTK", "source_ids": ["SFTK-119-002"], "condition": "干支组合断语（入墓冲/刑冲，原文逐字）", "output": "ganzhi_combo_candidate（SFTK 域）", "excluded": ["断语脱离语境"]}
+    ],
+    "golden_cases": [
+      {"case_id": "GOLDEN-012-01", "title": "地支成局", "verify_forbidden": ["成局=贵"], "expected": "登记组合候选，需配合旺衰/用神条件"},
+      {"case_id": "GOLDEN-012-02", "title": "刑冲会合", "verify_forbidden": ["刑冲=吉凶"], "expected": "登记关系，不直接断吉凶"}
+    ]
+  },
+  "section_B_liu_qin": {
+    "concept_boundaries": {
+      "SIX_RELATION_BASE": {
+        "definition": "六亲配属（印母/财父/官子女/年祖月父母日夫妻时子女）",
+        "primary_sources": ["YHZP-102-001（A）", "PZZQ-007-012（A 用神配）", "QTBJ-111-002（A）", "SMTH-047-001（A）", "SFTK-007-002（A 宫位）"],
+        "forbidden": ["六亲断语跨书混用"]
+      },
+      "DTS_FAN_JU_LIU_QIN": {
+        "definition": "反局六亲（君赖臣/母慈灭子）——结构层独立",
+        "primary_source": "DTS-045-001（A）",
+        "forbidden": ["母慈灭子=通用六亲"]
+      }
+    },
+    "rule_candidates": [
+      {"rule_id": "RULE-L-001", "status": "PENDING_GOLDEN", "classical_scope": "YHZP", "source_ids": ["YHZP-102-001"], "condition": "六亲配属（印母/财父/官子女，原文逐字）", "output": "six_relation_candidate", "excluded": ["配属=吉凶"]},
+      {"rule_id": "RULE-L-002", "status": "PENDING_GOLDEN", "classical_scope": "SFTK", "source_ids": ["SFTK-007-002"], "condition": "六亲宫位（年祖月父母日夫妻时子女，原文逐字）", "output": "six_relation_palace_candidate", "excluded": ["宫位断语泛化"]},
+      {"rule_id": "RULE-L-003", "status": "PENDING_GOLDEN", "classical_scope": "DTS", "source_ids": ["DTS-045-001"], "condition": "反局六亲（君赖臣/母慈灭子，原文逐字）", "output": "fan_ju_liuqin_candidate（DTS 结构层）", "excluded": ["母慈灭子=通用六亲"]}
+    ],
+    "golden_cases": [
+      {"case_id": "GOLDEN-012-03", "title": "印母财父", "verify_forbidden": ["六亲=吉凶"], "expected": "配属登记，待格局条件"},
+      {"case_id": "GOLDEN-012-04", "title": "母慈灭子", "verify_forbidden": ["反局=通用六亲"], "expected": "DTS 结构层独立登记"}
+    ]
+  },
+  "section_C_boundary_freeze": {
+    "shen_sha": {
+      "status": "EXCLUDED_FROM_RULE",
+      "allowed": ["文献检索", "参考展示"],
+      "forbidden": ["命局核心裁决", "用神判断", "吉凶自动输出"],
+      "note": "六部原文神煞体系混杂、后世添加过多（003B 已固化）"
+    },
+    "ming_li": {
+      "status": "REFERENCE_ONLY",
+      "allowed": ["Rule 验证", "Golden Case", "Regression Test"],
+      "forbidden": ["从命例反推规则"],
+      "note": "evidence_grade 上限 REFERENCE，须与原文纲领绑定"
+    }
+  },
+  "acceptance_criteria": [
+    "干支组合 4 Candidate PENDING_GOLDEN（source 可回查）",
+    "六亲 3 Candidate PENDING_GOLDEN（source 可回查）",
+    "神煞 EXCLUDED、命例 REFERENCE_ONLY 边界冻结",
+    "Golden 4 个",
+    "禁日时断语泛化/六亲跨书混用"
+  ]
+}

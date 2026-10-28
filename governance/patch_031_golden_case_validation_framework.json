@@ -1,0 +1,42 @@
+{
+  "contract_id": "PATCH-031",
+  "name": "Golden Case Validation Framework（金标准案例验证框架）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "定义什么情况下允许规则进入真实执行环境：Golden Case=Canonical Input+Admitted Rules+Expected Trace+Expected State（非人工经验案例）。用于验证 Producer 稳定/Rule 漂移/Namespace 污染/Runtime 未注册输出。",
+  "golden_case_schema": {
+    "required_fields": ["case_id", "input_version", "canonical_input", "admitted_rules", "expected_states", "expected_trace", "forbidden_outputs", "regression_gate"],
+    "note": "Golden Case 必须是：命盘输入锁定 + 已准入规则 + 预期状态 + 预期 evidence trace"
+  },
+  "canonical_case": {
+    "case_id": "GC-001",
+    "input_version": "V1",
+    "canonical_input": "1983-11-03 11:30 男 广东中山 → 癸亥 壬戌 乙未 壬午；日主乙木；藏干 亥(壬甲)戌(戊辛丁)未(己丁乙)午(丁己)；十神 癸偏印/壬正印/乙比肩/壬正印",
+    "note": "输入版本锁定：排盘层任何变更须升 input_version（V2…），旧 case 保留不覆盖"
+  },
+  "expected_states": {
+    "order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT", "support_state": "SUPPORT_PRESENT",
+    "wang_state": "UNKNOWN（ABSTAIN）", "shuai_state": "SHUAI（MATCHED）", "qiang_state": "UNKNOWN（ABSTAIN）",
+    "strength_state": "UNDETERMINED", "pattern_state": "UNDETERMINED（月令入口=财格候选）",
+    "use_god_state": "UNDETERMINED", "qu_yong_state": "UNDETERMINED", "climate_use_state": "UNDETERMINED",
+    "climate_state": "UNDETERMINED"
+  },
+  "expected_trace": {
+    "shuai_state": {"producer": "024", "evidence_chain": ["EVID-001"], "match_result": "MATCHED", "rule": "CAND-SHUAI-001"},
+    "wang_state": {"producer": "024", "evidence_chain": ["EVID-001"], "match_result": "ABSTAIN"},
+    "strength_state": {"producer": "024", "evidence_chain": [], "match_result": "UNKNOWN"}
+  },
+  "forbidden_outputs": {
+    "strength_state ∈ {STRONG, SLIGHTLY_STRONG, NEUTRAL, SLIGHTLY_WEAK, WEAK}", "pattern_state 已成立（非 UNDETERMINED）", "任一用神已确定", "climate_type ∈ {寒,暖,燥,湿} 具体判定", "未经注册输出字段（无 rule/evidence 支撑的结论）"
+  },
+  "regression_gate": {
+    "purpose": "防回退：Producer 稳定（state 不变）/ Rule 不漂移（match_result 不变）/ Namespace 不污染（trace 不变）/ Runtime 不越权（无 forbidden 输出）",
+    "on_failure": "FAIL_CLOSED：禁止升级为真实执行；先定位漂移层（Producer/Rule/Namespace/Runtime）再修复"
+  },
+  "acceptance_criteria": [
+    "Golden Case schema 六字段冻结",
+    "GC-001 命盘版本锁定（V1，变更须升级版本）",
+    "预期状态+预期 trace 锁定",
+    "forbidden_outputs 断言（防越权）",
+    "Regression 门：四层漂移检测（Producer/Rule/Namespace/Runtime）"
+  ]
+}

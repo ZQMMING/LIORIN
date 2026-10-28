@@ -1,0 +1,48 @@
+﻿==== PATCH-032 Rule Construction（阶段 D 第一批） ====
+
+==== 1983-11-03 命局 ====
+  癸亥 壬戌 乙未 壬午 | 日主乙木 | 月令戌(藏戊辛丁)
+
+==== RULE-032-01 PZZQ 月令取用 ====
+{
+ "rule_id": "RULE-032-01",
+ "namespace": "PZZQ.use_god",
+ "month_benqi": "戊",
+ "ten_god": "财",
+ "use_mode": "顺用",
+ "use_god_state": "CANDIDATE(财)",
+ "pattern_state": "CANDIDATE(财格)",
+ "evidence": [
+  "EVID-011",
+  "EVID-015",
+  "EVID-016",
+  "EVID-017"
+ ],
+ "note": "戌为杂气财库；财不透干（天干无戊），地支戌未双财库+午未合，成格待 structure 确认（PZZQ-007-006 透干会支）"
+}
+
+==== RULE-032-02 QTBJ 九月乙木调候 ====
+{
+ "rule_id": "RULE-032-02",
+ "namespace": "QTBJ.climate_use",
+ "climate_use_state": "DETERMINED(癸水)",
+ "condition": "癸透+辛藏发水源",
+ "ren_visible": 2,
+ "ren_limit": "四柱壬多水難生乙（断语层待综合，不影响调候用神）",
+ "evidence": [
+  "EVID-018"
+ ],
+ "note": "九月乙木必赖癸水滋养；本命癸透年干+戌中辛发水之源→调候用神癸水确定"
+}
+
+==== 输出汇总（1983-1103） ====
+  use_god_state    = CANDIDATE(财)
+  pattern_state    = CANDIDATE(财格)
+  climate_use_state= DETERMINED(癸水)（癸透+辛藏发水源）
+  qu_yong_state    = UNDETERMINED（SFTK 病药未接线，留待 033）
+  strength_state   = UNDETERMINED（无授权综合，不变）
+
+==== 证据绑定 ====
+  EVID-011 PZZQ-005-007 專求月令 | EVID-015 PZZQ-005-009 月令藏干变化
+  EVID-016 PZZQ-007-006 杂气透干会支 | EVID-017 PZZQ-007-021 财喜根深
+  EVID-018 QTBJ-022-001 九月乙木（注意：非 QTBJ-018-001，018 是五月乙木）

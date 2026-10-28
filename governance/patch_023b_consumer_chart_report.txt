@@ -1,0 +1,52 @@
+﻿==== PATCH-023B Classical Domain Consumer Contract ====
+consumer_mode 等级: ['DIRECT', 'FACT_ONLY', 'DISPLAY_ONLY', 'SUPPORTING', 'FORBIDDEN']
+
+==== concept_namespace ====
+  strength: ['DTS.strength_relation', 'PZZQ.strength_condition', 'QTBJ.climate_condition']
+  旺: ['DTS.wang_relation', 'YHZP.wang_expression']
+  强: ['PZZQ.strength_condition', 'DTS.strength_relation']
+  用: ['PZZQ.use_god', 'SFTK.qu_yong', 'QTBJ.climate_use']
+  病: ['SFTK.problem', 'DTS.problem_concept']
+  清: ['PZZQ.qing_za', 'DTS.qing_zhuo']
+  浊: ['PZZQ.qing_za', 'DTS.qing_zhuo']
+
+==== 1983-11-03 六经典消费视图 ====
+
+  [PZZQ] mode=DIRECT
+    allowed: {"order_state": "NOT_GET_ORDER", "month_order": "戌", "ten_god_relation": {"年干": "偏印", "月干": "正印", "日干": "比肩", "时干": "正印"}, "structure_relation": "UNDETERMINED", "root_relation": "WEAK_ROOT(亥藏甲+未藏乙)"}
+    配置校验: 无（allowed 与 forbidden 无交集）
+    未消费的全局状态: 无
+    输出权限: ['pattern_state', 'use_god_state']
+
+  [DTS] mode=DIRECT
+    allowed: {"trend_state": "PENDING", "support_relation": "SUPPORT_PRESENT(水透三：癸壬壬)", "control_relation": "CONTROL_PRESENT(戌藏辛制)", "drain_relation": "DRAIN_PRESENT(午丁泄/戌未土耗)", "root_relation": "WEAK_ROOT(亥藏甲+未藏乙)", "order_state": "NOT_GET_ORDER"}
+    配置校验: 无（allowed 与 forbidden 无交集）
+    未消费的全局状态: 无
+    输出权限: ['wang_state', 'shuai_state']
+
+  [QTBJ] mode=DIRECT
+    allowed: {"seasonal_state": "QTBJ_REQUIRED", "month_order": "戌", "daymaster": "乙木", "climate_relation": "UNDETERMINED"}
+    配置校验: 无（allowed 与 forbidden 无交集）
+    未消费的全局状态: ['strength_state', 'wang_state']（命局存在但本经典禁止读取）
+    输出权限: ['seasonal_state', 'climate_relation']
+
+  [SFTK] mode=DIRECT
+    allowed: {"problem_relation": "UNDETERMINED", "support_relation": "SUPPORT_PRESENT(水透三：癸壬壬)", "control_relation": "CONTROL_PRESENT(戌藏辛制)", "structure_relation": "UNDETERMINED"}
+    配置校验: 无（allowed 与 forbidden 无交集）
+    未消费的全局状态: 无
+    输出权限: ['problem_state', 'medicine_state']
+
+  [YHZP] mode=DIRECT
+    allowed: {"ten_god_relation": {"年干": "偏印", "月干": "正印", "日干": "比肩", "时干": "正印"}, "element_relation": "WATER_VISIBLE_SUPPORT+ROOTED_SUPPORT", "root_relation": "WEAK_ROOT(亥藏甲+未藏乙)", "season_relation": "戌月"}
+    配置校验: 无（allowed 与 forbidden 无交集）
+    未消费的全局状态: 无
+    输出权限: ['ten_god_state', 'element_relation_state']
+
+  [SMTH/五行精纪] mode=SUPPORTING
+    allowed: {"time_object": "1983-11-03 11:30", "luck_cycle": "未启动", "year_cycle": "未启动"}
+    配置校验: 无（allowed 与 forbidden 无交集）
+    未消费的全局状态: 无
+    输出权限: ['luck_cycle', 'year_cycle']
+
+==== 全局禁令 ====
+  任何经典不得：水三透=身强；乙木戌月=乙木弱；跨域直判

@@ -1,0 +1,14 @@
+{
+  "__comment": "旧引擎 state → 新规格 confidence 映射。单独成文件，与 pattern_rename_v1.json 同等待遇。",
+  "CONFIRMED": "CONFIRMED",
+  "MID": "MID",
+  "CANDIDATE": "CANDIDATE",
+  "LOW": "REJECT",
+  "None": "REJECT",
+  "_default": "REJECT",
+  "_provenance": {
+    "CONFIRMED/MID/CANDIDATE": "同名映射，语义未经逐条对校",
+    "LOW→REJECT": "旧引擎无 REJECT 档，以 LOW 代之"
+  },
+  "_source_field": "pattern.state（禁止读 zhuanwang_state：走从格族时该字段为 null）"
+}

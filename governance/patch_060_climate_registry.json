@@ -1,0 +1,23 @@
+{
+  "contract_id": "PATCH-060",
+  "name": "QTBJ 调候用神注册表(日主x月令)",
+  "principle": "调候用神逐条钉QTBJ原文; climate_use_state独立于格局用神/扶抑用神; 无评分",
+  "note": "10日主x12月令骨架已映射章节, 用神字段逐格钉原文填列中",
+  "registry_status": "骨架已建, 用神PENDING逐格填",
+  "entries": {
+    "乙戌": {"sources": ["QTBJ-010-001","QTBJ-010-002","QTBJ-010-003","QTBJ-022-001"], "use": "癸", "use_grade": "A",
+            "degrade": {"壬多": "水难生乙"}, "done": true,
+            "note": "九月乙木根枯叶落必赖癸水; QTBJ-022-001已钉"},
+    "甲寅": {"sources": ["QTBJ-003-001","QTBJ-014-001"], "use": "庚丁", "done": false,
+            "note": "正月甲木用庚劈甲丁火调候, 待钉原文"},
+    "卯寅": {"sources": ["QTBJ-027-001"], "use": "壬", "done": false,
+            "note": "正月丙火专用壬水, 待钉"},
+    "其余格": {"sources": "见章节映射", "use": "PENDING", "done": false}
+  },
+  "acceptance_criteria": [
+    "每格use钉QTBJ原文(用X/专用X/取X句式)",
+    "调候用≠格局用≠扶抑用",
+    "degrade条件原文绑定",
+    "未钉格保持PENDING不猜"
+  ]
+}

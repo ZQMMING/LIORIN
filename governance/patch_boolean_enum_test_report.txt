@@ -1,0 +1,41 @@
+﻿==== Boolean + Multi-Enum Test（1983-1103 / GC-001 V1） ====
+
+==== Boolean 层（004B 白名单 6 项） ====
+  has_root = True（事实层，无业务判断）
+  has_hidden_stem = True（事实层，无业务判断）
+  has_combination = True（事实层，无业务判断）
+  has_clash = False（事实层，无业务判断）
+  has_transformation_condition = False（事实层，无业务判断）
+  has_support_relation = True（事实层，无业务判断）
+
+==== Boolean→业务判断 违规检测 ====
+  无违规：Boolean 仅事实层 ✓
+
+==== Enum 层（对照 enum_registry v1.9.2） ====
+  ✓ day_master_element = WOOD | OK
+  ✓ ten_god_type = ['偏印', '正印', '比肩', '正印'] | OK
+  ✓ order_state = NOT_GET_ORDER | OK
+  ✓ root_state = WEAK_ROOT | OK
+  ✓ root_quality = WEAK_ROOT | OK
+  ✓ support_state = SUPPORT_PRESENT | OK
+  ✓ drain_state = DRAIN_PRESENT | OK
+  ✓ control_state = CONTROL_PRESENT | OK
+  ✓ wang_state = UNKNOWN | OK
+  ✓ shuai_state = SHUAI | OK
+  ✓ qiang_state = UNKNOWN | OK
+  ✓ strength_state = UNDETERMINED | OK
+  ✓ trend_state = PENDING | OK
+  ✓ seasonal_state = QTBJ_REQUIRED | OK
+  ✓ element_relation_state = ['VISIBLE_SUPPORT', 'ROOTED_SUPPORT'] | OK
+  ✓ pattern_state = UNDETERMINED | OK
+  ✓ use_god_state = UNDETERMINED | OK
+  ✓ qu_yong_state = UNDETERMINED | OK
+  ✓ climate_use_state = UNDETERMINED | OK
+  ✓ climate_state = UNDETERMINED | OK
+  ✓ use_type = ['USE_GOD', 'QU_YONG', 'CLIMATE_USE'] | OK
+  ✓ climate_type = UNKNOWN | OK
+
+==== 汇总 ====
+  共 22 个枚举输出：OK=22 缺口=0
+  缺口类型：support_state 值域不一致（producer=SUPPORT_PRESENT vs registry=PRESENT）；
+            pattern/use_god/qu_yong/climate_use/climate_state/use_type/climate_type 未登记 registry

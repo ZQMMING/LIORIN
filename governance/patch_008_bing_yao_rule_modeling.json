@@ -1,0 +1,57 @@
+{
+  "contract_id": "PATCH-008",
+  "name": "Bing-Yao（病药）Rule Modeling",
+  "status": "FROZEN_DRAFT",
+  "purpose": "病药 Rule Candidate Registry：SFTK 病药诊断体系为主体（害神为病/去之为药/从重者论/有病无药），DTS「有病方为贵」仅概念层。禁跨书套用。所有候选 PENDING_GOLDEN。",
+  "parent": "PATCH-007",
+  "concept_boundaries": {
+    "SFTK_BING_YAO_CORE": {
+      "definition": "病=原八字中所害之神；药=得一字以去之；先看日干次看月令，从重者论；有病无药为败",
+      "primary_source": "SFTK-008-001（A）、SFTK-002-002/003（A 有病无药）",
+      "forbidden": ["病药=通用用神算法", "病药结果跨书套用"]
+    },
+    "DTS_BING_CONCEPT": {
+      "definition": "「有病方为贵，无伤不是奇」——命局缺陷→去病思想（概念层 B1）",
+      "primary_source": "DTS-017-002（B1）",
+      "forbidden": ["if DTS_bing: use_SFTK_bingyao()"]
+    }
+  },
+  "rule_candidates": [
+    {
+      "rule_id": "RULE-B-001",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "SFTK",
+      "source_ids": ["SFTK-008-001"],
+      "condition": "何以為之病？原八字中所害之神也；何以為之藥？得一字以去之（原文逐字）",
+      "output": "bing_candidate + medicine_candidate",
+      "excluded": ["病药直接判吉凶"]
+    },
+    {
+      "rule_id": "RULE-B-002",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "SFTK",
+      "source_ids": ["SFTK-008-001"],
+      "condition": "先看日干，次看月令，從重者論（原文逐字）",
+      "output": "bingyao_priority_order",
+      "excluded": ["从重=量化权重"]
+    },
+    {
+      "rule_id": "RULE-B-003",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "SFTK",
+      "source_ids": ["SFTK-002-002", "SFTK-002-003"],
+      "condition": "有病无药（原文逐字）",
+      "output": "bingyao_outcome_candidate（有病无药/有病有药）",
+      "excluded": ["无药→直接凶断"]
+    }
+  ],
+  "conflict_resolver": [
+    {"conflict": "SFTK 病药 vs DTS 病药表述", "resolution": "概念层分离；禁 if DTS_bing: use_SFTK_bingyao()"}
+  ],
+  "golden_cases": [
+    {"case_id": "GOLDEN-008-01", "title": "病药与调候并存", "verify_forbidden": ["跨书套用"], "expected": "SFTK 病药域内登记，调候独立"},
+    {"case_id": "GOLDEN-008-02", "title": "有病无药", "verify_forbidden": ["直接凶断"], "expected": "登记 outcome_candidate，待格局/调候交叉"}
+  ],
+  "blocklist": ["病药=通用用神", "从重者论→百分比权重"],
+  "acceptance_criteria": ["病药双体系边界", "3 Rule Candidate PENDING_GOLDEN", "Conflict 1 类", "Golden 2 个"]
+}

@@ -1,0 +1,996 @@
+{
+  "contract_id": "PATCH-017",
+  "name": "Golden Validation Layer（金标验证层）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "把 Rule Candidate 验证成 ADMITTED_RULE 的验证集；当前引擎未接线，全部 validation_status=PENDING_VALIDATION；反例由 excluded_transition 机械派生，不编造语义。",
+  "validation_status_values": [
+    "PENDING_VALIDATION",
+    "STATIC_PASS",
+    "GOLDEN_PASS",
+    "ADMITTED",
+    "REJECTED"
+  ],
+  "cases": [
+    {
+      "rule_id": "CAND-WANG-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "YHZP-138-001",
+      "condition": "旺=对象在时令中的兴盛状态（非力量幅度，非 STRONG）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "wang_state→STRONG",
+          "counter_example": "存在wang_state但不得输出STRONG的案例"
+        },
+        {
+          "forbidden_mapping": "wang_state→strength_state",
+          "counter_example": "存在wang_state但不得输出strength_state的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "旺=对象在时令中的兴盛状态（非力量幅度，非 STRONG）",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-WANG-002",
+      "source_patch": "PATCH-005A",
+      "source_id": "DTS-016-002",
+      "condition": "旺中有衰/衰中有旺（原注 B1，只作辅助证据，不作主判）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "CONTAINED_WANG→STRONG",
+          "counter_example": "存在CONTAINED_WANG但不得输出STRONG的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "旺中有衰/衰中有旺（原注 B1，只作辅助证据，不作主判）",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-SHUAI-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "YHZP-138-001",
+      "condition": "衰=对象在时令中的衰退状态（非 WEAK 同义词）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "shuai_state→WEAK（自动）",
+          "counter_example": "存在shuai_state但不得输出WEAK（自动）的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "衰=对象在时令中的衰退状态（非 WEAK 同义词）",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-QIANG-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "YHZP-138-001",
+      "condition": "强=关系结果（日干无气遇劫为强）；结构支撑产生，非时令直接给出",
+      "counter_example": [
+        {
+          "forbidden_mapping": "qiang_state→STRONG",
+          "counter_example": "存在qiang_state但不得输出STRONG的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "强=关系结果（日干无气遇劫为强）；结构支撑产生，非时令直接给出",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-RUO-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "—",
+      "condition": "弱=strength_state 体系端；005A 阶段不建立直接触发（无单锚），主为 UNDETERMINED",
+      "counter_example": [
+        {
+          "forbidden_mapping": "日干無氣→WEAK（直接）",
+          "counter_example": "存在日干無氣但不得输出WEAK（直接）的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "弱=strength_state 体系端；005A 阶段不建立直接触发（无单锚），主为 UNDETERMINED",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-ORDER-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "YHZP-138-001",
+      "condition": "得令=对象↔月令关系；月提得令是旺衰入口但≠强",
+      "counter_example": [
+        {
+          "forbidden_mapping": "order_state→STRONG",
+          "counter_example": "存在order_state但不得输出STRONG的案例"
+        },
+        {
+          "forbidden_mapping": "order_state→strength_state",
+          "counter_example": "存在order_state但不得输出strength_state的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "得令=对象↔月令关系；月提得令是旺衰入口但≠强",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-TIME-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "YHZP-138-001",
+      "condition": "得时=四柱无根得时为旺（旺论，非强论）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "GET_TIME→STRONG",
+          "counter_example": "存在GET_TIME但不得输出STRONG的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "得时=四柱无根得时为旺（旺论，非强论）",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-ROOT-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "YHZP-123-003",
+      "condition": "根=对象化通根关系（日主/官/财/杀/印对象不同）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "root_state→STRONG",
+          "counter_example": "存在root_state但不得输出STRONG的案例"
+        },
+        {
+          "forbidden_mapping": "root_state→favorable",
+          "counter_example": "存在root_state但不得输出favorable的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "根=对象化通根关系（日主/官/财/杀/印对象不同）",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-TREND-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "DTS-008-003",
+      "condition": "势=结构趋势状态（五阳从气不从势）；势≠强弱",
+      "counter_example": [
+        {
+          "forbidden_mapping": "trend_state→strength_state",
+          "counter_example": "存在trend_state但不得输出strength_state的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "势=结构趋势状态（五阳从气不从势）；势≠强弱",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-SEASONAL-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "QTBJ-018-001",
+      "condition": "季节状态=QTBJ 当权/失令（寒暖燥湿体系）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "seasonal_state→STRONG",
+          "counter_example": "存在seasonal_state但不得输出STRONG的案例"
+        },
+        {
+          "forbidden_mapping": "seasonal_state→统一旺衰公式",
+          "counter_example": "存在seasonal_state但不得输出统一旺衰公式的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "季节状态=QTBJ 当权/失令（寒暖燥湿体系）",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-SFTK-ROOT-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "SFTK-129-038",
+      "condition": "强杀无根（SFTK 根气对象化；杀=官杀对象）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "杀无根→身强",
+          "counter_example": "存在杀无根但不得输出身强的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "强杀无根（SFTK 根气对象化；杀=官杀对象）",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-DTS-ZHENJIA-001",
+      "source_patch": "PATCH-005A",
+      "source_id": "DTS-023-004",
+      "condition": "真神得令（DTS 真假论；真神=月令真神）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "真神得令→身强",
+          "counter_example": "存在真神得令但不得输出身强的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "真神得令（DTS 真假论；真神=月令真神）",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-S-001",
+      "source_patch": "PATCH-005C",
+      "source_id": "—",
+      "condition": "得時俱為旺論（子機賦，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "原文只授权 旺 层输出；不得越层到 STRONG",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-S-002",
+      "source_patch": "PATCH-005C",
+      "source_id": "—",
+      "condition": "失令便作衰看（子機賦，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "衰≠弱；不得自动转 WEAK",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-S-003",
+      "source_patch": "PATCH-005C",
+      "source_id": "—",
+      "condition": "四柱無根得時為旺（原文逐字：无根+得时=旺）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "无根不否定得时之旺；仍只到旺层",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-S-004",
+      "source_patch": "PATCH-005C",
+      "source_id": "—",
+      "condition": "日干無氣遇劫為強（原文逐字：无气+遇劫=强条件）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "强=关系结果；不得转 STRONG",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-001",
+      "source_patch": "PATCH-006",
+      "source_id": "PZZQ-005-007",
+      "condition": "八字用神專求月令，以日干配月令地支，格局分財官印食（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-002",
+      "source_patch": "PATCH-006",
+      "source_id": "PZZQ-005-007",
+      "condition": "財官印食順用，煞傷刃劫逆用（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-003",
+      "source_patch": "PATCH-006",
+      "source_id": "SFTK-008-001",
+      "condition": "何以為病？原八字中所害之神也；何以為藥？得一字以去之（原文逐字）；先看月令從重者論",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-004",
+      "source_patch": "PATCH-006",
+      "source_id": "QTBJ-060-001",
+      "condition": "调候取用（寒冻取丙等；必须绑定日干×月令×寒暖燥湿条件）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-005",
+      "source_patch": "PATCH-006",
+      "source_id": "DTS-019-001",
+      "condition": "通关论（DTS_SCOPE_ONLY）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-006",
+      "source_patch": "PATCH-006",
+      "source_id": "PZZQ-007-004",
+      "condition": "月令既得用神，則別位亦必有相（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-P-001",
+      "source_patch": "PATCH-007",
+      "source_id": "PZZQ-005-007",
+      "condition": "格局分財官印食（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-P-002",
+      "source_patch": "PATCH-007",
+      "source_id": "PZZQ-005-008",
+      "condition": "成格/败格条件（原文逐字；印輕逢煞为已裁决工程执行文本）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-P-003",
+      "source_patch": "PATCH-007",
+      "source_id": "PZZQ-007-002",
+      "condition": "因成得敗/因敗得成（成败互转，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-P-004",
+      "source_patch": "PATCH-007",
+      "source_id": "SFTK-082-001",
+      "condition": "凡看八字先明從化為本，從化不成方論財官，財官無取方論格（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-B-001",
+      "source_patch": "PATCH-008",
+      "source_id": "SFTK-008-001",
+      "condition": "何以為之病？原八字中所害之神也；何以為之藥？得一字以去之（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-B-002",
+      "source_patch": "PATCH-008",
+      "source_id": "SFTK-008-001",
+      "condition": "先看日干，次看月令，從重者論（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-B-003",
+      "source_patch": "PATCH-008",
+      "source_id": "SFTK-002-002",
+      "condition": "有病无药（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "无药→直接凶断",
+          "counter_example": "存在无药但不得输出直接凶断的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-T-001",
+      "source_patch": "PATCH-009",
+      "source_id": "QTBJ-060-001",
+      "condition": "寒冻取丙（必须绑定日干×月令条件）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-T-002",
+      "source_patch": "PATCH-009",
+      "source_id": "QTBJ-109-001",
+      "condition": "冰冻结冻用丙（绑定日干×月令）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-T-003",
+      "source_patch": "PATCH-009",
+      "source_id": "SFTK-061-006",
+      "condition": "微寒用火温暖（四时调候，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Q-001",
+      "source_patch": "PATCH-010",
+      "source_id": "DTS-023-001",
+      "condition": "真假论（命之真者得令，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "真假→身强",
+          "counter_example": "存在真假但不得输出身强的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Q-002",
+      "source_patch": "PATCH-010",
+      "source_id": "DTS-022-002",
+      "condition": "並無傷官七煞混之…乃為清奇（B1）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Q-003",
+      "source_patch": "PATCH-010",
+      "source_id": "PZZQ-007-005",
+      "condition": "透干會支，取其清者用之，雜而不雜（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-C-001",
+      "source_patch": "PATCH-011",
+      "source_id": "SFTK-082-001",
+      "condition": "先明從化為本，從化不成方論財官，財官無取方論格（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-C-002",
+      "source_patch": "PATCH-011",
+      "source_id": "SFTK-020-002",
+      "condition": "弃命从财（原文逐字条件）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-C-003",
+      "source_patch": "PATCH-011",
+      "source_id": "SFTK-012-002",
+      "condition": "弃命从杀（原文逐字条件）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-C-004",
+      "source_patch": "PATCH-011",
+      "source_id": "YHZP-122-004",
+      "condition": "化气十段锦（合化条件原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SW-001",
+      "source_patch": "PATCH-013",
+      "source_id": "YHZP-016-001",
+      "condition": "十二长生十二宫定名（长生沐浴冠带临官帝旺衰病死墓绝胎养，阳顺阴逆，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "→力量百分比",
+          "counter_example": "存在但不得输出力量百分比的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SW-002",
+      "source_patch": "PATCH-013",
+      "source_id": "YHZP-015-002",
+      "condition": "十二长生逐干（阳顺阴逆，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SW-003",
+      "source_patch": "PATCH-013",
+      "source_id": "QTBJ-002-003",
+      "condition": "生旺死绝方位宜忌（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "方位→通用吉凶",
+          "counter_example": "存在方位但不得输出通用吉凶的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SW-004",
+      "source_patch": "PATCH-013",
+      "source_id": "SFTK-020-041",
+      "condition": "伤官行运旺相吉死墓凶（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-DZ-001",
+      "source_patch": "PATCH-014",
+      "source_id": "DTS-057-001",
+      "condition": "午之黨多，干頭助子必凶（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-DZ-002",
+      "source_patch": "PATCH-014",
+      "source_id": "PZZQ-007-027",
+      "condition": "煞旺身健（党众为结构条件，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "煞旺→身强",
+          "counter_example": "存在煞旺但不得输出身强的案例"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-DZ-003",
+      "source_patch": "PATCH-014",
+      "source_id": "QTBJ-048-002",
+      "condition": "地支成局（党众之会局，条件断语原文）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-DZ-004",
+      "source_patch": "PATCH-014",
+      "source_id": "SFTK-011-054",
+      "condition": "众土党众（病药语境，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SS-001",
+      "source_patch": "PATCH-015",
+      "source_id": "YHZP-138-001",
+      "condition": "子機賦十神体系（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SS-002",
+      "source_patch": "PATCH-015",
+      "source_id": "PZZQ-005-007",
+      "condition": "財官印食順用，煞傷刃劫逆用（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SS-003",
+      "source_patch": "PATCH-015",
+      "source_id": "QTBJ-111-003",
+      "condition": "十神条件断语（印逢官/官逢印，须绑定月日干支条件，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-WX-001",
+      "source_patch": "PATCH-016",
+      "source_id": "QTBJ-001-001",
+      "condition": "五行总论（寒生水/热生火/风生木/燥生金/湿生土；相生相维相尅相制，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-WX-002",
+      "source_patch": "PATCH-016",
+      "source_id": "YHZP-118-006",
+      "condition": "五行主性（水主寒，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-WX-003",
+      "source_patch": "PATCH-016",
+      "source_id": "QTBJ-001-002",
+      "condition": "五行色数配属（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-G-001",
+      "source_patch": "PATCH-012",
+      "source_id": "YHZP-131-001",
+      "condition": "看日主→提纲→财官（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-G-002",
+      "source_patch": "PATCH-012",
+      "source_id": "PZZQ-005-006",
+      "condition": "刑冲会合定义（原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-G-003",
+      "source_patch": "PATCH-012",
+      "source_id": "QTBJ-048-002",
+      "condition": "地支成局组合（条件断语原文）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-G-004",
+      "source_patch": "PATCH-012",
+      "source_id": "SFTK-119-002",
+      "condition": "干支组合断语（入墓冲/刑冲，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-L-001",
+      "source_patch": "PATCH-012",
+      "source_id": "YHZP-102-001",
+      "condition": "六亲配属（印母/财父/官子女，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-L-002",
+      "source_patch": "PATCH-012",
+      "source_id": "SFTK-007-002",
+      "condition": "六亲宫位（年祖月父母日夫妻时子女，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-L-003",
+      "source_patch": "PATCH-012",
+      "source_id": "DTS-045-001",
+      "condition": "反局六亲（君赖臣/母慈灭子，原文逐字）",
+      "counter_example": [
+        {
+          "forbidden_mapping": "(无显式禁转换)",
+          "counter_example": "结构层候选，验证输出枚举合法性"
+        }
+      ],
+      "conflict_case": "NONE",
+      "expected_boundary": "",
+      "validation_status": "PENDING_VALIDATION"
+    }
+  ],
+  "global_counter_examples": [
+    {
+      "case_id": "GC-WQ-001",
+      "title": "旺≠强",
+      "inputs": {
+        "wang_state": "WANG"
+      },
+      "verify_forbidden": [
+        "wang→strong",
+        "wang→STRONG"
+      ],
+      "expected_boundary": "旺层与强弱层隔离"
+    },
+    {
+      "case_id": "GC-DL-001",
+      "title": "得令≠强",
+      "inputs": {
+        "order_state": "GET_ORDER",
+        "root_state": {
+          "object": "DAYMASTER",
+          "value": "NO_ROOT"
+        }
+      },
+      "verify_forbidden": [
+        "GET_ORDER→STRONG"
+      ],
+      "expected_boundary": "得令只到 order 层"
+    },
+    {
+      "case_id": "GC-YG-001",
+      "title": "有根≠强",
+      "inputs": {
+        "root_state": {
+          "object": "DAYMASTER",
+          "value": "HAS_ROOT"
+        }
+      },
+      "verify_forbidden": [
+        "root→STRONG"
+      ],
+      "expected_boundary": "根对象化，不直接产强弱"
+    },
+    {
+      "case_id": "GC-TH-001",
+      "title": "调候≠旺衰",
+      "inputs": {
+        "seasonal_state": "寒暖成立"
+      },
+      "verify_forbidden": [
+        "seasonal→STRONG"
+      ],
+      "expected_boundary": "调候独立域"
+    },
+    {
+      "case_id": "GC-BY-001",
+      "title": "病药≠用神",
+      "inputs": {
+        "bingyao": "有病药关系"
+      },
+      "verify_forbidden": [
+        "病药→直接取用神"
+      ],
+      "expected_boundary": "病药与用神分离登记"
+    }
+  ]
+}

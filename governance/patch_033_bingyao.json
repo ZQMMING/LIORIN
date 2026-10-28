@@ -1,0 +1,30 @@
+{
+  "contract_id": "PATCH-033",
+  "name": "SFTK 病药规则（RULE-033-01，qu_yong_state 出值）",
+  "status": "RULE_CONSTRUCTED",
+  "evidence": [
+    {"source_id": "SFTK-008-001", "grade": "A", "quotation": "何以爲之病？原八字中原有所害之神也。何以爲之藥？如八字原有所害之字而得一字以去之之謂也……如用財見比肩爲病，喜官殺爲藥也"},
+    {"source_id": "SFTK-009-002", "grade": "A", "quotation": "日主太弱宜行身旺之地……弱而有根則官星雖弱而可致其旺財星雖弱而可致其強"},
+    {"source_id": "SFTK-008-001", "grade": "A", "text_variant": "底本『四柱純土……水日干則爲財多身弱』疑为『木日干』（木克土=财；水日干土=杀见前句殺重身輕）——工程按木日干采信，登记异文 S1 待 Human 裁决"}
+  ],
+  "rules": [
+    {
+      "rule_id": "RULE-033-01",
+      "name": "SFTK 病药：财多身弱→印比帮身",
+      "namespace": "SFTK.qu_yong",
+      "producer": "026 qu_yong_state",
+      "input_contract": {"day_master_wuxing": "木", "month_benqi": "土（=日主所克=财）", "day_master_order": "失令"},
+      "logic": "月令本气=日主所克（财星当令）+日主失令弱根 → 病=财多身弱（SFTK-008-001 木日干四柱土重例）；药=印比帮身（SFTK-009-002 日主太弱宜行身旺之地）",
+      "output_state": "qu_yong_state=DETERMINED(病=财多身弱,药=印比帮身)",
+      "chart_1983": {"qu_yong_state": "DETERMINED(病=财多身弱,药=印比帮身)", "yao_in_chart": "印透三（癸壬壬）已在局中", "secondary": "比劫仅支藏（亥甲/未乙）为日主之根，未成夺财重病（SFTK-008-001 用財見比肩喜官殺 登记次病）", "bijie_tou": 0}
+    }
+  ],
+  "gc001_update": {"qu_yong_state": "UNDETERMINED → DETERMINED(病=财多身弱,药=印比帮身)"},
+  "text_variant_registered": "S1（SFTK-008-001 水/木日干）→ text-variant-schema.md，PENDING 待 Human 取证裁决",
+  "acceptance_criteria": [
+    "RULE-033-01：1983 qu_yong=DETERMINED(病=财多身弱,药=印比帮身)",
+    "日干自身不计比劫（修正 bijie_tou=0）",
+    "异文 S1 登记且工程口径=木日干",
+    "GC-001 回归通过、枚举 22/22"
+  ]
+}

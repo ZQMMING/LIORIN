@@ -1,0 +1,21 @@
+{
+  "contract_id": "PATCH-068",
+  "name": "Climate State Enum + Output Contract",
+  "climate_state_enum": ["PRIMARY", "SECONDARY", "SUPPORTING", "DEGRADED", "ABSENT"],
+  "enum_principle": "降级≠失效: DEGRADED保留PRIMARY+降级原因, 不输出ABSENT/FAILED",
+  "output_contract": {
+    "state": "climate_use_state",
+    "primary": {"element": "癸", "status": "DEGRADED"},
+    "secondary": [],
+    "avoid": [],
+    "evidence_chain": ["QTBJ-022-001"],
+    "condition_trace": ["乙日", "戌月", "壬透二"],
+    "namespace": "QTBJ.climate_use"
+  },
+  "gc001_expected": {
+    "primary": {"element": "癸", "status": "DEGRADED"},
+    "condition_trace": ["乙日", "戌月", "壬透二"],
+    "note": "PRIMARY+DEGRADED_REASON, 非ABSENT"
+  },
+  "forbidden": ["百分比", "评分", "strength_state污染", "调候用=格局用"]
+}

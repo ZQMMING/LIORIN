@@ -1,0 +1,18 @@
+{
+  "registry_id": "TRANSPARENT_CONDITION_REGISTRY_V1",
+  "version": "1.0",
+  "principle": "透干条件->目标十神->L0 month_transparent; 无可靠目标=>UNKNOWN",
+  "conditions": {
+    "财透": {"target_ten_god": "正财"},
+    "官透": {"target_ten_god": "正官"},
+    "印透": {"target_ten_god": "正印"},
+    "食神透": {"target_ten_god": "食神"},
+    "伤官透": {"target_ten_god": "伤官"},
+    "杀透": {"target_ten_god": "七杀"},
+    "官杀透": {"predicate": "multi_target", "eval": "NOT_IMPLEMENTED"},
+    "财官双透": {"predicate": "multi_target", "eval": "NOT_IMPLEMENTED"},
+    "见财": {"source": "anywhere", "target_category": "财"},
+    "见印": {"source": "anywhere", "target_category": "印"},
+    "见官": {"source": "anywhere", "target_category": "官"}
+  }
+}

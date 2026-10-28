@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wisdom.shuntian/schema/engine_result.schema.json",
+  "title": "EngineResult",
+  "description": "V2.2.2 FINAL §70 所有引擎最终统一输出结构。canonical_input 优先使用 ref/hash，不复制可变 Chart。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["engine", "status", "canonical_input", "facts", "assertions", "judgments", "signals", "evidence", "provenance", "divergences", "metadata"],
+  "properties": {
+    "engine": {
+      "type": "string",
+      "enum": [
+        "YUHAI_ZIPING", "ZIPING_ZHENQUAN", "DITIANSUI",
+        "QIONGTONG_BAOJIAN", "SANMING_TONGHUI", "SHENFENG_TONGKAO"
+      ]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["PASS", "UNKNOWN", "CLASSICAL_DIVERGENCE", "FAIL", "FAIL_CLOSED"],
+      "description": "§71：RULE_NOT_APPLICABLE 不是 Engine Final Status，属于 Rule Match State"
+    },
+    "canonical_input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "hash"],
+      "properties": {
+        "ref": { "type": "string", "minLength": 1 },
+        "hash": { "type": "string", "minLength": 8 }
+      }
+    },
+    "facts": {
+      "type": ["array", "object"],
+      "description": "§70 统一结构为 array；§B-3 等引擎契约允许 object 分组（如 YHZP ten_god_facts/six_relative_facts/…）"
+    },
+    "assertions": { "type": "array", "items": { "type": "object" } },
+    "judgments": { "type": "array", "items": { "type": "object" } },
+    "signals": { "type": "array", "items": { "type": "object" } },
+    "evidence": { "type": "array", "items": { "type": "object" } },
+    "provenance": { "type": "array", "items": { "type": "object" } },
+    "divergences": { "type": "array", "items": { "type": "object" } },
+    "metadata": { "type": "object", "additionalProperties": true }
+  }
+}

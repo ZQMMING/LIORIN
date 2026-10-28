@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wisdom.shuntian/schema/source.schema.json",
+  "title": "SourceRecord",
+  "description": "V2.2.2 FINAL Phase 3 Source Registry 记录。来源必须可追溯至经典原著，证据链只准古书原文逐字；现代注记不得入正文。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_id",
+    "engine",
+    "book",
+    "chapter",
+    "text_id",
+    "text_layer",
+    "source_text",
+    "resource_id",
+    "logical_uri",
+    "relative_path",
+    "version",
+    "status"
+  ],
+  "properties": {
+    "source_id": {
+      "type": "string",
+      "pattern": "^[A-Z]{3,4}-[0-9]{3}-[0-9]{3}$",
+      "description": "格式：<BOOK>-<CHAP>-<INDEX>，如 YHZP-001-001"
+    },
+    "engine": {
+      "type": "string",
+      "enum": [
+        "YUHAI_ZIPING",
+        "ZIPING_ZHENQUAN",
+        "DITIANSUI",
+        "QIONGTONG_BAOJIAN",
+        "SANMING_TONGHUI",
+        "SHENFENG_TONGKAO"
+      ]
+    },
+    "book": {
+      "type": "string",
+      "minLength": 1
+    },
+    "chapter": {
+      "type": "string",
+      "minLength": 1
+    },
+    "text_id": {
+      "type": "string",
+      "pattern": "^[A-Z]{3,4}-T-[0-9]{3}-[0-9]{3}$"
+    },
+    "text_layer": {
+      "type": "string",
+      "enum": [
+        "ORIGINAL",
+        "ANNOTATION",
+        "LATER_COMMENTARY",
+        "UNVERIFIED",
+        "NEEDS_REVIEW"
+      ],
+      "description": "附录 D：ORIGINAL=作者原文(A) / ANNOTATION=正式注解(B) / LATER_COMMENTARY=后世解释(C) / UNVERIFIED / NEEDS_REVIEW(D)"
+    },
+    "source_text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "原著原文逐字，不改不删不补，不含现代校勘注记"
+    },
+    "resource_id": {
+      "type": "string",
+      "pattern": "^SRC-[A-Z]{3,4}-[0-9]{3}$"
+    },
+    "logical_uri": {
+      "type": "string",
+      "pattern": "^source://[a-z]{3,4}/[0-9]{3}/[0-9]{3}$"
+    },
+    "relative_path": {
+      "type": "string",
+      "pattern": "^sources/[a-z]{3,4}/chapter_[0-9]{3}\\.md$",
+      "description": "可移植相对路径，禁止绝对路径（V2.22 §103/§104）"
+    },
+    "evidence_grade": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "description": "附录 §78：A=ORIGINAL / B=ANNOTATION / C=LATER_COMMENTARY / D=UNVERIFIED 或 NEEDS_REVIEW；由 text_layer 派生"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "CANDIDATE",
+        "APPROVED",
+        "REJECTED",
+        "NEEDS_REVIEW",
+        "FROZEN"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  }
+}

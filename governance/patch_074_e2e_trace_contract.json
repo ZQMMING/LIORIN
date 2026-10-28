@@ -1,0 +1,20 @@
+{
+  "contract_id": "PATCH-074",
+  "name": "End-to-End Trace Contract",
+  "pipeline": "四柱→事实层→六经典Producer→State→Relation→Explanation",
+  "relation_v2_enum": ["SUPPORT","CONFLICT","ACTIVATED","CONDITION_CHANGE","INDEPENDENT","DEPENDENCY"],
+  "dependency_note": "DEPENDENCY=某状态成立requires另一状态作条件(七杀成立requires制化), 非简单SUPPORT",
+  "pressure_tests": {
+    "CaseA_格强身弱": "pattern≠strength→INDEPENDENT",
+    "CaseB_调候喜水旺衰忌水": "QTBJ≠DTS→INDEPENDENT",
+    "CaseC_岁运破格": "luck→ACTIVATED不改pattern_state",
+    "CaseD_病药用神不同": "七杀requires制化→DEPENDENCY"
+  },
+  "e2e_trace_checklist": [
+    "每个结论追Evidence",
+    "每个State有Producer",
+    "每个Relation有输入双方",
+    "Explanation不创造新状态"
+  ],
+  "acceptance": "Relation层不变成裁决层; 不重新生产状态"
+}

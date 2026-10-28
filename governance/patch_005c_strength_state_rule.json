@@ -1,0 +1,199 @@
+{
+  "contract_id": "PATCH-005C",
+  "name": "Strength State Rule Admission（强弱状态规则准入）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "PATCH-005 第三阶段：首次允许 Factor Collection → strength_state。必须建立 Rule Predicate 层、Conflict Resolver、Golden Case 验证三层治理；任何未过 Golden 的规则不得 ADMITTED。",
+  "parent": "PATCH-005B（f200d07d）",
+  "admission_gate": [
+    "① 六经典 Scope 匹配",
+    "② 条件完整（原文逐字条件）",
+    "③ Conflict Resolver 处理",
+    "④ Golden Case 验证"
+  ],
+  "output_allowed": {
+    "strength_state": "STRONG/SLIGHTLY_STRONG/NEUTRAL/SLIGHTLY_WEAK/WEAK/UNDETERMINED",
+    "evidence_trace": "source_id/chapter_id/text_layer/classical_scope",
+    "factor_used": "factor_ids",
+    "conflict_status": "NONE/DETECTED/RESOLVED/UNRESOLVED",
+    "classical_scope": "string"
+  },
+  "output_forbidden": [
+    "分数（score）",
+    "权重（weight）",
+    "百分比（percentage）",
+    "旺衰指数",
+    "强弱等级计算表（月令40%+根气30%+帮扶20%+克泄10% 等数学权重模型一律 BLOCK）"
+  ],
+  "1_rule_predicate_layer": {
+    "rule_condition_set_schema": {
+      "rule_id": "string",
+      "input_factor": "factor_id",
+      "relation": "ORDER_RELATION|ROOTED_IN|SUPPORTED_BY|CONTROLLED_BY|DRAINED_BY|TREND_TO|SEASONAL_CONDITION",
+      "classical_scope": "YHZP|PZZQ|DTS|QTBJ|SMTH|SFTK",
+      "condition": "原文逐字条件（不得由工程自行补全）",
+      "output_state": "枚举值"
+    },
+    "principle": "禁止「得令+有根=身强」式自编组合；每条 Rule Predicate 必须绑定原文逐字条件，且全部 PENDING_GOLDEN（未经 Golden 验证不得 ADMITTED）。",
+    "candidate_predicates": [
+      {
+        "rule_id": "RULE-S-001",
+        "status": "PENDING_GOLDEN",
+        "input_factor": "FCT-GET_ORDER-001",
+        "relation": "ORDER_RELATION",
+        "classical_scope": "YHZP",
+        "condition": "得時俱為旺論（子機賦，原文逐字）",
+        "output_state": "wang_state=WANG（非 strength_state）",
+        "note": "原文只授权 旺 层输出；不得越层到 STRONG [020 补齐 source_ids/excluded_transition]",
+        "source_ids": [
+          "YHZP-138-001"
+        ],
+        "excluded_transition": [
+          "wang_state→STRONG",
+          "得時俱為旺論→STRONG"
+        ]
+      },
+      {
+        "rule_id": "RULE-S-002",
+        "status": "PENDING_GOLDEN",
+        "input_factor": "FCT-GET_ORDER-001",
+        "relation": "ORDER_RELATION",
+        "classical_scope": "YHZP",
+        "condition": "失令便作衰看（子機賦，原文逐字）",
+        "output_state": "shuai_state=SHUAI（非 WEAK）",
+        "note": "衰≠弱；不得自动转 WEAK [020 补齐 source_ids/excluded_transition]",
+        "source_ids": [
+          "YHZP-138-001"
+        ],
+        "excluded_transition": [
+          "shuai_state→WEAK（自动）",
+          "失令便作衰看→WEAK"
+        ]
+      },
+      {
+        "rule_id": "RULE-S-003",
+        "status": "PENDING_GOLDEN",
+        "input_factor": "FCT-GET_ORDER-001 + FCT-ROOT-001",
+        "relation": "ORDER_RELATION + ROOTED_IN",
+        "classical_scope": "YHZP",
+        "condition": "四柱無根得時為旺（原文逐字：无根+得时=旺）",
+        "output_state": "wang_state=WANG",
+        "note": "无根不否定得时之旺；仍只到旺层 [020 补齐 source_ids/excluded_transition]",
+        "source_ids": [
+          "YHZP-138-001"
+        ],
+        "excluded_transition": [
+          "wang_state→STRONG",
+          "無根+得時→STRONG"
+        ]
+      },
+      {
+        "rule_id": "RULE-S-004",
+        "status": "PENDING_GOLDEN",
+        "input_factor": "FCT-ROOT-001 + 结构关系",
+        "relation": "ROOTED_IN（无气） + 遇劫",
+        "classical_scope": "YHZP",
+        "condition": "日干無氣遇劫為強（原文逐字：无气+遇劫=强条件）",
+        "output_state": "qiang_state=QIANG",
+        "note": "强=关系结果；不得转 STRONG [020 补齐 source_ids/excluded_transition]",
+        "source_ids": [
+          "YHZP-138-001"
+        ],
+        "excluded_transition": [
+          "qiang_state→STRONG",
+          "日干無氣遇劫→STRONG"
+        ]
+      }
+    ]
+  },
+  "2_conflict_resolver": {
+    "principle": "冲突≠错误。不得：因素相加/评分最高者胜/平均权重。必须：识别冲突→经典范围匹配→输出六级或 UNDETERMINED。",
+    "flow": [
+      "登记冲突（如 得令+无根+受制 并存）",
+      "逐因子回经典范围匹配（各 factor 的 classical_scope）",
+      "无法裁决 → UNDETERMINED（FAIL_CLOSED）",
+      "可裁决 → 输出六级"
+    ],
+    "conflict_example": {
+      "case": "得令 + 无根 + 受制",
+      "forbidden": [
+        "三因素相加",
+        "评分最高者胜",
+        "平均权重"
+      ],
+      "required": "识别冲突 → 经典范围匹配 → STRONG/SLIGHTLY_STRONG/NEUTRAL/SLIGHTLY_WEAK/WEAK/UNDETERMINED"
+    }
+  },
+  "3_golden_cases": [
+    {
+      "case_id": "GOLDEN-005C-01",
+      "title": "得令但无根",
+      "inputs": {
+        "order_state": "GET_ORDER",
+        "root_state": {
+          "object": "DAYMASTER",
+          "value": "NO_ROOT"
+        }
+      },
+      "verify_forbidden": [
+        "得令=强",
+        "GET_ORDER→STRONG"
+      ],
+      "expected": "不得输出 STRONG；按 Conflict Resolver 处理，无原文授权则 UNDETERMINED"
+    },
+    {
+      "case_id": "GOLDEN-005C-02",
+      "title": "失令但根旺",
+      "inputs": {
+        "order_state": "LOSE_ORDER",
+        "root_state": {
+          "object": "DAYMASTER",
+          "value": "STRONG_ROOT"
+        }
+      },
+      "verify_forbidden": [
+        "失令=弱",
+        "LOSE_ORDER→WEAK"
+      ],
+      "expected": "不得输出 WEAK；根旺为独立因素，须经典范围裁决"
+    },
+    {
+      "case_id": "GOLDEN-005C-03",
+      "title": "旺但日主关系不足",
+      "inputs": {
+        "wang_state": "WANG",
+        "qiang_state": "UNDETERMINED"
+      },
+      "verify_forbidden": [
+        "旺=强",
+        "WANG→STRONG"
+      ],
+      "expected": "不得输出 STRONG；旺层与强弱层隔离"
+    },
+    {
+      "case_id": "GOLDEN-005C-04",
+      "title": "势成",
+      "inputs": {
+        "trend_state": "TREND_TO"
+      },
+      "verify_forbidden": [
+        "势=强弱",
+        "TREND→strength_state"
+      ],
+      "expected": "trend 独立登记，不得进入 strength_state"
+    }
+  ],
+  "blocklist_weight_models": [
+    "月令40% + 根气30% + 帮扶20% + 克泄10%",
+    "任何 score/weight/percentage 组合",
+    "旺衰指数",
+    "强弱等级计算表"
+  ],
+  "acceptance_criteria": [
+    "Rule Predicate 层建立（条件集 schema + 候选规则全部 PENDING_GOLDEN）",
+    "Conflict Resolver 流程建立（禁相加/评分/平均）",
+    "Golden Case ≥4 个（得令无根/失令根旺/旺而关系不足/势成）",
+    "输出仅 strength_state+evidence_trace+factor_used+conflict_status+classical_scope",
+    "分数/权重/百分比/旺衰指数/强弱等级计算表 BLOCK",
+    "未过 Golden 的规则一律不 ADMITTED"
+  ]
+}

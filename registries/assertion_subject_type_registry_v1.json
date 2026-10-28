@@ -1,0 +1,36 @@
+{
+  "registry_id": "ASSERTION_SUBJECT_TYPE_REGISTRY_V1",
+  "version": "1.0",
+  "principle": "Loader按subject类型路由到对应Resolver; 未就绪Resolver一律ABSTAIN, 不字符串匹配",
+  "routes": [
+    {
+      "type": "QTBJ_DAY_STEM_MONTH",
+      "match": "^[甲乙丙丁戊己庚辛壬癸][木火土金水].*",
+      "resolver": "qtbj_subject_normalizer",
+      "status": "READY"
+    },
+    {
+      "type": "ELEMENT_CONCEPT",
+      "match": "^[五行金木水火土]$",
+      "resolver": "element_resolver",
+      "status": "NOT_READY"
+    },
+    {
+      "type": "SEASON_ELEMENT_PHRASE",
+      "match": "(春木|春火|夏木|夏火|秋木|秋火|冬木|冬火|春木|春秋木|寒露木|冬月水|夏月水)",
+      "resolver": "season_element_resolver",
+      "status": "NOT_READY"
+    },
+    {
+      "type": "TEN_GOD_CONCEPT",
+      "match": "(官|杀|印|财|食|伤|比)",
+      "resolver": "ten_god_resolver",
+      "status": "NOT_READY"
+    },
+    {
+      "type": "UNKNOWN",
+      "match": "*",
+      "action": "ABSTAIN"
+    }
+  ]
+}

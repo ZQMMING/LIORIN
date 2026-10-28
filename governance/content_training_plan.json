@@ -1,0 +1,14 @@
+{
+  "stage": "v1.0 Stable → 内容训练阶段",
+  "rule": "架构不再动, 只走 Evidence→Assertion→Admission→Golden→Release",
+  "coverage_by_classic": {
+    "PZZQ": {"evidence": 49, "parsed_assertion": 0, "active_rule": 0, "golden": 0, "priority": 1, "scope": "定格/成败/相神/清浊/顺逆/层次/救应"},
+    "DTS": {"evidence": 258, "parsed_assertion": 0, "active_rule": 0, "golden": 0, "priority": 2, "scope": "旺衰/气势/形气/通关/病药"},
+    "SFTK": {"evidence": 2519, "parsed_assertion": 0, "active_rule": 0, "golden": 0, "priority": 3, "scope": "可执行进Rule/解释型进Explanation/案例进Corpus 三类分流"},
+    "SMTH": {"evidence": 2530, "parsed_assertion": 0, "active_rule": 0, "golden": 0, "priority": 4, "scope": "只ACTIVATE/CHANGE/TRIGGER, 禁直接断发财升官"},
+    "QTBJ": {"evidence": 202, "parsed_assertion": 0, "active_rule": 0, "golden": 0, "priority": 5, "scope": "制化/寒暖转换/岁运调候"},
+    "YHZP": {"evidence": 592, "parsed_assertion": 0, "active_rule": 0, "golden": 0, "priority": 6, "scope": "十神组合(伤官+条件非伤官=坏)"}
+  },
+  "metric": "Assertion Completion Rate = parsed_assertion/evidence; 不看PATCH数量",
+  "forbid": "直接写RULE/新建架构层"
+}

@@ -1,0 +1,102 @@
+[
+  {
+    "assertion_id": "GEJU-DEF-001",
+    "group": "格局定义",
+    "original": "八字用神，专求月令，以日干配月令地支，而生克不同，格局分焉。",
+    "source": "PZZQ 论用神",
+    "semantic": "格局以月令为核心，日干与月令地支的生克关系决定格局类型",
+    "engine_status": "已实现（pzzq_producer_v1 月令定格）",
+    "faithful": true,
+    "note": "月令藏干透干关系决定格神候选，符合\"专求月令\""
+  },
+  {
+    "assertion_id": "GEJU-DEF-002",
+    "group": "格局定义",
+    "original": "然用神非尽出于月令，故于舍月令别取用神之格局，特别提出，加以说明。",
+    "source": "PZZQ 论用神",
+    "semantic": "用神不一定都出于月令，有舍月令别取用神的格局（如外格）",
+    "engine_status": "已实现（外格4类：井栏叉/六阴朝阳/刑合/合禄）",
+    "faithful": true,
+    "note": "外格作为独立entry，不与月令格混淆"
+  },
+  {
+    "assertion_id": "GEJU-SHUNNI-001",
+    "group": "顺用逆用",
+    "original": "财官印食，此用神之善而顺用之者也；煞伤劫刃，用神之不善而逆用之者也。",
+    "source": "PZZQ 论用神",
+    "semantic": "四吉神（财官印食）顺用，四凶神（煞伤劫刃）逆用",
+    "engine_status": "已实现（GE_SHEN_CANDIDATE 含顺用/逆用分类字段）",
+    "faithful": true,
+    "note": "顺用逆用只作为原典分类字段，不进一步解释成吉凶成败"
+  },
+  {
+    "assertion_id": "GEJU-SHUNNI-002",
+    "group": "顺用逆用",
+    "original": "善而顺用之，则财喜食神以相生，生官以护财；官喜透财以相生，生印以护官；印喜官煞以相生，劫才以护印；食喜身旺以相生，生财以护食。",
+    "source": "PZZQ 论用神",
+    "semantic": "顺用四吉神的配合规则：财喜食生官护，官喜财生印护，印喜官杀生劫护，食喜身旺财护",
+    "engine_status": "已实现（yongshen_geju XIANGSHEN_MAP + build_xiangshen_candidates）",
+    "faithful": true,
+    "note": "顺用/逆用配合已实现：XIANGSHEN_MAP定义10类格神对应的相神候选映射（原典顺用相生护/逆用制化），build_xiangshen_candidates检查相神是否在命局中出现"
+  },
+  {
+    "assertion_id": "GEJU-SHUNNI-003",
+    "group": "顺用逆用",
+    "original": "不善而逆用之，则七煞喜食神以制伏，忌财印以资扶；伤官喜佩印以制伏，生财以化伤；阳刃喜官煞以制伏，忌官煞之俱无；月劫喜透官以制伏。",
+    "source": "PZZQ 论用神",
+    "semantic": "逆用四凶神的配合规则：煞喜食制忌财印，伤官喜佩印生财，阳刃喜官煞制，月劫喜透官制",
+    "engine_status": "已实现（yongshen_geju XIANGSHEN_MAP + build_xiangshen_candidates）",
+    "faithful": true,
+    "note": "顺用/逆用配合已实现：XIANGSHEN_MAP定义10类格神对应的相神候选映射（原典顺用相生护/逆用制化），build_xiangshen_candidates检查相神是否在命局中出现"
+  },
+  {
+    "assertion_id": "GEJU-GAODI-001",
+    "group": "格局高低",
+    "original": "八字既有用神，必有格局，有格局必有高低...然其理之大纲，亦在有情、有力而已。",
+    "source": "PZZQ 论格局高低",
+    "semantic": "格局高低的核心判断标准是\"有情\"和\"有力\"",
+    "engine_status": "已实现（yongshen_geju check_geju_youqing_youli，结构化检查）",
+    "faithful": true,
+    "note": "格局有情有力已实现：检查相神的有情(通根透干不混不杂)/有力(得时得不克不破)结构条件，输出YOUQING_YOULI/YOUQING_WU_LI/WU_QING_YOULI/WU_QING_WU_LI四态；不做格局高低最终裁决/贵贱/吉凶"
+  },
+  {
+    "assertion_id": "GEJU-GAODI-002",
+    "group": "格局高低",
+    "original": "有情者，通根透干，不混不杂是也；有力者，得时得地，不克不破是也。",
+    "source": "PZZQ 论格局高低（后世注解概括）",
+    "semantic": "有情=通根透干不混杂；有力=得时得地不克破",
+    "engine_status": "已实现（yongshen_geju check_geju_youqing_youli，结构化检查）",
+    "faithful": true,
+    "note": "格局有情有力已实现：检查相神的有情(通根透干不混不杂)/有力(得时得不克不破)结构条件，输出YOUQING_YOULI/YOUQING_WU_LI/WU_QING_YOULI/WU_QING_WU_LI四态；不做格局高低最终裁决/贵贱/吉凶"
+  },
+  {
+    "assertion_id": "GEJU-BIANHUA-001",
+    "group": "用神变化",
+    "original": "用神变化，如甲木生寅月，本为建禄，干透庚金，则为七杀格。",
+    "source": "PZZQ 论用神变化（概括）",
+    "semantic": "月令本气格可因透干不同而变化为其他格",
+    "engine_status": "已实现（USE_GOD_CANDIDATE 候选枚举，多候选并列）",
+    "faithful": true,
+    "note": "只枚举候选变化，不做\"变格成功\"裁决，符合边界"
+  },
+  {
+    "assertion_id": "GEJU-XIANGSHEN-001",
+    "group": "相神",
+    "original": "相神者，辅助用神之神也。用神如主，相神如辅，主辅得宜，格局乃成。",
+    "source": "PZZQ 论相神（后世概括）",
+    "semantic": "相神是辅助格局之神，与用神配合决定格局成败",
+    "engine_status": "已实现（yongshen_geju build_xiangshen_candidates，结构化候选识别）",
+    "faithful": true,
+    "note": "相神候选已实现：根据格神类型识别原典配合关系候选，检查是否在命局中出现；不判有情/有力/成败"
+  },
+  {
+    "assertion_id": "GEJU-CHENGBAI-001",
+    "group": "格局成败",
+    "original": "格局既成，即使满盘孤辰入煞，何损其贵？格局既破，即使满盘天德贵人，何以为功？",
+    "source": "PZZQ 论格局成败",
+    "semantic": "格局成败由用神/相神配合决定，与神煞无关",
+    "engine_status": "已实现（yongshen_geju check_geju_chengbai，结构化检查）",
+    "faithful": true,
+    "note": "格局成败已实现：检查成格/败格结构条件(透干+相神出现-破格之神)，输出CHENGGE_STRUCTURE/BAIGE_STRUCTURE/PARTIAL_CHENG/UNKNOWN四态；不做格局最终裁决/贵贱/吉凶"
+  }
+]

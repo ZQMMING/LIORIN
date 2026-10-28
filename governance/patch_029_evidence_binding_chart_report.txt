@@ -1,0 +1,45 @@
+﻿==== PATCH-029 Classical Evidence Binding Layer ====
+
+==== Evidence 注册表 ====
+  EVID-001: YHZP 渊海子平·子機賦 | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-002: DTS 滴天髓·衰旺论 | layer=ANNOTATION/ORIGINAL_ANNOTATION | grade=B
+  EVID-003: YHZP 渊海子平·论财（财多生官） | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-004: YHZP 渊海子平·论杀（身强杀浅） | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-005: YHZP 渊海子平·论杀（杀旺运纯） | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-006: YHZP 渊海子平·论七杀 | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-007: DTS 滴天髓·中和 | layer=ORIGINAL+ANNOTATION/ORIGINAL_AUTHOR+ORIGINAL_ANNOTATION | grade=B
+  EVID-008: PZZQ 子平真诠·论伤官财格 | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-009: PZZQ 子平真诠·论煞食（根轻助身） | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-010: YHZP 渊海子平·月令 | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-011: PZZQ 子平真诠·論用神 | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-012: SFTK 神峰通考·病药取用 | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=A
+  EVID-013: QTBJ 穷通宝鉴·十干逐月调候 | layer=ORIGINAL/ORIGINAL_AUTHOR | grade=B
+  EVID-014: DTS 滴天髓·寒温湿燥论 | layer=ANNOTATION/ORIGINAL_ANNOTATION | grade=B
+
+==== 12 条 ADMITTED 绑定校验 ====
+  CAND-WANG-001: evidence 存在，grade=['A']（≤B 无 D）
+  CAND-WANG-002: evidence 存在，grade=['B']（≤B 无 D）
+  CAND-SHUAI-001: evidence 存在，grade=['A']（≤B 无 D）
+  CAND-QIANG-001: evidence 存在，grade=['A']（≤B 无 D）
+  RULE-022C-01: evidence 存在，grade=['A']（≤B 无 D）
+  RULE-022C-02: evidence 存在，grade=['A']（≤B 无 D）
+  RULE-022C-03: evidence 存在，grade=['A']（≤B 无 D）
+  RULE-022C-04: evidence 存在，grade=['A']（≤B 无 D）
+  RULE-022C-05: evidence 存在，grade=['B']（≤B 无 D）
+  RULE-022C-06: evidence 存在，grade=['A']（≤B 无 D）
+  RULE-022C-07: evidence 存在，grade=['A']（≤B 无 D）
+  RULE-022C-08: evidence 存在，grade=['A']（≤B 无 D）
+  缺口: 无
+
+==== 四层分离 ====
+  原文A=ORIGINAL/ORIGINAL_AUTHOR；注解B=ANNOTATION/B1·B2；后世整理C=LATER_COMMENTARY；现代解释D=MODERN 禁入规则层
+
+==== 域锚绑定 ====
+  PZZQ.use_god/pattern: ['EVID-011']（A 级）
+  SFTK.qu_yong: ['EVID-012']（A 级）
+  QTBJ.climate: ['EVID-013']（B 级）
+  DTS.climate(SUPPORTING): ['EVID-014']（B 级）
+
+==== 1983-1103 绑定检查 ====
+  12 条 ADMITTED evidence 绑定全通过（无自由文本、无 D 级）
+  QTBJ.climate 锚 EVID-013 grade=B 混合 → QTBJ-018-001 未升格前 FAIL_CLOSED ✓

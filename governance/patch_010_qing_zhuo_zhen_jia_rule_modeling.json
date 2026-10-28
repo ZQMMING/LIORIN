@@ -1,0 +1,62 @@
+{
+  "contract_id": "PATCH-010",
+  "name": "Qing-Zhuo-Zhen-Jia（清浊真假）Rule Modeling",
+  "status": "FROZEN_DRAFT",
+  "purpose": "清浊真假 Rule Candidate Registry：DTS 为主体（清奇/真假论/真神得令），PZZQ「雜而不雜」为取用层清杂（独立，禁与 DTS 清浊合并）。所有候选 PENDING_GOLDEN。",
+  "parent": "PATCH-009",
+  "concept_boundaries": {
+    "DTS_QING_ZHUO": {
+      "definition": "气象/格局层面的清浊（並無傷官七煞混之乃為清奇）",
+      "primary_source": "DTS-022-002（B1）",
+      "forbidden": ["DTS 清浊=PZZQ 清杂"]
+    },
+    "DTS_ZHEN_JIA": {
+      "definition": "真假论：命之真者得令；真神得令假神得局而党多（B1 辅助）",
+      "primary_source": "DTS-023-001（A）、DTS-023-004（B1）",
+      "forbidden": ["真神得令→身强"]
+    },
+    "PZZQ_QING_ZA": {
+      "definition": "取用神层面的纯杂：透干會支，取其清者用之，雜而不雜（四墓杂气取清）",
+      "primary_source": "PZZQ-007-005（CONDITIONAL）",
+      "forbidden": ["雜=濁，PZZQ 清杂≠DTS 清浊"]
+    }
+  },
+  "rule_candidates": [
+    {
+      "rule_id": "RULE-Q-001",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "DTS",
+      "source_ids": ["DTS-023-001"],
+      "condition": "真假论（命之真者得令，原文逐字）",
+      "output": "zhen_jia_candidate",
+      "excluded": ["真假→身强"]
+    },
+    {
+      "rule_id": "RULE-Q-002",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "DTS",
+      "source_ids": ["DTS-022-002"],
+      "condition": "並無傷官七煞混之…乃為清奇（B1）",
+      "output": "qing_zhuo_candidate（DTS 域）",
+      "excluded": ["B1 升 A"]
+    },
+    {
+      "rule_id": "RULE-Q-003",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "PZZQ",
+      "source_ids": ["PZZQ-007-005"],
+      "condition": "透干會支，取其清者用之，雜而不雜（原文逐字）",
+      "output": "qing_za_candidate（取用层）",
+      "excluded": ["雜=濁"]
+    }
+  ],
+  "conflict_resolver": [
+    {"conflict": "PZZQ 清杂 vs DTS 清浊", "resolution": "取用层纯杂 vs 气象格局清浊，禁合并（003B-02 已固化）"}
+  ],
+  "golden_cases": [
+    {"case_id": "GOLDEN-010-01", "title": "四墓杂气取清", "verify_forbidden": ["雜=濁"], "expected": "PZZQ 取用层登记，不与 DTS 清浊合并"},
+    {"case_id": "GOLDEN-010-02", "title": "真神得令", "verify_forbidden": ["真神得令→身强"], "expected": "真假域登记，不越层"}
+  ],
+  "blocklist": ["清浊统一概念库", "雜=濁"],
+  "acceptance_criteria": ["清浊真假三体系边界", "3 Rule Candidate PENDING_GOLDEN", "Conflict 1 类", "Golden 2 个"]
+}

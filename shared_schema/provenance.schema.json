@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wisdom.shuntian/schema/provenance.schema.json",
+  "title": "ProvenanceRecord",
+  "description": "V2.2.2 FINAL §40 Provenance Registry 记录。可移植、可审计，禁止依赖开发机绝对路径。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "provenance_id", "engine", "engine_version", "contract_version",
+    "rule_version", "source_version", "input_ref", "rule_ids",
+    "source_ids", "evidence_ids", "timestamp"
+  ],
+  "properties": {
+    "provenance_id": { "type": "string", "pattern": "^P-[A-Z]{4}-[0-9]{3}$" },
+    "engine": {
+      "type": "string",
+      "enum": [
+        "YUHAI_ZIPING", "ZIPING_ZHENQUAN", "DITIANSUI",
+        "QIONGTONG_BAOJIAN", "SANMING_TONGHUI", "SHENFENG_TONGKAO"
+      ]
+    },
+    "engine_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "contract_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "rule_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "source_version": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$" },
+    "input_ref": { "type": "string", "minLength": 1 },
+    "rule_ids": { "type": "array", "items": { "type": "string" } },
+    "source_ids": { "type": "array", "items": { "type": "string" } },
+    "evidence_ids": { "type": "array", "items": { "type": "string" } },
+    "timestamp": { "type": "string", "format": "date-time" }
+  }
+}

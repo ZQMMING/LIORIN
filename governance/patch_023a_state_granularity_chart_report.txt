@@ -1,0 +1,178 @@
+﻿{
+ "input": {
+  "年柱": "癸亥",
+  "月柱": "壬戌",
+  "日柱": "乙未",
+  "时柱": "壬午"
+ },
+ "L1_object": {
+  "day_master_element": "WOOD",
+  "ten_god_type": {
+   "年柱": "偏印",
+   "月柱": "正印",
+   "日柱": "比肩",
+   "时柱": "正印"
+  }
+ },
+ "L2_boolean": {
+  "has_root": true,
+  "root_detail": [
+   "年柱亥藏甲(中)",
+   "日柱未藏乙(余)"
+  ],
+  "has_visible_resource": true,
+  "has_visible_wealth": false,
+  "has_visible_authority": false,
+  "has_clash": false,
+  "has_combination": true,
+  "combination_detail": [
+   "日柱未-时柱午"
+  ],
+  "has_transformation_condition": "UNKNOWN",
+  "has_following_structure_condition": "UNKNOWN"
+ },
+ "L3_base": {
+  "order_state": "NOT_GET_ORDER",
+  "root_state": {
+   "object": "daymaster",
+   "value": "WEAK_ROOT",
+   "root_q": [
+    "中",
+    "余"
+   ]
+  },
+  "support_state": "PRESENT",
+  "support_detail": [
+   "年柱偏印(通根)",
+   "月柱正印(无根)",
+   "时柱正印(无根)"
+  ]
+ },
+ "L4_relation": {
+  "resource_relation_state": "UNDETERMINED（印透多但财制印存在，关系规则未准入）",
+  "wealth_relation_state": {
+   "status": "UNDETERMINED",
+   "wealth_structure": {
+    "地支得地": [
+     "月柱戌",
+     "日柱未"
+    ],
+    "天干透": []
+   },
+   "daymaster_relation": "未断言",
+   "drain_relation": "UNDETERMINED",
+   "condition_limits": "身健/身弱未断言"
+  },
+  "authority_relation_state": "UNDETERMINED（官杀不透）",
+  "drain_state": "DRAIN_PRESENT",
+  "drain_detail": [
+   "月柱戌藏戊(耗)",
+   "月柱戌藏丁(泄)",
+   "日柱未藏己(耗)",
+   "日柱未藏丁(泄)",
+   "时柱午藏丁(泄)",
+   "时柱午藏己(耗)"
+  ],
+  "control_state": "CONTROL_PRESENT",
+  "control_detail": [
+   "月柱戌藏辛(制)"
+  ],
+  "element_relation_registry": {
+   "principle": "元素关系注册表（PATCH-023）：印多/水多不得 count>=N；绑定经典后才有资格进入 Rule",
+   "water": {
+    "sources": [
+     "天干壬癸",
+     "地支亥子",
+     "藏干壬癸"
+    ],
+    "state": "WATER_UNKNOWN",
+    "classical_binding": "QTBJ/DTS 待审计"
+   },
+   "fire": {
+    "sources": [
+     "天干丙丁",
+     "地支巳午",
+     "藏干丙丁"
+    ],
+    "state": "FIRE_UNKNOWN",
+    "classical_binding": "QTBJ/DTS 待审计"
+   }
+  }
+ },
+ "L5_prosperity": {
+  "wang_state": "UNKNOWN",
+  "shuai_state": "SHUAI",
+  "seasonal_state": "QTBJ_REQUIRED",
+  "trend_state": "PENDING"
+ },
+ "L6_strength": {
+  "strength_state": "UNDETERMINED"
+ },
+ "L7_pattern": {
+  "pattern_state": "NOT_STARTED",
+  "use_god_state": "NOT_STARTED"
+ },
+ "L2_granularity": {
+  "water_relation_state": "VISIBLE_SUPPORT+ROOTED_SUPPORT",
+  "water_fact_collection": {
+   "visible_water": 3,
+   "visible_stem": [
+    "年柱癸",
+    "月柱壬",
+    "时柱壬"
+   ],
+   "hidden_water": 1,
+   "hidden_stem": [
+    "年柱亥藏壬"
+   ],
+   "water_root": [
+    "年柱亥"
+   ],
+   "month_support": false,
+   "position": {
+    "年柱": "VISIBLE",
+    "月柱": "VISIBLE",
+    "时柱": "VISIBLE"
+   }
+  },
+  "wood_relation_state": "ROOT_RELATION_PRESENT",
+  "wood_fact_collection": {
+   "day_master": "木",
+   "root": [
+    "年柱亥藏甲(中)",
+    "日柱未藏乙(余)"
+   ]
+  },
+  "earth_relation_state": "WEALTH_RELATION_PRESENT",
+  "earth_fact_collection": {
+   "branches": [
+    "月柱戌",
+    "日柱未"
+   ],
+   "hidden": [
+    "月柱戌藏戊",
+    "日柱未藏己",
+    "时柱午藏己"
+   ]
+  },
+  "forbidden_notes": [
+   "禁 水旺/印旺/水多/木强/财多 输出",
+   "EXCESS_CONDITION 不自动成立，等待 Rule"
+  ],
+  "classical_consumption": {
+   "DTS": [
+    "trend_relation",
+    "气势关系",
+    "中和关系"
+   ],
+   "QTBJ": [
+    "seasonal_relation",
+    "寒暖燥湿"
+   ],
+   "PZZQ": [
+    "month_order",
+    "格局关系"
+   ]
+  }
+ }
+}

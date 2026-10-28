@@ -1,0 +1,178 @@
+{
+  "_meta": {
+    "version": "v1",
+    "type": "规格断言（非可执行用例）",
+    "purpose": "规则的出处依据，供人工审计+grep溯源",
+    "rule": "每条断言必须能指到grade=A原句。指不到就是替古人说话。"
+  },
+  "assertions": [
+    {
+      "assertion_id": "a-dts-01",
+      "chapter": "六親論·化象",
+      "source_id": "DTS-041-001",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "A",
+      "attribution": "ORIGINAL_AUTHOR",
+      "rationale_quote": "化得真者只論化，化神還有幾般話。",
+      "meaning": "化气格总纲：真化则只论化，不论其他。",
+      "supports": "B轴（干合侧）总纲，证明化气是独立格局类型"
+    },
+    {
+      "assertion_id": "a-dts-02",
+      "chapter": "六親論·化象",
+      "source_id": "DTS-041-002",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "B",
+      "attribution": "ORIGINAL_ANNOTATION",
+      "rationale_quote": "如甲日主生於四季，單透一位己土在月時上合之，不遇壬癸甲乙戊己，而有辰字，乃為化得真。又如丙辛生於冬月，戊癸生於夏月，乙庚生於秋月，丁壬生於春月，獨自相合，又得龍以運之，此皆真化矣。",
+      "meaning": "真化四要件：①独合（单透一位，无争合）②化神当令（乙庚秋月/丙辛冬月等）③逢龙引化（有辰）④无破格之神（不遇壬癸甲乙等）",
+      "supports": "B轴判定式核心依据。B1独合（硬闸）+B2化神当令（硬闸）+B3逢龙引化（增益档）+B4无破（硬闸）"
+    },
+    {
+      "assertion_id": "a-dts-03",
+      "chapter": "六親論·從象",
+      "source_id": "DTS-040-001",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "A",
+      "attribution": "ORIGINAL_AUTHOR",
+      "rationale_quote": "從得真者只論從，從神又有吉和凶。",
+      "meaning": "从格总纲：真从则只论从，不论其他。",
+      "supports": "从格总纲，证明从格是独立格局类型"
+    },
+    {
+      "assertion_id": "a-dts-04",
+      "chapter": "六親論·從象",
+      "source_id": "DTS-040-002",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "B",
+      "attribution": "ORIGINAL_ANNOTATION",
+      "rationale_quote": "日主孤弱無氣，天地人元絕無一毫生扶之力，才官強甚，乃為真從也。",
+      "meaning": "真从三要件：①日主孤弱无气②绝无一毫生扶之力（无印比）③才官强甚",
+      "supports": "从格闸门唯一合法依据：无生扶+官杀财成势"
+    },
+    {
+      "assertion_id": "a-dts-05",
+      "chapter": "六親論·假化",
+      "source_id": "DTS-043-001",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "A",
+      "attribution": "ORIGINAL_AUTHOR",
+      "rationale_quote": "假化之人亦多貴，異姓孤兒能出類。",
+      "meaning": "假化格：非真化，但亦可富贵。",
+      "supports": "confidence降档依据：假化=MID，真化=CONFIRMED"
+    },
+    {
+      "assertion_id": "a-dts-06",
+      "chapter": "六親論·假化",
+      "source_id": "DTS-043-002",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "B",
+      "attribution": "ORIGINAL_ANNOTATION",
+      "rationale_quote": "日主孤弱而遇合神真，不能不化。但暗扶日主，合神又虛弱，又無龍以運之，不為真化。",
+      "meaning": "假化条件：①合神真（能化）但②暗扶日主（有微根）或③合神虚弱或④无龙运之→不真化",
+      "supports": "confidence分层依据：真化=CONFIRMED，假化=MID"
+    },
+    {
+      "assertion_id": "a-dts-07",
+      "chapter": "六親論·假象",
+      "source_id": "DTS-042-001",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "A",
+      "attribution": "ORIGINAL_AUTHOR",
+      "rationale_quote": "真從之家有幾人，假從亦可發其身。",
+      "meaning": "假从格：非真从，但亦可发身。",
+      "supports": "confidence降档依据：假从=MID，真从=CONFIRMED"
+    },
+    {
+      "assertion_id": "a-dts-08",
+      "chapter": "六親論·假象",
+      "source_id": "DTS-042-002",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "B",
+      "attribution": "ORIGINAL_ANNOTATION",
+      "rationale_quote": "日主弱矣，才官強矣，不能不從。中有所助及暗生者，從之不真。",
+      "meaning": "假从条件：①日主弱+才官强（本该从）但②中有所助及暗生（有微根/暗印）→从之不真",
+      "supports": "confidence分层依据：真从=CONFIRMED，假从=MID"
+    },
+    {
+      "assertion_id": "a-dts-09",
+      "chapter": "通天論·形象論",
+      "source_id": "DTS-011-001",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "A",
+      "attribution": "ORIGINAL_AUTHOR",
+      "rationale_quote": "兩氣合而成象，象不可破也。",
+      "meaning": "两气成象格总纲：两行成象，不可破。",
+      "supports": "两气成象格总纲（独立格局，不在一行成象族内）"
+    },
+    {
+      "assertion_id": "a-dts-10",
+      "chapter": "通天論·形象論",
+      "source_id": "DTS-011-002",
+      "source_book": "DTS",
+      "commentator": "liu",
+      "grade": "B",
+      "attribution": "ORIGINAL_ANNOTATION",
+      "rationale_quote": "天干屬木，地支屬火；天干屬火，地支屬木，其象屬一。若見金水則破，餘仿此。",
+      "meaning": "两气成象条件：两行成象（天干地支各一行），见第三行则破。",
+      "supports": "两气成象格判定依据（独立格局）"
+    },
+    {
+      "assertion_id": "a-yhzp-01",
+      "chapter": "論運化氣",
+      "source_id": "YHZP-121-003",
+      "source_book": "YHZP",
+      "commentator": "无（原著）",
+      "grade": "A",
+      "attribution": "ORIGINAL",
+      "rationale_quote": "天干化合者秀氣，地支合局者福德。",
+      "meaning": "一格两面公理：干合=秀气（化气侧），支局=福德（专旺侧）。",
+      "supports": "★一格两面架构的核心依据。化气格与专旺格不是独立格局，是同一格的两个侧面。"
+    },
+    {
+      "assertion_id": "a-yhzp-02",
+      "chapter": "論運化氣",
+      "source_id": "YHZP-121-003",
+      "source_book": "YHZP",
+      "commentator": "无（原著）",
+      "grade": "A",
+      "attribution": "ORIGINAL",
+      "rationale_quote": "化之眞者名公巨卿，化之假者孤兒異姓。逢龍即化，變作龍飛在天，利見大人。",
+      "meaning": "①真化/假化分层 ②逢龙即化（见辰则化）",
+      "supports": "confidence分层依据 + 逢龙引化作增益档（B3）"
+    },
+    {
+      "assertion_id": "a-yhzp-03",
+      "chapter": "化氣十段錦",
+      "source_id": "YHZP-122-004",
+      "source_book": "YHZP",
+      "commentator": "无（原著）",
+      "grade": "A",
+      "attribution": "ORIGINAL",
+      "rationale_quote": "乙從庚化，氣稟西方。蹇難兮生逢丙位，榮華兮長生壬鄉。",
+      "meaning": "乙庚化金忌丙火（克金），喜壬水（金生水泄秀？）",
+      "supports": "kepo减项出处：化金见丙火=破格减项"
+    },
+    {
+      "assertion_id": "a-yhzp-04",
+      "chapter": "化氣十段錦",
+      "source_id": "YHZP-122-002",
+      "source_book": "YHZP",
+      "commentator": "无（原著）",
+      "grade": "A",
+      "attribution": "ORIGINAL",
+      "rationale_quote": "甲從己合，賴土所生。遇乙兮妻財暗損，逢丁兮衣祿成空。",
+      "meaning": "甲己化土忌乙木（克土）。丁火理路不明，暂不编码。",
+      "supports": "kepo减项出处：化土见乙木=破格减项"
+    }
+  ]
+}

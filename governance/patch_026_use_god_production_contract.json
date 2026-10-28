@@ -1,0 +1,40 @@
+{
+  "contract_id": "PATCH-026",
+  "name": "Use-God Production Contract（用神生产契约）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "冻结三种「用」的生产边界：用神（PZZQ）≠ 取用（SFTK）≠ 调候用神（QTBJ）；禁止 strength_state→用神、pattern_state→自动生成用神；输出带 use_type 防合并。",
+  "namespace_equivalence": {"PZZQ.useful": "PZZQ.use_god", "SFTK.useful": "SFTK.qu_yong", "QTBJ.tiaohou_useful": "QTBJ.climate_use", "note": "与 023C concept_registry 保持一致命名"},
+  "producer_whitelist": [
+    {"state": "use_god_state", "use_type": "USE_GOD", "classical_scope": "PZZQ", "namespace": "use_god", "mode": "DIRECT", "note": "月令→用神（PZZQ-005-007 專求月令）；用神先于格局，格局不反生用神"},
+    {"state": "qu_yong_state", "use_type": "QU_YONG", "classical_scope": "SFTK", "namespace": "qu_yong", "mode": "DIRECT", "note": "病药取用（SFTK-008-001 先看月令→从重者论）"},
+    {"state": "climate_use_state", "use_type": "CLIMATE_USE", "classical_scope": "QTBJ", "namespace": "climate_use", "mode": "DIRECT", "note": "调候用神（QTBJ 十干逐月调候）"}
+  ],
+  "input_namespaces": {
+    "PZZQ.use_god": {"allowed_states": ["order_state", "month_order", "ten_god_relation", "structure_relation", "root_relation"], "forbidden_states": ["strength_state", "wang_state", "shuai_state", "qiang_state", "pattern_state"], "note": "PZZQ 用神从月令入口直接生产（先于格局），禁止 pattern_state→use_god 自动生成"},
+    "SFTK.qu_yong": {"allowed_states": ["problem_relation", "support_relation", "control_relation", "structure_relation"], "forbidden_states": ["PZZQ_useful", "DTS_strength", "strength_state"]},
+    "QTBJ.climate_use": {"allowed_states": ["seasonal_state", "month_order", "daymaster", "climate_relation"], "forbidden_states": ["strength_state", "wang_state", "qiang_state", "pattern_state"]}
+  },
+  "forbidden_paths": [
+    {"from": "strength_state", "to": "任何用神", "reason": "身强弱不得决定用神（现代旺衰用神法，六经典无统一授权）"},
+    {"from": "pattern_state", "to": "use_god_state", "reason": "格局成立不得自动生成用神"},
+    {"from": "用神(任一)", "to": "strength_state", "reason": "用神不得反推身强弱"},
+    {"from": "use_god_state", "to": "qu_yong_state/climate_use_state", "reason": "三种用互不合并（用神≠取用≠调候用神）"}
+  ],
+  "output_schema": {
+    "required_fields": ["state", "use_type", "value", "producer", "sources", "evidence_chain", "namespace_source"],
+    "note": "use_type 必填：USE_GOD / QU_YONG / CLIMATE_USE——避免 Rule Matcher 把不同「用」合并"
+  },
+  "chart_1983_1103_producer_demo": {
+    "use_god_state": {"use_type": "USE_GOD", "value": "UNDETERMINED（月令戌土→财用候选，structure 待确认）", "producer": "PZZQ.use_god", "sources": ["PZZQ.use_god(order/month/ten_god/structure/root)"], "evidence_chain": ["PZZQ-005-007 专求月令"], "namespace_source": {"PZZQ": "use_god"}},
+    "qu_yong_state": {"use_type": "QU_YONG", "value": "UNDETERMINED（problem_relation 未确认）", "producer": "SFTK.qu_yong", "sources": ["SFTK.qu_yong(problem/support/control/structure)"], "evidence_chain": ["SFTK-008-001 病药取用"], "namespace_source": {"SFTK": "qu_yong"}},
+    "climate_use_state": {"use_type": "CLIMATE_USE", "value": "UNDETERMINED（seasonal=QTBJ_REQUIRED，调候规则未准入）", "producer": "QTBJ.climate_use", "sources": ["QTBJ.climate_use(seasonal/month/daymaster/climate)"], "evidence_chain": ["QTBJ 十干逐月调候"], "namespace_source": {"QTBJ": "climate_use"}},
+    "note": "三种用独立输出不合并；1983 命局三用神均 UNDETERMINED（各域结构/规则未确认）"
+  },
+  "acceptance_criteria": [
+    "三生产者冻结：PZZQ.use_god / SFTK.qu_yong / QTBJ.climate_use（全 DIRECT，独立 namespace）",
+    "禁 strength→用神、pattern→自动生用神、用神→strength",
+    "三种用互不合并（use_type 必填）",
+    "输出 schema 含 use_type/producer/sources/evidence_chain/namespace_source",
+    "1983-1103：三用神独立 UNDETERMINED"
+  ]
+}

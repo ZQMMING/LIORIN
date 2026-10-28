@@ -1,0 +1,4293 @@
+{
+ "bazi": "癸亥壬戌乙未壬午",
+ "pillars": {
+  "year": [
+   "癸",
+   "亥"
+  ],
+  "month": [
+   "壬",
+   "戌"
+  ],
+  "day": [
+   "乙",
+   "未"
+  ],
+  "hour": [
+   "壬",
+   "午"
+  ]
+ },
+ "day_stem": "乙",
+ "daymaster_element": "木",
+ "month_qi_element": "土",
+ "month_qi_ten_god": "正财",
+ "month_branch": "戌",
+ "ten_god": {
+  "year": {
+   "癸": "偏印"
+  },
+  "month": {
+   "壬": "正印"
+  },
+  "day": {
+   "乙": "比肩"
+  },
+  "hour": {
+   "壬": "正印"
+  }
+ },
+ "hidden": {
+  "year": [
+   "壬",
+   "甲"
+  ],
+  "month": [
+   "戊",
+   "辛",
+   "丁"
+  ],
+  "day": [
+   "己",
+   "丁",
+   "乙"
+  ],
+  "hour": [
+   "丁",
+   "己"
+  ]
+ },
+ "wuxing_power": {
+  "木": {
+   "ling_state": "囚",
+   "ben_n": 0,
+   "zhong_n": 1,
+   "yu_n": 1,
+   "ju_n": 0,
+   "banhe_n": 0,
+   "stem_n": 1,
+   "root_detail": {
+    "亥": "ZHONG",
+    "未": "YU"
+   }
+  },
+  "火": {
+   "ling_state": "休",
+   "ben_n": 1,
+   "zhong_n": 1,
+   "yu_n": 1,
+   "ju_n": 0,
+   "banhe_n": 1,
+   "stem_n": 0,
+   "root_detail": {
+    "戌": "YU",
+    "未": "ZHONG",
+    "午": "BEN"
+   }
+  },
+  "土": {
+   "ling_state": "旺",
+   "ben_n": 2,
+   "zhong_n": 1,
+   "yu_n": 0,
+   "ju_n": 0,
+   "banhe_n": 0,
+   "stem_n": 0,
+   "chong_adjust": 0,
+   "chong_role": "NO_CHONG",
+   "chong_by": null,
+   "library_open": false,
+   "chong_note": "DTS L108「旺者冲衰衰者拔, 衰神冲旺旺神发」L110「子旺午衰, 冲则午拔不能立; 子衰午旺, 冲则午发而为福」两方对比; L96/L98「四库宜冲开」另记 library_open(布尔)",
+   "ling_state_eff": "旺",
+   "root_detail": {
+    "戌": "BEN",
+    "未": "BEN",
+    "午": "ZHONG"
+   }
+  },
+  "金": {
+   "ling_state": "相",
+   "ben_n": 0,
+   "zhong_n": 1,
+   "yu_n": 0,
+   "ju_n": 0,
+   "banhe_n": 0,
+   "stem_n": 0,
+   "root_detail": {
+    "戌": "ZHONG"
+   }
+  },
+  "水": {
+   "ling_state": "死",
+   "ben_n": 1,
+   "zhong_n": 0,
+   "yu_n": 0,
+   "ju_n": 0,
+   "banhe_n": 0,
+   "stem_n": 3,
+   "root_detail": {
+    "亥": "BEN"
+   }
+  }
+ },
+ "daymaster_power": {
+  "ling_state": "囚",
+  "ben_n": 0,
+  "zhong_n": 1,
+  "yu_n": 1,
+  "ju_n": 0,
+  "banhe_n": 0,
+  "stem_n": 1,
+  "root_detail": {
+   "亥": "ZHONG",
+   "未": "YU"
+  }
+ },
+ "root_weight_class": {
+  "year": {
+   "branch": "亥",
+   "class": "LIGHT"
+  },
+  "month": {
+   "branch": "戌",
+   "class": "NONE"
+  },
+  "day": {
+   "branch": "未",
+   "class": "LIGHT"
+  },
+  "hour": {
+   "branch": "午",
+   "class": "LIGHT"
+  }
+ },
+ "xunkong": {
+  "xun": "甲午旬",
+  "kong_wang": [
+   "辰",
+   "巳"
+  ]
+ },
+ "l0_chart": {
+  "twelve_growth": {
+   "year": "死",
+   "month": "墓",
+   "day": "养",
+   "hour": "长生"
+  },
+  "hidden_stems": {
+   "year": {
+    "main": "壬",
+    "middle": "甲",
+    "residual": "None",
+    "all": [
+     "壬",
+     "甲"
+    ]
+   },
+   "month": {
+    "main": "戊",
+    "middle": "辛",
+    "residual": "丁",
+    "all": [
+     "戊",
+     "辛",
+     "丁"
+    ]
+   },
+   "day": {
+    "main": "己",
+    "middle": "丁",
+    "residual": "乙",
+    "all": [
+     "己",
+     "丁",
+     "乙"
+    ]
+   },
+   "hour": {
+    "main": "丁",
+    "middle": "己",
+    "residual": "None",
+    "all": [
+     "丁",
+     "己"
+    ]
+   }
+  },
+  "branch_ten_gods": {
+   "year": {
+    "main": "正印",
+    "middle": "劫财",
+    "residual": "",
+    "all": [
+     "正印",
+     "劫财"
+    ]
+   },
+   "month": {
+    "main": "正财",
+    "middle": "七杀",
+    "residual": "食神",
+    "all": [
+     "正财",
+     "七杀",
+     "食神"
+    ]
+   },
+   "day": {
+    "main": "偏财",
+    "middle": "食神",
+    "residual": "比肩",
+    "all": [
+     "偏财",
+     "食神",
+     "比肩"
+    ]
+   },
+   "hour": {
+    "main": "食神",
+    "middle": "偏财",
+    "residual": "",
+    "all": [
+     "食神",
+     "偏财"
+    ]
+   }
+  },
+  "stem_ten_gods": {
+   "year": "偏印",
+   "month": "正印",
+   "day": "比肩",
+   "hour": "正印"
+  },
+  "stem_branch_polarity": {
+   "year": {
+    "stem": "寅",
+    "branch": "寅"
+   },
+   "month": {
+    "stem": "YANG",
+    "branch": "YANG"
+   },
+   "day": {
+    "stem": "寅",
+    "branch": "寅"
+   },
+   "hour": {
+    "stem": "YANG",
+    "branch": "YANG"
+   }
+  },
+  "branch_clash_map": {},
+  "branch_he_map": {
+   "WEI-WU": [
+    "未",
+    "戊"
+   ]
+  },
+  "he_hua": {
+   "WEI-WU": {
+    "branches": [
+     "未",
+     "戊"
+    ],
+    "hua_qi": "土",
+    "transformed": "False"
+   }
+  },
+  "branch_sanhe_map": {},
+  "sanhe_hua": {},
+  "branch_sanhui_map": {},
+  "branch_sanxing_map": {},
+  "branch_harm_map": {},
+  "branch_po_pairs": [
+   [
+    "戌",
+    "未"
+   ]
+  ],
+  "stem_he_pairs": [],
+  "stem_clash_pairs": [],
+  "kong_wang": [
+   "辰",
+   "巳"
+  ],
+  "nayin": {
+   "year": "大海水",
+   "month": "大海水",
+   "day": "沙中金",
+   "hour": "杨柳木"
+  },
+  "shensha": {
+   "WEN_CHANG": [
+    "戊"
+   ],
+   "HUA_GAI": [
+    "未"
+   ]
+  }
+ },
+ "l3_contract": {
+  "dm_ben_eff": 0,
+  "yin_ben_eff": 1,
+  "ling_state": "囚",
+  "root_grade": "余",
+  "root_grade_raw": "余",
+  "support_state": "SHENG_FU_CHENG_SHI",
+  "strength_verdict": {
+   "value": [
+    "帮身",
+    "通关"
+   ],
+   "status": "DTS_CITED",
+   "predictive": false,
+   "basis": "取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)",
+   "strength_verdict_enum": {
+    "value": "WEAK",
+    "status": "ENGINE_DEFINED",
+    "predictive": false,
+    "basis": "L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction"
+   }
+  },
+  "chong_adjust": 0,
+  "chong_role": "NO_CHONG",
+  "chong_by": null,
+  "library_open": false,
+  "ling_state_eff": "旺",
+  "de_ling": false,
+  "de_di": true,
+  "dang_duo": true,
+  "fan_ju": {
+   "types": [
+    "JUN_LAI_CHEN_SHENG"
+   ],
+   "count": 1,
+   "state": "FAN_JU_RESOLVED",
+   "detail": [
+    {
+     "fan_ju_id": "JUN_LAI_CHEN_SHENG",
+     "name": "君赖臣生",
+     "role": "君(日主)=木 / 臣(生我之神·印)=水",
+     "disease_wx": "水",
+     "yao_wx": "土",
+     "logic": "印(水)成党(工程档>=4) + 财(土)有气(透干或有本气根) -> 药=财, 破印救君",
+     "slice_id": "STATE.WANG_SHUAI.FAN_JU.001",
+     "classic_line": "DTS L445「水泛木浮, 土止水则生木……皆君赖臣生也」; 任氏「君赖臣生, 局中印绶虽旺, 柱中财星有气, 可用财破印也」"
+    }
+   ],
+   "role_map": {
+    "君/夫(日主)": "木",
+    "母/妻(印·生我)": "水",
+    "儿(食伤·我生)": "火",
+    "臣/伤母者(官杀·克我)": "金",
+    "妻(财·我克)": "土"
+   },
+   "power_map": {
+    "木": 3,
+    "水": 4,
+    "火": 3,
+    "金": 1,
+    "土": 3
+   },
+   "flag_map": {
+    "yin_wang": false,
+    "yin_chengdang": true,
+    "cai_youqi": true,
+    "cai_wuqi": false,
+    "chen_wang": true,
+    "chen_chengdang": false,
+    "chen_youqi": false
+   },
+   "boundary_note": "反局是旺衰层结构判断(DTS「### 十七、反局」), 不是格名也不是病名; 本模块只判是否成局, 不改 L3 既有字段, 不出强/弱单极结论; 阈值「成党>=4」为工程整数档, 非原典明文。"
+  },
+  "boundary_note": "§2.5 L3 契约位。dm_ben_eff 含孤根被冲拔/合局化根修正, 由 special_pattern 计算后提升, 不在本层重算; root_grade 由 L0 root_weight_class_facts 归一为无/余/本; support_state 为同党异党离散计数对比; strength_verdict 本引擎 Strength Resolver NOT_AUTHORIZED, 不出强/弱结论, 与 structure.comprehensive_verdict 口径一致; 全部整数/枚举, 无浮点。",
+  "evidence_refs": [
+   "ARCH v1.0 §2.5",
+   "DTS L442-L451 反局章",
+   "STATE.WANG_SHUAI.FAN_JU.001~004"
+  ]
+ },
+ "topology": {
+  "yuan_liu": {
+   "yuan_tou": {
+    "yuan_wx": "水",
+    "mass": 4,
+    "tied_with": [],
+    "evidence": "DTS_CITED",
+    "upstream_pending": "_mass_formula",
+    "zong_zu_note": "「满局之祖宗」是「最多最旺」的同义改写, 非独立判据; DTS 全文「祖宗」1 处 / 「源头」1 处, 均在 L245 同一句"
+   },
+   "path": [
+    "水",
+    "木",
+    "火",
+    "土",
+    "金",
+    "水"
+   ],
+   "path_complete": true,
+   "status": "SKELETON_ONLY",
+   "endpoint": null,
+   "endpoint_pending": "L4_XI_WX",
+   "pending_steps": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "evidence": "DTS_CITED",
+   "note": "步骤1-2 已落(源头+路径); 步骤3-6 未落。路径终点 / 是否气泄为乱 / 遇阻节 / 流住之地 —— 均依赖 L4 xi_wx。"
+  },
+  "fang_ju": {
+   "variant": "JIA_SAME_WUXING",
+   "jun_za_ming": false,
+   "group_type": null,
+   "findings": [],
+   "findings_count": 0,
+   "degree": null,
+   "degree_pending": "「太过」(L185)「纯疵」(L187/L189)「太强」(L189) 三词原典有, 无档位/阈值 -> 程度另立待核",
+   "mao_pending": "L185「搭一亥或卯或未」中「卯」语义歧义(卯已在寅卯辰组内); 六本底本逐本核无第二来源 -> 只落亥/未, 卯记 pending",
+   "criterion_status": "JIA_APPROVED",
+   "criterion_note": "DTS 总纲无五行限制语, 「同五行」为 ENGINE_DEFINED; 木组 DTS_CITED(L185/L189), 火金水 ENGINE_DEFINED",
+   "evidence": "DTS_CITED",
+   "pair_map_evidence": "木组 DTS_CITED / 火金水 ENGINE_DEFINED",
+   "keyword_table": "FANG_JU_HUN_WORDS(契约 §5.x)",
+   "line": "L183-L193"
+  },
+  "tong_guan": {
+   "rules": [
+    {
+     "guan": [
+      "木",
+      "土"
+     ],
+     "tong": "火",
+     "trigger": "KE",
+     "inert": false,
+     "evidence": "DTS_CITED",
+     "line": "L250"
+    },
+    {
+     "guan": [
+      "火",
+      "金"
+     ],
+     "tong": "土",
+     "trigger": "KE",
+     "inert": false,
+     "evidence": "DTS_CITED",
+     "line": "L250"
+    },
+    {
+     "guan": [
+      "土",
+      "水"
+     ],
+     "tong": "金",
+     "trigger": "KE",
+     "inert": false,
+     "evidence": "DTS_CITED",
+     "line": "L250"
+    },
+    {
+     "guan": [
+      "金",
+      "水"
+     ],
+     "tong": "水",
+     "trigger": "KE",
+     "inert": true,
+     "evidence": "DTS_CITED",
+     "line": "L250"
+    }
+   ],
+   "note": "前三组相克成关可触发; 第四组金水不相克 inert(见契约 §4.4)"
+  },
+  "guan_topo": {
+   "topo_ok": true,
+   "conditions": {
+    "distance": "SPAN_ONE",
+    "blocked": false,
+    "jie_zhan": true
+   },
+   "verdict": "PASS",
+   "pending": [],
+   "detail": {
+    "pairs": [
+     {
+      "pos": [
+       "year",
+       "day"
+      ],
+      "gap": 2,
+      "geo_tier": "SPAN_ONE",
+      "count": 0,
+      "rel_tier": null
+     }
+    ],
+    "pos_of_missing": false,
+    "blocked_by_third": true,
+    "third_positions": [
+     "month",
+     "hour"
+    ]
+   },
+   "evidence": "DTS_CITED",
+   "note": "V7.127 核清: distance/blocked/jie_zhan 均落(需 pos_of 柱位映射); jie_zhan=位置隔断(blocked_by_third, 与「隔一物」同层, 非劫财夺气, 阐微闲神章佐证); 引去通关归岁运层裁决。",
+   "line": "L108"
+  },
+  "boundary_note": "派生层(L0+L1 的确定性派生), 不塞 L0~L4 任何一层。源流读 mass(L1), 方局/通关/关拓扑读 relations(L0)。★ 不放 raw_facts —— 会让 L0 输出依赖 L1 输出, 层次倒挂。"
+ },
+ "combination_facts": {
+  "liuhe": [
+   [
+    "未",
+    "午"
+   ]
+  ],
+  "liuchong": [],
+  "anhe": [],
+  "sanhe": [],
+  "sanhui": [],
+  "liuhai": [],
+  "liupo": [
+   "未戌相破"
+  ],
+  "sanxing": [],
+  "banhe": [
+   {
+    "pair": [
+     "戌",
+     "午"
+    ],
+    "wx": "火"
+   }
+  ],
+  "self_punishment": [],
+  "resolved": {
+   "chong_active": [],
+   "chong_inactive": [],
+   "chong_canceled": [],
+   "chong_survive": [],
+   "liuhe_canceled": [],
+   "banhe_canceled": [],
+   "sanhe_canceled": [],
+   "sanhui_canceled": [],
+   "xinghe": [],
+   "chong_actions": [],
+   "_note": "PZZQ冲合互动裁决; 隔位/三会成方被单支冲=inactive; 暗合(卯申)、明合(六合/三合)解冲=canceled; 存活冲再解合会; 争合/位置UNVERIFIED"
+  }
+ },
+ "resolved": {
+  "chong_active": [],
+  "chong_inactive": [],
+  "chong_canceled": [],
+  "chong_survive": [],
+  "liuhe_canceled": [],
+  "banhe_canceled": [],
+  "sanhe_canceled": [],
+  "sanhui_canceled": [],
+  "xinghe": [],
+  "chong_actions": [],
+  "_note": "PZZQ冲合互动裁决; 隔位/三会成方被单支冲=inactive; 暗合(卯申)、明合(六合/三合)解冲=canceled; 存活冲再解合会; 争合/位置UNVERIFIED"
+ },
+ "root_relations": {
+  "generator": "DaymasterRootRelationOverlay",
+  "patch": "PATCH-160-B-V2-D8",
+  "root_branch_relations": {
+   "year": {
+    "branch": "亥",
+    "root_class": "LIGHT_YU_QI",
+    "is_root": true,
+    "relations": []
+   },
+   "month": {
+    "branch": "戌",
+    "root_class": "NONE",
+    "is_root": false,
+    "relations": []
+   },
+   "day": {
+    "branch": "未",
+    "root_class": "LIGHT_YU_QI",
+    "is_root": true,
+    "relations": [
+     {
+      "relation": "BREAK",
+      "group": "STRUCK",
+      "fact_key": "liupo",
+      "with_branches": [
+       "戌"
+      ],
+      "positions": [],
+      "raw": "未戌相破"
+     },
+     {
+      "relation": "SIX_COMBINE",
+      "group": "COMBINE",
+      "fact_key": "liuhe",
+      "with_branches": [
+       "午"
+      ],
+      "positions": [],
+      "raw": "未午"
+     }
+    ]
+   },
+   "hour": {
+    "branch": "午",
+    "root_class": "SPECIAL_LONGSHENG_YIN",
+    "is_root": true,
+    "relations": [
+     {
+      "relation": "SIX_COMBINE",
+      "group": "COMBINE",
+      "fact_key": "liuhe",
+      "with_branches": [
+       "未"
+      ],
+      "positions": [],
+      "raw": "未午"
+     }
+    ]
+   }
+  },
+  "struck_root_pillars": [
+   "day"
+  ],
+  "combined_root_pillars": [
+   "day",
+   "hour"
+  ],
+  "judgment_status": "ROOT_RELATION_STRUCTURE_ONLY",
+  "boundary_note": "仅标记日主根支参与何种地支关系; 关系存在≠根失效; 冲则根拔/衰者拔旺者发/合化改根/开库/根增强均为作用层, 未授权 HOLD; struck/combined 只是结构分组, 不带好坏, 不输出 STRONG/WEAK"
+ },
+ "root_effectiveness": {
+  "daymaster": "乙",
+  "per_pillar": {
+   "year": {
+    "root_class": "LIGHT_YU_QI",
+    "effective": true,
+    "reason": "有效根"
+   },
+   "month": {
+    "root_class": "NONE",
+    "effective": false,
+    "reason": "无根"
+   },
+   "day": {
+    "root_class": "LIGHT_YU_QI",
+    "effective": true,
+    "reason": "有效根"
+   },
+   "hour": {
+    "root_class": "SPECIAL_LONGSHENG_YIN",
+    "effective": true,
+    "reason": "半合局戌午化火(非日主木), 根气被合(半合仅标记)"
+   }
+  },
+  "has_effective_root": true,
+  "effective_root_weight_class": "LIGHT",
+  "chong_map": {},
+  "heju_map": {
+   "戌": "半合局戌午化火(非日主木), 根气被合",
+   "午": "半合局戌午化火(非日主木), 根气被合"
+  },
+  "boundary_note": "根有效性过滤: 多冲一根失效/一对一冲旺衰比较(衰者拔旺神发两停)/合局合神非日主同类则根气被合; 不评分不加权"
+ },
+ "stem_combination_facts": {
+  "wuhe": []
+ },
+ "tian_he": {
+  "generator": "TianHeAnalyzer",
+  "month_qi_wuxing": "土",
+  "he_pairs": [],
+  "huashen_on_month_qi": false,
+  "has_long_chen": false,
+  "sanhe_ju": [],
+  "sanhui_ju": [],
+  "judgment_status": "STRUCTURE_ONLY",
+  "boundary_note": "仅记天干合对/化神/化神得月令/逢辰结构; 不判真化假化, 不判化气格, 太过不及未量化"
+ },
+ "power_queries": [
+  {
+   "query_id": "ZP-160-QUERY-REN-CAIGUAN",
+   "name": "能任财官",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "ROOT_BRANCH"
+   ],
+   "matched_edges": [
+    "ROOT_RELATION"
+   ],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "有根=能任, 无根普通格不能任; 从化从杀等特殊路径未授权, 不推"
+  },
+  {
+   "query_id": "ZP-160-QUERY-DESHI-BUWANG",
+   "name": "得时不旺",
+   "classic": "子平真诠",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "只匹配得令+克/泄方成党(透干且通根); 不声明\"太重/不旺\", 不判成局强度; 命题成立待授权"
+  },
+  {
+   "query_id": "ZP-160-QUERY-SHISHI-BURUO",
+   "name": "失时不弱",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "SEASON",
+    "SUPPORT_PARTY"
+   ],
+   "matched_edges": [
+    "SEASONAL_RELATION",
+    "SUPPORT_RELATION"
+   ],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "只匹配失令+扶身成党(透干且通根); 不声明\"重叠/不弱\"; 命题成立待授权"
+  },
+  {
+   "query_id": "ZP-160-QUERY-CAIDUO-SHENRUAN",
+   "name": "财党无根结构",
+   "classic": "渊海子平",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "YHZP-078-024"
+   ],
+   "boundary_note": "只匹配财成党+日主无根; 不判财多程度, 不下旺衰结论; 命题成立待授权"
+  },
+  {
+   "query_id": "ZP-160-QUERY-SHAZHONG-SHENQING",
+   "name": "杀党无根结构",
+   "classic": "渊海子平",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "YHZP-079-031"
+   ],
+   "boundary_note": "只匹配官杀成党+日主无根; 不判煞重程度, 不下旺衰结论; 命题成立待授权"
+  },
+  {
+   "query_id": "ZP-160-QUERY-XIEQI-TAIZHONG",
+   "name": "泄气太重结构",
+   "classic": "子平真诠",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-007-025"
+   ],
+   "boundary_note": "只匹配食伤成党(透干且通根); 不判\"泄太重\"程度; 命题成立待授权"
+  },
+  {
+   "query_id": "ZP-160-QUERY-HEAVY-ROOT",
+   "name": "重根结构",
+   "classic": "子平真诠",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "只报有无长生禄刃重根; 不下旺衰结论; 重根参与六合且化神得令, 根被合走"
+  },
+  {
+   "query_id": "ZP-160-QUERY-LIGHT-ROOT",
+   "name": "轻根结构",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "ROOT_BRANCH"
+   ],
+   "matched_edges": [
+    "ROOT_RELATION"
+   ],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "只报有无墓库余气轻根; 不下旺衰结论, 不计根数/不与重根叠加"
+  },
+  {
+   "query_id": "ZP-160-QUERY-TENGLUO-XIJIA",
+   "name": "藤萝系甲结构",
+   "classic": "滴天髓",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-008-007"
+   ],
+   "boundary_note": "只报乙日见甲透这一结构; 不升旺衰结论, 不解释\"可春可秋\""
+  },
+  {
+   "query_id": "ZP-160-QUERY-JUECHU-FENGSHENG",
+   "name": "绝处逢生结构",
+   "classic": "神峰通考",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "SFTK-009-002"
+   ],
+   "boundary_note": "只报月令绝地+月令藏干见印这一结构; 不下旺衰结论"
+  },
+  {
+   "query_id": "ZP-160-QUERY-YIN-PARTY",
+   "name": "印星成党结构",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "YIN_PARTY"
+   ],
+   "matched_edges": [
+    "SUPPORT_RELATION"
+   ],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "只匹配印星透干且通根; 不判成党程度, 不下旺衰/喜忌结论"
+  },
+  {
+   "query_id": "ZP-160-QUERY-BIJIE-PARTY",
+   "name": "比劫成党结构",
+   "classic": "子平真诠",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "只匹配比劫透干且通根; 不判成党程度, 不下旺衰/喜忌结论"
+  },
+  {
+   "query_id": "ZP-160-QUERY-ROOT-STRUCK",
+   "name": "根支受对立关系",
+   "classic": "滴天髓",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "ROOT_BRANCH"
+   ],
+   "matched_edges": [
+    "COMBINATION"
+   ],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "只报日主根支参与冲刑害破这一结构; 不判根是否被拔/失效. 原典批\"墓库逢冲必发\"为谬: 赖库根逢冲反拔微根, 不预设冲开发福"
+  },
+  {
+   "query_id": "ZP-160-QUERY-ROOT-GAN-PRIORITY",
+   "name": "根干层级",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "ROOT_BRANCH"
+   ],
+   "matched_edges": [
+    "ROOT_RELATION"
+   ],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "根优先于干这一层级; 不数比肩个数, 不评分, 不下旺衰结论"
+  },
+  {
+   "query_id": "ZP-160-QUERY-WANGCHONG-SHUAI",
+   "name": "旺者冲衰结构",
+   "classic": "滴天髓",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "冲两支按四阶比谁拔谁发, 同阶两停; 不编七级旺衰, 不输出日主综合强弱"
+  },
+  {
+   "query_id": "ZP-160-QUERY-HE-HUASHEN-DESHI",
+   "name": "合化神得令结构",
+   "classic": "渊海子平",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "YHZP-121-003"
+   ],
+   "boundary_note": "仅记天干合+化神得月令结构; 不判真化假化, 不判化气格, 太过不及未量化"
+  },
+  {
+   "query_id": "ZP-160-QUERY-SHI-GUI-LU",
+   "name": "时柱归禄结构",
+   "classic": "滴天髓",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "ROOT_HOUR"
+   ],
+   "matched_edges": [
+    "ROOT_RELATION"
+   ],
+   "evidence_refs": [
+    "SMTH-026-015"
+   ],
+   "boundary_note": "时柱有日主重根即记归禄结构; 不做日禄归时贵格, 不做时位加倍权重"
+  },
+  {
+   "query_id": "ZP-160-QUERY-ZHONGGUA-2SIDE",
+   "name": "众寡两端结构",
+   "classic": "滴天髓",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "DAYMASTER_SIDE",
+    "OPPOSING_SIDE"
+   ],
+   "matched_edges": [
+    "TWO_SIDE_RELATION"
+   ],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "两端各报成党成员, 不合成一端强弱, 不判去谁成谁, 不输出旺衰结论"
+  },
+  {
+   "query_id": "ZP-160-QUERY-RI-BEI-HE",
+   "name": "日主被合结构",
+   "classic": "三命通会",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [
+    "TIAN_HE_RELATION"
+   ],
+   "evidence_refs": [
+    "DTS-008-013"
+   ],
+   "boundary_note": "日干参与天干五合即记被合结构; 不判合化成功, 不判被合后力减, 不判化神取代日主"
+  },
+  {
+   "query_id": "ZP-160-QUERY-JIRUO-WUGEN",
+   "name": "极弱无根/假从结构",
+   "classic": "神峰通考",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "SFTK-009-002"
+   ],
+   "boundary_note": "假从: 根=轻+印比无扶+对方成党=True; 不判弃命, 不下旺衰结论"
+  },
+  {
+   "query_id": "ZP-160-QUERY-WUGEN-YOUFU",
+   "name": "无根有扶衰弱结构",
+   "classic": "神峰通考",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "SFTK-ROOT-001"
+   ],
+   "boundary_note": "只匹配无根+印比有扶(=['BIJIE', 'YIN']), 弱而不从; 与极弱无根(从)互斥, 不下旺衰最终裁决"
+  },
+  {
+   "query_id": "ZP-160-QUERY-HEHUASHEN-CHENGGONG",
+   "name": "合化成功结构",
+   "classic": "子平真诠",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-007-025"
+   ],
+   "boundary_note": "仅记天干合+化神得令+局全结构; 不判真化假化, 不判化气格, 不判富贵"
+  },
+  {
+   "query_id": "ZP-160-QUERY-JIWANG-HUAIJI",
+   "name": "日干太旺结构",
+   "classic": "滴天髓",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "王/相令+重根+天干印比透扶+成势(比劫党=False,印党=True,重根支=0); 不输出喜克泄, 不判从强, 不与旺极混"
+  },
+  {
+   "query_id": "ZP-160-QUERY-JISHUAI-CONGSHENG",
+   "name": "日干极衰结构",
+   "classic": "滴天髓",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "仅记失令+无根+克泄成党结构; 不输出喜生扶, 不判从弱"
+  },
+  {
+   "query_id": "ZP-160-QUERY-SHIYONG-YUELING-XIANGFU",
+   "name": "时月人元相附结构",
+   "classic": "滴天髓",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "MONTH_HIDDEN",
+    "HOUR_HIDDEN"
+   ],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "仅记时月人元同类结构; 不判加倍兴隆/凶祸"
+  },
+  {
+   "query_id": "ZP-160-QUERY-GE-QING",
+   "name": "格清结构",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "COMBINATION"
+   ],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "仅记无冲刑害自刑结构; 不判格清贵格, 不判吉凶"
+  },
+  {
+   "query_id": "ZP-160-QUERY-GE-QING-EXT",
+   "name": "格清扩展(清纯/混杂/真假)",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "GE_QING_BASE"
+   ],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "格清扩展: 清纯(无官杀/食伤混杂)/混杂(官杀混杂或食伤混杂)/真假(月令本气透=真神, 余气中气透=假神); 只输出结构状态, 不判格局高低/吉凶/贵贱",
+   "qingchun": true,
+   "hunza_type": "无混杂",
+   "guansha_hunza": false,
+   "shishang_hunza": false,
+   "zhen_shen": null,
+   "jia_shen": [],
+   "zhenjia_type": "无透"
+  },
+  {
+   "query_id": "ZP-160-QUERY-GE-QUALITY",
+   "name": "格局高低",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "COMBINATION",
+    "ROOT",
+    "SEASONAL"
+   ],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "清但根令不足"
+  },
+  {
+   "query_id": "ZP-160-QUERY-YUN-SHENG-ROOT",
+   "name": "运补根结构",
+   "classic": "滴天髓",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "仅记原局无根结构(待大运补根); 不判喜忌吉凶"
+  },
+  {
+   "query_id": "ZP-160-QUERY-YUN-ZHI-XIJI",
+   "name": "运之喜忌结构",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "YUN_XIJI_BASE",
+    "GEJU_XI",
+    "GEJU_JI",
+    "SHEN_XI",
+    "SHEN_JI"
+   ],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-005-006",
+    "DTS-009-009"
+   ],
+   "boundary_note": "运之喜忌结构层: 格局喜忌(月令十神)+身强弱喜忌(root_class)+调候喜忌(气候候选); 只输出喜忌候选五行, 不判吉凶/贵贱/成败; 吉凶在前端拦截",
+   "geju_xiji": {
+    "xi": [
+     "官杀",
+     "食伤"
+    ],
+    "ji": [
+     "比劫"
+    ]
+   },
+   "shen_xiji": {
+    "xi": [
+     "水",
+     "木"
+    ],
+    "ji": [
+     "金",
+     "土",
+     "火"
+    ]
+   },
+   "tiaohou_xi": [],
+   "tiaohou_ji": [],
+   "all_xi": [
+    "水",
+    "官杀",
+    "木",
+    "食伤"
+   ],
+   "all_ji": [
+    "火",
+    "金",
+    "比劫",
+    "土"
+   ]
+  },
+  {
+   "query_id": "ZP-160-QUERY-CAI-RUO-SHEN-QIANG",
+   "name": "财弱身旺结构",
+   "classic": "神峰通考",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "SFTK-009-002"
+   ],
+   "boundary_note": "仅记重根+财无根结构; 不判吉凶"
+  },
+  {
+   "query_id": "ZP-160-QUERY-WANGJI-SIWO-SHENG",
+   "name": "旺极似我生结构",
+   "classic": "滴天髓",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "仅记得令+重根+食伤成党结构; 不判喜克"
+  },
+  {
+   "query_id": "ZP-160-QUERY-SHUAIJI-SIWO-KE",
+   "name": "衰极似我克结构",
+   "classic": "滴天髓",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "仅记失令+无根+财成党结构; 不判喜生"
+  },
+  {
+   "query_id": "ZP-160-QUERY-MU-CHONG-KAI",
+   "name": "墓库逢冲结构",
+   "classic": "滴天髓",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-008-007"
+   ],
+   "boundary_note": "仅记墓库逢冲结构; 不判冲开/根伤"
+  },
+  {
+   "query_id": "ZP-160-QUERY-SHI-ZHU-JI",
+   "name": "时柱为忌结构",
+   "classic": "滴天髓",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "HOUR_HIDDEN"
+   ],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "仅记时柱官杀财结构; 不判凶祸"
+  },
+  {
+   "query_id": "ZP-160-QUERY-SHI-LIN-WANG",
+   "name": "时临旺处结构",
+   "classic": "神峰通考",
+   "state": "NOT_SUPPORTED",
+   "match_type": "NO_MATCH",
+   "matched_nodes": [],
+   "matched_edges": [],
+   "evidence_refs": [
+    "SFTK-009-002"
+   ],
+   "boundary_note": "仅记时柱禄旺结构; 不判物自有成"
+  },
+  {
+   "query_id": "ZP-160-QUERY-TIANGAN-XINGQING",
+   "name": "天干性情结构",
+   "classic": "滴天髓",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "DAYMASTER"
+   ],
+   "matched_edges": [],
+   "evidence_refs": [
+    "DTS-009-009"
+   ],
+   "boundary_note": "日干乙性情:藤罗系甲; 不判喜忌"
+  },
+  {
+   "query_id": "ZP-160-QUERY-YONGSHEN-STRUCTURE",
+   "name": "用神结构",
+   "classic": "子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "MONTH_QI"
+   ],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-005-005"
+   ],
+   "boundary_note": "月令戌本气戊为日主正财; 不判最终用神/喜忌"
+  },
+  {
+   "query_id": "ZP-160-QUERY-YONGSHEN-FINAL",
+   "name": "用神最终裁决",
+   "classic": "子平真诠+穷通宝鉴",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "MONTH_QI",
+    "CLIMATE"
+   ],
+   "matched_edges": [],
+   "evidence_refs": [
+    "PZZQ-005-005",
+    "QTBJ-003-002"
+   ],
+   "boundary_note": "格神:戊(正财);调候:癸(偏印);调候:辛(七杀)"
+  },
+  {
+   "query_id": "ZP-160-QUERY-ZHONG-HE",
+   "name": "中和纯粹结构",
+   "classic": "滴天髓/子平真诠",
+   "state": "SUPPORTED",
+   "match_type": "STRUCTURE_MATCH",
+   "matched_nodes": [
+    "HAS_ROOT",
+    "YIN_OR_BIJIE_PARTY",
+    "NOT_EXTREME"
+   ],
+   "matched_edges": [
+    "SUPPORT_RELATION",
+    "ROOT_PRESENT"
+   ],
+   "evidence_refs": [
+    "DTS-017-001",
+    "DTS-017-002"
+   ],
+   "boundary_note": "只匹配有根+印比透扶+非极端; 不判格局高低, 不下吉凶结论"
+  }
+ ],
+ "structure": {
+  "daymaster": "乙",
+  "wangshuai_dimension": {
+   "state": "失令",
+   "month_supports": false,
+   "month_qi_ten_god": "正财",
+   "evidence": "PZZQ-论十干得时不旺失时不弱; YHZP-论旺衰; DTS-旺衰篇"
+  },
+  "root_dimension": {
+   "power": "轻根",
+   "effective_state": "根合",
+   "effective_rwc": "LIGHT",
+   "root_types": [
+    "LIGHT_YU_QI",
+    "SPECIAL_LONGSHENG_YIN"
+   ],
+   "evidence": "PZZQ-论根气; DTS-长生禄旺根之重者; 滴天髓-旺者冲衰衰者拔"
+  },
+  "support_dimension": {
+   "state": "生扶成势",
+   "support_count": 3,
+   "drain_count": 0,
+   "control_count": 0,
+   "stem_support": 3,
+   "stem_drain": 0,
+   "stem_control": 0,
+   "evidence": "PZZQ-党众为强助寡为弱; YHZP-论身强身弱; DTS-体用篇"
+  },
+  "comprehensive_verdict": "NOT_AUTHORIZED",
+  "boundary_note": "旺衰/强弱结构层 v0.1: 只输出多维结构事实, 不输出综合裁决. 旺衰≠强弱, 可以\"虽旺而弱\", 也可以\"虽衰而强\". Strength Resolver (160-B) NOT_AUTHORIZED. Authority Matrix v0.1: 旺衰 Primary=PZZQ, Secondary=YHZP, Alternate=DTS; 强弱 Primary=PZZQ, Secondary=YHZP, Alternate=DTS.",
+  "authority_matrix_version": "v0.1"
+ },
+ "ge_cheng": {
+  "ge": "财格",
+  "xi_wx": [
+   "水"
+  ],
+  "ti_wx": [
+   "土"
+  ],
+  "overpower_combo": 6,
+  "zhi_wx": [],
+  "hua_wx": [],
+  "po_ge": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   }
+  ],
+  "rule": "PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)",
+  "shape": "佩印",
+  "shape_base": "财格",
+  "ge_evidence": {
+   "zhun": [
+    "STRUCTURE.GE_JU.PI_CAI.001"
+   ],
+   "zhu": [],
+   "pang": [
+    "STRUCTURE.GE_JU.CHENG_BAI.004",
+    "STRUCTURE.GE_JU.CHENG_BAI.007"
+   ],
+   "rule_text": "PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)",
+   "mapped": true,
+   "xing_po_hai": {
+    "xing": false,
+    "po": true,
+    "hai": false,
+    "chong": false
+   },
+   "xing_po_hai_basis": "DTS冲合集.005(准神): 刑与穿兮动不动 -> UNKNOWN, 不升级破格 (对齐 guange_rule_contract.blocked_unknown)"
+  },
+  "po_ge_hits": [
+   {
+    "hit_type": "组合",
+    "match": "ANY",
+    "hit_detail": "七杀",
+    "sources": [
+     "七杀"
+    ],
+    "domain": "JIEGOU",
+    "basis": "ENGINE_DEFINED"
+   }
+  ],
+  "cheng_bai": "CHENG_ZHONG_YOU_PO"
+ },
+ "jiu_ying": {
+  "triggered": true,
+  "type": [
+   "JIU_YING.001",
+   "JIU_YING.004",
+   "JIU_YING.005-e+f+g+i"
+  ],
+  "success": "SUCCESS",
+  "evidence": [
+   ".001 通关: 金 缺中间神需引通, 日干有根=True",
+   ".004 澄浊(ENGINE_DEFINED 代理): po_n=1>0, 杂神5种≥2(格神=正财、偏财), 扫浊神=是 (有根=True)",
+   ".005 八格破格后救应: po_n=1>0, 命中原文子型=e 劫财解财、f 食枭就煞、g 食制印护、i 刃禄重印"
+  ],
+  "xiang_note": null,
+  "rescue_wx": [
+   "水",
+   "金"
+  ],
+  "note": null
+ },
+ "special": {
+  "cong_type": null,
+  "cong_state": null,
+  "zhuanwang": null,
+  "zhuanwang_state": null,
+  "hua_qi": null,
+  "hua_qi_state": null,
+  "liangqi": null,
+  "mu_mie": null,
+  "patterns": []
+ },
+ "liu_qin": {
+  "state": "six_relative_state",
+  "namespace": "SIX_RELATIVE",
+  "gender": "男",
+  "items": [
+   {
+    "symbol": "妻星",
+    "ten_god_group": "财",
+    "present": false,
+    "positions": [],
+    "palaces": []
+   },
+   {
+    "symbol": "父",
+    "ten_god_group": "财",
+    "present": false,
+    "positions": [],
+    "palaces": []
+   },
+   {
+    "symbol": "母",
+    "ten_god_group": "印",
+    "present": true,
+    "positions": [
+     {
+      "pos": "year",
+      "gan": "癸",
+      "ten_god": "偏印",
+      "is_day": false
+     },
+     {
+      "pos": "month",
+      "gan": "壬",
+      "ten_god": "正印",
+      "is_day": false
+     },
+     {
+      "pos": "hour",
+      "gan": "壬",
+      "ten_god": "正印",
+      "is_day": false
+     }
+    ],
+    "palaces": [
+     "子女宫",
+     "父母宫",
+     "祖辈/父母宫"
+    ]
+   },
+   {
+    "symbol": "子女",
+    "ten_god_group": "食伤",
+    "present": false,
+    "positions": [],
+    "palaces": []
+   },
+   {
+    "symbol": "兄弟",
+    "ten_god_group": "比劫",
+    "present": true,
+    "positions": [
+     {
+      "pos": "day",
+      "gan": "乙",
+      "ten_god": "比肩",
+      "is_day": true
+     }
+    ],
+    "palaces": [
+     "夫妻宫(日支)"
+    ]
+   }
+  ],
+  "evidence_refs": [
+   "SMTH L3565",
+   "YHZP-102-001",
+   "SFTK-007-002"
+  ],
+  "note": "六亲=星+宫+关系, 只记结构不判吉凶(PATCH-012「禁六亲=吉凶」)"
+ },
+ "yongshen_multi_track": {
+  "module": "YONGSHEN_MULTI_TRACK_V1.0",
+  "namespace": "daymaster_yongshen_multi_track",
+  "version": "1.0",
+  "tracks": {
+   "ZPZQ": {
+    "track_id": "ZPZQ",
+    "track_name": "格局轨",
+    "activated": true,
+    "candidates": [
+     {
+      "element": "水",
+      "priority": 1,
+      "evidence": "子平真诠: 格局用神专求月令, 财格·形态「佩印」以印星为用(PZZQ L1113/L3212/L1142-1143)",
+      "boundary": "形态用神; 喜忌随形态与身轻身重而异(取运章), 不可与调候/病药混为总用神"
+     }
+    ],
+    "evidence_grade": "DIRECT",
+    "note": "主链格局=财格·形态「佩印」; 用神取形态所定格神"
+   },
+   "QTBJ": {
+    "track_id": "QTBJ",
+    "track_name": "调候轨",
+    "activated": false,
+    "candidates": [],
+    "evidence_grade": "CANDIDATE",
+    "note": "月令戌非冬夏，调候不急"
+   },
+   "SFTK": {
+    "track_id": "SFTK",
+    "track_name": "病药轨",
+    "activated": true,
+    "candidates": [
+     {
+      "element": "土",
+      "priority": 1,
+      "evidence": "神峰通考: 有病方为贵，病在印多埋子(水)，药在土(病药层日主动态表; 药方多路: 土/木)",
+      "boundary": "药需得力方效；病轻药重/病重药轻皆非所宜；十干细分: 未明确病/未明确药"
+     }
+    ],
+    "evidence_grade": "DIRECT",
+    "note": "识别到1个病: ['印多埋子']"
+   },
+   "DTS": {
+    "track_id": "DTS",
+    "track_name": "体用轨",
+    "activated": true,
+    "candidates": [
+     {
+      "element": "木",
+      "priority": 1,
+      "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，木为候选之一",
+      "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+     },
+     {
+      "element": "火",
+      "priority": 2,
+      "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，火为候选之一",
+      "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+     },
+     {
+      "element": "土",
+      "priority": 3,
+      "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，土为候选之一",
+      "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+     },
+     {
+      "element": "金",
+      "priority": 4,
+      "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，金为候选之一",
+      "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+     },
+     {
+      "element": "水",
+      "priority": 5,
+      "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，水为候选之一",
+      "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+     }
+    ],
+    "evidence_grade": "CANDIDATE",
+    "note": "日主中和(结构枚举: 得令=False, 根=LIGHT, 印比=3, 克泄=0), 全五行候选(需配合其他轨道综合判断)"
+   }
+  },
+  "conflict": {
+   "has_conflict": true,
+   "conflict_type": "病药vs体用",
+   "tracks_involved": [
+    "ZPZQ",
+    "SFTK",
+    "DTS"
+   ],
+   "resolution": "保留多解，不裁决",
+   "display_note": "病药vs体用冲突: 格局轨首选水; 病药轨首选土; 体用轨首选木。请结合命局整体判断，各轨有独立原文依据。"
+  },
+  "all_candidates": [
+   {
+    "element": "水",
+    "track_id": "ZPZQ",
+    "track_name": "格局轨",
+    "priority_in_track": 1,
+    "evidence": "子平真诠: 格局用神专求月令, 财格·形态「佩印」以印星为用(PZZQ L1113/L3212/L1142-1143)",
+    "boundary": "形态用神; 喜忌随形态与身轻身重而异(取运章), 不可与调候/病药混为总用神"
+   },
+   {
+    "element": "土",
+    "track_id": "SFTK",
+    "track_name": "病药轨",
+    "priority_in_track": 1,
+    "evidence": "神峰通考: 有病方为贵，病在印多埋子(水)，药在土(病药层日主动态表; 药方多路: 土/木)",
+    "boundary": "药需得力方效；病轻药重/病重药轻皆非所宜；十干细分: 未明确病/未明确药"
+   },
+   {
+    "element": "木",
+    "track_id": "DTS",
+    "track_name": "体用轨",
+    "priority_in_track": 1,
+    "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，木为候选之一",
+    "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+   },
+   {
+    "element": "火",
+    "track_id": "DTS",
+    "track_name": "体用轨",
+    "priority_in_track": 2,
+    "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，火为候选之一",
+    "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+   },
+   {
+    "element": "金",
+    "track_id": "DTS",
+    "track_name": "体用轨",
+    "priority_in_track": 4,
+    "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，金为候选之一",
+    "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+   }
+  ],
+  "candidate_elements": [
+   "水",
+   "土",
+   "木",
+   "火",
+   "金"
+  ],
+  "display": {
+   "primary": null,
+   "primary_track": null,
+   "all_candidates": [
+    {
+     "element": "水",
+     "track_id": "ZPZQ",
+     "track_name": "格局轨",
+     "priority_in_track": 1,
+     "evidence": "子平真诠: 格局用神专求月令, 财格·形态「佩印」以印星为用(PZZQ L1113/L3212/L1142-1143)",
+     "boundary": "形态用神; 喜忌随形态与身轻身重而异(取运章), 不可与调候/病药混为总用神"
+    },
+    {
+     "element": "土",
+     "track_id": "SFTK",
+     "track_name": "病药轨",
+     "priority_in_track": 1,
+     "evidence": "神峰通考: 有病方为贵，病在印多埋子(水)，药在土(病药层日主动态表; 药方多路: 土/木)",
+     "boundary": "药需得力方效；病轻药重/病重药轻皆非所宜；十干细分: 未明确病/未明确药"
+    },
+    {
+     "element": "木",
+     "track_id": "DTS",
+     "track_name": "体用轨",
+     "priority_in_track": 1,
+     "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，木为候选之一",
+     "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+    },
+    {
+     "element": "火",
+     "track_id": "DTS",
+     "track_name": "体用轨",
+     "priority_in_track": 2,
+     "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，火为候选之一",
+     "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+    },
+    {
+     "element": "金",
+     "track_id": "DTS",
+     "track_name": "体用轨",
+     "priority_in_track": 4,
+     "evidence": "日主中和(得令=False,根=LIGHT,印比=3,克泄=0)，用神不明确，金为候选之一",
+     "boundary": "中和需配合格局/调候/病药综合判断；不单独裁决"
+    }
+   ],
+   "note": "病药vs体用冲突: 格局轨首选水; 病药轨首选土; 体用轨首选木。请结合命局整体判断，各轨有独立原文依据。"
+  },
+  "boundary_note": "四轨并行，冲突保留不裁决; 渊海子平/三命通会降级为基础事实校验层; 不评分/不权重/不强行统一; 命中率@K评价; 吉凶前端拦截"
+ },
+ "wangshuai_multi_track": {
+  "daymaster": "乙",
+  "tracks": {
+   "YHZP": {
+    "track_id": "YHZP",
+    "track_name": "渊海子平轨",
+    "activated": true,
+    "result": "身弱有根",
+    "evidence": "渊海子平: 得时为旺, 失时为衰; 得地为根, 失地无根",
+    "boundary": "月令权重极高, 得令即旺; 通根只看有无, 不区分轻重",
+    "details": {
+     "season": "失令",
+     "has_root": true,
+     "root_effective": "正常"
+    }
+   },
+   "PZZQ": {
+    "track_id": "PZZQ",
+    "track_name": "子平真诠轨",
+    "activated": true,
+    "result": "身弱有根",
+    "evidence": "子平真诠: 得时不旺失时不弱; 长生禄旺根之重者, 墓库余气根之轻者",
+    "boundary": "根气分类精细(重根/轻根/特殊根); 月令只作参考, 不直接决定旺衰",
+    "details": {
+     "root_power": "轻根",
+     "root_effective": "正常",
+     "season": "失令"
+    }
+   },
+   "DTS": {
+    "track_id": "DTS",
+    "track_name": "滴天髓轨",
+    "activated": true,
+    "result": "身旺",
+    "evidence": "滴天髓: 道有体用, 要在扶之抑之得其宜; 旺者冲衰衰者拔, 衰神冲旺旺神发",
+    "boundary": "体用关系+气势流通; 太旺(宜泄伤)/太衰(宜帮扶)(DTS-014-002 L94 体用论/016-002 L102 衰旺论)",
+    "details": {
+     "season": "失令",
+     "root_power": "轻根",
+     "root_effective": "正常",
+     "support": "生扶稍强"
+    }
+   }
+  },
+  "conflict": {
+   "has_conflict": true,
+   "conflict_type": "滴天髓 vs 渊海子平/子平真诠",
+   "tracks_involved": [
+    "DTS"
+   ],
+   "resolution": "保留多解, 不裁决",
+   "display_note": "渊海子平轨=身弱有根; 子平真诠轨=身弱有根; 滴天髓轨=身旺。冲突保留, 请结合命局整体判断"
+  },
+  "comprehensive_reference": "偏旺",
+  "boundary_note": "多轨并行V1.0: 三轨独立输出, 冲突保留不裁决; 综合参考仅作对比, 非最终结论"
+ },
+ "yun_natal_relations": {
+  "state": "OK",
+  "relations": [
+   {
+    "yun_type": "decade",
+    "yun_stem": "辛",
+    "yun_branch": "酉",
+    "relation": "运干生命干",
+    "natal_pillar": "year",
+    "stems": [
+     "辛",
+     "癸"
+    ],
+    "wuxing": [
+     "金",
+     "水"
+    ],
+    "note": "五行生结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "辛",
+    "yun_branch": "酉",
+    "relation": "运干生命干",
+    "natal_pillar": "month",
+    "stems": [
+     "辛",
+     "壬"
+    ],
+    "wuxing": [
+     "金",
+     "水"
+    ],
+    "note": "五行生结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "辛",
+    "yun_branch": "酉",
+    "relation": "运干克命干",
+    "natal_pillar": "day",
+    "stems": [
+     "辛",
+     "乙"
+    ],
+    "wuxing": [
+     "金",
+     "木"
+    ],
+    "note": "五行克结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "辛",
+    "yun_branch": "酉",
+    "relation": "运干生命干",
+    "natal_pillar": "hour",
+    "stems": [
+     "辛",
+     "壬"
+    ],
+    "wuxing": [
+     "金",
+     "水"
+    ],
+    "note": "五行生结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "辛",
+    "yun_branch": "酉",
+    "relation": "六害",
+    "natal_pillar": null,
+    "branches": [
+     "酉",
+     "戌"
+    ],
+    "note": "运支参与成害, 结构存在不作作用祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "辛",
+    "yun_branch": "酉",
+    "relation": "透清",
+    "natal_pillar": "month",
+    "stem": "辛",
+    "branch": "戌",
+    "note": "运干透命局藏干, 非用神成立"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "庚",
+    "yun_branch": "申",
+    "relation": "天干五合",
+    "natal_pillar": "day",
+    "stems": [
+     "庚",
+     "乙"
+    ],
+    "he": "乙庚合"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "庚",
+    "yun_branch": "申",
+    "relation": "运干生命干",
+    "natal_pillar": "year",
+    "stems": [
+     "庚",
+     "癸"
+    ],
+    "wuxing": [
+     "金",
+     "水"
+    ],
+    "note": "五行生结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "庚",
+    "yun_branch": "申",
+    "relation": "运干生命干",
+    "natal_pillar": "month",
+    "stems": [
+     "庚",
+     "壬"
+    ],
+    "wuxing": [
+     "金",
+     "水"
+    ],
+    "note": "五行生结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "庚",
+    "yun_branch": "申",
+    "relation": "运干克命干",
+    "natal_pillar": "day",
+    "stems": [
+     "庚",
+     "乙"
+    ],
+    "wuxing": [
+     "金",
+     "木"
+    ],
+    "note": "五行克结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "庚",
+    "yun_branch": "申",
+    "relation": "运干生命干",
+    "natal_pillar": "hour",
+    "stems": [
+     "庚",
+     "壬"
+    ],
+    "wuxing": [
+     "金",
+     "水"
+    ],
+    "note": "五行生结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "庚",
+    "yun_branch": "申",
+    "relation": "六害",
+    "natal_pillar": null,
+    "branches": [
+     "申",
+     "亥"
+    ],
+    "note": "运支参与成害, 结构存在不作作用祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "己",
+    "yun_branch": "未",
+    "relation": "运干克命干",
+    "natal_pillar": "year",
+    "stems": [
+     "己",
+     "癸"
+    ],
+    "wuxing": [
+     "土",
+     "水"
+    ],
+    "note": "五行克结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "己",
+    "yun_branch": "未",
+    "relation": "运干克命干",
+    "natal_pillar": "month",
+    "stems": [
+     "己",
+     "壬"
+    ],
+    "wuxing": [
+     "土",
+     "水"
+    ],
+    "note": "五行克结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "己",
+    "yun_branch": "未",
+    "relation": "运干克命干",
+    "natal_pillar": "hour",
+    "stems": [
+     "己",
+     "壬"
+    ],
+    "wuxing": [
+     "土",
+     "水"
+    ],
+    "note": "五行克结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "己",
+    "yun_branch": "未",
+    "relation": "地支六合",
+    "natal_pillar": "hour",
+    "branches": [
+     "未",
+     "午"
+    ]
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "己",
+    "yun_branch": "未",
+    "relation": "六破",
+    "natal_pillar": null,
+    "branches": [
+     "未",
+     "戌"
+    ],
+    "note": "运支参与成破, 结构存在不作作用祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "己",
+    "yun_branch": "未",
+    "relation": "透清",
+    "natal_pillar": "day",
+    "stem": "己",
+    "branch": "未",
+    "note": "运干透命局藏干, 非用神成立"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "己",
+    "yun_branch": "未",
+    "relation": "透清",
+    "natal_pillar": "hour",
+    "stem": "己",
+    "branch": "午",
+    "note": "运干透命局藏干, 非用神成立"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "戊",
+    "yun_branch": "午",
+    "relation": "天干五合",
+    "natal_pillar": "year",
+    "stems": [
+     "戊",
+     "癸"
+    ],
+    "he": "戊癸合"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "戊",
+    "yun_branch": "午",
+    "relation": "运干克命干",
+    "natal_pillar": "year",
+    "stems": [
+     "戊",
+     "癸"
+    ],
+    "wuxing": [
+     "土",
+     "水"
+    ],
+    "note": "五行克结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "戊",
+    "yun_branch": "午",
+    "relation": "运干克命干",
+    "natal_pillar": "month",
+    "stems": [
+     "戊",
+     "壬"
+    ],
+    "wuxing": [
+     "土",
+     "水"
+    ],
+    "note": "五行克结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "戊",
+    "yun_branch": "午",
+    "relation": "运干克命干",
+    "natal_pillar": "hour",
+    "stems": [
+     "戊",
+     "壬"
+    ],
+    "wuxing": [
+     "土",
+     "水"
+    ],
+    "note": "五行克结构事实, 不作祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "戊",
+    "yun_branch": "午",
+    "relation": "地支六合",
+    "natal_pillar": "day",
+    "branches": [
+     "午",
+     "未"
+    ]
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "戊",
+    "yun_branch": "午",
+    "relation": "透清",
+    "natal_pillar": "month",
+    "stem": "戊",
+    "branch": "戌",
+    "note": "运干透命局藏干, 非用神成立"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "丁",
+    "yun_branch": "巳",
+    "relation": "天干五合",
+    "natal_pillar": "month",
+    "stems": [
+     "丁",
+     "壬"
+    ],
+    "he": "丁壬合"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "丁",
+    "yun_branch": "巳",
+    "relation": "天干五合",
+    "natal_pillar": "hour",
+    "stems": [
+     "丁",
+     "壬"
+    ],
+    "he": "丁壬合"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "丁",
+    "yun_branch": "巳",
+    "relation": "地支六冲",
+    "natal_pillar": "year",
+    "branches": [
+     "巳",
+     "亥"
+    ],
+    "position": "year"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "丁",
+    "yun_branch": "巳",
+    "relation": "三会",
+    "natal_pillar": null,
+    "branches": [
+     "巳",
+     "午",
+     "未"
+    ],
+    "group": "巳午未南方火"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "丁",
+    "yun_branch": "巳",
+    "relation": "透清",
+    "natal_pillar": "month",
+    "stem": "丁",
+    "branch": "戌",
+    "note": "运干透命局藏干, 非用神成立"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "丁",
+    "yun_branch": "巳",
+    "relation": "透清",
+    "natal_pillar": "day",
+    "stem": "丁",
+    "branch": "未",
+    "note": "运干透命局藏干, 非用神成立"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "丁",
+    "yun_branch": "巳",
+    "relation": "透清",
+    "natal_pillar": "hour",
+    "stem": "丁",
+    "branch": "午",
+    "note": "运干透命局藏干, 非用神成立"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "丙",
+    "yun_branch": "辰",
+    "relation": "地支六冲",
+    "natal_pillar": "month",
+    "branches": [
+     "辰",
+     "戌"
+    ],
+    "position": "month"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "乙",
+    "yun_branch": "卯",
+    "relation": "地支六合",
+    "natal_pillar": "month",
+    "branches": [
+     "卯",
+     "戌"
+    ]
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "乙",
+    "yun_branch": "卯",
+    "relation": "三合",
+    "natal_pillar": null,
+    "branches": [
+     "亥",
+     "卯",
+     "未"
+    ],
+    "group": "亥卯未木局",
+    "note": "运支参与候选, 非成格"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "乙",
+    "yun_branch": "卯",
+    "relation": "六破",
+    "natal_pillar": null,
+    "branches": [
+     "卯",
+     "午"
+    ],
+    "note": "运支参与成破, 结构存在不作作用祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "乙",
+    "yun_branch": "卯",
+    "relation": "透清",
+    "natal_pillar": "day",
+    "stem": "乙",
+    "branch": "未",
+    "note": "运干透命局藏干, 非用神成立"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "甲",
+    "yun_branch": "寅",
+    "relation": "地支六合",
+    "natal_pillar": "year",
+    "branches": [
+     "寅",
+     "亥"
+    ]
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "甲",
+    "yun_branch": "寅",
+    "relation": "三合",
+    "natal_pillar": null,
+    "branches": [
+     "寅",
+     "午",
+     "戌"
+    ],
+    "group": "寅午戌火局",
+    "note": "运支参与候选, 非成格"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "甲",
+    "yun_branch": "寅",
+    "relation": "六破",
+    "natal_pillar": null,
+    "branches": [
+     "寅",
+     "亥"
+    ],
+    "note": "运支参与成破, 结构存在不作作用祸福判断"
+   },
+   {
+    "yun_type": "decade",
+    "yun_stem": "甲",
+    "yun_branch": "寅",
+    "relation": "透清",
+    "natal_pillar": "year",
+    "stem": "甲",
+    "branch": "亥",
+    "note": "运干透命局藏干, 非用神成立"
+   }
+  ],
+  "count": 41,
+  "by_type": {
+   "运干生命干": 6,
+   "运干克命干": 8,
+   "六害": 2,
+   "透清": 9,
+   "天干五合": 4,
+   "地支六合": 4,
+   "六破": 3,
+   "地支六冲": 2,
+   "三会": 1,
+   "三合": 2
+  },
+  "evidence_refs": [
+   "PZZQ L2932-2937",
+   "PATCH-178"
+  ],
+  "note": "岁运×原局结构事实(透清/六合/六冲/三合/三会/刑害破/并临); Relation Fact ≠ 作用成立 ≠ 成格 ≠ 喜忌吉凶"
+ },
+ "bing_list": [
+  {
+   "bing_id": "YIN_DUO_MAI_ZI",
+   "name": "印多埋子",
+   "desc": "印星成党且力量远大于日主, 印多反埋日主, 需财星疏印",
+   "classic": "DTS 反局章 君赖臣生(行445) 土重金埋/金旺则水浊 同族",
+   "evidence": [
+    "DTS 反局章 君赖臣生(行445) 土重金埋/金旺则水浊 同族"
+   ],
+   "matched_facts": [
+    "成党(他干3+本根1=4)",
+    "日主根轻"
+   ],
+   "slice_id": "STATE.WANG_SHUAI.FAN_JU.001",
+   "slice_support": [
+    "PATHOLOGY.ZHI_FA.010"
+   ],
+   "bing_domain": "JIEGOU",
+   "bing_wx": "水",
+   "severity": 2,
+   "severity_basis": [
+    "PZZQ「比肩成党」/ YHZP「枭神夺食」成党为病",
+    "病五行combo>=4 或透干>=2 或本根>=2"
+   ],
+   "slice_condition": {
+    "state": "MATCHED",
+    "slice_id": "STATE.WANG_SHUAI.FAN_JU.001",
+    "status": "触发(反局总纲)·印成党/当令埋日主(土重金埋同构)",
+    "reasons": [
+     "组[AND] NOT_MATCHED(hooks{'dm_no_heavy': True}): AND: month_qi_element='土' != '水'",
+     "组[AND] MATCHED(hooks{'combo_ge4': True, 'dm_no_heavy': True}): AND: 全部成立"
+    ],
+    "hooks": {
+     "dm_no_heavy": true,
+     "combo_ge4": true
+    },
+    "mode": "并行校验不改判定"
+   },
+   "yao_yuanju": "INVALID_POTENTIAL",
+   "yao_note": "病神水 combo=4 > 药 combo=2 -> 病重药轻, 不消 (PZZQ L3977 惜病重药轻)"
+  }
+ ],
+ "bingyao_summary": {
+  "bing_count": 1,
+  "yao_count": 4,
+  "yao_removed_yuanju": 0,
+  "bing_yao_pairs": [
+   {
+    "bing_id": "YIN_DUO_MAI_ZI",
+    "yao_id": "CAI_PO_YIN",
+    "yao_present": true,
+    "classic": "原典病药对应",
+    "note": "药在局中存在"
+   }
+  ]
+ },
+ "bing_yao": {
+  "bing_count": 1,
+  "yao_count": 4,
+  "boundary_note": "只识别病药结构存在, 不判吉凶/成败/轻重/有效性; 多病多药并列保留, 矛盾共存不裁"
+ },
+ "bing_debate": {
+  "state": "PRIMARY_RESOLVED",
+  "primary": "YIN_DUO_MAI_ZI",
+  "primary_detail": {
+   "bing_id": "YIN_DUO_MAI_ZI",
+   "name": "印多埋子",
+   "bing_wx": "水",
+   "tou": 3,
+   "ben": 1,
+   "dang_level": 0,
+   "month_order": 5,
+   "power_score": 4,
+   "key": [
+    -2,
+    5,
+    0,
+    -3,
+    -1
+   ],
+   "severity": 2,
+   "bing_domain": "JIEGOU",
+   "slice_id": "STATE.WANG_SHUAI.FAN_JU.001"
+  },
+  "secondary": [],
+  "domain_primaries": {
+   "JIEGOU": {
+    "bing_id": "YIN_DUO_MAI_ZI",
+    "name": "印多埋子",
+    "bing_wx": "水",
+    "tou": 3,
+    "ben": 1,
+    "dang_level": 0,
+    "month_order": 5,
+    "power_score": 4,
+    "key": [
+     -2,
+     5,
+     0,
+     -3,
+     -1
+    ],
+    "severity": 2,
+    "bing_domain": "JIEGOU",
+    "slice_id": "STATE.WANG_SHUAI.FAN_JU.001"
+   }
+  },
+  "ranked": [
+   {
+    "bing_id": "YIN_DUO_MAI_ZI",
+    "name": "印多埋子",
+    "bing_wx": "水",
+    "tou": 3,
+    "ben": 1,
+    "dang_level": 0,
+    "month_order": 5,
+    "power_score": 4,
+    "key": [
+     -2,
+     5,
+     0,
+     -3,
+     -1
+    ],
+    "severity": 2,
+    "bing_domain": "JIEGOU",
+    "slice_id": "STATE.WANG_SHUAI.FAN_JU.001"
+   }
+  ],
+  "compare_key": "(-severity, 月令序数, 成党级别, -透干数, -本气根数)"
+ },
+ "zhuangui": {
+  "layer": "ZHUANGUI",
+  "state": "RESOLVED",
+  "primary_bing": {
+   "bing_id": "YIN_DUO_MAI_ZI",
+   "name": "印多埋子",
+   "bing_wx": "水",
+   "tou": 3,
+   "ben": 1,
+   "dang_level": 0,
+   "month_order": 5,
+   "power_score": 4,
+   "key": [
+    -2,
+    5,
+    0,
+    -3,
+    -1
+   ],
+   "severity": 2,
+   "bing_domain": "JIEGOU",
+   "slice_id": "STATE.WANG_SHUAI.FAN_JU.001"
+  },
+  "secondary_bing": [],
+  "converted_medicine": [],
+  "ranked": [
+   {
+    "bing_id": "YIN_DUO_MAI_ZI",
+    "name": "印多埋子",
+    "bing_wx": "水",
+    "tou": 3,
+    "ben": 1,
+    "dang_level": 0,
+    "month_order": 5,
+    "power_score": 4,
+    "key": [
+     -2,
+     5,
+     0,
+     -3,
+     -1
+    ],
+    "severity": 2,
+    "bing_domain": "JIEGOU",
+    "slice_id": "STATE.WANG_SHUAI.FAN_JU.001"
+   }
+  ],
+  "rule": "制(克病)无条件转药; 化/帮: 过当(成党或当令)且日主无重根则次病, 否则药",
+  "boundary_note": "只做病→药/次病身份转换; 无药力评分/净收益; 效用受制(合绊/身弱)归解/验层",
+  "evidence_refs": [
+   "DTS FAN_JU.001",
+   "DTS ZHU_CI_BING.001"
+  ]
+ },
+ "climate": {
+  "module": "QTBJ_CLIMATE_VIEW",
+  "patch": "P160-QTBJ-CLIMATE-2",
+  "namespace": "QTBJ.climate_use",
+  "namespace_type": "climate",
+  "day_master": "乙",
+  "month_branch": "戌",
+  "climate_candidates": [
+   {
+    "candidate_id": "CL-乙-戌-癸-1",
+    "stem": "癸",
+    "order": 1,
+    "evidence_refs": [
+     "QTBJ-022-001"
+    ],
+    "status": "CANDIDATE"
+   },
+   {
+    "candidate_id": "CL-乙-戌-辛-2",
+    "stem": "辛",
+    "order": 2,
+    "evidence_refs": [
+     "QTBJ-022-001"
+    ],
+    "status": "CANDIDATE"
+   }
+  ],
+  "candidate_count": 2,
+  "judgment_status": "CLIMATE_CANDIDATE_ONLY",
+  "boundary_note": "仅《穷通宝鉴》日干×月令原文所载调候干及先后次序的查表投影; order 为原文次序非评分; 并列不裁, 不 selected; 不判断调候干透出/得用; 不录富贵/岁运喜忌/从化/降级; 与 PZZQ 格局用神独立 namespace, 不混为总用神; 未录入条目返回 NOT_REGISTERED, 不补全不编造; 不接 production_entry",
+  "evidence_refs": [
+   "QTBJ-022-001"
+  ],
+  "state": "REGISTERED"
+ },
+ "suiyun": {
+  "layer": "SUIYUN_VALIDATE",
+  "base_dm_tier": "平",
+  "dayun_steps": [
+   {
+    "index": 0,
+    "dayun": "辛酉",
+    "dm_tier": "平",
+    "diff": {
+     "primary_bing_changed": false,
+     "base_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "step_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "bing_added": [],
+     "bing_removed": [],
+     "primary_medicine_changed": false,
+     "base_medicine_wx": "火",
+     "step_medicine_wx": "火",
+     "base_medicine_blocked": null,
+     "step_medicine_blocked": null,
+     "block_released": false,
+     "new_block": false
+    },
+    "verdict": {
+     "level": -2,
+     "shorthand": "凶",
+     "good": [],
+     "bad": [
+      "助主病水(金)",
+      "克伐日主(金)",
+      "格局破格(财格·岁运辛(七杀)触发)"
+     ],
+     "direction": "忌妄动, 防助主病水(金);克伐日主(金);格局破格(财格·岁运辛(七杀)触发), 宜守待时",
+     "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶"
+    }
+   },
+   {
+    "index": 1,
+    "dayun": "庚申",
+    "dm_tier": "平",
+    "diff": {
+     "primary_bing_changed": false,
+     "base_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "step_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "bing_added": [],
+     "bing_removed": [],
+     "primary_medicine_changed": false,
+     "base_medicine_wx": "火",
+     "step_medicine_wx": "火",
+     "base_medicine_blocked": null,
+     "step_medicine_blocked": null,
+     "block_released": false,
+     "new_block": false
+    },
+    "verdict": {
+     "level": -2,
+     "shorthand": "凶",
+     "good": [],
+     "bad": [
+      "助主病水(金)",
+      "克伐日主(金)"
+     ],
+     "direction": "忌妄动, 防助主病水(金);克伐日主(金), 宜守待时",
+     "arbitration_note": "药受制(凶)"
+    }
+   },
+   {
+    "index": 2,
+    "dayun": "己未",
+    "dm_tier": "平",
+    "diff": {
+     "primary_bing_changed": false,
+     "base_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "step_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "bing_added": [],
+     "bing_removed": [],
+     "primary_medicine_changed": false,
+     "base_medicine_wx": "火",
+     "step_medicine_wx": "火",
+     "base_medicine_blocked": null,
+     "step_medicine_blocked": null,
+     "block_released": false,
+     "new_block": false
+    },
+    "verdict": {
+     "level": -2,
+     "shorthand": "凶",
+     "good": [
+      "制主病水(土)"
+     ],
+     "bad": [
+      "合走主药根(未合午·药火根拔)"
+     ],
+     "direction": "忌妄动, 防合走主药根(未合午·药火根拔), 宜守待时",
+     "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶"
+    }
+   },
+   {
+    "index": 3,
+    "dayun": "戊午",
+    "dm_tier": "平",
+    "diff": {
+     "primary_bing_changed": false,
+     "base_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "step_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "bing_added": [],
+     "bing_removed": [],
+     "primary_medicine_changed": false,
+     "base_medicine_wx": "火",
+     "step_medicine_wx": "火",
+     "base_medicine_blocked": null,
+     "step_medicine_blocked": null,
+     "block_released": false,
+     "new_block": false
+    },
+    "verdict": {
+     "level": 2,
+     "shorthand": "吉",
+     "good": [
+      "制主病水(土)",
+      "暖化寒湿(火)",
+      "三合局成火候神(午合戌/午·药成局, 吉)"
+     ],
+     "bad": [],
+     "direction": "病得制化/暖解, 可顺势进取",
+     "arbitration_note": "病得制化/暖解, 可顺势进取"
+    }
+   },
+   {
+    "index": 4,
+    "dayun": "丁巳",
+    "dm_tier": "平",
+    "diff": {
+     "primary_bing_changed": false,
+     "base_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "step_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "bing_added": [],
+     "bing_removed": [],
+     "primary_medicine_changed": false,
+     "base_medicine_wx": "火",
+     "step_medicine_wx": "火",
+     "base_medicine_blocked": null,
+     "step_medicine_blocked": null,
+     "block_released": false,
+     "new_block": false
+    },
+    "verdict": {
+     "level": 2,
+     "shorthand": "吉",
+     "good": [
+      "暖化寒湿(火)"
+     ],
+     "bad": [],
+     "direction": "病得制化/暖解, 可顺势进取",
+     "arbitration_note": "病得制化/暖解, 可顺势进取"
+    }
+   },
+   {
+    "index": 5,
+    "dayun": "丙辰",
+    "dm_tier": "平",
+    "diff": {
+     "primary_bing_changed": false,
+     "base_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "step_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "bing_added": [],
+     "bing_removed": [],
+     "primary_medicine_changed": false,
+     "base_medicine_wx": "火",
+     "step_medicine_wx": "火",
+     "base_medicine_blocked": null,
+     "step_medicine_blocked": null,
+     "block_released": false,
+     "new_block": false
+    },
+    "verdict": {
+     "level": 0,
+     "shorthand": "平",
+     "good": [
+      "制主病水(土)",
+      "暖化寒湿(火)"
+     ],
+     "bad": [
+      "冲月令提纲(辰冲戌)"
+     ],
+     "direction": "平淡无大关目, 常守",
+     "arbitration_note": "交战(冲提纲/重根)+药成局/制化之功, 吉凶参半为平"
+    }
+   },
+   {
+    "index": 6,
+    "dayun": "乙卯",
+    "dm_tier": "强",
+    "diff": {
+     "primary_bing_changed": true,
+     "base_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "step_primary": [
+      null,
+      null
+     ],
+     "bing_added": [],
+     "bing_removed": [
+      "YIN_DUO_MAI_ZI"
+     ],
+     "primary_medicine_changed": true,
+     "base_medicine_wx": "火",
+     "step_medicine_wx": "水",
+     "base_medicine_blocked": null,
+     "step_medicine_blocked": null,
+     "block_released": false,
+     "new_block": false
+    },
+    "verdict": {
+     "level": 2,
+     "shorthand": "吉",
+     "good": [
+      "化泄主病水(木)",
+      "帮身(木)",
+      "合提纲化火候神(卯合戌·提纲反得药化, 吉)"
+     ],
+     "bad": [],
+     "direction": "病得制化/暖解, 可顺势进取",
+     "arbitration_note": "病得制化/暖解, 可顺势进取"
+    }
+   },
+   {
+    "index": 7,
+    "dayun": "甲寅",
+    "dm_tier": "旺",
+    "diff": {
+     "primary_bing_changed": true,
+     "base_primary": [
+      "YIN_DUO_MAI_ZI",
+      "水"
+     ],
+     "step_primary": [
+      null,
+      null
+     ],
+     "bing_added": [],
+     "bing_removed": [
+      "YIN_DUO_MAI_ZI"
+     ],
+     "primary_medicine_changed": true,
+     "base_medicine_wx": "火",
+     "step_medicine_wx": "水",
+     "base_medicine_blocked": null,
+     "step_medicine_blocked": null,
+     "block_released": false,
+     "new_block": false
+    },
+    "verdict": {
+     "level": 1,
+     "shorthand": "平偏吉",
+     "good": [
+      "帮身(木)",
+      "三合局成火候神(寅合戌/午·药成局, 吉)"
+     ],
+     "bad": [],
+     "direction": "身得帮(非主药), 小吉, 宜稳守",
+     "arbitration_note": "身得帮, 宜稳守蓄力"
+    }
+   }
+  ],
+  "boundary_note": "岁运在原局结果上增量重评; 不改变原局月令/日干; 动态解合/争合为工程初判, 待真实命例回归校准"
+ },
+ "dayun_meta": {
+  "direction": "逆",
+  "gender": "男",
+  "basis": "SMTH L923/L13424 阳男阴女顺行/阴男阳女逆行",
+  "note": ""
+ },
+ "yongyao": {
+  "state": "YONGYAO_RESOLVED",
+  "primary": "火",
+  "primary_detail": {
+   "wuxing": "火",
+   "gan": [
+    "丙",
+    "丁"
+   ],
+   "function": "调候候神(寒燥交互: 戌月候干未候食伤职能/局内食伤有气: 透干0/坐旺True/食伤泄秀暖局/润燥(DTS L295/L300 寒暖燥湿互证) -> 升 primary)",
+   "kind": "调候",
+   "classic": "DTS L295/L300 寒燥交互候神+ PZZQ L24 身印两旺透食则贵",
+   "blocked": null
+  },
+  "ge_fallback_source": null,
+  "ji_shen": [
+   "水",
+   "金"
+  ],
+  "all_edges": [
+   {
+    "wuxing": "土",
+    "gan": [
+     "戊",
+     "己"
+    ],
+    "kind": "制",
+    "function": "克病(水)",
+    "accepted": true,
+    "reject_reason": ""
+   },
+   {
+    "wuxing": "木",
+    "gan": [
+     "甲",
+     "乙"
+    ],
+    "kind": "化",
+    "function": "泄病之气(水生? )",
+    "accepted": true,
+    "reject_reason": ""
+   },
+   {
+    "wuxing": "木",
+    "gan": [
+     "甲",
+     "乙"
+    ],
+    "kind": "帮",
+    "function": "比劫帮身",
+    "accepted": true,
+    "reject_reason": ""
+   },
+   {
+    "wuxing": "水",
+    "gan": [
+     "壬",
+     "癸"
+    ],
+    "kind": "帮",
+    "function": "印生身",
+    "accepted": false,
+    "reject_reason": "帮病(同病或生病), 剔除"
+   },
+   {
+    "wuxing": "火",
+    "gan": [
+     "丙",
+     "丁"
+    ],
+    "kind": "暖",
+    "function": "丙丁暖化寒湿",
+    "accepted": true,
+    "reject_reason": ""
+   }
+  ],
+  "auxiliary_medicine": [
+   {
+    "wuxing": "土",
+    "gan": [
+     "戊",
+     "己"
+    ],
+    "kind": "制",
+    "function": "克病(水)",
+    "classic": "原典病药通例(化/帮)"
+   },
+   {
+    "wuxing": "木",
+    "gan": [
+     "甲",
+     "乙"
+    ],
+    "kind": "化",
+    "function": "泄病之气(水生? )",
+    "classic": "原典病药通例(化/帮)"
+   }
+  ],
+  "medicine_blocked": [],
+  "rejected_climate": [
+   {
+    "stem": "癸",
+    "wuxing": "水",
+    "reason": "与主病同五行(水), 用之添病"
+   },
+   {
+    "stem": "辛",
+    "wuxing": "金",
+    "reason": "金生水(病), 为病之源"
+   }
+  ],
+  "rule": "制=克病; 化=泄病(克身则剔); 帮=比劫印帮身(是病则剔); 水泛加火暖",
+  "evidence_refs": [
+   "DTS PATHOLOGY_QI_HOU.008",
+   "DTS FAN_JU.001"
+  ],
+  "yuanliu_yongshen": {
+   "enabled": true,
+   "source": "水",
+   "hui_lu": "木",
+   "masses": {
+    "木": 3,
+    "火": 3,
+    "土": 3,
+    "金": 1,
+    "水": 4
+   },
+   "basis": "DTS L245「取最多最旺为源头, 流去之处是所喜之神」",
+   "note": "归路=源头直接所生; 多步流通(如火→土→金)精化归第4层程级"
+  },
+  "tiaohou_yongshen": {
+   "enabled": true,
+   "hou_stems": [
+    "癸",
+    "辛"
+   ],
+   "hou_wuxing": [
+    "水",
+    "金"
+   ],
+   "primary_hou": "水",
+   "climate_state": "中",
+   "basis": "DTS L295/L300 寒暖燥湿; 候神=QTBJ climate candidates(build_climate_candidates)",
+   "note": "候神按 QTBJ 原文次序; 精化/程级归第4层"
+  },
+  "xiji_xian": {
+   "xi_wx": [
+    "土",
+    "木",
+    "火"
+   ],
+   "ji_wx": [
+    "金",
+    "水"
+   ],
+   "xian_wx": [],
+   "basis": "PZZQ L3208 十神喜忌查表(_geju_xiji_map)+破格忌+病根; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性, 不预派吉凶)"
+  }
+ },
+ "yongshen_decision": {
+  "primary": "火",
+  "winner_route": "",
+  "winner_shen": null,
+  "winner_basis": "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/源流并列",
+  "routes": [
+   {
+    "route": "源流",
+    "shen": "木",
+    "status": "ENGINE_DEFINED",
+    "basis": "DTS L245 源流(并列取用)",
+    "note": "源流归路"
+   },
+   {
+    "route": "通关",
+    "shen": null,
+    "status": "ENGINE_DEFINED",
+    "basis": "DTS L250 两神相战需通",
+    "note": "通关神"
+   },
+   {
+    "route": "帮身",
+    "shen": null,
+    "status": "ENGINE_DEFINED",
+    "basis": "DTS L215 体用 + L230/L235",
+    "note": "扶抑路, primary 已算"
+   }
+  ],
+  "route_count": 3,
+  "xi_wx": [
+   "土",
+   "木",
+   "火"
+  ],
+  "ji_wx": [
+   "金",
+   "水"
+  ],
+  "xian_wx": [],
+  "basis": "第4层程级·A′: 硬情形(L420/L298)→病药(L240)→并行; winner_shen=消解喜用神(DTS_CITED), primary=扶抑(现); 喜忌闲=DTS L404 + PZZQ L3208 十神查表"
+ },
+ "wangshuai_matrix": {
+  "daymaster_element": "木",
+  "month_element": "土",
+  "month_qi_ling_state": "囚",
+  "fan_ju": {
+   "layer": "FAN_JU",
+   "state": "FAN_JU_RESOLVED",
+   "types": [
+    "JUN_LAI_CHEN_SHENG"
+   ],
+   "types_by_id": {
+    "JUN_LAI_CHEN_SHENG": {
+     "fan_ju_id": "JUN_LAI_CHEN_SHENG",
+     "name": "君赖臣生",
+     "role": "君(日主)=木 / 臣(生我之神·印)=水",
+     "disease_wx": "水",
+     "yao_wx": "土",
+     "logic": "印(水)成党(工程档>=4) + 财(土)有气(透干或有本气根) -> 药=财, 破印救君",
+     "slice_id": "STATE.WANG_SHUAI.FAN_JU.001",
+     "classic_line": "DTS L445「水泛木浮, 土止水则生木……皆君赖臣生也」; 任氏「君赖臣生, 局中印绶虽旺, 柱中财星有气, 可用财破印也」"
+    }
+   },
+   "detail": [
+    {
+     "fan_ju_id": "JUN_LAI_CHEN_SHENG",
+     "name": "君赖臣生",
+     "role": "君(日主)=木 / 臣(生我之神·印)=水",
+     "disease_wx": "水",
+     "yao_wx": "土",
+     "logic": "印(水)成党(工程档>=4) + 财(土)有气(透干或有本气根) -> 药=财, 破印救君",
+     "slice_id": "STATE.WANG_SHUAI.FAN_JU.001",
+     "classic_line": "DTS L445「水泛木浮, 土止水则生木……皆君赖臣生也」; 任氏「君赖臣生, 局中印绶虽旺, 柱中财星有气, 可用财破印也」"
+    }
+   ],
+   "count": 1,
+   "role_map": {
+    "君/夫(日主)": "木",
+    "母/妻(印·生我)": "水",
+    "儿(食伤·我生)": "火",
+    "臣/伤母者(官杀·克我)": "金",
+    "妻(财·我克)": "土"
+   },
+   "power_map": {
+    "木": 3,
+    "水": 4,
+    "火": 3,
+    "金": 1,
+    "土": 3
+   },
+   "flag_map": {
+    "yin_wang": false,
+    "yin_chengdang": true,
+    "cai_youqi": true,
+    "cai_wuqi": false,
+    "chen_wang": true,
+    "chen_chengdang": false,
+    "chen_youqi": false
+   },
+   "dm_chong": false,
+   "rule": "DTS 反局章 L442-L451 四句(君赖臣生/儿能救母/母慈灭子/夫健怕妻), 互为镜像; 判据按原典五行生克链, 非强弱对比; 「旺」=ling_state∈(旺,相)「有气」=B1~B6(透干/本气根未被合冲/中余气根得生助) 「成党」=mass>=4(工程档); 全整数/枚举, 无浮点; 触发为布尔, 不判程度",
+   "boundary_note": "反局是旺衰层结构判断(DTS「### 十七、反局」), 不是格名也不是病名; 本模块只判是否成局, 不改 L3 既有字段, 不出强/弱单极结论; 阈值「成党>=4」为工程整数档, 非原典明文。",
+   "evidence_refs": [
+    "DTS L442 反局章标题",
+    "DTS L445 君赖臣生",
+    "DTS L447 儿能救母",
+    "DTS L449 母慈灭子",
+    "DTS L451 夫健怕妻",
+    "PZZQ L3574-3577 身印三元",
+    "任氏 印旺/财星有气分野"
+   ]
+  },
+  "dm_row": {
+   "ling_state": "囚",
+   "ben_n": 0,
+   "zhong_n": 1,
+   "yu_n": 1,
+   "ju_n": 0,
+   "banhe_n": 0,
+   "stem_n": 1,
+   "root_detail": {
+    "亥": "ZHONG",
+    "未": "YU"
+   }
+  },
+  "yin_row": {
+   "ling_state": "死",
+   "ben_n": 1,
+   "zhong_n": 0,
+   "yu_n": 0,
+   "ju_n": 0,
+   "banhe_n": 0,
+   "stem_n": 3,
+   "root_detail": {
+    "亥": "BEN"
+   }
+  },
+  "by_element": {
+   "木": {
+    "ling_state": "囚",
+    "ben_n": 0,
+    "zhong_n": 1,
+    "yu_n": 1,
+    "ju_n": 0,
+    "banhe_n": 0,
+    "stem_n": 1,
+    "root_detail": {
+     "亥": "ZHONG",
+     "未": "YU"
+    }
+   },
+   "火": {
+    "ling_state": "休",
+    "ben_n": 1,
+    "zhong_n": 1,
+    "yu_n": 1,
+    "ju_n": 0,
+    "banhe_n": 1,
+    "stem_n": 0,
+    "root_detail": {
+     "戌": "YU",
+     "未": "ZHONG",
+     "午": "BEN"
+    }
+   },
+   "土": {
+    "ling_state": "旺",
+    "ben_n": 2,
+    "zhong_n": 1,
+    "yu_n": 0,
+    "ju_n": 0,
+    "banhe_n": 0,
+    "stem_n": 0,
+    "chong_adjust": 0,
+    "chong_role": "NO_CHONG",
+    "chong_by": null,
+    "library_open": false,
+    "chong_note": "DTS L108「旺者冲衰衰者拔, 衰神冲旺旺神发」L110「子旺午衰, 冲则午拔不能立; 子衰午旺, 冲则午发而为福」两方对比; L96/L98「四库宜冲开」另记 library_open(布尔)",
+    "ling_state_eff": "旺",
+    "root_detail": {
+     "戌": "BEN",
+     "未": "BEN",
+     "午": "ZHONG"
+    }
+   },
+   "金": {
+    "ling_state": "相",
+    "ben_n": 0,
+    "zhong_n": 1,
+    "yu_n": 0,
+    "ju_n": 0,
+    "banhe_n": 0,
+    "stem_n": 0,
+    "root_detail": {
+     "戌": "ZHONG"
+    }
+   },
+   "水": {
+    "ling_state": "死",
+    "ben_n": 1,
+    "zhong_n": 0,
+    "yu_n": 0,
+    "ju_n": 0,
+    "banhe_n": 0,
+    "stem_n": 3,
+    "root_detail": {
+     "亥": "BEN"
+    }
+   }
+  },
+  "branch_chong": {
+   "year": {
+    "adj": 0,
+    "role": "NO_CHONG",
+    "chong_by": null,
+    "library_open": false
+   },
+   "month": {
+    "adj": 0,
+    "role": "NO_CHONG",
+    "chong_by": null,
+    "library_open": false
+   },
+   "day": {
+    "adj": 0,
+    "role": "NO_CHONG",
+    "chong_by": null,
+    "library_open": false
+   },
+   "hour": {
+    "adj": 0,
+    "role": "NO_CHONG",
+    "chong_by": null,
+    "library_open": false
+   }
+  },
+  "month_chong": {
+   "month_branch": "戌",
+   "month_pos": {
+    "adj": 0,
+    "role": "NO_CHONG",
+    "chong_by": null,
+    "library_open": false
+   }
+  }
+ },
+ "raw_facts": {
+  "day_stem": "乙",
+  "month_branch": "戌",
+  "hidden_stems": {
+   "year": [
+    "壬",
+    "甲"
+   ],
+   "month": [
+    "戊",
+    "辛",
+    "丁"
+   ],
+   "day": [
+    "己",
+    "丁",
+    "乙"
+   ],
+   "hour": [
+    "丁",
+    "己"
+   ]
+  },
+  "stem_relations": {
+   "year": {
+    "stem": "癸",
+    "ten_god": "偏印"
+   },
+   "month": {
+    "stem": "壬",
+    "ten_god": "正印"
+   },
+   "hour": {
+    "stem": "壬",
+    "ten_god": "正印"
+   }
+  },
+  "root_facts": {
+   "year": false,
+   "month": false,
+   "day": true,
+   "hour": false
+  },
+  "combination_facts": {
+   "liuhe": [
+    [
+     "未",
+     "午"
+    ]
+   ],
+   "liuchong": [],
+   "anhe": [],
+   "sanhe": [],
+   "sanhui": [],
+   "liuhai": [],
+   "liupo": [
+    "未戌相破"
+   ],
+   "sanxing": [],
+   "banhe": [
+    {
+     "pair": [
+      "戌",
+      "午"
+     ],
+     "wx": "火"
+    }
+   ],
+   "self_punishment": [],
+   "resolved": {
+    "chong_active": [],
+    "chong_inactive": [],
+    "chong_canceled": [],
+    "chong_survive": [],
+    "liuhe_canceled": [],
+    "banhe_canceled": [],
+    "sanhe_canceled": [],
+    "sanhui_canceled": [],
+    "xinghe": [],
+    "chong_actions": [],
+    "_note": "PZZQ冲合互动裁决; 隔位/三会成方被单支冲=inactive; 暗合(卯申)、明合(六合/三合)解冲=canceled; 存活冲再解合会; 争合/位置UNVERIFIED"
+   }
+  },
+  "root_weight_class_facts": {
+   "year": {
+    "branch": "亥",
+    "class": "LIGHT"
+   },
+   "month": {
+    "branch": "戌",
+    "class": "NONE"
+   },
+   "day": {
+    "branch": "未",
+    "class": "LIGHT"
+   },
+   "hour": {
+    "branch": "午",
+    "class": "LIGHT"
+   }
+  },
+  "changsheng_direction": {
+   "year": {
+    "branch": "亥",
+    "direction": "LIFE"
+   },
+   "hour": {
+    "branch": "午",
+    "direction": "WEAK"
+   }
+  },
+  "changsheng_direction_note": "方向语义标签, 非旺衰结论; TRUE_LIFE不等于身旺, WEAK/TRUE_DEATH不等于身弱; LIFE=阴干死位即阳干同五行长生位方向参考(非日干长生); 长生不等于旺(SFTK\"根气犹枯未可以木为旺\"); 不进160 Relative Strength",
+  "month_hidden_stems": [
+   "戊",
+   "辛",
+   "丁"
+  ],
+  "month_transparent": [],
+  "month_qi_stem": "戊",
+  "month_qi_element": "土",
+  "daymaster_element": "木",
+  "month_supports_daymaster": false,
+  "month_qi_ten_god": "正财",
+  "jianlu_yuejie_entry": {
+   "is_entry": false,
+   "type": null
+  },
+  "shishen_entry": {
+   "is_entry": false,
+   "type": null,
+   "premise_note": "食神生财/制杀前提读166, ≠食神格成"
+  },
+  "qisha_entry": {
+   "is_entry": false,
+   "type": null,
+   "premise_note": "印化杀/食神制杀前提读166; 身强/逢制后续Rule, ≠煞格成"
+  },
+  "shangguan_entry": {
+   "is_entry": false,
+   "type": null,
+   "premise_note": "伤官生财/佩印前提读166; 伤官旺/印有根/身强弱后续Rule, ≠伤官格成"
+  },
+  "yangren_entry": {
+   "is_entry": false,
+   "type": null,
+   "premise_note": "仅五阳干; 官杀制刃/财印/食伤泄刃后续Rule, ≠刃格成"
+  },
+  "waige_structural_entries": [],
+  "waige_structural_note": "外格结构入口存在, 非成格非贵贱, 不证月令无用/旺衰/从化真假",
+  "target_root_facts": {
+   "财": true,
+   "官": true,
+   "印": true,
+   "身": true
+  },
+  "any_stem_has_ten_god": {
+   "财": false,
+   "官": false,
+   "印": true
+  },
+  "jianlu_yuejie_keystone": {
+   "财": false,
+   "官": false,
+   "煞": false,
+   "食": false
+  },
+  "liuyin_chaoyang_entry": {
+   "is_entry": false,
+   "type": null,
+   "reuse": [
+    "any_stem_has_ten_god[官](正官∪七杀)",
+    "target_root_facts[官](正官∪七杀)"
+   ],
+   "note": "结构入口出现, 未定格局; 官杀全无=L0枚举后确定FALSE, 非搜索不到; 不判祸福等级",
+   "provenance": {
+    "rule_id": "ZP-RULE-WAIGE-LIUYIN",
+    "condition_id": "ZP-RULE-WAIGE-LIUYIN-ENTRY",
+    "evidence_refs": [
+     "SFTK-033-001"
+    ],
+    "authorization": "structural_entry"
+   }
+  },
+  "xinghe_entry": {
+   "is_entry": false,
+   "type": null,
+   "reuse": [
+    "any_stem_has_ten_god[官](=天干无戊己官杀)",
+    "地支无申(申冲寅)"
+   ],
+   "note": "结构入口出现, 未定格局; 排除项为确定Fact, 不判祸福等级",
+   "provenance": {
+    "rule_id": "ZP-RULE-WAIGE-XINGHE",
+    "condition_id": "ZP-RULE-WAIGE-XINGHE-ENTRY",
+    "evidence_refs": [
+     "PZZQ-007-035"
+    ],
+    "authorization": "structural_entry"
+   }
+  },
+  "helu_entry": {
+   "is_entry": false,
+   "type": null,
+   "reuse": [
+    "any_stem_has_ten_god[官]=天干不透官杀"
+   ],
+   "note": "结构入口出现, 未定格局; 不推合到禄/格成/贵贱",
+   "provenance": {
+    "rule_id": "ZP-RULE-WAIGE-HELU",
+    "condition_id": "ZP-RULE-WAIGE-HELU-ENTRY",
+    "evidence_refs": [
+     "PZZQ-007-035"
+    ],
+    "authorization": "structural_entry"
+   }
+  },
+  "stem_combination_facts": {
+   "wuhe": []
+  },
+  "relations": [
+   {
+    "type": "HE",
+    "branches": [
+     "未",
+     "午"
+    ],
+    "positions": [
+     [
+      [
+       "day"
+      ],
+      [
+       "hour"
+      ]
+     ]
+    ],
+    "instances": [
+     {
+      "a_pos": "day",
+      "b_pos": "hour",
+      "distance": "adjacent",
+      "intervening_branches": [],
+      "blocking_branches": [],
+      "has_blocking": false
+     }
+    ],
+    "wx": "土",
+    "meta": {},
+    "instance_count": 1
+   },
+   {
+    "type": "BANHE",
+    "branches": [
+     "戌",
+     "午"
+    ],
+    "positions": [
+     [
+      [
+       "month"
+      ],
+      [
+       "hour"
+      ]
+     ]
+    ],
+    "instances": [
+     {
+      "a_pos": "month",
+      "b_pos": "hour",
+      "distance": "span_one",
+      "intervening_branches": [
+       "未"
+      ],
+      "blocking_branches": [],
+      "has_blocking": false
+     }
+    ],
+    "wx": "火",
+    "meta": {},
+    "instance_count": 1
+   }
+  ],
+  "branch_relations": [
+   {
+    "branches": [
+     "未",
+     "午"
+    ],
+    "type": "liuhe",
+    "huashen": "土",
+    "position": "adjacent",
+    "positions": [
+     "day",
+     "hour"
+    ],
+    "intervening_branches": [],
+    "blocking_branches": [],
+    "has_blocking": false
+   }
+  ],
+  "target_relation_facts": {
+   "官星被合": false,
+   "官星受冲": false,
+   "透干官杀所坐支": []
+  },
+  "ten_god_members": [
+   {
+    "pillar": "year",
+    "type": "stem",
+    "stem": "癸",
+    "branch": "亥",
+    "hidden_index": null,
+    "qi_position": null,
+    "ten_god": "偏印"
+   },
+   {
+    "pillar": "year",
+    "type": "hidden",
+    "stem": "壬",
+    "branch": "亥",
+    "hidden_index": 0,
+    "qi_position": "本气",
+    "ten_god": "正印"
+   },
+   {
+    "pillar": "year",
+    "type": "hidden",
+    "stem": "甲",
+    "branch": "亥",
+    "hidden_index": 1,
+    "qi_position": "中气",
+    "ten_god": "劫财"
+   },
+   {
+    "pillar": "month",
+    "type": "stem",
+    "stem": "壬",
+    "branch": "戌",
+    "hidden_index": null,
+    "qi_position": null,
+    "ten_god": "正印"
+   },
+   {
+    "pillar": "month",
+    "type": "hidden",
+    "stem": "戊",
+    "branch": "戌",
+    "hidden_index": 0,
+    "qi_position": "本气",
+    "ten_god": "正财"
+   },
+   {
+    "pillar": "month",
+    "type": "hidden",
+    "stem": "辛",
+    "branch": "戌",
+    "hidden_index": 1,
+    "qi_position": "中气",
+    "ten_god": "七杀"
+   },
+   {
+    "pillar": "month",
+    "type": "hidden",
+    "stem": "丁",
+    "branch": "戌",
+    "hidden_index": 2,
+    "qi_position": "余气",
+    "ten_god": "食神"
+   },
+   {
+    "pillar": "day",
+    "type": "hidden",
+    "stem": "己",
+    "branch": "未",
+    "hidden_index": 0,
+    "qi_position": "本气",
+    "ten_god": "偏财"
+   },
+   {
+    "pillar": "day",
+    "type": "hidden",
+    "stem": "丁",
+    "branch": "未",
+    "hidden_index": 1,
+    "qi_position": "中气",
+    "ten_god": "食神"
+   },
+   {
+    "pillar": "day",
+    "type": "hidden",
+    "stem": "乙",
+    "branch": "未",
+    "hidden_index": 2,
+    "qi_position": "余气",
+    "ten_god": "比肩"
+   },
+   {
+    "pillar": "hour",
+    "type": "stem",
+    "stem": "壬",
+    "branch": "午",
+    "hidden_index": null,
+    "qi_position": null,
+    "ten_god": "正印"
+   },
+   {
+    "pillar": "hour",
+    "type": "hidden",
+    "stem": "丁",
+    "branch": "午",
+    "hidden_index": 0,
+    "qi_position": "本气",
+    "ten_god": "食神"
+   },
+   {
+    "pillar": "hour",
+    "type": "hidden",
+    "stem": "己",
+    "branch": "午",
+    "hidden_index": 1,
+    "qi_position": "中气",
+    "ten_god": "偏财"
+   }
+  ],
+  "hezuo_relation_premise": {
+   "食神生财": true,
+   "食神制杀": true,
+   "伤官生财": false,
+   "伤官佩印": false,
+   "财生官": false,
+   "印化杀": true,
+   "财印相随": false,
+   "_note": "仅十神同现前提, 非配合成立/非成格; 位置隔位作用关系后续Rule层"
+  },
+  "pillars": {
+   "year": [
+    "癸",
+    "亥"
+   ],
+   "month": [
+    "壬",
+    "戌"
+   ],
+   "day": [
+    "乙",
+    "未"
+   ],
+   "hour": [
+    "壬",
+    "午"
+   ]
+  },
+  "wuxing_power": {
+   "wuxing_power": {
+    "木": {
+     "ling_state": "囚",
+     "ben_n": 0,
+     "zhong_n": 1,
+     "yu_n": 1,
+     "ju_n": 0,
+     "banhe_n": 0,
+     "stem_n": 1,
+     "root_detail": {
+      "亥": "ZHONG",
+      "未": "YU"
+     }
+    },
+    "火": {
+     "ling_state": "休",
+     "ben_n": 1,
+     "zhong_n": 1,
+     "yu_n": 1,
+     "ju_n": 0,
+     "banhe_n": 1,
+     "stem_n": 0,
+     "root_detail": {
+      "戌": "YU",
+      "未": "ZHONG",
+      "午": "BEN"
+     }
+    },
+    "土": {
+     "ling_state": "旺",
+     "ben_n": 2,
+     "zhong_n": 1,
+     "yu_n": 0,
+     "ju_n": 0,
+     "banhe_n": 0,
+     "stem_n": 0,
+     "chong_adjust": 0,
+     "chong_role": "NO_CHONG",
+     "chong_by": null,
+     "library_open": false,
+     "chong_note": "DTS L108「旺者冲衰衰者拔, 衰神冲旺旺神发」L110「子旺午衰, 冲则午拔不能立; 子衰午旺, 冲则午发而为福」两方对比; L96/L98「四库宜冲开」另记 library_open(布尔)",
+     "ling_state_eff": "旺",
+     "root_detail": {
+      "戌": "BEN",
+      "未": "BEN",
+      "午": "ZHONG"
+     }
+    },
+    "金": {
+     "ling_state": "相",
+     "ben_n": 0,
+     "zhong_n": 1,
+     "yu_n": 0,
+     "ju_n": 0,
+     "banhe_n": 0,
+     "stem_n": 0,
+     "root_detail": {
+      "戌": "ZHONG"
+     }
+    },
+    "水": {
+     "ling_state": "死",
+     "ben_n": 1,
+     "zhong_n": 0,
+     "yu_n": 0,
+     "ju_n": 0,
+     "banhe_n": 0,
+     "stem_n": 3,
+     "root_detail": {
+      "亥": "BEN"
+     }
+    }
+   },
+   "month_element": "土",
+   "month_branch": "戌",
+   "branch_chong": {
+    "year": {
+     "adj": 0,
+     "role": "NO_CHONG",
+     "chong_by": null,
+     "library_open": false
+    },
+    "month": {
+     "adj": 0,
+     "role": "NO_CHONG",
+     "chong_by": null,
+     "library_open": false
+    },
+    "day": {
+     "adj": 0,
+     "role": "NO_CHONG",
+     "chong_by": null,
+     "library_open": false
+    },
+    "hour": {
+     "adj": 0,
+     "role": "NO_CHONG",
+     "chong_by": null,
+     "library_open": false
+    }
+   },
+   "daymaster_element": "木"
+  },
+  "l0_chart": {
+   "twelve_growth": {
+    "year": "死",
+    "month": "墓",
+    "day": "养",
+    "hour": "长生"
+   },
+   "hidden_stems": {
+    "year": {
+     "main": "壬",
+     "middle": "甲",
+     "residual": "None",
+     "all": [
+      "壬",
+      "甲"
+     ]
+    },
+    "month": {
+     "main": "戊",
+     "middle": "辛",
+     "residual": "丁",
+     "all": [
+      "戊",
+      "辛",
+      "丁"
+     ]
+    },
+    "day": {
+     "main": "己",
+     "middle": "丁",
+     "residual": "乙",
+     "all": [
+      "己",
+      "丁",
+      "乙"
+     ]
+    },
+    "hour": {
+     "main": "丁",
+     "middle": "己",
+     "residual": "None",
+     "all": [
+      "丁",
+      "己"
+     ]
+    }
+   },
+   "branch_ten_gods": {
+    "year": {
+     "main": "正印",
+     "middle": "劫财",
+     "residual": "",
+     "all": [
+      "正印",
+      "劫财"
+     ]
+    },
+    "month": {
+     "main": "正财",
+     "middle": "七杀",
+     "residual": "食神",
+     "all": [
+      "正财",
+      "七杀",
+      "食神"
+     ]
+    },
+    "day": {
+     "main": "偏财",
+     "middle": "食神",
+     "residual": "比肩",
+     "all": [
+      "偏财",
+      "食神",
+      "比肩"
+     ]
+    },
+    "hour": {
+     "main": "食神",
+     "middle": "偏财",
+     "residual": "",
+     "all": [
+      "食神",
+      "偏财"
+     ]
+    }
+   },
+   "stem_ten_gods": {
+    "year": "偏印",
+    "month": "正印",
+    "day": "比肩",
+    "hour": "正印"
+   },
+   "stem_branch_polarity": {
+    "year": {
+     "stem": "寅",
+     "branch": "寅"
+    },
+    "month": {
+     "stem": "YANG",
+     "branch": "YANG"
+    },
+    "day": {
+     "stem": "寅",
+     "branch": "寅"
+    },
+    "hour": {
+     "stem": "YANG",
+     "branch": "YANG"
+    }
+   },
+   "branch_clash_map": {},
+   "branch_he_map": {
+    "WEI-WU": [
+     "未",
+     "戊"
+    ]
+   },
+   "he_hua": {
+    "WEI-WU": {
+     "branches": [
+      "未",
+      "戊"
+     ],
+     "hua_qi": "土",
+     "transformed": "False"
+    }
+   },
+   "branch_sanhe_map": {},
+   "sanhe_hua": {},
+   "branch_sanhui_map": {},
+   "branch_sanxing_map": {},
+   "branch_harm_map": {},
+   "branch_po_pairs": [
+    [
+     "戌",
+     "未"
+    ]
+   ],
+   "stem_he_pairs": [],
+   "stem_clash_pairs": [],
+   "kong_wang": [
+    "辰",
+    "巳"
+   ],
+   "nayin": {
+    "year": "大海水",
+    "month": "大海水",
+    "day": "沙中金",
+    "hour": "杨柳木"
+   },
+   "shensha": {
+    "WEN_CHANG": [
+     "戊"
+    ],
+    "HUA_GAI": [
+     "未"
+    ]
+   }
+  },
+  "xunkong": {
+   "xun": "甲午旬",
+   "kong_wang": [
+    "辰",
+    "巳"
+   ]
+  },
+  "root_relations": {
+   "generator": "DaymasterRootRelationOverlay",
+   "patch": "PATCH-160-B-V2-D8",
+   "root_branch_relations": {
+    "year": {
+     "branch": "亥",
+     "root_class": "LIGHT_YU_QI",
+     "is_root": true,
+     "relations": []
+    },
+    "month": {
+     "branch": "戌",
+     "root_class": "NONE",
+     "is_root": false,
+     "relations": []
+    },
+    "day": {
+     "branch": "未",
+     "root_class": "LIGHT_YU_QI",
+     "is_root": true,
+     "relations": [
+      {
+       "relation": "BREAK",
+       "group": "STRUCK",
+       "fact_key": "liupo",
+       "with_branches": [
+        "戌"
+       ],
+       "positions": [],
+       "raw": "未戌相破"
+      },
+      {
+       "relation": "SIX_COMBINE",
+       "group": "COMBINE",
+       "fact_key": "liuhe",
+       "with_branches": [
+        "午"
+       ],
+       "positions": [],
+       "raw": "未午"
+      }
+     ]
+    },
+    "hour": {
+     "branch": "午",
+     "root_class": "SPECIAL_LONGSHENG_YIN",
+     "is_root": true,
+     "relations": [
+      {
+       "relation": "SIX_COMBINE",
+       "group": "COMBINE",
+       "fact_key": "liuhe",
+       "with_branches": [
+        "未"
+       ],
+       "positions": [],
+       "raw": "未午"
+      }
+     ]
+    }
+   },
+   "struck_root_pillars": [
+    "day"
+   ],
+   "combined_root_pillars": [
+    "day",
+    "hour"
+   ],
+   "judgment_status": "ROOT_RELATION_STRUCTURE_ONLY",
+   "boundary_note": "仅标记日主根支参与何种地支关系; 关系存在≠根失效; 冲则根拔/衰者拔旺者发/合化改根/开库/根增强均为作用层, 未授权 HOLD; struck/combined 只是结构分组, 不带好坏, 不输出 STRONG/WEAK"
+  },
+  "root_effectiveness": {
+   "daymaster": "乙",
+   "per_pillar": {
+    "year": {
+     "root_class": "LIGHT_YU_QI",
+     "effective": true,
+     "reason": "有效根"
+    },
+    "month": {
+     "root_class": "NONE",
+     "effective": false,
+     "reason": "无根"
+    },
+    "day": {
+     "root_class": "LIGHT_YU_QI",
+     "effective": true,
+     "reason": "有效根"
+    },
+    "hour": {
+     "root_class": "SPECIAL_LONGSHENG_YIN",
+     "effective": true,
+     "reason": "半合局戌午化火(非日主木), 根气被合(半合仅标记)"
+    }
+   },
+   "has_effective_root": true,
+   "effective_root_weight_class": "LIGHT",
+   "chong_map": {},
+   "heju_map": {
+    "戌": "半合局戌午化火(非日主木), 根气被合",
+    "午": "半合局戌午化火(非日主木), 根气被合"
+   },
+   "boundary_note": "根有效性过滤: 多冲一根失效/一对一冲旺衰比较(衰者拔旺神发两停)/合局合神非日主同类则根气被合; 不评分不加权"
+  },
+  "special": {
+   "patterns": [],
+   "cong_type": null,
+   "cong_state": null,
+   "zhuanwang": null,
+   "hua_qi": null,
+   "mu_mie": null,
+   "mu_mie_state": null,
+   "liangqi": null,
+   "zhuanwang_state": null,
+   "judgment_status": "STRUCTURE_ONLY",
+   "struck_root_events": [],
+   "_gate_debug": [
+    "财星闸: cai_ben_zw=2, cai_stem_zw=0, cai_ju=0",
+    "dm_ju: 0 < 1",
+    "score=N/A",
+    "party=1, dm_ben_eff=0, ganhe_tight=False"
+   ],
+   "dm_ben_eff": 0,
+   "yin_ben_eff": 1,
+   "yin_stem": 3,
+   "root_removed_branches": []
+  },
+  "ge_cheng": {
+   "ge": "财格",
+   "xi_wx": [
+    "水"
+   ],
+   "ti_wx": [
+    "土"
+   ],
+   "overpower_combo": 6,
+   "zhi_wx": [],
+   "hua_wx": [],
+   "po_ge": [
+    {
+     "type": "组合",
+     "match": "ANY",
+     "required": [
+      "七杀"
+     ]
+    }
+   ],
+   "rule": "PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)",
+   "shape": "佩印",
+   "shape_base": "财格",
+   "ge_evidence": {
+    "zhun": [
+     "STRUCTURE.GE_JU.PI_CAI.001"
+    ],
+    "zhu": [],
+    "pang": [
+     "STRUCTURE.GE_JU.CHENG_BAI.004",
+     "STRUCTURE.GE_JU.CHENG_BAI.007"
+    ],
+    "rule_text": "PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)",
+    "mapped": true,
+    "xing_po_hai": {
+     "xing": false,
+     "po": true,
+     "hai": false,
+     "chong": false
+    },
+    "xing_po_hai_basis": "DTS冲合集.005(准神): 刑与穿兮动不动 -> UNKNOWN, 不升级破格 (对齐 guange_rule_contract.blocked_unknown)"
+   },
+   "po_ge_hits": [
+    {
+     "hit_type": "组合",
+     "match": "ANY",
+     "hit_detail": "七杀",
+     "sources": [
+      "七杀"
+     ],
+     "domain": "JIEGOU",
+     "basis": "ENGINE_DEFINED"
+    }
+   ],
+   "cheng_bai": "CHENG_ZHONG_YOU_PO"
+  },
+  "jiu_ying": {
+   "triggered": true,
+   "type": [
+    "JIU_YING.001",
+    "JIU_YING.004",
+    "JIU_YING.005-e+f+g+i"
+   ],
+   "success": "SUCCESS",
+   "evidence": [
+    ".001 通关: 金 缺中间神需引通, 日干有根=True",
+    ".004 澄浊(ENGINE_DEFINED 代理): po_n=1>0, 杂神5种≥2(格神=正财、偏财), 扫浊神=是 (有根=True)",
+    ".005 八格破格后救应: po_n=1>0, 命中原文子型=e 劫财解财、f 食枭就煞、g 食制印护、i 刃禄重印"
+   ],
+   "xiang_note": null,
+   "rescue_wx": [
+    "水",
+    "金"
+   ],
+   "note": null
+  },
+  "l3_contract": {
+   "dm_ben_eff": 0,
+   "yin_ben_eff": 1,
+   "ling_state": "囚",
+   "root_grade": "余",
+   "root_grade_raw": "余",
+   "support_state": "SHENG_FU_CHENG_SHI",
+   "strength_verdict": {
+    "value": [
+     "帮身",
+     "通关"
+    ],
+    "status": "DTS_CITED",
+    "predictive": false,
+    "basis": "取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)",
+    "strength_verdict_enum": {
+     "value": "WEAK",
+     "status": "ENGINE_DEFINED",
+     "predictive": false,
+     "basis": "L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction"
+    }
+   },
+   "chong_adjust": 0,
+   "chong_role": "NO_CHONG",
+   "chong_by": null,
+   "library_open": false,
+   "ling_state_eff": "旺",
+   "de_ling": false,
+   "de_di": true,
+   "dang_duo": true,
+   "fan_ju": {
+    "types": [
+     "JUN_LAI_CHEN_SHENG"
+    ],
+    "count": 1,
+    "state": "FAN_JU_RESOLVED",
+    "detail": [
+     {
+      "fan_ju_id": "JUN_LAI_CHEN_SHENG",
+      "name": "君赖臣生",
+      "role": "君(日主)=木 / 臣(生我之神·印)=水",
+      "disease_wx": "水",
+      "yao_wx": "土",
+      "logic": "印(水)成党(工程档>=4) + 财(土)有气(透干或有本气根) -> 药=财, 破印救君",
+      "slice_id": "STATE.WANG_SHUAI.FAN_JU.001",
+      "classic_line": "DTS L445「水泛木浮, 土止水则生木……皆君赖臣生也」; 任氏「君赖臣生, 局中印绶虽旺, 柱中财星有气, 可用财破印也」"
+     }
+    ],
+    "role_map": {
+     "君/夫(日主)": "木",
+     "母/妻(印·生我)": "水",
+     "儿(食伤·我生)": "火",
+     "臣/伤母者(官杀·克我)": "金",
+     "妻(财·我克)": "土"
+    },
+    "power_map": {
+     "木": 3,
+     "水": 4,
+     "火": 3,
+     "金": 1,
+     "土": 3
+    },
+    "flag_map": {
+     "yin_wang": false,
+     "yin_chengdang": true,
+     "cai_youqi": true,
+     "cai_wuqi": false,
+     "chen_wang": true,
+     "chen_chengdang": false,
+     "chen_youqi": false
+    },
+    "boundary_note": "反局是旺衰层结构判断(DTS「### 十七、反局」), 不是格名也不是病名; 本模块只判是否成局, 不改 L3 既有字段, 不出强/弱单极结论; 阈值「成党>=4」为工程整数档, 非原典明文。"
+   },
+   "boundary_note": "§2.5 L3 契约位。dm_ben_eff 含孤根被冲拔/合局化根修正, 由 special_pattern 计算后提升, 不在本层重算; root_grade 由 L0 root_weight_class_facts 归一为无/余/本; support_state 为同党异党离散计数对比; strength_verdict 本引擎 Strength Resolver NOT_AUTHORIZED, 不出强/弱结论, 与 structure.comprehensive_verdict 口径一致; 全部整数/枚举, 无浮点。",
+   "evidence_refs": [
+    "ARCH v1.0 §2.5",
+    "DTS L442-L451 反局章",
+    "STATE.WANG_SHUAI.FAN_JU.001~004"
+   ]
+  }
+ }
+}

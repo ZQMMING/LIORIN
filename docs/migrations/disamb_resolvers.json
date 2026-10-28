@@ -1,0 +1,12 @@
+{
+  "专旺格": {
+    "by": "branch_zhuanwang",
+    "status": "RESOLVED",
+    "note": "按支局反查五格，见 axis_fude"
+  },
+  "化气格": {
+    "by": "branch_huaqi",
+    "status": "RESOLVED",
+    "note": "按化气↔五格映射，见 s_source_notes S2+S3 拼合"
+  }
+}

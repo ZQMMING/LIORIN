@@ -1,0 +1,268 @@
+[
+ {
+  "no": "1",
+  "bazi": "壬子 辛亥 壬辰 丙午",
+  "gender": "乾",
+  "ge": null,
+  "xi": null,
+  "rule": null,
+  "winner": "土",
+  "primary": "土",
+  "bing": [
+   "BIJIE_DUO_CAI",
+   "BIJIE_CHENG_DANG"
+  ],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "2",
+  "bazi": "丁未 癸卯 庚子 丁丑",
+  "gender": "坤",
+  "ge": "财格",
+  "xi": [],
+  "rule": "PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)",
+  "winner": null,
+  "primary": "土",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "3",
+  "bazi": "戊申 己未 庚申 辛巳",
+  "gender": "乾",
+  "ge": "印格",
+  "xi": [],
+  "rule": "PZZQ255: 印格重(印多成病/土重金埋)->财是疏病之药(印多用财以抑太过), 财不作破格忌; 破格: 无",
+  "winner": "火",
+  "primary": "",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "4",
+  "bazi": "甲寅 丙子 己亥 戊辰",
+  "gender": "坤",
+  "ge": "财格",
+  "xi": [
+   "火"
+  ],
+  "rule": "PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)",
+  "winner": "火",
+  "primary": "木",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "5",
+  "bazi": "丁亥 癸丑 己未 癸酉",
+  "gender": "乾",
+  "ge": null,
+  "xi": null,
+  "rule": null,
+  "winner": "火",
+  "primary": "金",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "6",
+  "bazi": "庚寅 戊寅 己亥 丙寅",
+  "gender": "乾",
+  "ge": "正官格",
+  "xi": [
+   "土",
+   "火"
+  ],
+  "rule": "PZZQ255/V7.80: 正官格(官逢伤克/刑冲=败格, 格名仍存, PZZQ L1145「官逢伤克刑冲, 官格败也」/L1149「败者犯格之忌也」); 破格: 伤官克/刑冲/官杀混杂",
+  "winner": null,
+  "primary": "土",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "7",
+  "bazi": "戊申 己未 癸巳 己未",
+  "gender": "乾",
+  "ge": "七煞格",
+  "xi": [],
+  "rule": "PZZQ-007-028(PZZQ255): 七煞格; 煞是格体; 喜神=食(制)/印(化); 财是破格忌不入喜; 破格: 财透无制",
+  "winner": "金",
+  "primary": "水",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [
+   [
+    "印绶有根则不从(PZZQ L180/L187/L4936/L4939)",
+    "SPECIAL_FAIL"
+   ],
+   [
+    "从杀格",
+    "CANDIDATE"
+   ]
+  ],
+  "liuqin_status": null
+ },
+ {
+  "no": "8",
+  "bazi": "乙巳 甲申 辛酉 乙未",
+  "gender": "乾",
+  "ge": null,
+  "xi": null,
+  "rule": null,
+  "winner": "水",
+  "primary": "水",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "9",
+  "bazi": "癸丑 乙卯 戊戌 癸亥",
+  "gender": "乾",
+  "ge": "正官格",
+  "xi": [
+   "水"
+  ],
+  "rule": "PZZQ255: 官逢财印又无刑冲破害->官格成; 官是格体非杀病; 喜神=财印(兼用须财印不相碍, PZZQ L1119-1121); 破格: 伤官克/刑冲/官杀混杂(PZZQ258)",
+  "winner": null,
+  "primary": "水",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "10",
+  "bazi": "戊申 壬戌 甲子 丙寅",
+  "gender": "坤",
+  "ge": "财格",
+  "xi": [
+   "水"
+  ],
+  "rule": "PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)",
+  "winner": null,
+  "primary": "水",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "11",
+  "bazi": "庚寅 乙酉 戊午 丁巳",
+  "gender": "坤",
+  "ge": "伤官格",
+  "xi": [
+   "木",
+   "火"
+  ],
+  "rule": "PZZQ255: 伤官格成; 伤官是格体; 喜神=财(用财)/官(金水见官)/印(身弱)/煞印(伤多用煞印); 破格: 伤官见官(非金水)/生财带煞",
+  "winner": null,
+  "primary": "木",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "12",
+  "bazi": "丁亥 甲辰 己巳 丙寅",
+  "gender": "坤",
+  "ge": "建禄月劫格",
+  "xi": [
+   "火"
+  ],
+  "rule": "PZZQ255: 建禄月劫透官逢财印/透财逢食伤/透煞遇制伏/无财官用伤食泄秀->成; 配合神入ti_wx; 破格: 无财官",
+  "winner": null,
+  "primary": "火",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "13",
+  "bazi": "甲辰 庚午 甲辰 戊辰",
+  "gender": "坤",
+  "ge": "伤官格",
+  "xi": [
+   "土"
+  ],
+  "rule": "PZZQ255: 伤官格成; 伤官是格体; 喜神=财(用财)/官(金水见官)/印(身弱)/煞印(伤多用煞印); 破格: 伤官见官(非金水)/生财带煞",
+  "winner": "水",
+  "primary": "火",
+  "bing": [
+   "CAI_DUO_SHEN_RUO"
+  ],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [
+   [
+    "从财无官煞(PZZQ-033-001 L4937)",
+    "SPECIAL_FAIL"
+   ]
+  ],
+  "liuqin_status": null
+ },
+ {
+  "no": "14",
+  "bazi": "乙丑 辛巳 辛酉 己亥",
+  "gender": "坤",
+  "ge": "正官格",
+  "xi": [
+   "土",
+   "金"
+  ],
+  "rule": "PZZQ255/V7.80: 正官格(官逢伤克/刑冲=败格, 格名仍存, PZZQ L1145「官逢伤克刑冲, 官格败也」/L1149「败者犯格之忌也」); 破格: 伤官克/刑冲/官杀混杂",
+  "winner": "水",
+  "primary": "土",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ },
+ {
+  "no": "15",
+  "bazi": "乙未 乙酉 庚子 丁丑",
+  "gender": "坤",
+  "ge": "阳刃格",
+  "xi": [
+   "火",
+   "金"
+  ],
+  "rule": "PZZQ255: 阳刃透官煞露财印不见伤官->刃格成; 官煞制刃是喜神, 印护刃亦喜, 财单用所不喜; 财印并见不相碍则财生煞助制刃(PZZQ L1140/L4532); 破格: 无官煞",
+  "winner": "火",
+  "primary": "火",
+  "bing": [],
+  "cong": null,
+  "cong_state": null,
+  "patterns": [],
+  "liuqin_status": null
+ }
+]

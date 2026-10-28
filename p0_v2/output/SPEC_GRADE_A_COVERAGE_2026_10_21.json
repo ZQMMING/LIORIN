@@ -1,0 +1,805 @@
+{
+  "doc_id": "SPEC_GRADE_A_COVERAGE_2026_10_21",
+  "source": "docs/AGENTS.md §六 验收四条 第4条「每一条格局定义必须能指到至少一条 grade=A 原句」",
+  "date": "2026-10-21",
+  "method": "扫 ge_jie_layer.py 'ge': 格名 + special_pattern.py _pat(...) 产出点(上下文 ±24 行); 出处 = 上下文 source_id + DTS/PZZQ L行号(回底本查 grade) + 格名精确前缀匹配的 *_rule_contract.py 全量 evidence_refs; PZZQNNN 页码引用登记为未映射(不臆断 grade); evidence_grade 回 registries/source/sources.*.jsonl 精确查表",
+  "total_definition_points": 31,
+  "with_grade_A": 29,
+  "without_grade_A": 2,
+  "coverage_pct": 93.55,
+  "no_grade_A": [
+    {
+      "file": "ge_jie_layer.py",
+      "line": 848,
+      "pattern_id": null,
+      "ge_name": "无根须印(财不成格)",
+      "unmapped_page_refs": []
+    },
+    {
+      "file": "special_pattern.py",
+      "line": null,
+      "pattern_id": "ZP-SPECIAL-MUMIE",
+      "ge_name": "母多灭子/印势漂没",
+      "unmapped_page_refs": []
+    }
+  ],
+  "unmapped_pzzq_page_refs": {
+    "PZZQ255": 21,
+    "PZZQ258": 15
+  },
+  "results": [
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-031",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "陽刃者，劫我正財之神，乃正財之七煞也。祿前一位，惟六陽有之，故為陽刃，不曰劫而曰刃，劫之甚也。刃宜伏制，官煞皆宜，財印相隨，尤為顯貴。夫正官"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255"
+      ],
+      "has_grade_A": true,
+      "ge_name": "阳刃格",
+      "file": "ge_jie_layer.py",
+      "line": 507
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-031",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "陽刃者，劫我正財之神，乃正財之七煞也。祿前一位，惟六陽有之，故為陽刃，不曰劫而曰刃，劫之甚也。刃宜伏制，官煞皆宜，財印相隨，尤為顯貴。夫正官"
+        },
+        {
+          "ref": "PZZQ L1140",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "月令阳刃，以官煞制刃，格局最美。刃旺煞强，威权显赫，印滋刃，财生煞，故以财印并见为吉，但须不相"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255"
+      ],
+      "has_grade_A": true,
+      "ge_name": "阳刃格",
+      "file": "ge_jie_layer.py",
+      "line": 518
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-031",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "陽刃者，劫我正財之神，乃正財之七煞也。祿前一位，惟六陽有之，故為陽刃，不曰劫而曰刃，劫之甚也。刃宜伏制，官煞皆宜，財印相隨，尤為顯貴。夫正官"
+        },
+        {
+          "ref": "PZZQ L1140",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "月令阳刃，以官煞制刃，格局最美。刃旺煞强，威权显赫，印滋刃，财生煞，故以财印并见为吉，但须不相"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255"
+      ],
+      "has_grade_A": true,
+      "ge_name": "阳刃格",
+      "file": "ge_jie_layer.py",
+      "line": 560
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-026",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "食神取運，即以食神所成之局，分而配之。食神生財，財食輕則行財食，財食重則喜幫身。官煞之方，俱為不美。食用煞印，運喜印旺，切忌財鄉，身旺食傷亦"
+        },
+        {
+          "ref": "PZZQ L1140",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "月令阳刃，以官煞制刃，格局最美。刃旺煞强，威权显赫，印滋刃，财生煞，故以财印并见为吉，但须不相"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "食神格",
+      "file": "ge_jie_layer.py",
+      "line": 584
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-026",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "食神取運，即以食神所成之局，分而配之。食神生財，財食輕則行財食，財食重則喜幫身。官煞之方，俱為不美。食用煞印，運喜印旺，切忌財鄉，身旺食傷亦"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "食神格(带煞无财)",
+      "file": "ge_jie_layer.py",
+      "line": 602
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-030",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "傷官取運，即以傷官所成之局，分而配之。傷官用財，財旺身輕則利印比，身旺財淺則喜財運，傷官亦宜。傷官佩印，運行官煞為宜，印運亦吉，傷食不礙財地"
+        }
+      ],
+      "unmapped_page_refs": [],
+      "has_grade_A": true,
+      "ge_name": "伤官格(佩印)",
+      "file": "ge_jie_layer.py",
+      "line": 647
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-030",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "傷官取運，即以傷官所成之局，分而配之。傷官用財，財旺身輕則利印比，身旺財淺則喜財運，傷官亦宜。傷官佩印，運行官煞為宜，印運亦吉，傷食不礙財地"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "伤官格(带煞无财)",
+      "file": "ge_jie_layer.py",
+      "line": 667
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-020",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "取運之道，八字則有一八字之論，其理精，其法甚活，只可大略言之，變化在人，不可泥也。如正官取運，即以正官所統之格，分而配之。正官而用財印，身稍"
+        },
+        {
+          "ref": "PZZQ L1119",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "**【徐注】**用神既定，则须观其成败救应。官逢财印者，月令正官，身旺官轻，四柱有财生官，身弱官"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "正官格",
+      "file": "ge_jie_layer.py",
+      "line": 717
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-020",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "取運之道，八字則有一八字之論，其理精，其法甚活，只可大略言之，變化在人，不可泥也。如正官取運，即以正官所統之格，分而配之。正官而用財印，身稍"
+        },
+        {
+          "ref": "PZZQ L1119",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "**【徐注】**用神既定，则须观其成败救应。官逢财印者，月令正官，身旺官轻，四柱有财生官，身弱官"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "正官格",
+      "file": "ge_jie_layer.py",
+      "line": 748
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-020",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "取運之道，八字則有一八字之論，其理精，其法甚活，只可大略言之，變化在人，不可泥也。如正官取運，即以正官所統之格，分而配之。正官而用財印，身稍"
+        },
+        {
+          "ref": "PZZQ L1119",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "**【徐注】**用神既定，则须观其成败救应。官逢财印者，月令正官，身旺官轻，四柱有财生官，身弱官"
+        },
+        {
+          "ref": "PZZQ L1145",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "正官格",
+      "file": "ge_jie_layer.py",
+      "line": 769
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-020",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "取運之道，八字則有一八字之論，其理精，其法甚活，只可大略言之，變化在人，不可泥也。如正官取運，即以正官所統之格，分而配之。正官而用財印，身稍"
+        },
+        {
+          "ref": "PZZQ L1145",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "正官格",
+      "file": "ge_jie_layer.py",
+      "line": 789
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-026",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "食神取運，即以食神所成之局，分而配之。食神生財，財食輕則行財食，財食重則喜幫身。官煞之方，俱為不美。食用煞印，運喜印旺，切忌財鄉，身旺食傷亦"
+        },
+        {
+          "ref": "PZZQ L1145",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格"
+        },
+        {
+          "ref": "PZZQ L4882",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "谓二人同心；或日主得时秉令，四柱皆拱合之神，谓权在一人，只可顺其气势，引其性情以取用，若强制"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "食神制杀格",
+      "file": "ge_jie_layer.py",
+      "line": 804
+    },
+    {
+      "anchors": [
+        {
+          "ref": "DTS-014-002",
+          "grade": "B",
+          "layer": "ANNOTATION",
+          "text": "> 注：有以日主為體、提綱為用。日主旺，則提綱有食傷財官者皆為我用；日主弱，而提綱有物幫身以制其強神者亦皆為用。提綱為體、喜神為用者，日主不"
+        },
+        {
+          "ref": "DTS-016-002",
+          "grade": "B",
+          "layer": "ANNOTATION",
+          "text": "> 注：旺則宜洩宜傷，衰則喜幫喜助，子平之理也。然旺中有衰者存，不可損也；衰中有旺者存，不可益也。旺之極者不可損，以損在其中矣；衰之極者不可"
+        },
+        {
+          "ref": "PZZQ L4882",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "谓二人同心；或日主得时秉令，四柱皆拱合之神，谓权在一人，只可顺其气势，引其性情以取用，若强制"
+        }
+      ],
+      "unmapped_page_refs": [],
+      "has_grade_A": false,
+      "ge_name": "无根须印(财不成格)",
+      "file": "ge_jie_layer.py",
+      "line": 848
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-021",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "財為我剋使用之物也，以能生官，所以為美。為財帛，為妻妾，為才能，為驛馬，皆才類也。財喜根深，不宜太露，然一位以清用，格所最喜，不為之露。即非"
+        },
+        {
+          "ref": "PZZQ-007-022",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "財格取運，即以財格所就之局，分而配之。其財旺生官者，運喜身旺印綬，不利七煞傷官；若生官而復透印傷官之地，不甚有害。至生官而帶食破局，則運喜印"
+        },
+        {
+          "ref": "PZZQ L3448",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "**【徐注】**财格佩印，其最要之条件，即为财印两不相碍。如论财篇曾参政命："
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "财格",
+      "file": "ge_jie_layer.py",
+      "line": 915
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-021",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "財為我剋使用之物也，以能生官，所以為美。為財帛，為妻妾，為才能，為驛馬，皆才類也。財喜根深，不宜太露，然一位以清用，格所最喜，不為之露。即非"
+        },
+        {
+          "ref": "PZZQ-007-022",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "財格取運，即以財格所就之局，分而配之。其財旺生官者，運喜身旺印綬，不利七煞傷官；若生官而復透印傷官之地，不甚有害。至生官而帶食破局，則運喜印"
+        },
+        {
+          "ref": "PZZQ L1145",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "财格",
+      "file": "ge_jie_layer.py",
+      "line": 938
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-021",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "財為我剋使用之物也，以能生官，所以為美。為財帛，為妻妾，為才能，為驛馬，皆才類也。財喜根深，不宜太露，然一位以清用，格所最喜，不為之露。即非"
+        },
+        {
+          "ref": "PZZQ-007-022",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "財格取運，即以財格所就之局，分而配之。其財旺生官者，運喜身旺印綬，不利七煞傷官；若生官而復透印傷官之地，不甚有害。至生官而帶食破局，則運喜印"
+        },
+        {
+          "ref": "PZZQ L1130",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "为美。若四柱财无根气，则印虽多，不能用财破印；原局财星太旺，印绶被伤，则反须以比劫去财扶印为美"
+        },
+        {
+          "ref": "PZZQ L1145",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "财格",
+      "file": "ge_jie_layer.py",
+      "line": 949
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-023",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "印綬喜其生身，正偏同為美格，故財與印不分偏正，同為一格而論之。印綬之格局亦不一：有印而透官者，正官不獨取其生印，而即可以為用，與用煞者不同。"
+        },
+        {
+          "ref": "PZZQ L1130",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "为美。若四柱财无根气，则印虽多，不能用财破印；原局财星太旺，印绶被伤，则反须以比劫去财扶印为美"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255"
+      ],
+      "has_grade_A": true,
+      "ge_name": "印格(官印双全)",
+      "file": "ge_jie_layer.py",
+      "line": 1043
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-023",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "印綬喜其生身，正偏同為美格，故財與印不分偏正，同為一格而論之。印綬之格局亦不一：有印而透官者，正官不獨取其生印，而即可以為用，與用煞者不同。"
+        },
+        {
+          "ref": "PZZQ L1130",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "为美。若四柱财无根气，则印虽多，不能用财破印；原局财星太旺，印绶被伤，则反须以比劫去财扶印为美"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255"
+      ],
+      "has_grade_A": true,
+      "ge_name": "印格(印轻逢煞)",
+      "file": "ge_jie_layer.py",
+      "line": 1059
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-023",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "印綬喜其生身，正偏同為美格，故財與印不分偏正，同為一格而論之。印綬之格局亦不一：有印而透官者，正官不獨取其生印，而即可以為用，與用煞者不同。"
+        },
+        {
+          "ref": "PZZQ L1130",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "为美。若四柱财无根气，则印虽多，不能用财破印；原局财星太旺，印绶被伤，则反须以比劫去财扶印为美"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255"
+      ],
+      "has_grade_A": true,
+      "ge_name": "印格(印多逢财)",
+      "file": "ge_jie_layer.py",
+      "line": 1092
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-023",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "印綬喜其生身，正偏同為美格，故財與印不分偏正，同為一格而論之。印綬之格局亦不一：有印而透官者，正官不獨取其生印，而即可以為用，與用煞者不同。"
+        },
+        {
+          "ref": "PZZQ L4093",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "贵，不论去官或去煞。岳沈两造，同为煞格杂官而显有低昂，盖月令七煞，则煞为真神。岳统制造，癸水去"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255"
+      ],
+      "has_grade_A": true,
+      "ge_name": "印格",
+      "file": "ge_jie_layer.py",
+      "line": 1145
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-028",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "偏官取運，即以偏官所成之局，分而配之。煞用食制，煞重食輕則助食，煞輕食重則助煞，煞食均而日主根輕則助身。忌正官之混雜，畏印綬之奪食。煞用印綬"
+        },
+        {
+          "ref": "PZZQ-007-029",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "傷官雖非吉神，實為秀氣，故文人學士多於傷官格內得之。而夏木見水、冬金見火，則又秀之尤秀者也。其中格局比他格多變化，尤多在查其氣候，量其強弱，"
+        },
+        {
+          "ref": "PZZQ L4093",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "贵，不论去官或去煞。岳沈两造，同为煞格杂官而显有低昂，盖月令七煞，则煞为真神。岳统制造，癸水去"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "七煞格(破格)",
+      "file": "ge_jie_layer.py",
+      "line": 1183
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-028",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "偏官取運，即以偏官所成之局，分而配之。煞用食制，煞重食輕則助食，煞輕食重則助煞，煞食均而日主根輕則助身。忌正官之混雜，畏印綬之奪食。煞用印綬"
+        },
+        {
+          "ref": "PZZQ-007-029",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "傷官雖非吉神，實為秀氣，故文人學士多於傷官格內得之。而夏木見水、冬金見火，則又秀之尤秀者也。其中格局比他格多變化，尤多在查其氣候，量其強弱，"
+        },
+        {
+          "ref": "PZZQ L1146",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "败也；食神逢枭，或生财露煞，食神格败也；七煞逢财无制，七煞格败也；伤官非金水而见官，或生财而带"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "七煞格(逢制)",
+      "file": "ge_jie_layer.py",
+      "line": 1206
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-028",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "偏官取運，即以偏官所成之局，分而配之。煞用食制，煞重食輕則助食，煞輕食重則助煞，煞食均而日主根輕則助身。忌正官之混雜，畏印綬之奪食。煞用印綬"
+        },
+        {
+          "ref": "PZZQ-007-029",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "傷官雖非吉神，實為秀氣，故文人學士多於傷官格內得之。而夏木見水、冬金見火，則又秀之尤秀者也。其中格局比他格多變化，尤多在查其氣候，量其強弱，"
+        },
+        {
+          "ref": "PZZQ L1146",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "败也；食神逢枭，或生财露煞，食神格败也；七煞逢财无制，七煞格败也；伤官非金水而见官，或生财而带"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "七煞格",
+      "file": "ge_jie_layer.py",
+      "line": 1223
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-004",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "月令既得用神，則別位亦必有相，若君之有相，輔我用神者是也。如官逢財生，則官為用、財為相；財旺生官，則財為用、官為相；煞逢食制，則煞為用、食為"
+        },
+        {
+          "ref": "DTS L210",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "**原注**：飞天合禄之类，固为影响遥系而非格矣。如四季月生人，只当取土为格，不可言杂气财官；戊己日生于四季月者，当看人"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255",
+        "PZZQ258"
+      ],
+      "has_grade_A": true,
+      "ge_name": "建禄月劫格",
+      "file": "ge_jie_layer.py",
+      "line": 1268
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-026",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "食神取運，即以食神所成之局，分而配之。食神生財，財食輕則行財食，財食重則喜幫身。官煞之方，俱為不美。食用煞印，運喜印旺，切忌財鄉，身旺食傷亦"
+        },
+        {
+          "ref": "DTS L215",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "**原注**：有以日主为体，提纲为用。日主旺，则提纲之食神财官皆为我用；日主弱，则提纲有物，帮身以制其神者，亦皆为我用。"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255"
+      ],
+      "has_grade_A": true,
+      "ge_name": "食神格",
+      "file": "ge_jie_layer.py",
+      "line": 1359
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-030",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "傷官取運，即以傷官所成之局，分而配之。傷官用財，財旺身輕則利印比，身旺財淺則喜財運，傷官亦宜。傷官佩印，運行官煞為宜，印運亦吉，傷食不礙財地"
+        },
+        {
+          "ref": "PZZQ L170",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "何以复有寅卯者，又与甲乙分阴阳天地而言之者也。以甲乙而分阴阳，则甲为阳，乙为阴，木之行于天而为"
+        }
+      ],
+      "unmapped_page_refs": [
+        "PZZQ255"
+      ],
+      "has_grade_A": true,
+      "ge_name": "伤官格",
+      "file": "ge_jie_layer.py",
+      "line": 1396
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-033-001",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "有弃命保财者，四柱皆财而身无气，舍而从之，格成大贵。若透印则身赖印生而不从，有官煞则亦无从财兼从煞之理，其格不成。……有弃命从煞者，四柱皆煞"
+        },
+        {
+          "ref": "PZZQ-034-001",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "乙未 癸卯 癸卯 甲寅，十二节度使命是也。运忌填实，不利金乡，余则吉矣。……如上造乃《滴天髓》之顺局从儿格。从儿者，从食伤也，以见财为美，大"
+        }
+      ],
+      "unmapped_page_refs": [],
+      "has_grade_A": true,
+      "ge_name": "从格(",
+      "file": "ge_jie_layer.py",
+      "line": 1489
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-028",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "偏官取運，即以偏官所成之局，分而配之。煞用食制，煞重食輕則助食，煞輕食重則助煞，煞食均而日主根輕則助身。忌正官之混雜，畏印綬之奪食。煞用印綬"
+        },
+        {
+          "ref": "PZZQ-007-029",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "傷官雖非吉神，實為秀氣，故文人學士多於傷官格內得之。而夏木見水、冬金見火，則又秀之尤秀者也。其中格局比他格多變化，尤多在查其氣候，量其強弱，"
+        },
+        {
+          "ref": "PZZQ-033-001",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "有弃命保财者，四柱皆财而身无气，舍而从之，格成大贵。若透印则身赖印生而不从，有官煞则亦无从财兼从煞之理，其格不成。……有弃命从煞者，四柱皆煞"
+        },
+        {
+          "ref": "DTS L438",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "一出门来只见儿，吾儿成气构门闾；从儿不管身强弱，只要吾儿又得儿。"
+        }
+      ],
+      "unmapped_page_refs": [],
+      "has_grade_A": true,
+      "ge_name": "从杀无伤食制煞(PZZQ-033-001 L4939)",
+      "file": "special_pattern.py",
+      "pattern_id": "ZP-SPECIAL-CONG-BAN"
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-033-001",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "有弃命保财者，四柱皆财而身无气，舍而从之，格成大贵。若透印则身赖印生而不从，有官煞则亦无从财兼从煞之理，其格不成。……有弃命从煞者，四柱皆煞"
+        },
+        {
+          "ref": "DTS L438",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "一出门来只见儿，吾儿成气构门闾；从儿不管身强弱，只要吾儿又得儿。"
+        },
+        {
+          "ref": "PZZQ L5092",
+          "grade": "A",
+          "layer": "BASELINE",
+          "text": "木，行运最喜木火。从格忌见比劫，而从儿有食伤引化，不忌比劫，此为不同之点。官煞大忌，印运亦忌。"
+        }
+      ],
+      "unmapped_page_refs": [],
+      "has_grade_A": true,
+      "ge_name": "从财无官煞(PZZQ-033-001 L4937)",
+      "file": "special_pattern.py",
+      "pattern_id": "ZP-SPECIAL-CONG-BAN"
+    },
+    {
+      "anchors": [
+        {
+          "ref": "PZZQ-007-028",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "偏官取運，即以偏官所成之局，分而配之。煞用食制，煞重食輕則助食，煞輕食重則助煞，煞食均而日主根輕則助身。忌正官之混雜，畏印綬之奪食。煞用印綬"
+        },
+        {
+          "ref": "PZZQ-007-029",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "傷官雖非吉神，實為秀氣，故文人學士多於傷官格內得之。而夏木見水、冬金見火，則又秀之尤秀者也。其中格局比他格多變化，尤多在查其氣候，量其強弱，"
+        },
+        {
+          "ref": "PZZQ-033-001",
+          "grade": "A",
+          "layer": "ORIGINAL",
+          "text": "有弃命保财者，四柱皆财而身无气，舍而从之，格成大贵。若透印则身赖印生而不从，有官煞则亦无从财兼从煞之理，其格不成。……有弃命从煞者，四柱皆煞"
+        },
+        {
+          "ref": "PZZQ L2412",
+          "grade": "B",
+          "layer": "BASELINE",
+          "text": "金，此类皆非外格也。必四柱气象偏于一方，如春木而支连寅卯辰，或亥卯未，四柱无可扶抑。日与月同，"
+        }
+      ],
+      "unmapped_page_refs": [],
+      "has_grade_A": true,
+      "ge_name": "从杀格",
+      "file": "special_pattern.py",
+      "pattern_id": "ZP-SPECIAL-CONG"
+    },
+    {
+      "anchors": [
+        {
+          "ref": "DTS-033-015",
+          "grade": "B",
+          "layer": "ANNOTATION",
+          "text": "氣濁神枯之命極易看。印綬太旺，日主無着落；才煞太旺，日主無依倚；喜神與忌神雜戰，四柱與行運反沖，絕而不和，靜而不專，濕而不滯，燥而不鬱，精流"
+        }
+      ],
+      "unmapped_page_refs": [],
+      "has_grade_A": false,
+      "ge_name": "母多灭子/印势漂没",
+      "file": "special_pattern.py",
+      "pattern_id": "ZP-SPECIAL-MUMIE"
+    }
+  ],
+  "note": "覆盖率 = 【可回查的 grade=A 出处】下限(保守: 只算已映射 source_id / L行号; PZZQ 页码不计入). 无 A 级出处的定义点须人工裁定: 补 source_id 映射(升级引用) 或 依 §四 改写. ★ 签字位保留 null.",
+  "human_signoff": null
+}

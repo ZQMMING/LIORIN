@@ -1,0 +1,99 @@
+{
+  "engine": "DITIANSUI",
+  "contract_version": "1.0.0",
+  "engine_version": "0.1.0",
+  "input": {
+    "allowed_fields": [
+      "pillars",
+      "hidden_stems",
+      "shishen",
+      "wuxing",
+      "yinyang",
+      "nayin",
+      "xunkong",
+      "changsheng",
+      "relations",
+      "source_registry",
+      "rule_registry",
+      "definition_registry",
+      "terminology_registry",
+      "relation_registry",
+      "precedence_registry"
+    ],
+    "allowed_engines": []
+  },
+  "output": {
+    "fact_groups": [
+      "ten_god_facts",
+      "six_relative_facts",
+      "palace_facts",
+      "basic_structure_facts",
+      "geju_candidates",
+      "relation_facts"
+    ],
+    "judgment_fields": [
+      "fact_id",
+      "position",
+      "ten_god",
+      "source_rule_id",
+      "relation",
+      "target",
+      "palace",
+      "renshi",
+      "body",
+      "stage",
+      "structure_type",
+      "description",
+      "candidate_id",
+      "name",
+      "basis_fact_ids"
+    ],
+    "statuses": [
+      "PASS",
+      "UNKNOWN",
+      "CLASSICAL_DIVERGENCE",
+      "FAIL",
+      "FAIL_CLOSED"
+    ]
+  },
+  "forbidden_input": [
+    "recalculate",
+    "rechart",
+    "sxtwl",
+    "llm",
+    "llm_judgment",
+    "score",
+    "confidence",
+    "probability",
+    "percentage",
+    "vote",
+    "consensus",
+    "charting_dependency",
+    "l2b",
+    "l2c",
+    "l2d",
+    "l2e",
+    "l3"
+  ],
+  "forbidden_output": [
+    "FINAL_USE_SHEN",
+    "GLOBAL_USE_SHEN",
+    "UNIFIED_USE_SHEN",
+    "global_strength",
+    "global_yongshen",
+    "modern_signal",
+    "modern_conclusion",
+    "llm_judgment",
+    "cross_classic_priority",
+    "total_score",
+    "weighted_score",
+    "majority_vote",
+    "consensus"
+  ],
+  "dependency": {
+    "reads": [],
+    "notes": "§K-1 DITIANSUI 仅允许 L0 core facts + L1 Knowledge Registry；禁读 L2B/L2C/L2D/L2E/L3/L4/L5/L6"
+  },
+  "approved_by": "Human Architect (V2.2.2 FINAL + 附录 B 封板)",
+  "approved_at": "2026-09-15T00:00:00+08:00"
+}

@@ -1,0 +1,11 @@
+{
+  "golden_id": "GC-001",
+  "layer": "climate",
+  "input": {"day_stem": "乙", "month_branch": "戌"},
+  "must": {
+    "primary_contains": ["癸"],
+    "secondary_contains": ["辛"],
+    "avoid_contains": ["丙", "壬"]
+  },
+  "forbid": ["climate_use_state=癸DEGRADED旧硬编码直出", "single final_use"]
+}

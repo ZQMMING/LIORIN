@@ -1,0 +1,157 @@
+{
+  "contract_id": "PATCH-006",
+  "name": "Use-God Rule Modeling（用神规则建模）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "PATCH-006：建立用神 Rule Candidate Registry。用神非单概念：PZZQ 月令格局用神 / SFTK 病药用神 / QTBJ 调候用神 / DTS 通关·真神 / 相神 PZZQ_ONLY，五体系独立登记，禁合并替代。所有候选规则 PENDING_GOLDEN。",
+  "parent": "PATCH-005C（c97a6912）",
+  "scope_match_004C": {
+    "用神规则域": {"allowed": ["PZZQ_SCOPE"], "forbidden": ["QTBJ 调候替代用神", "DTS 通关替代用神"]},
+    "调候规则域": {"allowed": ["QTBJ_SCOPE", "DTS 寒暖湿燥辅助"], "forbidden": ["统一旺衰公式"]},
+    "通关规则域": {"allowed": ["DTS_SCOPE"], "forbidden": ["YHZP 引化=通关"]}
+  },
+  "concept_boundaries": {
+    "PZZQ_YONG_SHEN": {
+      "definition": "月令格局用神：八字用神专求月令，以日干配月令地支，格局分财官印食",
+      "primary_source": "PZZQ-005-007（A，CORE_RULE_ELIGIBLE，多域锚）",
+      "related": ["PZZQ-007-004 相神（A，PZZQ_ONLY）", "PZZQ-007-005 杂而不杂（CONDITIONAL）", "PZZQ-007-021 财星根深（A）"],
+      "forbidden": ["用神=调候", "用神=病药", "用神=通关"]
+    },
+    "SFTK_BING_YAO": {
+      "definition": "病药用神：原局害神为病，得一字去之为药；先看日干次看月令，从重者论",
+      "primary_source": "SFTK-008-001（A）",
+      "related": ["SFTK-082-001 从化→财官→格局入口"],
+      "forbidden": ["if DTS_bing: use_SFTK_bingyao()", "病药=通用用神算法"]
+    },
+    "QTBJ_TIAO_HOU": {
+      "definition": "调候用神：日干×月令×寒暖燥湿取用（如冻土取丙、寒水取丙）",
+      "primary_source": "QTBJ-060-001（A）、QTBJ-109-001（A）",
+      "forbidden": ["调候条件泛化成通用用神"]
+    },
+    "DTS_TONG_GUAN_ZHEN_JIA": {
+      "definition": "通关用神（DTS_SCOPE_ONLY）与真神得令（真假论）",
+      "primary_source": "DTS-019-001（A）、DTS-023-004",
+      "forbidden": ["YHZP 引化=通关", "真神得令→身强"]
+    },
+    "XIANG_SHEN": {
+      "definition": "相神：月令既得用神，别位亦必有相（辅用神者）",
+      "primary_source": "PZZQ-007-004（A，PZZQ_ONLY）",
+      "forbidden": ["病药救应=相神"]
+    }
+  },
+  "rule_candidates": [
+    {
+      "rule_id": "RULE-Y-001",
+      "status": "PENDING_GOLDEN",
+      "concept": "PZZQ_YONG_SHEN",
+      "classical_scope": "PZZQ",
+      "source_ids": ["PZZQ-005-007"],
+      "condition": "八字用神專求月令，以日干配月令地支，格局分財官印食（原文逐字）",
+      "output": "use_god_candidate（月令格局用神候选，须配合顺逆/成败条件）",
+      "excluded": ["直接产出最终用神"]
+    },
+    {
+      "rule_id": "RULE-Y-002",
+      "status": "PENDING_GOLDEN",
+      "concept": "PZZQ_YONG_SHEN",
+      "classical_scope": "PZZQ",
+      "source_ids": ["PZZQ-005-007"],
+      "condition": "財官印食順用，煞傷刃劫逆用（原文逐字）",
+      "output": "yong_shen_direction（顺/逆）",
+      "excluded": ["顺逆=吉凶自动输出"]
+    },
+    {
+      "rule_id": "RULE-Y-003",
+      "status": "PENDING_GOLDEN",
+      "concept": "SFTK_BING_YAO",
+      "classical_scope": "SFTK",
+      "source_ids": ["SFTK-008-001"],
+      "condition": "何以為病？原八字中所害之神也；何以為藥？得一字以去之（原文逐字）；先看月令從重者論",
+      "output": "bingyao_medicine_candidate（去病之药候选）",
+      "excluded": ["病药结果跨书套用"]
+    },
+    {
+      "rule_id": "RULE-Y-004",
+      "status": "PENDING_GOLDEN",
+      "concept": "QTBJ_TIAO_HOU",
+      "classical_scope": "QTBJ",
+      "source_ids": ["QTBJ-060-001", "QTBJ-109-001"],
+      "condition": "调候取用（寒冻取丙等；必须绑定日干×月令×寒暖燥湿条件）",
+      "output": "tiaohou_candidate（调候用神候选）",
+      "excluded": ["调候泛化成通用用神", "调候替代 PZZQ 格局用神"]
+    },
+    {
+      "rule_id": "RULE-Y-005",
+      "status": "PENDING_GOLDEN",
+      "concept": "DTS_TONG_GUAN_ZHEN_JIA",
+      "classical_scope": "DTS",
+      "source_ids": ["DTS-019-001"],
+      "condition": "通关论（DTS_SCOPE_ONLY）",
+      "output": "tong_guan_candidate（通关用神候选，DTS 域内）",
+      "excluded": ["YHZP 引化=通关", "通关=通用用神"]
+    },
+    {
+      "rule_id": "RULE-Y-006",
+      "status": "PENDING_GOLDEN",
+      "concept": "XIANG_SHEN",
+      "classical_scope": "PZZQ",
+      "source_ids": ["PZZQ-007-004"],
+      "condition": "月令既得用神，則別位亦必有相（原文逐字）",
+      "output": "xiang_shen_candidate（相神候选，PZZQ_ONLY）",
+      "excluded": ["病药救应=相神"]
+    }
+  ],
+  "conflict_resolver": {
+    "principle": "用神多体系冲突不得合并/加权/投票；按 Concept Scope Match 优先，各自域内登记，冲突无法裁决→UNDETERMINED（FAIL_CLOSED）。",
+    "cases": [
+      {"conflict": "PZZQ 格局用神 vs QTBJ 调候", "resolution": "各自登记 use_god_candidate + tiaohou_candidate；不合并；禁调候替代格局用神"},
+      {"conflict": "SFTK 病药 vs DTS 病药表述", "resolution": "DTS「有病方为贵」仅病药概念层，禁 if DTS_bing: use_SFTK_bingyao()"},
+      {"conflict": "DTS 通关 vs YHZP 引化", "resolution": "通关 DTS_SCOPE_ONLY；YHZP 引化不得登记为通关"}
+    ]
+  },
+  "golden_cases": [
+    {
+      "case_id": "GOLDEN-006-01",
+      "title": "冬生寒局",
+      "inputs": {"month": "冬月", "climate": "寒", "pattern_candidate": "PZZQ 格局用神候选"},
+      "verify_forbidden": ["调候替代格局用神"],
+      "expected": "tiaohou_candidate 与 use_god_candidate 各自登记，不合并"
+    },
+    {
+      "case_id": "GOLDEN-006-02",
+      "title": "印格透煞（印轻逢煞）",
+      "inputs": {"pattern": "印格", "killing": "透煞", "base_text": "PZZQ-005-008 工程执行文本=印輕逢煞"},
+      "verify_forbidden": ["印轻逢煞→直接吉凶"],
+      "expected": "登记用神方向候选（煞生印），须过成败救应条件"
+    },
+    {
+      "case_id": "GOLDEN-006-03",
+      "title": "病药与调候并存",
+      "inputs": {"bing": "DTS 病药表述", "medicine": "SFTK 病药体系"},
+      "verify_forbidden": ["if DTS_bing: use_SFTK_bingyao()"],
+      "expected": "DTS 病药概念层与 SFTK 病药诊断体系分离登记"
+    },
+    {
+      "case_id": "GOLDEN-006-04",
+      "title": "通关场景",
+      "inputs": {"structure": "两神相战需通关"},
+      "verify_forbidden": ["YHZP 引化=通关"],
+      "expected": "仅 DTS_SCOPE 内登记 tong_guan_candidate"
+    }
+  ],
+  "blocklist": [
+    "单一通用用神算法",
+    "用神评分表",
+    "用神权重（格局60%+调候40%等）",
+    "调候替代格局用神",
+    "通关替代格局用神",
+    "病药=通用用神算法"
+  ],
+  "acceptance_criteria": [
+    "用神五体系独立边界（PZZQ/SFTK/QTBJ/DTS/相神）",
+    "6 条 Rule Candidate 全部 PENDING_GOLDEN，source 可回查",
+    "Conflict Resolver 覆盖 3 类冲突（格局vs调候/病药vs病药/通关vs引化）",
+    "Golden Case 4 个（冬寒/印格透煞/病药调候/通关）",
+    "BLOCK 通用用神算法与权重模型",
+    "未过 Golden 不 ADMITTED"
+  ]
+}

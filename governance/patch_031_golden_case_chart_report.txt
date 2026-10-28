@@ -1,0 +1,12 @@
+﻿==== PATCH-031 Golden Case Validation Framework ====
+
+==== GC-001 输入版本锁定 ====
+  V1: 1983-11-03 11:30 男 广东中山 → 癸亥 壬戌 乙未 壬午（排盘变更须升 V2）
+
+==== Golden 校验（1983-1103） ====
+  全部通过 ✓
+  → Producer 稳定 / Rule 不漂移 / Namespace 不污染 / Runtime 不越权
+
+==== Regression 门 ====
+  Producer 稳定（state 不变）｜Rule 不漂移（match_result 不变）｜Namespace 不污染（trace 不变）｜Runtime 不越权（无 forbidden）
+  Golden Case=Canonical Input+Admitted Rules+Expected Trace+Expected State（非人工经验案例）

@@ -1,0 +1,65 @@
+{
+  "contract_id": "PATCH-023A",
+  "name": "State Granularity Registry（状态粒度规范）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "解决「印多？多小叫多？水多？水木漂怎么判断？」——答案不能放在 Strength Rule；必须先定义 L2 状态强度描述层。",
+  "layer_chain": {
+    "L0": "排盘事实",
+    "L1": "关系状态（state_producer Phase1 输出）",
+    "L2": "状态强度描述（本契约，粒度规范）",
+    "L3": "Rule 裁决",
+    "L4": "strength_state"
+  },
+  "components": {
+    "1_relation_quantity": {
+      "name": "Relation Quantity（关系量）",
+      "principle": "事实数量登记，不是评分；不是 水=30分",
+      "schema": {
+        "support_relation_detail": {"element": "water", "visible_stem": 3, "hidden_stem": 2, "root_branch": ["亥"], "season_relation": "戌月"}
+      },
+      "forbidden": ["water_strength=80%", "水=30分"]
+    },
+    "2_position_weight": {
+      "name": "Position Weight（位置权）",
+      "principle": "记录位置不是力量；六经典区别 透干/得地/司令/藏干",
+      "priority": [
+        {"code": "VISIBLE", "meaning": "天干透出"},
+        {"code": "SEASON", "meaning": "月令/司令"},
+        {"code": "PALACE", "meaning": "日支（日主之宫）"},
+        {"code": "HIDDEN", "meaning": "藏干"}
+      ]
+    },
+    "3_element_relation_state": {
+      "name": "Element Relation State",
+      "principle": "不要 water_many=true；EXCESS_CONDITION 不自动成立，只是等待 Rule",
+      "states": ["VISIBLE_SUPPORT", "ROOTED_SUPPORT", "SEASONALLY_SUPPORTED", "EXCESS_CONDITION", "UNKNOWN"],
+      "instance_example": "water_relation_state: VISIBLE_SUPPORT / ROOTED_SUPPORT / SEASONALLY_SUPPORTED / EXCESS_CONDITION / UNKNOWN"
+    },
+    "4_many_not_in_enum": {
+      "name": "「多」的定义不进入 Enum",
+      "principle": "六书没有统一标准（DTS 看气势/QTBJ 看寒暖燥湿/PZZQ 看月令格局）；同一「三水」不同领域意义不同",
+      "forbidden": ["water_many", "wood_many", "metal_many", "印多=true"],
+      "replacement": "water_fact_collection（事实收集，不同 Rule 消费）"
+    }
+  },
+  "chart_1983_1103_l2_output": {
+    "水关系": {"facts": {"visible_water": 3, "hidden_water": 1, "water_root": "亥", "month_support": false}, "state": "SUPPORT_RELATION_PRESENT", "forbidden": ["水旺", "印旺", "水多"]},
+    "木关系": {"facts": {"day_master": "乙", "root": ["亥藏甲(根)", "未藏乙(余气)"]}, "state": "ROOT_RELATION_PRESENT", "forbidden": ["木强"]},
+    "土关系": {"facts": {"branches": ["戌", "未"], "hidden": ["己戊"]}, "state": "WEALTH_RELATION_PRESENT", "forbidden": ["财多"]}
+  },
+  "classical_consumption_rule": {
+    "principle": "每个 Rule 按域读取事实，禁跨域直判",
+    "allow": {
+      "DTS": ["trend_relation", "气势关系", "中和关系"],
+      "QTBJ": ["seasonal_relation", "寒暖燥湿"],
+      "PZZQ": ["month_order", "格局关系"]
+    },
+    "forbidden": "DTS 看到水3个直接→水旺；QTBJ 看到三水直接→调候结论"
+  },
+  "acceptance_criteria": [
+    "L2 层定义冻结（事实数量/位置权/元素关系状态/禁多入 Enum）",
+    "1983-1103 L2 输出对齐（水/木/土三关系，禁旺强多）",
+    "六经典按域消费事实，禁跨域直判",
+    "EXCESS_CONDITION 不自动成立"
+  ]
+}

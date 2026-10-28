@@ -1,0 +1,50 @@
+{
+  "contract_id": "PATCH-032",
+  "name": "Rule Construction 第一批：PZZQ 月令取用 + QTBJ 九月乙木调候",
+  "status": "RULE_CONSTRUCTED",
+  "purpose": "阶段 D 首批可执行判定规则：让 1983-11-03 命局的 use_god_state/climate_use_state 出真实值（告别全 UNDETERMINED）。",
+  "evidence_bindings": [
+    {"evidence_id": "EVID-015", "source_id": "PZZQ-005-009", "grade": "A", "quotation": "用神既主月令矣，然月令所藏不一，而用神遂有變化", "note": "戌为杂气（藏戊辛丁）→用神变化依据"},
+    {"evidence_id": "EVID-016", "source_id": "PZZQ-007-006", "grade": "A", "quotation": "辰戌丑未，最喜刑衝，財官入庫，不衝不發……夫雜氣透干會支", "note": "戌月杂气取用：须透干会支"},
+    {"evidence_id": "EVID-017", "source_id": "PZZQ-007-021", "grade": "A", "quotation": "財為我剋使用之物也，以能生官，所以為美……財喜根深，不宜太露", "note": "财格喜忌：喜根深"},
+    {"evidence_id": "EVID-018", "source_id": "QTBJ-022-001", "grade": "A", "quotation": "九月乙木根枯葉落必賴癸水滋養……若見癸水又遇辛金發水之源定主科甲……四柱壬多水難生乙亦是尋常之輩", "note": "九月乙木调候：端用癸水；癸+辛发水源；壬多限制（QTBJ-018-001 为五月乙木，非九月！）"}
+  ],
+  "rules": [
+    {
+      "rule_id": "RULE-032-01",
+      "name": "PZZQ 月令取用（财星顺用）",
+      "classic_source": "PZZQ-005-007/008/009 + 007-006",
+      "namespace": "PZZQ.use_god",
+      "producer": "026 use_god_state",
+      "input_contract": {"month_order": "戌", "month_hidden": "戊辛丁", "day_master_element": "WOOD"},
+      "logic": "月令所藏主气（戊土=日主所克=财）→用神=财（顺用）；戌为杂气，成格待透干会支（PZZQ-007-006）",
+      "output_state": "use_god_state=CANDIDATE（财）",
+      "chart_1983": {"use_god_state": "CANDIDATE(财)", "pattern_state": "CANDIDATE(财格)", "note": "财不透干（天干无戊），地支戌未双财库+午未合，成格待 structure 确认"}
+    },
+    {
+      "rule_id": "RULE-032-02",
+      "name": "QTBJ 九月乙木调候用神",
+      "classic_source": "QTBJ-022-001",
+      "namespace": "QTBJ.climate_use",
+      "producer": "026 climate_use_state",
+      "input_contract": {"month_order": "戌", "day_master_element": "WOOD", "gui_visible": true, "xin_hidden": true, "ren_visible": 2},
+      "logic": "九月乙木端用癸水；本命癸透（年干）+辛藏（戌中辛）→调候用神=癸水（满足『若見癸水又遇辛金發水之源』条件）；壬透二触『四柱壬多水難生乙』限制（断语层待综合，不影响调候用神确定）",
+      "output_state": "climate_use_state=DETERMINED（癸水）",
+      "chart_1983": {"climate_use_state": "DETERMINED(癸水)", "note": "癸透年干+戌中辛发水源；壬多限制登记为断语条件"}
+    }
+  ],
+  "sftk_policy": "SFTK 病药规则不在 032 构造（病药诊断体系留待 033）；qu_yong_state 保持 UNDETERMINED，诚实标注未接线",
+  "gc001_update": {
+    "use_god_state": "CANDIDATE(财)",
+    "climate_use_state": "DETERMINED(癸水)",
+    "pattern_state": "CANDIDATE(财格)",
+    "forbidden_unchanged": "strength_state 仍 UNDETERMINED；wang/qiang 仍 UNKNOWN（无授权综合）"
+  },
+  "acceptance_criteria": [
+    "evidence 绑定：EVID-015~018（PZZQ-005-009/007-006/007-021、QTBJ-022-001 全 A 级）",
+    "RULE-032-01：1983 use_god=CANDIDATE(财)、pattern=CANDIDATE(财格)",
+    "RULE-032-02：1983 climate_use=DETERMINED(癸水)",
+    "SFTK qu_yong 保持 UNDETERMINED（诚实未接线）",
+    "GC-001 Golden 预期更新且回归通过"
+  ]
+}

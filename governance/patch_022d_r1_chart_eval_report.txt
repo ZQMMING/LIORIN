@@ -1,0 +1,44 @@
+﻿排盘: {"年柱": "癸亥", "月柱": "壬戌", "日柱": "乙未", "时柱": "壬午"}
+日主: 乙 | order: NOT_GET_ORDER | root: HAS_ROOT ['年柱', '日柱'] | 印透: ['年柱', '月柱', '时柱'] | 财透: [] | 官杀透: [] | 地支土(财)数: 2
+
+==== 条件评估矩阵（12 ADMITTED）====
+（RULE-022C-01 已改为 wealth_relation_state 登记：财星结构/日主关系/泄耗关系/条件限制，非数量判定）
+  CAND-WANG-001 | 得时俱为旺论
+     触发线索: 得令 | 评估: 条件不满足/未断言
+  CAND-SHUAI-001 | 失令便作衰看
+     触发线索: 失令 | 评估: 条件满足→规则可消费
+  CAND-QIANG-001 | 日干无气遇劫为强
+     触发线索: 无气∧遇劫 | 评估: 条件不满足/未断言
+  RULE-022C-01 | 财多生官须身健/财多盗气自柔（wealth_relation_state）
+     触发线索: 财星结构登记（非数量判定） | 评估: 条件不满足/未断言
+  RULE-022C-02 | 身强杀浅假杀为权
+     触发线索: 需身强断言（未产生） | 评估: 条件不满足/未断言
+  RULE-022C-03 | 杀旺运纯身旺→清贵/七杀全彰→极贫
+     触发线索: 官杀透（运纯/全彰分支待定） | 评估: 条件不满足/未断言
+  RULE-022C-04 | 七杀格喜忌
+     触发线索: 官杀透→格内条件 | 评估: 条件不满足/未断言
+  RULE-022C-05 | 中和原则（DTS）
+     触发线索: 原则登记（DTS 域，禁→NEUTRAL） | 评估: 条件满足→规则可消费
+  RULE-022C-06 | 伤官财格双向
+     触发线索: 伤官格未确认 | 评估: 条件不满足/未断言
+  RULE-022C-07 | 煞食均根轻助身
+     触发线索: 官杀透；煞食均/根轻待核 | 评估: 条件不满足/未断言
+  RULE-022C-08 | 身旺身弱月令入口
+     触发线索: 语境锚（月令入口登记） | 评估: 条件满足→规则可消费
+
+==== wealth_relation_state（R1-01 对象化）====
+  wealth_structure : 地支戌未土=2（得地无透）；天干无财透
+  daymaster_relation: 未断言（日主失令但通根+印三透，泄身关系未逐支确认）
+  drain_relation   : UNDETERMINED（财不干透，盗气程度未断言）
+  condition_limits : 身健/身弱未断言（CAND-RUO-001 PENDING）
+  status           : UNDETERMINED（财多不作数量结论）
+
+==== strength_state 产出权限（R1-02）====
+  authorized_rules = []（当前 0 条 ADMITTED 登记 output=strength_state）
+  禁止: relationship_result/context_marker/wang/shuai/qiang/single_factor/factor_count/中和 → strength_state
+  解锁条件: 多因素输入 + scope 匹配 + 无单因子 + Golden 全过 + Admission 登记产出权限
+
+==== strength_state ====
+  UNDETERMINED
+  原因: strength_state=RELATIONAL_RESULT 需消费端状态齐备；身弱概念 PENDING（CAND-RUO-001 无单锚）；
+        身旺未断言（无得时）；六部无 factor_collection→strength_state 综合授权 → FAIL_CLOSED 正确行为

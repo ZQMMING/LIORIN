@@ -1,0 +1,12 @@
+{
+  "gap_id": "CLIMATE_QTBJ_COVERAGE",
+  "layer": "climate",
+  "note": "戊土春/冬月Assertion未拆, 非Matcher失败; 后续补assertion时再进",
+  "gaps": [
+    {"case": "戊寅", "status": "COVERAGE_GAP", "reason": "戊土春月Assertion未拆"},
+    {"case": "戊卯", "status": "COVERAGE_GAP", "reason": "戊土春月Assertion未拆"},
+    {"case": "戊辰", "status": "COVERAGE_GAP", "reason": "戊土春月Assertion未拆"},
+    {"case": "戊子", "status": "COVERAGE_GAP", "reason": "戊土冬月Assertion未拆"},
+    {"case": "戊丑", "status": "COVERAGE_GAP", "reason": "戊土冬月Assertion未拆"}
+  ]
+}

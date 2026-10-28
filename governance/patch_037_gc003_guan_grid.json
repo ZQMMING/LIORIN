@@ -1,0 +1,28 @@
+﻿{
+  "contract_id": "PATCH-037",
+  "name": "Golden Case 扩展：GC-003 官格命局（RULE-035-04 激活）",
+  "status": "GOLDEN_EXTENDED",
+  "golden_cases": [
+    {"id": "GC-001", "version": "V1", "chart": "1983-11-03 11:30 癸亥 壬戌 乙未 壬午", "grid": "财格", "rule": "RULE-035-01", "status": "PASS"},
+    {"id": "GC-002", "version": "V1", "chart": "1990-01-15 10:00 己巳 乙丑 庚辰 辛巳", "grid": "印格", "rule": "RULE-035-02", "status": "PASS"},
+    {"id": "GC-003", "version": "V1", "chart": "1992-07-15 12:00 壬申 丁未 壬辰 丙午", "grid": "官格", "rule": "RULE-035-04", "status": "PASS"}
+  ],
+  "gc003": {
+    "chart": "壬申 丁未 壬辰 丙午",
+    "day_master": "壬", "month": "未",
+    "pattern_success_state": "SUCCESS(官逢財印又無刑衝破害)",
+    "condition_context": "官伤同宫（藏干乙伤未透）登记，不直接败格",
+    "daiji_state": "NO_DAIJI",
+    "rescue_state": "NO_RESCUE_NEEDED",
+    "xiangshen_state": "PRESENT(财印双辅)",
+    "evidence": ["PZZQ-005-008", "PZZQ-007-004"],
+    "new_capabilities": ["地支刑冲破害判定表（六冲/六害/六破两支论；三刑三支齐/子卯两支）", "官杀/财/伤官按日主阴阳动态判定"],
+    "bug_fixed": "『我克=财』方向 bug（壬之财=火非土）已修"
+  },
+  "acceptance_criteria": [
+    "GC-003 官格成败出值 SUCCESS（官逢財印又無刑衝破害）",
+    "刑冲破害判定表可复现",
+    "官伤同宫藏干登记不直接败格",
+    "三 Golden 回归通过；枚举 22/22"
+  ]
+}

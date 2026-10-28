@@ -1,0 +1,80 @@
+{
+  "contract_id": "PATCH-021",
+  "name": "Engine Execution Contract（引擎执行契约）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "定义 Engine Execution 四层协议：输入层 → State Producer → Factor Collector → Rule Matcher。本契约不包含任何命理计算逻辑（零算法），仅定义数据流、允许/禁止边界与执行门禁。",
+  "parent": "PATCH-020",
+  "pipeline": {
+    "layer_1_input": {
+      "name": "输入层",
+      "components": [
+        {"object": "four_pillars", "fields": ["年柱", "月柱", "日柱", "时柱（干支对象）"], "note": "排盘结果，确定性天文计算"},
+        {"object": "hidden_stems", "fields": ["地支藏干对象（各支藏干表）"], "note": "YHZP 人元表 A 级；用事分段按 SCHEDULE_VARIANT 登记（YHZP/DTS 并存不合并）"},
+        {"object": "month_order", "fields": ["月支", "节气位置", "月令用事分段"], "note": "用事 schedule 仅记录时间节点，禁转比例（R1-04 冻结）"},
+        {"object": "time", "fields": ["出生时间", "真太阳时", "节气边界"], "note": "用于确定月柱/时柱归属，不参与强弱判断"}
+      ],
+      "forbidden": ["输入层不得直接产出任何状态或判断"]
+    },
+    "layer_2_state_producer": {
+      "name": "State Producer",
+      "allowed_states": ["order_state", "root_state", "support_state", "wang_state", "qiang_state", "shuai_state", "trend_state", "seasonal_state"],
+      "state_sources": {
+        "order_state": {"source_rule": "YHZP-138-001 得時俱為旺論 / 失令便作衰看（仅登记月令关系，禁直转强弱）", "execution_mode": "DIRECT_OUTPUT（结构关系）"},
+        "root_state": {"source_rule": "YHZP-056-001 人元表 + 004B 根对象化（日主/官/财/杀/印各自登记）", "execution_mode": "DIRECT_OUTPUT（结构事实）"},
+        "support_state": {"source_rule": "十神生扶关系（印比）结构登记", "execution_mode": "DIRECT_OUTPUT（结构事实）"},
+        "wang_state": {"source_rule": "YHZP-138-001 时令兴盛；DTS 衰旺论（旺中有衰=B1 辅助）", "execution_mode": "RULE_REQUIRED（需匹配规则后产生）"},
+        "qiang_state": {"source_rule": "关系结果（得令+根+扶助等综合，须经 Rule 层）", "execution_mode": "RULE_REQUIRED"},
+        "shuai_state": {"source_rule": "YHZP-138-001 失令便作衰看（时令层）", "execution_mode": "RULE_REQUIRED"},
+        "trend_state": {"source_rule": "DTS-008-003 五陽從氣不從勢（A 级，独立域）", "execution_mode": "RULE_REQUIRED"},
+        "seasonal_state": {"source_rule": "QTBJ 季节/调候独立域", "execution_mode": "RULE_REQUIRED"}
+      },
+      "forbidden_transitions": [
+        "order_state → strength_state",
+        "root_state → strength_state",
+        "support_state → strength_state",
+        "wang_state → strength_state",
+        "seasonal_state → strength_state",
+        "任何 state → favorable",
+        "任何 state → useful",
+        "任何 state → 喜/忌",
+        "factor_count → strength_state",
+        "SCHEDULE → WEIGHT"
+      ]
+    },
+    "layer_3_factor_collector": {
+      "name": "Factor Collector",
+      "factors": ["GET_ORDER", "ROOT", "SUPPORT", "CONTROL", "DRAIN", "TREND", "SEASONAL"],
+      "allowed_output": ["factor_collection[]", "evidence_trace[]", "relation_record[]"],
+      "forbidden_output": ["身强", "身弱", "喜用", "忌神", "格局成败", "富贵贫贱", "任何 strength_state 结论"]
+    },
+    "layer_4_rule_matcher": {
+      "name": "Rule Matcher",
+      "execution_gate": [
+        "rule.status == ADMITTED",
+        "rule.golden_pass == true",
+        "ConflictResolver 输出 PASS（该规则无 UNRESOLVED 冲突）"
+      ],
+      "output_contract": {
+        "rule_result": {"rule_id": "", "result_type": "", "value": ""},
+        "evidence_trace": {"source_id": "", "chapter_id": "", "text_layer": "", "classical_scope": ""},
+        "confidence": "VERIFIED | SUPPORTED | PENDING | UNDETERMINED（禁 score/percentage）"
+      },
+      "fail_closed": "当前 ADMITTED=0 → Rule Matcher 恒空输出；无 ADMITTED 规则前禁止任何规则匹配执行"
+    }
+  },
+  "hard_rules": [
+    "RULE-21-01 输入层零判断：四柱/藏干/月令/时间仅登记，不产状态",
+    "RULE-21-02 State 层禁三态直出：strength_state / favorable / useful 均须经 Rule 层",
+    "RULE-21-03 Factor 层只产证据：factor_collection / evidence_trace / relation_record",
+    "RULE-21-04 Rule Matcher 三门槛：ADMITTED + golden_pass + Conflict PASS，缺一 FAIL_CLOSED",
+    "RULE-21-05 无 ADMITTED 规则时引擎恒返回 UNDETERMINED 空结果",
+    "RULE-21-06 输出置信度四态枚举，禁任何数值评分"
+  ],
+  "acceptance_criteria": [
+    "四层契约完整定义",
+    "State 允许/禁止边界明确",
+    "Factor 输出三层",
+    "Rule Matcher 三门槛 + FAIL_CLOSED",
+    "零算法（不含任何计算公式）"
+  ]
+}

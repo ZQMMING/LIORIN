@@ -1,0 +1,62 @@
+{
+  "contract_id": "PATCH-023C",
+  "name": "Conflict Namespace Registry（冲突命名空间注册表）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "把 023B 的 concept_namespace 落地为可执行注册表：同词不同义（strength/旺/强/用/病/清/浊）按经典拆分，防止 Rule Matcher 跨领域串规则。",
+  "core_principle": [
+    "不存在裸 surface 总变量（禁 strength、禁 water_many）",
+    "Rule 引用的 input 必须带经典 namespace 前缀，否则 REJECT",
+    "QTBJ 修正逻辑：检查数据流（consumer→读取请求→namespace registry→allowed/forbidden），不检查命盘对象是否存在 strength",
+    "全局禁令：水三透≠身强；乙木戌月≠乙木弱（现象→结论未经 namespace 推理链）"
+  ],
+  "concept_registry": {
+    "strength": {
+      "DTS": {"name": "strength_relation", "type": "trend", "meaning": "五行关系中的生扶泄耗趋势，非身强身弱结论", "allowed_states": ["trend_state", "support_relation", "control_relation", "drain_relation", "root_relation", "order_state"]},
+      "PZZQ": {"name": "strength_condition", "type": "structure", "meaning": "月令/格局/根气/十神结构条件，非强弱评分", "allowed_states": ["order_state", "month_order", "ten_god_relation", "structure_relation", "root_relation"]},
+      "QTBJ": {"name": "climate_condition", "type": "climate", "meaning": "寒暖燥湿/调候环境，非日主旺弱", "allowed_states": ["seasonal_state", "month_order", "daymaster", "climate_relation"], "forbidden_states": ["strength_state", "wang_state", "qiang_state"]}
+    },
+    "wang": {
+      "DTS": {"name": "wang_relation", "type": "relation_state", "allowed_states": ["trend_state", "support_relation", "control_relation", "drain_relation"]},
+      "YHZP": {"name": "wang_expression", "type": "expression_state", "allowed_states": ["ten_god_relation", "element_relation", "root_relation", "season_relation"]},
+      "QTBJ": {"forbidden": ["wang_state"]},
+      "PZZQ": {"allowed": ["structure_state"]}
+    },
+    "qiang": {
+      "PZZQ": {"name": "strength_condition", "type": "structure", "allowed_states": ["order_state", "month_order", "ten_god_relation", "structure_relation", "root_relation"]},
+      "DTS": {"name": "strength_relation", "type": "trend", "allowed_states": ["trend_state", "support_relation", "control_relation", "drain_relation", "root_relation", "order_state"]}
+    },
+    "用": {
+      "PZZQ": {"name": "use_god", "type": "pattern", "allowed_states": ["order_state", "month_order", "ten_god_relation", "structure_relation"]},
+      "SFTK": {"name": "qu_yong", "type": "diagnosis", "allowed_states": ["problem_relation", "support_relation", "control_relation", "structure_relation"]},
+      "QTBJ": {"name": "climate_use", "type": "climate", "allowed_states": ["seasonal_state", "month_order", "daymaster", "climate_relation"]}
+    },
+    "病": {
+      "SFTK": {"name": "problem", "type": "diagnosis", "allowed_states": ["problem_relation", "support_relation", "control_relation", "structure_relation"]},
+      "DTS": {"name": "problem_concept", "type": "concept", "allowed_states": ["trend_state", "support_relation", "control_relation", "drain_relation"]}
+    },
+    "清": {
+      "PZZQ": {"name": "qing_za", "type": "selection", "meaning": "取用神层面的纯杂", "allowed_states": ["order_state", "month_order", "ten_god_relation", "structure_relation"]},
+      "DTS": {"name": "qing_zhuo", "type": "pattern", "meaning": "气象/格局层面的清浊", "allowed_states": ["trend_state", "support_relation", "control_relation", "drain_relation", "root_relation"]}
+    },
+    "浊": {
+      "PZZQ": {"name": "qing_za", "type": "selection"},
+      "DTS": {"name": "qing_zhuo", "type": "pattern"}
+    }
+  },
+  "rule_matcher_guard": {
+    "rule": "Rule 的 input 引用必须带经典 namespace 前缀（如 DTS.strength_relation）；裸 surface（strength/水多/印多）→ REJECT",
+    "reject_examples": ["strength", "water_many", "wood_many", "印多", "水三透=身强", "乙木戌月=乙木弱"]
+  },
+  "chart_1983_1103_namespace_demo": {
+    "DTS.strength_relation": {"allowed_view": {"trend_state": "PENDING", "support_relation": "SUPPORT_PRESENT(水透三)", "control_relation": "CONTROL_PRESENT(戌辛)", "drain_relation": "DRAIN_PRESENT(午丁泄/戌未土耗)", "root_relation": "WEAK_ROOT(亥甲+未乙)", "order_state": "NOT_GET_ORDER"}, "forbidden_not_consumed": ["strength_state 直判"]},
+    "PZZQ.strength_condition": {"allowed_view": {"order_state": "NOT_GET_ORDER", "month_order": "戌", "ten_god_relation": "偏印正印比肩正印", "structure_relation": "UNDETERMINED", "root_relation": "WEAK_ROOT(亥甲+未乙)"}, "forbidden_not_consumed": ["强弱评分"]},
+    "QTBJ.climate_condition": {"allowed_view": {"seasonal_state": "QTBJ_REQUIRED", "month_order": "戌", "daymaster": "乙木", "climate_relation": "UNDETERMINED"}, "forbidden_not_consumed": ["strength_state", "wang_state", "qiang_state"]}
+  },
+  "acceptance_criteria": [
+    "concept_registry 落地（strength/旺/强/用/病/清/浊 全按经典拆分）",
+    "Rule Matcher 前置校验：裸 surface REJECT",
+    "QTBJ 数据流检查逻辑（consumer→registry→allowed/forbidden）",
+    "1983-1103 三 namespace 演示：各读各 allowed，禁直判",
+    "全局禁令保留：水三透≠身强、乙木戌月≠乙木弱"
+  ]
+}

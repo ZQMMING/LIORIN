@@ -1,0 +1,65 @@
+{
+ "contract_id": "PATCH-022D-R1",
+ "name": "Wealth Relation Objectification + Strength State Output Authority（财多对象化与 strength_state 产出权限）",
+ "status": "FROZEN_DRAFT",
+ "parent": "PATCH-022D",
+ "reason": "022D 审计：RULE-022C-01 财多判定使用 cai_dizhi_count>=2（数量统计）违反 PATCH-005 禁止数量模型；strength_state 产出权限未登记，relationship_result 与 strength_state 边界需锁死。",
+ "corrections": {
+  "R1-01": {
+   "name": "财多条件对象化",
+   "problem": "财多 = 财星数量 >= 2 重新引入数量统计模型（PATCH-005 已禁：旺数量统计/五行力量计数/百分比评分）",
+   "replacement": "wealth_relation_state（财星关系状态，对象化登记）",
+   "schema": {
+    "wealth_structure": "财星结构（成局/透干/得地/无根）",
+    "daymaster_relation": "日主关系（财生官/财泄身/财受制/财星与日主的关系方向）",
+    "drain_relation": "泄耗关系（财多盗气：是否实际泄身）",
+    "condition_limits": "条件限制（身健/身弱等消费端状态）",
+    "status": "UNDETERMINED（证据不足或关系未断言）"
+   },
+   "principle": "财多不是数量结论，是关系结构描述；任何 '财多→弱' 直推禁止（衰≠弱、多≠力量、禁评分）",
+   "chart_1983_1103": {
+    "wealth_structure": "地支戌未土=2（得地无透）；天干无财透",
+    "daymaster_relation": "未断言（日主乙木失令但通根亥未+印三透，泄身关系需逐支确认）",
+    "drain_relation": "UNDETERMINED（财不干透，盗气程度未断言）",
+    "condition_limits": "身健/身弱未断言（CAND-RUO-001 PENDING）",
+    "status": "UNDETERMINED"
+   }
+  },
+  "R1-02": {
+   "name": "strength_state 产出权限登记",
+   "problem": "relationship_result / context_marker 可能被误当 strength_state",
+   "authority_table": {
+    "authorized_rules_to_output_strength_state": [],
+    "current_authorized_count": 0,
+    "forbidden_mappings": [
+     "relationship_result → strength_state",
+     "context_marker → strength_state",
+     "wang_state → strength_state",
+     "shuai_state → strength_state",
+     "qiang_state → strength_state",
+     "single_factor → strength_state",
+     "factor_count → strength_state",
+     "中和(principle) → strength_state=NEUTRAL"
+    ],
+    "production_requirements": [
+     "多因素输入（factor_collection）",
+     "classical_scope 匹配",
+     "无单因子触发",
+     "Golden 全通过",
+     "明确授权：Rule Admission 记录中登记 output=strength_state"
+    ]
+   },
+   "conclusion": "当前 12 条 ADMITTED 均未登记 strength_state 产出权限；strength_state 六级保持 UNDETERMINED 是正确行为；解锁需先建立多源身弱判定资格（CAND-RUO-001）或出现六部授权的多因素综合规则"
+  }
+ },
+ "engine_update": {
+  "file": "engines/common/multifactor_eval.py",
+  "change": "RULE-022C-01 触发判定由 cai_dizhi_count>=2 改为 wealth_relation_state 登记（结构描述+关系未断言→UNDETERMINED），不再输出 '财多成立'"
+ },
+ "acceptance_criteria": [
+  "财多不再以数量>=2 判定",
+  "wealth_relation_state 对 1983-11-03 输出 UNDETERMINED（结构描述保留）",
+  "strength_state 产出权限表登记：授权=0 条",
+  "relationship_result ≠ strength_state 锁死"
+ ]
+}

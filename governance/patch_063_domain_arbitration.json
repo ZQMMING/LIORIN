@@ -1,0 +1,62 @@
+{
+  "contract_id": "PATCH-063",
+  "name": "Classical Three-Domain Arbitration Boundary 六经典域边界裁决",
+  "principle": "三维不是竞争关系, 不选冠军; 冻结哪个问题由哪个经典回答, 哪些是不同维度, 哪些才需Conflict Resolver",
+  "note": "原著依据→后世注解→现代解释→工程namespace; 禁止把不同经典的用/强/病/清浊混成一个变量",
+  "six_classics_domain_matrix": {
+    "PZZQ": {
+      "name": "子平真诠", "role": "格局主域",
+      "core_question": "月令为何物? 如何成格? 何为用神?",
+      "namespace": ["month_order","pattern_state","pattern_success","use_god_state"],
+      "answers": ["命局结构是什么","结构是否成立"],
+      "forbidden": ["日主强弱多少","寒暖燥湿"]
+    },
+    "DTS": {
+      "name": "滴天髓", "role": "气势旺衰流通主域",
+      "core_question": "气势是否得势? 五行是否流通?",
+      "namespace": ["strength_relation","qi_flow","support/control/drain"],
+      "answers": ["气是否得势","五行是否流通","通关顺逆"],
+      "forbidden": ["直接生成pattern_state(格局属月令结构)"]
+    },
+    "QTBJ": {
+      "name": "穷通宝鉴", "role": "调候主域",
+      "core_question": "寒暖燥湿如何处理?",
+      "namespace": ["climate_condition","climate_use_state","season_source"],
+      "answers": ["四时寒暖燥湿","调候用神"],
+      "forbidden": ["寒湿→身弱","调候用=格局用"]
+    },
+    "SMTH": {
+      "name": "三命通会", "role": "汇总/外格/岁运资料域",
+      "namespace": ["special_pattern_reference","luck_context","historical_cases"],
+      "answers": ["外格","岁运资料","变化案例"],
+      "forbidden": ["绕过Rule Admission直接生产状态"]
+    },
+    "YHZP": {
+      "name": "渊海子平", "role": "子平体系基础语法",
+      "namespace": ["ten_god","wang_expression","structure_expression"],
+      "answers": ["十神基础","旺衰表达","结构表达"],
+      "forbidden": ["现代评分模型"]
+    },
+    "SFTK": {
+      "name": "神峰通考", "role": "补充论法验法",
+      "namespace": ["qu_yong","disease/medicine","auxiliary_judgement"],
+      "answers": ["病药","取用补充"],
+      "forbidden": ["覆盖PZZQ格局","覆盖DTS旺衰","覆盖QTBJ调候"]
+    }
+  },
+  "three_dim_relation": {
+    "type": "PARALLEL_NOT_COMPETE",
+    "description": "原局→PZZQ格局/DTS气势/QTBJ气候→状态并列输出, 不选冠军",
+    "three_cases": {
+      "A_NO_CONFLICT": "财格+偏弱+用癸 同时成立",
+      "B_DUAL_USE": "PZZQ.use_god=财, QTBJ.climate_use=水 → DUAL_USE, 非冲突",
+      "C_TRUE_CONFLICT": "同namespace内PZZQ规则A与PZZQ规则B输出相反 → 才进Conflict Resolver"
+    }
+  },
+  "acceptance": [
+    "六经典×namespace×producer矩阵冻结",
+    "不同维度的用不合成一个变量",
+    "真冲突仅限同namespace内部",
+    "不做谁优先Resolution"
+  ]
+}

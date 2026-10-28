@@ -1,0 +1,50 @@
+{
+  "contract_id": "PATCH-028",
+  "name": "Rule Admission Layer（规则准入层）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "冻结规则准入状态机与绑定 schema：DRAFT→CANDIDATE→ADMITTED/REJECTED；每条规则必须绑定 rule_id/classic_source/namespace/producer/input_contract/output_state/evidence_chain；禁止经典原文直接生成状态。",
+  "rule_state_machine": {
+    "states": ["DRAFT", "CANDIDATE", "ADMITTED", "REJECTED"],
+    "transitions": [
+      {"from": "DRAFT", "to": "CANDIDATE", "gate": "证据绑定完整（source/chapter/text_layer/attribution/evidence_grade）"},
+      {"from": "CANDIDATE", "to": "ADMITTED", "gate": "11 门槛全过（002 系列）+ namespace/producer 绑定 + Golden 通过"},
+      {"from": "CANDIDATE", "to": "REJECTED", "gate": "门槛任一不满足（如 SMTH-030-002 引用不实→FAIL_CLOSED）"},
+      {"from": "DRAFT", "to": "REJECTED", "gate": "证据缺失/attribution 错误/跨书偷换语义"}
+    ],
+    "note": "ADMITTED=资格层≠自动执行；golden_pass 未过前不得进引擎"
+  },
+  "binding_schema": {
+    "required_fields": ["rule_id", "classic_source", "namespace", "producer", "input_contract", "output_state", "evidence_chain"],
+    "example": {
+      "rule_id": "CAND-WANG-001",
+      "classic_source": "YHZP-138-001（得时俱为旺论，A）",
+      "namespace": "YHZP.wang_expression",
+      "producer": "024（wang_state Producer：YHZP DIRECT）",
+      "input_contract": "order_state（GET_ORDER）",
+      "output_state": "wang_state",
+      "evidence_chain": ["YHZP-138-001 得时俱为旺论"]
+    }
+  },
+  "prohibition": {
+    "forbidden": "经典原文 → 直接生成状态",
+    "required_chain": "经典原文 → 规则解析 → namespace → producer → state",
+    "note": "原文命中只是 Evidence，必须经 concept mapping + namespace 解析 + producer 契约后才可进入状态层"
+  },
+  "qtbj_018_001_policy": "保持 CANDIDATE_RULE 不先升格——先完成 028 Admission 框架，再走 CANDIDATE→ADMITTED 正常通道；禁止「规则先通过，架构后补」",
+  "binding_completeness_check": {
+    "source": "governance/patch_019_admitted_rule_registry.json（12 条 ADMITTED）",
+    "check": "每条 ADMITTED 补 namespace/producer/input_contract/output_state 绑定；缺口标记 binding_incomplete（状态保持 ADMITTED 但 execution_eligibility 受限）",
+    "note": "022A/022D 的 12 条为 Human 已裁决准入，028 只做绑定登记与完整性校验，不重新裁决"
+  },
+  "chart_1983_1103_demo": {
+    "rule_match_result": "CAND-WANG-001 未触发（order=NOT_GET_ORDER）；CAND-SHUAI-001 触发→shuai_state=SHUAI；CAND-QIANG-001 未触发（无比劫透）；多因素 022D 规则维持 022D-R1 评估矩阵",
+    "note": "Admission 框架不影响既有输出：strength 仍 UNDETERMINED（无授权综合）"
+  },
+  "acceptance_criteria": [
+    "规则状态机冻结（DRAFT/CANDIDATE/ADMITTED/REJECTED + 门槛）",
+    "绑定 schema 七字段冻结",
+    "禁原文直链状态；必须过 namespace→producer→state 链",
+    "QTBJ-018-001 保持 CANDIDATE（不先升格）",
+    "12 条 ADMITTED 绑定登记 + 完整性校验（无缺口）"
+  ]
+}

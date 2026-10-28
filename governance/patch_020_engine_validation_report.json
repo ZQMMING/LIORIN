@@ -1,0 +1,796 @@
+{
+  "contract_id": "PATCH-020",
+  "name": "Engine Validation Layer（引擎验证层）",
+  "status": "FROZEN_DRAFT",
+  "summary": {
+    "rules_total": 60,
+    "static_pass": 60,
+    "static_fail": 0,
+    "golden_block_pass": 5,
+    "golden_block_total": 5,
+    "conflict_resolver": "PASS"
+  },
+  "020_01_pipeline": [
+    "加载 60 条 Rule Candidate",
+    "静态验证（STATIC_VALIDATION）",
+    "Golden 拦截测试（GOLDEN_BLOCK）",
+    "Conflict Resolver 单测"
+  ],
+  "020_02_static_validation": [
+    {
+      "rule_id": "CAND-WANG-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-WANG-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-SHUAI-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-QIANG-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-RUO-001",
+      "checks": {
+        "source_traceable": false,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "DESIGN_EXEMPT",
+      "reason": "005A Human 裁决：弱=PENDING，六部无单源等价；无单锚为设计豁免"
+    },
+    {
+      "rule_id": "CAND-ORDER-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-TIME-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-ROOT-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-TREND-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-SEASONAL-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-SFTK-ROOT-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-DTS-ZHENJIA-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-S-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-S-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-S-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-S-004",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-Y-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-Y-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-Y-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-Y-004",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-Y-005",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-Y-006",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-P-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-P-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-P-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-P-004",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-B-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-B-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-B-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-T-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-T-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-T-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-Q-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-Q-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-Q-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-C-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-C-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-C-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-C-004",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-SW-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-SW-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-SW-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-SW-004",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-DZ-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-DZ-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-DZ-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-DZ-004",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-SS-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-SS-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-SS-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-WX-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-WX-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-WX-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-G-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-G-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-G-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-G-004",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-L-001",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-L-002",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    },
+    {
+      "rule_id": "RULE-L-003",
+      "checks": {
+        "source_traceable": true,
+        "output_nonempty": true,
+        "condition_nonempty": true,
+        "excluded_declared": true,
+        "scope_nonempty": true,
+        "rule_id_nonempty": true
+      },
+      "result": "STATIC_PASS"
+    }
+  ],
+  "020_03_golden_block": [
+    {
+      "title": "旺≠强",
+      "forbidden": [
+        "wang_state→STRONG",
+        "旺→强"
+      ],
+      "violations": [],
+      "result": "BLOCKED"
+    },
+    {
+      "title": "得令≠强",
+      "forbidden": [
+        "GET_ORDER→STRONG",
+        "order_state→STRONG",
+        "得令→强"
+      ],
+      "violations": [],
+      "result": "BLOCKED"
+    },
+    {
+      "title": "有根≠强",
+      "forbidden": [
+        "root_state→STRONG",
+        "有根→强",
+        "has_root→STRONG"
+      ],
+      "violations": [],
+      "result": "BLOCKED"
+    },
+    {
+      "title": "调候≠旺衰",
+      "forbidden": [
+        "seasonal_state→STRONG",
+        "seasonal→STRONG"
+      ],
+      "violations": [],
+      "result": "BLOCKED"
+    },
+    {
+      "title": "病药≠用神",
+      "forbidden": [
+        "病药→直接取用神"
+      ],
+      "violations": [],
+      "result": "BLOCKED"
+    }
+  ],
+  "020_03_conflict_test": {
+    "total": 8,
+    "invalid_resolution": [],
+    "result": "PASS"
+  },
+  "note": "本层不实现命理计算；ADMITTED 状态不变更（引擎执行层未启动，golden_pass 仍为 false）"
+}

@@ -1,0 +1,104 @@
+{
+  "contract_id": "PATCH-023B",
+  "name": "Classical Domain Consumer Contract（经典域消费契约）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "定义六经典各自允许读取哪些状态、禁止哪些输入——防止 QTBJ 消费旺衰/DTS 消费调候/PZZQ 消费病药 的边界混乱。只定义消费边界，不产生任何命理结论，不写 Strength Rule。",
+  "registry_schema": {
+    "classical_consumer_registry": [
+      {
+        "domain_id": "PZZQ_MONTH_PATTERN",
+        "classical_scope": "PZZQ",
+        "responsible": ["月令", "格局", "用神", "相神", "顺逆"],
+        "allowed_input_states": ["order_state", "month_order", "ten_god_relation", "structure_relation", "root_relation"],
+        "forbidden_inputs": ["strength_score", "percentage", "temperature_score", "shen_sha"],
+        "consumer_mode": "DIRECT",
+        "output_permission": ["pattern_state", "use_god_state"]
+      },
+      {
+        "domain_id": "DTS_WANG_SHUAI",
+        "classical_scope": "DTS",
+        "responsible": ["旺衰关系", "中和", "气势", "清浊", "病药概念"],
+        "allowed_input_states": ["trend_state", "support_relation", "control_relation", "drain_relation", "root_relation", "order_state"],
+        "forbidden_inputs": ["water_many", "element_score", "direct_strength_value"],
+        "consumer_mode": "DIRECT",
+        "output_permission": ["wang_state", "shuai_state"]
+      },
+      {
+        "domain_id": "QTBJ_CLIMATE",
+        "classical_scope": "QTBJ",
+        "responsible": ["寒暖", "燥湿", "调候"],
+        "allowed_input_states": ["seasonal_state", "month_order", "daymaster", "climate_relation"],
+        "forbidden_inputs": ["strength_state", "wang_state", "qiang_state"],
+        "consumer_mode": "DIRECT",
+        "output_permission": ["seasonal_state", "climate_relation"],
+        "note": "乙木戌月 QTBJ 可以看燥湿寒暖，不能直接判『乙木弱』"
+      },
+      {
+        "domain_id": "SFTK_BING_YAO",
+        "classical_scope": "SFTK",
+        "responsible": ["病药", "救应", "取用条件"],
+        "allowed_input_states": ["problem_relation", "support_relation", "control_relation", "structure_relation"],
+        "forbidden_inputs": ["PZZQ_useful", "DTS_strength"],
+        "consumer_mode": "DIRECT",
+        "output_permission": ["problem_state", "medicine_state"]
+      },
+      {
+        "domain_id": "YHZP_BASIC",
+        "classical_scope": "YHZP",
+        "responsible": ["基础十神", "干支", "五行关系", "部分旺衰表达"],
+        "allowed_input_states": ["ten_god_relation", "element_relation", "root_relation", "season_relation"],
+        "forbidden_inputs": ["现代评分模型"],
+        "consumer_mode": "DIRECT",
+        "output_permission": ["ten_god_state", "element_relation_state"]
+      },
+      {
+        "domain_id": "SMTH_SUIYUN",
+        "classical_scope": "SMTH/五行精纪",
+        "responsible": ["岁运", "起运", "时间体系"],
+        "allowed_input_states": ["time_object", "luck_cycle", "year_cycle"],
+        "forbidden_inputs": ["直接参与 strength_state"],
+        "consumer_mode": "SUPPORTING",
+        "output_permission": ["luck_cycle", "year_cycle"]
+      }
+    ]
+  },
+  "consumer_mode": {
+    "principle": "消费权限等级",
+    "levels": [
+      {"code": "DIRECT", "meaning": "直接生产状态（如月令→order_state）"},
+      {"code": "FACT_ONLY", "meaning": "只能读取事实（如神煞）"},
+      {"code": "DISPLAY_ONLY", "meaning": "仅展示"},
+      {"code": "SUPPORTING", "meaning": "辅助证明（如 DTS 中和辅助）"},
+      {"code": "FORBIDDEN", "meaning": "禁止消费"}
+    ]
+  },
+  "concept_namespace": {
+    "principle": "同一个字段在不同经典不是同一个变量",
+    "examples": [
+      {"surface": "strength", "namespaced": ["DTS.strength_relation", "PZZQ.strength_condition", "QTBJ.climate_condition"], "note": "三个不是同一个变量"},
+      {"surface": "旺", "namespaced": ["DTS.wang_relation", "YHZP.wang_expression"], "note": "DTS 旺衰关系 vs YHZP 部分旺衰表达"},
+      {"surface": "强", "namespaced": ["PZZQ.strength_condition", "DTS.strength_relation"], "note": "PZZQ 格局条件 vs DTS 关系结果"},
+      {"surface": "用", "namespaced": ["PZZQ.use_god", "SFTK.qu_yong", "QTBJ.climate_use"], "note": "PZZQ 用神 vs SFTK 取用 vs QTBJ 调候用神"},
+      {"surface": "病", "namespaced": ["SFTK.problem", "DTS.problem_concept"], "note": "SFTK 诊断体系 vs DTS 去病思想"},
+      {"surface": "清", "namespaced": ["PZZQ.qing_za", "DTS.qing_zhuo"], "note": "PZZQ 取用纯杂 vs DTS 气象清浊"},
+      {"surface": "浊", "namespaced": ["PZZQ.qing_za", "DTS.qing_zhuo"], "note": "同上"}
+    ]
+  },
+  "chart_1983_1103_consumer_demo": {
+    "principle": "六经典各自看到什么（同一命局，不同域）",
+    "DTS": {"allowed": {"trend_state": "PENDING", "support_relation": "SUPPORT_PRESENT(水透三)", "root_relation": "WEAK_ROOT(亥甲+未乙)", "control_relation": "CONTROL_PRESENT(戌辛)", "drain_relation": "DRAIN_PRESENT(午丁泄/戌未土耗)", "order_state": "NOT_GET_ORDER"}, "forbidden_hit": "无", "entry": "气势/中和规则（DTS 域）"},
+    "QTBJ": {"allowed": {"seasonal_state": "QTBJ_REQUIRED", "month_order": "戌", "daymaster": "乙木", "climate_relation": "UNDETERMINED"}, "forbidden_hit": "无（未读 strength/wang/qiang）", "entry": "燥湿寒暖/调候规则（QTBJ 域）"},
+    "PZZQ": {"allowed": {"order_state": "NOT_GET_ORDER", "month_order": "戌", "ten_god_relation": "偏印正印比肩正印", "root_relation": "WEAK_ROOT"}, "forbidden_hit": "无", "entry": "格局规则（PZZQ 域，格局层未启动）"},
+    "SFTK": {"allowed": {"problem_relation": "UNDETERMINED", "support_relation": "SUPPORT_PRESENT", "control_relation": "CONTROL_PRESENT", "structure_relation": "UNDETERMINED"}, "forbidden_hit": "无", "entry": "病药规则（SFTK 域）"},
+    "YHZP": {"allowed": {"ten_god_relation": "偏印正印比肩正印", "element_relation": "WATER_VISIBLE_SUPPORT+ROOTED_SUPPORT", "root_relation": "WEAK_ROOT", "season_relation": "戌月"}, "forbidden_hit": "无", "entry": "基础十神/干支/五行（YHZP 域）"},
+    "SMTH": {"allowed": {"time_object": "1983-11-03 11:30", "luck_cycle": "未启动", "year_cycle": "未启动"}, "forbidden_hit": "无", "entry": "岁运时间体系（SUPPORTING）"},
+    "global_forbidden": "任何经典不得：水三透=身强；乙木戌月=乙木弱"
+  },
+  "acceptance_criteria": [
+    "六经典 × allowed × forbidden × consumer_mode 全注册",
+    "concept_namespace 拆分（旺/强/用/病/清/浊）",
+    "1983-1103 六经典消费演示：各域只读自己 allowed 状态",
+    "禁跨域直判（水三透≠身强）",
+    "不产生任何命理结论，不写 Strength Rule"
+  ]
+}

@@ -1,0 +1,59 @@
+{
+  "contract_id": "PATCH-024",
+  "name": "Ziping Engine State Producer Architecture（子平引擎状态生产器七层架构）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "定义子平引擎消费排盘输出后的计算架构——State Producer 七层依赖顺序。排盘引擎独立；本契约只规定状态生产层。",
+  "scope_boundary": "排盘引擎保持独立，83 字段排盘输出仅作为 Input Contract；本契约不升级排盘引擎。",
+  "dependency_order": [
+    {"layer": 1, "name": "对象识别层 Object Layer", "output": ["day_master_element", "ten_god_type"], "type": "ENUM", "input": "四柱/藏干/月令/日主", "note": "不用 Boolean"},
+    {"layer": 2, "name": "事实 Boolean 层 Fact Boolean Layer", "output": ["has_root", "has_visible_resource", "has_visible_wealth", "has_visible_authority", "has_clash", "has_combination", "has_transformation_condition", "has_following_structure_condition"], "type": "BOOLEAN", "input": "四柱/藏干/十神/关系", "note": "只表达有没有，不表达强弱"},
+    {"layer": 3, "name": "基础 Enum 层 Base Enum Layer", "output": ["order_state", "root_state", "support_state"], "type": "ENUM", "input": "月令/藏干/印比位置透藏", "note": "多态枚举；有根≠强"},
+    {"layer": 4, "name": "关系 Enum 层 Relation Enum Layer", "output": ["resource_relation_state", "wealth_relation_state", "authority_relation_state"], "type": "ENUM", "input": "十神位置/透藏/月令/制化/日主承受", "note": "解决多；印=3 不等于印多"},
+    {"layer": 5, "name": "旺衰层 Prosperity Layer", "output": ["wang_state", "shuai_state"], "type": "ENUM", "input": "时令/季节/月令为主，非根、非印比数量", "note": "旺≠强；衰≠弱"},
+    {"layer": 6, "name": "强弱层 Strength Layer", "output": ["strength_state"], "type": "ENUM", "input": "order+root+support+resource_relation+wealth_relation+authority_relation+drain_relation+trend_state", "note": "RELATIONAL_RESULT；禁 if root=true→strong；禁 count>3→strong；禁 score"},
+    {"layer": 7, "name": "格局/用神层 Pattern/Use-God Layer", "output": ["pattern_state", "use_god_state"], "type": "ENUM", "input": "前六层输出+格局规则", "note": "后续 PATCH 冻结"}
+  ],
+  "enum_specs": {
+    "day_master_element": {"values": ["WOOD", "FIRE", "EARTH", "METAL", "WATER"], "type": "ENUM", "layer": 1},
+    "ten_god_type": {"values": ["比肩", "劫财", "食神", "伤官", "正财", "偏财", "正官", "七杀", "正印", "偏印"], "type": "ENUM", "layer": 1},
+    "order_state": {"values": ["GET_ORDER", "NOT_GET_ORDER", "NEUTRAL_ORDER", "UNKNOWN"], "type": "ENUM", "layer": 3, "note": "月令状态；NEUTRAL_ORDER=不论令/中性"},
+    "root_state": {"values": ["NO_ROOT", "WEAK_ROOT", "NORMAL_ROOT", "STRONG_ROOT", "UNKNOWN"], "type": "ENUM", "layer": 3, "note": "根关系状态非日主强弱；必须带 object 字段（daymaster/official/wealth/killing/resource）"},
+    "support_state": {"values": ["NONE", "PRESENT", "STRONG_RELATION", "EXCESSIVE_RELATION", "UNKNOWN"], "type": "ENUM", "layer": 3, "note": "印比位置/透藏/月令；非数量"},
+    "resource_relation_state": {"values": ["INSUFFICIENT", "BALANCED", "EXCESSIVE", "BLOCKED", "UNKNOWN"], "type": "ENUM", "layer": 4, "note": "印的位置/透干/月令/财制印/日主承受"},
+    "wealth_relation_state": {"values": ["INSUFFICIENT", "BALANCED", "EXCESSIVE", "UNKNOWN"], "type": "ENUM", "layer": 4, "note": "022D-R1 对象化：wealth_structure/daymaster_relation/drain_relation/condition_limits；非财数量"},
+    "authority_relation_state": {"values": ["BALANCED", "PRESSURE", "EXCESSIVE", "CONTROLLED", "UNKNOWN"], "type": "ENUM", "layer": 4},
+    "wang_state": {"values": ["WANG", "PING", "SHUAI", "UNKNOWN"], "type": "ENUM", "layer": 5, "note": "时令/季节/月令为主；禁→STRONG"},
+    "shuai_state": {"values": ["SHUAI", "NOT_SHUAI", "UNKNOWN"], "type": "ENUM", "layer": 5, "note": "禁→WEAK"},
+    "qiang_state": {"values": ["QIANG", "ZHONG", "RUO", "UNKNOWN"], "type": "ENUM", "layer": 6, "note": "关系结果；CAND-QIANG-001 双条件"},
+    "strength_state": {"values": ["STRONG", "SLIGHTLY_STRONG", "NEUTRAL", "SLIGHTLY_WEAK", "WEAK", "UNDETERMINED"], "type": "ENUM", "layer": 6, "note": "004B-R1 Human 拍板；RELATIONAL_RESULT；产出权限登记见 022D-R1"},
+    "trend_state": {"values": ["TREND", "NEUTRAL", "UNKNOWN"], "type": "ENUM", "layer": 4, "note": "PENDING——值域待 005B TREND factor 审计后冻结"},
+    "seasonal_state": {"values": ["SEASONAL_ALIGNED", "SEASONAL_MISALIGNED", "UNDETERMINED"], "type": "ENUM", "layer": 5, "note": "PENDING——QTBJ 域待审计"}
+  },
+  "boolean_specs": {
+    "has_root": "是否存在根气证据（对象化）",
+    "has_visible_resource": "印星是否天干透出",
+    "has_visible_wealth": "财星是否天干透出",
+    "has_visible_authority": "官杀是否天干透出",
+    "has_clash": "是否存在冲",
+    "has_combination": "是否存在合",
+    "has_transformation_condition": "是否满足化气条件入口",
+    "has_following_structure_condition": "从格结构条件是否存在"
+  },
+  "chart_1983_1103_demo": {
+    "input": "癸亥 壬戌 乙未 壬午（日主乙木）",
+    "layer1": {"day_master_element": "WOOD", "ten_god_type": {"年干": "偏印", "月干": "正印", "日干": "比肩", "时干": "正印"}},
+    "layer2": {"has_root": true, "has_visible_resource": true, "has_visible_wealth": false, "has_visible_authority": false, "has_clash": false, "has_combination": true, "has_transformation_condition": "UNKNOWN", "has_following_structure_condition": "UNKNOWN"},
+    "layer3": {"order_state": "NOT_GET_ORDER", "root_state": "WEAK_ROOT（亥甲长生/未乙余气，无本气强根）", "support_state": "PRESENT（印三透但仅年干癸通根亥）"},
+    "layer4": {"resource_relation_state": "UNDETERMINED（印透多但财制印存在，关系规则未准入）", "wealth_relation_state": "UNDETERMINED（022D-R1 结构登记）", "authority_relation_state": "UNDETERMINED（官杀不透）"},
+    "layer5": {"wang_state": "UNKNOWN（无得时证据）", "shuai_state": "SHUAI（失令断言，CAND-SHUAI-001）"},
+    "layer6": {"strength_state": "UNDETERMINED（无授权综合规则；身弱 PENDING）"},
+    "note": "关系层/强弱层未断言是正确行为——还缺 Relation State 规则层"
+  },
+  "acceptance_criteria": [
+    "七层依赖顺序冻结",
+    "14 个引擎级枚举注册（enum_registry v1.9.0）",
+    "Boolean 仅事实层",
+    "旺在第五层、强在第六层产生",
+    "1983-11-03 七层示范输出完整且诚实（未断言=UNKNOWN/UNDETERMINED）"
+  ]
+}

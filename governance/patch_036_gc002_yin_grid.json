@@ -1,0 +1,27 @@
+﻿{
+  "contract_id": "PATCH-036",
+  "name": "Golden Case 扩展：GC-002 印格命局（RULE-035-02 激活）",
+  "status": "GOLDEN_EXTENDED",
+  "golden_cases": [
+    {"id": "GC-001", "version": "V1", "chart": "1983-11-03 11:30 癸亥 壬戌 乙未 壬午", "grid": "财格", "rule": "RULE-035-01", "status": "PASS"},
+    {"id": "GC-002", "version": "V1", "chart": "1990-01-15 10:00 己巳 乙丑 庚辰 辛巳", "grid": "印格", "rule": "RULE-035-02", "status": "PASS"}
+  ],
+  "gc002": {
+    "chart": "己巳 乙丑 庚辰 辛巳",
+    "day_master": "庚", "month": "丑",
+    "paipan_anchor_check": "1983-11-03 → 癸亥 壬戌 乙未 壬午 PASS（标准干支：JDN日柱/五虎遁/五鼠遁）",
+    "pattern_success_state": "SUCCESS(印多逢財而財透根輕)",
+    "daiji_state": "NO_DAIJI",
+    "rescue_state": "NO_RESCUE_NEEDED",
+    "xiangshen_state": "PRESENT(财)",
+    "evidence": ["PZZQ-005-008", "PZZQ-007-004"],
+    "bug_fixed": "正官/七杀按日主阴阳动态判定（庚→丁/丙），首版劫财辛误当正官已修"
+  },
+  "evidence": [{"source_id": "PZZQ-005-008", "grade": "A", "note": "印格成『印多逢財而財透根輕』"}],
+  "acceptance_criteria": [
+    "GC-002 印格成败出值 SUCCESS（印多逢財而財透根輕）",
+    "排盘可复算（锚点自校验 PASS）",
+    "官印雙全不误触发（阴阳动态判定）",
+    "双 Golden 回归通过；枚举 22/22"
+  ]
+}

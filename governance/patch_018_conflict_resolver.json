@@ -1,0 +1,35 @@
+{
+  "contract_id": "PATCH-018",
+  "name": "Conflict Resolver（冲突解决实现）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "跨书/跨域冲突按 Scope/Relation/Object 差异登记解决；输出 CONFLICT_RESOLVED_BY_SCOPE / BY_CONDITION / UNRESOLVED（UNRESOLVED 须人工裁决）。",
+  "parent": "PATCH-017",
+  "principle": "冲突≠错误，不选谁对谁错；scope 不同/relation 不同/object 不同 → 各自登记。",
+  "resolution_types": {
+    "CONFLICT_RESOLVED_BY_SCOPE": "两书不同 scope/对象/关系，各自域内成立",
+    "CONFLICT_RESOLVED_BY_CONDITION": "同域但条件不同，条件分支各自成立",
+    "UNRESOLVED": "同一 scope+对象+关系直接冲突 → 人工裁决"
+  },
+  "resolved_conflicts": [
+    {"conflict_id": "CF-001", "books": ["YHZP", "DTS"], "topic": "得时俱为旺 vs 旺中有衰", "resolution": "CONFLICT_RESOLVED_BY_SCOPE", "detail": "YHZP 得时旺=时令层；DTS 旺中有衰=结构层（B1 辅助）；object/relation 不同"},
+    {"conflict_id": "CF-002", "books": ["PZZQ", "DTS"], "topic": "清杂 vs 清浊", "resolution": "CONFLICT_RESOLVED_BY_SCOPE", "detail": "PZZQ 取用层纯杂（雜而不雜）；DTS 气象格局清浊；禁合并"},
+    {"conflict_id": "CF-003", "books": ["SFTK", "DTS"], "topic": "病药体系 vs 病药概念", "resolution": "CONFLICT_RESOLVED_BY_SCOPE", "detail": "SFTK 病药诊断（害神为病去之为药）；DTS 有病方为贵仅概念层；禁 if DTS_bing: use_SFTK_bingyao()"},
+    {"conflict_id": "CF-004", "books": ["QTBJ", "PZZQ"], "topic": "调候 vs 格局用神", "resolution": "CONFLICT_RESOLVED_BY_SCOPE", "detail": "QTBJ 调候独立域；PZZQ 格局用神独立域；各自登记禁替代"},
+    {"conflict_id": "CF-005", "books": ["DTS", "YHZP"], "topic": "通关 vs 引化", "resolution": "CONFLICT_RESOLVED_BY_SCOPE", "detail": "通关 DTS_SCOPE_ONLY；YHZP 引化不得登记为通关"},
+    {"conflict_id": "CF-006", "books": ["PZZQ", "DTS"], "topic": "印轻逢煞（工程执行） vs 财轻逢煞（底本异文）", "resolution": "CONFLICT_RESOLVED_BY_CONDITION", "detail": "已裁决工程执行文本=印輕逢煞（煞生印成格）；底本异文记 text_variant"},
+    {"conflict_id": "CF-007", "books": ["DTS", "SFTK"], "topic": "十二宫定名", "resolution": "CONFLICT_RESOLVED_BY_CONDITION", "detail": "定名一致（YHZP-016-001/SFTK-062-050 互证）；应用断语按书域登记"},
+    {"conflict_id": "CF-008", "books": ["DTS", "YHZP"], "topic": "人元用事 schedule 差异", "resolution": "CONFLICT_RESOLVED_BY_SCOPE", "detail": "YHZP A 级完整表 / DTS B1 寅月子时局部表；SCHEDULE_VARIANT 并存不合并（R1-04 已冻结）"}
+  ],
+  "unresolved_pending": [],
+  "resolver_flow": [
+    "检测两候选是否同 classical_scope + 同 object + 同 relation",
+    "同域同对象同关系 → 检查条件是否区分（BY_CONDITION）",
+    "条件无法区分 → UNRESOLVED → 人工裁决（FAIL_CLOSED）",
+    "不同域/对象/关系 → CONFLICT_RESOLVED_BY_SCOPE（各自登记）"
+  ],
+  "acceptance_criteria": [
+    "8 类已登记冲突全部有 resolution 类型",
+    "UNRESOLVED 当前为 0（无同域同对象同关系直接冲突）",
+    "人工裁决门槛明确：同 scope+对象+关系直接冲突 / Golden 无法唯一确定边界"
+  ]
+}

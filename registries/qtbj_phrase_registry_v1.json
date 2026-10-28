@@ -1,0 +1,49 @@
+{
+  "registry_id": "QTBJ_PHRASE_REGISTRY_V1",
+  "version": "1.0",
+  "principle": "纯事实别名归一化, 不推理/不评分/不产state",
+  "granularity_rule": "R005: phrase粒度 > L0 fact粒度 => ABSTAIN",
+  "stems": {
+    "甲木": {"fact": "day_stem", "value": "甲", "status": "READY"},
+    "乙木": {"fact": "day_stem", "value": "乙", "status": "READY"},
+    "丙火": {"fact": "day_stem", "value": "丙", "status": "READY"},
+    "丁火": {"fact": "day_stem", "value": "丁", "status": "READY"},
+    "戊土": {"fact": "day_stem", "value": "戊", "status": "READY"},
+    "己土": {"fact": "day_stem", "value": "己", "status": "READY"},
+    "庚金": {"fact": "day_stem", "value": "庚", "status": "READY"},
+    "辛金": {"fact": "day_stem", "value": "辛", "status": "READY"},
+    "壬水": {"fact": "day_stem", "value": "壬", "status": "READY"},
+    "癸水": {"fact": "day_stem", "value": "癸", "status": "READY"}
+  },
+  "months_single": {
+    "正月": {"fact": "month_branch", "value": "寅", "status": "READY"},
+    "二月": {"fact": "month_branch", "value": "卯", "status": "READY"},
+    "三月": {"fact": "month_branch", "value": "辰", "status": "READY"},
+    "四月": {"fact": "month_branch", "value": "巳", "status": "READY"},
+    "五月": {"fact": "month_branch", "value": "午", "status": "READY"},
+    "六月": {"fact": "month_branch", "value": "未", "status": "READY"},
+    "七月": {"fact": "month_branch", "value": "申", "status": "READY"},
+    "八月": {"fact": "month_branch", "value": "酉", "status": "READY"},
+    "九月": {"fact": "month_branch", "value": "戌", "status": "READY"},
+    "十月": {"fact": "month_branch", "value": "亥", "status": "READY"},
+    "十一月": {"fact": "month_branch", "value": "子", "status": "READY"},
+    "十二月": {"fact": "month_branch", "value": "丑", "status": "READY"}
+  },
+  "months_any_of": {
+    "三冬": {"fact": "month_branch", "any_of": ["亥", "子", "丑"], "status": "READY"},
+    "三夏": {"fact": "month_branch", "any_of": ["巳", "午", "未"], "status": "READY"},
+    "三秋": {"fact": "month_branch", "any_of": ["申", "酉", "戌"], "status": "READY"},
+    "正二月": {"fact": "month_branch", "any_of": ["寅", "卯"], "status": "READY"},
+    "五六月": {"fact": "month_branch", "any_of": ["午", "未"], "status": "READY"},
+    "四五月": {"fact": "month_branch", "any_of": ["巳", "午"], "status": "READY"}
+  },
+  "abstain": {
+    "初春": {"reason": "missing_solar_term_granularity", "status": "ABSTAIN"},
+    "春末": {"reason": "missing_solar_term_granularity", "status": "ABSTAIN"},
+    "夏月": {"reason": "natural_language_not_collection, 不等同三夏", "status": "ABSTAIN"},
+    "秋": {"reason": "single_char_too_broad", "status": "ABSTAIN"},
+    "五月下半月": {"reason": "missing_half_month_granularity", "status": "ABSTAIN"},
+    "八月白露后": {"reason": "missing_solar_term_position", "status": "ABSTAIN"},
+    "八月秋分后": {"reason": "missing_solar_term_position", "status": "ABSTAIN"}
+  }
+}

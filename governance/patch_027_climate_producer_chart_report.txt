@@ -1,0 +1,34 @@
+﻿==== PATCH-027 Climate Production Contract ====
+
+==== 禁止路径 ====
+  禁止: climate_state → strength_state（寒暖≠旺衰）
+  禁止: climate_state → pattern_state（调候≠格局判定）
+  禁止: climate_use_state → use_god_state（调候用≠格局用）
+  禁止: climate_use_state → qu_yong_state（调候用≠病药取用）
+  禁止: climate_state → climate_use_state（调候状态不自动产生调候用神）
+
+==== 概念边界 ====
+  寒暖≠旺衰；燥湿≠强弱；调候用≠格局用
+
+==== 1983-1103 Climate Producer 输出 ====
+{
+ "state": "climate_state",
+ "value": "UNDETERMINED（QTBJ 调候规则未准入：QTBJ-018-001 仍 CANDIDATE_RULE，须升格核验或换 QTBJ-060-001/109-001）",
+ "producer": "QTBJ.climate",
+ "sources": [
+  "QTBJ.climate(month_order/daymaster/seasonal_state/temperature_condition/dryness_wetness)"
+ ],
+ "evidence_chain": [
+  "QTBJ 十干逐月调候体系（规则未准入，FAIL_CLOSED）"
+ ],
+ "namespace_source": {
+  "QTBJ": "climate"
+ },
+ "climate_type": "UNKNOWN",
+ "season_source": "戌月（寒露后霜降前）",
+ "temperature_source": "UNDETERMINED（无量化依据，禁编数字阈值）",
+ "fact_layer_note": "水透三(3)为寒湿事实证据，但禁自动转调候结论"
+}
+
+==== 规则准入检查 ====
+  QTBJ-018-001 CANDIDATE_RULE → 未升格 → climate_state FAIL_CLOSED ✓

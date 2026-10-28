@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wisdom.shuntian/schema/signal.schema.json",
+  "title": "SignalRecord",
+  "description": "V2.2.2 FINAL §87 L5 Signal：必须通过 SignalRegistry + MappingRegistry 产生；结构化、可追溯的语义信号，不是人工结论。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["signal_id", "engine", "signal_type", "basis_assertion_ids", "mapping_ref", "status"],
+  "properties": {
+    "signal_id": { "type": "string", "pattern": "^SIG-[A-Z]{4}-[0-9]{3}$" },
+    "engine": {
+      "type": "string",
+      "enum": [
+        "YUHAI_ZIPING", "ZIPING_ZHENQUAN", "DITIANSUI",
+        "QIONGTONG_BAOJIAN", "SANMING_TONGHUI", "SHENFENG_TONGKAO"
+      ]
+    },
+    "signal_type": { "type": "string", "minLength": 1 },
+    "basis_assertion_ids": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "mapping_ref": { "type": "string", "minLength": 1 },
+    "value": { "type": ["string", "number", "boolean"] },
+    "status": { "type": "string", "enum": ["ACTIVE", "SUPPRESSED", "UNKNOWN"] }
+  }
+}

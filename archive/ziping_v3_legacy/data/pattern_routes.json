@@ -1,0 +1,929 @@
+{
+ "schema_version": "1.0",
+ "engine": "ZIPING",
+ "provenance": {
+  "source": "chinese-fortune-bazi skill包 bazi_rules.json (ziping-month-v2 profile)",
+  "transcribed": "2026-09-13",
+  "note": "结构+枚举条件移植入库; 引文/例外条款 passage_id 为源库锚(ziwei无关), 本地语料绑定下一轮",
+  "status_inherited": "transcription_checked_conditions_under_review",
+  "facsimile_status_inherited": "not_checked"
+ },
+ "predicate_enum": [
+  "full_chart",
+  "present_any",
+  "exposed_any",
+  "exposed_none"
+ ],
+ "families": [
+  {
+   "id": "officer",
+   "title": "正官",
+   "roles": [
+    "正官"
+   ],
+   "chapter": "c031",
+   "routes": [
+    {
+     "id": "officer-finance-seal",
+     "title": "财印配官",
+     "passage_id": "ziping:c031:p0002",
+     "quote": "兩不相礙",
+     "roles": [
+      [],
+      [
+       "正官"
+      ],
+      [
+       "正财",
+       "偏财"
+      ],
+      [
+       "正印",
+       "偏印"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "exposed_any",
+      "exposed_any"
+     ],
+     "pending_review": [
+      "position",
+      "protection",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c031:p0003",
+      "ziping:c031:p0006"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "officer-hurt-seal",
+     "title": "遇伤检查佩印",
+     "passage_id": "ziping:c031:p0004",
+     "quote": "遇傷在於佩印",
+     "roles": [
+      [],
+      [
+       "正官"
+      ],
+      [
+       "伤官"
+      ],
+      [
+       "正印",
+       "偏印"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any",
+      "exposed_any"
+     ],
+     "pending_review": [
+      "seal_function",
+      "other_damage",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c031:p0006",
+      "ziping:c031:p0007"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "officer-mixed",
+     "title": "官杀并见检查取清",
+     "passage_id": "ziping:c031:p0005",
+     "quote": "合煞留官",
+     "roles": [
+      [],
+      [
+       "正官"
+      ],
+      [
+       "七杀"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "exposed_any"
+     ],
+     "pending_review": [
+      "remove_kill",
+      "position",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c031:p0006",
+      "ziping:c005:p0003",
+      "ziping:c005:p0004",
+      "ziping:c005:p0005"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    }
+   ]
+  },
+  {
+   "id": "wealth",
+   "title": "财",
+   "roles": [
+    "正财",
+    "偏财"
+   ],
+   "chapter": "c033",
+   "routes": [
+    {
+     "id": "wealth-food",
+     "title": "财用食生",
+     "passage_id": "ziping:c033:p0004",
+     "quote": "身强而不露官",
+     "roles": [
+      [],
+      [
+       "正财",
+       "偏财"
+      ],
+      [
+       "食神"
+      ],
+      [
+       "正官"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any",
+      "exposed_none"
+     ],
+     "pending_review": [
+      "strength",
+      "position",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c033:p0007",
+      "ziping:c033:p0008"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "wealth-seal",
+     "title": "财格佩印",
+     "passage_id": "ziping:c033:p0005",
+     "quote": "財印不宜相並",
+     "roles": [
+      [],
+      [
+       "正财",
+       "偏财"
+      ],
+      [
+       "正印",
+       "偏印"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "position",
+      "seal_function",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c033:p0006"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "wealth-kill",
+     "title": "财带杀的处理",
+     "passage_id": "ziping:c033:p0008",
+     "quote": "或合煞存財，或制煞生財",
+     "roles": [
+      [],
+      [
+       "正财",
+       "偏财"
+      ],
+      [
+       "七杀"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "resolution",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c033:p0009",
+      "ziping:c033:p0012"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    }
+   ]
+  },
+  {
+   "id": "seal",
+   "title": "印",
+   "roles": [
+    "正印",
+    "偏印"
+   ],
+   "chapter": "c035",
+   "routes": [
+    {
+     "id": "seal-officer",
+     "title": "印而透官",
+     "passage_id": "ziping:c035:p0002",
+     "quote": "只要官星清純",
+     "roles": [
+      [],
+      [
+       "正印",
+       "偏印"
+      ],
+      [
+       "正官"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "exposed_any"
+     ],
+     "pending_review": [
+      "officer_purity",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c035:p0008"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "seal-output",
+     "title": "印用食伤泄气",
+     "passage_id": "ziping:c035:p0003",
+     "quote": "身强印旺",
+     "roles": [
+      [],
+      [
+       "正印",
+       "偏印"
+      ],
+      [
+       "食神",
+       "伤官"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "strength",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c035:p0007"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "seal-wealth",
+     "title": "印多用财",
+     "passage_id": "ziping:c035:p0006",
+     "quote": "印重身强",
+     "roles": [
+      [],
+      [
+       "正印",
+       "偏印"
+      ],
+      [
+       "正财",
+       "偏财"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "exposed_any"
+     ],
+     "pending_review": [
+      "strength",
+      "wealth_root",
+      "resolution",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c035:p0007"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    }
+   ]
+  },
+  {
+   "id": "food",
+   "title": "食神",
+   "roles": [
+    "食神"
+   ],
+   "chapter": "c037",
+   "routes": [
+    {
+     "id": "food-wealth",
+     "title": "食神生财",
+     "passage_id": "ziping:c037:p0002",
+     "quote": "財要有根",
+     "roles": [
+      [],
+      [
+       "食神"
+      ],
+      [
+       "正财",
+       "偏财"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "strength",
+      "wealth_root",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c037:p0003",
+      "ziping:c037:p0008"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "food-kill",
+     "title": "食带杀：核财印与制杀条件",
+     "passage_id": "ziping:c037:p0003",
+     "quote": "只要無財",
+     "roles": [
+      [],
+      [
+       "食神"
+      ],
+      [
+       "七杀"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "exposed_any"
+     ],
+     "pending_review": [
+      "wealth_resolution",
+      "hidden_wealth",
+      "control",
+      "seal_relation",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c037:p0008"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "food-seal-rescue",
+     "title": "食逢印检查财的解法",
+     "passage_id": "ziping:c037:p0005",
+     "quote": "透財以解",
+     "roles": [
+      [],
+      [
+       "食神"
+      ],
+      [
+       "正印",
+       "偏印"
+      ],
+      [
+       "正财",
+       "偏财"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any",
+      "exposed_any"
+     ],
+     "pending_review": [
+      "resolution",
+      "climate",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c037:p0003"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    }
+   ]
+  },
+  {
+   "id": "kill",
+   "title": "七杀",
+   "roles": [
+    "七杀"
+   ],
+   "chapter": "c039",
+   "routes": [
+    {
+     "id": "kill-food",
+     "title": "七杀用食制",
+     "passage_id": "ziping:c039:p0002",
+     "quote": "煞旺食强而身健",
+     "roles": [
+      [],
+      [
+       "七杀"
+      ],
+      [
+       "食神"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "strength",
+      "position",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c039:p0003",
+      "ziping:c039:p0004"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "kill-seal",
+     "title": "七杀用印",
+     "passage_id": "ziping:c039:p0003",
+     "quote": "煞印有情",
+     "roles": [
+      [],
+      [
+       "七杀"
+      ],
+      [
+       "正印",
+       "偏印"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "resolution",
+      "position",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c039:p0002",
+      "ziping:c039:p0004"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "kill-mixed",
+     "title": "七杀混官取清",
+     "passage_id": "ziping:c039:p0006",
+     "quote": "或去官，或去煞",
+     "roles": [
+      [],
+      [
+       "七杀"
+      ],
+      [
+       "正官"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "resolution",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c039:p0007",
+      "ziping:c005:p0003",
+      "ziping:c005:p0004",
+      "ziping:c005:p0005"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    }
+   ]
+  },
+  {
+   "id": "hurt",
+   "title": "伤官",
+   "roles": [
+    "伤官"
+   ],
+   "chapter": "c041",
+   "routes": [
+    {
+     "id": "hurt-wealth",
+     "title": "伤官生财",
+     "passage_id": "ziping:c041:p0002",
+     "quote": "身强而財有根",
+     "roles": [
+      [],
+      [
+       "伤官"
+      ],
+      [
+       "正财",
+       "偏财"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "strength",
+      "wealth_root",
+      "climate",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c041:p0003",
+      "ziping:c041:p0004"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "hurt-seal",
+     "title": "伤官佩印",
+     "passage_id": "ziping:c041:p0005",
+     "quote": "傷官旺，身稍弱",
+     "roles": [
+      [],
+      [
+       "伤官"
+      ],
+      [
+       "正印",
+       "偏印"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "strength",
+      "seal_root",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c041:p0006",
+      "ziping:c041:p0007"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "hurt-officer",
+     "title": "金水伤官用官",
+     "passage_id": "ziping:c041:p0008",
+     "quote": "不可傷、官並透",
+     "roles": [
+      [],
+      [
+       "正官"
+      ],
+      [
+       "伤官"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "exposed_any",
+      "exposed_none"
+     ],
+     "pending_review": [
+      "metal_water",
+      "support",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c041:p0009",
+      "ziping:c041:p0010"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    }
+   ]
+  },
+  {
+   "id": "blade",
+   "title": "阳刃",
+   "roles": [
+    "劫财"
+   ],
+   "chapter": "c043",
+   "routes": [
+    {
+     "id": "blade-control",
+     "title": "阳刃用官杀",
+     "passage_id": "ziping:c043:p0001",
+     "quote": "刃宜伏制，官煞皆宜",
+     "roles": [
+      [],
+      [
+       "正官",
+       "七杀"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any"
+     ],
+     "pending_review": [
+      "control_root",
+      "resolution",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c043:p0002",
+      "ziping:c043:p0004",
+      "ziping:c043:p0003",
+      "ziping:c043:p0005"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "blade-kill-combine",
+     "title": "刃与杀同时透出时查合",
+     "passage_id": "ziping:c043:p0002",
+     "quote": "丁與壬合",
+     "roles": [
+      [],
+      [
+       "劫财"
+      ],
+      [
+       "七杀"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "exposed_any",
+      "exposed_any"
+     ],
+     "pending_review": [
+      "combine",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c043:p0004",
+      "ziping:c043:p0005"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "blade-wealth",
+     "title": "阳刃用财须查转生",
+     "passage_id": "ziping:c043:p0006",
+     "quote": "用傷食以轉刃生財",
+     "roles": [
+      [],
+      [
+       "正财",
+       "偏财"
+      ],
+      [
+       "食神",
+       "伤官"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "wealth_root",
+      "resolution",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c043:p0005"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    }
+   ]
+  },
+  {
+   "id": "salary",
+   "title": "建禄月劫",
+   "roles": [
+    "比肩",
+    "劫财"
+   ],
+   "chapter": "c045",
+   "routes": [
+    {
+     "id": "salary-officer",
+     "title": "禄劫用官",
+     "passage_id": "ziping:c045:p0002",
+     "quote": "又要財印相隨",
+     "roles": [
+      [],
+      [
+       "正官"
+      ],
+      [
+       "正财",
+       "偏财",
+       "正印",
+       "偏印"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "exposed_any",
+      "present_any"
+     ],
+     "pending_review": [
+      "position",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c045:p0007",
+      "ziping:c045:p0008"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "salary-wealth",
+     "title": "禄劫用财",
+     "passage_id": "ziping:c045:p0003",
+     "quote": "須帶傷食",
+     "roles": [
+      [],
+      [
+       "正财",
+       "偏财"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any"
+     ],
+     "pending_review": [
+      "output_or_transform",
+      "resolution",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c045:p0005",
+      "ziping:c045:p0009"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "salary-kill",
+     "title": "禄劫用杀",
+     "passage_id": "ziping:c045:p0004",
+     "quote": "必須制伏",
+     "roles": [
+      [],
+      [
+       "七杀"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "exposed_any"
+     ],
+     "pending_review": [
+      "control",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c045:p0005",
+      "ziping:c045:p0010"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    },
+    {
+     "id": "salary-output",
+     "title": "禄劫无财官用食伤",
+     "passage_id": "ziping:c045:p0006",
+     "quote": "無財官而用傷食",
+     "roles": [
+      [],
+      [
+       "食神",
+       "伤官"
+      ],
+      [
+       "正财",
+       "偏财",
+       "正官"
+      ]
+     ],
+     "predicates": [
+      "full_chart",
+      "present_any",
+      "exposed_none"
+     ],
+     "pending_review": [
+      "hidden_roles",
+      "season",
+      "month_resolution"
+     ],
+     "exception_passage_ids": [
+      "ziping:c045:p0007"
+     ],
+     "scope": "natal",
+     "allowed_conclusion": "只解释本条结构与成立条件，不推出现实事件或优劣等级",
+     "review_status": "source_examples_checked_pending_full_semantic_review"
+    }
+   ]
+  }
+ ]
+}

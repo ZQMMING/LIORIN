@@ -1,0 +1,152 @@
+[
+  {
+    "assertion_id": "BINGYAO-CORE-001",
+    "group": "病药核心思想",
+    "original": "有病方为贵，无伤不是奇。格中如去病，财禄两相宜。",
+    "source": "SFTK 神峰通考·病药说",
+    "semantic": "命局有病（太过/不及）并不可怕，关键在于有药能去病；去病则贵，无病则平庸",
+    "engine_status": "已实现（bingyao_layer 病药结构识别）",
+    "faithful": true,
+    "note": "只识别病药结构存在，不判吉凶/成败/轻重/有效性"
+  },
+  {
+    "assertion_id": "BINGYAO-CORE-002",
+    "group": "病药核心思想",
+    "original": "盖因四柱之旺衰，以致大运之亨否。旺则宜泄宜伤，衰则喜帮喜助。",
+    "source": "SFTK 神峰通考",
+    "semantic": "病药的核心是根据四柱旺衰确定大运喜忌，旺则泄伤，衰则帮助",
+    "engine_status": "已实现（bingyao_layer + dayun_xiji）",
+    "faithful": true,
+    "note": "旺衰判断与病药识别联动"
+  },
+  {
+    "assertion_id": "BINGYAO-BING-001",
+    "group": "病的定义",
+    "original": "太过不及之病，皆可为病。太过者宜泄宜克，不及者宜生宜助。",
+    "source": "SFTK 神峰通考（概括）",
+    "semantic": "病分两类：太过（某五行过旺）和不及（某五行过弱）；太过宜泄克，不及宜生助",
+    "engine_status": "已实现（bing_list 包含太过/不及类病）",
+    "faithful": true,
+    "note": "病的识别基于五行力量结构，不做数值评分"
+  },
+  {
+    "assertion_id": "BINGYAO-BING-002",
+    "group": "病的定义",
+    "original": "如自身天干是甲木，周围却是一片克我的戊土、己土，叫做财多身弱。",
+    "source": "SFTK 神峰通考",
+    "semantic": "财多身弱是典型病：日主周围一片我克之五行（财），日主受克太过",
+    "engine_status": "已实现（bingyao_layer CAI_DUO_SHEN_RUO，query驱动+结构驱动）",
+    "faithful": true,
+    "note": "财多身弱病已识别：财星当令/成党+日主无根/根轻"
+  },
+  {
+    "assertion_id": "BINGYAO-BING-003",
+    "group": "病的定义",
+    "original": "煞重身轻，制乡为富。",
+    "source": "YHZP 渊海子平 / SFTK 神峰通考",
+    "semantic": "官杀过重而日主无根或根轻，是为煞重身轻之病；宜行制杀之乡（食伤运）",
+    "engine_status": "已实现（bingyao_layer SHA_ZHONG_SHEN_QING，query驱动+结构驱动）",
+    "faithful": true,
+    "note": "煞重身轻病已识别：官杀当令/成党+日主无根/根轻"
+  },
+  {
+    "assertion_id": "BINGYAO-BING-004",
+    "group": "病的定义",
+    "original": "伤官见官，为祸百端。",
+    "source": "YHZP 渊海子平",
+    "semantic": "伤官与官杀同时出现，互相战克，是为伤官见官之病",
+    "engine_status": "已实现（bingyao_layer SHANGGUAN_JIAN_GUAN）",
+    "faithful": true,
+    "note": "伤官见官病已识别"
+  },
+  {
+    "assertion_id": "BINGYAO-BING-005",
+    "group": "病的定义",
+    "original": "枭神夺食，不仁不义。",
+    "source": "YHZP 渊海子平",
+    "semantic": "偏印（枭神）克制食神，是为枭神夺食之病",
+    "engine_status": "已实现（bingyao_layer XIAO_DUO_SHI，偏印+食神同时出现）",
+    "faithful": true,
+    "note": "枭神夺食病已识别：偏印(枭)与食神同时出现"
+  },
+  {
+    "assertion_id": "BINGYAO-BING-007",
+    "group": "病的定义",
+    "original": "水多以水为病。比劫成党，无论是否有财，皆为病。",
+    "source": "DTS 滴天髓 / SFTK 神峰通考",
+    "semantic": "比劫数量达到3个或以上，日主同类成势，无论是否有财，皆为病；药为官杀制比劫",
+    "engine_status": "已实现（bingyao_layer BIJIE_CHENG_DANG，比劫数量>=3）",
+    "faithful": true,
+    "note": "比劫成党病已识别：比劫数量>=3，无论是否有财；DTS案例水多以水为病已覆盖"
+  },
+  {
+    "assertion_id": "BINGYAO-BING-006",
+    "group": "病的定义",
+    "original": "比劫夺财，兄弟争财。",
+    "source": "YHZP 渊海子平 / SFTK 神峰通考",
+    "semantic": "比劫过旺而财星弱，比劫争夺财星，是为比劫夺财之病",
+    "engine_status": "已实现（bingyao_layer BIJIE_DUO_CAI，比劫透干+财同时出现）",
+    "faithful": true,
+    "note": "比劫夺财病已识别：比劫透干成党+财星被夺"
+  },
+  {
+    "assertion_id": "BINGYAO-YAO-001",
+    "group": "药的定义",
+    "original": "因其病而药之，斯可作为用神而论祸福也。",
+    "source": "SFTK 神峰通考",
+    "semantic": "药是针对病的五行：病在太过则以克泄为药，病在不及则以生助为药；药即为用神",
+    "engine_status": "已实现（yao_list 对应病的药神枚举）",
+    "faithful": true,
+    "note": "药神枚举基于病的类型，不做唯一选择"
+  },
+  {
+    "assertion_id": "BINGYAO-YAO-002",
+    "group": "药的定义",
+    "original": "七煞喜食神以制伏，忌财印以资扶。",
+    "source": "PZZQ 子平真诠 / SFTK 神峰通考",
+    "semantic": "煞重之病，以食神为药（制杀）；忌财印（财生杀、印化杀反而助杀）",
+    "engine_status": "已实现（bingyao_layer 煞重→食制对应）",
+    "faithful": true,
+    "note": "病药对应关系已结构化"
+  },
+  {
+    "assertion_id": "BINGYAO-YAO-003",
+    "group": "药的定义",
+    "original": "伤官喜佩印以制伏，生财以化伤。",
+    "source": "PZZQ 子平真诠 / SFTK 神峰通考",
+    "semantic": "伤官之病，以印星为药（制伤），或以财星为药（化伤）",
+    "engine_status": "已实现（bingyao_layer 伤官→印/财对应）",
+    "faithful": true,
+    "note": "伤官病有两药（印制/财化），并列保留"
+  },
+  {
+    "assertion_id": "BINGYAO-DUIYING-001",
+    "group": "病药对应与应期",
+    "original": "有病之命得药救之，亦多富贵。",
+    "source": "SFTK 神峰通考",
+    "semantic": "命局有病，若大运/流年得药（去病之神），则可发富贵",
+    "engine_status": "已实现（bingyao_layer 应期去病/添病识别）",
+    "faithful": true,
+    "note": "应期层判断大运是否去病/添病"
+  },
+  {
+    "assertion_id": "BINGYAO-DUIYING-002",
+    "group": "病药对应与应期",
+    "original": "去尽病根，位入台阁。",
+    "source": "SFTK 神峰通考",
+    "semantic": "大运/流年完全去除病根，则大贵",
+    "engine_status": "已实现（bingyao_layer check_qubing_level，结构化去病程度检查）",
+    "faithful": true,
+    "note": "去病程度已实现：check_qubing_level检查大运/流年对原局病的去除程度，输出FULLY_REMOVED/PARTIALLY_REMOVED/NOT_REMOVED/ADDED_BING四态+总体判断"
+  },
+  {
+    "assertion_id": "BINGYAO-DUIYING-003",
+    "group": "病药对应与应期",
+    "original": "破损用神，虚火死矣。",
+    "source": "SFTK 神峰通考",
+    "semantic": "大运/流年克破药神（用神），则病发祸至",
+    "engine_status": "已实现（bingyao_layer 应期添病/破药识别）",
+    "faithful": true,
+    "note": "应期层判断大运是否添病/破药"
+  }
+]

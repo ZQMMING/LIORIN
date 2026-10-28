@@ -1,0 +1,148 @@
+{
+  "contract_id": "PATCH-022C",
+  "name": "Strength Multi-Factor Rule Extraction（多因素关系规则提取）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "从六部 A 级原文提取 CLASSICAL FACTOR RELATION RULE（多因素关系规则）——非单因子直推；目标是为 strength_state RELATIONAL_RESULT 提供规则基础。全部候选 PENDING_GOLDEN，不直接写综合算法。",
+  "parent": "PATCH-022B",
+  "principle": "禁止 印多=强 / 财多=弱 / 官杀多=弱 单因子直推；只提取「条件组合→关系结论」；PZZQ 格局语境只提取关系不扩展统一旺衰算法。",
+  "candidates": [
+    {
+      "rule_id": "RULE-022C-01",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "YHZP",
+      "source_id": "YHZP-078-024",
+      "chapter": "繼善篇",
+      "text_layer": "ORIGINAL",
+      "evidence_grade": "A",
+      "original_text": "財多生官須要身健，財多盜氣本身自柔",
+      "condition_decomposition": {
+        "branch_A": {"condition": "財多 ∧ 生官", "requirement": "須要身健", "factor_relation": "财(多)+官+身健 → 官可用"},
+        "branch_B": {"condition": "財多（無身健）", "result": "盜氣本身自柔", "factor_relation": "财(多)→盗气→身柔（关系链非直接身弱）"}
+      },
+      "forbidden": ["財多→WEAK（单因子）", "財多→身弱（自动）"],
+      "golden_case": {"case": "财多身弱（女命贱格条目）", "verify": "须经身健条件判定；禁单因子财多=弱", "expected": "财多∧身健→官可用；财多∧身不健→盗气自柔（关系链）"}
+    },
+    {
+      "rule_id": "RULE-022C-02",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "YHZP",
+      "source_id": "YHZP-079-022",
+      "chapter": "正氣官星（繼善篇注）",
+      "text_layer": "ORIGINAL",
+      "evidence_grade": "A",
+      "original_text": "身強殺淺，假殺為權",
+      "condition_decomposition": {"condition": "身強 ∧ 殺淺", "result": "假殺為權", "factor_relation": "身强+杀浅 → 假杀为权（两条件缺一不可）"},
+      "forbidden": ["殺淺→權（单因子）", "身強→權（单因子）"],
+      "golden_case": {"case": "身强杀浅", "verify": "双条件齐备才触发；禁单因子", "expected": "身强∧杀浅→假杀为权"}
+    },
+    {
+      "rule_id": "RULE-022C-03",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "YHZP",
+      "source_id": "YHZP-076-104 + YHZP-076-109",
+      "chapter": "喜忌篇",
+      "text_layer": "ORIGINAL",
+      "evidence_grade": "A",
+      "original_text": "四柱殺旺運純身旺為官清貴 / 柱中七殺全彰身旺極貧",
+      "condition_decomposition": {
+        "branch_A": {"condition": "殺旺 ∧ 運純 ∧ 身旺", "result": "為官清貴"},
+        "branch_B": {"condition": "七殺全彰 ∧ 身旺", "result": "極貧"},
+        "note": "两条件分支不得合并：運純 vs 全彰 是不同条件（BY_CONDITION 登记）"
+      },
+      "forbidden": ["殺旺∧身旺→貴（忽略運純/全彰条件）"],
+      "golden_case": {"case": "杀旺身旺两分支", "verify": "必须区分運純/全彰条件；禁合并为单一结论", "expected": "BY_CONDITION 分支登记"}
+    },
+    {
+      "rule_id": "RULE-022C-04",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "YHZP",
+      "source_id": "YHZP-082-001",
+      "chapter": "論七殺（即偏官）",
+      "text_layer": "ORIGINAL",
+      "evidence_grade": "A",
+      "original_text": "喜身旺，合殺，喜制伏，喜羊刃；忌身弱，忌見財生，忌無制",
+      "condition_decomposition": {
+        "喜": ["身旺", "合殺", "制伏", "羊刃"],
+        "忌": ["身弱", "見財生", "無制"],
+        "factor_relation": "七杀格：身旺/制伏/合杀/羊刃为喜条件；身弱/财生/无制为忌条件——格内条件关系，非通用身旺身弱判定"
+      },
+      "forbidden": ["身旺→吉（跨格通用）", "身弱→凶（跨格通用）"],
+      "golden_case": {"case": "七杀格身弱", "verify": "格内语境：身弱为忌条件；不得抽成通用身弱=凶", "expected": "绑定七杀格语境"}
+    },
+    {
+      "rule_id": "RULE-022C-05",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "DTS",
+      "source_id": "DTS-017-001 + DTS-017-002",
+      "chapter": "中和論",
+      "text_layer": "ORIGINAL(A) + ANNOTATION(B1)",
+      "evidence_grade": "A（总纲）+ B1（病药中和展开）",
+      "original_text": "既識中和之正理，而於五行之妙，有能全焉 / 有病方為貴，無傷不是奇…到底要中和為至貴",
+      "condition_decomposition": {
+        "condition": "五行中和（多因素综合原则）",
+        "relation": "中和=多因素平衡结果，非单因子；病药去病→中和（B1 展开）",
+        "scope_boundary": "DTS 域内原则；禁扩展为跨书统一强弱标准"
+      },
+      "forbidden": ["中和→NEUTRAL（自动映射六级）", "病藥→用神（SFTK 域分离）"],
+      "golden_case": {"case": "中和原则", "verify": "中和是多因素综合结果；禁单因子触发；禁与 SFTK 病药合并", "expected": "DTS 域登记"}
+    },
+    {
+      "rule_id": "RULE-022C-06",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "PZZQ",
+      "source_id": "PZZQ-007-030",
+      "chapter": "論用神格局高低（傷官取運）",
+      "text_layer": "ORIGINAL",
+      "evidence_grade": "A",
+      "original_text": "傷官用財，財旺身輕則利印比，身旺財淺則喜財運",
+      "condition_decomposition": {
+        "branch_A": {"condition": "傷官用財 ∧ 財旺身輕", "result": "利印比（帮身）"},
+        "branch_B": {"condition": "傷官用財 ∧ 身旺財淺", "result": "喜財運"},
+        "note": "格局语境双向条件；身轻/身旺为格内条件变量，非通用身强弱判定"
+      },
+      "forbidden": ["財旺身輕→身弱（跨格通用）", "身旺財淺→身強（跨格通用）"],
+      "golden_case": {"case": "伤官财格两分支", "verify": "格内语境双向条件登记；禁抽成通用旺衰算法", "expected": "PZZQ 格内登记"}
+    },
+    {
+      "rule_id": "RULE-022C-07",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "PZZQ",
+      "source_id": "PZZQ-007-028",
+      "chapter": "論用神格局高低（偏官取運）",
+      "text_layer": "ORIGINAL",
+      "evidence_grade": "A",
+      "original_text": "煞食均而日主根輕則助身",
+      "condition_decomposition": {"condition": "煞食均 ∧ 日主根輕", "result": "助身（运喜帮身）", "factor_relation": "杀食均衡+日主根轻 → 助身；根轻=多因素之一，禁根輕→身弱单因子"},
+      "forbidden": ["根輕→身弱（单因子）"],
+      "golden_case": {"case": "杀食均日主根轻", "verify": "根轻只是条件之一，须与杀食均组合；禁根轻单因子", "expected": "多因素组合登记"}
+    },
+    {
+      "rule_id": "RULE-022C-08",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "YHZP",
+      "source_id": "YHZP-063-001",
+      "chapter": "論月令（出淵源）",
+      "text_layer": "ORIGINAL",
+      "evidence_grade": "A",
+      "original_text": "以日主大要看日加臨於甚度，或身旺或身弱，又看地支有何格局",
+      "condition_decomposition": {
+        "condition": "身旺/身弱 = 月令判断入口（以日主配月令）",
+        "relation": "语境锚：身旺身弱先于格局判断；但原文未授权统一触发公式",
+        "note": "月令入口；不得抽成身旺=Boolean 判定器"
+      },
+      "forbidden": ["月令→身旺（直接）", "身旺身弱→格局（直接）"],
+      "golden_case": {"case": "月令入口", "verify": "身旺身弱为月令语境入口；禁 Boolean 化", "expected": "语境锚登记"}
+    }
+  ],
+  "conflicts_registered": [
+    {"conflict": "YHZP-076-104 殺旺運純身旺→貴 vs YHZP-076-109 七殺全彰身旺→貧", "resolution": "BY_CONDITION（運純 vs 全彰 条件分支，不同条件各自成立）"},
+    {"conflict": "DTS 中和 vs PZZQ 格局身强弱", "resolution": "BY_SCOPE（DTS 中和为多因素原则；PZZQ 格内条件变量，互不替代）"}
+  ],
+  "acceptance_criteria": [
+    "8 条候选全部绑定 A 级原文（PZZQ-005-008 印轻逢煞工程文本不重复收录）",
+    "每条多因素条件拆解完整",
+    "禁止单因子直推已声明",
+    "2 类冲突 BY_CONDITION/BY_SCOPE 登记",
+    "全部 PENDING_GOLDEN（等引擎接线后动态验证）"
+  ]
+}

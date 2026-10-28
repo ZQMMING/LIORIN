@@ -1,0 +1,60 @@
+{
+  "contract_id": "PATCH-025",
+  "name": "Pattern Production Contract（格局生产契约）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "冻结格局状态的生产边界：谁生产 pattern_state、输入 namespace、禁读路径、输出 schema、成败/清浊独立 namespace。不直接判什么格。",
+  "core_guard": {
+    "name": "格局↔身强弱 循环依赖防护（双向禁止）",
+    "forbidden_paths": [
+      {"from": "pattern_state", "to": "strength_state", "note": "格局成立≠反推身强身弱"},
+      {"from": "strength_state", "to": "pattern_state", "note": "身强弱≠强行取格依据"}
+    ],
+    "principle": "pattern 与 strength 并列产出，互不消费；输入流单向：事实层→关系层→结构层→各自 Producer→并列状态"
+  },
+  "producer_whitelist": {
+    "pattern_state": [
+      {"classical_scope": "PZZQ", "namespace": "pattern", "mode": "DIRECT", "note": "月令→用神→格局（PZZQ-005-007 專求月令）——唯一主生产者"},
+      {"classical_scope": "DTS", "namespace": "pattern", "mode": "SUPPORTING", "note": "八格仅辅助，不替代 PZZQ 格局定义"},
+      {"classical_scope": "SFTK", "namespace": "pattern", "mode": "CONTEXTUAL", "note": "从化顺序体系（SFTK-082-001）不得替代 PZZQ 格局定义"}
+    ]
+  },
+  "input_namespace": {
+    "PZZQ.pattern": {"allowed_states": ["order_state", "month_order", "ten_god_relation", "structure_relation", "root_relation"], "forbidden_states": ["strength_state", "wang_state", "qiang_state", "shuai_state"]},
+    "note": "格局输入不含任何强弱状态；月令是唯一入口（PZZQ-005-007 八字用神专求月令）"
+  },
+  "forbidden_read_paths": [
+    {"path": "strength_state → pattern_state", "reason": "身强身弱不得作为取格依据（防身强→强行取格）"},
+    {"path": "pattern_state → strength_state", "reason": "格局成立不得反推身强弱（防格局→反推旺衰）"},
+    {"path": "wang_state/shuai_state/qiang_state → pattern_state", "reason": "旺衰状态不得进入格局判定输入"}
+  ],
+  "output_schema": {
+    "required_fields": ["state", "value", "producer", "sources", "evidence_chain", "namespace_source", "month_order_entry"],
+    "example": {
+      "state": "pattern_state",
+      "value": "UNDETERMINED（月令入口已登记，structure 未确认）",
+      "producer": "PZZQ.pattern",
+      "sources": ["PZZQ.pattern(order_state/month_order/ten_god_relation/structure_relation/root_relation)"],
+      "evidence_chain": ["PZZQ-005-007 八字用神专求月令"],
+      "namespace_source": {"PZZQ": "pattern"},
+      "month_order_entry": "戌月戊土用事→财格候选（待 structure 确认）"
+    }
+  },
+  "sub_namespace_independence": {
+    "pattern_success": {"namespace": "PZZQ.pattern_success", "type": "formation", "note": "格局成败（成/败/救应）独立 namespace，非 qing_zhuo"},
+    "pattern_failure": {"namespace": "PZZQ.pattern_failure", "type": "formation"},
+    "qing_zhuo": {"note": "已按 023C 拆分：PZZQ.qing_za（取用纯杂）/ DTS.qing_zhuo（气象清浊）——两个不同 namespace，格局成败不与清浊合并"},
+    "principle": "成败（成/败/救应）与清浊（取用纯杂/气象清浊）互不合并"
+  },
+  "chart_1983_1103_producer_demo": {
+    "input_view": {"order_state": "NOT_GET_ORDER", "month_order": "戌", "ten_god_relation": "偏印正印比肩正印", "structure_relation": "UNDETERMINED", "root_relation": "WEAK_ROOT(亥甲+未乙)"},
+    "pattern_state": {"value": "UNDETERMINED", "producer": "PZZQ.pattern", "sources": ["PZZQ.pattern"], "evidence_chain": ["PZZQ-005-007 专求月令"], "namespace_source": {"PZZQ": "pattern"}, "month_order_entry": "戌月戊土用事→财格候选（structure_relation=UNDETERMINED，待透干会支确认）", "forbidden_not_consumed": ["strength_state/wang_state/shuai_state/qiang_state（格局不读强弱）"]}
+  },
+  "acceptance_criteria": [
+    "格局生产者冻结（PZZQ DIRECT + DTS SUPPORTING + SFTK CONTEXTUAL）",
+    "输入不含任何强弱状态（禁 strength/wang/shuai/qiang 入格局）",
+    "双向循环依赖防护：pattern↔strength 互不推导",
+    "输出 schema 含 month_order_entry + trace 四字段",
+    "成败/清浊独立 namespace（PZZQ.pattern_success/failure ≠ qing_zhuo）",
+    "1983-1103：pattern=UNDETERMINED（月令入口登记财格候选，structure 未确认）"
+  ]
+}

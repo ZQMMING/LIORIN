@@ -1,0 +1,3786 @@
+{
+  "wang_hit": 17,
+  "wang_total": 17,
+  "wang_mismatch": [],
+  "ruo_hit": 4,
+  "ruo_total": 6,
+  "ruo_mismatch": [
+    {
+      "line": 438,
+      "pillars": [
+        [
+          "庚",
+          "申"
+        ],
+        [
+          "辛",
+          "巳"
+        ],
+        [
+          "丙",
+          "辰"
+        ],
+        [
+          "乙",
+          "未"
+        ]
+      ],
+      "ren": [
+        "身弱"
+      ],
+      "engine": "HEAVY",
+      "segment": "庚申 辛巳 丙辰 乙未\n 壬午 癸未 甲申 乙酉 丙戌 丁亥\n 此造以俗论之，丙火生于巳月，建禄必要用财，无如庚辛重叠根深，独印受伤，弱可知矣。此财多身弱，所谓帮之则有功也"
+    },
+    {
+      "line": 2131,
+      "pillars": [
+        [
+          "庚",
+          "辰"
+        ],
+        [
+          "己",
+          "丑"
+        ],
+        [
+          "己",
+          "亥"
+        ],
+        [
+          "壬",
+          "申"
+        ]
+      ],
+      "ren": [
+        "身弱"
+      ],
+      "engine": "HEAVY",
+      "segment": "庚辰 己丑 己亥 壬申\n 庚寅 辛卯 壬辰 癸巳 甲午 乙未\n 己亥日元，生于丑月虚湿之地，辰丑蓄水藏金，庚壬透而通根，只得任其虚湿之气，反以水为用而从财也。此造四柱无火，得申时壬水逢生，格成假从财，"
+    }
+  ],
+  "yougen_hit": 49,
+  "yougen_total": 53,
+  "yougen_mismatch": [
+    {
+      "line": 975,
+      "pillars": [
+        [
+          "乙",
+          "酉"
+        ],
+        [
+          "戊",
+          "寅"
+        ],
+        [
+          "壬",
+          "午"
+        ],
+        [
+          "庚",
+          "戌"
+        ]
+      ],
+      "ren": [
+        "通根"
+      ],
+      "engine": "has_root=False,rw=NONE"
+    },
+    {
+      "line": 1162,
+      "pillars": [
+        [
+          "乙",
+          "亥"
+        ],
+        [
+          "庚",
+          "辰"
+        ],
+        [
+          "丙",
+          "申"
+        ],
+        [
+          "壬",
+          "辰"
+        ]
+      ],
+      "ren": [
+        "通根"
+      ],
+      "engine": "has_root=False,rw=NONE"
+    },
+    {
+      "line": 1640,
+      "pillars": [
+        [
+          "丙",
+          "戌"
+        ],
+        [
+          "戊",
+          "戌"
+        ],
+        [
+          "癸",
+          "巳"
+        ],
+        [
+          "壬",
+          "戌"
+        ]
+      ],
+      "ren": [
+        "通根"
+      ],
+      "engine": "has_root=False,rw=NONE"
+    },
+    {
+      "line": 2213,
+      "pillars": [
+        [
+          "丙",
+          "申"
+        ],
+        [
+          "壬",
+          "辰"
+        ],
+        [
+          "丙",
+          "子"
+        ],
+        [
+          "壬",
+          "辰"
+        ]
+      ],
+      "ren": [
+        "得地"
+      ],
+      "engine": "has_root=False,rw=NONE"
+    }
+  ],
+  "wugen_hit": 4,
+  "wugen_total": 46,
+  "wugen_mismatch": [
+    {
+      "line": 193,
+      "pillars": [
+        [
+          "庚",
+          "寅"
+        ],
+        [
+          "辛",
+          "巳"
+        ],
+        [
+          "丙",
+          "寅"
+        ],
+        [
+          "辛",
+          "卯"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 200,
+      "pillars": [
+        [
+          "戊",
+          "辰"
+        ],
+        [
+          "辛",
+          "酉"
+        ],
+        [
+          "丙",
+          "午"
+        ],
+        [
+          "癸",
+          "巳"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 203,
+      "pillars": [
+        [
+          "庚",
+          "寅"
+        ],
+        [
+          "壬",
+          "午"
+        ],
+        [
+          "丁",
+          "卯"
+        ],
+        [
+          "癸",
+          "卯"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 290,
+      "pillars": [
+        [
+          "壬",
+          "申"
+        ],
+        [
+          "甲",
+          "辰"
+        ],
+        [
+          "丙",
+          "寅"
+        ],
+        [
+          "丙",
+          "申"
+        ]
+      ],
+      "ren": [
+        "根拔"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 454,
+      "pillars": [
+        [
+          "丙",
+          "辰"
+        ],
+        [
+          "庚",
+          "寅"
+        ],
+        [
+          "乙",
+          "卯"
+        ],
+        [
+          "丁",
+          "亥"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 519,
+      "pillars": [
+        [
+          "辛",
+          "卯"
+        ],
+        [
+          "丙",
+          "申"
+        ],
+        [
+          "癸",
+          "卯"
+        ],
+        [
+          "甲",
+          "寅"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=LIGHT"
+    },
+    {
+      "line": 611,
+      "pillars": [
+        [
+          "乙",
+          "丑"
+        ],
+        [
+          "甲",
+          "申"
+        ],
+        [
+          "甲",
+          "申"
+        ],
+        [
+          "辛",
+          "未"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=LIGHT"
+    },
+    {
+      "line": 617,
+      "pillars": [
+        [
+          "乙",
+          "丑"
+        ],
+        [
+          "壬",
+          "午"
+        ],
+        [
+          "丙",
+          "戌"
+        ],
+        [
+          "甲",
+          "午"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 774,
+      "pillars": [
+        [
+          "壬",
+          "申"
+        ],
+        [
+          "丁",
+          "未"
+        ],
+        [
+          "丁",
+          "未"
+        ],
+        [
+          "癸",
+          "卯"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=LIGHT"
+    },
+    {
+      "line": 895,
+      "pillars": [
+        [
+          "癸",
+          "酉"
+        ],
+        [
+          "己",
+          "未"
+        ],
+        [
+          "丙",
+          "午"
+        ],
+        [
+          "癸",
+          "巳"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 911,
+      "pillars": [
+        [
+          "乙",
+          "酉"
+        ],
+        [
+          "辛",
+          "巳"
+        ],
+        [
+          "戊",
+          "午"
+        ],
+        [
+          "丙",
+          "辰"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 991,
+      "pillars": [
+        [
+          "壬",
+          "申"
+        ],
+        [
+          "戊",
+          "申"
+        ],
+        [
+          "庚",
+          "辰"
+        ],
+        [
+          "甲",
+          "申"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1013,
+      "pillars": [
+        [
+          "癸",
+          "酉"
+        ],
+        [
+          "甲",
+          "子"
+        ],
+        [
+          "庚",
+          "辰"
+        ],
+        [
+          "甲",
+          "申"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1026,
+      "pillars": [
+        [
+          "甲",
+          "申"
+        ],
+        [
+          "丙",
+          "子"
+        ],
+        [
+          "庚",
+          "辰"
+        ],
+        [
+          "戊",
+          "寅"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1045,
+      "pillars": [
+        [
+          "丙",
+          "辰"
+        ],
+        [
+          "辛",
+          "丑"
+        ],
+        [
+          "庚",
+          "辰"
+        ],
+        [
+          "丙",
+          "子"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=LIGHT"
+    },
+    {
+      "line": 1067,
+      "pillars": [
+        [
+          "壬",
+          "午"
+        ],
+        [
+          "乙",
+          "巳"
+        ],
+        [
+          "丁",
+          "丑"
+        ],
+        [
+          "丙",
+          "午"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1077,
+      "pillars": [
+        [
+          "戊",
+          "辰"
+        ],
+        [
+          "乙",
+          "丑"
+        ],
+        [
+          "戊",
+          "戌"
+        ],
+        [
+          "辛",
+          "酉"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1080,
+      "pillars": [
+        [
+          "戊",
+          "午"
+        ],
+        [
+          "壬",
+          "戌"
+        ],
+        [
+          "丁",
+          "卯"
+        ],
+        [
+          "癸",
+          "卯"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1195,
+      "pillars": [
+        [
+          "乙",
+          "未"
+        ],
+        [
+          "辛",
+          "巳"
+        ],
+        [
+          "戊",
+          "戌"
+        ],
+        [
+          "丁",
+          "巳"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1208,
+      "pillars": [
+        [
+          "辛",
+          "卯"
+        ],
+        [
+          "辛",
+          "卯"
+        ],
+        [
+          "甲",
+          "辰"
+        ],
+        [
+          "丁",
+          "卯"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1249,
+      "pillars": [
+        [
+          "甲",
+          "申"
+        ],
+        [
+          "丙",
+          "子"
+        ],
+        [
+          "壬",
+          "寅"
+        ],
+        [
+          "辛",
+          "亥"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1278,
+      "pillars": [
+        [
+          "癸",
+          "卯"
+        ],
+        [
+          "甲",
+          "寅"
+        ],
+        [
+          "丁",
+          "巳"
+        ],
+        [
+          "己",
+          "酉"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1301,
+      "pillars": [
+        [
+          "丙",
+          "辰"
+        ],
+        [
+          "庚",
+          "寅"
+        ],
+        [
+          "丙",
+          "午"
+        ],
+        [
+          "壬",
+          "辰"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1448,
+      "pillars": [
+        [
+          "丁",
+          "亥"
+        ],
+        [
+          "壬",
+          "子"
+        ],
+        [
+          "癸",
+          "丑"
+        ],
+        [
+          "甲",
+          "寅"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1556,
+      "pillars": [
+        [
+          "甲",
+          "子"
+        ],
+        [
+          "丁",
+          "卯"
+        ],
+        [
+          "甲",
+          "寅"
+        ],
+        [
+          "庚",
+          "午"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1612,
+      "pillars": [
+        [
+          "癸",
+          "酉"
+        ],
+        [
+          "癸",
+          "亥"
+        ],
+        [
+          "庚",
+          "申"
+        ],
+        [
+          "丁",
+          "亥"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1615,
+      "pillars": [
+        [
+          "丙",
+          "戌"
+        ],
+        [
+          "壬",
+          "辰"
+        ],
+        [
+          "癸",
+          "巳"
+        ],
+        [
+          "甲",
+          "寅"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=LIGHT"
+    },
+    {
+      "line": 1653,
+      "pillars": [
+        [
+          "丁",
+          "丑"
+        ],
+        [
+          "壬",
+          "寅"
+        ],
+        [
+          "丙",
+          "申"
+        ],
+        [
+          "壬",
+          "辰"
+        ]
+      ],
+      "ren": [
+        "根拔"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1684,
+      "pillars": [
+        [
+          "甲",
+          "辰"
+        ],
+        [
+          "丁",
+          "卯"
+        ],
+        [
+          "壬",
+          "辰"
+        ],
+        [
+          "辛",
+          "亥"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1852,
+      "pillars": [
+        [
+          "甲",
+          "戌"
+        ],
+        [
+          "丙",
+          "寅"
+        ],
+        [
+          "甲",
+          "戌"
+        ],
+        [
+          "乙",
+          "亥"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1865,
+      "pillars": [
+        [
+          "戊",
+          "寅"
+        ],
+        [
+          "甲",
+          "寅"
+        ],
+        [
+          "甲",
+          "寅"
+        ],
+        [
+          "庚",
+          "午"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1926,
+      "pillars": [
+        [
+          "辛",
+          "巳"
+        ],
+        [
+          "甲",
+          "午"
+        ],
+        [
+          "丙",
+          "子"
+        ],
+        [
+          "甲",
+          "午"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 1979,
+      "pillars": [
+        [
+          "丁",
+          "卯"
+        ],
+        [
+          "丙",
+          "午"
+        ],
+        [
+          "丙",
+          "午"
+        ],
+        [
+          "庚",
+          "寅"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 2012,
+      "pillars": [
+        [
+          "壬",
+          "戌"
+        ],
+        [
+          "丙",
+          "午"
+        ],
+        [
+          "丙",
+          "寅"
+        ],
+        [
+          "己",
+          "丑"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 2083,
+      "pillars": [
+        [
+          "壬",
+          "寅"
+        ],
+        [
+          "丁",
+          "未"
+        ],
+        [
+          "丙",
+          "申"
+        ],
+        [
+          "甲",
+          "午"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 2155,
+      "pillars": [
+        [
+          "辛",
+          "未"
+        ],
+        [
+          "戊",
+          "戌"
+        ],
+        [
+          "戊",
+          "戌"
+        ],
+        [
+          "丁",
+          "巳"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 2158,
+      "pillars": [
+        [
+          "己",
+          "丑"
+        ],
+        [
+          "丁",
+          "丑"
+        ],
+        [
+          "己",
+          "亥"
+        ],
+        [
+          "乙",
+          "丑"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=LIGHT"
+    },
+    {
+      "line": 2161,
+      "pillars": [
+        [
+          "丙",
+          "戌"
+        ],
+        [
+          "己",
+          "亥"
+        ],
+        [
+          "甲",
+          "戌"
+        ],
+        [
+          "庚",
+          "午"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 2242,
+      "pillars": [
+        [
+          "壬",
+          "午"
+        ],
+        [
+          "甲",
+          "辰"
+        ],
+        [
+          "丁",
+          "巳"
+        ],
+        [
+          "己",
+          "酉"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 2251,
+      "pillars": [
+        [
+          "己",
+          "亥"
+        ],
+        [
+          "癸",
+          "酉"
+        ],
+        [
+          "壬",
+          "申"
+        ],
+        [
+          "戊",
+          "申"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 2270,
+      "pillars": [
+        [
+          "癸",
+          "巳"
+        ],
+        [
+          "甲",
+          "寅"
+        ],
+        [
+          "丙",
+          "戌"
+        ],
+        [
+          "庚",
+          "寅"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    },
+    {
+      "line": 2273,
+      "pillars": [
+        [
+          "壬",
+          "辰"
+        ],
+        [
+          "甲",
+          "辰"
+        ],
+        [
+          "辛",
+          "酉"
+        ],
+        [
+          "丁",
+          "酉"
+        ]
+      ],
+      "ren": [
+        "无根"
+      ],
+      "engine": "has_root=True,rw=HEAVY"
+    }
+  ],
+  "results": [
+    {
+      "line": 49,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 52,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 55,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 58,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 61,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 71,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 74,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 84,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 87,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 154,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 157,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 160,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 163,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 166,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 174,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 177,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 180,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 187,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 190,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 193,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 200,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 203,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 215,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 218,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 225,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 228,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 231,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 234,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 241,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 244,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 247,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 250,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 257,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 260,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 267,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 270,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 277,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 280,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 287,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 290,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 297,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 300,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 307,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 310,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 317,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 320,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 323,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 326,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 334,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 337,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 344,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 347,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 350,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 360,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 363,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 366,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 369,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 372,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 375,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 382,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 385,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 388,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 396,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 399,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 402,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 405,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 408,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 415,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 418,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 432,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 435,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 438,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 441,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 451,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 454,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 461,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 464,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 471,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 474,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 481,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 484,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 491,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 494,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 497,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 507,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 510,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 513,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 516,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 519,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 528,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 531,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 534,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 537,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 554,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 557,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 568,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 571,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 574,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 585,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 588,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 605,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 608,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 611,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 614,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 617,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 620,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 623,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 626,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 629,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 632,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 635,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 638,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 641,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 644,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 647,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 650,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 653,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 656,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 659,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 662,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 673,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 676,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 686,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 689,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 692,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 695,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 706,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 709,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 712,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 715,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 726,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 729,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 733,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 736,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 739,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 742,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 745,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 749,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 752,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 755,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 758,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 762,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 765,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 768,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 771,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 774,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 777,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 780,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 783,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 786,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 790,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 793,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 796,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 799,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 805,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 808,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 811,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 814,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 817,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 830,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 833,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 836,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 839,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 843,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 846,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 849,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 852,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 856,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 859,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 862,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 865,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 868,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 873,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 876,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 879,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 882,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 886,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 889,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 892,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 895,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 899,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 902,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 905,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 908,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 911,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 914,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 917,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 927,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 930,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 933,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 943,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 946,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 949,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 959,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 962,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 965,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 975,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 978,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 981,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 991,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 994,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 997,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1000,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1010,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1013,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1016,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1026,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1029,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1032,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1035,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1045,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1048,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1051,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1054,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1064,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1067,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1077,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1080,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1083,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1093,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1096,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1099,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1102,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1105,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1116,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1119,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1122,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1125,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1128,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1156,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1159,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1162,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1189,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1192,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1195,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1198,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1201,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1204,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1208,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1218,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1221,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1224,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1227,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1236,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1239,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1249,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1252,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1259,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1262,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1265,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1268,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1275,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1278,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1281,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1284,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1287,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1290,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1298,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1301,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1304,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1312,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1315,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1322,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1325,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1332,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1335,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1338,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1341,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1344,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1347,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1350,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1357,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1360,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1363,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1366,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1379,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1382,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1385,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1388,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1391,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1394,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1397,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1400,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1403,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1406,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1409,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1412,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1415,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1418,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1421,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1424,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1427,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1430,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1433,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1436,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1439,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1442,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1445,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1448,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1451,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1454,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1457,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1460,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1463,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1473,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1476,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1479,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1482,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1485,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1488,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1491,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1501,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1504,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1507,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1517,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1520,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1523,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1526,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1536,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1539,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1542,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1553,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1556,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1563,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1566,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1573,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1576,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1590,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1593,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1596,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1600,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1603,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1606,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1609,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1612,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1615,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1618,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1628,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1631,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1634,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1637,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1640,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1650,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1653,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1656,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1659,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1662,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1672,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1675,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1678,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1681,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1684,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1694,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1697,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1700,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1703,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1706,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1709,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1712,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1715,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1718,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1729,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1732,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1735,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1738,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1744,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1747,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1750,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1753,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1760,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 1763,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1766,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1769,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1775,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1778,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1781,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1784,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1787,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1799,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1802,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1805,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1808,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1811,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1814,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1824,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1827,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1830,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1833,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1836,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1839,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1842,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1852,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1855,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1865,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1868,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1871,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1874,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1884,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1887,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1897,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1900,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1910,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1913,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 1916,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1923,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1926,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1933,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1936,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1939,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1946,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1949,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1956,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1959,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1966,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1969,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1976,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1979,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1986,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1989,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1996,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 1999,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2002,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2009,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2012,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2019,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2022,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2025,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2032,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2035,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2038,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2041,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2044,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2048,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2051,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 2054,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 2057,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2067,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2070,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2073,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2080,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2083,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2086,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2093,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2096,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 2105,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2108,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2111,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2118,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2121,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2128,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2131,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2142,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2145,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2148,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2152,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2155,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2158,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2161,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2164,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2168,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2179,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2182,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2185,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2188,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2195,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2198,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2201,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2204,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2207,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2210,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2213,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 2216,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2219,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2222,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2225,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2229,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2236,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2239,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2242,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2245,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2248,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2251,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2258,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2261,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2264,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2267,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2270,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2273,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2283,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2285,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2287,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2289,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2295,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2298,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2301,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2304,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2311,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2314,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2317,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2320,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2323,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2330,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2333,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2336,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2339,
+      "root_class": "NONE",
+      "has_root": false
+    },
+    {
+      "line": 2342,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2345,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2360,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2363,
+      "root_class": "LIGHT",
+      "has_root": true
+    },
+    {
+      "line": 2366,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2369,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2376,
+      "root_class": "HEAVY",
+      "has_root": true
+    },
+    {
+      "line": 2379,
+      "root_class": "HEAVY",
+      "has_root": true
+    }
+  ]
+}

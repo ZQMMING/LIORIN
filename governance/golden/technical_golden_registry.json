@@ -1,0 +1,115 @@
+{
+  "registry": "TECHNICAL_GOLDEN_REGISTRY",
+  "version": "1.0.0",
+  "governance": "§54-56/§91：Technical Golden 用于验证 Schema/Contract/Boundary/Pipeline/Canonical Gate/Serialization；Agent 只 READ/RUN/REPORT；CREATE/APPROVE/FREEZE 仅 Human Architect；CI 拒绝未授权修改",
+  "golden_list": [
+    {
+      "golden_id": "TG-001",
+      "name": "Canonical Gate",
+      "purpose": "验证 G-001~G-024 可执行且关键失败 FAIL_CLOSED",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-002",
+      "name": "Frozen Input",
+      "purpose": "验证输入 Frozen Canonical Bazi Chart 不被下游修改",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-003",
+      "name": "Contract Validation",
+      "purpose": "验证 contract.json 与 approved Contract 一致，Input/Output 白名单生效",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-004",
+      "name": "Import Isolation",
+      "purpose": "验证 Static Import Boundary：L2A-E 无横向 import，SFTK 仅可读 L2A-E public",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-005",
+      "name": "Runtime Input Isolation",
+      "purpose": "验证 Runtime Input Boundary：context 跨引擎读取被拒绝",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-006",
+      "name": "Forbidden Symbol Scan",
+      "purpose": "验证 score/confidence/probability/percentage/vote/consensus/LLM/recalculate/sxtwl 等禁用符号被扫描",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-007",
+      "name": "Rule Trace",
+      "purpose": "验证 Derived Fact → Rule 可追溯，无 Rule 的 Fact 拒绝",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-008",
+      "name": "Source Trace",
+      "purpose": "验证 Rule → Source 可追溯，无 Source 的 Rule 拒绝",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-009",
+      "name": "Evidence Trace",
+      "purpose": "验证 Judgment → Evidence 可追溯，无 Evidence 的 Judgment 拒绝",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-010",
+      "name": "Provenance Trace",
+      "purpose": "验证 Provenance 记录完整（engine/versions/input_ref/rule/source/evidence/timestamp）",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-011",
+      "name": "Divergence Handling",
+      "purpose": "验证 CLASSICAL_DIVERGENCE 仅在 M-9 条件下触发，且不得投票/平均消解",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    },
+    {
+      "golden_id": "TG-012",
+      "name": "Fail Closed",
+      "purpose": "验证任何关键 Gate/Contract/Boundary/权限失败 → FAIL_CLOSED 且不向下游传播",
+      "status": "DEFINED",
+      "approved_by": "Human Architect",
+      "approval_status": "APPROVED",
+      "approved_at": "2026-09-15T14:47:09+08:00"
+    }
+  ]
+}

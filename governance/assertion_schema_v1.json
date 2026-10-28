@@ -1,0 +1,37 @@
+{
+  "schema_id": "assertion_schema_v1",
+  "version": "1.0",
+  "frozen": "2026-09-16",
+  "principle": "Evidence->Assertion只做语义结构化, 不造新事实; Assertion不是断语, 不出现吉凶人事结论",
+  "fields": {
+    "assertion_id": "续编 ASSERT-{BOOK}-{NNNN}; PZZQ从0001起",
+    "source_evidence": "数组, 引用已落地 evidence_id (如 PZZQ-005-007), 不翻译不改写",
+    "classic": "六经典名, 与evidence一致",
+    "namespace": "必须取自已有 namespace_registry (PZZQ.pattern / DTS.strength_relation / QTBJ.climate / SFTK.bingyao / DTS.tongguan / YHZP.ten_god 等)",
+    "subject": "SPO主语: 被断言对象(如 month_order/use_element)",
+    "predicate": "SPO谓语: 关系动词(如 controls/determines/blocks/activates)",
+    "object": "SPO宾语: 作用目标(如 pattern_selection/use_god/condition)",
+    "condition": {
+      "_comment": "触发条件对象; 只引已有state/事实, 不含未注册概念",
+      "positive": "成立条件",
+      "negative": "不成立/反例条件",
+      "exception": "例外(可空)"
+    },
+    "polarity": "positive/negative/neutral",
+    "assertion_type": "DEFINITION(定义型)/CONDITION(条件型)/RELATION(关系型)/EXCEPTION(例外)/NEGATION(禁止型); 解析标签, 非新规则",
+    "grade": "继承自 source_evidence 的 evidence_grade (A/B/C/D); D级禁入",
+    "consumer": "允许消费本assertion的Producer namespace数组",
+    "runtime_action": "SUPPORT_STATE/CHANGE_RELATION/BLOCK_RULE/CONTEXT_MARKER",
+    "human_text": "人类可读解释, 仅供阅读, 不进Producer",
+    "audit_status": "DRAFT/CANDIDATE/ADMITTED",
+    "source_chain": "state<-producer<-assertion<-evidence<-classic text 可追溯"
+  },
+  "forbidden": [
+    "出现'此人富贵/贫贱/吉凶'等人事断语",
+    "evidence_id 新造 E/A 前缀(沿用 PZZQ-005-007)",
+    "namespace 不取自注册表新起枚举",
+    "grade 另立 CLASSIC_DIRECT 等新枚举(继承A/B/C/D)",
+    "condition 引入未注册state"
+  ],
+  "golden_pilot": "PZZQ 7条重写后作人审Golden"
+}
