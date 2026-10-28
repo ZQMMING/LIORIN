@@ -224,11 +224,6 @@ __marimo__/
 .venv/
 
 # Testing
-
-# IDE
-.vscode/
-.idea/
-
 # Temporary scripts and outputs
 _temp_*.py
 _tmp_*.py
@@ -270,3 +265,9 @@ _archive_*/
 archive/
 vendor/
 tools/
+
+# Virtual environments
+
+
+
+# Node

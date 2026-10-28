@@ -66,13 +66,6 @@ Issues = "https://github.com/ZQMMING/LIORIN/issues"
 #   heluo-engine doctor        # 部署自检：确认包内资源齐备
 [project.scripts]
 heluo-engine = "heluo_engine.cli:main"
-
-[build-system]
-requires = ["setuptools>=68"]
-build-backend = "setuptools.build_meta"
-
-[tool.setuptools.packages.find]
-where = ["src"]
 # ⚠ 2026-10-24 结构性重构：顶层包名已由 `tongshu` 改为 **`heluo_engine`**。
 #   旧配置：装出顶层包 `tongshu` ⇒ 与主仓同名，两个 `tongshu` 不能同时 import
 #   （实测：site-packages 在前时，主仓 32 个顶层子包全部消失，且报错不提示
@@ -294,4 +287,3 @@ disable_error_code = ["attr-defined", "arg-type", "call-arg", "index",
                       "union-attr", "assignment", "return-value", "operator",
                       "var-annotated", "misc", "override", "dict-item",
                       "no-untyped-def", "no-untyped-call"]
-
