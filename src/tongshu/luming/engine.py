@@ -4534,8 +4534,13 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
         #   tone=吉 时吉力已净胜, 轻凶被盖, 只需浮灾提醒, 升需防会造成
         #   "tone=吉 + 应期=需防" 的逆向脱钩 (2026-10-24 分布扫描: 413例).
         _yq_level = "浮灾细累"
-    elif counts.get("吉", 0) > 0:
+    elif counts.get("吉", 0) > 0 and year_tone == "吉":
+        # 2026-10-31 审计修正 (相杂-应期脱钩): 应期="吉"仅限 tone=吉 (无凶计数
+        #   且福力在身). tone=吉凶相杂 时多为"基薄不任福" (L4276 薄基+无恶=相杂)
+        #   — 吉断在场但福力不足, 标"吉"应期会把平年说成大吉, 降"无"(平年).
         _yq_level = "吉"
+    elif counts.get("吉", 0) > 0:
+        _yq_level = "无"
     else:
         _yq_level = "无"
     # 大运基调闸门 (L4427 陈访: "小大灾福皆以大运为之主"):
