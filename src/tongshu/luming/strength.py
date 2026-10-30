@@ -531,7 +531,10 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None,
         if _year_ji > _year_xiong:
             out["mode"] = "浮灾"
             out["year_tone"] = year_tone   # 吉面主导之年, 尊重流年自身判定
-            out["detail"] = "屯蹇凶祸之运遇太岁刑冲本可发祸, 然流年吉面（生我/喜神/贵禄马）净胜, 细累浮灾不为重害 (五行精纪 L4273)"
+            _v60_in = any(v.get("rule_id") == "LM-V60"
+                          for v in (year_verdicts or []))
+            out["detail"] = ("屯蹇凶祸之运遇太岁刑冲本可发祸, 然流年吉面（生我/喜神/贵禄马）净胜, 细累浮灾不为重害 (五行精纪 L4273)"
+                             + ("；然死绝会集灾限相应（烛神经 L4113）另主'定死/大凶'之判" if _v60_in else ""))
         elif not _xy_bad:
             # 大运凶+太岁刑冲 但小运无死绝刑害 → 缺"小运不和冲击死绝"要件,
             # 降浮灾 (L943 小运补大运之不足; 细累浮灾不为重害)
