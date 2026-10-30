@@ -515,13 +515,19 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None,
                            if not (v.get("rule_id", "") or "").startswith("LM-F")])
         _year_ji = _pwr["ji"]
         _year_xiong = _pwr["xiong"]
-        # 小运要件 (三命通会 L4273"小运不和, 冲击死绝, 方主发祸"): 小运须落在
-        #   死绝衰息之乡 (死/绝/衰/病/沐浴, 与定死"会集死绝衰息"同口径);
+        # 小运要件 (五行精纪 L4273"小运不和, 死绝带杀者, 方可发祸"/三命通会 L943
+        #   "小运不和冲击死绝方主发祸"): 小运"不和"(与年/日支刑害冲=xy_xing_hai)
+        #   或 小运落死绝衰息之乡(死/绝/衰/病/沐浴, 与定死"会集死绝衰息"同口径);
+        #   两项并列, 满足其一即"小运不和死绝带杀"要件.
+        #   (2026-10-31 审计#68: 旧实现只查死绝宫位, 漏"小运不和(刑害冲)" —
+        #   大运天罗/元辰犯运+太岁刑冲+小运刑害(生旺宫)+恶力重 被误降浮灾, 全量
+        #   128 例. 吉运侧 ji_tai 分支本就认 xy_xing_hai 为"刑害之乡", 发祸侧对称补齐.)
         #   单纯自刑/刑害而在胎养安康 (如 1990 2030 小运午=胎, 午午自刑) 不构成
         #   "冲击死绝", 降浮灾. 守住: 喻1951 小运辰=衰/周1976 小运申=绝 → 发祸.
         _XY_FA = {"死", "绝", "衰", "病", "沐浴"}
         _xy_bad = bool(yctx.get("xy_dead_jue")
-                       or yctx.get("xiao_yun_growth", "") in _XY_FA)
+                       or yctx.get("xiao_yun_growth", "") in _XY_FA
+                       or yctx.get("xy_xing_hai"))
         if _year_ji > _year_xiong:
             out["mode"] = "浮灾"
             out["year_tone"] = year_tone   # 吉面主导之年, 尊重流年自身判定
