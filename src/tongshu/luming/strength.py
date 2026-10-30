@@ -440,8 +440,15 @@ _XIONG_HUI_RULES = {"LM-V124", "LM-V49-YC", "LM-V49-XS"}  # 天罗/元辰犯运/
 _XIONG_HUI_LIGHT = {"LM-V125"}  # 大小耗 (耗散, 非灾祸级屯蹇 — 1986乙丑运误判根源, 需净恶力重才发祸)
 
 
-def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dict:
+def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None,
+                      luck_verdict_net=None) -> dict:
     """L4273 条件互动: 凶祸之运+太岁刑冲 → 发祸; 吉泰之运+太岁刑害 → 浮灾.
+
+    2026-10-31 审计修正 (大运口径统一): ji_tai/发祸路径判定改用"净口径"
+      (剔除 LM-F 发用) — 发用是应事标注, 只进展示; 旧逻辑用 info["verdict"]
+      (含 LM-F) 判 ji_tai, 净偏凶之运被 LM-F 吉条抬成"吉泰之运"而误走浮灾分支,
+      与 engine 大运基调(_luck_verdict 净)脱节. 调用方须传 luck_verdict_net;
+      不传时回退 info["verdict"] (兼容外部直调).
 
     原文精确口径 (2026-10-20 第二版核实):
       - "大运至吉乡, 却遇逐年太岁小运到**刑害**之乡, 亦主细累浮灾, 但不为重害也"
@@ -470,14 +477,16 @@ def l4273_interaction(lm, year_tone: str, yctx: dict, year_verdicts=None) -> dic
                    if v.get("scope") == "运" and v.get("target") == yctx["luck_pillar"]
                    and v.get("tone") == "凶"}   # 仅取实判凶的规则 (V49-XS 凶煞在该运判吉时不构成屯蹇)
     xiong_hui = bool(_luck_rules & _XIONG_HUI_RULES)     # 屯蹇凶祸之运
-    ji_tai = info["verdict"] in ("偏吉", "吉")           # 吉泰之运
+    ji_tai = ((luck_verdict_net if luck_verdict_net is not None else info["verdict"])
+              in ("偏吉", "吉"))   # 吉泰之运 (净口径, 2026-10-31 统一)
     # 真实关系: 运上 冲/刑 + 命柱 relations 的 冲/刑/害/压
     rels = [r.get("tai_relation", "") for r in (yctx.get("tai_pillar_relations") or [])]
     tai_xing = bool(yctx.get("tai_xing_dayun") or "刑" in rels)      # 刑
     tai_chong = bool(yctx.get("tai_chong_dayun") or yctx.get("tai_chong_nian") or "冲" in rels)  # 冲
     tai_hai = bool("害" in rels)                                     # 害
     tai_ya = bool(yctx.get("tai_ya_dayun") or "压" in rels)          # 压 (伏吟)
-    out["luck_verdict"] = info["verdict"]
+    out["luck_verdict"] = (luck_verdict_net if luck_verdict_net is not None
+                           else info["verdict"])   # 净口径(判定)优先; 兼容直调回退展示
     # 发祸: 屯蹇凶祸运定义即"支干刑冲六害一切凶杀" (L4273), 互动侧"又见"= 太岁犯命
     #   (冲/刑/压/害任一 — 压=伏吟犯命, 喻1951 卯压月柱+辛亥天罗=处决)
     # 2026-10-20 系统性根治 (1968 戊申案 10年9凶 诊断):

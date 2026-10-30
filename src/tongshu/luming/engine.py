@@ -4266,37 +4266,8 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _agg["verdict"] = "吉凶相杂"
     year_tone = _agg["verdict"]
 
-    # L4273 条件互动 (原著唯一运年互动, 标注非合成; 浮灾含强度修正)
-    _i4273 = l4273_interaction(lm, year_tone, yctx, verdicts) if lm is not None else {
-        "mode": "无", "year_tone": year_tone, "detail": "", "luck_verdict": ""}
-    year_tone = _i4273["year_tone"]
-
-    # 2026-10-21 用户定案(核验二): tone 与应期联动, 不得脱钩 —
-    #   L4273 发祸 (凶祸之运+太岁刑冲, "方主发祸") → tone 定凶;
-    #   重凶集在场 (应期=需防/定死) → tone 不为纯吉, 上限"吉凶相杂";
-    #   V60 定死 → tone 必凶 (发祸级, 吉神不救)
-    _rids2 = [v.get("rule_id", "") for v in verdicts]
-    if _i4273.get("mode") == "发祸":
-        year_tone = "凶"
-    elif "LM-V60" in _rids2:
-        year_tone = "凶"
-    elif year_tone == "吉" and any(
-            rid in _HEAVY_XIONG or rid in ("LM-V90A", "LM-V90B")
-            for rid in _rids2):
-        # 重凶集 或 比劫夺财(破财) 在场 → 不升纯吉, 降相杂 (吉中有破财/灾)
-        year_tone = "吉凶相杂"
-
-    # 2026-10-21 用户定案(深挖原著): 大运定基调 — 流年 tone 的天花板/地板
-    #   三命通会《论大运》/五行精纪卷33(两书同文, 已核原文):
-    #   "若大运至吉乡, 却遇逐年太岁小运到刑害之乡, 亦主细累浮灾, 但不为重害也.
-    #    若大运行迍蹇凶祸之地, 逐年太岁又见刑冲, 小运不和冲击死绝, 方主发祸."
-    #   + 烛神经: "若大运曾历过本命长生处者, 谓之气盛之运, 虽岁运来冲克者,
-    #    为祸不重, 运气强故也. 未经长生而岁运刑冲克破, 则便为灾."
-    #   + 大运吉凶定义: "行至本命宫五行生旺, 支干和禄马贵人食神相生有益处,
-    #    为吉泰之运; 五行死绝, 支干刑冲六害一切凶杀者, 为屯蹇凶祸之运."
-    #   → 大运吉: tone 上限"吉凶相杂", 唯发祸级(V60定死/V70元辰)可突破;
-    #     大运凶: tone 不升纯吉 (重大救应=主断吉在场可保留);
-    #     大运平: 现有规则不动. (tone 降级, 应期独立以重凶信号定防)
+    # 大运基调"净口径" (2026-10-31 审计: 移到 L4273 互动之前, 供其判定 ji_tai 用净口径)
+    #   ===== (原 L4300-4349 块, 上移) =====
     _luck_verdict = ""
     if lm is not None and yctx.get("luck_pillar"):
         _lp = (lm.tone_scope or {}).get("pillars", [])
@@ -4347,6 +4318,42 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             _luck_verdict = (_linfo or {}).get("verdict", "")
     _luck_ji = _luck_verdict in ("吉", "偏吉")      # 吉泰之运(含吉面占先)
     _luck_xiong = _luck_verdict in ("凶", "偏凶")   # 屯蹇凶祸之运(含凶面占先)
+    # ===== 净口径块结束 =====
+
+    # L4273 条件互动 (原著唯一运年互动, 标注非合成; 浮灾含强度修正)
+    _i4273 = l4273_interaction(lm, year_tone, yctx, verdicts,
+                               luck_verdict_net=_luck_verdict) if lm is not None else {
+        "mode": "无", "year_tone": year_tone, "detail": "", "luck_verdict": ""}
+    year_tone = _i4273["year_tone"]
+
+    # 2026-10-21 用户定案(核验二): tone 与应期联动, 不得脱钩 —
+    #   L4273 发祸 (凶祸之运+太岁刑冲, "方主发祸") → tone 定凶;
+    #   重凶集在场 (应期=需防/定死) → tone 不为纯吉, 上限"吉凶相杂";
+    #   V60 定死 → tone 必凶 (发祸级, 吉神不救)
+    _rids2 = [v.get("rule_id", "") for v in verdicts]
+    if _i4273.get("mode") == "发祸":
+        year_tone = "凶"
+    elif "LM-V60" in _rids2:
+        year_tone = "凶"
+    elif year_tone == "吉" and any(
+            rid in _HEAVY_XIONG or rid in ("LM-V90A", "LM-V90B")
+            for rid in _rids2):
+        # 重凶集 或 比劫夺财(破财) 在场 → 不升纯吉, 降相杂 (吉中有破财/灾)
+        year_tone = "吉凶相杂"
+
+    # 2026-10-21 用户定案(深挖原著): 大运定基调 — 流年 tone 的天花板/地板
+    #   三命通会《论大运》/五行精纪卷33(两书同文, 已核原文):
+    #   "若大运至吉乡, 却遇逐年太岁小运到刑害之乡, 亦主细累浮灾, 但不为重害也.
+    #    若大运行迍蹇凶祸之地, 逐年太岁又见刑冲, 小运不和冲击死绝, 方主发祸."
+    #   + 烛神经: "若大运曾历过本命长生处者, 谓之气盛之运, 虽岁运来冲克者,
+    #    为祸不重, 运气强故也. 未经长生而岁运刑冲克破, 则便为灾."
+    #   + 大运吉凶定义: "行至本命宫五行生旺, 支干和禄马贵人食神相生有益处,
+    #    为吉泰之运; 五行死绝, 支干刑冲六害一切凶杀者, 为屯蹇凶祸之运."
+    #   → 大运吉: tone 上限"吉凶相杂", 唯发祸级(V60定死/V70元辰)可突破;
+    #     大运凶: tone 不升纯吉 (重大救应=主断吉在场可保留);
+    #     大运平: 现有规则不动. (tone 降级, 应期独立以重凶信号定防)
+    # (净口径 _luck_verdict/_luck_ji/_luck_xiong 计算已上移至 L4273 互动之前,
+    #  2026-10-31 审计: l4273 判定 ji_tai 须用净口径, 与 engine 大运基调一致)
     # 大运吉乡流年判凶, 仅当"流年含重凶/发祸级"时保持凶 (古法依据):
     #   ① V60定死/V70元辰 — 发祸级不救;
     #   ② L4273 发祸 (屯蹇凶运+太岁刑冲+小运死绝);
@@ -4426,7 +4433,8 @@ def query_year(chart: Any, year: int, lm: Any = None) -> Dict[str, Any]:
             lc = info["counts"]
             risk_n = len(info.get("risk") or [])
             combined = {"luck_pillar": yctx["luck_pillar"],
-                        "luck_verdict": info["verdict"],
+                        "luck_verdict": _luck_verdict,          # 净口径(判定, 2026-10-31统一)
+                        "luck_verdict_display": info["verdict"],  # 含发用标注(纯展示)
                         "luck_verdict_net": _luck_verdict,
                         "luck_counts": lc,
                         "luck_risk": list(info.get("risk") or []),
