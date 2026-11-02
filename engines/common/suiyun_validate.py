@@ -150,6 +150,9 @@ def _heavy_root_branches(some_facts):
 
 
 def verdict_step(pillars, base, step, extra, base_tier):
+    from engines.common.medicine_contract import unresolved_transit, unknown_verdict
+    if unresolved_transit(base.get('yongyao'), step.get('yongyao')):
+        return unknown_verdict()
     dm = pillars['day'][0]
     dm_wx = WUXING[dm]
     cur_g, cur_z = extra[-1]                  # 当前岁运柱(流年场景为流年)
@@ -538,6 +541,7 @@ def validate_suiyun(pillars, production_result, dayun_list, liunian_map=None):
     """production_result: production_entry 返回.
     dayun_list: ['甲子','乙丑',...].
     liunian_map: {大运下标: '流年干支'} 在指定大运下叠加流年."""
+    from engines.common.medicine_contract import unresolved_transit, unknown_verdict
     base_facts = production_result['engine_result']
     queries = production_result['l1_result']['queries']
     base = base_chain_from_result(production_result)
@@ -549,7 +553,8 @@ def validate_suiyun(pillars, production_result, dayun_list, liunian_map=None):
         extra = [[gz[0], gz[1]]]
         step = run_chain_on(pillars, base_facts, extra, queries)
         d = diff_chain(base, step)
-        v = verdict_step(pillars, base, step, extra, base_tier)
+        v = (unknown_verdict() if unresolved_transit(base['yongyao'], step['yongyao'])
+             else verdict_step(pillars, base, step, extra, base_tier))
         tier = element_power_tier(step['tp']['wuxing_power'], dm_wx)
         entry = {'index': i, 'dayun': gz, 'dm_tier': tier['name'],
                  'diff': d, 'verdict': v}
@@ -558,7 +563,8 @@ def validate_suiyun(pillars, production_result, dayun_list, liunian_map=None):
             lextra = extra + [[ln[0], ln[1]]]
             lstep = run_chain_on(pillars, base_facts, lextra, queries)
             ld = diff_chain(base, lstep)
-            lv = verdict_step(pillars, base, lstep, lextra, base_tier)
+            lv = (unknown_verdict() if unresolved_transit(base['yongyao'], lstep['yongyao'])
+                  else verdict_step(pillars, base, lstep, lextra, base_tier))
             entry['liunian'] = {'ganzhi': ln, 'diff': ld, 'verdict': lv}
         steps.append(entry)
 

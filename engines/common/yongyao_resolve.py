@@ -435,7 +435,7 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any], *,
         "basis": "第4层程级·A′: 硬情形(L420/L298)→病药(L240)→并行; 依据级 DTS_CITED"}
 
 
-def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
+def _resolve_yongyao_unchecked(facts: Dict[str, Any], debate: Dict[str, Any],
                     climate: Dict[str, Any] = None, *,
                     bing_list: List[Dict[str, Any]] = None) -> Dict[str, Any]:
     primary = debate.get('primary_bing') or {}
@@ -996,3 +996,13 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
         'routing': _rt,   # ★ 第4层 程级路由
     }
+
+
+def resolve_yongyao(facts, debate, climate=None, *, bing_list=None):
+    """Shared public resolver: all callers receive the same evidence contract."""
+    from engines.common.medicine_contract import enforce_medicine_contract
+    diseases = bing_list if bing_list is not None else (facts.get('p1_bing') or {}).get('bing_list', [])
+    if not diseases and (debate.get('primary_bing') or {}).get('bing_id') == 'YIN_DUO_MAI_ZI':
+        diseases = [debate['primary_bing']]
+    result = _resolve_yongyao_unchecked(facts, debate, climate, bing_list=bing_list)
+    return enforce_medicine_contract(result, facts, diseases)

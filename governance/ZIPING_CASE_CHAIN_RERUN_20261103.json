@@ -1,0 +1,828 @@
+{
+  "input": {
+    "pillars": "癸亥 壬戌 乙未 壬午",
+    "gender": "女",
+    "dayun_source": "外部传入，未计算起运",
+    "liunian": "甲子仅用于状态传播测试"
+  },
+  "runtime": "DEGRADED_DEBUG_ONLY",
+  "assessment": {
+    "medicine": "NOT_EVALUABLE",
+    "dependent_conclusions": "NOT_EVALUABLE",
+    "scope": [
+      "喜忌",
+      "岁运吉凶"
+    ],
+    "reason": "依赖未完成校核的病药规则，不作为已验证结论"
+  },
+  "medicine": {
+    "state": "NOT_EVALUABLE",
+    "assessment": {
+      "status": "NOT_EVALUABLE",
+      "issues": [
+        {
+          "code": "YIN_EXCESS_CONDITION_NOT_VALIDATED",
+          "rule_status": "ENGINE_DEFINED",
+          "reason": "透根数量阈值及无重根不足以独立证明印已构成损害",
+          "required": [
+            "印的有效生扶与实际损害判据",
+            "位置及制化影响"
+          ],
+          "source_boundary": {
+            "path": "registries/source/raw/PZZQ_子平真诠_沈孝瞻原文.md",
+            "lines": [
+              1127,
+              1130
+            ],
+            "authority": "LATER_COMMENTARY",
+            "excluded_as": "SHEN_ORIGINAL"
+          }
+        },
+        {
+          "code": "CLIMATE_SELECTION_UNRESOLVED",
+          "required": [
+            "CLIMATE_IMBALANCE",
+            "DAYMASTER_DISCHARGE_CAPACITY"
+          ]
+        }
+      ],
+      "blocked_outputs": [
+        "主用神",
+        "喜忌",
+        "岁运吉凶"
+      ]
+    },
+    "source_lanes": [
+      {
+        "source": "QTBJ",
+        "authority": "ORIGINAL_TEXT",
+        "path": "registries/source/raw/QTBJ_穷通宝鉴_原文.md",
+        "line": 2076,
+        "condition": {
+          "day_stem": "乙",
+          "month_branch": "戌"
+        },
+        "candidate_stems": [
+          "癸"
+        ],
+        "status": "SOURCE_RULE_MATCHED",
+        "scope": "癸水滋养候选_非全部水无条件为喜",
+        "efficacy": "NOT_EVALUABLE"
+      }
+    ],
+    "function_matrix": [
+      {
+        "stem": "甲",
+        "wuxing": "木",
+        "effects": [
+          "同类帮身",
+          "泄病五行_不等于承接有效"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "乙",
+        "wuxing": "木",
+        "effects": [
+          "同类帮身",
+          "泄病五行_不等于承接有效"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "丙",
+        "wuxing": "火",
+        "effects": [
+          "泄身"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "丁",
+        "wuxing": "火",
+        "effects": [
+          "泄身"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "戊",
+        "wuxing": "土",
+        "effects": [
+          "日主克财需承载",
+          "克病五行_不等于制病有效"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "己",
+        "wuxing": "土",
+        "effects": [
+          "日主克财需承载",
+          "克病五行_不等于制病有效"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "庚",
+        "wuxing": "金",
+        "effects": [
+          "克身",
+          "生病五行_不等于最终为忌"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "辛",
+        "wuxing": "金",
+        "effects": [
+          "克身",
+          "生病五行_不等于最终为忌"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "壬",
+        "wuxing": "水",
+        "effects": [
+          "生身",
+          "同病五行_不等于助病成立"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "癸",
+        "wuxing": "水",
+        "effects": [
+          "生身",
+          "同病五行_不等于助病成立"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      }
+    ],
+    "diagnostic_legacy": {
+      "primary_medicine": null,
+      "auxiliary_medicine": [
+        {
+          "wuxing": "木",
+          "gan": [
+            "甲",
+            "乙"
+          ],
+          "kind": "化",
+          "function": "泄病之气(水生? )",
+          "classic": "原典病药通例(化/帮)"
+        },
+        {
+          "wuxing": "火",
+          "gan": [
+            "丙",
+            "丁"
+          ],
+          "kind": "暖",
+          "function": "丙丁暖化寒湿",
+          "classic": "DTS QI_HOU.008 丙丁暖化/化杀生身为原典通例"
+        }
+      ],
+      "ji_shen": [
+        "水",
+        "金"
+      ],
+      "xiji_xian": {
+        "xi_wx": [
+          "土",
+          "木",
+          "火"
+        ],
+        "ji_wx": [
+          "金",
+          "水"
+        ],
+        "xian_wx": [],
+        "basis": "PZZQ L3208 十神喜忌查表(_geju_xiji_map)+破格忌+病根; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性, 不预派吉凶)"
+      },
+      "rejected_climate": [
+        {
+          "stem": "癸",
+          "wuxing": "水",
+          "reason": "与主病同五行(水), 用之添病"
+        },
+        {
+          "stem": "辛",
+          "wuxing": "金",
+          "reason": "金生水(病), 为病之源"
+        }
+      ],
+      "routing": {
+        "routes": [
+          {
+            "route": "源流",
+            "shen": "木",
+            "status": "ENGINE_DEFINED",
+            "basis": "DTS L245 源流(并列取用)",
+            "note": "源流归路"
+          },
+          {
+            "route": "通关",
+            "shen": null,
+            "status": "ENGINE_DEFINED",
+            "basis": "DTS L250 两神相战需通",
+            "note": "通关神"
+          },
+          {
+            "route": "帮身",
+            "shen": null,
+            "status": "ENGINE_DEFINED",
+            "basis": "DTS L215 体用 + L230/L235",
+            "note": "扶抑路, primary 已算"
+          }
+        ],
+        "winner_route": "",
+        "winner_shen": null,
+        "winner_basis": "未命中硬情形或重病优先路由, 各路并行(§2.8.2); primary 另见药方选择轨迹",
+        "route_count": 3,
+        "pending_count": 0,
+        "xiji_xian": {
+          "xi_wx": [
+            "水"
+          ],
+          "ji_wx": [
+            "土"
+          ],
+          "basis": "PZZQ L3208 十神喜忌查表(_geju_xiji_map) + DTS L404「自喜忌之外皆闲神」; 闲=局中余集(中性)"
+        },
+        "basis": "第4层程级·A′: 硬情形(L420/L298)→病药(L240)→并行; 依据级 DTS_CITED"
+      }
+    },
+    "primary": "",
+    "primary_detail": null,
+    "ge_fallback_source": null,
+    "ji_shen": [],
+    "all_edges": [
+      {
+        "wuxing": "土",
+        "gan": [
+          "戊",
+          "己"
+        ],
+        "kind": "制",
+        "function": "克病(水)",
+        "accepted": true,
+        "reject_reason": ""
+      },
+      {
+        "wuxing": "木",
+        "gan": [
+          "甲",
+          "乙"
+        ],
+        "kind": "化",
+        "function": "泄病之气(水生? )",
+        "accepted": true,
+        "reject_reason": ""
+      },
+      {
+        "wuxing": "木",
+        "gan": [
+          "甲",
+          "乙"
+        ],
+        "kind": "帮",
+        "function": "比劫帮身",
+        "accepted": true,
+        "reject_reason": ""
+      },
+      {
+        "wuxing": "水",
+        "gan": [
+          "壬",
+          "癸"
+        ],
+        "kind": "帮",
+        "function": "印生身",
+        "accepted": false,
+        "reject_reason": "帮病(同病或生病), 剔除"
+      },
+      {
+        "wuxing": "火",
+        "gan": [
+          "丙",
+          "丁"
+        ],
+        "kind": "暖",
+        "function": "丙丁暖化寒湿",
+        "accepted": true,
+        "reject_reason": ""
+      }
+    ],
+    "auxiliary_medicine": [],
+    "medicine_blocked": [],
+    "rejected_climate": [],
+    "rule": "制=克病; 化=泄病(克身则剔); 帮=比劫印帮身(是病则剔); 水泛加火暖",
+    "evidence_refs": [
+      "DTS PATHOLOGY_QI_HOU.008",
+      "DTS FAN_JU.001"
+    ],
+    "yuanliu_yongshen": {
+      "enabled": true,
+      "source": "水",
+      "hui_lu": "木",
+      "masses": {
+        "木": 3,
+        "火": 3,
+        "土": 3,
+        "金": 1,
+        "水": 4
+      },
+      "basis": "DTS L245「取最多最旺为源头, 流去之处是所喜之神」",
+      "note": "归路=源头直接所生; 多步流通(如火→土→金)精化归第4层程级"
+    },
+    "tiaohou_yongshen": {
+      "enabled": true,
+      "hou_stems": [
+        "癸",
+        "辛"
+      ],
+      "hou_wuxing": [
+        "水",
+        "金"
+      ],
+      "primary_hou": "水",
+      "climate_state": "中",
+      "basis": "DTS L295/L300 寒暖燥湿; 候神=QTBJ climate candidates(build_climate_candidates)",
+      "note": "候神按 QTBJ 原文次序; 精化/程级归第4层"
+    },
+    "xiji_xian": {
+      "status": "NOT_EVALUABLE",
+      "xi_wx": [],
+      "ji_wx": [],
+      "xian_wx": [],
+      "unknown_wx": [
+        "木",
+        "火",
+        "土",
+        "金",
+        "水"
+      ],
+      "basis": "规则未决，未知不归闲神；原计算仅保留诊断字段"
+    }
+  },
+  "decision": {
+    "primary": "",
+    "status": "NOT_EVALUABLE",
+    "unknown_wx": [
+      "木",
+      "火",
+      "土",
+      "金",
+      "水"
+    ],
+    "selection_trace": {
+      "scope": "MEDICINE_SELECTION_NOT_GLOBAL_UNIQUE_YONGSHEN",
+      "before_climate": {
+        "wuxing": "土",
+        "gan": [
+          "戊",
+          "己"
+        ],
+        "kind": "制",
+        "function": "克病(水)",
+        "accepted": true,
+        "reject_reason": ""
+      },
+      "climate_rank": {
+        "rank": "ABSTAIN",
+        "wx": "火",
+        "reason": [
+          "寒燥交互规则缺少可核验的偏枯及日主承载条件，禁止自动提升"
+        ],
+        "refs": [
+          "DTS L295/L300",
+          "PZZQ 身强印旺食伤泄秀"
+        ],
+        "missing_conditions": [
+          "CLIMATE_IMBALANCE",
+          "DAYMASTER_DISCHARGE_CAPACITY"
+        ]
+      },
+      "climate_applied": false,
+      "selected": null,
+      "provisional_candidate": {
+        "wuxing": "土",
+        "gan": [
+          "戊",
+          "己"
+        ],
+        "function": "克病(水)",
+        "kind": "制",
+        "classic": "五行相克为基础关系; DTS FAN_JU.001",
+        "blocked": null
+      },
+      "missing_conditions": [
+        "CLIMATE_IMBALANCE",
+        "DAYMASTER_DISCHARGE_CAPACITY"
+      ],
+      "routing_winner": {
+        "route": "",
+        "shen": null
+      },
+      "review_status": "NOT_EVALUABLE"
+    },
+    "winner_route": "",
+    "winner_shen": null,
+    "winner_basis": "规则成立及效用条件未决，未裁决",
+    "routes": [
+      {
+        "route": "源流",
+        "shen": "木",
+        "status": "ENGINE_DEFINED",
+        "basis": "DTS L245 源流(并列取用)",
+        "note": "源流归路"
+      },
+      {
+        "route": "通关",
+        "shen": null,
+        "status": "ENGINE_DEFINED",
+        "basis": "DTS L250 两神相战需通",
+        "note": "通关神"
+      },
+      {
+        "route": "帮身",
+        "shen": null,
+        "status": "ENGINE_DEFINED",
+        "basis": "DTS L215 体用 + L230/L235",
+        "note": "扶抑路, primary 已算"
+      }
+    ],
+    "route_count": 3,
+    "xi_wx": [],
+    "ji_wx": [],
+    "xian_wx": [],
+    "basis": "第4层程级·A′: 硬情形(L420/L298)→病药(L240)→并行; winner_shen=消解喜用神(DTS_CITED), primary=扶抑(现); 喜忌闲=DTS L404 + PZZQ L3208 十神查表"
+  },
+  "relatives": {
+    "state": "six_relative_state",
+    "namespace": "SIX_RELATIVE",
+    "gender": "女",
+    "items": [
+      {
+        "symbol": "夫星",
+        "ten_god_group": "官杀",
+        "present": true,
+        "visible_present": false,
+        "hidden_present": true,
+        "presence_scope": "VISIBLE_AND_HIDDEN_EXCLUDING_DAY_STEM",
+        "positions": [
+          {
+            "pos": "month",
+            "gan": "辛",
+            "branch": "戌",
+            "ten_god": "七杀",
+            "source": "HIDDEN_STEM",
+            "is_day": false
+          }
+        ],
+        "palaces": [
+          "父母宫"
+        ]
+      },
+      {
+        "symbol": "父",
+        "ten_god_group": "财",
+        "present": true,
+        "visible_present": false,
+        "hidden_present": true,
+        "presence_scope": "VISIBLE_AND_HIDDEN_EXCLUDING_DAY_STEM",
+        "positions": [
+          {
+            "pos": "month",
+            "gan": "戊",
+            "branch": "戌",
+            "ten_god": "正财",
+            "source": "HIDDEN_STEM",
+            "is_day": false
+          },
+          {
+            "pos": "day",
+            "gan": "己",
+            "branch": "未",
+            "ten_god": "偏财",
+            "source": "HIDDEN_STEM",
+            "is_day": true
+          },
+          {
+            "pos": "hour",
+            "gan": "己",
+            "branch": "午",
+            "ten_god": "偏财",
+            "source": "HIDDEN_STEM",
+            "is_day": false
+          }
+        ],
+        "palaces": [
+          "夫妻宫(日支)",
+          "子女宫",
+          "父母宫"
+        ]
+      },
+      {
+        "symbol": "母",
+        "ten_god_group": "印",
+        "present": true,
+        "visible_present": true,
+        "hidden_present": true,
+        "presence_scope": "VISIBLE_AND_HIDDEN_EXCLUDING_DAY_STEM",
+        "positions": [
+          {
+            "pos": "year",
+            "gan": "癸",
+            "ten_god": "偏印",
+            "source": "VISIBLE_STEM",
+            "is_day": false
+          },
+          {
+            "pos": "year",
+            "gan": "壬",
+            "branch": "亥",
+            "ten_god": "正印",
+            "source": "HIDDEN_STEM",
+            "is_day": false
+          },
+          {
+            "pos": "month",
+            "gan": "壬",
+            "ten_god": "正印",
+            "source": "VISIBLE_STEM",
+            "is_day": false
+          },
+          {
+            "pos": "hour",
+            "gan": "壬",
+            "ten_god": "正印",
+            "source": "VISIBLE_STEM",
+            "is_day": false
+          }
+        ],
+        "palaces": [
+          "子女宫",
+          "父母宫",
+          "祖辈/父母宫"
+        ]
+      },
+      {
+        "symbol": "子女",
+        "ten_god_group": "食伤",
+        "present": true,
+        "visible_present": false,
+        "hidden_present": true,
+        "presence_scope": "VISIBLE_AND_HIDDEN_EXCLUDING_DAY_STEM",
+        "positions": [
+          {
+            "pos": "month",
+            "gan": "丁",
+            "branch": "戌",
+            "ten_god": "食神",
+            "source": "HIDDEN_STEM",
+            "is_day": false
+          },
+          {
+            "pos": "day",
+            "gan": "丁",
+            "branch": "未",
+            "ten_god": "食神",
+            "source": "HIDDEN_STEM",
+            "is_day": true
+          },
+          {
+            "pos": "hour",
+            "gan": "丁",
+            "branch": "午",
+            "ten_god": "食神",
+            "source": "HIDDEN_STEM",
+            "is_day": false
+          }
+        ],
+        "palaces": [
+          "夫妻宫(日支)",
+          "子女宫",
+          "父母宫"
+        ]
+      },
+      {
+        "symbol": "兄弟",
+        "ten_god_group": "比劫",
+        "present": true,
+        "visible_present": false,
+        "hidden_present": true,
+        "presence_scope": "VISIBLE_AND_HIDDEN_EXCLUDING_DAY_STEM",
+        "positions": [
+          {
+            "pos": "year",
+            "gan": "甲",
+            "branch": "亥",
+            "ten_god": "劫财",
+            "source": "HIDDEN_STEM",
+            "is_day": false
+          },
+          {
+            "pos": "day",
+            "gan": "乙",
+            "branch": "未",
+            "ten_god": "比肩",
+            "source": "HIDDEN_STEM",
+            "is_day": true
+          }
+        ],
+        "palaces": [
+          "夫妻宫(日支)",
+          "祖辈/父母宫"
+        ]
+      }
+    ],
+    "evidence_refs": [
+      "SMTH L3565",
+      "YHZP-102-001",
+      "SFTK-007-002"
+    ],
+    "note": "六亲=星+宫+关系, 只记结构不判吉凶(PATCH-012「禁六亲=吉凶」)"
+  },
+  "transits": [
+    {
+      "dayun": "癸亥",
+      "verdict": {
+        "status": "NOT_EVALUABLE",
+        "level": null,
+        "shorthand": "未决",
+        "direction": null,
+        "reason": "原局或复合局病药未决，禁止输出确定岁运吉凶"
+      },
+      "liunian": {
+        "ganzhi": "甲子",
+        "diff": {
+          "primary_bing_changed": false,
+          "base_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "step_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "bing_added": [],
+          "bing_removed": [],
+          "primary_medicine_changed": false,
+          "base_medicine_wx": null,
+          "step_medicine_wx": null,
+          "base_medicine_blocked": null,
+          "step_medicine_blocked": null,
+          "block_released": false,
+          "new_block": false
+        },
+        "verdict": {
+          "status": "NOT_EVALUABLE",
+          "level": null,
+          "shorthand": "未决",
+          "direction": null,
+          "reason": "原局或复合局病药未决，禁止输出确定岁运吉凶"
+        }
+      }
+    },
+    {
+      "dayun": "甲子",
+      "verdict": {
+        "status": "NOT_EVALUABLE",
+        "level": null,
+        "shorthand": "未决",
+        "direction": null,
+        "reason": "原局或复合局病药未决，禁止输出确定岁运吉凶"
+      },
+      "liunian": null
+    },
+    {
+      "dayun": "乙丑",
+      "verdict": {
+        "status": "NOT_EVALUABLE",
+        "level": null,
+        "shorthand": "未决",
+        "direction": null,
+        "reason": "原局或复合局病药未决，禁止输出确定岁运吉凶"
+      },
+      "liunian": null
+    },
+    {
+      "dayun": "丙寅",
+      "verdict": {
+        "status": "NOT_EVALUABLE",
+        "level": null,
+        "shorthand": "未决",
+        "direction": null,
+        "reason": "原局或复合局病药未决，禁止输出确定岁运吉凶"
+      },
+      "liunian": null
+    },
+    {
+      "dayun": "丁卯",
+      "verdict": {
+        "status": "NOT_EVALUABLE",
+        "level": null,
+        "shorthand": "未决",
+        "direction": null,
+        "reason": "原局或复合局病药未决，禁止输出确定岁运吉凶"
+      },
+      "liunian": null
+    },
+    {
+      "dayun": "戊辰",
+      "verdict": {
+        "status": "NOT_EVALUABLE",
+        "level": null,
+        "shorthand": "未决",
+        "direction": null,
+        "reason": "原局或复合局病药未决，禁止输出确定岁运吉凶"
+      },
+      "liunian": null
+    },
+    {
+      "dayun": "己巳",
+      "verdict": {
+        "status": "NOT_EVALUABLE",
+        "level": null,
+        "shorthand": "未决",
+        "direction": null,
+        "reason": "原局或复合局病药未决，禁止输出确定岁运吉凶"
+      },
+      "liunian": null
+    },
+    {
+      "dayun": "庚午",
+      "verdict": {
+        "status": "NOT_EVALUABLE",
+        "level": null,
+        "shorthand": "未决",
+        "direction": null,
+        "reason": "原局或复合局病药未决，禁止输出确定岁运吉凶"
+      },
+      "liunian": null
+    }
+  ]
+}

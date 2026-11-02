@@ -787,7 +787,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
     return {
         "assessment_status": {
             "medicine": yy.get("state"),
-            "dependent_conclusions": "PROVISIONAL" if yy.get("state") == "NOT_EVALUABLE" else "NOT_INDEPENDENTLY_VALIDATED",
+            "dependent_conclusions": "NOT_EVALUABLE" if yy.get("state") == "NOT_EVALUABLE" else "NOT_INDEPENDENTLY_VALIDATED",
             "scope": ["喜忌", "岁运吉凶"],
             "reason": "依赖未完成校核的病药规则，不作为已验证结论",
         },
@@ -879,6 +879,10 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         #   本次只补投影, 不改 yongyao_resolve 任何计算; primary/ji_shen 原样保留。
         #   注: 三键在无主病盘为 None(上游本就返回空 / NO_BING), 属正常。
         "yongyao": {"state": yy.get("state"),   # ★ V7.168 投影: YONGYAO_RESOLVED/TIAOHOU_HARD_WINNER/GE_FALLBACK/NO_BING(_GE_XIJI), 下游可分「有药/调候硬情形/无病不裁」
+                    "assessment": yy.get("assessment"),
+                    "source_lanes": yy.get("source_lanes", []),
+                    "function_matrix": yy.get("function_matrix", []),
+                    "diagnostic_legacy": yy.get("diagnostic_legacy"),
                     "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),
                     "primary_detail": yy.get("primary_medicine"),
                     "ge_fallback_source": yy.get("ge_fallback_source"),
@@ -895,6 +899,8 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
                     },
         "yongshen_decision": {   # ★ 第4层 喜用神路由(程级·A′ 消解)
             "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),
+            "status": yy.get("state"),
+            "unknown_wx": (yy.get("xiji_xian") or {}).get("unknown_wx", []),
             "selection_trace": yy.get("selection_trace"),
             "winner_route": (yy.get("routing") or {}).get("winner_route", ""),
             "winner_shen": (yy.get("routing") or {}).get("winner_shen"),
