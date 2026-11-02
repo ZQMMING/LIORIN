@@ -30,13 +30,18 @@ def _combo(facts: Dict[str, Any], wx: str) -> int:
         return tou_ben
 
 
-def _dm_no_heavy(facts: Dict[str, Any]) -> bool:
-    """日主无重根: root_weight_class_facts 无任何 HEAVY 根(与验证器同源)."""
-    rw = facts.get("root_weight_class_facts") or {}
-    try:
-        return not any(v.get("class") == "HEAVY" for v in rw.values())
-    except Exception:
+def _dm_no_heavy(facts: Dict[str, Any]) -> Optional[bool]:
+    """Use the same root enum family as diagnosis; missing roots are unknown."""
+    rw = facts.get('root_weight_class_facts')
+    if not isinstance(rw, dict) or not rw:
+        return None
+    known = ('HEAVY', 'LIGHT', 'SPECIAL', 'NONE')
+    classes = [str(v.get('class') or '') if isinstance(v, dict) else '' for v in rw.values()]
+    if any(c.startswith('HEAVY') for c in classes):
         return False
+    if any(not c.startswith(known) for c in classes):
+        return None
+    return True
 
 
 # hook 注册表(同源计数)
@@ -243,13 +248,19 @@ def eval_slice_conditions(bid: str, bing_wx: str, facts: Dict[str, Any]) -> Dict
         g_hook_vals: Dict[str, bool] = {}
         for h in g_hooks:
             fn = HOOKS.get(h)
-            g_hook_vals[h] = bool(fn(facts, wx)) if fn else False
+            try:
+                value = fn(facts, wx) if fn else None
+                g_hook_vals[h] = None if value is None else bool(value)
+            except Exception:
+                g_hook_vals[h] = None
         hook_vals_all.update(g_hook_vals)
-        g_ok = all(g_hook_vals.values()) if g_hook_vals else True
-        if st == "MATCHED" and g_ok:
+        # AND semantics: a known false dominates unknown, otherwise propagate it.
+        g_false = any(v is False for v in g_hook_vals.values())
+        g_unknown = any(v is None for v in g_hook_vals.values())
+        if st == "MATCHED" and not g_false and not g_unknown:
             matched = True
             reasons.append("组[%s] MATCHED(hooks%s): %s" % (logic, g_hook_vals or '', why))
-        elif st == "ABSTAIN":
+        elif st != "NOT_MATCHED" and not g_false and (st == "ABSTAIN" or g_unknown):
             abstain_seen = True
             reasons.append("组[%s] ABSTAIN: %s" % (logic, why))
         else:

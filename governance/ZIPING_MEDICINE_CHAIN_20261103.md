@@ -53,3 +53,19 @@ L1127 有明确【徐注】标记，L1128-1130 的“身强印旺”“财无根
 共享边界保留药方、喜忌及岁运计算，统一标 PROVISIONAL，并显式列出跨来源冲突。
 当前土为病药候选，QTBJ 癸为独立候选；不宣称已解决两者冲突或验证命理准确性。
 本次相应调整自行新增的状态契约测试；未修改已有 Golden。14项合同测试通过。
+
+## 重根条件实际修复与100盘核查
+
+slice_conditions._dm_no_heavy 原只比较 class == HEAVY，与诊断层识别 HEAVY_* 不一致。
+现统一识别重根枚举族；根事实缺失或未注册类型返回未知，AND hook 按三态传播，不再 bool(None) 当明确否。
+新增3项独立真值表测试。100盘既有基线中该谓词前后变化0盘，不宣称因此改变本例喜忌或证明算法准确。
+100盘中已触发病机存在9条切片 NOT_MATCHED，详见 ZIPING_ROOT_CONDITION_AUDIT_20261103.json。
+这些属于校验与触发不一致信号，不直接等同9条病机判错；不得未经规则核查直接删除。
+
+权威排盘来源确认是 feature/bazi-engine（不是 feature/bazi），已核查固定提交
+4d124ee23b98244c2502d57f3677e7c1fb0daa61 的 bazi_engine、bazi_facts、bazi_ten_gods 与包初始化依赖。
+该包还依赖 bazi_adapter、time_resolver 和 time 子包，不能只拷贝一个 bazi_engine.py 当作依赖接通。
+本次未拼装 vendor 或改动冻结源；权威事实依赖预检仍阻塞。
+
+更新自行新增的案例测试以符合用户要求：保留 PROVISIONAL 计算，而非把药方清空。
+完整21项gate：14 PASS / 4 FAIL / 1 SKIP / 2 BLOCKED。未修改既有 Golden。

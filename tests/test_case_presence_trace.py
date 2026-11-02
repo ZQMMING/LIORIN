@@ -16,8 +16,8 @@ class CasePresenceTraceTests(unittest.TestCase):
         trace = r['yongshen_decision']['selection_trace']
         self.assertEqual(trace['selected'], r['yongyao']['primary_detail'])
         self.assertFalse(trace['climate_applied'])
-        self.assertIsNone(trace['selected'])
-        self.assertEqual(r['yongyao']['state'], 'NOT_EVALUABLE')
+        self.assertIsNotNone(trace['selected'])
+        self.assertEqual(r['yongyao']['state'], 'PROVISIONAL')
         self.assertTrue(trace['missing_conditions'])
         self.assertNotIn('无硬情形无病', r['yongshen_decision']['winner_basis'])
 
