@@ -1,0 +1,759 @@
+{
+  "source_commit": "4d124ee23b98244c2502d57f3677e7c1fb0daa61",
+  "guard": {
+    "checked": true,
+    "branches": 12
+  },
+  "bazi": "癸亥壬戌乙未壬午",
+  "hidden": {
+    "year": [
+      "壬",
+      "甲"
+    ],
+    "month": [
+      "戊",
+      "辛",
+      "丁"
+    ],
+    "day": [
+      "己",
+      "丁",
+      "乙"
+    ],
+    "hour": [
+      "丁",
+      "己"
+    ]
+  },
+  "diseases": [
+    {
+      "bing_id": "YIN_DUO_MAI_ZI",
+      "name": "印多埋子",
+      "desc": "印星成党且力量远大于日主, 印多反埋日主, 需财星疏印",
+      "classic": "DTS 反局章 君赖臣生(行445) 土重金埋/金旺则水浊 同族",
+      "evidence": [
+        "DTS 反局章 君赖臣生(行445) 土重金埋/金旺则水浊 同族"
+      ],
+      "matched_facts": [
+        "成党(他干3+本根1=4)",
+        "日主根轻"
+      ],
+      "slice_id": "STATE.WANG_SHUAI.FAN_JU.001",
+      "slice_support": [
+        "PATHOLOGY.ZHI_FA.010"
+      ],
+      "bing_domain": "JIEGOU",
+      "bing_wx": "水",
+      "severity": 2,
+      "severity_basis": [
+        "PZZQ「比肩成党」/ YHZP「枭神夺食」成党为病",
+        "病五行combo>=4 或透干>=2 或本根>=2"
+      ],
+      "slice_condition": {
+        "state": "MATCHED",
+        "slice_id": "STATE.WANG_SHUAI.FAN_JU.001",
+        "status": "触发(反局总纲)·印成党/当令埋日主(土重金埋同构)",
+        "reasons": [
+          "组[AND] NOT_MATCHED(hooks{'dm_no_heavy': True}): AND: month_qi_element='土' != '水'",
+          "组[AND] MATCHED(hooks{'combo_ge4': True, 'dm_no_heavy': True}): AND: 全部成立"
+        ],
+        "hooks": {
+          "dm_no_heavy": true,
+          "combo_ge4": true
+        },
+        "mode": "并行校验不改判定"
+      },
+      "yao_yuanju": "INVALID_POTENTIAL",
+      "yao_note": "病神水 combo=4 > 药 combo=2 -> 病重药轻, 不消 (PZZQ L3977 惜病重药轻)"
+    }
+  ],
+  "medicine": {
+    "state": "PROVISIONAL",
+    "assessment": {
+      "status": "PROVISIONAL",
+      "issues": [
+        {
+          "code": "YIN_EXCESS_CONDITION_NOT_VALIDATED",
+          "rule_status": "ENGINE_DEFINED",
+          "reason": "透根数量阈值及无重根不足以独立证明印已构成损害",
+          "required": [
+            "印的有效生扶与实际损害判据",
+            "位置及制化影响"
+          ],
+          "source_boundary": {
+            "path": "registries/source/raw/PZZQ_子平真诠_沈孝瞻原文.md",
+            "lines": [
+              1127,
+              1130
+            ],
+            "authority": "LATER_COMMENTARY",
+            "excluded_as": "SHEN_ORIGINAL"
+          }
+        },
+        {
+          "code": "CLIMATE_SELECTION_UNRESOLVED",
+          "required": [
+            "CLIMATE_IMBALANCE",
+            "DAYMASTER_DISCHARGE_CAPACITY"
+          ]
+        }
+      ],
+      "note": "算法候选，依据与临界条件尚未验收"
+    },
+    "source_lanes": [
+      {
+        "source": "QTBJ",
+        "authority": "ORIGINAL_TEXT",
+        "path": "registries/source/raw/QTBJ_穷通宝鉴_原文.md",
+        "line": 2076,
+        "condition": {
+          "day_stem": "乙",
+          "month_branch": "戌"
+        },
+        "candidate_stems": [
+          "癸"
+        ],
+        "status": "SOURCE_RULE_MATCHED",
+        "scope": "癸水滋养候选_非全部水无条件为喜",
+        "efficacy": "NOT_EVALUABLE"
+      }
+    ],
+    "source_conflicts": [
+      {
+        "stem": "癸",
+        "element": "水",
+        "source": "QTBJ",
+        "conflict": "经典候选与病药五行忌项并存，禁止等同为已消解",
+        "status": "UNRESOLVED"
+      }
+    ],
+    "function_matrix": [
+      {
+        "stem": "甲",
+        "wuxing": "木",
+        "effects": [
+          "同类帮身",
+          "泄病五行_不等于承接有效"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "乙",
+        "wuxing": "木",
+        "effects": [
+          "同类帮身",
+          "泄病五行_不等于承接有效"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "丙",
+        "wuxing": "火",
+        "effects": [
+          "泄身"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "丁",
+        "wuxing": "火",
+        "effects": [
+          "泄身"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "戊",
+        "wuxing": "土",
+        "effects": [
+          "日主克财需承载",
+          "克病五行_不等于制病有效"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "己",
+        "wuxing": "土",
+        "effects": [
+          "日主克财需承载",
+          "克病五行_不等于制病有效"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "庚",
+        "wuxing": "金",
+        "effects": [
+          "克身",
+          "生病五行_不等于最终为忌"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "辛",
+        "wuxing": "金",
+        "effects": [
+          "克身",
+          "生病五行_不等于最终为忌"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "壬",
+        "wuxing": "水",
+        "effects": [
+          "生身",
+          "同病五行_不等于助病成立"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      },
+      {
+        "stem": "癸",
+        "wuxing": "水",
+        "effects": [
+          "生身",
+          "同病五行_不等于助病成立"
+        ],
+        "efficacy": "NOT_EVALUABLE",
+        "required": [
+          "病机成立",
+          "作用路径有效",
+          "日主承载",
+          "合冲制化及气候兼容"
+        ]
+      }
+    ],
+    "diagnostic_legacy": null,
+    "primary": "土",
+    "primary_detail": {
+      "wuxing": "土",
+      "gan": [
+        "戊",
+        "己"
+      ],
+      "function": "克病(水)",
+      "kind": "制",
+      "classic": "五行相克为基础关系; DTS FAN_JU.001",
+      "blocked": null
+    },
+    "ge_fallback_source": null,
+    "ji_shen": [
+      "水",
+      "金"
+    ],
+    "all_edges": [
+      {
+        "wuxing": "土",
+        "gan": [
+          "戊",
+          "己"
+        ],
+        "kind": "制",
+        "function": "克病(水)",
+        "accepted": true,
+        "reject_reason": ""
+      },
+      {
+        "wuxing": "木",
+        "gan": [
+          "甲",
+          "乙"
+        ],
+        "kind": "化",
+        "function": "泄病之气(水生? )",
+        "accepted": true,
+        "reject_reason": ""
+      },
+      {
+        "wuxing": "木",
+        "gan": [
+          "甲",
+          "乙"
+        ],
+        "kind": "帮",
+        "function": "比劫帮身",
+        "accepted": true,
+        "reject_reason": ""
+      },
+      {
+        "wuxing": "水",
+        "gan": [
+          "壬",
+          "癸"
+        ],
+        "kind": "帮",
+        "function": "印生身",
+        "accepted": false,
+        "reject_reason": "帮病(同病或生病), 剔除"
+      },
+      {
+        "wuxing": "火",
+        "gan": [
+          "丙",
+          "丁"
+        ],
+        "kind": "暖",
+        "function": "丙丁暖化寒湿",
+        "accepted": true,
+        "reject_reason": ""
+      }
+    ],
+    "auxiliary_medicine": [
+      {
+        "wuxing": "木",
+        "gan": [
+          "甲",
+          "乙"
+        ],
+        "kind": "化",
+        "function": "泄病之气(水生? )",
+        "classic": "原典病药通例(化/帮)"
+      },
+      {
+        "wuxing": "火",
+        "gan": [
+          "丙",
+          "丁"
+        ],
+        "kind": "暖",
+        "function": "丙丁暖化寒湿",
+        "classic": "DTS QI_HOU.008 丙丁暖化/化杀生身为原典通例"
+      }
+    ],
+    "medicine_blocked": [],
+    "rejected_climate": [
+      {
+        "stem": "癸",
+        "wuxing": "水",
+        "reason": "与主病同五行(水), 用之添病"
+      },
+      {
+        "stem": "辛",
+        "wuxing": "金",
+        "reason": "金生水(病), 为病之源"
+      }
+    ],
+    "rule": "制=克病; 化=泄病(克身则剔); 帮=比劫印帮身(是病则剔); 水泛加火暖",
+    "evidence_refs": [
+      "DTS PATHOLOGY_QI_HOU.008",
+      "DTS FAN_JU.001"
+    ],
+    "yuanliu_yongshen": {
+      "enabled": true,
+      "source": "水",
+      "hui_lu": "木",
+      "masses": {
+        "木": 3,
+        "火": 3,
+        "土": 3,
+        "金": 1,
+        "水": 4
+      },
+      "basis": "DTS L245「取最多最旺为源头, 流去之处是所喜之神」",
+      "note": "归路=源头直接所生; 多步流通(如火→土→金)精化归第4层程级"
+    },
+    "tiaohou_yongshen": {
+      "enabled": true,
+      "hou_stems": [
+        "癸",
+        "辛"
+      ],
+      "hou_wuxing": [
+        "水",
+        "金"
+      ],
+      "primary_hou": "水",
+      "climate_state": "中",
+      "basis": "DTS L295/L300 寒暖燥湿; 候神=QTBJ climate candidates(build_climate_candidates)",
+      "note": "候神按 QTBJ 原文次序; 精化/程级归第4层"
+    },
+    "xiji_xian": {
+      "xi_wx": [
+        "土",
+        "木",
+        "火"
+      ],
+      "ji_wx": [
+        "金",
+        "水"
+      ],
+      "xian_wx": [],
+      "basis": "PZZQ L3208 十神喜忌查表(_geju_xiji_map)+破格忌+病根; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性, 不预派吉凶)",
+      "status": "PROVISIONAL"
+    }
+  },
+  "transits": {
+    "layer": "SUIYUN_VALIDATE",
+    "base_dm_tier": "平",
+    "dayun_steps": [
+      {
+        "index": 0,
+        "dayun": "癸亥",
+        "dm_tier": "平",
+        "diff": {
+          "primary_bing_changed": false,
+          "base_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "step_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "bing_added": [],
+          "bing_removed": [],
+          "primary_medicine_changed": false,
+          "base_medicine_wx": "土",
+          "step_medicine_wx": "土",
+          "base_medicine_blocked": null,
+          "step_medicine_blocked": null,
+          "block_released": false,
+          "new_block": false
+        },
+        "verdict": {
+          "level": -2,
+          "shorthand": "凶",
+          "good": [],
+          "bad": [
+            "助主病水(水)"
+          ],
+          "direction": "忌妄动, 防助主病水(水), 宜守待时",
+          "arbitration_note": "药受制(凶)",
+          "status": "PROVISIONAL"
+        }
+      },
+      {
+        "index": 1,
+        "dayun": "甲子",
+        "dm_tier": "平",
+        "diff": {
+          "primary_bing_changed": false,
+          "base_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "step_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "bing_added": [],
+          "bing_removed": [],
+          "primary_medicine_changed": false,
+          "base_medicine_wx": "土",
+          "step_medicine_wx": "土",
+          "base_medicine_blocked": null,
+          "step_medicine_blocked": null,
+          "block_released": false,
+          "new_block": false
+        },
+        "verdict": {
+          "level": -2,
+          "shorthand": "凶",
+          "good": [
+            "化泄主病水(木)",
+            "帮身(木)"
+          ],
+          "bad": [
+            "助主病水(水)"
+          ],
+          "direction": "忌妄动, 防助主病水(水), 宜守待时",
+          "arbitration_note": "药受制(凶)",
+          "status": "PROVISIONAL"
+        }
+      },
+      {
+        "index": 2,
+        "dayun": "乙丑",
+        "dm_tier": "平",
+        "diff": {
+          "primary_bing_changed": false,
+          "base_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "step_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "bing_added": [],
+          "bing_removed": [],
+          "primary_medicine_changed": false,
+          "base_medicine_wx": "土",
+          "step_medicine_wx": "土",
+          "base_medicine_blocked": null,
+          "step_medicine_blocked": null,
+          "block_released": false,
+          "new_block": false
+        },
+        "verdict": {
+          "level": -2,
+          "shorthand": "凶",
+          "good": [
+            "制主病水(土)",
+            "化泄主病水(木)",
+            "帮身(木)"
+          ],
+          "bad": [
+            "冲拔主药根(丑冲未·药土根拔)",
+            "三刑(丑戌未恃势之刑)"
+          ],
+          "direction": "忌妄动, 防冲拔主药根(丑冲未·药土根拔);三刑(丑戌未恃势之刑), 宜守待时",
+          "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶",
+          "status": "PROVISIONAL"
+        }
+      },
+      {
+        "index": 3,
+        "dayun": "丙寅",
+        "dm_tier": "平",
+        "diff": {
+          "primary_bing_changed": true,
+          "base_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "step_primary": [
+            null,
+            null
+          ],
+          "bing_added": [],
+          "bing_removed": [
+            "YIN_DUO_MAI_ZI"
+          ],
+          "primary_medicine_changed": true,
+          "base_medicine_wx": "土",
+          "step_medicine_wx": "水",
+          "base_medicine_blocked": null,
+          "step_medicine_blocked": null,
+          "block_released": false,
+          "new_block": false
+        },
+        "verdict": {
+          "level": 2,
+          "shorthand": "吉",
+          "good": [
+            "暖化寒湿(火)",
+            "帮身(木)",
+            "三合局成火候神(寅合戌/午·药成局, 吉)"
+          ],
+          "bad": [],
+          "direction": "病得制化/暖解, 可顺势进取",
+          "arbitration_note": "病得制化/暖解, 可顺势进取",
+          "status": "PROVISIONAL"
+        }
+      },
+      {
+        "index": 4,
+        "dayun": "丁卯",
+        "dm_tier": "强",
+        "diff": {
+          "primary_bing_changed": true,
+          "base_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "step_primary": [
+            null,
+            null
+          ],
+          "bing_added": [],
+          "bing_removed": [
+            "YIN_DUO_MAI_ZI"
+          ],
+          "primary_medicine_changed": true,
+          "base_medicine_wx": "土",
+          "step_medicine_wx": "水",
+          "base_medicine_blocked": null,
+          "step_medicine_blocked": null,
+          "block_released": false,
+          "new_block": false
+        },
+        "verdict": {
+          "level": -2,
+          "shorthand": "凶",
+          "good": [
+            "暖化寒湿(火)",
+            "帮身(木)"
+          ],
+          "bad": [
+            "合走主药根(卯合戌·药土根拔)"
+          ],
+          "direction": "忌妄动, 防合走主药根(卯合戌·药土根拔), 宜守待时",
+          "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶",
+          "status": "PROVISIONAL"
+        }
+      },
+      {
+        "index": 5,
+        "dayun": "戊辰",
+        "dm_tier": "平",
+        "diff": {
+          "primary_bing_changed": false,
+          "base_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "step_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "bing_added": [],
+          "bing_removed": [],
+          "primary_medicine_changed": false,
+          "base_medicine_wx": "土",
+          "step_medicine_wx": "土",
+          "base_medicine_blocked": null,
+          "step_medicine_blocked": null,
+          "block_released": false,
+          "new_block": false
+        },
+        "verdict": {
+          "level": -2,
+          "shorthand": "凶",
+          "good": [
+            "制主病水(土)"
+          ],
+          "bad": [
+            "冲拔主药根(辰冲戌·药土根拔)"
+          ],
+          "direction": "忌妄动, 防冲拔主药根(辰冲戌·药土根拔), 宜守待时",
+          "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶",
+          "status": "PROVISIONAL"
+        }
+      },
+      {
+        "index": 6,
+        "dayun": "己巳",
+        "dm_tier": "平",
+        "diff": {
+          "primary_bing_changed": false,
+          "base_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "step_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "bing_added": [],
+          "bing_removed": [],
+          "primary_medicine_changed": false,
+          "base_medicine_wx": "土",
+          "step_medicine_wx": "土",
+          "base_medicine_blocked": null,
+          "step_medicine_blocked": null,
+          "block_released": false,
+          "new_block": false
+        },
+        "verdict": {
+          "level": 2,
+          "shorthand": "吉",
+          "good": [
+            "制主病水(土)",
+            "暖化寒湿(火)"
+          ],
+          "bad": [],
+          "direction": "病得制化/暖解, 可顺势进取",
+          "arbitration_note": "病得制化/暖解, 可顺势进取",
+          "status": "PROVISIONAL"
+        }
+      },
+      {
+        "index": 7,
+        "dayun": "庚午",
+        "dm_tier": "平",
+        "diff": {
+          "primary_bing_changed": false,
+          "base_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "step_primary": [
+            "YIN_DUO_MAI_ZI",
+            "水"
+          ],
+          "bing_added": [],
+          "bing_removed": [],
+          "primary_medicine_changed": false,
+          "base_medicine_wx": "土",
+          "step_medicine_wx": "土",
+          "base_medicine_blocked": null,
+          "step_medicine_blocked": null,
+          "block_released": false,
+          "new_block": false
+        },
+        "verdict": {
+          "level": -2,
+          "shorthand": "凶",
+          "good": [
+            "暖化寒湿(火)",
+            "三合局成火候神(午合戌/午·药成局, 吉)"
+          ],
+          "bad": [
+            "助主病水(金)",
+            "克伐日主(金)",
+            "合走主药根(午合未·药土根拔)"
+          ],
+          "direction": "忌妄动, 防助主病水(金);克伐日主(金);合走主药根(午合未·药土根拔), 宜守待时",
+          "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶",
+          "status": "PROVISIONAL"
+        }
+      }
+    ],
+    "boundary_note": "岁运在原局结果上增量重评; 不改变原局月令/日干; 动态解合/争合为工程初判, 待真实命例回归校准"
+  }
+}

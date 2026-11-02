@@ -60,8 +60,8 @@ def _hou_candidates(climate: Dict[str, Any]) -> List[Dict[str, Any]]:
         wx = GAN_WX.get(stem, '')
         if not wx:
             continue
-        if wx not in seen:
-            seen.append(wx)
+        if stem not in seen:
+            seen.append(stem)
             out.append({'wx': wx, 'order': c.get('order', 99),
                        'stem': stem, 'ref': c.get('evidence_refs') or []})
     return out
@@ -176,6 +176,7 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
         #         L6282「宜先用甲疏, 後用壬洗」; DTS L445「土重金埋, 木克土则生金...君赖臣生也」;
         #         任氏「局中印绶虽旺, 柱中财星有气, 可用财破印也」。
         _cands_sorted = sorted(cands, key=lambda c: c.get('order', 99))
+        _unresolved_candidates = []
         for _top in _cands_sorted:
             wx = _top['wx']
             _in_chu = _stem_present(wx, pillars) >= 1 or _ben_wang(wx, pillars)
@@ -193,10 +194,11 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
             # Same-element stems and branch support are not proof that this exact
             # classical candidate stem is visible or effective. Keep unknown.
             if not _exact_stem_present(_top.get('stem', ''), pillars):
-                return {'rank': 'ABSTAIN', 'wx': wx,
+                _unresolved_candidates.append({'rank': 'ABSTAIN', 'wx': wx,
                         'reason': ['候干%s未透，不能把同五行天干或支气当作该干透出或有效' % _top.get('stem', '')],
                         'refs': list(_top.get('ref') or []),
-                        'missing_conditions': ['EXACT_STEM_EFFECTIVENESS']}
+                        'missing_conditions': ['EXACT_STEM_EFFECTIVENESS']})
+                continue
             _role = []
             if _is_shishang_x:
                 _role.append('食伤泄秀')
@@ -212,7 +214,9 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
             _reason.append('候干有气+职能中+未刑 -> 升 primary')
             return {'rank': 'PROMOTE', 'wx': wx, 'reason': _reason,
                     'refs': ['QTBJ %s 候干序%d=%s' % (mb, _top.get('order', 99), _top.get('stem', ''))] + list(_top.get('ref') or [])}
-        # 全候干皆不成立 -> 让位寒燥交互(维持原行为)
+        if _unresolved_candidates:
+            return _unresolved_candidates[0]
+        # 全候干皆不成立 -> 独立寒燥条件评估
         return _hanzao_shishang_rank(climate, dm_wx, mb, pillars)
     # 候干表未录入 -> 直接寒燥交互候
     return _hanzao_shishang_rank(climate, dm_wx, mb, pillars)

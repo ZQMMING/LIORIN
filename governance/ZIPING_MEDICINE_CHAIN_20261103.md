@@ -69,3 +69,16 @@ slice_conditions._dm_no_heavy 原只比较 class == HEAVY，与诊断层识别 H
 
 更新自行新增的案例测试以符合用户要求：保留 PROVISIONAL 计算，而非把药方清空。
 完整21项gate：14 PASS / 4 FAIL / 1 SKIP / 2 BLOCKED。未修改既有 Golden。
+
+## 权威事实源隔离接线验证完成
+
+已从固定提交取得完整src源码树及包元数据，各文件Git blob SHA与树一致，清单见BAZI_DEPENDENCY_PIN_20261103.json。
+隔离源码路径仅用于本次验证，没有拼装或覆盖本分支vendor。requirements-bazi-integration.txt提供固定提交的可复现安装声明。
+本次环境通过PYTHONPATH指向完整依赖源码；check_fact_source通过，_HIDDEN_GUARD.checked=True。
+本例权威源重跑见ZIPING_AUTHORITATIVE_RERUN_20261103.json：印多埋子仍触发；土为病药候选；喜土木火、忌金水仍为PROVISIONAL；QTBJ癸候选冲突保留。
+因此回退依赖不是本例病药分歧的唯一原因，不宣称接通依赖就已算准。
+
+回归发现并修复候干递降缺陷：按五行去重会丢失后序同五行候干；前序候干不确定也不能提前结束全部候选判断。
+现按天干保留候选，继续核对后序候干。新增丙未透、丁已透的独立顺序测试通过。
+既有矩阵293 PASS/0 FAIL，无修改预期。完整21项gate：17 PASS/2 FAIL/1 SKIP/1 BLOCKED。
+剩余：切片锚点缺失、旧回归输出差异、已封存古例SKIP、缺全量runner。不得改Golden掩盖差异。
