@@ -17,7 +17,7 @@ SUITES = [
     'test_dayun_xiji_yongshen_golden', 'test_daymaster_root_class_golden',
     'test_qtbj_climate_golden', 'test_ancient_case_golden',
     'test_daymaster_root_relations_golden', 'test_daymaster_wang_xiang_golden',
-    'test_runtime_contract_repair', 'test_final_gate_contract', 'test_case_presence_trace', 'test_medicine_evidence_contract',
+    'test_runtime_contract_repair', 'test_final_gate_contract', 'test_case_presence_trace', 'test_medicine_evidence_contract', 'test_climate_candidate_identity',
 ]
 
 

@@ -79,6 +79,12 @@ def _stem_present(wx: str, pillars: Optional[Dict[str, Any]]) -> int:
     return n
 
 
+def _exact_stem_present(stem: str, pillars: Optional[Dict[str, Any]]) -> bool:
+    """Only count the nominated stem as visible; the day stem is the subject."""
+    return any((pillars.get(pos) or ['', ''])[0] == stem
+               for pos in ('year', 'month', 'hour')) if pillars else False
+
+
 def _ben_wang(wx: str, pillars: Optional[Dict[str, Any]]) -> bool:
     """坐旺: 四支(年/月/日/时)本气含候神且坐该候神旺地."""
     if not pillars:
@@ -184,6 +190,13 @@ def _tiaohou_primary_rank(climate: Dict[str, Any],
                 continue
             if not (_is_shishang_x or _is_zhi_x or _is_lianjin_x or _is_shubing_x):
                 continue
+            # Same-element stems and branch support are not proof that this exact
+            # classical candidate stem is visible or effective. Keep unknown.
+            if not _exact_stem_present(_top.get('stem', ''), pillars):
+                return {'rank': 'ABSTAIN', 'wx': wx,
+                        'reason': ['候干%s未透，不能把同五行天干或支气当作该干透出或有效' % _top.get('stem', '')],
+                        'refs': list(_top.get('ref') or []),
+                        'missing_conditions': ['EXACT_STEM_EFFECTIVENESS']}
             _role = []
             if _is_shishang_x:
                 _role.append('食伤泄秀')
