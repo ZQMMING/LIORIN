@@ -950,6 +950,36 @@
           "arbitration_note": "药受制(凶)",
           "scope": "PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS",
           "status": "PROVISIONAL"
+        },
+        "query_refresh": {
+          "scope": "FIVE_CONSUMED_STRUCTURE_QUERIES_RECOMPUTED",
+          "queries": [
+            {
+              "query_id": "ZP-160-QUERY-CAIDUO-SHENRUAN",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-SHAZHONG-SHENQING",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-XIEQI-TAIZHONG",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-YIN-PARTY",
+              "natal_state": "SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-BIJIE-PARTY",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            }
+          ]
         }
       },
       {
@@ -990,6 +1020,36 @@
           "arbitration_note": "药受制(凶)",
           "scope": "PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS",
           "status": "PROVISIONAL"
+        },
+        "query_refresh": {
+          "scope": "FIVE_CONSUMED_STRUCTURE_QUERIES_RECOMPUTED",
+          "queries": [
+            {
+              "query_id": "ZP-160-QUERY-CAIDUO-SHENRUAN",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-SHAZHONG-SHENQING",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-XIEQI-TAIZHONG",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-YIN-PARTY",
+              "natal_state": "SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-BIJIE-PARTY",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "SUPPORTED"
+            }
+          ]
         }
       },
       {
@@ -1032,6 +1092,36 @@
           "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶",
           "scope": "PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS",
           "status": "PROVISIONAL"
+        },
+        "query_refresh": {
+          "scope": "FIVE_CONSUMED_STRUCTURE_QUERIES_RECOMPUTED",
+          "queries": [
+            {
+              "query_id": "ZP-160-QUERY-CAIDUO-SHENRUAN",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-SHAZHONG-SHENQING",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-XIEQI-TAIZHONG",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-YIN-PARTY",
+              "natal_state": "SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-BIJIE-PARTY",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "SUPPORTED"
+            }
+          ]
         }
       },
       {
@@ -1073,6 +1163,36 @@
           "arbitration_note": "病得制化/暖解, 可顺势进取",
           "scope": "PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS",
           "status": "PROVISIONAL"
+        },
+        "query_refresh": {
+          "scope": "FIVE_CONSUMED_STRUCTURE_QUERIES_RECOMPUTED",
+          "queries": [
+            {
+              "query_id": "ZP-160-QUERY-CAIDUO-SHENRUAN",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-SHAZHONG-SHENQING",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-XIEQI-TAIZHONG",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-YIN-PARTY",
+              "natal_state": "SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-BIJIE-PARTY",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            }
+          ]
         }
       },
       {
@@ -1115,6 +1235,36 @@
           "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶",
           "scope": "PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS",
           "status": "PROVISIONAL"
+        },
+        "query_refresh": {
+          "scope": "FIVE_CONSUMED_STRUCTURE_QUERIES_RECOMPUTED",
+          "queries": [
+            {
+              "query_id": "ZP-160-QUERY-CAIDUO-SHENRUAN",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-SHAZHONG-SHENQING",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-XIEQI-TAIZHONG",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-YIN-PARTY",
+              "natal_state": "SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-BIJIE-PARTY",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            }
+          ]
         }
       },
       {
@@ -1154,6 +1304,36 @@
           "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶",
           "scope": "PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS",
           "status": "PROVISIONAL"
+        },
+        "query_refresh": {
+          "scope": "FIVE_CONSUMED_STRUCTURE_QUERIES_RECOMPUTED",
+          "queries": [
+            {
+              "query_id": "ZP-160-QUERY-CAIDUO-SHENRUAN",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-SHAZHONG-SHENQING",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-XIEQI-TAIZHONG",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-YIN-PARTY",
+              "natal_state": "SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-BIJIE-PARTY",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            }
+          ]
         }
       },
       {
@@ -1192,6 +1372,36 @@
           "arbitration_note": "病得制化/暖解, 可顺势进取",
           "scope": "PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS",
           "status": "PROVISIONAL"
+        },
+        "query_refresh": {
+          "scope": "FIVE_CONSUMED_STRUCTURE_QUERIES_RECOMPUTED",
+          "queries": [
+            {
+              "query_id": "ZP-160-QUERY-CAIDUO-SHENRUAN",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-SHAZHONG-SHENQING",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-XIEQI-TAIZHONG",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-YIN-PARTY",
+              "natal_state": "SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-BIJIE-PARTY",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            }
+          ]
         }
       },
       {
@@ -1234,6 +1444,36 @@
           "arbitration_note": "恶神(刑/冲药根/破格)不抵消制化之功, 判主凶",
           "scope": "PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS",
           "status": "PROVISIONAL"
+        },
+        "query_refresh": {
+          "scope": "FIVE_CONSUMED_STRUCTURE_QUERIES_RECOMPUTED",
+          "queries": [
+            {
+              "query_id": "ZP-160-QUERY-CAIDUO-SHENRUAN",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-SHAZHONG-SHENQING",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-XIEQI-TAIZHONG",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-YIN-PARTY",
+              "natal_state": "SUPPORTED",
+              "compound_state": "SUPPORTED"
+            },
+            {
+              "query_id": "ZP-160-QUERY-BIJIE-PARTY",
+              "natal_state": "NOT_SUPPORTED",
+              "compound_state": "NOT_SUPPORTED"
+            }
+          ]
         }
       }
     ],

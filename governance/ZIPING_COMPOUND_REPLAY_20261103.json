@@ -1,0 +1,47 @@
+{
+  "baseline_commit": "1754b20",
+  "case_count": 100,
+  "operations_per_case": [
+    "甲子",
+    "乙丑",
+    "丙寅",
+    "丁卯",
+    "戊辰",
+    "己巳",
+    "庚午",
+    "辛未"
+  ],
+  "scope": "synthetic transit stress replay, not actual timed fortunes or accuracy proof",
+  "query_state_changes": 306,
+  "chain_changes": [
+    {
+      "bazi": "辛酉 庚子 丙辰 己丑",
+      "injected_transit": "丙寅",
+      "before": {
+        "disease_ids": [
+          "CAI_DUO_SHEN_RUO"
+        ],
+        "medicine": "火"
+      },
+      "after": {
+        "disease_ids": [],
+        "medicine": "水"
+      }
+    },
+    {
+      "bazi": "丙午 庚寅 壬午 壬寅",
+      "injected_transit": "甲子",
+      "before": {
+        "disease_ids": [
+          "CAI_DUO_SHEN_RUO"
+        ],
+        "medicine": "水"
+      },
+      "after": {
+        "disease_ids": [],
+        "medicine": "火"
+      }
+    }
+  ],
+  "errors": []
+}
