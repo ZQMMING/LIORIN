@@ -784,7 +784,12 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
     except Exception as _e:
         _dayun_meta["note"] = "排运方向派生异常: %s" % _e
 
+    _usage_tracks = _mt_of(f, p, by, cli, special, f)
+    from engines.common.usage_resolution import summarize_usage
+    _usage_resolution = summarize_usage(_usage_tracks, yy)
+
     return {
+        "usage_resolution": _usage_resolution,
         "assessment_status": {
             "medicine": yy.get("state"),
             "dependent_conclusions": "PROVISIONAL" if yy.get("state") == "PROVISIONAL" else ("NOT_EVALUABLE" if yy.get("state") == "NOT_EVALUABLE" else "NOT_INDEPENDENTLY_VALIDATED"),
@@ -846,7 +851,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         #   docs/PATCH-012「禁六亲=吉凶」). 未传 gender 则不输出(性别未知不臆断).
         "liu_qin": _liu_qin_of(f, p, gender),
         # ★ V7.116 用神四轨并行层(结构事实; 各书视角并列, 冲突保留多解不裁决; 不覆盖主链程级路由)
-        "yongshen_multi_track": _mt_of(f, p, by, cli, special, f),
+        "yongshen_multi_track": _usage_tracks,
         # ★ V7.117 旺衰多轨(渊海/真诠/滴天髓三轨并列, 冲突保留不裁决; AGENTS.md v3 第三节判定元为
         #   得令/根气/党众等原子项, 非"身强身弱"单极结论; 第二节「三命通会…自己声明不作吉凶结论」)
         "wangshuai_multi_track": _wmt_of(f, p, rc),

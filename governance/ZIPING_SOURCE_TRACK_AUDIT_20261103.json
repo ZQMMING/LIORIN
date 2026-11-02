@@ -1,0 +1,838 @@
+{
+  "baseline_commit": "cc5425e",
+  "cases": 100,
+  "errors": [],
+  "monthly_track_applicability_changes": [
+    {
+      "bazi": "癸亥 乙卯 甲寅 乙亥",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "庚寅 丙戌 戊子 癸丑",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "水",
+          "癸"
+        ],
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "戊午 甲寅 乙卯 己卯",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "癸未 辛酉 乙酉 丁亥",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "癸"
+        ],
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "丁巳 戊申 癸丑 乙卯",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丁"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "癸卯 甲寅 丁巳 己酉",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "金",
+          "庚"
+        ],
+        [
+          "水",
+          "壬"
+        ]
+      ]
+    },
+    {
+      "bazi": "己巳 壬申 己酉 甲戌",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "乙未 甲申 癸酉 甲寅",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丁"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "戊戌 庚申 壬午 癸卯",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "土",
+          "戊"
+        ],
+        [
+          "火",
+          "丁"
+        ]
+      ]
+    },
+    {
+      "bazi": "丁酉 庚戌 戊寅 乙卯",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "水",
+          "癸"
+        ],
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "壬子 癸卯 庚戌 庚辰",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丁"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "戊戌 壬戌 辛酉 甲午",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "乙亥 乙酉 己卯 庚午",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "辛卯 庚寅 壬申 戊申",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "金",
+          "庚"
+        ],
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "丙辰 辛卯 甲申 庚午",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "甲子 丙寅 己巳 辛未",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "辛酉 丙申 癸酉 辛酉",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丁"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "丙子 丁酉 壬子 己酉",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "戊寅 乙卯 甲辰 辛未",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "己亥 丁卯 庚寅 丙子",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丁"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "丙子 丙申 丙子 丙申",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ]
+      ]
+    },
+    {
+      "bazi": "戊辰 壬戌 丁丑 丁未",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "己亥 甲戌 戊寅 丙辰",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "水",
+          "癸"
+        ],
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "乙亥 乙酉 己巳 乙丑",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "庚申 乙酉 癸未 乙卯",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "金",
+          "辛"
+        ],
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "壬申 甲辰 壬申 戊申",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "丁酉 癸卯 丙辰 丙申",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "乙亥 甲申 己巳 乙亥",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "甲戌 戊辰 己酉 丁卯",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "庚申 庚辰 戊辰 戊午",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "壬辰 甲辰 庚午 丙戌",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "火",
+          "丁"
+        ]
+      ]
+    },
+    {
+      "bazi": "癸亥 甲寅 丙戌 甲午",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "庚子 戊寅 戊子 丁巳",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "己丑 丙寅 甲子 戊辰",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "丙辰 庚寅 丙午 壬辰",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "丙午 庚寅 壬午 壬寅",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "金",
+          "庚"
+        ],
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "乙酉 庚辰 壬寅 己酉",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "戊申 庚申 庚申 丙子",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丁"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "丁巳 己酉 癸卯 丁巳",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "金",
+          "辛"
+        ],
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "辛巳 庚寅 庚戌 丙戌",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "庚申 戊寅 己酉 丁卯",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    },
+    {
+      "bazi": "己巳 甲戌 己丑 壬申",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "辛巳 庚寅 丙辰 己丑",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "癸亥 乙卯 壬申 乙巳",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "土",
+          "戊"
+        ],
+        [
+          "金",
+          "辛"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "乙酉 庚辰 甲午 戊辰",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "金",
+          "庚"
+        ],
+        [
+          "水",
+          "壬"
+        ]
+      ]
+    },
+    {
+      "bazi": "壬子 癸卯 丙子 己亥",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "壬辰 己酉 辛丑 癸巳",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "癸丑 甲寅 乙卯 己卯",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "壬子 壬寅 庚申 庚辰",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "丙戌 壬辰 丙申 丙申",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "乙卯 戊寅 丙戌 乙未",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "癸酉 乙卯 壬戌 乙巳",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "土",
+          "戊"
+        ],
+        [
+          "金",
+          "辛"
+        ],
+        [
+          "金",
+          "庚"
+        ]
+      ]
+    },
+    {
+      "bazi": "辛酉 庚寅 庚子 己卯",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "戊戌 辛酉 戊戌 丙辰",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "己未 丁卯 辛巳 己亥",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "水",
+          "壬"
+        ],
+        [
+          "木",
+          "甲"
+        ]
+      ]
+    },
+    {
+      "bazi": "壬辰 戊申 己未 己巳",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "戊寅 庚申 壬辰 壬寅",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "土",
+          "戊"
+        ],
+        [
+          "火",
+          "丁"
+        ]
+      ]
+    },
+    {
+      "bazi": "壬戌 己酉 戊午 丁巳",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "火",
+          "丙"
+        ],
+        [
+          "水",
+          "癸"
+        ]
+      ]
+    },
+    {
+      "bazi": "庚午 己卯 己未 庚午",
+      "before_activated": false,
+      "after_candidates": [
+        [
+          "木",
+          "甲"
+        ],
+        [
+          "水",
+          "癸"
+        ],
+        [
+          "火",
+          "丙"
+        ]
+      ]
+    }
+  ],
+  "scope": "工程接线回归，不是命理准确率"
+}
