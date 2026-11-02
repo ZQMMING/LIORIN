@@ -247,7 +247,7 @@ def production_entry(chart: Any, climate_table: Optional[Dict] = None) -> Dict[s
         _deb = resolve_primary_bing(facts, _by['bing_list'])
         _zg = resolve_zhuangui(facts, _deb)
         _cli = build_climate_candidates(facts, external_table=climate_table)
-        _yy = resolve_yongyao(facts, _zg, _cli)
+        _yy = resolve_yongyao(facts, _zg, _cli, bing_list=_by['bing_list'])
         zhenglun = {'bingyao': _by, 'debate': _deb, 'zhuangui': _zg,
                     'climate_static': _cli, 'yongyao': _yy}
     except Exception as _e:

@@ -283,7 +283,8 @@ def _tiaohou_yongshen(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
             "note": "候神按 QTBJ 原文次序; 精化/程级归第4层"}
 
 
-def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[str, Any]:
+def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any], *,
+                     bing_list: List[Dict[str, Any]] = None) -> Dict[str, Any]:
     """★ 第4层程级(喜用神路由)·A′ 消解 (User 裁定 2026-10-16):
     准神 DTS 有两处明文程级 —— ①硬情形优先(L295-298「寒之甚/过于燥皆偏枯, 必无好处」)
     ②病药优先(L240「有病方为贵, 无伤不是奇」)。消解序:
@@ -297,12 +298,14 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
     yl = _yuanliu_yongshen(facts)
     th = _tiaohou_yongshen(facts, climate)
     # P1 病药 severity(病五行->0-4序数), 供病药优先判定
+    # Explicit current P1 output wins, including an explicitly empty list.
+    # Keep the fact snapshot fallback for existing standalone callers.
     p1 = facts.get("p1_bing") or {}
-    bings = p1.get("bing_list") or []
+    bings = bing_list if bing_list is not None else (p1.get("bing_list") or [])
     def _sev(bx):
         return max((int((x.get("severity") or 0)) for x in bings if (x.get("bing_wx") == bx)), default=0)
     # 克/泄 病五行之神(药): 克病(泄病气)优先, 再泄病
-    _ke_wx = {"木": "金", "火": "水", "土": "水", "金": "火", "水": "土"}
+    _ke_wx = KE_BACK
     _sheng_wx = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
 
     # ★ V7.46 喜忌闲三桶(DTS L404「自喜忌之外皆闲神」+ PZZQ L3208 十神相对格):
@@ -433,11 +436,12 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
 
 
 def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
-                    climate: Dict[str, Any] = None) -> Dict[str, Any]:
+                    climate: Dict[str, Any] = None, *,
+                    bing_list: List[Dict[str, Any]] = None) -> Dict[str, Any]:
     primary = debate.get('primary_bing') or {}
     _yl = _yuanliu_yongshen(facts)   # ★ 第2层 源流(不动 primary)
     _th = _tiaohou_yongshen(facts, climate)   # ★ 第3层 调候(不动 primary)
-    _rt = _yongshen_routing(facts, climate)   # ★ 第4层 程级路由(该盘适用哪路)
+    _rt = _yongshen_routing(facts, climate, bing_list=bing_list)
     bw = primary.get('bing_wx', '')
     bid = primary.get('bing_id', '')
     _sec_wx = {s2.get('bing_wx') for s2 in (debate.get('secondary_bing') or []) if s2.get('bing_wx')}

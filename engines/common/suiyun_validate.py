@@ -97,7 +97,7 @@ def run_chain_on(pillars, base_facts, extra, queries):
     deb = resolve_primary_bing(cf, by['bing_list'])
     zg = resolve_zhuangui(cf, deb)
     cli = build_climate_candidates(cf)
-    yy = resolve_yongyao(cf, zg, cli)
+    yy = resolve_yongyao(cf, zg, cli, bing_list=by['bing_list'])
     return {'bingyao': by, 'debate': deb, 'zhuangui': zg,
             'climate': cli, 'yongyao': yy, 'facts': cf, 'tp': tp, 'th': th}
 

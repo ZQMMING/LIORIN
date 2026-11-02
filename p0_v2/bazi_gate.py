@@ -688,7 +688,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
     debate = resolve_primary_bing(f, by.get("bing_list") or [])
     zg = resolve_zhuangui(f, debate)
     cli = build_climate_candidates(f)
-    yy = resolve_yongyao(f, debate, cli)
+    yy = resolve_yongyao(f, zg, cli, bing_list=by.get("bing_list") or [])
 
     dm = f["day_stem"]
     # STEP-2.3 (2026-10): daymaster_element 改为读 L0 契约, 不再绕道 wuxing_power 顶层。
@@ -995,7 +995,9 @@ def walk_layers(bazi: str) -> List[Dict[str, Any]]:
     def s7():
         state["zg"] = resolve_zhuangui(state["f"], state["debate"])
         state["cli"] = build_climate_candidates(state["f"])
-        state["yy"] = resolve_yongyao(state["f"], state["debate"], state["cli"])
+        state["yy"] = resolve_yongyao(
+            state["f"], state["zg"], state["cli"],
+            bing_list=state["by"].get("bing_list") or [])
         return {"primary": (state["yy"].get("primary_medicine") or {}).get("wuxing", "")}
     rec("P1_yongyao", s7)
     return out
