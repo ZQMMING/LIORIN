@@ -174,10 +174,19 @@ def _liu_qin_of(facts, pillars, gender):
     def _present(tg_keys):
         out = []
         for pos in ('year', 'month', 'day', 'hour'):
-            g = (pillars.get(pos) or ["", ""])[0]
-            if g and ten_god(dm, g) in tg_keys:
+            g, z = pillars.get(pos) or ('', '')
+            # 日干是主体本身，不作为六亲星。日支藏干仍参与。
+            if pos != 'day' and g and ten_god(dm, g) in tg_keys:
                 out.append({'pos': pos, 'gan': g, 'ten_god': ten_god(dm, g),
-                            'is_day': pos == 'day'})
+                            'source': 'VISIBLE_STEM', 'is_day': False})
+            hidden = (facts.get('hidden_stems') or {}).get(pos)
+            if hidden is None:
+                hidden = HIDDEN.get(z, [])
+            for h in hidden:
+                if ten_god(dm, h) in tg_keys:
+                    out.append({'pos': pos, 'gan': h, 'branch': z,
+                                'ten_god': ten_god(dm, h),
+                                'source': 'HIDDEN_STEM', 'is_day': pos == 'day'})
         return out
     _PALACE = {'year': '祖辈/父母宫', 'month': '父母宫',
                'day': '夫妻宫(日支)', 'hour': '子女宫'}
@@ -195,6 +204,9 @@ def _liu_qin_of(facts, pillars, gender):
         items.append({
             'symbol': sym, 'ten_god_group': tgname,
             'present': bool(pres),
+            'visible_present': any(x['source'] == 'VISIBLE_STEM' for x in pres),
+            'hidden_present': any(x['source'] == 'HIDDEN_STEM' for x in pres),
+            'presence_scope': 'VISIBLE_AND_HIDDEN_EXCLUDING_DAY_STEM',
             'positions': pres,
             'palaces': sorted(set(_PALACE.get(x['pos'], '') for x in pres)),
         })
@@ -877,6 +889,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
                     },
         "yongshen_decision": {   # ★ 第4层 喜用神路由(程级·A′ 消解)
             "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),
+            "selection_trace": yy.get("selection_trace"),
             "winner_route": (yy.get("routing") or {}).get("winner_route", ""),
             "winner_shen": (yy.get("routing") or {}).get("winner_shen"),
             "winner_basis": (yy.get("routing") or {}).get("winner_basis", ""),

@@ -421,7 +421,7 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any], *,
         _basis = (winner or {}).get("basis", "")
     else:
         # 无硬情形/无病 → 扶抑 primary 为准(第1层已算), 源流/调候并列不压
-        _basis = "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/源流并列"
+        _basis = "未命中硬情形或重病优先路由, 各路并行(§2.8.2); primary 另见药方选择轨迹"
     return {
         "routes": routes,
         "winner_route": winner_route,
@@ -816,6 +816,9 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         zhu = uniq[0]
     fu = [e for e in uniq if e is not zhu]
 
+    _before_climate = dict(zhu) if zhu else None
+    _climate_promoted = False
+
     # V7.25 候神集中裁决源(tiaohou_rank): 候干查表(职能=食伤泄秀/制药 且 有气且未刑)
     #   -> 候干升 primary; 候干=生我(印=主病源) 或 职能不中 -> 让位寒燥交互候食伤
     #   (寒燥月令 × 局内食伤有气, DTS L295/L300). 替换 case-by-case if(原 T3/候神消解 分支).
@@ -826,6 +829,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         _he_ban = any(m.get('wuxing') == _sh_wx and m.get('state', '').startswith('合绊')
                       for m in medicine_blocked)
         if not _he_ban:
+            _climate_promoted = True
             zhu = {'wuxing': _sh_wx, 'gan': list(WX_GAN.get(_sh_wx, ())),
                    'function': '调候候神(%s)' % '/'.join(_rank['reason']),
                    'kind': '调候',
@@ -956,6 +960,16 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
 
     return {
         'layer': 'YONGYAO_RESOLVE', 'state': 'YONGYAO_RESOLVED',
+        'selection_trace': {
+            'scope': 'MEDICINE_SELECTION_NOT_GLOBAL_UNIQUE_YONGSHEN',
+            'before_climate': _before_climate,
+            'climate_rank': _rank,
+            'climate_applied': _climate_promoted,
+            'selected': primary_medicine,
+            'routing_winner': {'route': _rt.get('winner_route'),
+                               'shen': _rt.get('winner_shen')},
+            'review_status': 'ALGORITHM_NOT_VALIDATED',
+        },
         'primary_bing': {'bing_id': bid, 'wuxing': bw},
         'primary_medicine': primary_medicine,
         'auxiliary_medicine': aux,
