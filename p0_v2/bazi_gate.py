@@ -787,7 +787,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
     return {
         "assessment_status": {
             "medicine": yy.get("state"),
-            "dependent_conclusions": "NOT_EVALUABLE" if yy.get("state") == "NOT_EVALUABLE" else "NOT_INDEPENDENTLY_VALIDATED",
+            "dependent_conclusions": "PROVISIONAL" if yy.get("state") == "PROVISIONAL" else ("NOT_EVALUABLE" if yy.get("state") == "NOT_EVALUABLE" else "NOT_INDEPENDENTLY_VALIDATED"),
             "scope": ["喜忌", "岁运吉凶"],
             "reason": "依赖未完成校核的病药规则，不作为已验证结论",
         },
@@ -881,6 +881,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         "yongyao": {"state": yy.get("state"),   # ★ V7.168 投影: YONGYAO_RESOLVED/TIAOHOU_HARD_WINNER/GE_FALLBACK/NO_BING(_GE_XIJI), 下游可分「有药/调候硬情形/无病不裁」
                     "assessment": yy.get("assessment"),
                     "source_lanes": yy.get("source_lanes", []),
+                    "source_conflicts": yy.get("source_conflicts", []),
                     "function_matrix": yy.get("function_matrix", []),
                     "diagnostic_legacy": yy.get("diagnostic_legacy"),
                     "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),

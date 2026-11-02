@@ -555,6 +555,8 @@ def validate_suiyun(pillars, production_result, dayun_list, liunian_map=None):
         d = diff_chain(base, step)
         v = (unknown_verdict() if unresolved_transit(base['yongyao'], step['yongyao'])
              else verdict_step(pillars, base, step, extra, base_tier))
+        if 'PROVISIONAL' in (base['yongyao'].get('state'), step['yongyao'].get('state')):
+            v['status'] = 'PROVISIONAL'
         tier = element_power_tier(step['tp']['wuxing_power'], dm_wx)
         entry = {'index': i, 'dayun': gz, 'dm_tier': tier['name'],
                  'diff': d, 'verdict': v}
@@ -565,6 +567,8 @@ def validate_suiyun(pillars, production_result, dayun_list, liunian_map=None):
             ld = diff_chain(base, lstep)
             lv = (unknown_verdict() if unresolved_transit(base['yongyao'], lstep['yongyao'])
                   else verdict_step(pillars, base, lstep, lextra, base_tier))
+            if 'PROVISIONAL' in (base['yongyao'].get('state'), lstep['yongyao'].get('state')):
+                lv['status'] = 'PROVISIONAL'
             entry['liunian'] = {'ganzhi': ln, 'diff': ld, 'verdict': lv}
         steps.append(entry)
 

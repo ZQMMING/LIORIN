@@ -73,29 +73,32 @@ def enforce_medicine_contract(result, facts, bing_list):
     result['source_lanes'] = lanes
     if not issues:
         return result
-    # Preserve all old values in a diagnostic namespace, never in final verdict fields.
-    keys = ('primary_medicine', 'auxiliary_medicine', 'ji_shen', 'xiji_xian',
-            'rejected_climate', 'routing')
-    result['diagnostic_legacy'] = {k: deepcopy(result.get(k)) for k in keys}
-    result['assessment'] = {'status': 'NOT_EVALUABLE', 'issues': issues,
-                            'blocked_outputs': ['主用神', '喜忌', '岁运吉凶']}
-    result['state'] = 'NOT_EVALUABLE'
-    result['primary_medicine'] = None
-    result['auxiliary_medicine'] = []
-    result['ji_shen'] = []
-    result['rejected_climate'] = []
-    result['xiji_xian'] = {'status': 'NOT_EVALUABLE', 'xi_wx': [], 'ji_wx': [],
-                           'xian_wx': [], 'unknown_wx': ['木', '火', '土', '金', '水'],
-                           'basis': '规则未决，未知不归闲神；原计算仅保留诊断字段'}
-    route = deepcopy(result.get('routing') or {})
-    route.update(status='NOT_EVALUABLE', winner_route='', winner_shen=None,
-                 winner_basis='规则成立及效用条件未决，未裁决',
-                 xiji_xian=result['xiji_xian'])
-    result['routing'] = route
+    # Keep the engine's computed candidates available while making their
+    # unverified status explicit. Do not turn a provisional result into a fact.
     trace = result.get('selection_trace') or {}
-    trace.update(selected=None, review_status='NOT_EVALUABLE')
+    candidate = trace.get('provisional_candidate')
+    if not result.get('primary_medicine') and candidate:
+        result['primary_medicine'] = deepcopy(candidate)
+        trace['selected'] = deepcopy(candidate)
+    result['state'] = 'PROVISIONAL'
+    trace['review_status'] = 'PROVISIONAL'
     result['selection_trace'] = trace
+    result['assessment'] = {'status': 'PROVISIONAL', 'issues': issues,
+                            'note': '算法候选，依据与临界条件尚未验收'}
+    xiji = result.get('xiji_xian')
+    if xiji is not None:
+        xiji['status'] = 'PROVISIONAL'
     result['function_matrix'] = function_matrix(facts, (disease or {}).get('bing_wx'))
+    # An element-level taboo must not erase a source-specific stem candidate.
+    result['source_conflicts'] = []
+    for lane in lanes:
+        for stem in lane['candidate_stems']:
+            if WX[stem] in ((result.get('xiji_xian') or {}).get('ji_wx') or []):
+                result['source_conflicts'].append({
+                    'stem': stem, 'element': WX[stem],
+                    'source': lane['source'],
+                    'conflict': '经典候选与病药五行忌项并存，禁止等同为已消解',
+                    'status': 'UNRESOLVED'})
     return result
 
 
