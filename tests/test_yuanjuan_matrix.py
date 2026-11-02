@@ -7,7 +7,7 @@
 每条断言格式: ①原典出处(书+行号+条文) ②断言的判据行为 ③可执行判据
 """
 import sys, os
-ROOT = r"D:\shuntian-ziping-p0"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 _p0 = os.path.join(ROOT, "p0_v2")
 if _p0 in sys.path:
