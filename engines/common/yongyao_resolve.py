@@ -953,19 +953,27 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                             'kind': zhu.get('kind', '制'),
                             'classic': zhu.get('classic', '五行相克为基础关系; DTS FAN_JU.001'),
                             'blocked': _zb[0] if _zb else None}
+    selection_unresolved = _rank.get('rank') == 'ABSTAIN'
+    provisional_medicine = primary_medicine
+    if selection_unresolved:
+        primary_medicine = None
+
     aux = [{'wuxing': e['wuxing'], 'gan': e['gan'], 'kind': e['kind'],
             'function': e['function'],
             'classic': 'DTS QI_HOU.008 丙丁暖化/化杀生身为原典通例' if e['kind'] in ('暖',)
             else '原典病药通例(化/帮)'} for e in fu]
 
     return {
-        'layer': 'YONGYAO_RESOLVE', 'state': 'YONGYAO_RESOLVED',
+        'layer': 'YONGYAO_RESOLVE',
+        'state': 'NOT_EVALUABLE' if selection_unresolved else 'YONGYAO_RESOLVED',
         'selection_trace': {
             'scope': 'MEDICINE_SELECTION_NOT_GLOBAL_UNIQUE_YONGSHEN',
             'before_climate': _before_climate,
             'climate_rank': _rank,
             'climate_applied': _climate_promoted,
             'selected': primary_medicine,
+            'provisional_candidate': provisional_medicine,
+            'missing_conditions': _rank.get('missing_conditions', []),
             'routing_winner': {'route': _rt.get('winner_route'),
                                'shen': _rt.get('winner_shen')},
             'review_status': 'ALGORITHM_NOT_VALIDATED',

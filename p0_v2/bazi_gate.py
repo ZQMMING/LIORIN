@@ -785,6 +785,12 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         _dayun_meta["note"] = "排运方向派生异常: %s" % _e
 
     return {
+        "assessment_status": {
+            "medicine": yy.get("state"),
+            "dependent_conclusions": "PROVISIONAL" if yy.get("state") == "NOT_EVALUABLE" else "NOT_INDEPENDENTLY_VALIDATED",
+            "scope": ["喜忌", "岁运吉凶"],
+            "reason": "依赖未完成校核的病药规则，不作为已验证结论",
+        },
         "bazi": bz,
         "pillars": p,
         "day_stem": dm,

@@ -46,7 +46,7 @@ _WANG_ZHI = {'木': ('寅', '卯'), '火': ('巳', '午'), '土': ('巳', '午')
              '金': ('申', '酉'), '水': ('亥', '子')}
 # 寒燥交互月令: 秋金水(申酉戌)寒燥 + 冬(亥子丑)寒 + 春(寅卯辰)燥 + 夏(巳午未)燥
 #   金水伤官要燥(申酉戌亥子丑), 木火伤官要湿(寅卯辰巳午未) —— DTS L30
-_HANZAO = ('申', '酉', '戌', '亥', '子', '丑', '寅', '卯', '辰', '巳', '午', '未')
+# 不以月份全集代替偏枯判据。
 
 # ------------------------------------------------------------------ 候神表
 def _hou_candidates(climate: Dict[str, Any]) -> List[Dict[str, Any]]:
@@ -129,22 +129,12 @@ def _hanzao_shishang_rank(climate: Dict[str, Any],
         return {'rank': 'DEMOTE', 'wx': _shishang,
                 'reason': ['候干表已候食伤, 不重复走寒燥交互'],
                 'refs': ['候干轨覆盖']}
-    if month_branch not in _HANZAO:
-        return {'rank': 'DEMOTE', 'wx': _shishang,
-                'reason': ['月令%s非寒燥交互临界(寒燥互证 DTS L30)' % month_branch],
-                'refs': ['DTS L30 金水伤官要燥/木火伤官要湿']}
-    # 局内食伤有气(透干>=1 或坐旺)
-    _in_chu = _stem_present(_shishang, pillars) >= 1 or _ben_wang(_shishang, pillars)
-    _reason = ['寒燥交互: %s月候干未候食伤职能' % month_branch,
-               '局内食伤有气: 透干%d/坐旺%s' % (_stem_present(_shishang, pillars), _ben_wang(_shishang, pillars))]
-    if not _in_chu:
-        _reason.append('食伤无气(不透不旺), 让位候干')
-        return {'rank': 'DEMOTE', 'wx': _shishang, 'reason': _reason,
-                'refs': ['DTS L295/L300']}
-    # 局内食伤有气 且 候干表未候食伤职能 -> 食伤泄秀暖局/润燥候
-    _reason.append('食伤泄秀暖局/润燥(DTS L295/L300 寒暖燥湿互证) -> 升 primary')
-    return {'rank': 'PROMOTE', 'wx': _shishang, 'reason': _reason,
-            'refs': ['DTS L295/L300 寒燥交互候神', 'PZZQ L24 身印两旺透食则贵']}
+    # 原实现把十二月全部视为寒燥临界，并由食伤有气直接提升。
+    # 月份与有气不足以证明偏枯及泄秀承载条件；冻结规则未补齐前不自动裁决。
+    return {'rank': 'ABSTAIN', 'wx': _shishang,
+            'reason': ['寒燥交互规则缺少可核验的偏枯及日主承载条件，禁止自动提升'],
+            'refs': ['DTS L295/L300', 'PZZQ 身强印旺食伤泄秀'],
+            'missing_conditions': ['CLIMATE_IMBALANCE', 'DAYMASTER_DISCHARGE_CAPACITY']}
 
 
 # ------------------------------------------------------------------ 候神集中裁决
