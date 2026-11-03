@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wisdom.shuntian/schema/assertion.schema.json",
+  "title": "AssertionRecord",
+  "description": "V2.2.2 FINAL §86 L4 Assertion：将已存在的 Fact/Judgment/Evidence 组织成 Assertion；不得凭空创造新 Fact。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assertion_id", "engine", "subject", "predicate", "value", "basis_fact_ids", "basis_judgment_ids", "evidence_ids"],
+  "properties": {
+    "assertion_id": { "type": "string", "pattern": "^A-[A-Z]{4}-[0-9]{3}$" },
+    "engine": {
+      "type": "string",
+      "enum": [
+        "YUHAI_ZIPING", "ZIPING_ZHENQUAN", "DITIANSUI",
+        "QIONGTONG_BAOJIAN", "SANMING_TONGHUI", "SHENFENG_TONGKAO"
+      ]
+    },
+    "subject": { "type": "string", "minLength": 1 },
+    "predicate": { "type": "string", "minLength": 1 },
+    "value": { "type": ["string", "number", "boolean"] },
+    "basis_fact_ids": { "type": "array", "items": { "type": "string" } },
+    "basis_judgment_ids": { "type": "array", "items": { "type": "string" } },
+    "evidence_ids": { "type": "array", "items": { "type": "string" } }
+  }
+}
