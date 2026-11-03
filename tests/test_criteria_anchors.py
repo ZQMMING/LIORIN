@@ -8,7 +8,7 @@
 """
 import os, re, json, glob, sys, collections
 
-ROOT = r"D:\shuntian-ziping-p0"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BOOK_DIR = {'PZZQ': 'PZZQ', 'DTS': 'DTS_LB', 'QTBJ': 'QTBJ', 'SFTK': 'SFTK',
             'SMTH': 'SMTH', 'YHZP': 'YHZP'}
 FAILS = []

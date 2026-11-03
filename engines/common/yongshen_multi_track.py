@@ -171,46 +171,36 @@ def _track_zpzq(pillars, facts, wuxing_power, spectrum, special, climate):
 # 轨道2: QTBJ 调候轨 (穷通宝鉴 - 气候所需)
 # ============================================================
 def _track_qtbj(pillars, facts, wuxing_power, spectrum, special, climate):
-    """调候轨: 生于亥子丑/巳午未且调候为急时激活。
-
-    激活条件(保守): 月支在冬夏(亥子丑/巳午未)
-    不激活: 春秋月(寅卯辰/申酉戌)调候不急
-    """
+    """Registered monthly rules apply in all seasons; urgency is a separate fact."""
     mz = facts['month_branch']
-    activated = mz in WINTER or mz in SUMMER
-
-    if not activated:
-        return _track_output('QTBJ', '调候轨', False, note=f'月令{mz}非冬夏，调候不急')
-
-    # 从climate模块获取调候候选, 若为空则fallback直接调用build_climate_candidates
-    cands_raw = (climate or {}).get('climate_candidates', [])
-    if not cands_raw:
-        try:
-            from engines.common.qtbj_climate_candidates import build_climate_candidates
-            _climate_result = build_climate_candidates(facts)
-            if isinstance(_climate_result, dict):
-                cands_raw = _climate_result.get('climate_candidates', [])
-        except Exception:
-            pass
+    if climate is None:
+        from engines.common.qtbj_climate_candidates import build_climate_candidates
+        climate = build_climate_candidates(facts)
+    raw = (climate or {}).get('climate_candidates') or []
     candidates = []
-    for i, c in enumerate(cands_raw):
+    for c in raw:
         stem = c.get('stem', '')
-        wx = WX.get(stem, stem)
-        if wx in WUXING:
-            _cand = _candidate(
-                wx, i + 1,
-                evidence=f'穷通宝鉴: {facts["day_stem"]}生{mz}月调候用{stem}，原文次序第{i+1}',
-                boundary='调候为急，权而用之；与格局用神互参，不混为总用神'
-            )
-            _cand['stem_element'] = stem  # 调候天干级别输出
-            candidates.append(_cand)
-
-    if not candidates:
-        return _track_output('QTBJ', '调候轨', True, [], 'CANDIDATE',
-                             note=f'{facts["day_stem"]}{mz}月调候候选未录入')
-
-    return _track_output('QTBJ', '调候轨', True, candidates, 'DIRECT',
-                         note=f'{mz}月{"冬令寒" if mz in WINTER else "夏令燥"}，调候为急')
+        wx = WX.get(stem)
+        if wx not in WUXING:
+            continue
+        order = c.get('order', 1)
+        candidate = _candidate(
+            wx, order,
+            evidence=f'穷通宝鉴: {facts["day_stem"]}生{mz}月候选{stem}，表内次序{order}',
+            boundary='月份规则适用不等于调候为急；候选存在不等于药效成立',
+            stem_element=stem)
+        candidate['evidence_refs'] = list(c.get('evidence_refs') or [])
+        # Preserve exact stem identity and factual location; no same-element substitution.
+        candidate['visible_positions'] = [pos for pos in ('year', 'month', 'hour')
+                                          if (pillars.get(pos) or ['', ''])[0] == stem]
+        candidate['hidden_positions'] = [pos for pos, stems in (facts.get('hidden_stems') or {}).items()
+                                         if stem in stems]
+        candidates.append(candidate)
+    out = _track_output('QTBJ', '调候轨', bool(candidates), candidates, 'CANDIDATE',
+                        note='按已登记的日干月令条件参与，急缓和有效性另判' if candidates else '无已登记候选')
+    out['urgency'] = 'NOT_EVALUATED'
+    out['applicability'] = 'REGISTERED' if candidates else (climate or {}).get('state', 'NOT_REGISTERED')
+    return out
 
 
 # ============================================================
@@ -234,7 +224,7 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
     candidates = []
     # 获取十干级力量(用于天干细分)
     wp_data = wuxing_power.get('wuxing_power', wuxing_power) if isinstance(wuxing_power, dict) else {}
-    for i, b in enumerate(bing_list[:5]):  # 最多取5个病
+    for i, b in enumerate(bing_list):  # 保留每个已识别病机的药方证据
         bing_name = b.get('name', '')
         bing_id = b.get('bing_id', '')
         # 从病名/ID中推断病的五行
@@ -322,7 +312,7 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
             if main_bing_gan and main_yao_gan:
                 he_note = f'，合化边界: {he_relation_info}' if he_degraded else ''
                 force_note = '同气相克力大' if not he_degraded else '合绊降级后选干'
-                evidence = (f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，'
+                evidence = (f'病药通例与工程药表: 病在{bing_name}({bing_wx})，'
                           f'主力病干={main_bing_gan}({main_bing_type},力{bing_yang_total if main_bing_type=="阳干" else bing_yin_total})，'
                           f'药在{yao_wx}(病药层日主动态表; 药方多路: {"/".join(_yao_list) if _yao_list else yao_wx})，首选药干={main_yao_gan}({force_note}){he_note}')
                 stem_detail = {
@@ -335,7 +325,7 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
                     'he_relation': he_relation_info,
                 }
             else:
-                evidence = (f'神峰通考: 有病方为贵，病在{bing_name}({bing_wx})，'
+                evidence = (f'病药通例与工程药表: 病在{bing_name}({bing_wx})，'
                            f'药在{yao_wx}(病药层日主动态表; 药方多路: {"/".join(_yao_list) if _yao_list else yao_wx})')
                 stem_detail = {}
             cand = _candidate(
@@ -343,6 +333,9 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
                 evidence=evidence,
                 boundary=f'药需得力方效；病轻药重/病重药轻皆非所宜；十干细分: {main_bing_gan or "未明确"}病/{main_yao_gan or "未明确"}药' + (f'；合化边界: {he_relation_info}' if he_degraded else '')
             )
+            cand['bing_id'] = bing_id
+            cand['disease_evidence'] = list(b.get('evidence') or [])
+            cand['derivation_status'] = 'ENGINE_DEFINED_CROSS_SOURCE'
             if stem_detail:
                 cand['stem_detail'] = stem_detail
                 yao_gan = stem_detail.get('yao_main_gan', '')
@@ -358,13 +351,13 @@ def _track_sftk(pillars, facts, wuxing_power, spectrum, special, climate, bingya
     seen = set()
     unique = []
     for c in candidates:
-        el = c.get('element')
+        el = (c.get('bing_id'), c.get('element'), c.get('stem_element'))
         if el not in seen:
             seen.add(el)
             unique.append(c)
     candidates = unique
 
-    return _track_output('SFTK', '病药轨', True, candidates, 'DIRECT',
+    return _track_output('SFTK', '病药轨', True, candidates, 'INFERRED',
                          note=f'识别到{len(bing_list)}个病: {[b.get("name","") for b in bing_list[:5]]}')
 
 
@@ -460,12 +453,14 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
         all_candidates = []
         for i, wx in enumerate(WUXING):
             all_candidates.append(_candidate(
-                wx, i + 1,
-                evidence=f'日主中和(得令={in_season},根={root_class},印比={support_n},克泄={oppose_n})，用神不明确，{wx}为候选之一',
+                wx, 1,
+                evidence=f'日主未归入旺局或衰局(得令={in_season},根={root_class},印比={support_n},克泄={oppose_n})，用神不明确，{wx}为候选之一',
                 boundary='中和需配合格局/调候/病药综合判断；不单独裁决'
             ))
-        return _track_output('DTS', '体用轨', True, all_candidates, 'CANDIDATE',
-                             note=f'日主中和(结构枚举: 得令={in_season}, 根={root_class}, 印比={support_n}, 克泄={oppose_n}), 全五行候选(需配合其他轨道综合判断)')
+        out = _track_output('DTS', '体用轨', True, all_candidates, 'CANDIDATE',
+                            note='未归入旺局或衰局不等于已经证明中和；候选无先后')
+        out['rank_status'] = 'UNDETERMINED'
+        return out
 
     activated = is_wang_ju or is_shuai_ju
 
@@ -800,7 +795,8 @@ def _track_dts(pillars, facts, wuxing_power, spectrum, special, climate):
 # ============================================================
 def _conflict_layer(tracks: List[Dict]) -> Dict:
     """冲突保留层: 识别多轨候选冲突，不裁决。"""
-    activated = [t for t in tracks if t['activated'] and t['candidates']]
+    activated = [t for t in tracks if t['activated'] and t['candidates']
+                 and t.get('rank_status') != 'UNDETERMINED']
 
     if len(activated) <= 1:
         return {
@@ -845,7 +841,9 @@ def _conflict_layer(tracks: List[Dict]) -> Dict:
     # 有冲突
     track_ids = [t['track_id'] for t in activated]
     # 冲突类型
-    if 'ZPZQ' in track_ids and 'QTBJ' in track_ids:
+    if len(track_ids) > 2:
+        ctype = '多轨冲突'
+    elif 'ZPZQ' in track_ids and 'QTBJ' in track_ids:
         ctype = '格局vs调候'
     elif 'QTBJ' in track_ids and 'SFTK' in track_ids:
         ctype = '调候vs病药'
@@ -863,7 +861,7 @@ def _conflict_layer(tracks: List[Dict]) -> Dict:
         'conflict_type': ctype,
         'tracks_involved': track_ids,
         'resolution': '保留多解，不裁决',
-        'display_note': f'{ctype}冲突: {detail}。请结合命局整体判断，各轨有独立原文依据。',
+        'display_note': f'{ctype}: {detail}。各轨保留自己的适用条件与依据等级。',
     }
 
 
@@ -903,6 +901,9 @@ def build_yongshen_multi_track(pillars, facts, wuxing_power, spectrum, special, 
             for c in t['candidates']:
                 all_candidates.append({
                     'element': c['element'],
+                    'stem_element': c.get('stem_element'),
+                    'evidence_refs': list(c.get('evidence_refs') or []),
+                    'rank_status': t.get('rank_status', 'CANDIDATE_ORDER'),
                     'track_id': t['track_id'],
                     'track_name': t['track_name'],
                     'priority_in_track': c['priority'],
@@ -914,13 +915,14 @@ def build_yongshen_multi_track(pillars, facts, wuxing_power, spectrum, special, 
     seen = set()
     unique_candidates = []
     for c in all_candidates:
-        key = c['element']
+        key = (c['track_id'], c.get('stem_element'), c['element'])
         if key not in seen:
             seen.add(key)
             unique_candidates.append(c)
 
     # display层
-    activated_tracks = [t for t in tracks if t['activated'] and t['candidates']]
+    activated_tracks = [t for t in tracks if t['activated'] and t['candidates']
+                        and t.get('rank_status') != 'UNDETERMINED']
     if not conflict['has_conflict'] and activated_tracks:
         # 无冲突: primary = 唯一首选
         primary = activated_tracks[0]['candidates'][0]['element']
@@ -951,7 +953,7 @@ def build_yongshen_multi_track(pillars, facts, wuxing_power, spectrum, special, 
         },
         'conflict': conflict,
         'all_candidates': unique_candidates,
-        'candidate_elements': [c['element'] for c in unique_candidates],
+        'candidate_elements': list(dict.fromkeys(c['element'] for c in unique_candidates)),
         'display': display,
         'boundary_note': (
             '四轨并行，冲突保留不裁决; 渊海子平/三命通会降级为基础事实校验层; '

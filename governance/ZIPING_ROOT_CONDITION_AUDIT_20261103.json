@@ -1,0 +1,52 @@
+{
+  "scope": "100 existing regression cases; agreement is not classical accuracy",
+  "root_predicate_changed": 0,
+  "changes": [],
+  "trigger_slice_states": [
+    {
+      "disease": "CAI_DUO_SHEN_RUO",
+      "slice_state": "NOT_MATCHED",
+      "count": 4
+    },
+    {
+      "disease": "YIN_DUO_MAI_ZI",
+      "slice_state": "MATCHED",
+      "count": 4
+    },
+    {
+      "disease": "XIE_QI_TAI_ZHONG",
+      "slice_state": "NOT_MATCHED",
+      "count": 2
+    },
+    {
+      "disease": "ZHI_SHA_TAI_GUO",
+      "slice_state": "NOT_MATCHED",
+      "count": 1
+    },
+    {
+      "disease": "BIJIE_CHENG_DANG",
+      "slice_state": "MATCHED",
+      "count": 3
+    },
+    {
+      "disease": "SHA_ZHONG_SHEN_QING",
+      "slice_state": "NOT_MATCHED",
+      "count": 2
+    },
+    {
+      "disease": "BIJIE_DUO_CAI",
+      "slice_state": "MATCHED",
+      "count": 1
+    },
+    {
+      "disease": "XIE_QI_TAI_ZHONG",
+      "slice_state": "MATCHED",
+      "count": 3
+    },
+    {
+      "disease": "CAI_DUO_SHEN_RUO",
+      "slice_state": "MATCHED",
+      "count": 3
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "repository": "ZQMMING/LIORIN",
+  "ref": "feature/bazi-engine",
+  "commit": "4d124ee23b98244c2502d57f3677e7c1fb0daa61",
+  "scope": "complete src tree plus package metadata, isolated verification only",
+  "files": [
+    {
+      "path": "README.md",
+      "git_blob_sha": "802bb4f51b27ac1ee9f7994bdf36b49946daa344"
+    },
+    {
+      "path": "pyproject.toml",
+      "git_blob_sha": "9a450872c857e787b91fb9f4cd1c7bb1a12dfa7c"
+    },
+    {
+      "path": "src/tongshu/__init__.py",
+      "git_blob_sha": "1f391ea0cb42f091546bfec9b987a897998fc133"
+    },
+    {
+      "path": "src/tongshu/engines/__init__.py",
+      "git_blob_sha": "0fbcc9a66760eedefea1e9678952ad61deaaa4f4"
+    },
+    {
+      "path": "src/tongshu/engines/bazi_adapter.py",
+      "git_blob_sha": "55b313551c75fe8a0fab79f8b40ad0debd3cf61e"
+    },
+    {
+      "path": "src/tongshu/engines/bazi_engine.py",
+      "git_blob_sha": "a3b26c1a2ba484c23f8f9d993e867f961670a2fa"
+    },
+    {
+      "path": "src/tongshu/engines/bazi_engine_spec.py",
+      "git_blob_sha": "6bb070b4e3e6febf4453f37f2e1e6605ca222732"
+    },
+    {
+      "path": "src/tongshu/engines/bazi_l1_facts.py",
+      "git_blob_sha": "ba36f10cda52a4430e6409921e9ab2a0c1643150"
+    },
+    {
+      "path": "src/tongshu/engines/time/__init__.py",
+      "git_blob_sha": "ec31a868ec5ae5f0312599cbac004368148bc5d8"
+    },
+    {
+      "path": "src/tongshu/engines/time/calculation_context.py",
+      "git_blob_sha": "bdeddf8ace9a027e26f9b448be641590b0485b8a"
+    },
+    {
+      "path": "src/tongshu/engines/time/day_boundary.py",
+      "git_blob_sha": "e09416c71c9707eba43866c0958a6e17d96bb66f"
+    },
+    {
+      "path": "src/tongshu/engines/time/eot.py",
+      "git_blob_sha": "f7d2b62f071fce7222f90b158a956e6acb22e957"
+    },
+    {
+      "path": "src/tongshu/engines/time/exceptions.py",
+      "git_blob_sha": "3efa95fe7b15c5d8dcf95f9b9de82e4a02ea671f"
+    },
+    {
+      "path": "src/tongshu/engines/time/jd_converter.py",
+      "git_blob_sha": "2afe4d197c5a5a94970ff6ef06f0d171f38beb15"
+    },
+    {
+      "path": "src/tongshu/engines/time/location_registry.py",
+      "git_blob_sha": "923fd39762c41c705c374b0a1907442c00b5cc6f"
+    },
+    {
+      "path": "src/tongshu/engines/time/longitude_offset.py",
+      "git_blob_sha": "4986f0c9662d85f712c6b7c4d5ae2cb9cbcb2678"
+    },
+    {
+      "path": "src/tongshu/engines/time/resolver.py",
+      "git_blob_sha": "c05a304acc7fc5c6e85cb3ee00772ac8fbfb90b2"
+    },
+    {
+      "path": "src/tongshu/engines/time/solar_time.py",
+      "git_blob_sha": "8da37c454c7a27825d59d5808eb16402b853d657"
+    },
+    {
+      "path": "src/tongshu/engines/time/time_axis_facts.py",
+      "git_blob_sha": "0111a3111e475d48e48833e1e6c9c00bf51bfedb"
+    },
+    {
+      "path": "src/tongshu/engines/time/timezone_resolver.py",
+      "git_blob_sha": "dfb4de46efbf374f7cd4f49bcf3bfd7dc95c35e8"
+    },
+    {
+      "path": "src/tongshu/engines/time_resolver.py",
+      "git_blob_sha": "6a7e808b1a3410f30ba032c1180123bbe1f39b2e"
+    },
+    {
+      "path": "src/tongshu/facts/__init__.py",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/tongshu/facts/bazi_facts.py",
+      "git_blob_sha": "956e3c9ba9b84bdb313eedb0e2c637816f399976"
+    },
+    {
+      "path": "src/tongshu/k2g/__init__.py",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/tongshu/k2g/registry_loader.py",
+      "git_blob_sha": "c25e5a6d3cb2757a85b390c9f390d048ab0e1a73"
+    },
+    {
+      "path": "src/tongshu/models/__init__.py",
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391"
+    },
+    {
+      "path": "src/tongshu/models/canonical_bazi.py",
+      "git_blob_sha": "f48c33d37b974e672fd9bc9e31e3be7b9f409464"
+    },
+    {
+      "path": "src/tongshu/reasoning/__init__.py",
+      "git_blob_sha": "c22d31a2df17f12f6059b2b300718b0ccc5a8b6c"
+    },
+    {
+      "path": "src/tongshu/reasoning/bazi_ten_gods.py",
+      "git_blob_sha": "ee00ea39e73052dca38fe7c1f8fc5d94a4cfb413"
+    }
+  ]
+}

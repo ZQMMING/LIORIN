@@ -247,9 +247,17 @@ def production_entry(chart: Any, climate_table: Optional[Dict] = None) -> Dict[s
         _deb = resolve_primary_bing(facts, _by['bing_list'])
         _zg = resolve_zhuangui(facts, _deb)
         _cli = build_climate_candidates(facts, external_table=climate_table)
-        _yy = resolve_yongyao(facts, _zg, _cli)
+        _yy = resolve_yongyao(facts, _zg, _cli, bing_list=_by['bing_list'])
+        from engines.common.yongshen_multi_track import build_yongshen_multi_track
+        from engines.common.daymaster_power_structure import build_power_structure
+        from engines.common.usage_resolution import summarize_usage
+        _tracks = build_yongshen_multi_track(
+            chart.pillars, facts, facts.get('wuxing_power') or {},
+            build_power_structure(chart.pillars), facts.get('special') or {}, _cli, _by)
         zhenglun = {'bingyao': _by, 'debate': _deb, 'zhuangui': _zg,
-                    'climate_static': _cli, 'yongyao': _yy}
+                    'climate_static': _cli, 'yongyao': _yy,
+                    'yongshen_multi_track': _tracks,
+                    'usage_resolution': summarize_usage(_tracks, _yy)}
     except Exception as _e:
         # 异常不再静默吞掉(曾导致格成案例bingyao崩被掩盖显示"无病"):
         # 完整保留 traceback 到 zhenglun, 并输出到 stderr 供回归显式捕获
@@ -262,6 +270,7 @@ def production_entry(chart: Any, climate_table: Optional[Dict] = None) -> Dict[s
         "l1_result": l1,
         "meta_outputs": meta_outputs,
         "zhenglun": zhenglun,
+        "usage_resolution": zhenglun.get("usage_resolution"),
         "gate_passed": True,
         "gate": "PASSED",
         "reason": "canonical/frozen 身份有效, contract 完整",

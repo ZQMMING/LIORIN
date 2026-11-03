@@ -274,11 +274,18 @@ def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None, facts=None):
         #   遥冲/合解 -> 不扣. 禄神逢冲为破禄. (DT-0029 甲木戌月囚,
         #   申金相乘权冲寅禄, 年日隔位亦「冲去禄神其根已拔」)
         _ling = (wp2['wuxing_power'].get(wx, {}) or {}).get('ling_state', '休')
-        dm_e['ben_n'] = effective_ben(
+        natal_effective_ben = effective_ben(
             _ben_self,
             build_root_clash_events(pillars, dg, _ling, wp2['wuxing_power'],
                                     kong_wang, (facts or {}).get('l0_chart') or None),
             _ling)
+        if (facts or {}).get('transit_extra'):
+            # The compound row already contains transit roots. The clash
+            # operator above evaluates natal positions only.
+            natal_loss = _ben_self - natal_effective_ben
+            dm_e['ben_n'] = max(0, dm_e['ben_n'] - natal_loss)
+        else:
+            dm_e['ben_n'] = natal_effective_ben
     # 同阴阳借根剥(乙寅)已撤销: PZZQ 刃/劫财为帮身重根, 不剥.
     # (旧 _YIN_YANG_JIEGEN 把乙在寅的帝旺根剥掉, 与 L800/L1075 冲突)
     return element_power_tier(wp2, wx)

@@ -174,10 +174,19 @@ def _liu_qin_of(facts, pillars, gender):
     def _present(tg_keys):
         out = []
         for pos in ('year', 'month', 'day', 'hour'):
-            g = (pillars.get(pos) or ["", ""])[0]
-            if g and ten_god(dm, g) in tg_keys:
+            g, z = pillars.get(pos) or ('', '')
+            # 日干是主体本身，不作为六亲星。日支藏干仍参与。
+            if pos != 'day' and g and ten_god(dm, g) in tg_keys:
                 out.append({'pos': pos, 'gan': g, 'ten_god': ten_god(dm, g),
-                            'is_day': pos == 'day'})
+                            'source': 'VISIBLE_STEM', 'is_day': False})
+            hidden = (facts.get('hidden_stems') or {}).get(pos)
+            if hidden is None:
+                hidden = HIDDEN.get(z, [])
+            for h in hidden:
+                if ten_god(dm, h) in tg_keys:
+                    out.append({'pos': pos, 'gan': h, 'branch': z,
+                                'ten_god': ten_god(dm, h),
+                                'source': 'HIDDEN_STEM', 'is_day': pos == 'day'})
         return out
     _PALACE = {'year': '祖辈/父母宫', 'month': '父母宫',
                'day': '夫妻宫(日支)', 'hour': '子女宫'}
@@ -195,6 +204,9 @@ def _liu_qin_of(facts, pillars, gender):
         items.append({
             'symbol': sym, 'ten_god_group': tgname,
             'present': bool(pres),
+            'visible_present': any(x['source'] == 'VISIBLE_STEM' for x in pres),
+            'hidden_present': any(x['source'] == 'HIDDEN_STEM' for x in pres),
+            'presence_scope': 'VISIBLE_AND_HIDDEN_EXCLUDING_DAY_STEM',
             'positions': pres,
             'palaces': sorted(set(_PALACE.get(x['pos'], '') for x in pres)),
         })
@@ -688,7 +700,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
     debate = resolve_primary_bing(f, by.get("bing_list") or [])
     zg = resolve_zhuangui(f, debate)
     cli = build_climate_candidates(f)
-    yy = resolve_yongyao(f, debate, cli)
+    yy = resolve_yongyao(f, zg, cli, bing_list=by.get("bing_list") or [])
 
     dm = f["day_stem"]
     # STEP-2.3 (2026-10): daymaster_element 改为读 L0 契约, 不再绕道 wuxing_power 顶层。
@@ -772,7 +784,18 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
     except Exception as _e:
         _dayun_meta["note"] = "排运方向派生异常: %s" % _e
 
+    _usage_tracks = _mt_of(f, p, by, cli, special, f)
+    from engines.common.usage_resolution import summarize_usage
+    _usage_resolution = summarize_usage(_usage_tracks, yy)
+
     return {
+        "usage_resolution": _usage_resolution,
+        "assessment_status": {
+            "medicine": yy.get("state"),
+            "dependent_conclusions": "PROVISIONAL" if yy.get("state") == "PROVISIONAL" else ("NOT_EVALUABLE" if yy.get("state") == "NOT_EVALUABLE" else "NOT_INDEPENDENTLY_VALIDATED"),
+            "scope": ["喜忌", "岁运吉凶"],
+            "reason": "依赖未完成校核的病药规则，不作为已验证结论",
+        },
         "bazi": bz,
         "pillars": p,
         "day_stem": dm,
@@ -828,7 +851,7 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         #   docs/PATCH-012「禁六亲=吉凶」). 未传 gender 则不输出(性别未知不臆断).
         "liu_qin": _liu_qin_of(f, p, gender),
         # ★ V7.116 用神四轨并行层(结构事实; 各书视角并列, 冲突保留多解不裁决; 不覆盖主链程级路由)
-        "yongshen_multi_track": _mt_of(f, p, by, cli, special, f),
+        "yongshen_multi_track": _usage_tracks,
         # ★ V7.117 旺衰多轨(渊海/真诠/滴天髓三轨并列, 冲突保留不裁决; AGENTS.md v3 第三节判定元为
         #   得令/根气/党众等原子项, 非"身强身弱"单极结论; 第二节「三命通会…自己声明不作吉凶结论」)
         "wangshuai_multi_track": _wmt_of(f, p, rc),
@@ -861,6 +884,11 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
         #   本次只补投影, 不改 yongyao_resolve 任何计算; primary/ji_shen 原样保留。
         #   注: 三键在无主病盘为 None(上游本就返回空 / NO_BING), 属正常。
         "yongyao": {"state": yy.get("state"),   # ★ V7.168 投影: YONGYAO_RESOLVED/TIAOHOU_HARD_WINNER/GE_FALLBACK/NO_BING(_GE_XIJI), 下游可分「有药/调候硬情形/无病不裁」
+                    "assessment": yy.get("assessment"),
+                    "source_lanes": yy.get("source_lanes", []),
+                    "source_conflicts": yy.get("source_conflicts", []),
+                    "function_matrix": yy.get("function_matrix", []),
+                    "diagnostic_legacy": yy.get("diagnostic_legacy"),
                     "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),
                     "primary_detail": yy.get("primary_medicine"),
                     "ge_fallback_source": yy.get("ge_fallback_source"),
@@ -877,6 +905,9 @@ def paipan(bazi: str, dayun_list: List[str] = None, liunian_map: Dict[int, str] 
                     },
         "yongshen_decision": {   # ★ 第4层 喜用神路由(程级·A′ 消解)
             "primary": (yy.get("primary_medicine") or {}).get("wuxing", ""),
+            "status": yy.get("state"),
+            "unknown_wx": (yy.get("xiji_xian") or {}).get("unknown_wx", []),
+            "selection_trace": yy.get("selection_trace"),
             "winner_route": (yy.get("routing") or {}).get("winner_route", ""),
             "winner_shen": (yy.get("routing") or {}).get("winner_shen"),
             "winner_basis": (yy.get("routing") or {}).get("winner_basis", ""),
@@ -995,7 +1026,9 @@ def walk_layers(bazi: str) -> List[Dict[str, Any]]:
     def s7():
         state["zg"] = resolve_zhuangui(state["f"], state["debate"])
         state["cli"] = build_climate_candidates(state["f"])
-        state["yy"] = resolve_yongyao(state["f"], state["debate"], state["cli"])
+        state["yy"] = resolve_yongyao(
+            state["f"], state["zg"], state["cli"],
+            bing_list=state["by"].get("bing_list") or [])
         return {"primary": (state["yy"].get("primary_medicine") or {}).get("wuxing", "")}
     rec("P1_yongyao", s7)
     return out

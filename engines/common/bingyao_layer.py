@@ -336,7 +336,7 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         if _dg:
             _kw = (facts.get('xunkong') or {}).get('kong_wang') or None
             _dmt = _dm_tier_calc(facts.get('wuxing_power', {}), _dg, _mz, pillars,
-                                 kong_wang=_kw)
+                                 kong_wang=_kw, facts=facts)
     except Exception:
         _dmt = {'tier': 1, 'name': '平'}
     _shen_ruo = _dmt['tier'] <= 1   # 平/衰=身弱前提成立; 旺/强=不触发

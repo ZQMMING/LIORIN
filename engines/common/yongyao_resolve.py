@@ -283,7 +283,8 @@ def _tiaohou_yongshen(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
             "note": "候神按 QTBJ 原文次序; 精化/程级归第4层"}
 
 
-def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[str, Any]:
+def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any], *,
+                     bing_list: List[Dict[str, Any]] = None) -> Dict[str, Any]:
     """★ 第4层程级(喜用神路由)·A′ 消解 (User 裁定 2026-10-16):
     准神 DTS 有两处明文程级 —— ①硬情形优先(L295-298「寒之甚/过于燥皆偏枯, 必无好处」)
     ②病药优先(L240「有病方为贵, 无伤不是奇」)。消解序:
@@ -297,12 +298,14 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
     yl = _yuanliu_yongshen(facts)
     th = _tiaohou_yongshen(facts, climate)
     # P1 病药 severity(病五行->0-4序数), 供病药优先判定
+    # Explicit current P1 output wins, including an explicitly empty list.
+    # Keep the fact snapshot fallback for existing standalone callers.
     p1 = facts.get("p1_bing") or {}
-    bings = p1.get("bing_list") or []
+    bings = bing_list if bing_list is not None else (p1.get("bing_list") or [])
     def _sev(bx):
         return max((int((x.get("severity") or 0)) for x in bings if (x.get("bing_wx") == bx)), default=0)
     # 克/泄 病五行之神(药): 克病(泄病气)优先, 再泄病
-    _ke_wx = {"木": "金", "火": "水", "土": "水", "金": "火", "水": "土"}
+    _ke_wx = KE_BACK
     _sheng_wx = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
 
     # ★ V7.46 喜忌闲三桶(DTS L404「自喜忌之外皆闲神」+ PZZQ L3208 十神相对格):
@@ -418,7 +421,7 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
         _basis = (winner or {}).get("basis", "")
     else:
         # 无硬情形/无病 → 扶抑 primary 为准(第1层已算), 源流/调候并列不压
-        _basis = "无硬情形无病, 各路并行(§2.8.2); 扶抑 primary 为准, 调候/源流并列"
+        _basis = "未命中硬情形或重病优先路由, 各路并行(§2.8.2); primary 另见药方选择轨迹"
     return {
         "routes": routes,
         "winner_route": winner_route,
@@ -432,12 +435,13 @@ def _yongshen_routing(facts: Dict[str, Any], climate: Dict[str, Any]) -> Dict[st
         "basis": "第4层程级·A′: 硬情形(L420/L298)→病药(L240)→并行; 依据级 DTS_CITED"}
 
 
-def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
-                    climate: Dict[str, Any] = None) -> Dict[str, Any]:
+def _resolve_yongyao_unchecked(facts: Dict[str, Any], debate: Dict[str, Any],
+                    climate: Dict[str, Any] = None, *,
+                    bing_list: List[Dict[str, Any]] = None) -> Dict[str, Any]:
     primary = debate.get('primary_bing') or {}
     _yl = _yuanliu_yongshen(facts)   # ★ 第2层 源流(不动 primary)
     _th = _tiaohou_yongshen(facts, climate)   # ★ 第3层 调候(不动 primary)
-    _rt = _yongshen_routing(facts, climate)   # ★ 第4层 程级路由(该盘适用哪路)
+    _rt = _yongshen_routing(facts, climate, bing_list=bing_list)
     bw = primary.get('bing_wx', '')
     bid = primary.get('bing_id', '')
     _sec_wx = {s2.get('bing_wx') for s2 in (debate.get('secondary_bing') or []) if s2.get('bing_wx')}
@@ -812,6 +816,9 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         zhu = uniq[0]
     fu = [e for e in uniq if e is not zhu]
 
+    _before_climate = dict(zhu) if zhu else None
+    _climate_promoted = False
+
     # V7.25 候神集中裁决源(tiaohou_rank): 候干查表(职能=食伤泄秀/制药 且 有气且未刑)
     #   -> 候干升 primary; 候干=生我(印=主病源) 或 职能不中 -> 让位寒燥交互候食伤
     #   (寒燥月令 × 局内食伤有气, DTS L295/L300). 替换 case-by-case if(原 T3/候神消解 分支).
@@ -822,6 +829,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         _he_ban = any(m.get('wuxing') == _sh_wx and m.get('state', '').startswith('合绊')
                       for m in medicine_blocked)
         if not _he_ban:
+            _climate_promoted = True
             zhu = {'wuxing': _sh_wx, 'gan': list(WX_GAN.get(_sh_wx, ())),
                    'function': '调候候神(%s)' % '/'.join(_rank['reason']),
                    'kind': '调候',
@@ -945,13 +953,31 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                             'kind': zhu.get('kind', '制'),
                             'classic': zhu.get('classic', '五行相克为基础关系; DTS FAN_JU.001'),
                             'blocked': _zb[0] if _zb else None}
+    selection_unresolved = _rank.get('rank') == 'ABSTAIN'
+    provisional_medicine = primary_medicine
+    if selection_unresolved:
+        primary_medicine = None
+
     aux = [{'wuxing': e['wuxing'], 'gan': e['gan'], 'kind': e['kind'],
             'function': e['function'],
             'classic': 'DTS QI_HOU.008 丙丁暖化/化杀生身为原典通例' if e['kind'] in ('暖',)
             else '原典病药通例(化/帮)'} for e in fu]
 
     return {
-        'layer': 'YONGYAO_RESOLVE', 'state': 'YONGYAO_RESOLVED',
+        'layer': 'YONGYAO_RESOLVE',
+        'state': 'NOT_EVALUABLE' if selection_unresolved else 'YONGYAO_RESOLVED',
+        'selection_trace': {
+            'scope': 'MEDICINE_SELECTION_NOT_GLOBAL_UNIQUE_YONGSHEN',
+            'before_climate': _before_climate,
+            'climate_rank': _rank,
+            'climate_applied': _climate_promoted,
+            'selected': primary_medicine,
+            'provisional_candidate': provisional_medicine,
+            'missing_conditions': _rank.get('missing_conditions', []),
+            'routing_winner': {'route': _rt.get('winner_route'),
+                               'shen': _rt.get('winner_shen')},
+            'review_status': 'ALGORITHM_NOT_VALIDATED',
+        },
         'primary_bing': {'bing_id': bid, 'wuxing': bw},
         'primary_medicine': primary_medicine,
         'auxiliary_medicine': aux,
@@ -970,3 +996,13 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
         'routing': _rt,   # ★ 第4层 程级路由
     }
+
+
+def resolve_yongyao(facts, debate, climate=None, *, bing_list=None):
+    """Shared public resolver: all callers receive the same evidence contract."""
+    from engines.common.medicine_contract import enforce_medicine_contract
+    diseases = bing_list if bing_list is not None else (facts.get('p1_bing') or {}).get('bing_list', [])
+    if not diseases and (debate.get('primary_bing') or {}).get('bing_id') == 'YIN_DUO_MAI_ZI':
+        diseases = [debate['primary_bing']]
+    result = _resolve_yongyao_unchecked(facts, debate, climate, bing_list=bing_list)
+    return enforce_medicine_contract(result, facts, diseases)

@@ -25,7 +25,7 @@
 import copy
 from typing import Any, Dict, List
 
-from engines.common.l0_fact_builder import build as l0build, ten_god, WUXING
+from engines.common.l0_fact_builder import build as l0build, ten_god, WUXING, HIDDEN
 from engines.common.transit_power import (
     build_transit_power, element_power_tier, BRANCH_WX)
 from engines.common.daymaster_tian_he import build_tian_he
@@ -87,19 +87,37 @@ def build_compound_facts(pillars, base_facts, extra):
         tgm.append({'pillar': 't%d' % i, 'type': 'stem', 'stem': eg, 'branch': ez,
                     'hidden_index': None, 'qi_position': None,
                     'ten_god': ten_god(dm, eg)})
+        for hidden_index, hidden_stem in enumerate(HIDDEN[ez]):
+            tgm.append({'pillar': 't%d' % i, 'type': 'hidden',
+                        'stem': hidden_stem, 'branch': ez,
+                        'hidden_index': hidden_index,
+                        'qi_position': ('本气', '中气', '余气')[hidden_index],
+                        'ten_god': ten_god(dm, hidden_stem)})
     return cf, tp, th
 
 
 def run_chain_on(pillars, base_facts, extra, queries):
-    """在 原局+extra 复合局上重跑 算→辩→转归→解."""
+    """复合局重评病药链，重算其消费的5个结构查询；其余L1和格局尚非全链重算。"""
     cf, tp, th = build_compound_facts(pillars, base_facts, extra)
-    by = build_bingyao_layer(cf, queries)
+    from engines.common.compound_queries import evaluate_compound_queries
+    compound_queries = evaluate_compound_queries(cf)
+    by = build_bingyao_layer(cf, compound_queries)
     deb = resolve_primary_bing(cf, by['bing_list'])
     zg = resolve_zhuangui(cf, deb)
     cli = build_climate_candidates(cf)
-    yy = resolve_yongyao(cf, zg, cli)
+    yy = resolve_yongyao(cf, zg, cli, bing_list=by['bing_list'])
     return {'bingyao': by, 'debate': deb, 'zhuangui': zg,
-            'climate': cli, 'yongyao': yy, 'facts': cf, 'tp': tp, 'th': th}
+            'climate': cli, 'yongyao': yy, 'facts': cf, 'tp': tp, 'th': th,
+            'queries': compound_queries,
+            'query_scope': 'FIVE_CONSUMED_STRUCTURE_QUERIES_RECOMPUTED',
+            'natal_reference_queries': queries}
+
+
+def query_refresh_trace(step, natal_queries):
+    old = {q['query_id']: q.get('state') for q in natal_queries}
+    return {'scope': step['query_scope'], 'queries': [
+        {'query_id': q['query_id'], 'natal_state': old.get(q['query_id']),
+         'compound_state': q['state']} for q in step['queries']]}
 
 
 def base_chain_from_result(production_result):
@@ -150,6 +168,9 @@ def _heavy_root_branches(some_facts):
 
 
 def verdict_step(pillars, base, step, extra, base_tier):
+    from engines.common.medicine_contract import unresolved_transit, unknown_verdict
+    if unresolved_transit(base.get('yongyao'), step.get('yongyao')):
+        return unknown_verdict()
     dm = pillars['day'][0]
     dm_wx = WUXING[dm]
     cur_g, cur_z = extra[-1]                  # 当前岁运柱(流年场景为流年)
@@ -538,6 +559,7 @@ def validate_suiyun(pillars, production_result, dayun_list, liunian_map=None):
     """production_result: production_entry 返回.
     dayun_list: ['甲子','乙丑',...].
     liunian_map: {大运下标: '流年干支'} 在指定大运下叠加流年."""
+    from engines.common.medicine_contract import unresolved_transit, unknown_verdict
     base_facts = production_result['engine_result']
     queries = production_result['l1_result']['queries']
     base = base_chain_from_result(production_result)
@@ -549,17 +571,26 @@ def validate_suiyun(pillars, production_result, dayun_list, liunian_map=None):
         extra = [[gz[0], gz[1]]]
         step = run_chain_on(pillars, base_facts, extra, queries)
         d = diff_chain(base, step)
-        v = verdict_step(pillars, base, step, extra, base_tier)
+        v = (unknown_verdict() if unresolved_transit(base['yongyao'], step['yongyao'])
+             else verdict_step(pillars, base, step, extra, base_tier))
+        v['scope'] = 'PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS'
+        if 'PROVISIONAL' in (base['yongyao'].get('state'), step['yongyao'].get('state')):
+            v['status'] = 'PROVISIONAL'
         tier = element_power_tier(step['tp']['wuxing_power'], dm_wx)
         entry = {'index': i, 'dayun': gz, 'dm_tier': tier['name'],
-                 'diff': d, 'verdict': v}
+                 'diff': d, 'verdict': v, 'query_refresh': query_refresh_trace(step, queries)}
         if liunian_map and i in liunian_map:
             ln = liunian_map[i]
             lextra = extra + [[ln[0], ln[1]]]
             lstep = run_chain_on(pillars, base_facts, lextra, queries)
             ld = diff_chain(base, lstep)
-            lv = verdict_step(pillars, base, lstep, lextra, base_tier)
-            entry['liunian'] = {'ganzhi': ln, 'diff': ld, 'verdict': lv}
+            lv = (unknown_verdict() if unresolved_transit(base['yongyao'], lstep['yongyao'])
+                  else verdict_step(pillars, base, lstep, lextra, base_tier))
+            lv['scope'] = 'PATHOLOGY_RULE_VERDICT_NOT_SIX_BOOK_CONSENSUS'
+            if 'PROVISIONAL' in (base['yongyao'].get('state'), lstep['yongyao'].get('state')):
+                lv['status'] = 'PROVISIONAL'
+            entry['liunian'] = {'ganzhi': ln, 'diff': ld, 'verdict': lv,
+                                'query_refresh': query_refresh_trace(lstep, queries)}
         steps.append(entry)
 
     return {

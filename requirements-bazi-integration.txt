@@ -1,0 +1,3 @@
+# Authoritative fact dependency for isolated Ziping integration verification.
+# Install with normal GitHub access; no credentials belong in this file.
+shuntian-bazi @ git+https://github.com/ZQMMING/LIORIN.git@4d124ee23b98244c2502d57f3677e7c1fb0daa61
