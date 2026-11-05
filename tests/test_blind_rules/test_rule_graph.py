@@ -103,8 +103,11 @@ class TestRuleMatcher(unittest.TestCase):
 class TestRuleGraph(unittest.TestCase):
     """RuleGraph 加载与匹配集成测试。"""
 
+    # 旧仓路径 backend/data/rules 已失效(0 条), 规则库现址为 <repo>/data/rules
+    RULES_DIR = Path(__file__).parent.parent.parent / "data" / "rules"
+
     def test_load_and_match(self):
-        graph = RuleGraph(rules_dir=Path("backend/data/rules"))
+        graph = RuleGraph(rules_dir=self.RULES_DIR)
         n = graph.load("CRR-*.json")  # 加载存在的规则文件
         self.assertGreater(n, 0, "应加载至少一个规则")
 
@@ -122,7 +125,7 @@ class TestRuleGraph(unittest.TestCase):
 
     def test_get_rule(self):
         # 使用实际存在的规则文件
-        graph = RuleGraph(rules_dir=Path("backend/data/rules"))
+        graph = RuleGraph(rules_dir=self.RULES_DIR)
         n = graph.load("CRR-*.json")  # 加载存在的规则文件
         rules = graph.rules
         if rules:

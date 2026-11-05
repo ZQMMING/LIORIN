@@ -65,7 +65,12 @@ class TestTheme1980Facts:
     def test_wealth_directed_established(self, theme_result):
         t = next(x for x in theme_result["themes"] if x["theme_id"] == "THEME-005")
         v = next(e["value"] for e in t["entries"] if e["source"].endswith("wealth_state"))
-        assert v == "DIRECTED_AND_ESTABLISHED"
+        # ㊻s128 口径修正后为 DIRECTED_PARTIAL：本盘主位丙(日主之根, 寅中藏丙)制庚偏财
+        # 由"比劫夺财 NEGATIVE"改判"身制财求财 NEUTRAL"(非他字比劫克财, 原书只认他字),
+        # 夺财风险消除(robbed=False)；但工作效能 SMALL(禄神受穿 NEGATIVE 压档) → 取财
+        # 有功而层次不高, 按 wealth 分支落 PARTIAL。旧值 DIRECTED_AND_ESTABLISHED 是
+        # V3.4.2 引擎自身 dump(非原书), 不再作为自证基准。
+        assert v == "DIRECTED_PARTIAL"
 
     def test_official_controlled_clean(self, theme_result):
         t = next(x for x in theme_result["themes"] if x["theme_id"] == "THEME-008")

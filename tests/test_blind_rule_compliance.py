@@ -72,11 +72,11 @@ class TestBlindRuleCompliance(unittest.TestCase):
         self.assertIsInstance(self.result.eff_target_effective, bool)
 
     def test_06_gong_shen_roles(self) -> None:
-        """功神角色为结构枚举（WORKING/TARGET/UNDETERMINED）。"""
+        """功神角色为结构枚举（GongShenRole 全枚举）。"""
         roles = set(self.result.gong_shen.keys())
-        self.assertTrue(roles.issubset({GongShenRole.WORKING.value,
-                                        GongShenRole.TARGET.value,
-                                        GongShenRole.UNDETERMINED.value}))
+        # ㊻s88 显式补 IDLE(闲神, 原书ch3"不参与做功之神"), 枚举为准；
+        # 旧断言只放行 WORKING/TARGET/UNDETERMINED, 与实际枚举定义自相矛盾。
+        self.assertTrue(roles.issubset({r.value for r in GongShenRole}))
         # 有做功时 WORKING/TARGET 为支列表
         if self.result.zuo_gong:
             self.assertIsInstance(self.result.gong_shen.get("WORKING"), list)

@@ -24,6 +24,7 @@ from __future__ import annotations
 # ═══════════════════════════════════════════════════════════════════════
 
 import enum
+import re
 from collections import Counter
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Set, Tuple
@@ -1106,6 +1107,10 @@ class BlindBaziEngine:
                         attribution = ZuoGongAttribution["NEGATIVE"]
                     else:
                         method = f"合{yong_tg}"
+                        # ㊻s128: 日主合财=财来合我(得财)。合官=官被合绊=失官方向,
+                        # 合财=财入我手(原书案例9"双癸合戊, 财来合我"、案例1"丙辛合取财"),
+                        # 故日主自身合财优先于「合绊」口径, 判 EFFECTIVE(合财入手)。
+                        _zhi_he_cai = (ti_stem == day_master and yong_tg in GROUP_CAI)
                         # V3.6.6: 紧贴+有根气=合绊(互绊失性)→ INEFFECTIVE(做功被绑)
                         _is_tight = distance <= 1
                         _ti_root_el = STEM_ELEMENT[ti_stem]
@@ -1121,7 +1126,13 @@ class BlindBaziEngine:
                             for b in all_branches_list
                         )
                         _is_he_ban = _is_tight and (_ti_has_root or _yo_has_root)
-                        if _is_he_ban:
+                        if _zhi_he_cai:
+                            attribution = ZuoGongAttribution["EFFECTIVE"]
+                            method_detail = (
+                                f"{'天干五合' if relation=='he' else '地支六合'}: "
+                                f"日主{ti_stem}合{yong_stem}({yong_tg}), 距{distance}[财来合我=合财入手]"
+                            )
+                        elif _is_he_ban:
                             attribution = ZuoGongAttribution["INEFFECTIVE"]
                             method_detail = f"{'天干五合' if relation=='he' else '地支六合'}: {ti_stem}({ti_tg})合{yong_stem}({yong_tg}), 距{distance}[合绊=互绊失性, 做功被绑]"
                         elif ti_in_main:
@@ -1187,7 +1198,13 @@ class BlindBaziEngine:
                 elif (relation == "ke_ti_yong" and ti_tg in GROUP_BI and yong_tg in GROUP_CAI
                       and not (ti_idx == 2 and not ti_hidden)):
                     method = "比劫制财"
-                    if ti_in_main:
+                    if ti_hidden and ti_stem == day_master:
+                        # ㊻s128: 日支/时支藏干与日主同字(我之根气)制财=身制财求财,
+                        # 非"他字比劫夺财"(原书案例9 双癸合戊得财, 戌中戊为日主之根,
+                        # 判 NEGATIVE 破财与原书"财来合我"矛盾) → NEUTRAL 结构事实。
+                        attribution = ZuoGongAttribution["NEUTRAL"]
+                        method_detail = f"{ti_stem}({ti_tg}=日主之根)制{yong_stem}({yong_tg}), 距{distance}[身制财=求财, 非他字夺财]"
+                    elif ti_in_main:
                         attribution = ZuoGongAttribution["NEGATIVE"]
                         method_detail = f"{ti_stem}({ti_tg})制{yong_stem}({yong_tg}), 距{distance}[主位比劫夺财=破财]"
                     else:
@@ -2624,21 +2641,19 @@ class BlindBaziEngine:
         # 与原局去正官（丢官）并存 = 意向冲突。
         # ㊻s88 修: R2"日主合官 vs 去官冲突"须 去官 方 有效 (EFFECTIVE) 才构成 冲突.
         # ch1 例①朱元璋"日主合月令官=意在管理控制, 财官全被我制=正局皇帝命":
-        # 伤官制官/印化官杀 是 宾位/藏干 INEFFECTIVE(做功无效) 时, 不构成 去官意向, 不判 R2 冲突.
-        # 原口径 zhi_tiangan 只看 天干 明克(无 效率 门控), 致 朱元璋 误判 FAN_JU.
-        zhi_tiangan_eff = False
-        if zhi_tiangan:
-            zhi_tiangan_eff = any(
-                '伤官制官' in m and a == ZuoGongAttribution["EFFECTIVE"]
-                for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
-            )
-        if day_he_methods and (zhi_guan_eff or zhi_tiangan_eff):
+        # ㊻s127: 方向门控替代旧"效率门控"(见下) —— 合官与去官同向, 不再靠 EFFECTIVE 压制。
+        if day_he_methods and (zhi_guan_eff or zhi_tiangan):
             _zhi_eff_src = zhi_guan_eff if zhi_guan_eff else ['伤官制官(天干明克)']
             he_has_guan = any('正官' in m for m in day_he_methods)
             he_has_cai = any('财' in m for m in day_he_methods)
-            if he_has_guan or he_has_cai:
+            # ㊻s127 R2 方向门控（原书 ch1 反局诊断"左边伤官制官, 右边合财"：
+            #   日主合财(求财) vs 原局去正官(丢官) = 意向冲突 → 反局（D28 牢狱）；
+            #   日主合官=我管他(得权) 与 去正官 同向不冲突（ch1 例①朱元璋"财官全被我制=正局"）。
+            # 旧口径 he_has_guan or he_has_cai 会把 朱元璋 误判反局（㊻s88 靠 EFFECTIVE 门控压住,
+            # 又把 D28 天干明克压没了）→ 改为只看 合财, 且天干明克本身即算"去官"(不要求 EFFECTIVE)。
+            if he_has_cai:
                 reasons.append(
-                    f"R2日主做功与日支做功相反: {'+'.join(day_he_methods)}(追求)"
+                    f"R2日主做功与日支做功相反: {'+'.join(day_he_methods)}(求财)"
                     f" vs 原局{'+'.join(_zhi_eff_src)}"
                     "(去除正官)"
                 )
@@ -2837,9 +2852,23 @@ class BlindBaziEngine:
                 # 不要求日干五合(stem_active), 做功主体在日支(日支为势中之物, 追忌=得忌).
                 _day_branch_in_party = _day_branch_el in xishen_all or _day_branch_el in shi_party
                 _zhi_jing_flag = getattr(result, "shi_zhi_jing", "ZHI_JING") == "ZHI_BU_JING"
-                if _day_branch_in_party and _zhi_jing_flag:
+                # ㊻s127 忌神成党门控（1983锚点 癸亥壬戌乙未壬午）：
+                # "制不净当财看"只适用于 忌神孤弱(不成党)；忌神在局成党(天干≥2, 不含日主自身 /
+                # 地支≥2)时仍是独立忌神, 日支追它=助忌=逆势, 不适用李嘉诚"追忌=得财"豁免。
+                # 1983: 癸壬壬三水干透 → 忌(金水)成党 → 追亥水=FAN_JU（用户定稿锚点）。
+                _ji_dang = (
+                    sum(1 for _i3, _s3, _b3 in pillars
+                        if _i3 != 2 and STEM_ELEMENT.get(_s3) in shi_ctrl) >= 2
+                    or sum(1 for _b3 in all_branches_list if _branch_element(_b3) in shi_ctrl) >= 2
+                )
+                if _day_branch_in_party and _zhi_jing_flag and not _ji_dang:
                     # ㊻s124i 李嘉诚锚(ch8"官杀制不尽当财看,是发财的命"+ch1"日干做功=制了就要得到"):
                     pass  # 不加 R1 reason, 后续判 ZHENG
+                elif _ji_dang:
+                    reasons.append(
+                        f"R1日支追忌且忌神成党: 势={shi}(忌={shi_ctrl}), 日支追求忌={branch_pursues_ctrl}, "
+                        f"忌神在局成党(天干≥2不含日主或地支≥2)=真忌(虽制不净亦不可当财看), 追忌=助忌=逆势"
+                    )
                 else:
                     # 日支 不 在 势本党(如 日支=亥水 忌 神 自身), 日支 同时 追忌 与 追喜=真 矛盾
                     reasons.append(
@@ -3461,12 +3490,26 @@ class BlindBaziEngine:
         palace_is_ji = (palace_tg not in spouse_tg_set
                         and palace_tg not in ZHENG_TG_EXCLUDE
                         and palace_tg != "")
-        # ② 做功层有配偶星制宫忌神EFFECTIVE(制官/制杀/伤官制官/食伤制官/官杀制食伤等)
-        ZHIGONG_KWS = ("伤官制官", "食伤制杀", "官杀制食伤", "官杀制伤",
-                        "刑制正官", "刑制七杀", "冲制官杀", "穿制正官", "穿制七杀",
-                        "合正官", "合七杀", "印制官杀", "印化官杀",
-                        "比劫制财", "官杀制比劫", "食伤泄秀")
-        zhi_gong_eff = any(kw in m for m in eff_methods_now for kw in ZHIGONG_KWS)
+        # ② 做功层有配偶星制宫忌神EFFECTIVE
+        # ㊻s129 修(1980 庚申壬午丙寅癸巳 误判 HARMONIOUS): 旧关键词集合含「印化官杀/印制食伤/
+        # 比劫制财/官杀制比劫/食伤泄秀」等并非「配偶星制宫忌神」的项, 且不要求作用落在日支(宫),
+        # 只借 control_completeness=CLEAN(官杀制尽口径)当"制干净"代理 → 宫被冲穿仍放行。
+        # 新口径三项硬门控: (a) 宫未受损(palace_state=STABLE, 原书"制之不住反为坏婚");
+        # (b) 有本性别配偶星(男财/女官杀)参与制的 EFFECTIVE 条目;
+        # (c) 制的作用点落在日支藏干(宫本身), 非遥制他柱。
+        _spouse_tg = spouse_tg_set
+        _palace_hidden = set(palace_stems)
+        zhi_gong_eff = False
+        if palace_state == "STABLE":
+            for _m, _d in zip(result.zuo_gong_methods, result.zuo_gong_detail):
+                if _m not in eff_methods_now or "(" not in _d:
+                    continue
+                _toks = re.findall(r"[^\s:]*?\(([^)]*)\)", _d)
+                _has_spouse = any(t in _spouse_tg for t in _toks)
+                _hit_palace = any(_h in _d for _h in _palace_hidden)
+                if _has_spouse and _hit_palace:
+                    zhi_gong_eff = True
+                    break
         # ③ 制干净(CLEAN): 官杀制尽口径, ㊻v 收窄
         zhi_gengjing = (result.control_completeness == "CLEAN")
         gong_ji_zhi_star = palace_is_ji and zhi_gong_eff and zhi_gengjing
@@ -3661,11 +3704,23 @@ class BlindBaziEngine:
         # 修后: 取财功法 = 财/冲开/冲库 类 EFFECTIVE, 排除比劫制财(夺财事实)
         # 与穿制正财/穿制偏财(破财事实)。
         wealth_positive = any(
-            ('财' in m or '冲开' in m or '冲库' in m)
-            and m != "比劫制财"
-            and m not in ("穿制正财", "穿制偏财")
-            and a == ZuoGongAttribution["EFFECTIVE"]
-            for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
+            # ㊻s128: 墓库收物 EFFECTIVE 且主位库收成党之气=财富聚拢(原书案例1
+            # "日支辰为水库, 将年月满盘汪洋大水尽数收入库中→收的力量是极大的做功,
+            # 辰库=银行/金融中心/巨大储蓄量"·巨富) → 计入取财功法。
+            (('财' in m or '冲开' in m or '冲库' in m or m == '墓库收物')
+             and m != "比劫制财"
+             and m not in ("穿制正财", "穿制偏财")
+             and a == ZuoGongAttribution["EFFECTIVE"]
+             and (m != '墓库收物' or '[主位]' in d))
+            for m, a, d in zip(result.zuo_gong_methods, result.zuo_gong_attributions,
+                               result.zuo_gong_detail)
+        )
+        # ㊻s128: 闭库聚财时, 比劫在外夺不到库中财(原书"闭库=财富聚拢; 冲则破库散财"),
+        # 库在日/时(主位)且库收有效 → 比劫制财不构成夺财风险。
+        _muku_ju_cai = any(
+            m == '墓库收物' and a == ZuoGongAttribution["EFFECTIVE"] and '[主位]' in d
+            for m, a, d in zip(result.zuo_gong_methods, result.zuo_gong_attributions,
+                               result.zuo_gong_detail)
         )
         # 比劫夺财风险（比劫制财 NEGATIVE = 有财被同我夺的风险事实）
         # V3.6.6 修(可真值41例校对): 主位比劫制财(NEGATIVE) 即构成夺财风险, 不必比劫成势。
@@ -3675,7 +3730,7 @@ class BlindBaziEngine:
         wealth_robbed = any(
             m == "比劫制财" and a == ZuoGongAttribution["NEGATIVE"]
             for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
-        )
+        ) and not _muku_ju_cai
         # V3.6.9㊻o ch8 比劫双向口径(原书ch8 L12"比劫当财(制财局): 比劫制财为得财, 用劫是富命";
         # L36"比劫制财=得财(用劫富命), 比劫分禄=破财, 要看制的是财还是分的是禄"):
         # 宾位比劫制财(EFFECTIVE)=制住同伙财归我=得财(用劫富命); 主位比劫制财(NEGATIVE)=分自身禄=破财。
@@ -3716,7 +3771,22 @@ class BlindBaziEngine:
         ) and wealth_robbed
         # ㊻s93 教训: 曾试"官杀当财+财入库+比劫夺财=贪污"否决项(_guansha_caingu_mukuluo),
         # 误伤官杀当财吉例(财域 84%→74%), 已回滚。官杀当财路径维持 ch8 L9"制不净当财=发财"原文口径。
-        if substitution and _substitution_robbed:
+        # ㊻s128: 日主亲自合财(合财入手 EFFECTIVE)=真财入我手, 强于"官杀换象当财"
+        # (原书案例9 双癸合戊"财来合我"+2008 资产增长; 旧判 SUBSTITUTED_CANDIDATE
+        # 因 官杀换象 抢注, 与原文得财矛盾)。真财入手且无比劫夺财 → 直取财方向。
+        _zhi_he_cai_eff = any(
+            m in ("合正财", "合偏财") and a == ZuoGongAttribution["EFFECTIVE"]
+            and "财来合我" in d
+            for m, a, d in zip(result.zuo_gong_methods, result.zuo_gong_attributions,
+                               result.zuo_gong_detail)
+        )
+        if _zhi_he_cai_eff and wealth_present and not wealth_robbed:
+            wealth_state = (
+                "DIRECTED_AND_ESTABLISHED"
+                if result.work_efficiency in (WorkEfficiency.LARGE.value, WorkEfficiency.MEDIUM.value)
+                else "DIRECTED_PARTIAL"
+            )
+        elif substitution and _substitution_robbed:
             wealth_state = "SUBSTITUTED_ROBBED"
         elif substitution:
             # 换象当财（食伤当财/官杀当财）：以用代财=财路事实
@@ -3909,6 +3979,20 @@ class BlindBaziEngine:
             and not _other_guan_zhi       # 官杀无其他制法(彻底受损)
             and not _guan_ku_in          # 官库不在局(无升职应期)
         )
+        # ㊻s127 伤官穿官库=损官（原书明文：案2 坤造 丁未癸卯庚子丁丑"子水伤官穿月令未土官库
+        # → 伤官损官, 官根受损, 体制内不适应/反骨"）。旧口径把一切"穿制正官=穿官库去官得权"
+        # (V3.6.7) 一律判 controlled, 与原著明文相反。区分: 穿方为伤官(食伤)时=损官(伤官损官),
+        # 非伤官(财/比劫/官杀)穿官库才按去官得权。伤官 穿 官 本体时官根已伤, 制不尽即损。
+        _chuan_by_shang = any(
+            a == ZuoGongAttribution["EFFECTIVE"]
+            and m in ("穿制正官", "穿制七杀")
+            and "伤官" in (d or "")
+            for m, a, d in zip(result.zuo_gong_methods, result.zuo_gong_attributions,
+                               getattr(result, "zuo_gong_detail", []) or [""] * len(
+                                   result.zuo_gong_methods))
+        )
+        if _chuan_by_shang:
+            officer_damaged = True
         # V3.4.3 【官被劫财合走】ROBBED：官杀支被比劫支六合（如巳申=官被劫财合去）
         # （原书原文"官星被劫财合去→非我所有、做功无效"，官贵章）
         # 宾主约束：官支在宾位（年月）且比劫支也在宾位（年月）→ 宾位劫财合走宾位官
@@ -4886,7 +4970,11 @@ class BlindBaziEngine:
         # ③ 金水湿势 (ch9): 金水党(申酉亥子支+庚辛壬癸干) + 湿土(辰丑支+戊己干) ≥3, 金水≥1
         mw_party = metal + water + wet_earth_br + stem_count.get("METAL", 0) + stem_count.get("WATER", 0)
         metal_water = metal + water + stem_count.get("METAL", 0) + stem_count.get("WATER", 0)
-        if mw_party >= 3 and metal_water >= 1:
+        # ㊻s127 金水湿势须金党实有（原书 ch9"金水湿土成势"=湿土生金, 无金则湿土无所生）：
+        # 蒋介石造 丁亥甲辰戊辰甲寅 无金(金0支0干), 旧口径把 辰辰 两湿土并入金水党(1水+2湿土=3)
+        # 误判金水势制木火, 与原书"木火成势制亥水官星、大贵"相悖。加 金党≥1 门控后归 木火同党。
+        _jin_party = metal + stem_count.get("METAL", 0)
+        if mw_party >= 3 and metal_water >= 1 and _jin_party >= 1:
             ctrl_els = _ctrl_of_els(["METAL", "WATER"])   # 金克木 + 水克火 = 木火
             _set_out(ctrl_els, ["METAL", "WATER"], "METAL_WATER→FIRE_EARTH",
                      "STRONG" if metal_water >= 2 else "WEAK",
