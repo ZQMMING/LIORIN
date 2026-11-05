@@ -28,7 +28,7 @@ GOLDEN_SETS = {
     "meihua": "cases/golden/meihua_golden_set.json",
     "huangli": "cases/golden/huangli_golden_set.json",
     "yijing": "cases/golden/yijing_golden_set.json",
-    "blind": "cases/golden/blind_golden_set_v2.json",
+    "blind": "cases/golden/blind_engine_snapshot.json",
     "ziping": "cases/golden/ziping_golden_set.json",
 }
 SNAPSHOT_PATH = ROOT / "cases" / "baselines" / "golden_replay_baseline.json"

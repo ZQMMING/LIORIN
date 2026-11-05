@@ -110,5 +110,9 @@
 4. `blind-012` 原书"大贵"还含官贵层次，本轮只校 `zheng_fan_ju`；官域层次（CONTROLLED_PARTIAL vs 贵格）
    仍无原文明文锚点。
 5. 1980 案例无原典断语 → 仅作回归探针，不进真值层。
-6. `cases/golden/blind_golden_set*.json` 的 `expected_calculation` 应改为「引擎签名快照」并重命名，
-   避免继续被当成真值（未改资产，等裁决）。
+6. `cases/golden/blind_golden_set*.json` 已按裁决改名重录（2026-11-05）：
+   旧两文件（v1 未使用、v2 被兼作"验证"）删除，改为 `cases/golden/blind_engine_snapshot.json`
+   （`metadata.kind = engine_snapshot`，逐案 `snapshot` 字段=信号数/强度区间/结构字段/正反局），
+   测试改为 `tests/test_blind_snapshot.py`（含"快照不得使用 expected_calculation"防回归断言），
+   重录器 `scripts/blind_snapshot_record.py`（`--check` 只比对不写回）；`golden_replay.py` 盲派路径同步。
+   `book_claim`（原 `human_verified_result`）保留，但只作为书籍章节的一句话标注，不可机读、不作断言来源。
