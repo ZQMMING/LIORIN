@@ -6,7 +6,12 @@
     {
       "case_id": "blind-e001",
       "pillars": "癸丑 乙卯 戊戌 癸亥",
-      "solar": [1913, 3, 18, 22],
+      "solar": [
+        1913,
+        3,
+        18,
+        22
+      ],
       "gender": "male",
       "event_year": 1958,
       "expected_nominal_age": 46,
@@ -22,7 +27,12 @@
     {
       "case_id": "blind-e002",
       "pillars": "戊申 壬戌 甲子 丙寅",
-      "solar": [1968, 10, 21, 4],
+      "solar": [
+        1968,
+        10,
+        21,
+        4
+      ],
       "gender": "female",
       "event_year": 1992,
       "expected_nominal_age": 25,
@@ -37,7 +47,12 @@
     {
       "case_id": "blind-e003",
       "pillars": "戊申 壬戌 甲子 丙寅",
-      "solar": [1968, 10, 21, 4],
+      "solar": [
+        1968,
+        10,
+        21,
+        4
+      ],
       "gender": "female",
       "event_year": 1996,
       "expected_nominal_age": 29,
@@ -52,7 +67,12 @@
     {
       "case_id": "blind-e004",
       "pillars": "乙未 乙酉 丙戌 己丑",
-      "solar": [1955, 9, 22, 2],
+      "solar": [
+        1955,
+        9,
+        22,
+        2
+      ],
       "gender": "female",
       "event_year": 1970,
       "expected_nominal_age": 16,
@@ -63,6 +83,46 @@
       },
       "verbatim": "乙为母，未与乙连；酉为父，戌酉穿倒父 → 死……16岁庚戌年死母。",
       "source": "盲派命理-案例资料集.md 案例15"
+    },
+    {
+      "case_id": "blind-e005",
+      "pillars": "乙丑 辛巳 丁亥 辛亥",
+      "solar": [
+        1865,
+        5,
+        17,
+        22
+      ],
+      "gender": "female",
+      "event_year": 1916,
+      "expected": {
+        "domain": "长辈家宅",
+        "event_topic": "长辈家宅事件",
+        "direction": "NEGATIVE"
+      },
+      "verbatim": "乙木在月令为父，父坐墓少年克父；乙庚合、子穿未早死之象 → 戊运丙辰年丧父。",
+      "source": "盲派命理-案例资料集.md 案例14（一岁丧母）",
+      "data_issue": "原书正文自相矛盾（说辛酉日主，四柱却为丁亥日辛亥时）；四柱唯一可解为 1865-05-17 22:00。应期只锚定\"戊运丙辰年(1916)丧父\"的领域与方向，不作日柱/时柱断言。"
+    },
+    {
+      "case_id": "blind-e006",
+      "pillars": "乙丑 辛巳 丁亥 辛亥",
+      "solar": [
+        1865,
+        5,
+        17,
+        22
+      ],
+      "gender": "female",
+      "event_year": 1866,
+      "expected": {
+        "domain": "长辈家宅",
+        "event_topic": "长辈家宅事件",
+        "direction": "NEGATIVE"
+      },
+      "verbatim": "辛酉一柱入丑墓，辛为母，母死更早 → 一岁丧母。",
+      "source": "盲派命理-案例资料集.md 案例14（一岁丧母）",
+      "data_issue": "同上（1865-05-17 22:00）；「一岁」为周岁 1 / 虚岁 2，engine 两值都输出。"
     }
   ]
 }

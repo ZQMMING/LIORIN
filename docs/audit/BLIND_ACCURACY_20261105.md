@@ -3,7 +3,7 @@
 > 范围：`src/tongshu/engines/blind_bazi_engine.py` + `blind_yingqi.py` + 盲派测试族 + 真值层。
 > 原则：只用原典/原著明文断语做真值；Golden v2 为引擎自证，不作真值。
 > 命令：`python scripts/blind_truth_replay.py`（13 案全 PASS）、
-> `python scripts/blind_event_replay.py`（应期 4 案全 PASS）、
+> `python scripts/blind_event_replay.py`（应期 6 案全 PASS）、
 > `pytest tests -k blind --continue-on-collection-errors`（219 passed / 3 skipped）。
 
 ## 一、结论
@@ -12,8 +12,8 @@
   `expected_calculation` 只记录引擎自身 dump 的信号数量，`source` 字段自释「引擎实测」。
 - 本轮建立**结构真值层** `cases/truth/blind_truth_cases.json`（13 案，全部带原文断语），
   逐案经 `BaziEngine → BlindBaziEngine` 真跑比对，**13/13 PASS**。
-- 建立**应期真值层** `cases/truth/blind_event_cases.json`（4 案，事件级：年 + 领域 + 事件主题 +
-  吉凶方向 + 虚岁），经 `blind_yingqi.analyze` 真跑，**4/4 PASS**。
+- 建立**应期真值层** `cases/truth/blind_event_cases.json`（6 案，事件级：年 + 领域 + 事件主题 +
+  吉凶方向 + 虚岁），经 `blind_yingqi.analyze` 真跑，**6/6 PASS**。
 - 修 9 处规则缺陷（D1~D9），修前 11 案中 6 案残差；修后 0 残差。
 - 回归：盲派测试族由 **4 failed / 199 passed** 变为 **0 failed / 219 passed / 3 skipped**
   （唯一 error 仍是子平线在途的 `tests/test_ziping_15_2_evidence_provenance.py` CITATION 导入）。
@@ -38,7 +38,7 @@
 
 四柱→公历由 sxtwl 求解（年柱取当年 7/1 年干支，日时按五鼠遁/支中间小时），回放时逐案复核四柱一致（`pillars_match`）。
 
-## 二之二、应期真值层（事件级，4 案）
+## 二之二、应期真值层（事件级，6 案）
 
 | 事件 | 四柱 | 公历 | 应期 | 期望 | 原文依据 |
 |---|---|---|---|---|---|
@@ -46,6 +46,8 @@
 | e002 | 戊申 壬戌 甲子 丙寅 | 1968-10-21 04:00 女 | 1992 壬申 | 婚姻/婚姻事件/POSITIVE | 案例10：夫星申出现拱入夫宫（申子合局） |
 | e003 | 同 e002 | — | 1996 丙子 | 婚姻/婚姻事件/NEGATIVE | 案例10：己未运之未运未穿子，夫宫被穿 |
 | e004 | 乙未 乙酉 丙戌 己丑 | 1955-09-22 02:00 女 | 1970 庚戌（虚岁 16） | 长辈家宅/长辈家宅事件/NEGATIVE | 案例15：16 岁庚戌年死母（未戌刑、戌穿酉） |
+| e005 | 乙丑 辛巳 丁亥 辛亥 | 1865-05-17 22:00 女 | 1916 丙辰 | 长辈家宅/长辈家宅事件/NEGATIVE | 案例14：戊运丙辰年丧父 |
+| e006 | 同 e005 | — | 1866 丙寅（虚岁 2） | 长辈家宅/长辈家宅事件/NEGATIVE | 案例14：一岁丧母（辛入丑墓） |
 
 - e001 的应期年有 60 甲子歧义：原书"2008 戊子年"与 1913 年生（95 岁）不可能，而 1958 亦为戊戌年、
   虚岁 45 正落庚戌大运（癸丑阴年男逆行第 5 运）→ 判原书年份为 60 甲子笔误，真值取 1958；`data_issue` 已记录。
@@ -153,7 +155,7 @@
 2. `blind-013`（甲辰 庚午 辛未 戊辰）：辛日辰时应为**壬辰**（丙辛日戊子起），时柱 戊辰 与该日干
    五鼠遁不合 → 原著转录矛盾，不改资产。
 3. `blind-014`（乙丑 辛巳 丁亥 辛亥）：1865-05-17 22:00 唯一可解（原书正文自相矛盾说"辛酉日主"）；
-   `scripts/blind_pillar_solver.py` 扫描得该解，暂未入真值（应期线索"丙辰年丧父"需另核）。
+   已以**事件级**入应期真值层（e005 1916 丧父 / e006 1866 丧母），只锚领域+方向，不锚日柱时柱。
 4. `blind-005`（丁亥 癸丑 己未 癸酉）：丁亥年（1887/1947/2007）的己未日只落 2/4/6/8/10/12 月，
    **丑月无己未日** → 四柱不可共存，不入真值。
 5. `blind-012` 原书"大贵"还含官贵层次，本轮只校 `zheng_fan_ju`；官域层次（CONTROLLED_PARTIAL vs 贵格）
