@@ -24,6 +24,15 @@ DOC = Path(r"D:\顺天系统资料\紫微检验\亮度表四方对照_Z39.md")
 CLS = {"庙": "bright", "旺": "bright", "得": "normal", "利": "normal",
        "平": "normal", "陷": "dim", "不": "dim", "弱": "dim"}
 
+# 已按原典明文裁决的倪师断言冲突格：(星, 支) -> 裁决理由
+ADJUDICATED_CONFLICTS = {
+    ("太阴", "卯"): (
+        "《紫微斗数全书》:2145 明列「太阴 庙亥子丑 旺寅酉戌 陷卯辰巳」，"
+        "卯=陷，产品与 dataset 正确；倪师断言条（Z38:9）原文实讲"
+        "「水澄桂萼/太阴庙在子时」，系误摘，该断言条已注销"
+    ),
+}
+
 
 def parse(doc: Path) -> list[dict]:
     rows = []
@@ -74,10 +83,12 @@ def main() -> int:
                  if r["nishi"] not in ("-", "") and r["nishi"] != "-"
                  and CLS.get(r["nishi"]) != CLS.get(BRIGHTNESS_TABLE.get(r["star"], {}).get(r["branch"]))]
     if conflicts:
-        print(f"\n与倪师断言列冲突 = {len(conflicts)}（证据互斥，登记待裁决）：")
+        print(f"\n与倪师断言列冲突 = {len(conflicts)}（已裁决：原典明文优先，Z38 断言条注销为误摘）：")
         for r in conflicts:
+            verdict = ADJUDICATED_CONFLICTS.get((r["star"], r["branch"]), "未裁决，待补原典证据")
             print(f"  {r['star']}{r['branch']}: 产品={BRIGHTNESS_TABLE.get(r['star'], {}).get(r['branch'])} "
                   f"倪师断言={r['nishi']} dataset={r['dataset']} 命图={r['mingtu']}")
+            print(f"    裁决: {verdict}")
     return 0
 
 
