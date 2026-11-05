@@ -585,6 +585,48 @@ class BlindBaziResult:
             'day_master_personality': self.day_master_personality,
             'bijie_zhichai_fenliu': self.bijie_zhichai_fenliu,
             'yin_mie_yang_present': self.crime_present,
+            # ㊻s132: 补齐 dataclass 全字段（此前 37 个字段漏在 to_dict 之外，正是
+            # 势/风险/应期层消费的关键字段：shi_direction/shi_zhi_jing/liyi_risk/
+            # zhenfu_risk/lu_dangcai/root_provenance/xunkong_branches/yima_branches…
+            # 下游 adapters/themes/验证脚本读 to_dict() 会拿到 None，属静默失真）。
+            # tests/test_blind_result_dict.py::test_to_dict_covers_all_fields 守护。
+            'shi_direction': self.shi_direction,
+            'shi_party': list(self.shi_party),
+            'shi_controlled': list(self.shi_controlled),
+            'shi_strength': self.shi_strength,
+            'shi_zhi_jing': self.shi_zhi_jing,
+            'shi_evidence': list(self.shi_evidence),
+            'shi_xueyi_xiang': self.shi_xueyi_xiang,
+            'gui_jian_dui_mi': self.gui_jian_dui_mi,
+            'liyi_risk': self.liyi_risk,
+            'liyi_risk_evidence': list(self.liyi_risk_evidence),
+            'zhenfu_risk': self.zhenfu_risk,
+            'zhenfu_risk_evidence': list(self.zhenfu_risk_evidence),
+            'poshui_star': self.poshui_star,
+            'poshui_star_evidence': list(self.poshui_star_evidence),
+            'lu_dangcai': self.lu_dangcai,
+            'root_provenance': self.root_provenance,
+            'xunkong_branches': list(self.xunkong_branches),
+            'yima_branches': list(self.yima_branches),
+            'guan_he_fangwei': self.guan_he_fangwei,
+            'menhu_trading': self.menhu_trading,
+            'wuji_kai_ku': self.wuji_kai_ku,
+            'wuji_kai_ku_evidence': list(self.wuji_kai_ku_evidence),
+            'tone_char': self.tone_char,
+            'shensha_leixiang': self.shensha_leixiang,
+            'xinkong_evidence': list(self.xinkong_evidence),
+            'space_dynamic_evidence': list(self.space_dynamic_evidence),
+            'edu_zhongduan': self.edu_zhongduan,
+            'edu_zhongduan_evidence': list(self.edu_zhongduan_evidence),
+            'education_evidence': list(self.education_evidence),
+            'education_field_evidence': list(self.education_field_evidence),
+            'day_master_personality_evidence': list(self.day_master_personality_evidence),
+            'xingqi_cycle': self.xingqi_cycle,
+            'xingqi_cycle_evidence': list(self.xingqi_cycle_evidence),
+            'kk_shixiang': self.kk_shixiang,
+            'kk_wuxu': self.kk_wuxu,
+            'release_path': self.release_path,
+            'wulei_shen': self.wulei_shen,
         }
 
 
@@ -3437,6 +3479,11 @@ class BlindBaziEngine:
         # 合绊（V3.2 合绊域：日支与其他支六合=被合绊, 感情易被牵动）
         if any(day_branch in h for h in result.he_ban_structures):
             palace_flags.append("HE_BANNED")
+        # ㊻s132 枚举稳定化: palace_flags 原按遍历顺序拼接(「HARMED_AND_CLASHED」/
+        # 「CLASHED_AND_HARMED」随支序漂移), 下游按字符串匹配枚举会漏判。
+        # 固定 CLASHED→HARMED→PUNISHED→PO_BROKEN→HE_BANNED 次序, 全仓只出一种写法。
+        _PALACE_FLAG_ORDER = ("CLASHED", "HARMED", "PUNISHED", "PO_BROKEN", "HE_BANNED")
+        palace_flags.sort(key=_PALACE_FLAG_ORDER.index)
         palace_state = "STABLE" if not palace_flags else "_AND_".join(palace_flags)
         # 配偶星（男=财 女=官杀）— 藏干+透干都算存在（透干漏判修复）
         spouse_group = GROUP_CAI if chart.gender == "male" else GROUP_GUAN
@@ -3704,6 +3751,17 @@ class BlindBaziEngine:
             _zf_ev.append("ch10 无比劫争夫(妻)做功")
         result.zhenfu_risk = _zhenfu_risk
         result.zhenfu_risk_evidence = _zf_ev
+        # ㊻s132 自洽闸: 原书 ch10「比劫争夫/争妻, 轻者第三者, 重者必离婚」——
+        # 争夫重(NEGATIVE 制配偶星) 与 HARMONIOUS(宫稳星入宫) 互斥, 前者是原书明定的
+        # 婚姻质量判决, 后者只是「宫星俱佳」的单条结构; 二者并存会输出自相矛盾的婚姻结论
+        # (1980 庚申壬午丙寅癸巳 曾 BROKEN/HARMONIOUS 反复, 现统一以争夫重为准)。
+        if _zhenfu_risk == "DIVORCE" and marriage_state == "HARMONIOUS":
+            marriage_state = "BROKEN"
+            result.marriage_event_structure["marriage_state"] = marriage_state
+            result.liyi_risk = "CHU"
+            result.liyi_risk_evidence = [
+                "ch10 比劫争夫(妻)重(必离婚)优先于宫星俱佳(星入宫/宫未损) → 婚姻判 BROKEN"
+            ]
 
         # 正偏夫(妻): ch10 L38 "夫星(妻星)坐正位=正夫, 偏位=偏夫. 不以星的正偏定, 以宫位定".
         # 宫位正偏口径: 日支(夫妻宫)藏干含 正星(男正财/女正官)=正; 藏干含 偏星(男偏财/女偏官)=偏.

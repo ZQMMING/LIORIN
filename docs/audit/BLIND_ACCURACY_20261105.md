@@ -4,7 +4,8 @@
 > 原则：只用原典/原著明文断语做真值；Golden v2 为引擎自证，不作真值。
 > 命令：`python scripts/blind_truth_replay.py`（13 案全 PASS）、
 > `python scripts/blind_event_replay.py`（应期 6 案全 PASS）、
-> `pytest tests -k blind --continue-on-collection-errors`（219 passed / 3 skipped）。
+> `pytest tests -k blind --continue-on-collection-errors`（228 passed / 3 skipped）、
+> `python scripts/blind_invariant_scan.py 80`（不变式扫描 0 问题）。
 
 ## 一、结论
 
@@ -14,8 +15,11 @@
   逐案经 `BaziEngine → BlindBaziEngine` 真跑比对，**13/13 PASS**。
 - 建立**应期真值层** `cases/truth/blind_event_cases.json`（6 案，事件级：年 + 领域 + 事件主题 +
   吉凶方向 + 虚岁），经 `blind_yingqi.analyze` 真跑，**6/6 PASS**。
-- 修 9 处规则缺陷（D1~D9），修前 11 案中 6 案残差；修后 0 残差。
-- 回归：盲派测试族由 **4 failed / 199 passed** 变为 **0 failed / 219 passed / 3 skipped**
+- 修 13 处规则/结构缺陷（D1~D13），修前 11 案中 6 案残差；修后 0 残差。
+- 新增**不变式扫描**（`scripts/blind_invariant_scan.py`）：80 随机盘枚举合法/结构自洽/应期不崩
+  全绿；扫出并修掉 D11（to_dict 漏 37 字段）、D12（争夫重与宫星俱佳互斥）、
+  D13（palace_state 枚举随遍历漂移）。
+- 回归：盲派测试族由 **4 failed / 199 passed** 变为 **0 failed / 228 passed / 3 skipped**
   （唯一 error 仍是子平线在途的 `tests/test_ziping_15_2_evidence_provenance.py` CITATION 导入）。
 
 ## 二、真值层（结构级，13 案）
@@ -137,6 +141,31 @@
   事件主题修正（`parent_star→长辈家宅事件`、`muku_*` 按 domain 映射、`spouse_star` 区分"合身/现身引动"）。
 - 修后：1970 庚戌输出父星(穿酉)+母星(刑未) 两条 NEGATIVE 长辈家宅事件，虚岁 16。
 
+### D11 `to_dict()` 漏 37 个字段（下游静默读到 None）
+- 现象：不变式扫描发现 `shi_direction`/`shi_zhi_jing` 等字段 `to_dict()` 返回 `None`，
+  而对象属性本身有值（1980 案 `'FIRE_EARTH→METAL_WATER'`）。
+- 根因：`BlindBaziResult.to_dict()` 是手写白名单（73 键 / dataclass 109 字段），漏掉的
+  37 个恰是 势/风险/应期层消费的关键项（shi_*、liyi_risk、zhenfu_risk、lu_dangcai、
+  root_provenance、xunkong_branches、yima_branches、education_*_evidence…），
+  adapters/themes/验证脚本按 dict 读取时全部静默降级。
+- 修：补齐全部字段（set→list），保留兼容别名 `yin_mie_yang_present`。
+- 守护：`tests/test_blind_result_dict.py`（字段全覆盖 + 1980 势字段值）。
+
+### D12 争夫重（必离婚）与「宫星俱佳」并存 → 婚姻结论自相矛盾
+- 现象：随机盘 8% 出现 `marriage_state=HARMONIOUS` 且 `zhenfu_risk=DIVORCE`。
+- 根因：HARMONIOUS 分支只查「宫 STABLE + 星在宫 + 星未弱 + 无多婚源」，未与
+  ch10「比劫争夫/争妻，轻者第三者，重者必离婚」的判决对齐 —— 后者是原书明定的
+  婚姻质量结论，前者只是单条结构。
+- 修：`zhenfu_risk=DIVORCE` 时把 HARMONIOUS 降为 BROKEN（并同步 `liyi_risk=CHU`），
+  证据串写明「争夫重优先于宫星俱佳」。
+- 实测：80 盘结构互斥 0 条；1980 案婚姻 BROKEN。
+
+### D13 `palace_state` 枚举随遍历顺序漂移
+- 现象：同一宫位组合出现 `HARMED_AND_CLASHED` / `CLASHED_AND_HARMED` 两种写法，
+  下游按字符串匹配枚举会漏判。
+- 修：flag 固定次序 `CLASHED→HARMED→PUNISHED→PO_BROKEN→HE_BANNED` 后拼接；
+  扫描端改用逐段校验（`_palace_state_ok`）而非全排列白名单。
+
 ## 四、测试口径修正（非改金凑绿）
 
 - `tests/test_blind_rule_compliance.py::test_06_gong_shen_roles`：旧白名单只放行
@@ -147,6 +176,14 @@
 - `tests/test_blind_themes.py::test_wealth_directed_established`：旧值 DIRECTED_AND_ESTABLISHED
   来自 V3.4.2 引擎自证 dump；D5/D6 修后本盘（主位丙=日主之根制财=身制财、非他字比劫夺财）
   为 DIRECTED_PARTIAL（rob.sted=False，工作效能 SMALL 压档）。已改断言并在测试内注明原因。
+
+## 四之二、不变式扫描（质量护栏，不产真值）
+
+- `scripts/blind_invariant_scan.py N`：N 个随机盘（种子 20261105）跑
+  ①枚举白名单（势/婚/财/官/旺衰/身体/子女/合宫 flag/事件域）
+  ②结构互斥（HARMONIOUS×DIVORCE、ESTABLISHED×wealth_present=False、CLEAN×damaged 等）
+  ③应期层 1/18/36/55/80 岁不崩、事件年份与目标年一致。
+- 守护：`tests/test_blind_invariant_scan.py`（12 固定盘 + 事件域字面量↔白名单一致性）。
 
 ## 五、待裁决 / 未尽
 

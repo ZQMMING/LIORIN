@@ -53,6 +53,14 @@ DAXIAN_SEGMENTS = [
 LUCK_PILLAR_COUNT = 8
 
 
+# ㊻s132 事件域白名单（与下方 domain 字面量一一对应；新增域须同步登记，
+# scripts/blind_invariant_scan.py 与 tests/test_blind_invariant_scan.py 会核对）
+EVENT_DOMAINS = (
+    '财富', '婚姻口舌', '事业官贵', '长辈家宅', '学业文书', '健康灾伤',
+    '官非刑伤', '官贵刑伤', '人事竞争', '子女前程', '口舌子女', '自身禄位',
+)
+
+
 @dataclass
 class YingqiResult:
     """盲派应期断法分析结果(单个年龄/流年)"""
