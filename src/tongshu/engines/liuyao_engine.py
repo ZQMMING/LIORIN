@@ -88,14 +88,13 @@ def lines_to_trigrams(lines: list[int]) -> tuple[str, str]:
 
 
 def trigrams_to_gua_name(upper: str, lower: str) -> str:
-    """上下卦→卦名. 简化版, 完整映射待补充."""
-    # 八纯卦
-    pure = {"乾": "乾为天", "坤": "坤为地", "坎": "坎为水", "离": "离为火",
-            "震": "震为雷", "艮": "艮为山", "巽": "巽为风", "兑": "兑为泽"}
-    if upper == lower:
-        return pure.get(upper, f"{upper}为{upper}")
-    # 简化: 上卦+下卦
-    return f"{upper}{lower}"
+    """上下卦→六十四卦名（取京房纳甲表，非纯卦亦正确）。"""
+    from .liuyao_najia import HEXAGRAM_NAME
+
+    name = HEXAGRAM_NAME.get((upper, lower))
+    if name is None:  # pragma: no cover - 上下卦必为八卦之一
+        raise ValueError(f"未知上下卦组合：上{upper}下{lower}")
+    return name
 
 
 def get_dong_yao(lines: list[int]) -> list[int]:
@@ -171,3 +170,77 @@ def line_visual(lines: list[int]) -> str:
             line += " *"  # 动爻
         visual.append(f"{pos}: {line}")
     return "\n".join(visual)
+
+
+# ---------------------------------------------------------------------------
+# 纳甲装卦（京房法）——起卦 + 装卦一体入口
+# ---------------------------------------------------------------------------
+
+@dataclass
+class LiuYaoCast:
+    """一次完整起卦：起卦结果 + 纳甲装卦盘。"""
+    result: "LiuYaoResult"
+    chart: "object"  # liuyao_najia.LiuYaoChart
+
+    def to_dict(self) -> dict:
+        return {"result": {
+            "lines": list(self.result.lines),
+            "ben_gua": self.result.ben_gua,
+            "bian_gua": self.result.bian_gua,
+            "hu_gua": self.result.hu_gua,
+            "dong_yao": list(self.result.dong_yao),
+            "upper_trigram": self.result.upper_trigram,
+            "lower_trigram": self.result.lower_trigram,
+            "question": self.result.question,
+            "cast_time": self.result.cast_time,
+        }, "chart": self.chart.to_dict()}
+
+
+def cast_from_lines(
+    lines: list[int],
+    *,
+    question: str = "",
+    cast_time: str = "",
+    day_stem: str = "甲",
+    day_branch: str = "子",
+    month_branch: str = "",
+) -> LiuYaoCast:
+    """由六爻值（6/7/8/9，自下而上）直接起卦并纳甲装卦。"""
+    from .liuyao_najia import build_liuyao_chart
+
+    upper, lower = lines_to_trigrams(lines)
+    dong_yao = get_dong_yao(lines)
+    ben_gua = trigrams_to_gua_name(upper, lower)
+    result = LiuYaoResult(
+        lines=list(lines),
+        ben_gua=ben_gua,
+        bian_gua=get_bian_gua(lines, dong_yao),
+        hu_gua=get_hu_gua(lines),
+        dong_yao=dong_yao,
+        upper_trigram=upper,
+        lower_trigram=lower,
+        question=question,
+        cast_time=cast_time,
+    )
+    chart = build_liuyao_chart(day_stem, day_branch, month_branch, dong_yao, ben_gua)
+    return LiuYaoCast(result=result, chart=chart)
+
+
+def cast_full(
+    question: str = "",
+    seed: Optional[int] = None,
+    cast_time: str = "",
+    *,
+    day_stem: str = "甲",
+    day_branch: str = "子",
+    month_branch: str = "",
+) -> LiuYaoCast:
+    """铜钱起卦 + 京房纳甲装卦（六亲/世应/六神/伏神/旬空/变爻）。"""
+    return cast_from_lines(
+        cast_coins(seed),
+        question=question,
+        cast_time=cast_time,
+        day_stem=day_stem,
+        day_branch=day_branch,
+        month_branch=month_branch,
+    )
