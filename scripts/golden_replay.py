@@ -66,6 +66,24 @@ def _load_cases(path: Path):
     return d if isinstance(d, list) else d.get("cases", [])
 
 
+def _time_index_to_hour24(ti) -> int:
+    """时辰序号 0–12 → 24h 时钟（紫微 golden 集字段语义，见下）。
+
+    `cases/golden/ziwei_golden_set.json` 的 `input.birth_hour` 是**时辰序号**
+    （0=早子 … 11=亥 … 12=晚子），因为该数据集生成时直接把它当 iztro timeIndex
+    传给 `bySolar`。而生产适配器 `ZiweiSolarAdapter` 按 **24h 时钟** 解析后再转
+    timeIndex。若直接把序号当小时喂进去，每个案例会系统性偏 1–2 个时辰
+    （2026-11-04 审计实录：80 案中 68 案命宫错位）。此处做显式换算，口径为
+    h = 2ti − 1（ti≥1），ti=0→0（早子）、ti=12→23（晚子）。
+    """
+    ti = int(ti)
+    if ti <= 0:
+        return 0
+    if ti >= 12:
+        return 23
+    return 2 * ti - 1
+
+
 def _exec_case(engine: str, case: dict):
     """执行单案例, 返回结果对象(异常则抛出). 适配各引擎Golden Set的实际input schema."""
     inp = case.get("input", case)
@@ -74,7 +92,11 @@ def _exec_case(engine: str, case: dict):
         y = inp.get("year", inp.get("birth_year"))
         m = inp.get("month", inp.get("birth_month"))
         dd = inp.get("day", inp.get("birth_day"))
-        h = inp.get("hour", inp.get("birth_hour"))
+        if "birth_hour" in inp:
+            # golden 集字段 = 时辰序号，必须换算为 24h 时钟
+            h = _time_index_to_hour24(inp["birth_hour"])
+        else:
+            h = inp.get("hour")
         return ZiweiSolarAdapter().compute(y, m, dd, h, inp.get("gender", "male"))
     if engine == "meihua":
         from tongshu.engines.meihua import cast_by_time, cast_by_numbers

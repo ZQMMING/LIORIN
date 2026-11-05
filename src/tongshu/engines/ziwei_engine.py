@@ -175,6 +175,120 @@ def time_index_from_hour(hour: int) -> int:
     return ((hour + 1) // 2) % 12
 
 
+# ============================================================================
+# 排盘后处理（两条生产路径共用的唯一口径）
+# ============================================================================
+# 背景（2026-11-04 审计）：紫微曾有两条生产排盘入口——
+#   ① ZiweiEngine.full_chart()（农历输入，含借对宫/生年四化/亮度/天刑天姚/斗君）
+#   ② ZiweiSolarAdapter（阳历输入，pipeline 实际消费）——后者缺后处理，
+#      导致「同一个人两条入口排出两个盘」。以下函数把后处理收敛为单一实现，
+#      两路共用，禁止再在任一入口内重复写一份。
+
+_BRANCH_NAMES = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+_SIHUA_CODES = ("HUA_LU", "HUA_QUAN", "HUA_KE", "HUA_JI")
+
+
+def inject_brightness_table(palaces: dict) -> bool:
+    """把 Z39 四档亮度表（庙/旺/利/陷）写进盘面，覆盖 iztro 原始亮度。
+
+    失败（规则包导入异常）时返回 False 并**不静默改值**——亮度缺失要能被看见，
+    不能靠半导入状态随机有/无（Z80-G 式假绿）。
+    """
+    try:
+        from tongshu.engines.ziwei.rules.brightness import get_brightness
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("[ZiweiEngine] brightness table unavailable: %s", exc)
+        return False
+    for pdata in palaces.values():
+        br = pdata.get("branch", "")
+        if not br:
+            continue
+        bmap = {s: get_brightness(s, br) for s in (pdata.get("major") or [])}
+        pdata["brightness"] = bmap
+        for detail in pdata.get("starDetail") or []:
+            if detail.get("kind") == "major" and detail.get("name") in bmap:
+                detail["brightness"] = bmap[detail["name"]]
+    return True
+
+
+def inject_tianxing_tianyao(month: int, palaces: dict) -> None:
+    """天刑/天姚安星（月系顺数）：天刑酉起正月，天姚丑起正月。"""
+    month = abs(month)
+    if not 1 <= month <= 12:
+        return
+    tx_branch = _BRANCH_NAMES[(9 + (month - 1)) % 12]
+    ty_branch = _BRANCH_NAMES[(1 + (month - 1)) % 12]
+    for pdata in palaces.values():
+        br = pdata.get("branch", "")
+        if br == tx_branch:
+            minor = pdata.setdefault("minor", [])
+            if "天刑" not in minor:
+                minor.append("天刑")
+        if br == ty_branch:
+            minor = pdata.setdefault("minor", [])
+            if "天姚" not in minor:
+                minor.append("天姚")
+
+
+def postprocess_natal_palaces(palaces: dict, *, soul_branch: str, natal_stem: str,
+                              lunar_date, hour: int) -> dict:
+    """盘面后处理（单一实现）：月系安星 → 亮度表 → 命宫(空宫借对宫) →
+    生年四化入命宫 → 生年斗君。
+
+    Returns:
+        {"soul_palace_name", "soul_majors_zh", "soul_keys", "soul_sihua", "doujun_palace"}
+    """
+    month = abs(lunar_date[1])
+    inject_tianxing_tianyao(month, palaces)
+    inject_brightness_table(palaces)
+
+    soul_palace_name = ""
+    soul_majors: list = []
+    for pname, pdata in palaces.items():
+        if pdata.get("branch") == soul_branch:
+            soul_palace_name = pname
+            soul_majors = list(pdata.get("major") or [])
+            break
+
+    # DECISION-009 / 倪海厦约束9：空宫必借对宫主星论事，不得留白。
+    if not soul_majors:
+        opp = _BRANCH_OPPOSITE.get(soul_branch, "")
+        for pdata in palaces.values():
+            if pdata.get("branch") == opp:
+                soul_majors = list(pdata.get("major") or [])
+                break
+
+    soul_keys = [CHINESE_STAR_TO_KEY.get(s, s) for s in soul_majors]
+
+    soul_sihua: list = []
+    sihua_stars = GAN_SIHUA.get(natal_stem, ())
+    if soul_palace_name and sihua_stars:
+        sp = palaces.get(soul_palace_name) or {}
+        sp_stars = set(sp.get("major") or []) | set(sp.get("minor") or [])
+        soul_sihua = [_SIHUA_CODES[i] for i, st in enumerate(sihua_stars[:4]) if st in sp_stars]
+
+    doujun_palace = ""
+    try:
+        from tongshu.engines.ziwei.rules.temporal_facts import doujun_branch
+        yb = _BRANCH_NAMES[(int(lunar_date[0]) - 4) % 12]
+        dj_branch = doujun_branch(yb, month, time_index_from_hour(hour) % 12)
+        for pname, pdata in palaces.items():
+            if pdata.get("branch") == dj_branch:
+                doujun_palace = pname
+                break
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("[ZiweiEngine] doujun unavailable: %s", exc)
+
+    return {
+        "soul_palace_name": soul_palace_name,
+        "soul_majors_zh": soul_majors,
+        "soul_keys": soul_keys,
+        "soul_sihua": soul_sihua,
+        "doujun_palace": doujun_palace,
+    }
+
+
+
 def ziwei_natal_stem(chart) -> str:
     """生年天干（农历界·春节起算）— 紫微盘唯一时间事实源。
 
@@ -385,7 +499,16 @@ class ZiweiChart:
 
 
 class ZiweiEngine:
-    def __init__(self, node_modules_dir: Path | None = None):
+    def __init__(self, node_modules_dir: Path | None = None, backend: str = "auto"):
+        """backend:
+        - "auto"（默认）：iztro 可用则走 iztro；不可用则按既有契约 raise / stub（行为不变）。
+        - "native"：强制走 `ziwei_natal` 原生实现，完全不依赖 node/iztro。
+          原生实现与本引擎的 isztro 路径共用同一盘面后处理（postprocess_natal_palaces），
+          在 17040 盘上已核对到逐字段一致（见 docs/audit/ZIWEI_ACCURACY_20261104.md）。
+        """
+        if backend not in ("auto", "native"):
+            raise ValueError(f"backend 必须 auto/native，收到 {backend!r}")
+        self._backend = backend
         self._node = shutil.which("node")
         self._node_modules = node_modules_dir or Path("node_modules")
         self._iztro_available = (self._node_modules / "iztro").exists() and self._node is not None
@@ -982,31 +1105,8 @@ class ZiweiEngine:
             raise RuntimeError(f"iztro flow_day failed: {proc.stderr}")
         return json.loads(proc.stdout)
 
-    def full_chart(self, lunar_date, hour, gender, flow_month=0, flow_year=0, flow_day=None):
-        """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）
-
-        Z74c: flow_month 可选（1-12 流月应期层入参，默认0不启用）。
-
-        倪海厦/《紫微斗数全书》体系核心数据：
-        - 五行局（fiveElementsClass，纳音起局：水二木三金四土五火六）
-        - 12宫：宫干(heavenlyStem)、宫支(earthlyBranch)、主星/辅星、
-          宫干自化(selfMutaged)、大限范围(decadal.range)与大限干支
-        - 命宫/身宫地支
-
-        用于紫微独立格局识别、三方四正、宫干自化、12大限序列分析。
-
-        NOTE: Production adapter integration (2026-09-02)
-        This method now applies Shuntian dependency adapter to correct
-        iztro 2.6.0 decadal direction bug (palace.js:163).
-        """
-        # Z80-G：full_chart 是公开生产入口，必须与 compute 一样 fail-closed。
-        # 此前绕过校验 → hour=25 静默取模成丑时、gender='unknown' 静默出盘
-        # 并触发 dependency_adapter 误报。
-        _validate_inputs(lunar_date, hour, gender)
-        year, month, day = lunar_date
-        is_leap = month < 0
-        month = abs(month)
-        ti = time_index_from_hour(hour)
+    def _full_chart_via_iztro(self, year, month, day, ti, gender, is_leap):
+        """iztro 后端：byLunar → 与 `ziwei_natal.native_raw_chart` 同构的盘面 dict。"""
         script = '''
         const { byLunar } = require('iztro').astro;
         const a = byLunar('%s-%s-%s', %d, '%s', %s);
@@ -1053,7 +1153,43 @@ class ZiweiEngine:
         )
         if proc.returncode != 0:
             raise RuntimeError(f"iztro full_chart failed: {proc.stderr}")
-        raw_chart = json.loads(proc.stdout)
+        return json.loads(proc.stdout)
+
+    def full_chart(self, lunar_date, hour, gender, flow_month=0, flow_year=0, flow_day=None,
+                   leap_mode="half_month"):
+        """返回紫微完整结构化盘（独立分析基础，2026-08-27 补齐）
+
+        Z74c: flow_month 可选（1-12 流月应期层入参，默认0不启用）。
+        Z80-H/W1: leap_mode 仅对 native 后端生效——"half_month"（默认，与 iztro
+        fixLeap=true 一致）/ "classic"（原典《紫微斗数全书》闰月整体作次月）。
+
+        倪海厦/《紫微斗数全书》体系核心数据：
+        - 五行局（fiveElementsClass，纳音起局：水二木三金四土五火六）
+        - 12宫：宫干(heavenlyStem)、宫支(earthlyBranch)、主星/辅星、
+          宫干自化(selfMutaged)、大限范围(decadal.range)与大限干支
+        - 命宫/身宫地支
+
+        用于紫微独立格局识别、三方四正、宫干自化、12大限序列分析。
+
+        NOTE: Production adapter integration (2026-09-02)
+        This method now applies Shuntian dependency adapter to correct
+        iztro 2.6.0 decadal direction bug (palace.js:163).
+        """
+        # Z80-G：full_chart 是公开生产入口，必须与 compute 一样 fail-closed。
+        # 此前绕过校验 → hour=25 静默取模成丑时、gender='unknown' 静默出盘
+        # 并触发 dependency_adapter 误报。
+        _validate_inputs(lunar_date, hour, gender)
+        year, month, day = lunar_date
+        is_leap = month < 0
+        month = abs(month)
+        ti = time_index_from_hour(hour)
+        if self._backend == "native":
+            # 原生后端：不依赖 node/iztro，盘面结构与下方 JS 输出同构
+            from .ziwei_natal import native_raw_chart
+            raw_chart = native_raw_chart((year, -month if is_leap else month, day), hour,
+                                         gender, leap_mode=leap_mode)
+        else:
+            raw_chart = self._full_chart_via_iztro(year, month, day, ti, gender, is_leap)
 
         # Apply Shuntian dependency adapter for decadal direction correction
         adapter = get_adapter()
@@ -1074,22 +1210,18 @@ class ZiweiEngine:
 
         # F-04修复: 构建 ZiweiChart 实例（原代码在98073792中被移除，需还原）
         palaces = {k: dict(v) for k, v in corrected_chart.get("palaces", {}).items()}
-        # Z27: 庙旺利陷亮度注入（明刊《捷览》星论补遗，rules/brightness.py）
-        try:
-            from tongshu.engines.ziwei.rules.brightness import get_brightness
-            for _pname, _pdata in palaces.items():
-                _br = _pdata.get("branch", "")
-                _pdata["brightness"] = {
-                    _s: get_brightness(_s, _br) for _s in _pdata.get("major", [])
-                }
-        except Exception as _e:  # 亮度为增强信息，失败不影响主盘
-            logger.warning("[ZiweiEngine] brightness inject failed: %s", _e)
-        # Z64: 生年斗君（《紫微斗数全书》卷二·安斗君诀第43）
-        # 于流年太岁宫起正月逆至本生月，又从本生月起子顺数至本生时安斗君。
-        # 大岁宫中便起正，逆寻生月即留停，又从生月宫轮子，顺至生时镇斗星。
-        doujun = self._compute_doujun(lunar_date, hour, palaces)
-        # Z73: 天刑/天姚安星（《紫微斗数全书》第35章：天刑酉起正月顺至生月、天姚丑起正月顺至生月）
-        self._inject_tianxing_tianyao(month, palaces)
+        # 盘面后处理收敛为单一实现（阴历/阳历两路同口径）：
+        # 亮度表(Z39) → 天刑/天姚 → 命宫(空宫借对宫) → 生年四化入命宫 → 生年斗君
+        facts = postprocess_natal_palaces(
+            palaces,
+            soul_branch=corrected_chart.get("soulPalaceBranch", ""),
+            natal_stem=corrected_chart.get("natalYearStem", ""),
+            lunar_date=lunar_date,
+            hour=hour,
+        )
+        _soul_keys = facts["soul_keys"]
+        _soul_sihua = facts["soul_sihua"]
+        doujun = facts["doujun_palace"]
         # Z72: 应期层数据接通——大限命宫名 + 流年年份
         # Z74h: 大限按 flow_year 虚岁自动落位（decadalRange 即虚岁区间）；
         #       未传 flow_year 或虚岁越界时回退第一大限（range 最小者）。
@@ -1114,7 +1246,7 @@ class ZiweiEngine:
         _fd_zhi = ""
         _fd_mutagen = []
         _fd_luck_branch = ""
-        if flow_day is not None:
+        if flow_day is not None and self._backend != "native":
             try:
                 _fd = self._resolve_flow_day(lunar_date, hour, gender, flow_day)
                 _fd_gan = _fd.get("gan", "")
@@ -1132,42 +1264,9 @@ class ZiweiEngine:
                 if _pd.get("branch") == _fd_luck_branch:
                     _daily_luck_palace = _pn
                     break
-        # Z80-G：命宫主星（含空宫借对宫，与 compute 口径一致）。
-        # 此前 full_chart 未填该二字段 → 恒空，而 signal_engine / evidence_producer
-        # 会消费它们（compute 路径正常填充，两路径不一致）。
-        _soul_branch = corrected_chart.get("soulPalaceBranch", "")
-        _soul_majors: list = []
-        for _pd in palaces.values():
-            if _pd.get("branch") == _soul_branch:
-                _soul_majors = list(_pd.get("major", []) or [])
-                break
-        if not _soul_majors:
-            _opp_branch = _BRANCH_OPPOSITE.get(_soul_branch, "")
-            for _pd in palaces.values():
-                if _pd.get("branch") == _opp_branch:
-                    _soul_majors = list(_pd.get("major", []) or [])
-                    break
-        _soul_keys = [CHINESE_STAR_TO_KEY.get(_s, _s) for _s in _soul_majors]
-        # Z80-H：生年四化入命宫（soul_palace_sihua）——此前生产路径恒传 []，
-        # 而 evidence_producer.py:71 消费它 → 该分支恒无产出（Z80-G P3-7）。
-        # 语义（本次裁定）：生年天干四化（禄权科忌）中，化星落入命宫者，
-        # 编码为 HUA_LU/HUA_QUAN/HUA_KE/HUA_JI（与 _stub 及
-        # tests/spec/test_vertical_slice_ziwei 的既有格式一致）。
-        _natal_stem = corrected_chart.get("natalYearStem", "")
-        _soul_palace_name = ""
-        for _pn, _pd in palaces.items():
-            if _pd.get("branch") == _soul_branch:
-                _soul_palace_name = _pn
-                break
-        _soul_sihua: list = []
-        _sihua_stars = GAN_SIHUA.get(_natal_stem, ())
-        if _soul_palace_name and _sihua_stars:
-            _sp = palaces.get(_soul_palace_name) or {}
-            _sp_stars = set(_sp.get("major", []) or []) | set(
-                _sp.get("minor", []) or [])
-            _codes = ("HUA_LU", "HUA_QUAN", "HUA_KE", "HUA_JI")
-            _soul_sihua = [_codes[i] for i, _st in enumerate(_sihua_stars[:4])
-                           if _st in _sp_stars]
+        # Z80-G：命宫主星（含空宫借对宫）与生年四化已由
+        # postprocess_natal_palaces 统一给出（_soul_keys/_soul_sihua），
+        # 与 compute / ZiweiSolarAdapter 口径一致。
         return ZiweiChart(
             fiveElementsClass=corrected_chart.get("fiveElementsClass", ""),
             soul_earthly_branch=corrected_chart.get("soulPalaceBranch", ""),
@@ -1267,15 +1366,18 @@ class ZiweiEngine:
         const a = byLunar('%s-%s-%s', %d, '%s', %s);
         const h = a.horoscope('%s-%s-%s');
         const dd = h.daily || {};
-        // Z80-H：流日命宫地支——iztro daily.palaceNames 按地支序（起子）列出
-        // 流日十二宫名，取「命宫」所在下标即流日命宫地支。
+        // Z80-H / Z-ACC(2026-11-04)：iztro 各层 palaceNames 的数组下标是**寅起**
+        // （与 astrolabe.palaces 同序：0=寅,1=卯,…），不是子起。
+        // 原实现直接 B[li]（子起）→ 流日命宫地支整体偏 2 宫。
+        // 证据：流年层 2024(辰)/2025(巳)/2026(午) 的「命宫」下标分别 2/3/4，
+        // 即 idx = 流年支 − 2，故地支 = B[(idx + 2) mod 12]。
         const pn = dd.palaceNames || [];
         const li = pn.indexOf('命宫');
         process.stdout.write(JSON.stringify({
             gan: dd.heavenlyStem || '',
             zhi: dd.earthlyBranch || '',
             mutagen: dd.mutagen || [],
-            luck_branch: li >= 0 ? B[li] : ''
+            luck_branch: li >= 0 ? B[((li + 2) %% 12 + 12) %% 12] : ''
         }));
         """ % (y, abs(mo), d, ti, gender_n, str(is_leap).lower(), fy, fmo, fd)
         proc = subprocess.run(
@@ -1286,61 +1388,11 @@ class ZiweiEngine:
             raise RuntimeError("iztro flow_day daily failed: " + proc.stderr)
         return json.loads(proc.stdout)
 
-    def _inject_tianxing_tianyao(self, month, palaces):
-        """天刑/天姚安星（月系，生月顺数）。
-
-        依据（三源一致）：
-        - 《紫微斗数全书》第35章·安天刑天姚星诀：
-          「天刑星从酉上起正月顺至本生月便安之。天姚星从丑上起正月顺至本生月便安之。」
-        - 蔡明宏《飞星秘仪》：「安天刑、天姚、天馬。圖示：依出生月順數排之。」
-        - iztro location.js 注释：「天刑从酉起正月，顺至生月便安之。天姚丑宫起正月，顺到生月即停留。」
-
-        公式（地支序：子0丑1…酉9…亥11）：
-        - 天刑支 = (9 + (生月-1)) % 12（酉起正月顺数）
-        - 天姚支 = (1 + (生月-1)) % 12（丑起正月顺数）
-        验证：图例天刑在未=11月生（(9+10)%12=7=未）、天姚在午=6月生（(1+5)%12=6=午）均吻合。
-        """
-        month = abs(month)
-        if month < 1 or month > 12:
-            return
-        branch_names = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-        tx_branch = branch_names[(9 + (month - 1)) % 12]
-        ty_branch = branch_names[(1 + (month - 1)) % 12]
-        for _name, _p in palaces.items():
-            _br = _p.get("branch", "")
-            if not _br:
-                continue
-            if _br == tx_branch:
-                _minor = _p.setdefault("minor", [])
-                if "天刑" not in _minor:
-                    _minor.append("天刑")
-            if _br == ty_branch:
-                _minor = _p.setdefault("minor", [])
-                if "天姚" not in _minor:
-                    _minor.append("天姚")
-
-    def _compute_doujun(self, lunar_date, hour, palaces):
-        """生年斗君（月将星）——《紫微斗数全书》卷二·安斗君诀（逆月顺时）
-
-        于流年太岁宫（生年地支宫）起正月逆至本生月，又从本生月起子顺数至本生时安斗君。
-        算法：month_branch = (生年地支 - 生月 + 1) % 12；斗君 = (month_branch + 时辰地支) % 12。
-
-        Z80-H 收敛（2026-10-15）：安法公式**复用** temporal_facts.doujun_branch
-        （单一事实源），本方法只保留「地支 → 宫名」的盘面映射，消除重复实现。
-        """
-        year, month, day = lunar_date
-        month = abs(month)
-        if month < 1 or month > 12:
-            return ""
-        from .ziwei.rules.temporal_facts import doujun_branch
-        branch_names = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
-        year_branch = branch_names[(year - 4) % 12]
-        hour_branch_idx = time_index_from_hour(hour) % 12
-        doujun_branch = doujun_branch(year_branch, month, hour_branch_idx)
-        for _name, _p in palaces.items():
-            if _p.get("branch", "") == doujun_branch:
-                return _name
-        return ""
+    # 2026-11-05 调用图取证（codegraph callers）确认：旧方法
+    # `ZiweiEngine._inject_tianxing_tianyao` 与 `ZiweiEngine._compute_doujun`
+    # 在统一后处理（postprocess_natal_palaces）接线后已零调用方，属孤儿代码，
+    # 按 AGENTS.md §2 纪律删除；单一实现见本文件 postprocess_natal_palaces /
+    # inject_tianxing_tianyao / inject_brightness_table。
 
     def sanfang_sizheng(self, palace_name):
         """紫微三方四正（倪海厦"十年大运看三方四正"）。
