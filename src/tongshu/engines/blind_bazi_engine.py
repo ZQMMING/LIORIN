@@ -368,6 +368,10 @@ class BlindBaziResult:
     zuo_gong_targets: Set[str] = field(default_factory=set)  # 做功目标支（目标神）
     # 制尽（规则 §37 CONTROL_COMPLETENESS）
     control_completeness: str = "UNDETERMINED"   # COMPLETE / PARTIAL / UNDETERMINED
+    # ㊻s131 ch9 财制印格: 主位财六合合制宾位印(巳申/卯戌/子丑 合克) → 合住即制住=制净
+    # 原书案例7「癸水坐巳火(财), 巳火合制年柱申金(印带官帽)→财制印; 财星主动制合印星
+    # 且制得干净→大贵」。合制与"克到支孤立"不同, 不适用 isolated 判据, 单列布尔。
+    cai_zhi_yin_hezhi: bool = False
     # ── 未核证规则域占位（VERIFY-BLIND 门禁）────────────────
     # 规则文档已列规则域但核证未通过（VERIFY-BLIND-015/017/022/023）：
     # 按"核证通过前不施工、不自行发明规则"原则，引擎只输出 UNDETERMINED 占位，
@@ -537,6 +541,7 @@ class BlindBaziResult:
             'zuo_gong_actors': sorted(self.zuo_gong_actors),
             'zuo_gong_targets': sorted(self.zuo_gong_targets),
             'control_completeness': self.control_completeness,
+            'cai_zhi_yin_hezhi': self.cai_zhi_yin_hezhi,
             'thief_capture': self.thief_capture,
             'ganzhi_transmission': self.ganzhi_transmission,
             'image_substitution': self.image_substitution,
@@ -997,6 +1002,8 @@ class BlindBaziEngine:
         # ── 作用关系判定 ──
         # 记录已触发的做功方式(避免重复)
         triggered = set()
+        # ㊻s131 ch9 财制印格: 主位财六合合制宾位印 → 合住即制住(制净), 供官域层次消费
+        _cai_zhi_yin_hezhi = False
         # V3.1: 做功归因（与 methods/detail 一一对应）
         attributions = []
         # 根因D：谁在做功三维度（与 methods 一一对应）
@@ -1105,6 +1112,18 @@ class BlindBaziEngine:
                         method = "劫财合官"
                         method_detail = f"{'天干五合' if relation=='he' else '地支六合'}: {ti_stem}(劫财)合{yong_stem}({yong_tg}), 距{distance}{'[宾位]' if not ti_in_main else ''}=官被劫走非我所有"
                         attribution = ZuoGongAttribution["NEGATIVE"]
+                    elif ti_tg in GROUP_YIN and yong_tg in GROUP_CAI and yong_idx >= 2 and ti_idx < 2:
+                        # ㊻s131 ch9 财制印格(原书案例7): 六合把主位财与宾位印合住——
+                        # 主位财(资本)合制宾位印(印带官帽=资源权力) = 财制印做功, 合住即制住。
+                        # 旧版落"合正财"[宾做功]INEFFECTIVE, 致案7 财制印整块丢失。
+                        method = "财制印"
+                        attribution = ZuoGongAttribution["EFFECTIVE"]
+                        method_detail = (
+                            f"{'天干五合' if relation=='he' else '地支六合'}: "
+                            f"主位{yong_stem}({yong_tg})合制宾位{ti_stem}({ti_tg}), "
+                            f"距{distance}[合制]印被财合制=财制印成立"
+                        )
+                        _cai_zhi_yin_hezhi = True
                     else:
                         method = f"合{yong_tg}"
                         # ㊻s128: 日主合财=财来合我(得财)。合官=官被合绊=失官方向,
@@ -1210,13 +1229,44 @@ class BlindBaziEngine:
                     else:
                         attribution = ZuoGongAttribution["EFFECTIVE"]
                         method_detail = f"{ti_stem}({ti_tg})制{yong_stem}({yong_tg}), 距{distance}[宾位比劫被制=财归我]"
+                # ⑤'-a ㊻s130 财制印(体用方向: 体是财, 用是印, 体克用)
+                # 原书案例7「癸水坐下巳火（财），巳火合制年柱申金（印带官帽）→ 财制印做功」
+                # 六合且五行相克(巳申合/卯戌合/子丑合)时, 上方关系判定会先把 relation 归为
+                # ke_ti_yong(体克用), 只命中 ⑤(ke_yong_ti) 的镜像分支不覆盖 → 该方向无方法,
+                # 案例7 的财制印整块丢失(只剩月未丁财制年申庚印的宾位版本, 判 INEFFECTIVE)。
+                elif relation == "ke_ti_yong" and ti_tg in GROUP_CAI and yong_tg in GROUP_YIN:
+                    method = "财制印"
+                    _he_jian = "合克" if BRANCH_LIUHE.get(ti_branch) == yong_branch else "制"
+                    method_detail = (
+                        f"{ti_stem}({ti_tg}){_he_jian}{yong_stem}({yong_tg}), 距{distance}"
+                        f"{'[主位]' if ti_in_main else ''}"
+                        f"{'[主取宾]' if ti_gets_yong else '[宾位]' if not ti_in_main else ''}"
+                    )
+                    attribution = (ZuoGongAttribution["EFFECTIVE"] if ti_in_main
+                                   else ZuoGongAttribution["INEFFECTIVE"])
                 # ⑤ 财制印: V2.3 fix — 用是财, 体是印, 用克体(原写反为体克用,财属用不属体永不触发)
                 # 盲派视"财制印"层次极高: 财星主动制合印星(资源/权力), 制得干净则大贵
                 elif relation == "ke_yong_ti" and yong_tg in GROUP_CAI and ti_tg in GROUP_YIN:
                     method = "财制印"
-                    method_detail = f"{yong_stem}({yong_tg})制{ti_stem}({ti_tg}), 距{distance}{'[用克体]' if not ti_in_main else ''}"
-                    attribution = (ZuoGongAttribution["EFFECTIVE"] if (ti_in_main or yong_in_main)
-                                   else ZuoGongAttribution["INEFFECTIVE"])
+                    # ㊻s131 ch9 财制印格(原书案例7): 巳申/卯戌/子丑 六合五行相克时, 上方关系
+                    # 判定把 relation 归为 ke_yong_ti(用克体) 而非 liuhe; 语义上"合克"先合:
+                    # 主位财(资本)六合合制宾位印(印带官帽=资源权力)=财制印, 合住即制住(制净)。
+                    _he_zhi = (
+                        ti_branch != yong_branch
+                        and (BRANCH_LIUHE.get(ti_branch) == yong_branch
+                             or BRANCH_LIUHE.get(yong_branch) == ti_branch)
+                    )
+                    if _he_zhi and yong_in_main and not ti_in_main:
+                        attribution = ZuoGongAttribution["EFFECTIVE"]
+                        method_detail = (
+                            f"{yong_stem}({yong_tg})合制{ti_stem}({ti_tg}), 距{distance}"
+                            f"[合制]印被财合制=财制印成立"
+                        )
+                        _cai_zhi_yin_hezhi = True
+                    else:
+                        method_detail = f"{yong_stem}({yong_tg})制{ti_stem}({ti_tg}), 距{distance}{'[用克体]' if not ti_in_main else '[主位]印被财制=财制印成立'}"
+                        attribution = (ZuoGongAttribution["EFFECTIVE"] if (ti_in_main or yong_in_main)
+                                       else ZuoGongAttribution["INEFFECTIVE"])
                 # ⑤b 官杀制比劫: 用是官杀, 体是比劫, 用克体
                 # V3.6.9㊻e 修(㊻b全量93%过宽溯源): 142/219例"被制体"(比劫)=日主透干本身
                 # (日柱干, ti_idx==2非藏干), 即"官杀制日主本身"=正常官制身/杀制身结构事实,
@@ -1938,6 +1988,7 @@ class BlindBaziEngine:
         result.zuo_gong_type = "+".join(methods) if methods else ""
         result.zuo_gong_methods = methods
         result.zuo_gong_detail = detail
+        result.cai_zhi_yin_hezhi = _cai_zhi_yin_hezhi
         result.zuo_gong_attributions = attributions
         result.zuo_gong_actor_dimensions = actor_dims
         # V3.0: 功神/废神划分依据（参与做功的支=功神候选, 目标支=目标候选）
@@ -3935,6 +3986,7 @@ class BlindBaziEngine:
             '穿制正官', '穿制七杀',   # V3.6.7: 穿官库=去官得权
             '制官', '制杀',
             '印化官杀', '印制官杀',    # V3.6.9⑮: 印化/印制官杀=制官一法(原书"官中有印=印主权力")
+            '财制印',                 # ㊻s131: 印带官帽, 财制印=制官之源(案7 财制印格=大贵)
         )
         eff_methods = [
             m for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
@@ -3953,6 +4005,10 @@ class BlindBaziEngine:
             b in MU_KU and '墓库收物' in eff_methods for b in officer_branches
         )
         controlled = controlled or muku_officer_controlled
+        # ㊻s131 合制即制净（原书案7「财星主动制合印星且制得干净→大贵」）：
+        # 主位财六合合制宾位印(巳申/卯戌/子丑 合克), 合住即制住, 不走 isolated 判据。
+        # 布尔由 _analyze_zuogong 在六合扣制分支置位(不受抢注去重影响)。
+        _he_zhi_qing = bool(getattr(result, "cai_zhi_yin_hezhi", False))
         # V3.4.3 【穿官=损官】DAMAGED：穿官类方法（含 NEGATIVE 做负功）→ 官根受损
         # V3.6 修(可真值41例校对): 穿官库(去官得权)不是"官根受损"——
         # "穿制X"已表示穿官库=得权(制官语境), 只有"穿损X"(穿官星本体)才是官根受损。
@@ -4019,7 +4075,13 @@ class BlindBaziEngine:
             for b_bi in bi_branches for o_b in officer_branches
         )
         # ㊻s16: 宾位官杀被比劫合走 + 官杀有制法(得权口径) → 不判ROBBED(夺官), 判CONTROLLED(制宾位官得权)
-        officer_robbed = officer_robbed and not _other_guan_zhi_s16
+        # ㊻s131: 但若局中确有"劫财合官"做负功(=官被劫合走本体, 原书案例8"官星被劫财合走→
+        # 非我所有"仓库保管员), 则官已离身, 别处制法不能改判得权 → ROBBED 成立。
+        _rob_method = any(
+            m == "劫财合官" and a == ZuoGongAttribution["NEGATIVE"]
+            for m, a in zip(result.zuo_gong_methods, result.zuo_gong_attributions)
+        )
+        officer_robbed = officer_robbed and not (_other_guan_zhi_s16 and not _rob_method)
         # ㊻r3 官 贵 虚 精 准 口 径(ch9 "官 命 必 须 有 根, 虚 透=名 气 非 实 官" 精 准 化):
 
 
@@ -4092,7 +4154,9 @@ class BlindBaziEngine:
         elif officer_present and not controlled and officer_has_power:
             # ㊻s26 ch9 "官有根/有源=有权": 官杀无制但有根或被财生 → 有权(吉), 非"官非(凶)"
             official_state = "CONTROLLED_PARTIAL"   # 有官权(部分制/有源), 方向吉
-        elif officer_present and controlled and result.control_completeness == "CLEAN":
+        elif officer_present and controlled and (
+            result.control_completeness == "CLEAN" or _he_zhi_qing
+        ):
             official_state = "CONTROLLED_AND_CLEAN"   # 金水伤官制净（制尽杀星得天下）
         elif officer_present and controlled:
             official_state = "CONTROLLED_PARTIAL"

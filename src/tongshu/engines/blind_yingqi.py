@@ -57,6 +57,7 @@ LUCK_PILLAR_COUNT = 8
 class YingqiResult:
     """盲派应期断法分析结果(单个年龄/流年)"""
     age: int = 0
+    nominal_age: int = 0                     # 虚岁(流年-出生年+1); 盲派案例口径多为"16岁"=虚岁
     flow_year: int = 0                       # 流年(公历)
     flow_stem: str = ""                      # 流年天干
     flow_branch: str = ""                    # 流年地支
@@ -86,6 +87,7 @@ class YingqiResult:
     def to_dict(self) -> dict:
         return {
             'age': self.age,
+            'nominal_age': self.nominal_age,
             'flow_year': self.flow_year,
             'flow_pillar': self.flow_stem + self.flow_branch,
             'daxian_pillar': self.daxian_pillar,
@@ -247,7 +249,8 @@ class BlindYingqiEngine:
             flow_year = target_year
             age = flow_year - birth_year
 
-        result = YingqiResult(age=age, flow_year=flow_year)
+        result = YingqiResult(age=age, flow_year=flow_year,
+                              nominal_age=flow_year - birth_year + 1)
         result.flow_stem, result.flow_branch = self._ganzhi_of_year(flow_year)
 
         # 大限定位
@@ -1004,10 +1007,15 @@ class BlindYingqiEngine:
         stem_tg_flow = ten_god(day_master, yun_stem)
         spouse_group = GROUP_CAI if gender == "male" else GROUP_GUAN
         if stem_tg_flow in spouse_group:
+            # ㊻s130: 文案区分"合身"(流年干与日主成五合)与"现身"(仅十神同类现身),
+            # 旧版一律写"合身"(甲日主遇庚七杀/辛正官 并不构成五合, 是七杀/正官现身)。
+            _he_body = ((yun_stem, day_master) in STEM_HE
+                        or (day_master, yun_stem) in STEM_HE)
             triggers.append({
                 'kind': 'spouse_star', 'source': source, 'position': 'day',
                 'branch': yun_branch, 'in_main': True,
-                'mech': f"{source}{yun_stem}={stem_tg_flow}(配偶星)合身=婚期应象",
+                'mech': (f"{source}{yun_stem}={stem_tg_flow}(配偶星)"
+                         + ("合身=婚期应象" if _he_body else "现身引动=婚期应象")),
                 'keyword': yun_stem, 'ten_god': stem_tg_flow,
                 'direction': 'POSITIVE',
             })
@@ -1032,43 +1040,54 @@ class BlindYingqiEngine:
         # ── V3.6.9 §65 父母系统接入 (原书 L1875 "正偏财为父, 食伤禄为母, 印=父母星") ──
         # 长辈 domain 核心: 父星=偏财(藏干), 母星=正印(藏干), 年柱=祖上宫。
         # 应期: 流年支/干 引动 父星/母星 藏干所在支 = 父母应事年。
-        FATHER_STAR = "偏财"
-        MOTHER_STAR = "正印"
+        FATHER_STARS = ("偏财", "正财")
+        MOTHER_STARS = ("正印", "偏印")
         father_branches = [
             nb for nb in four_branches.values()
-            if any(ten_god(day_master, h) == FATHER_STAR
+            if any(ten_god(day_master, h) in FATHER_STARS
                    for h, _p in BRANCH_HIDDEN_STEMS.get(nb, []))
         ]
         mother_branches = [
             nb for nb in four_branches.values()
-            if any(ten_god(day_master, h) == MOTHER_STAR
+            if any(ten_god(day_master, h) in MOTHER_STARS
                    for h, _p in BRANCH_HIDDEN_STEMS.get(nb, []))
         ]
-        # 父星/母星 藏干所在支 被流年冲/穿 = 父母应事年
-        if father_branches:
-            for nb in father_branches:
-                if BRANCH_CHONG.get(yun_branch) == nb or BRANCH_CHUAN.get(yun_branch) == nb:
-                    pos = next(p for p, b in four_branches.items() if b == nb)
-                    triggers.append({
-                        'kind': 'parent_star', 'source': source, 'position': 'year',
-                        'branch': nb, 'in_main': False,
-                        'mech': f"{source}{yun_branch}引动父星{FATHER_STAR}(藏{nb})=父应期",
-                        'keyword': FATHER_STAR,
-                        'direction': 'NEGATIVE',
-                    })
-                    break
-        if mother_branches:
-            for nb in mother_branches:
-                if BRANCH_CHONG.get(yun_branch) == nb or BRANCH_CHUAN.get(yun_branch) == nb:
-                    pos = next(p for p, b in four_branches.items() if b == nb)
-                    triggers.append({
-                        'kind': 'parent_star', 'source': source, 'position': 'year',
-                        'branch': nb, 'in_main': False,
-                        'mech': f"{source}{yun_branch}引动母星{MOTHER_STAR}(藏{nb})=母应期",
-                        'keyword': MOTHER_STAR,
-                        'direction': 'NEGATIVE',
-                    })
-                    break
+
+        def _xing_with(a: str, b: str) -> bool:
+            """a 与 b 是否构成刑(三刑同组/子卯刑/自刑同支)。
+            ㊻s130: 原书案例15「丑未戌三刑母也有问题 → 16岁庚戌年死母」= 未戌刑,
+            原实现只认冲/穿, 漏刑 → 六亲星所在支被刑亦为父母应事年。"""
+            if a == b:
+                return a in BRANCH_SANXING_SELF
+            for grp in BRANCH_SANXING_TRIPLE:
+                if a in grp and b in grp:
+                    return True
+            return frozenset({a, b}) in BRANCH_SANXING_DOUBLE
+
+        def _kinship_trigger(stars, nb, label):
+            pos = next(p for p, b in four_branches.items() if b == nb)
+            mech_kind = ("冲" if BRANCH_CHONG.get(yun_branch) == nb
+                         else "穿" if BRANCH_CHUAN.get(yun_branch) == nb
+                         else "刑")
+            triggers.append({
+                'kind': 'parent_star', 'source': source, 'position': 'year',
+                'branch': nb, 'in_main': False,
+                'mech': f"{source}{yun_branch}{mech_kind}动{label}{'/'.join(stars)}(藏{nb})={label}应期",
+                'keyword': stars[0],
+                'direction': 'NEGATIVE',
+            })
+
+        # 父星/母星 藏干所在支 被流年冲/穿/刑 = 父母应事年
+        for nb in father_branches:
+            if (BRANCH_CHONG.get(yun_branch) == nb or BRANCH_CHUAN.get(yun_branch) == nb
+                    or _xing_with(yun_branch, nb)):
+                _kinship_trigger(FATHER_STARS, nb, "父星")
+                break
+        for nb in mother_branches:
+            if (BRANCH_CHONG.get(yun_branch) == nb or BRANCH_CHUAN.get(yun_branch) == nb
+                    or _xing_with(yun_branch, nb)):
+                _kinship_trigger(MOTHER_STARS, nb, "母星")
+                break
 
         # ── 合见冲 / 冲见合为应 (段建业第02章: 原局有合,以冲为应; 原局有冲,以合为应) ──
         # 原局六合支对被岁运冲 → 合见冲应期; 原局六冲支对被岁运合 → 冲见合应期
@@ -1448,7 +1467,7 @@ class BlindYingqiEngine:
             base['topic'] = '反吟引动'
             base['direction'] = 'NEGATIVE' if in_main else 'CHANGE'
         elif kind in ('spouse_star', 'chong_spouse_palace'):
-            base['topic'] = '配偶星合身' if kind == 'spouse_star' else '配偶宫逢冲刑'
+            base['topic'] = '配偶星引动' if kind == 'spouse_star' else '配偶宫逢冲刑'
             base['direction'] = 'POSITIVE' if kind == 'spouse_star' else 'CHANGE'
             base['domain'] = '婚姻口舌'
             base.setdefault('domain_scope', 'BLIND_CORE')
@@ -1491,6 +1510,17 @@ class BlindYingqiEngine:
         in_main_ev = trg.get('in_main', False)
         pos_ev = trg.get('position', '')
         tg_ev = trg.get('ten_god', '')
+        # ㊻s130: 六亲星引动=长辈/家宅事件(原书案例15"16岁庚戌年死母"=父母应事年),
+        # 旧版落进十神回填分支(tg=正印→学业文书事件), 事件性质错位。
+        if kind == 'parent_star':
+            event_topic = '长辈家宅事件'
+        # ㊻s130: 墓库冲开/闭库 放出之物=库藏十神, 事件性质按该域(原书案例9"闭库收财=资产增长")
+        elif kind in ('muku_kai', 'muku_bi') and base.get('domain'):
+            event_topic = {
+                '财富': '财富事件', '事业官贵': '事业官贵事件',
+                '学业文书': '学业文书事件', '婚姻口舌': '婚姻事件',
+                '健康灾伤': '健康事件',
+            }.get(base.get('domain'), '')
         # 宫位 引动 → 事件 性质
         if in_main_ev or kind in ('chong', 'chuan', 'fanyin', 'sanxing', 'zixing'):
             if pos_ev == 'day':

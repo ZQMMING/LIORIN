@@ -1,0 +1,68 @@
+{
+  "schema": "blind-event-cases-v1",
+  "engine": "blind_yingqi",
+  "note": "应期层真值：只收原书案例资料集里『某年发生某事』的明文句子。与 blind_truth_cases.json（结构层真值：正反局/婚姻态/财态/官态）互补，不重复。四柱→公历年份的换算与歧义处理见 docs/audit/BLIND_ACCURACY_20261105.md 第五节。",
+  "cases": [
+    {
+      "case_id": "blind-e001",
+      "pillars": "癸丑 乙卯 戊戌 癸亥",
+      "solar": [1913, 3, 18, 22],
+      "gender": "male",
+      "event_year": 1958,
+      "expected_nominal_age": 46,
+      "expected": {
+        "domain": "财富",
+        "event_topic": "财富事件",
+        "direction": "POSITIVE"
+      },
+      "verbatim": "庚戌大运运支戌土伏吟日支，日主根基倍增由弱变强……原局『双癸合戊』激活，身强担旺财，2008戊子年资产几何级增长。",
+      "source": "盲派命理-案例资料集.md 案例9",
+      "data_issue": "原书『2008戊子年』对1913年生人不可能(95岁)；据『庚戌大运运支戌伏吟日支』约束，庚戌运=虚岁45-54，该运内戊年只有1958戊戌(60甲子相邻笔误：子→戌)；故真值年取1958戊戌(虚岁46)。"
+    },
+    {
+      "case_id": "blind-e002",
+      "pillars": "戊申 壬戌 甲子 丙寅",
+      "solar": [1968, 10, 21, 4],
+      "gender": "female",
+      "event_year": 1992,
+      "expected_nominal_age": 25,
+      "expected": {
+        "domain": "婚姻口舌",
+        "event_topic": "婚姻事件",
+        "direction": "POSITIVE"
+      },
+      "verbatim": "以子为夫宫、申为夫星，申子合局 = 夫到夫宫……结婚应在壬申年（夫星申出现拱入夫宫）。",
+      "source": "盲派命理-案例资料集.md 案例10"
+    },
+    {
+      "case_id": "blind-e003",
+      "pillars": "戊申 壬戌 甲子 丙寅",
+      "solar": [1968, 10, 21, 4],
+      "gender": "female",
+      "event_year": 1996,
+      "expected_nominal_age": 29,
+      "expected": {
+        "domain": "婚姻口舌",
+        "event_topic": "婚姻事件",
+        "direction": "NEGATIVE"
+      },
+      "verbatim": "己未运之未运：未穿子，申生子 → 夫宫被穿 → 婚姻出问题。应期在丙子年（夫宫子水在流年出现见穿）。",
+      "source": "盲派命理-案例资料集.md 案例10"
+    },
+    {
+      "case_id": "blind-e004",
+      "pillars": "乙未 乙酉 丙戌 己丑",
+      "solar": [1955, 9, 22, 2],
+      "gender": "female",
+      "event_year": 1970,
+      "expected_nominal_age": 16,
+      "expected": {
+        "domain": "长辈家宅",
+        "event_topic": "长辈家宅事件",
+        "direction": "NEGATIVE"
+      },
+      "verbatim": "乙为母，未与乙连；酉为父，戌酉穿倒父 → 死……16岁庚戌年死母。",
+      "source": "盲派命理-案例资料集.md 案例15"
+    }
+  ]
+}

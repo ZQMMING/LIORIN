@@ -10,99 +10,211 @@
     {
       "case_id": "blind-001",
       "pillars": "壬子 辛亥 壬辰 丙午",
-      "solar": [1912, 11, 12, 12],
+      "solar": [
+        1912,
+        11,
+        12,
+        12
+      ],
       "gender": "male",
-      "expected": {"wealth_state": "DIRECTED_AND_ESTABLISHED"},
+      "expected": {
+        "wealth_state": "DIRECTED_AND_ESTABLISHED"
+      },
       "verbatim": "日支辰为水库（墓库），将年月满盘汪洋大水尽数收入库中→收的力量是极大的做功；丙辛合：壬水日主通过辛金合克丙火偏财取财。实际：资本市场大鳄。",
       "source": "案例资料集 案例1（巨富之命的闭库与做功）"
     },
     {
       "case_id": "blind-002",
       "pillars": "丁未 癸卯 庚子 丁丑",
-      "solar": [2027, 3, 22, 2],
+      "solar": [
+        2027,
+        3,
+        22,
+        2
+      ],
       "gender": "female",
-      "expected": {"official_state": "DAMAGED"},
+      "expected": {
+        "official_state": "DAMAGED"
+      },
       "verbatim": "子水伤官穿月令未土官库 → 伤官损官，官根受损 → 体制内不适应、反骨。",
       "source": "案例资料集 案例2（仕途坎坷与穿害的杀伤力）"
     },
     {
       "case_id": "blind-003",
       "pillars": "戊申 己未 庚申 辛巳",
-      "solar": [2028, 8, 3, 10],
+      "solar": [
+        2028,
+        8,
+        3,
+        10
+      ],
       "gender": "male",
-      "expected": {"body_candidate": "LU_UNDER_ATTACK"},
+      "expected": {
+        "body_candidate": "LU_UNDER_ATTACK"
+      },
       "verbatim": "禄被穿害（禄怕见绝，更怕穿害）→ 身体/福报受损。",
       "source": "案例资料集 案例3（禄被穿害）"
     },
     {
       "case_id": "blind-004",
       "pillars": "甲寅 丙子 己亥 戊辰",
-      "solar": [1974, 12, 24, 8],
+      "solar": [
+        1974,
+        12,
+        24,
+        8
+      ],
       "gender": "male",
-      "expected": {"marriage_state": "BROKEN"},
+      "expected": {
+        "marriage_state": "BROKEN"
+      },
       "verbatim": "官星投墓/宾主易位 → 婚姻难长久。",
       "source": "案例资料集 案例4（官星投墓）"
     },
     {
+      "case_id": "blind-006",
+      "pillars": "庚寅 戊寅 甲子 丙寅",
+      "solar": [
+        1890,
+        2,
+        12,
+        4
+      ],
+      "gender": "male",
+      "expected": {
+        "zheng_fan_ju": "ZHENG",
+        "official_state": "CONTROLLED_AND_CLEAN"
+      },
+      "verbatim": "包局主贵：寅午戌三合火局制子水；壬午大运寅午戌三合火局制子水→权力巅峰，官至师长；癸运戊癸合走印星→权力瞬间旁落下野。关键：包局主贵，体强包用得权极快；运破包局失权亦速。",
+      "source": "案例资料集 案例6（包局得权·陈济棠）",
+      "data_issue": "原四柱在当前历法下唯一解为 1890-02-12 04:00（扫描下界 1900 曾漏解）。"
+    },
+    {
+      "case_id": "blind-007",
+      "pillars": "戊申 己未 癸巳 己未",
+      "solar": [
+        1968,
+        7,
+        22,
+        14
+      ],
+      "gender": "male",
+      "expected": {
+        "official_state": "CONTROLLED_AND_CLEAN"
+      },
+      "verbatim": "从杀格，土金旺极。癸水坐下巳火（财），巳火合制年柱申金（印带官帽）→ 财制印做功。传统视财破印为凶，盲派视财制印层次极高。关键：财星主动制合印星且制得干净 → 大贵。",
+      "source": "案例资料集 案例7（财制印格·金融巨头）",
+      "data_issue": "原四柱解为 1908-08-06 / 1968-07-22 / 2028-07-07，取 1968。"
+    },
+    {
       "case_id": "blind-008",
       "pillars": "乙巳 甲申 辛酉 乙未",
-      "solar": [2025, 8, 20, 14],
+      "solar": [
+        2025,
+        8,
+        20,
+        14
+      ],
       "gender": "male",
-      "expected": {"official_state": "ROBBED"},
+      "expected": {
+        "official_state": "ROBBED"
+      },
       "verbatim": "官星被劫财合去 → 非我所有（做功无效）。",
       "source": "案例资料集 案例8（劫财合官）"
     },
     {
       "case_id": "blind-009",
       "pillars": "癸丑 乙卯 戊戌 癸亥",
-      "solar": [1913, 3, 18, 22],
+      "solar": [
+        1913,
+        3,
+        18,
+        22
+      ],
       "gender": "male",
-      "expected": {"wealth_state": "DIRECTED_AND_ESTABLISHED"},
+      "expected": {
+        "wealth_state": "DIRECTED_AND_ESTABLISHED"
+      },
       "verbatim": "双癸合戊，财来合我（合财入手）；2008 年资产增长。",
       "source": "案例资料集 案例9（双癸合戊）"
     },
     {
       "case_id": "blind-012",
       "pillars": "丁亥 甲辰 戊辰 甲寅",
-      "solar": [1947, 4, 19, 4],
+      "solar": [
+        1947,
+        4,
+        19,
+        4
+      ],
       "gender": "male",
-      "expected": {"zheng_fan_ju": "ZHENG"},
+      "expected": {
+        "zheng_fan_ju": "ZHENG"
+      },
       "verbatim": "木火成势制亥水官星，大贵（蒋介石造）。",
       "source": "案例资料集 案例12（蒋介石）"
     },
     {
-      "case_id": "blind-d28",
-      "pillars": "己巳 乙亥 壬申 丁未",
-      "solar": [1989, 11, 8, 14],
-      "gender": "male",
-      "expected": {"zheng_fan_ju": "FAN_JU"},
-      "verbatim": "反证锚点：左（日干）伤官制官去官、右（日支）合财求财，意向相反 → 反局。",
-      "source": "docs/v2/盲派9例对齐验证_V3.4.3.md 反证"
-    },
-    {
       "case_id": "blind-1983",
       "pillars": "癸亥 壬戌 乙未 壬午",
-      "solar": [1983, 11, 3, 12],
+      "solar": [
+        1983,
+        11,
+        3,
+        12
+      ],
       "gender": "male",
-      "expected": {"zheng_fan_ju": "FAN_JU"},
+      "expected": {
+        "zheng_fan_ju": "FAN_JU"
+      },
       "verbatim": "用户定稿锚点：火土燥势制不净（水有根）+ 未亥暗合追水忌 → 反局。",
       "source": "MEMORY 盲派核心拓扑锚点"
     },
     {
       "case_id": "blind-ch1-2",
       "pillars": "丙子 戊戌 丁丑 丁未",
-      "solar": [1876, 11, 5, 14],
+      "solar": [
+        1876,
+        11,
+        5,
+        14
+      ],
       "gender": "female",
-      "expected": {"zheng_fan_ju": "FAN_JU"},
+      "expected": {
+        "zheng_fan_ju": "FAN_JU"
+      },
       "verbatim": "ch1 例②：火土燥势忌金水 + 丑合子水追忌 → 反局（坤造）。",
       "source": "MEMORY 盲派核心拓扑锚点（原著 ch1 例②）"
     },
     {
+      "case_id": "blind-d28",
+      "pillars": "己巳 乙亥 壬申 丁未",
+      "solar": [
+        1989,
+        11,
+        8,
+        14
+      ],
+      "gender": "male",
+      "expected": {
+        "zheng_fan_ju": "FAN_JU"
+      },
+      "verbatim": "反证锚点：左（日干）伤官制官去官、右（日支）合财求财，意向相反 → 反局。",
+      "source": "docs/v2/盲派9例对齐验证_V3.4.3.md 反证"
+    },
+    {
       "case_id": "blind-zhu",
       "pillars": "戊辰 壬戌 丁丑 丁未",
-      "solar": [1868, 10, 18, 14],
+      "solar": [
+        1868,
+        10,
+        18,
+        14
+      ],
       "gender": "male",
-      "expected": {"zheng_fan_ju": "ZHENG"},
+      "expected": {
+        "zheng_fan_ju": "ZHENG"
+      },
       "verbatim": "朱元璋造：合官 + 天干明克去官，日主做功与日支同向 → 正局。",
       "source": "MEMORY 盲派核心拓扑锚点（朱元璋造）"
     }
