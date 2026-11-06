@@ -169,9 +169,10 @@ def test_ye_buye_uses_gua_qi_and_najia():
     ye = judge_ye_buye("乾", 4, "甲子")     # 乾卦气属四月，甲子在纳甲
     assert ye is not None and ye.ye is True and ye.buye is False
     assert ye.najia_hit is True
-    half = judge_ye_buye("乾", 6, "甲子")   # 月不合、纳甲合 → 半叶
+    # 乾卦头「二月已后八月以前及时」→ 得时窗 2-8 月；11 月既非卦气月也非得时
+    half = judge_ye_buye("乾", 11, "甲子")  # 月不合、纳甲合 → 半叶
     assert half is not None and half.ye is False and half.buye is False
-    buye = judge_ye_buye("乾", 6, "乙丑")   # 两不合 → 不叶
+    buye = judge_ye_buye("乾", 11, "乙丑")  # 两不合 → 不叶
     assert buye is not None and buye.buye is True
 
 
@@ -199,3 +200,36 @@ def test_compose_guajie_outputs_benming_ye_buye():
     assert yb["gua_qi_month"] == 1      # 泰卦气属正月
     assert yb["najia_hit"] is True      # 甲辰在纳甲
     assert any("命卦叶/不叶" in e for e in gj["evidence"])
+
+
+def test_de_shi_windows_parsed_from_book_text():
+    """卦头「及时/得时/失时」月窗：旧实现只认出乾 1 卦，新实现覆盖 19 卦。"""
+    from tongshu.engines.heluo.guajie import load_guajie_data, _parse_de_shi_windows
+
+    data = load_guajie_data()
+    windows = {}
+    for name, g in data.items():
+        de, shi = _parse_de_shi_windows(g.gua_lines)
+        if de or shi:
+            windows[name] = (de, shi)
+
+    assert len(windows) == 19
+    de, shi = windows["乾"]                 # 二月已后八月以前及时
+    assert de == set(range(2, 9)) and not shi
+    de, shi = windows["兑"]                 # 生于秋则及时
+    assert de == {7, 8, 9}
+    de, shi = windows["渐"]                 # 在冬则及时
+    assert de == {10, 11, 12}
+    de, shi = windows["恒"]                 # 二至八月及时，九至十二月失时
+    assert de == set(range(2, 9)) and shi == {9, 10, 11, 12}
+    de, shi = windows["噬嗑"]               # 二至八月及时，十月至正月失时
+    assert de == set(range(2, 9)) and shi == {10, 11, 12, 1}
+
+
+def test_ye_buye_uses_de_shi_window():
+    """得时月窗参与叶/不叶判定：乾 6 月得时 + 纳甲合 → 叶。"""
+    from tongshu.engines.heluo.guajie import judge_ye_buye
+
+    ye = judge_ye_buye("乾", 6, "甲子")
+    assert ye is not None and ye.ye is True
+    assert any("得时" in e for e in ye.evidence)

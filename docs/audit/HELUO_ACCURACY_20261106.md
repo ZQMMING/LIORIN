@@ -110,3 +110,22 @@ python scripts/heluo_truth_replay.py                                            
 
 纪晓岚实测（甲辰 辛未 丙戌 甲午 男 午时）：命卦泰（卦气正月），生月六月 → 月不合、
 年干支甲辰在纳甲 → **半叶**；数凶 `以弱敌强（天22/56）+ 生月6月（阳月）`。
+
+### D-008 得时/失时月窗（叶/不叶第三判据）只识别出 1 卦
+
+- 原典「及时/得时/失时」是叶不叶的第三个判据（如乾「二月已后、八月以前及时」，
+  兑「生于秋则及时」，渐「在冬则及时」），旧实现只有一条正则，64 卦里仅 **乾** 能匹配。
+- 重写为分句解析：`_parse_de_shi_windows(lines)` 逐行按 `(?!不)及时|(?!不)得时|失时|非时`
+  切段，`_analysis_segment` 取标记前从句（「X月已后，Y月以前及时」配对、
+  「九、十、十二、一月为失时」顿号枚举左补、不并入含另一断语的前句），
+  `_month_tokens` 要求数字后 10 字内有「月」以免把爻位「九五」当月份，
+  `_expand_range` 支持 9→1 跨年回绕。
+- 结果：**19 卦**解析出月窗（乾/屯/豫/随/复/无妄/大壮/归妹/丰/小过 得时 2-8；
+  兑/大有 得时 7-9；渐 得时 10-12；离 得时 4-6；颐 得时 2-7、失时 9-12；
+  恒 得时 2-8、失时 9-12；噬嗑/解 失时 9-1 等），无妄原文「九、十、十二、一月」确实漏十一月，
+  保留原样不做补写。
+- 叶/不叶因此改为「卦气月 / 得时月窗 / 纳甲」三判据；新增
+  `tests/test_heluo_guajie_mapping.py::test_de_shi_windows_parsed_from_book_text`、
+  `test_ye_buye_uses_de_shi_window`。
+- 回归：`pytest tests -k "heluo or meihua"` → **542 passed / 1 error**（error 为子平线
+  `test_ziping_15_2_evidence_provenance.py` CITATION，pre-existing）。

@@ -560,6 +560,135 @@ def query_yao_duan(hexagram_name: str, yao_name: str) -> Optional[YaoDuan]:
 # 叶/不叶判定
 # ═══════════════════════════════════════════════════════════════════
 
+_SEASON_MONTHS = {"春": {1, 2, 3}, "夏": {4, 5, 6}, "秋": {7, 8, 9}, "冬": {10, 11, 12}}
+_MONTH_CHARS = {"正": 1, "一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6,
+                "七": 7, "八": 8, "九": 9, "十": 10, "冬": 11, "腊": 12}
+
+
+def _month_tokens(frag: str) -> list[tuple[int, int]]:
+    """从一段卦头文字抽出 (月, 字符位置) 列表。
+
+    只认与「月」相关的位置：列举式「二三四五六七八月」、顿号列举
+    「九、十、十二、一月」、复合式「十一月/十二月」；`十` 单出现视为十月。
+    与「月」距离超过 10 字的数字（如爻位「九五」）不采。
+    """
+    out: list[tuple[int, int]] = []
+    i, n = 0, len(frag)
+    while i < n:
+        ch = frag[i]
+        start = i
+        value = None
+        if ch == "十" and i + 1 < n and frag[i + 1] in "一二":
+            value = 11 if frag[i + 1] == "一" else 12
+            i += 3 if (i + 2 < n and frag[i + 2] == "月") else 2
+        elif ch in _MONTH_CHARS:
+            value = _MONTH_CHARS[ch]
+            i += 2 if (i + 1 < n and frag[i + 1] == "月") else 1
+        else:
+            i += 1
+            continue
+        if value is None:
+            continue
+        # 「月」必须出现在该数字之后 10 字内，否则视为无关数字
+        win = frag[start:start + 11]
+        if "月" in win or ("至" in win and "月" in frag[start:start + 16]):
+            out.append((value, start))
+    return out
+
+
+def _expand_range(lo: int, hi: int) -> set[int]:
+    """月区间（含跨年回绕：9→1 = 9,10,11,12,1）。"""
+    if lo <= hi:
+        return set(range(lo, hi + 1))
+    return set(range(lo, 13)) | set(range(1, hi + 1))
+
+
+_CLAUSE_SEP = "。；，、"
+
+
+def _clause_start(line: str, pos: int) -> int:
+    """返回 pos 所在从句的起始下标（以 。；，、 为界）。"""
+    for i in range(pos - 1, -1, -1):
+        if line[i] in _CLAUSE_SEP:
+            return i + 1
+    return 0
+
+
+_ENUM_TAIL_RE = re.compile(
+    r"((?:[正一二三四五六七八九十冬腊]+[、，])+[正一二三四五六七八九十冬腊]+月)"
+    r"[^、，。；]{0,6}$")
+
+
+def _analysis_segment(line: str, pos: int, floor: int = 0) -> str:
+    """取断语标记前用于解析月窗的片段。
+
+    取标记所在从句；若该从句无「月」，或含「以前/已前」而需要与前半句
+    「X月以后」配对（如「二月已后，八月以前及时」），则并入前一句。
+    顿号列举（「九、十、十二、一月为失时」）向左补齐枚举项；
+    floor 为上一断语的结束位置，任何并入都不得跨越它。
+    """
+    start = _clause_start(line, pos)
+    m = _ENUM_TAIL_RE.search(line[:pos])
+    if m:
+        start = max(floor, m.start())
+    seg = line[start:pos]
+    need_prev = ("月" not in seg) or ("以前" in seg or "已前" in seg)
+    if need_prev and start > floor:
+        prev_start = _clause_start(line, start - 1)
+        prev = line[prev_start:start]
+        # 不得并到另一断语（「及时之福深」前一句可能是「失时也」）
+        if ("月" in prev or "以后" in prev or "已后" in prev) and \
+                not any(k in prev for k in ("及时", "得时", "失时", "非时")):
+            seg = prev + seg
+    return seg
+
+
+def _parse_de_shi_windows(text: str | list[str]) -> tuple[set[int], set[int]]:
+    """解析卦头「得时/及时」「失时/非时」月窗（原典写法极不统一）。
+
+    逐行解析（不同卦象断语行之间不得串段），以「及时/得时/失时/非时」
+    四个断语标记切段：每个标记之前的文字属于该判定；「不及时」是否定式，
+    不计为得时。
+    支持：`二月至八月`、`二月以后八月以前`、`二月已后，八月以前`、
+    `二三四五六七八月`、`九十十一月十二月正月`、单侧 `九月以后`、
+    `生于秋则及时`（单季）。
+    返回 `(得时月集合, 失时月集合)`；无相关语句时返回两个空集合。
+    """
+    lines = [text] if isinstance(text, str) else list(text)
+    de: set[int] = set()
+    shi: set[int] = set()
+    for line in lines:
+        marks = [(m.start(), m.end(), "shi" if m.group(0) in ("失时", "非时") else "de")
+                 for m in re.finditer(r"(?<!不)及时|(?<!不)得时|失时|非时", line)]
+        prev_end = 0
+        for pos, end, kind in marks:
+            seg = _analysis_segment(line, pos, prev_end)
+            prev_end = end
+            toks = _month_tokens(seg)
+            months: set[int] = set()
+            if len(toks) >= 2 and ("至" in seg or "到" in seg):
+                months |= _expand_range(toks[0][0], toks[1][0])
+                if len(toks) > 2:
+                    months |= {m for m, _ in toks[2:]}
+            elif len(toks) >= 2 and ("以后" in seg or "已后" in seg) and \
+                    ("以前" in seg or "已前" in seg):
+                months |= _expand_range(toks[0][0], toks[1][0])
+            elif toks and ("以后" in seg or "已后" in seg):
+                months |= _expand_range(toks[0][0], 12)
+            elif toks and ("以前" in seg or "已前" in seg):
+                months |= _expand_range(1, toks[0][0])
+            elif toks:
+                months |= {m for m, _ in toks}
+            if months:
+                (shi if kind == "shi" else de).update(months)
+                continue
+            # 季节式：秋则及时 / 在冬则及时
+            seasons = [s for s in _SEASON_MONTHS if s in seg]
+            if len(seasons) == 1:
+                (shi if kind == "shi" else de).update(_SEASON_MONTHS[seasons[0]])
+    return de, shi
+
+
 def judge_ye_buye(
     hexagram_name: str,
     birth_month: int,
@@ -599,16 +728,17 @@ def judge_ye_buye(
     elif g.najia:
         ev.append(f"未提供年干支，纳甲[{','.join(g.najia)}]不参与判定")
 
-    # 3. 旺时区间（卦头 lines 中的"生于X月以后X月以前者得时"）
+    # 3. 旺时/失时区间（卦头 lines 中的"二月至八月及时"/"二三四五月为及时"等）
     gua_text = " ".join(g.gua_lines)
-    m = re.search(r"生于([正二三四五六七八九十腊]+)月以后([正二三四五六七八九十腊]+)月以前[^\n，。]*得时", gua_text)
-    if m:
-        lo, hi = _CN_MONTH[m.group(1)], _CN_MONTH[m.group(2)]
-        if lo <= birth_month <= hi:
+    de_shi, shi_shi = _parse_de_shi_windows(gua_text)
+    if de_shi or shi_shi:
+        if birth_month in de_shi:
             ye = True
-            ev.append(f"生月{birth_month} ∈ 旺时[{lo}月,{hi}月]（{g.name}得时）")
+            ev.append(f"生月{birth_month}月 ∈ 得时月{sorted(de_shi)}（{g.name}卦头明示及时/得时）")
+        elif birth_month in shi_shi:
+            ev.append(f"生月{birth_month}月 ∈ 失时月{sorted(shi_shi)}（{g.name}卦头明示失时/非时）")
         else:
-            ev.append(f"生月{birth_month} ∉ 旺时[{lo}月,{hi}月]")
+            ev.append(f"生月{birth_month}月 ∉ 得时月{sorted(de_shi)}（{g.name}卦头未许得时）")
     m2 = re.search(r"如生(月)?不及时[^，。]*不在纳甲[^，。]*", gua_text)
     if m2:
         ev.append(f"卦头提示：{m2.group(0)}")
