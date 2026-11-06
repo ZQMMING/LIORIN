@@ -239,6 +239,8 @@ class HeluoCanonical:
         solar_phase: "winter"（冬至后至夏至前）/ "summer"（夏至后至冬至前）。
                       纯卦（女乾/男坤）元堂上下行向分支；未传且 birth_date 有效时自动推算。
         """
+        _real_birth_date = birth_date  # 化工月支：真实生日优先，否则回退四柱月支
+
         # Step 1: 计算天数地数
         numbers = compute_tian_di_shu(bazi, gender)
 
@@ -313,9 +315,19 @@ class HeluoCanonical:
             day_boundary="23:00",
         )
 
-        # Step 8: H6 化工计算
+        # Step 8: H6 化工计算（纳音五行供"正互俱无则取纳甲纳音"代用）
+        _nayin_el = None
+        try:
+            from .yuan_qi import nayin_element as _nayin_fn
+            if bazi and len(bazi[0]) >= 2:
+                _nayin_el = _nayin_fn(bazi[0][0], bazi[0][1])
+        except Exception:
+            _nayin_el = None
+        _bazi_month_branch = bazi[1][1] if (bazi and len(bazi) > 1) else None
         hua_gong = self._compute_huagong(
-            prenatal, postnatal, birth_date, gender, birth_year
+            prenatal, postnatal, birth_date, gender, birth_year, _nayin_el,
+            month_branch=_bazi_month_branch,
+            prefer_date_branch=bool(_real_birth_date),
         )
 
         # Step 8.5: H7 元气（年柱纳甲/后天宫位配先天之气）— 与化工对偶
@@ -482,19 +494,26 @@ class HeluoCanonical:
         birth_date: str,
         gender: str,
         birth_year: int | None,
+        nayin_element: str | None = None,
+        month_branch: str | None = None,
+        prefer_date_branch: bool = True,
     ) -> HuaGongResult | None:
         """H6: 计算化工状态。"""
         try:
             # 月支按节气节令月精确判定（修复：原实现用公历月份近似，
             # 边界日会错判月支，如 11-03 立冬前实为戌月却被当亥月）。
             from .hua_gong import compute_huagong, resolve_birth_month_branch
-            branch = resolve_birth_month_branch(birth_date)
+            branch = resolve_birth_month_branch(birth_date) if (prefer_date_branch and birth_date) else None
+            if branch is None:
+                branch = month_branch
             if branch is None:
                 return None
             return compute_huagong(
                 prenatal.upper_gua, prenatal.lower_gua,
                 postnatal.upper_gua, postnatal.lower_gua,
                 branch,
+                nayin_element=nayin_element,
+                gender=gender,
             )
         except Exception:
             return None

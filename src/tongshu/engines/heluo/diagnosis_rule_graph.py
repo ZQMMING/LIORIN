@@ -165,6 +165,13 @@ def build_diagnosis_graph(
 
         # 匹配对应的 EVENT_SIGNAL 获取方向
         direction = _signal_direction_for_evidence(ev, signals)
+        # D-019: 化工证据的方向由冻结态化工状态决定（NORMAL→SUPPORTIVE、
+        # REVERSE→CAUTION、UNRESOLVED→NEUTRAL），不能只依赖信号匹配而落成 NEUTRAL，
+        # 否则与下方由 FrozenHeluoState 补充的同一化工断言方向互相矛盾。
+        if ev.rule_id == "HL_HUA_GONG" and frozen_state is not None:
+            _hg_state = getattr(frozen_state, "hua_gong_state", None)
+            if _hg_state:
+                direction = HUAGONG_DIRECTION.get(_hg_state, direction)
 
         evidence_ref = EvidenceRef(
             evidence_id=ev.evidence_id,

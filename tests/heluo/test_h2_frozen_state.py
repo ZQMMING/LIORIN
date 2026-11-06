@@ -56,10 +56,15 @@ class TestFrozenStateGoldenCase(unittest.TestCase):
         self.assertEqual(self.state.postnatal_lines, (1, 1, 1, 1, -1, -1))
 
     def test_huagong(self):
-        """纪晓岚案例（占位 birth_date 1984-01-01→大雪后子月，冬）→ 化工卦为坎，卦中无坎无离 → UNRESOLVED"""
-        self.assertEqual(self.state.hua_gong_state, "UNRESOLVED")
+        """纪晓岚案例（甲辰辛未丙戌甲午，未月）→ 未为四季月，先天泰卦见坤 → 土旺得化工（NORMAL）。
+
+        D-019 起化工按原典：四季月（辰戌丑未）坤艮土旺十八日亦为化工；同时月支改取
+        四柱月支（旧实现占位 birth_date 被填成 1984-01-01 而误判为子月）。
+        """
+        self.assertEqual(self.state.hua_gong_state, "NORMAL")
         self.assertIsNotNone(self.state.hua_gong_evidence)
-        self.assertTrue(any("坎" in e for e in self.state.hua_gong_evidence))
+        self.assertTrue(any("未" in e for e in self.state.hua_gong_evidence))
+        self.assertTrue(any("坤" in e or "土旺" in e for e in self.state.hua_gong_evidence))
 
     def test_dayun_count(self):
         """先天6爻 + 后天6爻 = 12段大运"""

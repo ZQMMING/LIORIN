@@ -256,30 +256,30 @@ section("Rule 09: 化工状态判定")
 
 from tongshu.engines.heluo.hua_gong import compute_huagong, HuaGongState
 
-# 春季寅月→化工卦震。卦(乾,坤,乾,坤)不含震也不含兑→UNRESOLVED
+# 冬至后（子丑寅）→化工卦坎。卦(乾,坤,乾,坤)不含坎也不含离→UNRESOLVED
 r = compute_huagong("乾", "坤", "乾", "坤", "寅")
 check("春化工乾坤卦→UNRESOLVED", r.state, HuaGongState.UNRESOLVED,
-      "卦含乾(金)坤(土)，不含震(化工)也不含兑(反)")
+      "卦含乾(金)坤(土)，不含坎(化工)也不含离(反)")
 
 # 卦中含震+兑（正对）：兑金克震木（化工受制），四卦无生震无克兑 → RESTRAINED（尤凶）
-r = compute_huagong("震", "坤", "兑", "坤", "寅")
-check("春化工含震含兑受制→RESTRAINED", r.state, HuaGongState.RESTRAINED,
+r = compute_huagong("兑", "震", "乾", "震", "酉")
+check("秋化工含兑含震受制→RESTRAINED", r.state, HuaGongState.RESTRAINED,
       "原典（化工相反图论）：'虽相反，却又有相生者则吉。但忌克制，尤凶'——"
       "兑金克震木无救应 → RESTRAINED（尤凶），非 RESCUED")
 
 # 卦中含兑不含震（反位）
-r = compute_huagong("兑", "坤", "兑", "坤", "寅")
-check("春化工含兑不含震→REVERSE", r.state, HuaGongState.REVERSE,
-      "卦含反卦兑，无化工震 → REVERSE")
+r = compute_huagong("坎", "坤", "坎", "坤", "午")
+check("夏化工含坎不含离→REVERSE", r.state, HuaGongState.REVERSE,
+      "卦含反卦坎，无化工离 → REVERSE")
 
 # 冬季丑月→化工卦坎
 r = compute_huagong("坎", "坤", "坎", "坤", "丑")
 check("冬坎化工-NORMAL", r.state, HuaGongState.NORMAL,
       "卦含坎(化工)，不含离(反) → NORMAL")
 
-r = compute_huagong("离", "坤", "离", "坤", "丑")
-check("冬坎化工卦含离→REVERSE", r.state, HuaGongState.REVERSE,
-      "卦含离(反)，不含坎(化工) → REVERSE")
+r = compute_huagong("坎", "坎", "坤", "坤", "午")
+check("夏离化工卦含坎→REVERSE", r.state, HuaGongState.REVERSE,
+      "卦含坎(反)，不含离(化工) → REVERSE")
 
 # 夏季午月→化工卦离
 r = compute_huagong("离", "坤", "离", "坤", "午")
@@ -287,7 +287,7 @@ check("夏离化工-NORMAL", r.state, HuaGongState.NORMAL,
       "卦含离(化工)，不含坎(反) → NORMAL")
 
 # 秋季申月→化工卦兑
-r = compute_huagong("兑", "坤", "兑", "坤", "申")
+r = compute_huagong("兑", "坤", "兑", "坤", "酉")
 check("秋兑化工-NORMAL", r.state, HuaGongState.NORMAL,
       "卦含兑(化工)，不含震(反) → NORMAL")
 

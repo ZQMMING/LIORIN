@@ -237,7 +237,7 @@ class TestHuaGongEndToEnd(unittest.TestCase):
 
     def test_normal_state_detection(self):
         """化工得位 → NORMAL"""
-        r = compute_huagong("乾", "震", "乾", "震", "寅")
+        r = compute_huagong("乾", "震", "乾", "震", "卯")
         self.assertEqual(r.state, HuaGongState.NORMAL)
         self.assertTrue(r.has_huagong)
         self.assertFalse(r.has_opposite)
@@ -251,7 +251,7 @@ class TestHuaGongEndToEnd(unittest.TestCase):
 
     def test_rescued_state_with_rescue(self):
         """化工有反卦但有相生救应 → RESCUED（原典：相生者则吉）"""
-        r = compute_huagong("震", "坤", "兑", "坎", "寅")
+        r = compute_huagong("震", "坤", "兑", "坤", "酉")
         self.assertEqual(r.state, HuaGongState.RESCUED)
         self.assertTrue(r.has_huagong)
         self.assertTrue(r.has_opposite)
@@ -263,7 +263,7 @@ class TestHuaGongEndToEnd(unittest.TestCase):
 
     def test_evidence_chain_contains_facts(self):
         """化工证据链为纯事实"""
-        r = compute_huagong("乾", "震", "乾", "震", "寅")
+        r = compute_huagong("乾", "震", "乾", "震", "卯")
         for e in r.evidence:
             self.assertNotIn("POSITIVE", e)
             self.assertNotIn("direction", e.lower())

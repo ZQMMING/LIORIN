@@ -86,9 +86,11 @@ class TestDiagnosisGraphIntegration(unittest.TestCase):
         result = build_diagnosis_graph(self.evidences, self.signals, self.state)
         huagong_assertions = [a for a in result.assertions if "HUA_GONG" in a.assertion_id]
         self.assertGreaterEqual(len(huagong_assertions), 1)
-        # 至少有一个化工断言，方向正确
+        # 至少有一个化工断言，方向须与化工状态→方向映射一致（D-019 后 Golden 案
+        # 未月四季土旺得化工，状态由 UNRESOLVED 变 NORMAL，方向随之为 SUPPORTIVE）
+        expect = HUAGONG_DIRECTION[self.state.hua_gong_state]
         for a in huagong_assertions:
-            self.assertEqual(a.direction, AssertionDirection.NEUTRAL)
+            self.assertEqual(a.direction, expect)
 
     def test_signal_assertions_present(self):
         result = build_diagnosis_graph(self.evidences, self.signals, self.state)

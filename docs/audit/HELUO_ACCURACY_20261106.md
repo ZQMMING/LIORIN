@@ -12,9 +12,10 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **605 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **630 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 | 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
 | 节候卦（二十四节气 × 七十二候） | **72/72 候名按序命中原文，24/24 节候卦由首候派生，八节卦 24/24 与原典首句一致** | `tests/test_heluo_jiehhou_yuanwen.py`，`tests/heluo/test_h11_jiehhou.py` |
+| 化工卦（H6） | **12 月支映射与原典「冬至→惊蛰/春分→芒种/夏至→白露/秋分→大雪」四句一致，三层判据（正体·互体·纳音）+ 四季月坤艮土旺均落地，25 tests** | `tests/heluo/test_h6_huagong_yuanwen.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
 
@@ -76,7 +77,7 @@ python scripts/heluo_truth_replay.py --dump heluo-002
 $env:PYTHONPATH='D:\shuntian\src'
 $env:PYTHONIOENCODING='utf-8'
 python -m pytest tests/test_heluo_truth.py tests/test_heluo_guajie_mapping.py tests/test_heluo_canping_truth.py -q   # 21 passed
-python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 605 passed / 1 pre-existing error
+python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 630 passed / 1 pre-existing error
 python scripts/heluo_truth_replay.py                                                                               # 4/4 PASS
 ```
 
@@ -329,4 +330,40 @@ python scripts/heluo_truth_replay.py                                            
 - 影响面：`JIEHOU_GUA` 只经 `canonical._compute_seasonal_hexagram` → 证据文本与
   `frozen_state` 存档，无逻辑分支依赖其数值；`SIXTY_GUA` 无任何消费者。
 
+### D-019 化工卦四季映射错位一月，且缺互体/纳音/四季土旺三层判据
 
+- 现象：`hua_gong.py` 的 `SEASON_BRANCH_TO_HUAGONG` 为 亥子丑→坎 / 寅卯辰→震 /
+  巳午未→离 / 申酉戌→兑（农历四季分法），与《河洛真数·起例卷之上·化工论》四句
+  整体错位一个月；且只有「正体有/反卦有」两档，缺互体与纳甲纳音代用、缺四季月
+  坤艮土旺。
+- 原典明文：
+  - 「坎卦自冬至十一月中以后至惊蛰终止」→ 子丑寅（冬至在子月中，惊蛰为卯月节）
+  - 「震卦自春分二月中以后至芒种终止」→ 卯辰巳
+  - 「离卦自夏至五月中以后至白露终止」→ 午未申
+  - 「兑卦自秋分八月中以后至大雪终止」→ 酉戌亥
+  - 「坤艮卦主四季辰戌丑未月，除正节气十二日外，各旺十八日。妇人得此，名儿女星，
+    又为贞母节妇」
+  - 「正不逢而互体得之；若正互俱无，则取纳甲纳音，终是浅薄，福寿减半」
+  - 反卦四条：坎反离（夏至后秋分前）、离反坎（冬至后春分前）、兑反震（春分后夏至前）、
+    震反兑（秋分后冬至前）
+- 修（`src/tongshu/engines/heluo/hua_gong.py` 重写）：
+  ① 映射改 子丑寅→坎 / 卯辰巳→震 / 午未申→离 / 酉戌亥→兑；
+  ② 新增 `TU_WANG_BRANCHES=("辰","戌","丑","未")`、`TU_WANG_TRIGRAMS=("坤","艮")`：
+     四季月见坤艮即土旺化工（女命追加「儿女星/贞母节妇」注）；
+  ③ 新增 `hu_trigrams(upper, lower)`（上互三四五爻、下互二三四爻）→ 正体无而互体有
+     则 `scope="互体"`；
+  ④ 新增纳音层：`nayin_element(年干,年支)`（60 甲子纳音，与 D-017 共用）→ 纳音五行
+     与当令化工同气或生之，则 `scope="纳音"`、`weak=True`，证据注明「终是浅薄，福寿减半」；
+  ⑤ `HuaGongResult` 增 `scope/weak/tu_wang` 三字段，证据串带判据来源。
+- 接线（`canonical._compute_huagong`）：原实现 `birth_date` 缺省被填成 `YYYY-01-01`
+  （子月），四柱月支为未月者被误判成坎月。改为：有真实出生日期时按 `resolve_birth_month_branch`
+  取节气月支，否则回退**四柱月支**（`bazi[1][1]`）；同时传入纳音五行与性别。
+- 测试更新：`test_h6_hua_gong.py` / `test_h16_independent_verification.py` /
+  `test_full_pipeline.py` 断言按新映射逐条改写（旧图上经互体会命中化工者已换图）；
+  `test_h2_frozen_state.py::test_huagong` 纪晓岚案由 UNRESOLVED 改 NORMAL（未月四季土旺、
+  先天泰卦含坤）；`test_h12_diagnosis.py::test_huagong_assertion_present` 改为按
+  `HUAGONG_DIRECTION[state]` 断言，并修 `diagnosis_rule_graph` 中证据派生的化工断言
+  方向（原固定落 NEUTRAL，与冻结态补充的同名断言方向矛盾）。
+- 验证：新增 `tests/heluo/test_h6_huagong_yuanwen.py` **25 passed**（原典四句逐字命中、
+  12 月支参数化、映射精确三分组、土旺女命/男命、互体、纳音同气/相生/不合、
+  反卦、证据串）；全族 **630 passed**；真值 4/4；结构扫描 60 盘 0 问题。

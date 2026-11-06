@@ -18,8 +18,8 @@ class TestHuaGongNormal(unittest.TestCase):
     """NORMAL: 卦中含当令化工卦，无反卦"""
 
     def test_spring_zhen_no_dui(self):
-        """春震卦，卦中含震但无兑 → NORMAL"""
-        r = compute_huagong("乾", "震", "乾", "震", "寅")
+        """春分后（卯月→震），卦中含震但无兑 → NORMAL"""
+        r = compute_huagong("乾", "震", "乾", "震", "卯")
         self.assertEqual(r.state, HuaGongState.NORMAL)
         self.assertTrue(r.has_huagong)
         self.assertFalse(r.has_opposite)
@@ -31,8 +31,8 @@ class TestHuaGongNormal(unittest.TestCase):
         self.assertEqual(r.state, HuaGongState.NORMAL)
 
     def test_autumn_dui_no_zhen(self):
-        """秋兑卦，卦中含兑但无震 → NORMAL"""
-        r = compute_huagong("兑", "兑", "乾", "兑", "申")
+        """秋分后（酉月→兑），卦中含兑但无震 → NORMAL"""
+        r = compute_huagong("兑", "兑", "乾", "兑", "酉")
         self.assertEqual(r.state, HuaGongState.NORMAL)
 
     def test_winter_kan_no_li(self):
@@ -60,8 +60,8 @@ class TestHuaGongRescued(unittest.TestCase):
         self.assertTrue(r.has_opposite)
 
     def test_spring_zhen_rescued_by_kan(self):
-        """春震含兑，另有坎水生震（救应）→ RESCUED（相生则吉）"""
-        r = compute_huagong("震", "坤", "兑", "坎", "寅")
+        """秋兑含震（反卦），另有坤土生兑金（救应）→ RESCUED（相生则吉）"""
+        r = compute_huagong("震", "坤", "兑", "坤", "酉")
         self.assertEqual(r.state, HuaGongState.RESCUED)
 
     def test_summer_li_rescued_by_gen(self):
@@ -79,15 +79,15 @@ class TestHuaGongReverse(unittest.TestCase):
     """REVERSE: 卦中含反卦但无当令化工卦"""
 
     def test_winter_kan_opposite(self):
-        """冬坎卦但卦中无坎只有离 → REVERSE（反位）"""
-        r = compute_huagong("乾", "离", "坤", "离", "子")
+        """冬坎卦但卦中无坎只有离（互体亦无坎）→ REVERSE（反位）"""
+        r = compute_huagong("乾", "离", "乾", "离", "子")
         self.assertEqual(r.state, HuaGongState.REVERSE)
         self.assertFalse(r.has_huagong)
         self.assertTrue(r.has_opposite)
 
     def test_summer_li_opposite(self):
-        """夏离卦但卦中无离只有坎 → REVERSE"""
-        r = compute_huagong("坎", "坎", "乾", "坎", "午")
+        """夏离卦但卦中无离只有坎（互体亦无离）→ REVERSE"""
+        r = compute_huagong("坎", "坎", "坎", "坎", "午")
         self.assertEqual(r.state, HuaGongState.REVERSE)
 
 
@@ -114,12 +114,12 @@ class TestHuaGongEvidence(unittest.TestCase):
 
     def test_evidence_contains_branch(self):
         """证据链包含出生月支"""
-        r = compute_huagong("乾", "震", "乾", "震", "寅")
-        self.assertTrue(any("寅" in e for e in r.evidence))
+        r = compute_huagong("乾", "震", "乾", "震", "卯")
+        self.assertTrue(any("卯" in e for e in r.evidence))
 
     def test_evidence_contains_huagong_trigram(self):
         """证据链包含当令化工卦"""
-        r = compute_huagong("乾", "震", "乾", "震", "寅")
+        r = compute_huagong("乾", "震", "乾", "震", "卯")
         self.assertTrue(any("震" in e for e in r.evidence))
 
 
