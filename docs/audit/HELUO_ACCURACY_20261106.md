@@ -65,13 +65,48 @@ python scripts/heluo_truth_replay.py --dump heluo-002
 | 案例 | 问题 | 处置 |
 |---|---|---|
 | 卢某 甲辰 戊辰 丁酉 癸卯 男 | 核证表同时记「天30地40」与「卢某比初六／比→解」，但按同一张表的取数/寄宫/相荡规则推导应为：天30除25余5（中元阳男寄艮→艮）、地40除30余10（遇十不用取1→坎），阳男天卦在上 → **山水蒙**；引擎实测亦为山水蒙（元堂上九）。「比」（上坎下坤）与该表自身规则不合。 | 判为核证表转录可疑（或该案例原始参数不同），**不入真值层**，待回原书影印件复核。 |
+| 观 卦头「纳甲是」 | 原文写「乙未、乙巳、乙卯、辛巳、辛卯、辛丑」，按巽外卦应为「辛未、辛巳、辛卯」→ 辛丑 系 辛未 之讹 | 引擎按京房表计算得 6 条正解；原文异文登记在测试 `_NAJIA_TEXT_VARIANTS`，不改原典资产 |
+| 损 卦头「纳甲是」 | 原文写「丁巳、丁卯、丁丑、丙**戊**、丙子、丙寅」，戊非地支 → 丙戌 之讹 | 同上（引擎按京房表得 丙戌） |
 
 ## 六、复现命令
 
 ```powershell
 $env:PYTHONPATH='D:\shuntian\src'
 $env:PYTHONIOENCODING='utf-8'
-python -m pytest tests/test_heluo_truth.py tests/test_heluo_guajie_mapping.py tests/test_heluo_canping_truth.py -q   # 17 passed
-python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 527 passed
+python -m pytest tests/test_heluo_truth.py tests/test_heluo_guajie_mapping.py tests/test_heluo_canping_truth.py -q   # 21 passed
+python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 540 passed / 1 pre-existing error
 python scripts/heluo_truth_replay.py                                                                               # 4/4 PASS
 ```
+
+## 七、缺陷 D-006 / D-007（2026-11-06 修复）
+
+### D-006 卦气月与纳甲解析不完整（解层断法入口被污染）
+
+`guajie.py::_parse_gua_header` 两个解析缺陷：
+
+1. **卦气月漏 9 卦**（坤/小畜/贲/复/坎/离/巽/兑/节 → `gua_qi_month=None`）。
+   原典写法有三种：`卦气属四月`、`卦气**在**十月`（坤）、`八纯卦世在上**属**十月`（坎）、
+   `坤宫三世卦**属**七月`（比/泰/否）。旧正则只认「(卦气|宫)…属X月」，
+   对「在X月」「卦…在…属X月」均不匹配。
+2. **纳甲只剩内卦三爻**（比/小畜等）。旧解析在「借用」处 `break`，
+   而原典部分卦把外卦三爻写进借用句
+   （比：「纳甲是乙未乙巳乙卯，借用癸未…**戊申戊戌戊子**」），
+   于是 6 条纳甲只取到 3 条 → `judge_ye_buye` 的「纳甲本命」必错。
+
+修复：月份正则容忍「属|在」且允许中间夹「世在上」等修饰；纳甲改为按
+`COMPOUND_GUA`（卦名→上下卦）+ 京房纳甲表**计算六爻**（`hexagram_najia()`），
+原文解析结果保留为 `najia_borrow` 作交叉校验（64 卦仅观/损 两处原文讹字例外，已登记）。
+校验：64/64 卦有卦气月、64/64 卦纳甲恰 6 条且与京房表一致、原文并集覆盖计算值
+（`tests/test_heluo_guajie_mapping.py` 新增 4 条断言）。
+
+### D-007 命卦叶/不叶缺失 + 生月未知被当阳月
+
+- 此前只对**流年卦**判 `judge_ye_buye`，命卦本身不判；
+  而原典「如生于四月及纳甲本命者，多属富贵人也」正是命卦级断法。
+  → `GuaJieResult` 新增 `benming_ye_buye` 并接入 `compose_guajie` / `to_dict`。
+- `build_guajie_from_result` 在无四柱时用 `birth_month or 1`，把「未知生月」静默当正月，
+  数凶判据的阳月分支因此会把「未知」判成「阳月 → 数凶」。
+  → 改为 `birth_month or 0`，`judge_shu_xiong` 对 `<=0` 显式记「生月未知 → 阳月判据跳过」。
+
+纪晓岚实测（甲辰 辛未 丙戌 甲午 男 午时）：命卦泰（卦气正月），生月六月 → 月不合、
+年干支甲辰在纳甲 → **半叶**；数凶 `以弱敌强（天22/56）+ 生月6月（阳月）`。

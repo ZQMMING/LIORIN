@@ -95,3 +95,107 @@ def test_gua_ci_jingyi_covers_all_64():
         item = gua[name]
         assert item.gua_ci_jingyi, f"{name} 精义为空"
         assert item.gua_ci_shiyi, f"{name} 释义为空"
+
+
+# ═══════════════════════════════════════════════════════════════════
+# 卦气月 / 纳甲（006：原典写法不统一，抽取必须 64/64 全覆盖）
+# ═══════════════════════════════════════════════════════════════════
+
+# 原典「纳甲是」段落两处转录异文（不是解析缺陷）：
+#   观：原文写「辛巳、辛卯、辛丑」，按巽外卦应为「辛未、辛巳、辛卯」→ 辛丑 系 辛未 之讹
+#   损：原文写「丙戊」，戊非地支 → 丙戌 之讹
+_NAJIA_TEXT_VARIANTS = {"观": {"辛未"}, "损": {"丙戌"}}
+
+
+def test_gua_qi_month_covers_all_64():
+    """64 卦卦气月必须全部解析出来（原典写法有「属X月」「在X月」「世在上属X月」三种）。"""
+    gua = load_guajie_data()
+    missing = [name for name, g in gua.items() if g.gua_qi_month is None]
+    assert missing == [], f"卦气月未解析：{missing}"
+    bad = [name for name, g in gua.items() if not 1 <= (g.gua_qi_month or 0) <= 12]
+    assert bad == [], f"卦气月越界：{bad}"
+
+
+def test_najia_six_lines_for_all_64():
+    """每卦纳甲必须是完整六爻（初→上），不能只剩内卦三条。"""
+    from tongshu.engines.heluo.guajie import COMPOUND_GUA, hexagram_najia
+
+    gua = load_guajie_data()
+    bad = []
+    for name, g in gua.items():
+        if len(g.najia) != 6 or len(set(g.najia)) != 6:
+            bad.append((name, g.najia))
+        # 与按卦象独立重算的结果一致
+        if g.najia != hexagram_najia(name):
+            bad.append((name, "recompute", g.najia, hexagram_najia(name)))
+        up, low = COMPOUND_GUA[name]
+        assert g.najia[:3] == hexagram_najia(name)[:3] and up and low
+    assert bad == [], f"纳甲不完整：{bad[:5]}"
+
+
+def test_najia_matches_jingfang_table():
+    """纳甲必须合京房纳甲表（河洛原典「纳甲是」所载即京房表）。"""
+    from tongshu.engines.heluo.guajie import hexagram_najia
+
+    expected = {
+        "乾": ["甲子", "甲寅", "甲辰", "壬午", "壬申", "壬戌"],
+        "坤": ["乙未", "乙巳", "乙卯", "癸丑", "癸亥", "癸酉"],
+        "比": ["乙未", "乙巳", "乙卯", "戊申", "戊戌", "戊子"],   # 坤内 + 坎外
+        "小畜": ["甲子", "甲寅", "甲辰", "辛未", "辛巳", "辛卯"],  # 乾内 + 巽外
+    }
+    for name, want in expected.items():
+        assert hexagram_najia(name) == want, name
+
+
+def test_najia_text_evidence_cross_check():
+    """原文「纳甲是」+「借用」并集必须覆盖计算出的纳甲（除登记的两处异文）。"""
+    from tongshu.engines.heluo.guajie import _parse_gua_header, hexagram_najia
+
+    bad = []
+    for entry in _RAW:
+        name = entry["name"]
+        _month, najia_text, borrow = _parse_gua_header(entry.get("lines", []))
+        union = set(najia_text) | set(borrow)
+        missing = set(hexagram_najia(name)) - union
+        if missing - _NAJIA_TEXT_VARIANTS.get(name, set()):
+            bad.append((name, sorted(missing)))
+    assert bad == [], f"原文纳甲与京房表不符：{bad[:5]}"
+
+
+def test_ye_buye_uses_gua_qi_and_najia():
+    """命卦叶/不叶：生月=卦气月 + 年干支在纳甲 → 叶；只满足一项 → 半叶。"""
+    from tongshu.engines.heluo.guajie import judge_ye_buye
+
+    ye = judge_ye_buye("乾", 4, "甲子")     # 乾卦气属四月，甲子在纳甲
+    assert ye is not None and ye.ye is True and ye.buye is False
+    assert ye.najia_hit is True
+    half = judge_ye_buye("乾", 6, "甲子")   # 月不合、纳甲合 → 半叶
+    assert half is not None and half.ye is False and half.buye is False
+    buye = judge_ye_buye("乾", 6, "乙丑")   # 两不合 → 不叶
+    assert buye is not None and buye.buye is True
+
+
+def test_shu_xiong_does_not_assume_yang_month():
+    """生月未知时不得假设阳月，否则「数有余」会被误判成数凶。"""
+    from tongshu.engines.heluo.guajie import judge_shu_xiong
+
+    sx = judge_shu_xiong(22, 56, 0)
+    assert sx.pattern == "以弱敌强"
+    assert any("生月未知" in e for e in sx.evidence)
+    assert sx.shu_xiong is True  # 数有余本身仍记凶，但不得伪称"阳月"
+
+
+def test_compose_guajie_outputs_benming_ye_buye():
+    """解卦层输出必须带命卦叶/不叶（此前只算流年卦）。"""
+    from tongshu.engines.heluo.canonical import heluo_calculate
+    from tongshu.engines.heluo.guajie import build_guajie_from_result
+
+    bazi = [("甲", "辰"), ("辛", "未"), ("丙", "戌"), ("甲", "午")]
+    r = heluo_calculate(("甲辰", "辛未", "丙戌", "甲午"), gender="male",
+                        birth_hour="午", era="shang")
+    gj = build_guajie_from_result(r, bazi=bazi)
+    yb = gj["benming_ye_buye"]
+    assert yb is not None
+    assert yb["gua_qi_month"] == 1      # 泰卦气属正月
+    assert yb["najia_hit"] is True      # 甲辰在纳甲
+    assert any("命卦叶/不叶" in e for e in gj["evidence"])

@@ -261,7 +261,29 @@ ZONG_GUA: dict[str, str] = {
 }
 
 # 月名数字映射（卦气属X月）
-_CN_MONTH = {"正": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9, "十": 10, "十一": 11, "十二": 12, "腊": 12}
+_CN_MONTH = {"一": 1, "正": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6,
+             "七": 7, "八": 8, "九": 9, "十": 10, "十一": 11, "十二": 12,
+             "冬": 11, "腊": 12}
+
+# 京房纳甲（三画卦 → (内卦三爻, 外卦三爻)；河洛原典「纳甲是」所载即此表）
+_NAJIA_BY_TRIGRAM: dict[str, tuple[tuple[str, ...], tuple[str, ...]]] = {
+    "乾": (("甲子", "甲寅", "甲辰"), ("壬午", "壬申", "壬戌")),
+    "坤": (("乙未", "乙巳", "乙卯"), ("癸丑", "癸亥", "癸酉")),
+    "震": (("庚子", "庚寅", "庚辰"), ("庚午", "庚申", "庚戌")),
+    "巽": (("辛丑", "辛亥", "辛酉"), ("辛未", "辛巳", "辛卯")),
+    "坎": (("戊寅", "戊辰", "戊午"), ("戊申", "戊戌", "戊子")),
+    "离": (("己卯", "己丑", "己亥"), ("己酉", "己未", "己巳")),
+    "艮": (("丙辰", "丙午", "丙申"), ("丙戌", "丙子", "丙寅")),
+    "兑": (("丁巳", "丁卯", "丁丑"), ("丁亥", "丁酉", "丁未")),
+}
+
+
+def hexagram_najia(gua_name: str) -> list[str]:
+    """卦名 → 六爻纳甲干支（初爻起；按 COMPOUND_GUA 上下卦 + 京房纳甲表）。"""
+    up, low = COMPOUND_GUA.get(gua_name, ("", ""))
+    inner = _NAJIA_BY_TRIGRAM.get(low, ((), ()))[0]
+    outer = _NAJIA_BY_TRIGRAM.get(up, ((), ()))[1]
+    return list(inner) + list(outer)
 
 
 # ═══════════════════════════════════════════════════════════════════
@@ -289,8 +311,9 @@ class GuaDuan:
     name: str
     gua_ci: str         # 卦辞
     gua_qi_month: Optional[int]  # 卦气属X月
-    najia: list[str]    # 纳甲干支
+    najia: list[str]    # 纳甲干支（六爻，按京房纳甲表计算；原典「纳甲是」即此）
     gua_lines: list[str]  # 卦头断语（含旺时/得时信息）
+    najia_borrow: list[str] = field(default_factory=list)  # 原典「借用」干支（交叉校验/备用）
     # ── 精义/释义（guajie_jingyi.json 现代语义，2026-09-15 接入） ──
     gua_ci_jingyi: str = ""            # 卦辞精义
     gua_ci_shiyi: str = ""             # 卦辞释义
@@ -329,6 +352,7 @@ class GuaJieResult:
     liunian_year: Optional[int] = None      # 流年公历年份
     liunian_yao: Optional[YaoDuan] = None   # 流年动爻判词
     liunian_ye_buye: Optional[YeBuYeResult] = None
+    benming_ye_buye: Optional[YeBuYeResult] = None  # 命卦叶/不叶（原典：生月得时 + 纳甲本命）
     liuyue_hexagram: str = ""             # 流月卦名
     liuyue_yao: Optional[YaoDuan] = None    # 流月动爻判词（应期定位）
     liuri_hexagram: str = ""              # 流日卦名
@@ -363,6 +387,12 @@ class GuaJieResult:
                 "najia_hit": self.liunian_ye_buye.najia_hit,
                 "evidence": self.liunian_ye_buye.evidence,
             } if self.liunian_ye_buye else None,
+            "benming_ye_buye": {
+                "ye": self.benming_ye_buye.ye, "buye": self.benming_ye_buye.buye,
+                "najia_hit": self.benming_ye_buye.najia_hit,
+                "gua_qi_month": self.benming_ye_buye.gua_qi_month,
+                "evidence": self.benming_ye_buye.evidence,
+            } if self.benming_ye_buye else None,
             "liuyue_yao": {
                 "yao": self.liuyue_yao.yao, "ci": self.liuyue_yao.ci,
                 "ye": self.liuyue_yao.ye, "buye": self.liuyue_yao.buye,
@@ -425,28 +455,45 @@ def _split_duans(duans: list[str]) -> tuple[str, str, str]:
     return " ".join(ye), " ".join(buye), " ".join(suiyun)
 
 
-def _parse_gua_header(lines: list[str]) -> tuple[Optional[int], list[str]]:
-    """从卦头断语提取 卦气属X月 + 纳甲干支。"""
+def _parse_gua_header(lines: list[str]) -> tuple[Optional[int], list[str], list[str]]:
+    """从卦头断语提取 卦气X月 + 纳甲干支 + 借用干支。
+
+    原典写法不统一（已核 64 卦原文）："卦气属四月"/"卦气**在**十月"/
+    "坤宫三世卦**属**七月"/"八纯卦世在上**属**十月"，故前缀容忍
+    「卦气|宫|卦」、动词容忍「属|在」。
+    纳甲段落部分卦（比/小畜等）把外卦三爻写进「借用」句，故两段都要解析，
+    真正的六爻纳甲由 `hexagram_najia()` 按京房表计算，此处结果仅作校验。
+    """
     text = " ".join(lines)
     month = None
-    m = re.search(r"(?:卦气|宫)[^属]{0,6}属([正二三四五六七八九十腊]+)月", text)
+    m = re.search(r"(?:卦气|宫|卦)[^，。]{0,12}?(?:属|在)([正一二三四五六七八九十冬腊]+)月", text)
     if m:
         month = _CN_MONTH.get(m.group(1))
     if month is None:
-        m = re.search(r"属(\d+)月", text)
+        m = re.search(r"(?:卦气|宫|卦)[^，。]{0,8}属(\d+)月", text)
         if m:
             month = int(m.group(1))
-    najia = []
-    m = re.search(r"纳甲(?:是|有)[：:]?\s*([^，。；]{2,60})", text)
-    if m:
-        seg = m.group(1)
+
+    def _collect(seg: str) -> list[str]:
+        out: list[str] = []
         for part in re.split(r"[、，,\s]+", seg):
             part = part.strip()
             if re.fullmatch(r"[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]", part):
-                najia.append(part)
-            if "借用" in part or "如生" in part:
-                break
-    return month, najia
+                out.append(part)
+        return out
+
+    najia: list[str] = []
+    borrow: list[str] = []
+    m = re.search(r"纳甲(?:是|有|乃)[：:]?\s*([^。；]{2,80})", text)
+    if m:
+        seg = m.group(1)
+        if "借用" in seg:
+            a, b = seg.split("借用", 1)
+            najia = _collect(a)
+            borrow = _collect(b.split("如生")[0].split("若生")[0].split("凡")[0])
+        else:
+            najia = _collect(seg.split("如生")[0].split("若生")[0].split("凡")[0])
+    return month, najia, borrow
 
 
 # 中华典藏网页爬取残留行（混入 guajie_data.lines，load 时过滤，保持卦象断语纯净）
@@ -470,13 +517,16 @@ def load_guajie_data() -> dict[str, GuaDuan]:
         jy_raw = {}  # 精义库缺失/损坏不阻塞判词主链
     out: dict[str, GuaDuan] = {}
     for g in raw:
-        month, najia = _parse_gua_header(g.get("lines", []))
+        month, najia_text, borrow = _parse_gua_header(g.get("lines", []))
+        computed = hexagram_najia(g["name"])
+        najia = computed or najia_text
         jg = jy_raw.get(g["name"], {})
         gd = GuaDuan(
             name=g["name"],
             gua_ci=g.get("gua_ci", ""),
             gua_qi_month=month,
             najia=najia,
+            najia_borrow=borrow,
             gua_lines=_filter_web_noise(g.get("lines", [])),
             gua_ci_jingyi=(jg.get("gua_ci") or {}).get("jingyi", ""),
             gua_ci_shiyi=(jg.get("gua_ci") or {}).get("shiyi", ""),
@@ -616,9 +666,16 @@ def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongRes
 
     # 数凶：有余/不足 + 生月合时（阳月/阴月）
     # 卢某：地40有余 + 生三月（谷雨-芒种，阳月）→ 数凶
-    yang_month = birth_month in (1, 2, 3, 4, 5, 6)  # 春夏季为阳月（简化，原典按节气细分）
+    # 生月未知（birth_month<=0）时不得假设阳月，否则会把"未知"判成"数凶"。
+    if birth_month and 1 <= birth_month <= 12:
+        yang_month = birth_month in (1, 2, 3, 4, 5, 6)  # 春夏季为阳月（简化，原典按节气细分）
+    else:
+        yang_month = None
     if pattern in ("孤阳不偶", "孤阴背阳", "以弱敌强", "太过有余"):
-        if yang_month:
+        if yang_month is None:
+            shu_xiong = True
+            ev.append("生月未知 → 阳月判据跳过，按数有余直接记数凶（须补生月复核）")
+        elif yang_month:
             shu_xiong = True
             ev.append(f"生月{birth_month}月（阳月），数有余逢阳月 → 数凶（不可妄行致凶）")
         else:
@@ -838,6 +895,15 @@ def compose_guajie(
     res.shu_xiong = sx
     ev.extend(f"  数之凶吉：{e}" for e in sx.evidence)
 
+    # ── 命卦叶/不叶（原典：生月得时 + 纳甲本命 → 功名富贵人） ──────────
+    # 此前只算流年卦叶/不叶，命卦本身不判，导致原典「如生于四月及纳甲本命者，
+    # 多属富贵」这一核心断法在输出里缺失（2026-11-06 接入）。
+    if birth_month and 1 <= birth_month <= 12:
+        bm_yb = judge_ye_buye(prenatal_name, birth_month, year_ganzhi)
+        if bm_yb:
+            res.benming_ye_buye = bm_yb
+            ev.extend(f"  命卦叶/不叶：{x}" for x in bm_yb.evidence)
+
     # ── 元气化工（流年遇） ─────────────────────────────────────
     if yuan_qi_trigrams:
         res.yuan_qi_hit = bool(yuan_qi_trigrams)
@@ -1044,7 +1110,7 @@ def build_guajie_from_result(
         gj = compose_guajie(
             prenatal_name=prenatal, postnatal_name=postnatal,
             yuantang_yao=yuantang_yao,
-            birth_month=birth_month or 1, tian_shu=tian, di_shu=di,
+            birth_month=birth_month or 0, tian_shu=tian, di_shu=di,
             year_ganzhi=year_ganzhi,
             liunian_hexagram=liunian_hex, liunian_yao=liunian_yao_name,
             liuyue_hexagram=liuyue_hex_name, liuyue_yao=liuyue_yao_name,
