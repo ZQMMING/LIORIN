@@ -12,7 +12,7 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **564 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **565 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 | 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
@@ -198,3 +198,19 @@ python scripts/heluo_truth_replay.py                                            
   ⑤化工卦 ∈ 八卦；⑥流年卦数量 ≥30 且上下卦 ∈ 64 卦；
   ⑦解层返回必含 enming/benming_ye_buye/liunian_hexagram/kuozhan 且叶不叶 evidence 非空。
 - 结果：**200 盘 0 问题**；固化测试 **17 passed**（全族 564 passed）。
+
+### D-013 死断「过第四爻/连三爻」判据错位
+
+- 现象：judge_si_duan 的「若过了第四爻，遇凶 → 十死八九」原写在
+  dayun_line_index == 3（即**第四爻本身**，未过），且只取流年最后一年判词；
+  「连三爻不吉」也只认近 3 年流年，而原典说的是**后天行爻**（大运三爻）。
+- 原典（河洛真数_起例卷之下.txt 后天详说）：「若行后天，连三爻不吉，必多坎壈。
+  若过了第四爻，遇凶，十死八九。」；「如后天之气数行至君爻之位，此为数足，到此必死」；
+  「纵到君爻，亦不许行至上极一爻，寿必不久」。
+- 修：①新增 dayun_combo（当前及前两段大运：卦 + 爻位 + 该爻 ci/buye/suiyun），
+  「连三爻不吉」改按大运三爻判词，「过第四爻遇凶」改 dayun_line_index >= 4 且当前
+  大运爻判词凶；②uild_guajie_from_result 按 qi_phase.dayun 的 ge_start/age_end
+  取当前段并回溯两段，阳爻九年/阴爻六年口径不变；③保留流年回退（首段不足 3 段时）。
+- 实测（纪晓岚盘）：三岁（四爻）→ 连三爻不吉（流年回退）；七岁（五爻）→ 数足必死；
+  十三岁（上极）→ 寿必不久 + 数足必死 + 十死八九。
+- 新增 	ests/test_heluo_si_duan.py **6 passed**；全族 **565 passed**、真值 4/4。

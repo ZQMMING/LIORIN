@@ -975,6 +975,7 @@ def judge_si_duan(
     shu_xiong: bool = False,        # 数凶
     dayun_line_index: int | None = None,      # 当前大运行至爻位（0初~5上）
     recent_years: list[dict] | None = None,   # 近3年流年判词 [{year, hexagram, yao, ci, buye, suiyun}]
+    dayun_combo: list[dict] | None = None,    # 当前及前两段大运判词 [{hexagram, line_index, yao, ci, ...}]
 ) -> list[str]:
     """
     死断诸法（《河洛真数·起例卷之下·后天详说》原文逐条）：
@@ -999,14 +1000,22 @@ def judge_si_duan(
             warns.append("后天之气数行至上极一爻（上爻），寿必不久（原典：纵到君爻，亦不许行至上极一爻）")
         if dayun_line_index >= 4:
             warns.append("后天之气数行至君爻（五爻）之位，此为数足，到此必死。无阴骘者生日之前便死，有阴骘者到君爻阳爻延九年（原典：后天详说）")
-        elif dayun_line_index == 3 and recent_years and _yao_buji(
-            recent_years[-1].get("ci", ""), recent_years[-1].get("buye", ""), recent_years[-1].get("suiyun", "")):
-            warns.append("行数过第四爻（五爻）遇凶 → 十死八九（原典：若过了第四爻，遇凶，十死八九）")
+            _cur_bad = False
+            if dayun_combo:
+                _c = dayun_combo[-1]
+                _cur_bad = _yao_buji(_c.get("ci", ""), _c.get("buye", ""), _c.get("suiyun", ""))
+            if _cur_bad:
+                warns.append("行数过第四爻遇凶 → 十死八九（原典：若过了第四爻，遇凶，十死八九）")
 
-    # 3b. 连三爻不吉 → 多坎壈（近3个大运爻判词凶）
-    if dayun_line_index is not None and dayun_line_index < 4 and recent_years and len(recent_years) >= 3:
-        if all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", "")) for y in recent_years[-3:]):
-            warns.append("若行后天，连三爻不吉，必多坎壈（原典：后天详说）")
+    # 3b. 连三爻不吉 → 多坎壈（近3段大运爻判词凶；缺大运判词时退回近3年流年判词）
+    _combo = dayun_combo if (dayun_combo and len(dayun_combo) >= 3) else None
+    if dayun_line_index is not None and dayun_line_index < 4:
+        if _combo and all(_yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", "")) for y in _combo[-3:]):
+            warns.append("若行后天，连三爻不吉，必多坎壈（原典：后天详说；按近3段大运爻判词）")
+        elif recent_years and len(recent_years) >= 3 and all(
+            _yao_buji(y.get("ci", ""), y.get("buye", ""), y.get("suiyun", "")) for y in recent_years[-3:]
+        ):
+            warns.append("若行后天，连三爻不吉，必多坎壈（原典：后天详说；按近3年流年判词）")
 
     # 4. 小象与大象反对 → 定死无疑（流年卦与命卦反对 + 爻辞凶）
     if recent_years:
@@ -1453,6 +1462,26 @@ def _collect_si_duan(
                 dayun_line_index = de.get("line_index")
                 break
 
+    # 当前及前两段大运判词（阳爻九年/阴爻六年，取该爻爻辞）
+    dayun_combo: list[dict] = []
+    if age_now is not None and dayun_entries:
+        cur_idx: int | None = None
+        for i, de in enumerate(dayun_entries):
+            if de.get("age_start") and de.get("age_end") and de["age_start"] <= age_now <= de["age_end"]:
+                cur_idx = i
+                break
+        if cur_idx is not None:
+            for de in dayun_entries[max(0, cur_idx - 2): cur_idx + 1]:
+                _li = de.get("line_index")
+                _pol = 1 if de.get("line_nature") == "阳" else -1
+                _yname = _yao_name(_li, _pol) if isinstance(_li, int) else ""
+                _d = query_yao_duan(_short(de.get("hexagram", "")), _yname) if _yname else None
+                dayun_combo.append({
+                    "hexagram": _short(de.get("hexagram", "")), "line_index": _li, "yao": _yname,
+                    "ci": (_d.ci if _d else ""), "buye": (_d.buye if _d else ""),
+                    "suiyun": (_d.suiyun if _d else ""),
+                })
+
     # 近3年流年判词（target_year-2 .. target_year）
     recent: list[dict] = []
     if target_year is not None and result.timeline is not None:
@@ -1479,6 +1508,7 @@ def _collect_si_duan(
         shu_xiong=shu_xiong,
         dayun_line_index=dayun_line_index,
         recent_years=recent or None,
+        dayun_combo=dayun_combo or None,
     )
 
 
