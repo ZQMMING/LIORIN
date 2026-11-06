@@ -147,3 +147,22 @@ python scripts/heluo_truth_replay.py                                            
 - 新增测试 `test_shu_patterns_cover_yuan_dian_taxonomy`（14 格逐格）、
   `test_shu_xiong_month_direction_follows_book`（阳月/阴月方向）。
 - 回归：**544 passed / 1 error**（同上 pre-existing）；`scripts/heluo_truth_replay.py` 4/4。
+
+### D-010 贵命十体③④⑥⑦ 判据窄于原典
+
+- **④得时**：原文「如春震木、夏离火、秋兑金、冬坎水之类。**又如正月得泰卦、九月得剥卦
+  之类皆是**」——engine 只实现四季卦，未实现「生月 = 卦气月」。→ 接入
+  `load_guajie_data()[name].gua_qi_month`，生月与卦气月相同亦记得时。
+- **⑦得体**：原文「戊己土命得坤艮，巳午火命得离，**或土命得离火，火命得震木，有生气
+  皆为得体**」——engine 只认同五行卦（木巽/火离/土坤艮），漏「生我之卦」（有生气）。
+  → `_DETI_BY_WUMING` 改为「同五行之卦 ∪ 生我五行之卦」派生（土命: 坤艮+离；火命:
+  离+震巽；金命: 乾兑+坤艮；水命: 坎+乾兑；木命: 震巽+坎）。
+- **⑥顺时**：原文「谓天地二数多寡**与时偕行**」——engine 只有正月/九月两例。
+  → `_shunshi_want(mon)` 按半年推广：阳月（1-6 月）宜天多、阴月（7-12 月）宜地多。
+- 贱命十体逐条取反同步继承（⑦不得体、⑥数逆时、④不得时均按新判据取反）。
+- 实测：泰命六五 寅月（泰卦气正月）→ 得 7 体「乡监侍从」（原 6 体「如通命」）；
+  庚金命得剥（艮坤土）→ ⑦得体成立，贱体由 7 降为 6。
+- 新增测试 `test_gui_ming_deshi_accepts_gua_qi_month`、
+  `test_gui_ming_deti_includes_sheng_wo_trigram`、
+  `test_gui_ming_shunshi_generalized_by_half_year`；两条既有 kuozhan 断言按原典修正。
+- 回归：**547 passed / 1 error**（pre-existing）。

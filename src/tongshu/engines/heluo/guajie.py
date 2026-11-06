@@ -1747,8 +1747,19 @@ GUI_MING_EXAMPLE_GUA = {"泰", "大有", "同人", "晋", "豫"}
 # 得时表（原文："春震木、夏离火、秋兑金、冬坎水"）
 _SEASON_DESHI_GUA = {"春": "震", "夏": "离", "秋": "兑", "冬": "坎"}
 
-# 得体表（原文 L161："木人得巽，火人得离，土人得坤艮之类，皆为得体，虽遇凶爻亦无甚害"）
-_DETI_BY_WUMING = {"木": {"巽"}, "火": {"离"}, "土": {"坤", "艮"}}
+# 八卦五行（判得体用）
+_TRIGRAM_ELEMENT = {"乾": "金", "兑": "金", "震": "木", "巽": "木",
+                    "坎": "水", "离": "火", "坤": "土", "艮": "土"}
+# 五行相生：生我者
+_WUXING_SHENG_ME = {"木": "水", "火": "木", "土": "火", "金": "土", "水": "金"}
+
+# 得体表（原文："戊己土命得坤艮，巳午火命得离，或土命得离火，火命得震木，
+#   有生气皆为得体"）——同五行得卦 + 生我之卦（有生气）皆为得体
+_DETI_BY_WUMING = {
+    wm: {t for t, el in _TRIGRAM_ELEMENT.items() if el == wm}
+    | {t for t, el in _TRIGRAM_ELEMENT.items() if el == _WUXING_SHENG_ME[wm]}
+    for wm in ("木", "火", "土", "金", "水")
+}
 
 # 得局/生气表（原文 L235："木人得震巽为得局，坎为生气；土人得坤艮离；
 #   金人得乾兑艮坤；水人得乾兑坎，皆是"）——火人原文未载 → 标注
@@ -1760,9 +1771,12 @@ _DEJU_SHENGQI = {
     "火": {"得局": set(), "生气": set()},   # 原文未载火人
 }
 
-# 贵命十体·顺时例（原文："正月生人得天数多地数少，九月生人得地数多天数少"）
-# 节气月：寅=1（正月）…戌=9（九月）——仅此两例为原文明文，其余月份不判
-_GUI_SHUNSHI_MONTHS = {1: ("天多", "地少"), 9: ("地多", "天少")}
+# 贵命十体·顺时（原文："谓天地二数多寡与时偕行。如正月生人得天数多地数少，
+#   九月生人得地数多天数少是也"）——阳月（正月至六月）宜天多，阴月（七月至十二月）宜地多
+def _shunshi_want(mon: int) -> tuple[str, str] | None:
+    if mon <= 0:
+        return None
+    return ("天多", "地少") if mon <= 6 else ("地多", "天少")
 
 
 def _yao_wei(yuantang_yao: str) -> str:
@@ -1854,9 +1868,18 @@ def judge_gui_ming_shi_ti(
     # ③ 辞吉（卦爻中有元吉亨利）
     if yao_cis and any(any(k in (c or "") for k in ("元", "吉", "亨", "利")) for c in yao_cis):
         got.append("③辞吉（卦爻中有元吉亨利）")
-    # ④ 得时（春震夏离秋兑冬坎）
-    if season and _SEASON_DESHI_GUA.get(season) in (up, low):
-        got.append(f"④得时（{season}月得{_SEASON_DESHI_GUA[season]}卦）")
+    # ④ 得时（春震夏离秋兑冬坎；另原文「又如正月得泰卦、九月得剥卦之类」→ 生月=卦气月）
+    deshi_gua = _SEASON_DESHI_GUA.get(season) if season else ""
+    gq = 0
+    try:
+        _gd = load_guajie_data().get(prenatal_name)
+        gq = (_gd.gua_qi_month or 0) if _gd is not None else 0
+    except Exception:
+        gq = 0
+    if deshi_gua and deshi_gua in (up, low):
+        got.append(f"④得时（{season}月得{deshi_gua}卦）")
+    elif gq and mon == gq:
+        got.append(f"④得时（生月{mon}月，值{prenatal_name}卦气月{gq}月）")
     # ⑤ 有援（元堂阳应阴 / 元堂阴应阳）
     if yy is not None and yao_lines and len(yao_lines) == 6 and w:
         idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}.get(w)
@@ -1864,11 +1887,11 @@ def judge_gui_ming_shi_ti(
             ying = yao_lines[(idx + 3) % 6]
             if (yy == 1 and ying == 0) or (yy == 0 and ying == 1):
                 got.append("⑤有援（元堂与应爻阴阳相济）")
-    # ⑥ 顺时（正月天多地少 / 九月地多天少，原文明文两例）
-    if mon in _GUI_SHUNSHI_MONTHS:
-        want = _GUI_SHUNSHI_MONTHS[mon]
-        ok = (want == ("天多", "地少") and tian_shu > di_shu) or \
-             (want == ("地多", "天少") and di_shu > tian_shu)
+    # ⑥ 顺时（天地二数多寡与时偕行：阳月宜天多、阴月宜地多）
+    want = _shunshi_want(mon)
+    if want:
+        ok = (want[0] == "天多" and tian_shu > di_shu) or \
+             (want[0] == "地多" and di_shu > tian_shu)
         if ok:
             got.append(f"⑥顺时（节气月{mon}：{'天多地少' if want[0] == '天多' else '地多天少'}，与时偕行）")
     # ⑦ 得体（土命坤艮/火命离/木命巽）
@@ -1940,17 +1963,24 @@ def judge_jian_ming_shi_ti(
     if yao_cis and not any(any(k in (c or "") for k in ("元", "吉", "亨", "利")) for c in yao_cis):
         got.append("③辞凶（卦爻无元吉亨利）")
     if season and _SEASON_DESHI_GUA.get(season) not in (up, low):
-        got.append(f"④不得时（{season}月不得{_SEASON_DESHI_GUA[season]}卦）")
+        gq = 0
+        try:
+            _gd = load_guajie_data().get(prenatal_name)
+            gq = (_gd.gua_qi_month or 0) if _gd is not None else 0
+        except Exception:
+            gq = 0
+        if not (gq and mon == gq):
+            got.append(f"④不得时（{season}月不得{_SEASON_DESHI_GUA[season]}卦，亦不值卦气月）")
     if yy is not None and yao_lines and len(yao_lines) == 6 and w:
         idx = {"初": 0, "二": 1, "三": 2, "四": 3, "五": 4, "上": 5}.get(w)
         if idx is not None:
             ying = yao_lines[(idx + 3) % 6]
             if not ((yy == 1 and ying == 0) or (yy == 0 and ying == 1)):
                 got.append("⑤无援（元堂与应爻阴阳不济）")
-    if mon in _GUI_SHUNSHI_MONTHS:
-        want = _GUI_SHUNSHI_MONTHS[mon]
-        ok = (want == ("天多", "地少") and tian_shu > di_shu) or \
-             (want == ("地多", "天少") and di_shu > tian_shu)
+    want = _shunshi_want(mon)
+    if want:
+        ok = (want[0] == "天多" and tian_shu > di_shu) or \
+             (want[0] == "地多" and di_shu > tian_shu)
         if not ok:
             got.append("⑥数逆时（天地二数与时令相逆）")
     if wm in _DETI_BY_WUMING and not (_DETI_BY_WUMING[wm] & {up, low}):

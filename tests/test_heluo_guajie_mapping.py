@@ -268,3 +268,52 @@ def test_shu_xiong_month_direction_follows_book():
     assert any("以强伏弱 → 不记数凶" in e for e in strong.evidence)
     strong_yin = judge_shu_xiong(30, 10, 10)
     assert any("以强伏弱 → 数凶" in e for e in strong_yin.evidence)
+
+
+def test_gui_ming_deshi_accepts_gua_qi_month():
+    """得时④除四季卦外，原文「又如正月得泰卦、九月得剥卦」→ 生月=卦气月亦得时。"""
+    import tongshu.engines.heluo.guajie as g
+
+    out = g.judge_gui_ming_shi_ti(
+        prenatal_name="泰", yuantang_yao="六四", yao_cis=[],
+        yao_lines=[1, 1, 1, 0, 0, 0], birth_month_branch="寅",
+        tian_shu=22, di_shu=56, year_gan="甲", year_zhi="辰",
+    )
+    joined = "；".join(out)
+    assert "④得时" in joined and "卦气月1月" in joined
+
+
+def test_gui_ming_deti_includes_sheng_wo_trigram():
+    """得体⑦原文「土命得离火、火命得震木，有生气皆为得体」→ 生我之卦亦得体。"""
+    import tongshu.engines.heluo.guajie as g
+
+    tu_li = g.judge_gui_ming_shi_ti(
+        prenatal_name="大有", yuantang_yao="九四", yao_cis=[],
+        yao_lines=[1, 0, 1, 1, 1, 1], birth_month_branch="午",
+        year_gan="戊", year_zhi="申",
+    )
+    assert any("⑦得体" in o for o in tu_li)        # 大有=离上乾下，离火生土
+    huo_zhen = g.judge_gui_ming_shi_ti(
+        prenatal_name="豫", yuantang_yao="九四", yao_cis=[],
+        yao_lines=[0, 0, 0, 1, 0, 0], birth_month_branch="巳",
+        year_gan="丙", year_zhi="寅",
+    )
+    assert any("⑦得体" in o for o in huo_zhen)     # 豫=震上坤下，震木生火
+
+
+def test_gui_ming_shunshi_generalized_by_half_year():
+    """顺时⑥原文「天地二数多寡与时偕行」：阳月（1-6）宜天多，阴月（7-12）宜地多。"""
+    import tongshu.engines.heluo.guajie as g
+
+    yang = g.judge_gui_ming_shi_ti(
+        prenatal_name="剥", yuantang_yao="初六", yao_cis=[],
+        yao_lines=[0, 0, 0, 0, 0, 1], birth_month_branch="辰",
+        tian_shu=40, di_shu=20, year_gan="庚", year_zhi="申",
+    )
+    assert any("⑥顺时" in o for o in yang)          # 3 月（阳月）天多 → 顺时
+    yin = g.judge_gui_ming_shi_ti(
+        prenatal_name="剥", yuantang_yao="初六", yao_cis=[],
+        yao_lines=[0, 0, 0, 0, 0, 1], birth_month_branch="戌",
+        tian_shu=20, di_shu=40, year_gan="庚", year_zhi="申",
+    )
+    assert any("⑥顺时" in o for o in yin)           # 9 月（阴月）地多 → 顺时

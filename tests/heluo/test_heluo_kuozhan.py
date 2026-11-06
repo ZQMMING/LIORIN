@@ -393,7 +393,7 @@ class TestGuiMingShiTi:
     """贵命十体（起例卷之上·贵命十体）"""
 
     def test_tai_liu_wu_tu_ming_yin(self):
-        """泰卦（卦名吉）+六五（爻吉）+辞吉+寅月顺时+土命得体+有援 → 得五六如通命"""
+        """泰卦（卦名吉）+六五（爻吉）+辞吉+寅月得时（卦气正月）+顺时+土命得体+有援 → 得7体乡监侍从"""
         out = g.judge_gui_ming_shi_ti(
             prenatal_name="泰", yuantang_yao="六五",
             yao_cis=["元吉", "凶", "凶", "凶", "凶", "凶"],
@@ -405,10 +405,11 @@ class TestGuiMingShiTi:
         assert "①卦名吉" in joined
         assert "②爻吉" in joined
         assert "③辞吉" in joined
+        assert "④得时" in joined
         assert "⑤有援" in joined
         assert "⑥顺时" in joined
         assert "⑦得体" in joined
-        assert any("如通命" in o for o in out)
+        assert any("乡监侍从" in o for o in out)
 
     def test_dang_wei_yang_yue_yang_yao(self):
         """当位：阳月（寅=冬半年阳令）元堂阳爻 ✓"""
@@ -462,7 +463,7 @@ class TestJianMingShiTi:
         assert "⑤无援" in joined
 
     def test_jian_fenji(self):
-        """得 3-4 贱体 → 僧道九流之命"""
+        """得 7 贱体 → 夭横凶顽（庚金命得剥之艮坤土，原典「金人得乾兑艮坤」为得体，故⑦不成立）"""
         out = g.judge_jian_ming_shi_ti(
             prenatal_name="剥", yuantang_yao="初六",
             yao_cis=["凶", "凶", "凶", "凶", "凶", "凶"],
@@ -470,7 +471,7 @@ class TestJianMingShiTi:
             birth_month_branch="午", tian_shu=20, di_shu=35,
             year_gan="庚", year_zhi="申",
         )
-        assert any("僧道九流" in o for o in out) or any("吏僧孤独" in o for o in out)
+        assert any("夭横凶顽" in o for o in out)
 
 
 class TestYaoCiBiLi:
