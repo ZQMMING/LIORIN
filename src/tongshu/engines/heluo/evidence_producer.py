@@ -165,9 +165,38 @@ class HeLuoEvidenceProducer:
                         "birth_month_branch": heluo_result.hua_gong.birth_month_branch,
                         "has_huagong": heluo_result.hua_gong.has_huagong,
                         "has_opposite": heluo_result.hua_gong.has_opposite,
+                        # D-022：原典化工论三层判据（正体/土旺/互体/纳音）
+                        "scope": getattr(heluo_result.hua_gong, "scope", ""),
+                        "weak": getattr(heluo_result.hua_gong, "weak", False),
+                        "tu_wang": getattr(heluo_result.hua_gong, "tu_wang", False),
                     },
                     source_rule_ref="data/rules/heluo_hua_gong.json",
                     source_field="hua_gong",
+                    calculation_version=self.CALC_VERSION,
+                    contract_version=self.CONTRACT_VERSION,
+                )
+            )
+
+        # 6b. H7 元气事实（D-022：原典「元气化工二者最重」，此前 evidence 层缺此条）
+        if hasattr(heluo_result, 'yuan_qi') and heluo_result.yuan_qi:
+            yq = heluo_result.yuan_qi
+            evidences.append(
+                EngineEvidence(
+                    evidence_id=f"{self.RULE_PREFIX}-YUANQI-{uuid.uuid4().hex[:8]}",
+                    engine=EngineName.HE_LUO,
+                    rule_id=f"{self.RULE_PREFIX}_YUAN_QI",
+                    value=yq.state.value,
+                    temporal_scope=TemporalScope.BIRTH,
+                    attributes={
+                        "state": yq.state.value,
+                        "scope": getattr(yq, "scope", ""),
+                        "tian_yuan_qi": yq.tian_yuan_qi,
+                        "di_yuan_qi": yq.di_yuan_qi,
+                        "ren_yuan_element": getattr(yq, "ren_yuan_element", ""),
+                        "ren_yuan_qi": list(getattr(yq, "ren_yuan_qi", ())),
+                    },
+                    source_rule_ref="data/rules/heluo_yuan_qi.json",
+                    source_field="yuan_qi",
                     calculation_version=self.CALC_VERSION,
                     contract_version=self.CONTRACT_VERSION,
                 )

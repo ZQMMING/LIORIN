@@ -74,6 +74,10 @@ HELUO_RULES: Dict[str, RuleNode] = {
         "HL_HUA_GONG", "化工状态判定",
         "起例卷下·论化工", confidence=0.9, is_authorized=True,
     ),
+    "HL_YUAN_QI": RuleNode(
+        "HL_YUAN_QI", "元气有无判定",
+        "起例卷上·元气化工有无论", confidence=0.9, is_authorized=True,
+    ),
     "HL_DAYUN": RuleNode(
         "HL_DAYUN", "大运爻位值运",
         "起例卷上·小象阳爻九年运行例", confidence=1.0, is_authorized=True,
@@ -98,6 +102,7 @@ RULE_DOMAIN_MAP: Dict[str, str] = {
     "HL_POSTNATAL_HEXAGRAM": "FAMILY",
     "HL_YUANTANG": "FAMILY",
     "HL_HUA_GONG": "FAMILY",
+    "HL_YUAN_QI": "FAMILY",
     "HL_DAYUN": "CAREER",
     "HL_YUEGUA": "CAREER",
     "HL_RIGUA": "DAILY",
@@ -112,6 +117,13 @@ HUAGONG_DIRECTION: Dict[str, AssertionDirection] = {
     HuaGongState.REVERSE.value:  AssertionDirection.CAUTION,
     HuaGongState.RESTRAINED.value: AssertionDirection.CAUTION,  # 化工受反卦克制无救（尤凶）
     HuaGongState.UNRESOLVED.value: AssertionDirection.NEUTRAL,
+}
+
+# 元气状态 → 方向映射（原典「元气化工二者最重…二者俱反，必贫穷困苦夭死」）
+YUANQI_DIRECTION: Dict[str, AssertionDirection] = {
+    "NORMAL": AssertionDirection.SUPPORTIVE,
+    "REVERSE": AssertionDirection.CAUTION,
+    "UNRESOLVED": AssertionDirection.NEUTRAL,
 }
 
 
@@ -172,6 +184,9 @@ def build_diagnosis_graph(
             _hg_state = getattr(frozen_state, "hua_gong_state", None)
             if _hg_state:
                 direction = HUAGONG_DIRECTION.get(_hg_state, direction)
+        # D-022: 元气证据方向由元气状态决定（原典「元气化工二者最重」）
+        elif ev.rule_id == "HL_YUAN_QI" and ev.value:
+            direction = YUANQI_DIRECTION.get(str(ev.value), direction)
 
         evidence_ref = EvidenceRef(
             evidence_id=ev.evidence_id,

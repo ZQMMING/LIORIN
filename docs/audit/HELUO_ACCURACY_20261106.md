@@ -12,12 +12,13 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **637 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **642 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 | 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
 | 节候卦（二十四节气 × 七十二候） | **72/72 候名按序命中原文，24/24 节候卦由首候派生，八节卦 24/24 与原典首句一致** | `tests/test_heluo_jiehhou_yuanwen.py`，`tests/heluo/test_h11_jiehhou.py` |
 | 化工卦（H6） | **12 月支映射与原典「冬至→惊蛰/春分→芒种/夏至→白露/秋分→大雪」四句一致，三层判据（正体·互体·纳音）+ 四季月坤艮土旺均落地，25 tests** | `tests/heluo/test_h6_huagong_yuanwen.py` |
 | 流时卦接线（每段十二时） | **六段流日各挂 12 时卦，0 缺失（链式流日回归）** | `tests/heluo/test_heluo_liuri_hours.py` |
 | 流年应爻/元爻断随段 | **逐岁应爻 = (本段大运元堂+3)%6，跨段年份按段元堂而非本命元堂** | `tests/heluo/test_heluo_liunian_ying_yao.py` |
+| 元气证据（H7 → V13 断言） | **`HL_YUAN_QI` 进入证据层与诊断图（NORMAL→SUPPORTIVE / REVERSE→CAUTION），化工证据补 scope/weak/tu_wang** | `tests/heluo/test_h7_yuanqi_evidence.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
 
@@ -395,3 +396,30 @@ python scripts/heluo_truth_replay.py                                            
 - 验证：`tests/heluo/test_heluo_liunian_ying_yao.py` **4 passed**（逐岁应爻 =
   (段元堂+3)%6；存在跨段年份；证据串含「本段元堂@跨段位」）；全族 **637 passed**、
   真值 4/4、扫描 60 盘 0 问题。
+
+### D-022 元气只入冻结态、未进证据层/V13 断言（「元气化工二者最重」丢失）
+
+- 现象：`HeLuoEvidenceProducer.produce` 只产 7 条证据（天地数/先天/元堂/后天/结构/
+  化工/节候），**无 HL_YUAN_QI**；而 D-017 已算出 `yuan_qi_state/scope/人元气` 并写入
+  `FrozenHeluoState`。V13 断言链拿不到元气，等于漏掉原典最重的一条判断。
+  同时化工证据 `value` 只有状态串，`scope`（正体/土旺/互体/纳音）与 `weak` 未上送。
+- 原典依据（起例卷上·元气化工有无论）：「元气化工二者最重，兼有之，若本数又吉，
+  必功名富贵福寿人也；如卦体中二者俱反，必贫穷困苦夭死者也。」
+- 修：①`evidence_producer.py` 新增 `HL_YUAN_QI`（value=state，attributes 带
+  `scope/tian_yuan_qi/di_yuan_qi/ren_yuan_element/ren_yuan_qi`）；
+  ②`HL_HUA_GONG` attributes 补 `scope/weak/tu_wang`；
+  ③`diagnosis_rule_graph.py` 注册 `HL_YUAN_QI` 规则节点（源「起例卷上·元气化工有无论」，
+  domain=FAMILY）并新增 `YUANQI_DIRECTION`（NORMAL→SUPPORTIVE、REVERSE→CAUTION、
+  UNRESOLVED→NEUTRAL），使证据派生的元气断言不再恒 NEUTRAL。
+- 验证：新增 `tests/heluo/test_h7_yuanqi_evidence.py` **5 passed**（元气证据字段、
+  化工 scope 上送、规则授权、方向映射、REVERSE/UNRESOLVED 合成证据方向）；
+  全族 **642 passed**、真值 4/4、扫描 60 盘 0 问题。
+
+### 口径登记：化工「当令」与「不必拘于当令」宽严两说
+
+- `hua_gong.py`（H6 状态，D-019）按化工论四句走**当令**口径：子丑寅→坎、卯辰巳→震、
+  午未申→离、酉戌亥→兑，再以互体/纳音/四季土旺兜底。
+- `guajie.py::_HG_SIGUA`（仅用于「元气化工有无论」的命运层次）按起例卷之上 L191 走**宽口径**：
+  卦中含四正化工卦（震离兑坎）或坤艮即算「有化工」，不论当令。
+- 两处引文都来自《河洛真数》，不冲突：当令用于「是否得化工之正」，宽口径用于
+  「有无化工」的层次判断。已在代码注释标注；后续若做统一口径，须先定层次语义。
