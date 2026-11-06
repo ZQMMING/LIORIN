@@ -42,6 +42,19 @@ def _flip_line(six_lines: list[int], idx: int) -> list[int]:
     return out
 
 
+def _next_position(idx: int, positions: tuple[int, ...]) -> int:
+    """从 idx 之后起找 positions 中的下一位（回绕）。
+
+    《河洛真数》起日卦例：阳日寻阳爻位（初/三/五），阴日寻阴爻位（二/四/上）。
+    idx=0（初爻居位）→ 阳日下一位=2（三爻），与原文演例「初一当在三爻」一致。
+    """
+    for step in range(1, 7):
+        p = (idx + step) % 6
+        if p in positions:
+            return p
+    return (idx + 1) % 6
+
+
 def _lines_to_hexagram(six_lines: list[int]) -> tuple[str, str, str]:
     """六爻 → (上卦, 下卦, 卦名)。下卦=lines[0:3]，上卦=lines[3:6]。"""
     lower = "".join("1" if l == 1 else "0" for l in six_lines[0:3])
@@ -316,36 +329,42 @@ def compute_liuri(
     yue_lines: list[int],
     yue_yao_index: int,
     jie_datetime: str | None = None,
+    yang_day: bool = True,
 ) -> LiuRiResult:
     """
     流日卦（《河洛真数·起例卷之上·起日卦例》万历二十年李学诗刻本）。
 
-    规则（按现存最早刻本口径，2026-09-12 考证裁定）：
-      1. 以当月月卦为本，从月卦居位爻的下一爻起，自下而上变六爻
-         （绕一圈回到居位爻为止），即"六爻俱变毕，则满三十日"。
+    规则（《河洛真数·起例卷之上·起日卦例》原文演例，链式累积）：
+      1. 以当月月卦为本，自月卦居位爻的下一位起（阳日取阳位 初/三/五，
+         阴日取阴位 二/四/上），逐日累积变爻、自下而上挨次变去，
+         即"六爻俱变毕，则满三十日"。
       2. "每一爻管五日"：六爻各管五日，共三十日。
-      3. "另画一乾卦"：各段以月卦为本独立变对应爻位（非链式）。
-      例（乾九二居位）：九三→履、九四→小畜、九五→大有、
-         上九→夬、初九→姤、九二（居位）→同人。
+      3. 原文演例（乾卦初九居位，初一为阳日→起于三爻）：初一乾九三→履六三；
+         初二变履九四→中孚六四；初三变中孚九五→损六五；初四变损上九→临上六；
+         初五变临初九→师初六……挨次而变，不容紊也（非各段独立变）。
 
     异文记录：《河洛理数》卷二下（国图藏史应选校订明刊本，晚出约40年）
-      "除此一爻不变…每管六日…自下爻行至上爻"为 5 爻×6 日口径
-      （不含居位爻），按"最早书籍为准"原则不采用，保留为异文。
+      "另画一乾卦…除此一爻不变…每管六日…自下爻行至上爻"为「各段独立变 +
+      5 爻×6 日」口径，按"最早书籍为准"原则不采用，保留为异文。
+      旧实现采此异文且起爻偏移一爻（D-015，2026-11-06 修正为链式）。
 
     节气对齐（《河洛真数》："日卦行起必须按月卦节气方不误"）：
       若提供 jie_datetime（当月"节"的精确时刻，如 2024-08-07 08:09），
       则第1段从"节"当日开始管起，各段标注真实起止日期；
       否则退化为相对分段（第1-5天、第6-10天...），兼容旧调用。
     """
-    start = (yue_yao_index + 1) % 6
+    start = _next_position(yue_yao_index, (0, 2, 4) if yang_day else (1, 3, 5))
+    cur = list(yue_lines)
     days = []
     for k in range(6):
         flip_idx = (start + k) % 6
-        seg_lines = _flip_line(yue_lines, flip_idx)
+        cur = _flip_line(cur, flip_idx)
+        seg_lines = cur
         u, lo, name = _lines_to_hexagram(seg_lines)
         entry = {
             "segment": k + 1, "day_from": k * 5 + 1, "day_to": k * 5 + 5,
             "name": name, "upper": u, "lower": lo, "lines": seg_lines,
+            "flip_index": flip_idx, "yue_yao_index": yue_yao_index,
         }
         if jie_datetime:
             # 节气对齐：段k覆盖节起第(k*5+1)~第(k*5+5)天

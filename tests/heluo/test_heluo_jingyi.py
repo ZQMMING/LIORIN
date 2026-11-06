@@ -98,9 +98,11 @@ class TestJingyiOutputLayer:
         assert ly.get("jingyi") and ly.get("shiyi")
 
     def test_liuri_yao_jingyi(self, guajie_dict):
+        # 起日卦例为链式（D-015）：2026-09 月卦雷水解·四爻居位、阳日→起于五爻；
+        # 第 3 段（11-15 日）累积变至天泽履·初九（素履，往无咎）。
         lr = guajie_dict.get("liuri_yao") or {}
-        assert lr.get("ci") and "归妹" in lr["ci"]
-        assert lr.get("jingyi") and "娣" in lr["jingyi"]
+        assert lr.get("ci") and "素履" in lr["ci"]
+        assert lr.get("jingyi")
         assert lr.get("shiyi")
 
     def test_four_layers_all_have_jingyi(self, guajie_dict):

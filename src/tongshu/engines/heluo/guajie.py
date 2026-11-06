@@ -1329,9 +1329,17 @@ def build_guajie_from_result(
                                         if d_from <= target_day <= d_to:
                                             liuri_hex_name = _short(dseg.get("name", ""))
                                             dl = dseg.get("lines") or []
-                                            diffs = [k for k in range(6) if len(dl) > k and len(ml) > k and dl[k] != ml[k]]
+                                            # 链式流日：动爻 = 与上一段（段1则与月卦）的单爻差
+                                            _prev_dl = ml
+                                            for _pd in m["days"]:
+                                                if _pd.get("segment") == dseg.get("segment", 0) - 1:
+                                                    _prev_dl = _pd.get("lines") or ml
+                                                    break
+                                            diffs = [k for k in range(6) if len(dl) > k and len(_prev_dl) > k and dl[k] != _prev_dl[k]]
                                             if len(diffs) == 1 and len(dl) > diffs[0]:
                                                 liuri_yao_name = _yao_name(diffs[0], dl[diffs[0]])
+                                            elif dseg.get("flip_index") is not None and len(dl) > dseg["flip_index"]:
+                                                liuri_yao_name = _yao_name(dseg["flip_index"], dl[dseg["flip_index"]])
                                             # 流时应期：值日卦 hours（起时卦例：前六时进/后六时退）
                                             if target_hour and dseg.get("hours"):
                                                 for hs in dseg["hours"]:

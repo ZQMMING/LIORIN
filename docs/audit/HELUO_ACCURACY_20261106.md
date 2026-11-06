@@ -12,7 +12,7 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **569 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **580 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 | 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
@@ -105,7 +105,7 @@ python scripts/heluo_truth_replay.py                                            
 - 此前只对**流年卦**判 `judge_ye_buye`，命卦本身不判；
   而原典「如生于四月及纳甲本命者，多属富贵人也」正是命卦级断法。
   → `GuaJieResult` 新增 `benming_ye_buye` 并接入 `compose_guajie` / `to_dict`。
-- `build_guajie_from_result` 在无四柱时用 `birth_month or 1`，把「未知生月」静默当正月，
+- `bbuild_guajie_from_result` 在无四柱时用 `birth_month or 1`，把「未知生月」静默当正月，
   数凶判据的阳月分支因此会把「未知」判成「阳月 → 数凶」。
   → 改为 `birth_month or 0`，`judge_shu_xiong` 对 `<=0` 显式记「生月未知 → 阳月判据跳过」。
 
@@ -190,13 +190,13 @@ python scripts/heluo_truth_replay.py                                            
   元堂爻变」「结构卦名与上下卦自洽」「元堂阴阳与落爻一致」等结构关系没有自动检查，
   回归只能覆盖写死的案例。
 - 修：新增 scripts/heluo_invariant_scan.py（随机 N 盘，种子固定，含男女/三元覆盖）与
-  	ests/test_heluo_invariant_scan.py（16 固定盘 + 脚本 12 盘跑通），检查项：
+  tests/test_heluo_invariant_scan.py（16 固定盘 + 脚本 12 盘跑通），检查项：
   ①先天六爻与上下卦一致（TRIGRAM_LINES 下三 + 上三）；
   ②元堂爻位 0-5 且 yao_nature 与落爻阴阳一致；
   ③后天 lines = 先天 lines 在元堂位翻转，step1_hexagram 由上/下卦查 SIXTY_FOUR_HEXAGRAMS；
   ④结构层六爻与 structure.lines 一致、structure.name 与上下卦一致；
   ⑤化工卦 ∈ 八卦；⑥流年卦数量 ≥30 且上下卦 ∈ 64 卦；
-  ⑦解层返回必含 enming/benming_ye_buye/liunian_hexagram/kuozhan 且叶不叶 evidence 非空。
+  ⑦解层返回必含 benming/benming_ye_buye/liunian_hexagram/kuozhan 且叶不叶 evidence 非空。
 - 结果：**200 盘 0 问题**；固化测试 **17 passed**（全族 564 passed）。
 
 ### D-013 死断「过第四爻/连三爻」判据错位
@@ -209,15 +209,15 @@ python scripts/heluo_truth_replay.py                                            
   「纵到君爻，亦不许行至上极一爻，寿必不久」。
 - 修：①新增 dayun_combo（当前及前两段大运：卦 + 爻位 + 该爻 ci/buye/suiyun），
   「连三爻不吉」改按大运三爻判词，「过第四爻遇凶」改 dayun_line_index >= 4 且当前
-  大运爻判词凶；②uild_guajie_from_result 按 qi_phase.dayun 的 ge_start/age_end
+  大运爻判词凶；②build_guajie_from_result 按 qi_phase.dayun 的 age_start/age_end
   取当前段并回溯两段，阳爻九年/阴爻六年口径不变；③保留流年回退（首段不足 3 段时）。
 - 实测（纪晓岚盘）：三岁（四爻）→ 连三爻不吉（流年回退）；七岁（五爻）→ 数足必死；
   十三岁（上极）→ 寿必不久 + 数足必死 + 十死八九。
-- 新增 	ests/test_heluo_si_duan.py **6 passed**；全族 **569 passed**、真值 4/4。
+- 新增 tests/test_heluo_si_duan.py **6 passed**；全族 **569 passed**、真值 4/4。
 
 ### D-014 流年卦翻转在 0/1 爻值约定下静默失效
 
-- 现象：	imeline_yun._flip_line 用 -out[idx] 翻爻，只适用于 ±1 约定；当上游传入
+- 现象：timeline_yun._flip_line 用 -out[idx] 翻爻，只适用于 ±1 约定；当上游传入
   0/1 约定（如 guajie.hexagram_to_lines 返回 0=阴）时，-0 == 0 爻不翻、卦名不变，
   不报错（静默失效）。实测「同人九三 阳年段」第 8 岁应得蒙卦，实际仍停在剥卦，正是
   原典演例第 8 步。
@@ -228,4 +228,25 @@ python scripts/heluo_truth_replay.py                                            
   · 同人九三·阳年段：同人 → 革 → 随 → 屯 → 复 → 颐 → 剥 → **蒙** → 蛊（9 岁逐岁一致）；
   · 同人九三·阴年段：无妄 → 随 → 革 → 既济 → 明夷 → 贲 → 艮 → 蛊 → 蒙（9 岁逐岁一致）；
   · 同人六二·阴爻段（不取应、不分阴阳年）：乾 → 履 → 中孚 → 损 → 临 → 师（6 岁逐岁一致）。
-- 新增 	ests/test_heluo_liunian_examples.py **4 passed**（含翻转约定回归）；全族 **569 passed**。
+- 新增 tests/test_heluo_liunian_examples.py **4 passed**（含翻转约定回归）；全族 **569 passed**。
+
+
+### D-015 流日卦：独立变爻（误）→ 原典链式累积 + 起爻阴阳位
+
+- 现象：timeline_yun.compute_liuri 每段以月卦为底独立变一位，且起爻取
+  (yue_yao_index + 1) % 6；与《河洛真数·起例卷之上·起日卦例》原文演例不符。
+  实测 乾为天·初九居位 输出 同人/履/小畜/大有/夬/姤，而原典为 履/中孚/损/临/师。
+- 原典（河洛真数_起例卷之上.txt 起日卦例）：「假如正月得乾卦初爻，初一日当在三爻，
+  变为履六三，初二日变履九四为中孚六四，初三日变中孚九五为损六五，初四日变损上九
+  为临上六，初五日变临初九为师初六，挨次而变，不容紊也。」并「阳日寻阳爻位（初、
+  三、五），阴日寻阴爻位（二、四、上）」「每一爻管五日」「六爻俱变毕，则满三十日」。
+- 修：①起爻 = 居位爻之后第一个同阴阳位（阳日 初/三/五，阴日 二/四/上，回绕），
+  compute_liuri 新增 yang_day 参数（默认 True）；②各段在上段结果上累积变下一位
+  （链式），自下而上 2→3→4→5→0→1；③段 dict 增 flip_index/yue_yao_index 供断爻定位；
+  ④guajie 流日动爻改取「与上一段（段1则与月卦）的单爻差」，回退 flip_index。
+- 验证：乾初九 → 履/中孚/损/临/师/坤（原典前五段逐字一致）；1980 盘 2026-09 月卦
+  雷水解·四爻居位 → 泽水困/天水讼/天泽履（第 3 段 11-15 日）与逐爻手算一致。
+- 异文：河洛理数 卷二下「另画一乾卦」独立变 + 5 爻×6 日口径，按最早书籍不采用。
+- 新增 tests/test_heluo_liuri_example.py **6 passed**；既有
+  tests/heluo/test_heluo_jingyi.py::test_liuri_yao_jingyi 期望值按链式修正
+  （归妹 → 天泽履·初九）。全族 **580 passed**、真值 4/4。
