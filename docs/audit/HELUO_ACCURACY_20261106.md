@@ -12,8 +12,9 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **597 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **605 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 | 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
+| 节候卦（二十四节气 × 七十二候） | **72/72 候名按序命中原文，24/24 节候卦由首候派生，八节卦 24/24 与原典首句一致** | `tests/test_heluo_jiehhou_yuanwen.py`，`tests/heluo/test_h11_jiehhou.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
 
@@ -75,7 +76,7 @@ python scripts/heluo_truth_replay.py --dump heluo-002
 $env:PYTHONPATH='D:\shuntian\src'
 $env:PYTHONIOENCODING='utf-8'
 python -m pytest tests/test_heluo_truth.py tests/test_heluo_guajie_mapping.py tests/test_heluo_canping_truth.py -q   # 21 passed
-python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 540 passed / 1 pre-existing error
+python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 605 passed / 1 pre-existing error
 python scripts/heluo_truth_replay.py                                                                               # 4/4 PASS
 ```
 
@@ -289,4 +290,43 @@ python scripts/heluo_truth_replay.py                                            
   庚申木 / 戊申土）。
 - 新增 tests/heluo/test_h7_yuan_qi_parts.py **14 passed**（既有 test_h7_yuan_qi.py 7 passed
   不变）；全族 **597 passed**、真值 4/4、结构扫描 60 盘 0 问题。
+
+
+### D-018 节候卦 / 六十卦表取自二手网文，与原典 72 候冲突（24 条错 23）
+
+- 现象：jiehou.py 的 `JIEHOU_GUA`（24 条节气→候卦→变卦）与 `SIXTY_GUA`（60 条卦序）
+  均来自网络二手表，与仓内 `data/heluo/guajie_raw/河洛真数_起例卷之下.txt`「节候卦爻」
+  段冲突：24 条中只有冬至（颐六四）正确，其余 **23 条全错**——
+  立春原文为「小过初爻」，旧表作「泰六三」；春分原文「晋四爻」，旧作「夬二」；
+  夏至原文「井四爻」，旧作「比四」；秋分原文「大畜四爻」，旧作「丰四」；
+  小寒原文「屯初爻」，旧作「井三」……
+  旧表的「变卦」列机械上也不自洽（如泰六三翻转应为泽地萃，旧写雷水解）。
+  另 `SIXTY_GUA` 含 5 处重复（贲/困/涣/节/损）与讹字「宜」。
+- 原典结构（起例卷之下·节候卦爻）：
+  ①八节卦：坎初六起冬至→上六惊蛰，震初九起春分→上六芒种，
+  离初九起夏至→上九白露，兑初九起秋分→上六大雪；「每卦总管九十日，自下而上，
+  每一爻各直十五日」；
+  ②七十二候：自「候卦颐四爻起冬至蚯蚓结」至「未济上爻虎始交、蹇五爻荔挺出」，
+  每卦总六日、自初而上爻各一日；「生时值节卦者谓之化工，生月值卦者谓之得令」。
+- 修（src/tongshu/engines/heluo/jiehhou.py 全文重写，约 470 行）：
+  ①`HOU_GUA` = 72 元组（节气索引/候序/卦短名/爻位 0-5/候名），逐条照原文；
+  ②`HOU_GUA_BY_JQ` 取候序 1 的 24 条 → `JIEHOU_GUA` 由首候派生，变卦 = 该爻机械翻转
+  （原典未载变卦，仅作参考并在证据注明）；
+  ③`JIE_GUA` = 24 条四正卦分领（坎/震/离/兑 各 6 爻），`jie_line = jq % 6`；
+  ④`BI_GUA_BY_JQ` 节气→当值辟卦（按月建：冬至复、立春泰、夏至姤…）；
+  ⑤`SIXTY_GUA` 改为文王序去四正卦（60 条、无重复、无讹字）；
+  ⑥`SeasonalHexagram` 增 `jie_gua/jie_line/hou`，`moving_line` 改 0-based（与
+  `hexagram_to_lines` 一致），`_yao_label` 出「初六/九二」原典爻名；`QiPhase` 增 `bi_gua`。
+- 数据问题（已登记，不修表）：原文「离九二大暑」为刻本讹字（离无九二，按
+  初九/六二/九三/九四/六五/上九 排布）；候名「鹰化为始」为月令「鹰化为鸠」之讹
+  （测试用异文字典 `_HOU_VARIANTS` 兼容原文）；原文「随三大雨时行」「随五鹰化为始」
+  同卦两爻重复出现，按原文照录不擅改。
+- 验证：72/72 候名按序命中原文；24 条候卦由首候派生；变卦机械一致；八节卦 24/24
+  与首句一致；`get_qi_phase` 二至二分为四正卦（`six_day_seven_method=False`）、
+  其余行六日七分。新增 tests/test_heluo_jiehhou_yuanwen.py **8 passed**，
+  test_h11_jiehhou.py / test_h16_independent_verification.py / test_full_pipeline.py
+  断言按原典更新（**32 passed**）；全族 **605 passed**、真值 4/4、结构扫描 60 盘 0 问题。
+- 影响面：`JIEHOU_GUA` 只经 `canonical._compute_seasonal_hexagram` → 证据文本与
+  `frozen_state` 存档，无逻辑分支依赖其数值；`SIXTY_GUA` 无任何消费者。
+
 

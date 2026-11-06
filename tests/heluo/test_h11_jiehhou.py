@@ -49,32 +49,45 @@ class TestSeasonalHexagram(unittest.TestCase):
             self.assertIn(info.main_gua, JIEHOU_GUA_NAME.values())
 
     def test_dongzhi_yi_fu(self):
-        """冬至：颐六四动→复（原典）"""
+        """冬至：候卦颐四爻（起例卷之下·节候卦爻「候卦颐四爻起冬至蚯蚓结」）"""
         info = get_seasonal_hexagram(0)
         self.assertEqual(info.jq_name, "冬至")
         self.assertEqual(info.main_gua, "山雷颐")
-        self.assertEqual(info.moving_line, 4)
-        self.assertEqual(info.result_gua, "地雷复")
+        self.assertEqual(info.moving_line, 3)      # 0-based：六四
+        self.assertEqual(info.result_gua, "火雷噬嗑")
+        self.assertEqual(info.hou, "蚯蚓结")
+        self.assertEqual(info.jie_gua, "坎为水")
+        self.assertEqual(info.jie_line, 0)         # 坎初六
 
-    def test_lichun_jie(self):
-        """立春：泰三动→解（原典）"""
+    def test_lichun_xiaoguo(self):
+        """立春：小过初爻（旧作泰三，与原文不符，D-018）"""
         info = get_seasonal_hexagram(3)
-        self.assertEqual(info.result_gua, "雷水解")
+        self.assertEqual(info.main_gua, "雷山小过")
+        self.assertEqual(info.moving_line, 0)
+        self.assertEqual(info.hou, "东风解冻")
+        self.assertEqual(info.jie_line, 3)         # 坎六四
 
-    def test_chunfen_duogua(self):
-        """春分：夬二动→损"""
+    def test_chunfen_jin(self):
+        """春分：晋四爻（旧作夬二）"""
         info = get_seasonal_hexagram(6)
-        self.assertEqual(info.result_gua, "山泽损")
+        self.assertEqual(info.main_gua, "火地晋")
+        self.assertEqual(info.moving_line, 3)
+        self.assertEqual(info.jie_gua, "震为雷")
+        self.assertEqual(info.jie_line, 0)         # 震初九
 
-    def test_xiazhi_shi_pou(self):
-        """夏至：师五动→剥"""
+    def test_xiazhi_jing(self):
+        """夏至：井四爻（旧作比四）"""
         info = get_seasonal_hexagram(12)
-        self.assertEqual(info.result_gua, "山地剥")
+        self.assertEqual(info.main_gua, "水风井")
+        self.assertEqual(info.moving_line, 3)
+        self.assertEqual(info.jie_gua, "离为火")
 
-    def test_qiufen_dun(self):
-        """秋分：丰四动→遁"""
+    def test_qiufen_dachu(self):
+        """秋分：大畜四爻（旧作丰四）"""
         info = get_seasonal_hexagram(18)
-        self.assertEqual(info.result_gua, "天山遁")
+        self.assertEqual(info.main_gua, "山天大畜")
+        self.assertEqual(info.moving_line, 3)
+        self.assertEqual(info.jie_gua, "兑为泽")
 
     def test_invalid_index_raises(self):
         """越界应抛出 ValueError"""
