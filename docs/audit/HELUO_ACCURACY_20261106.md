@@ -12,7 +12,7 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **565 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **569 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 | 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
@@ -213,4 +213,19 @@ python scripts/heluo_truth_replay.py                                            
   取当前段并回溯两段，阳爻九年/阴爻六年口径不变；③保留流年回退（首段不足 3 段时）。
 - 实测（纪晓岚盘）：三岁（四爻）→ 连三爻不吉（流年回退）；七岁（五爻）→ 数足必死；
   十三岁（上极）→ 寿必不久 + 数足必死 + 十死八九。
-- 新增 	ests/test_heluo_si_duan.py **6 passed**；全族 **565 passed**、真值 4/4。
+- 新增 	ests/test_heluo_si_duan.py **6 passed**；全族 **569 passed**、真值 4/4。
+
+### D-014 流年卦翻转在 0/1 爻值约定下静默失效
+
+- 现象：	imeline_yun._flip_line 用 -out[idx] 翻爻，只适用于 ±1 约定；当上游传入
+  0/1 约定（如 guajie.hexagram_to_lines 返回 0=阴）时，-0 == 0 爻不翻、卦名不变，
+  不报错（静默失效）。实测「同人九三 阳年段」第 8 岁应得蒙卦，实际仍停在剥卦，正是
+  原典演例第 8 步。
+- 修：_flip_line 改为按「阳=1，其余视为阴」翻转（out[i] = -1 if out[i] == 1 else 1），
+  两种约定都正确。
+- **原典演例逐岁核对**（河洛真数_起例卷之上.txt 小象行年卦气三个完整演例，均以同人为
+  先天卦）：
+  · 同人九三·阳年段：同人 → 革 → 随 → 屯 → 复 → 颐 → 剥 → **蒙** → 蛊（9 岁逐岁一致）；
+  · 同人九三·阴年段：无妄 → 随 → 革 → 既济 → 明夷 → 贲 → 艮 → 蛊 → 蒙（9 岁逐岁一致）；
+  · 同人六二·阴爻段（不取应、不分阴阳年）：乾 → 履 → 中孚 → 损 → 临 → 师（6 岁逐岁一致）。
+- 新增 	ests/test_heluo_liunian_examples.py **4 passed**（含翻转约定回归）；全族 **569 passed**。

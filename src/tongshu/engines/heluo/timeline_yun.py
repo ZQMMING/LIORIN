@@ -31,9 +31,14 @@ YANG_STEMS = set("甲丙戊庚壬")  # 阳年
 
 
 def _flip_line(six_lines: list[int], idx: int) -> list[int]:
-    """翻转指定爻（1 ↔ -1），返回新卦。"""
+    """翻转指定爻（阳↔阴），返回新卦。
+
+    兼容两种爻值约定：±1（阳=1/阴=-1）与 0/1（阳=1/阴=0）。
+    旧实现 `-out[idx]` 在 0/1 约定下对阴爻（0）取负仍是 0，静默不翻（D-014）。
+    """
     out = list(six_lines)
-    out[idx % 6] = -out[idx % 6]
+    i = idx % 6
+    out[i] = -1 if out[i] == 1 else 1
     return out
 
 
