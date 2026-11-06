@@ -12,11 +12,12 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **633 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **637 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 | 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
 | 节候卦（二十四节气 × 七十二候） | **72/72 候名按序命中原文，24/24 节候卦由首候派生，八节卦 24/24 与原典首句一致** | `tests/test_heluo_jiehhou_yuanwen.py`，`tests/heluo/test_h11_jiehhou.py` |
 | 化工卦（H6） | **12 月支映射与原典「冬至→惊蛰/春分→芒种/夏至→白露/秋分→大雪」四句一致，三层判据（正体·互体·纳音）+ 四季月坤艮土旺均落地，25 tests** | `tests/heluo/test_h6_huagong_yuanwen.py` |
 | 流时卦接线（每段十二时） | **六段流日各挂 12 时卦，0 缺失（链式流日回归）** | `tests/heluo/test_heluo_liuri_hours.py` |
+| 流年应爻/元爻断随段 | **逐岁应爻 = (本段大运元堂+3)%6，跨段年份按段元堂而非本命元堂** | `tests/heluo/test_heluo_liunian_ying_yao.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
 
@@ -78,7 +79,7 @@ python scripts/heluo_truth_replay.py --dump heluo-002
 $env:PYTHONPATH='D:\shuntian\src'
 $env:PYTHONIOENCODING='utf-8'
 python -m pytest tests/test_heluo_truth.py tests/test_heluo_guajie_mapping.py tests/test_heluo_canping_truth.py -q   # 21 passed
-python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 633 passed / 1 pre-existing error
+python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 637 passed / 1 pre-existing error
 python scripts/heluo_truth_replay.py                                                                               # 4/4 PASS
 ```
 
@@ -379,3 +380,18 @@ python scripts/heluo_truth_replay.py                                            
 - 验证：`tests/heluo/test_heluo_liuri_hours.py` **3 passed**——六段各 12 时、首条为子时、
   子时 `shi_yao_index == (flip_index+1)%6` 且仅变该一爻、第 6 段与 `compute_liushi`
   手工结果逐条一致；全族 **633 passed**、真值 4/4、扫描 60 盘 0 问题。
+
+### D-021 流年卦应爻/元爻断误用本命先天元堂（段 2 起错位）
+
+- 现象：`interpret_all_liunian` 对整张流年表都传入本命先天元堂
+  （`canonical._build_timeline` → `interpret_all_liunian(yearly, yuan_tang_index=先天元堂)`），
+  于是每岁的「应爻」恒为本命元堂的应位；换大运段后（原典「至十岁换九四爻」）
+  元堂已换爻位，应爻与「无动爻可判时用元爻断」全部拿错爻。
+- 原典依据（起例卷之上·小象行年卦气）：「一岁在同人九三元爻，二岁取应爻…至十岁换
+  九四爻，当看其年或阴或阳…仍用九四元爻断」——元堂随大运段换爻，应爻随之。
+- 修：`interpret_all_liunian` 逐条取 `entry["yuantang_index"]`（该岁所属大运段的元堂）
+  作本段元堂，爻性优先 `entry["yuantang_nature"]`（兼容 1/-1 与「阳」「阴」两种表示），
+  否则由该爻阴阳推导；证据串改「本段元堂@N（阳/阴爻），动爻X，应爻Y」。
+- 验证：`tests/heluo/test_heluo_liunian_ying_yao.py` **4 passed**（逐岁应爻 =
+  (段元堂+3)%6；存在跨段年份；证据串含「本段元堂@跨段位」）；全族 **637 passed**、
+  真值 4/4、扫描 60 盘 0 问题。

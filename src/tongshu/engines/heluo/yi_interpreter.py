@@ -383,7 +383,7 @@ def interpret_liunian_year(
     if ying_yao_ci and ying_yao_source:
         evidence.append(f"应爻{ying_line_name}：{ying_yao_ci}（{ying_yao_source}）")
     if changed_line_idx is not None:
-        evidence.append(f"元堂@{yuan_tang_index}（{yuan_tang_line_nature}爻），动爻{changed_line_idx}，应爻{ying_idx}")
+        evidence.append(f"本段元堂@{yuan_tang_index}（{yuan_tang_line_nature}爻），动爻{changed_line_idx}，应爻{ying_idx}")
 
     # ── 白话爻义（YAO_CI_MEANINGS 接入，消除孤儿资产）────────────
     meanings = YAO_CI_MEANINGS.get(resolved, {})
@@ -450,12 +450,27 @@ def interpret_all_liunian(
         age = entry["age"]
         hexagram = entry["hexagram"]
 
+        # D-021：以小象分段的「本段元堂」为准，不能用本命先天元堂。
+        # 原典「二岁取应爻…至十岁换九四爻」——应爻与元爻断都随大运段元堂而变；
+        # 旧实现整张表都用先天元堂，段 2 起应爻错位、无动爻可判时元爻断也拿错爻。
+        seg_yuan = entry.get("yuantang_index", yuan_tang_index)
+        if not isinstance(seg_yuan, int) or not (0 <= seg_yuan < 6):
+            seg_yuan = yuan_tang_index
+        seg_nature = entry.get("yuantang_nature")
+        if seg_nature in ("阳", "阴"):
+            seg_nature_str = seg_nature
+        elif isinstance(seg_nature, int):
+            seg_nature_str = "阳" if seg_nature == 1 else "阴"
+        else:
+            lines = entry.get("lines") or []
+            seg_nature_str = "阳" if (0 <= seg_yuan < len(lines) and lines[seg_yuan] == 1) else "阴"
+
         interp = interpret_liunian_year(
             hexagram_name=hexagram,
             year=year,
             age=age,
-            yuan_tang_index=yuan_tang_index,
-            yuan_tang_line_nature=yuan_tang_nature,
+            yuan_tang_index=seg_yuan,
+            yuan_tang_line_nature=seg_nature_str,
             liunian_years=yearly_hexagrams,
         )
         entry["yi_signal"] = interp.signal.to_dict()
