@@ -78,6 +78,9 @@ class FrozenHeluoState:
     yuan_qi_evidence: Optional[list[str]] = None  # 元气证据链
     yuan_qi_tian: Optional[str] = None    # 天元气卦（年干纳甲）
     yuan_qi_di: Optional[str] = None      # 地元气卦（年支后天宫）
+    yuan_qi_ren: Optional[list[str]] = None  # 人元气所纳之卦（年柱纳音）
+    yuan_qi_ren_element: Optional[str] = None  # 人元气五行（纳音）
+    yuan_qi_scope: Optional[str] = None   # 元气所在：正体/互体/伏体/相生
 
     def to_dict(self) -> dict:
         """序列化为字典，供 Signal/Assertion 层消费。"""
@@ -121,6 +124,9 @@ class FrozenHeluoState:
                 "state": self.yuan_qi_state,
                 "tian": self.yuan_qi_tian,
                 "di": self.yuan_qi_di,
+                "ren": self.yuan_qi_ren,
+                "ren_element": self.yuan_qi_ren_element,
+                "scope": self.yuan_qi_scope,
                 "evidence": self.yuan_qi_evidence,
             },
             "seasonal": self.seasonal_hexagram,
@@ -203,6 +209,9 @@ def build_frozen_state(result: Any, calculation_policy: Optional[dict] = None) -
         yuan_qi_evidence=yuan_qi.evidence if yuan_qi else None,
         yuan_qi_tian=yuan_qi.tian_yuan_qi if yuan_qi else None,
         yuan_qi_di=yuan_qi.di_yuan_qi if yuan_qi else None,
+        yuan_qi_ren=list(yuan_qi.ren_yuan_qi) if yuan_qi else None,
+        yuan_qi_ren_element=yuan_qi.ren_yuan_element if yuan_qi else None,
+        yuan_qi_scope=yuan_qi.scope if yuan_qi else None,
         dayun_summary=dayun_summary,
         liunian_count=liunian_count,
         birth_year=birth_year,

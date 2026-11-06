@@ -12,7 +12,7 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **580 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **597 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 | 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
@@ -249,7 +249,7 @@ python scripts/heluo_truth_replay.py                                            
 - 异文：河洛理数 卷二下「另画一乾卦」独立变 + 5 爻×6 日口径，按最早书籍不采用。
 - 新增 tests/test_heluo_liuri_example.py **6 passed**；既有
   tests/heluo/test_heluo_jingyi.py::test_liuri_yao_jingyi 期望值按链式修正
-  （归妹 → 天泽履·初九）。全族 **580 passed**、真值 4/4。
+  （归妹 → 天泽履·初九）。全族 **597 passed**、真值 4/4。
 
 
 ### D-016 生月未知（0）仍参与叶/不叶判定，凭空得「不叶凶象」
@@ -262,5 +262,31 @@ python scripts/heluo_truth_replay.py                                            
   流年/命卦两处叶不叶序列化同步带 judged。
 - 验证：judge_ye_buye(乾, 0) → judged=False、无「生月0月 ≠」越界比较；
   judge_ye_buye(乾, 4, 甲子) 仍 judged=True、叶、纳甲命中。
-- 新增 tests/test_heluo_ye_buye_unknown_month.py **3 passed**；全族 **580 passed**、
+- 新增 tests/test_heluo_ye_buye_unknown_month.py **3 passed**；全族 **597 passed**、
   真值 4/4。
+
+
+### D-017 元气判定漏「人元气 / 互体 / 伏体 / 相生」
+
+- 现象：yuan_qi.compute_yuan_qi 只把「天元气（年干纳甲）、地元气（年支后天宫）」与
+  先天/后天的**正体上下卦**比对，漏原典三层判据——
+  ①「纳音为人元气」（干支纳卦：金乾兑 / 水坎 / 火离 / 土坤艮 / 木震巽）；
+  ②「正体若无，须看互体，互体又无，推及伏体」；
+  ③「水命生人，天干地支俱无元气，而得乾兑之卦，是金能生水，亦可谓得元气」。
+  后果：原典明举的「甲子生人得小过，互体有兑亦是纳音」被误判 UNRESOLVED；
+  且「二者俱反」的凶象可能被伏体兜底掩盖。
+- 修（src/tongshu/engines/heluo/yuan_qi.py）：
+  ①补六十甲子纳音表 + nayin_element(年干,年支)，人元气卦按「干支纳卦」映射；
+  ②按原典优先级判定：正体/互体有元气 → NORMAL；正体见元气错卦（二者俱反）→
+  REVERSE；其后才「推及伏体」，最后「生我之卦亦可谓得元气」→ NORMAL（scope=相生）；
+  ③补互卦（二三四爻为下互、三四五爻为上互）与伏体（上下卦各取对宫）计算；
+  ④YuanQiResult 增 ren_yuan_element / ren_yuan_qi / scope 字段，frozen_state 序列化
+  同步扩到 yuan_qi.ren / ren_element / scope。
+- 验证：甲子年得小过 → scope=互体、NORMAL、证据「人元气=兑（互体）」；丙子年（纳音水）
+  乾卦 → scope=相生、证据「金生水」；甲子年坤卦 → REVERSE（正体见天元反之坤）；
+  纪晓岚 甲辰年 → 正体 NORMAL（天元气乾在正体，元气为主）；纳音九组逐条对
+  「干支纳卦」原文（甲子金 / 丙寅火 / 戊辰木 / 庚午土 / 壬申金 / 癸亥水 / 甲辰火 /
+  庚申木 / 戊申土）。
+- 新增 tests/heluo/test_h7_yuan_qi_parts.py **14 passed**（既有 test_h7_yuan_qi.py 7 passed
+  不变）；全族 **597 passed**、真值 4/4、结构扫描 60 盘 0 问题。
+
