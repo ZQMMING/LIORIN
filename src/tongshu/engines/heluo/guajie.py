@@ -331,6 +331,7 @@ class YeBuYeResult:
     birth_month: int
     najia_hit: bool             # 年干支是否在纳甲
     evidence: list[str] = field(default_factory=list)
+    judged: bool = True         # 生月未知时不判（D-016）
 
 
 @dataclass
@@ -386,11 +387,13 @@ class GuaJieResult:
             "liunian_ye_buye": {
                 "ye": self.liunian_ye_buye.ye, "buye": self.liunian_ye_buye.buye,
                 "najia_hit": self.liunian_ye_buye.najia_hit,
+                "judged": self.liunian_ye_buye.judged,
                 "evidence": self.liunian_ye_buye.evidence,
             } if self.liunian_ye_buye else None,
             "benming_ye_buye": {
                 "ye": self.benming_ye_buye.ye, "buye": self.benming_ye_buye.buye,
                 "najia_hit": self.benming_ye_buye.najia_hit,
+                "judged": self.benming_ye_buye.judged,
                 "gua_qi_month": self.benming_ye_buye.gua_qi_month,
                 "evidence": self.benming_ye_buye.evidence,
             } if self.benming_ye_buye else None,
@@ -727,6 +730,15 @@ def judge_ye_buye(
     ev: list[str] = []
     ye = False
     buye = False
+
+    # 0. 生月未知（0/缺省）→ 不判（原典判据以生月为前提，D-016）
+    if not (1 <= birth_month <= 12):
+        return YeBuYeResult(
+            ye=False, buye=False, gua_qi_month=g.gua_qi_month,
+            birth_month=birth_month, najia_hit=False,
+            evidence=[f"生月未知（{birth_month}）→ 叶/不叶不判（原典判据须真实生月）"],
+            judged=False,
+        )
 
     # 1. 卦气月匹配
     if g.gua_qi_month is not None:

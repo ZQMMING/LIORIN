@@ -250,3 +250,17 @@ python scripts/heluo_truth_replay.py                                            
 - 新增 tests/test_heluo_liuri_example.py **6 passed**；既有
   tests/heluo/test_heluo_jingyi.py::test_liuri_yao_jingyi 期望值按链式修正
   （归妹 → 天泽履·初九）。全族 **580 passed**、真值 4/4。
+
+
+### D-016 生月未知（0）仍参与叶/不叶判定，凭空得「不叶凶象」
+
+- 现象：build_guajie_from_result 未传四柱时 birth_month=0，judge_ye_buye 仍拿 0
+  与卦气月比较，输出「生月0月 ≠ 卦气月11月 → 不叶（凶象…）」；流年叶/不叶
+  分支更无生月门控。叶/不叶的必要前提是「生月得时」，生月缺失时结论应为不判。
+- 修：YeBuYeResult 增 judged 字段（默认 True）；judge_ye_buye 首段加门控
+  「birth_month ∉ 1..12 → ye/buye 皆 False、judged=False、evidence 明写不判」；
+  流年/命卦两处叶不叶序列化同步带 judged。
+- 验证：judge_ye_buye(乾, 0) → judged=False、无「生月0月 ≠」越界比较；
+  judge_ye_buye(乾, 4, 甲子) 仍 judged=True、叶、纳甲命中。
+- 新增 tests/test_heluo_ye_buye_unknown_month.py **3 passed**；全族 **580 passed**、
+  真值 4/4。
