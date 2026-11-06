@@ -658,10 +658,18 @@ def _parse_de_shi_windows(text: str | list[str]) -> tuple[set[int], set[int]]:
     lines = [text] if isinstance(text, str) else list(text)
     de: set[int] = set()
     shi: set[int] = set()
+    _DE_MARK = r"(?<!不)及时|(?<!不)得时|福力(?:至重|深重|为重|重|深)"
+    _SHI_MARK = r"失时|非时|福力(?:轻|浅)"
     for line in lines:
-        marks = [(m.start(), m.end(), "shi" if m.group(0) in ("失时", "非时") else "de")
-                 for m in re.finditer(r"(?<!不)及时|(?<!不)得时|失时|非时", line)]
+        # 邵曰（邵雍断语）里的「得时/失时」是泛论文气，不是卦头月窗
+        # （如无妄邵曰「更喜春夏得时，秋冬不利」），会污染卦头窗口
+        if line.lstrip().startswith("邵曰"):
+            continue
+        marks = [(m.start(), m.end(),
+                  "shi" if re.fullmatch(_SHI_MARK, m.group(0)) else "de")
+                 for m in re.finditer(_DE_MARK + "|" + _SHI_MARK, line)]
         prev_end = 0
+        complement = False
         for pos, end, kind in marks:
             seg = _analysis_segment(line, pos, prev_end)
             prev_end = end
@@ -683,10 +691,19 @@ def _parse_de_shi_windows(text: str | list[str]) -> tuple[set[int], set[int]]:
             if months:
                 (shi if kind == "shi" else de).update(months)
                 continue
-            # 季节式：秋则及时 / 在冬则及时
+            # 「余月（失时）」= 得时月之外的所有月（原典：复「余月福力浅」、
+            # 益「余月非时」、丰「余月福力浅」）
+            if kind == "shi" and any(k in seg for k in ("余月", "其余月", "其他月", "余者")):
+                complement = True
+                continue
+            # 季节式：秋则及时 / 在冬则及时 / 春夏…福力为重（巽）
             seasons = [s for s in _SEASON_MONTHS if s in seg]
-            if len(seasons) == 1:
-                (shi if kind == "shi" else de).update(_SEASON_MONTHS[seasons[0]])
+            if seasons:
+                target = shi if kind == "shi" else de
+                for s in seasons:
+                    target.update(_SEASON_MONTHS[s])
+        if complement and de:
+            shi |= set(range(1, 13)) - de
     return de, shi
 
 
@@ -731,7 +748,7 @@ def judge_ye_buye(
 
     # 3. 旺时/失时区间（卦头 lines 中的"二月至八月及时"/"二三四五月为及时"等）
     gua_text = " ".join(g.gua_lines)
-    de_shi, shi_shi = _parse_de_shi_windows(gua_text)
+    de_shi, shi_shi = _parse_de_shi_windows(g.gua_lines)
     if de_shi or shi_shi:
         if birth_month in de_shi:
             ye = True

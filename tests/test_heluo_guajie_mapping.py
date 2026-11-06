@@ -203,7 +203,7 @@ def test_compose_guajie_outputs_benming_ye_buye():
 
 
 def test_de_shi_windows_parsed_from_book_text():
-    """卦头「及时/得时/失时」月窗：旧实现只认出乾 1 卦，新实现覆盖 19 卦。"""
+    """卦头「及时/得时/失时」月窗：旧实现只认出乾 1 卦，新实现覆盖 20 卦。"""
     from tongshu.engines.heluo.guajie import load_guajie_data, _parse_de_shi_windows
 
     data = load_guajie_data()
@@ -213,7 +213,7 @@ def test_de_shi_windows_parsed_from_book_text():
         if de or shi:
             windows[name] = (de, shi)
 
-    assert len(windows) == 19
+    assert len(windows) == 20
     de, shi = windows["乾"]                 # 二月已后八月以前及时
     assert de == set(range(2, 9)) and not shi
     de, shi = windows["兑"]                 # 生于秋则及时
@@ -224,6 +224,16 @@ def test_de_shi_windows_parsed_from_book_text():
     assert de == set(range(2, 9)) and shi == {9, 10, 11, 12}
     de, shi = windows["噬嗑"]               # 二至八月及时，十月至正月失时
     assert de == set(range(2, 9)) and shi == {10, 11, 12, 1}
+    # 「余月失时」= 得时之外的所有月（复「余月福力浅」、益「余月非时」）
+    de, shi = windows["复"]
+    assert de == set(range(2, 9)) and shi == {1, 9, 10, 11, 12}
+    de, shi = windows["益"]                 # 福力重/非时写法（无「及时」字样）
+    assert de == set(range(2, 9)) and shi == {1, 9, 10, 11, 12}
+    de, shi = windows["巽"]                 # 春夏福力为重，秋冬福力轻
+    assert de == set(range(1, 7)) and shi == set(range(7, 13))
+    # 邵曰泛论「更喜春夏得时」不得污染无妄卦头窗口
+    de, shi = windows["无妄"]
+    assert de == set(range(2, 9)) and shi == {1, 9, 10, 12}
 
 
 def test_ye_buye_uses_de_shi_window():
