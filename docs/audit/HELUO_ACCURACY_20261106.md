@@ -129,3 +129,21 @@ python scripts/heluo_truth_replay.py                                            
   `test_ye_buye_uses_de_shi_window`。
 - 回归：`pytest tests -k "heluo or meihua"` → **542 passed / 1 error**（error 为子平线
   `test_ziping_15_2_evidence_provenance.py` CITATION，pre-existing）。
+
+### D-009 数格只认 5 格，且「数有余逢阳月」方向与原典相反
+
+- 原典《起例卷之中·数论》共 14 格：天数（不足/得中/太过/孤阳不偶/孤阳自偶/阳数偏少/
+  以强伏弱）、地数（至弱/不足/得中/太过/孤阴背阳/孤阴向阳/阴数偏少）、跨二数
+  （以弱敌强/安和自宁）。旧 `judge_shu_xiong` 只有「孤阳不偶/孤阴背阳/以弱敌强/
+  太过有余/安和」5 格，且把「数有余」一律按「阳月 → 数凶」处理，与原典两处相反：
+  以弱敌强「阴月令逢之尚庶几，阳月令逢之必主灭顶之凶」、以强伏弱「值阳月令不妨，
+  逢阴月令颇有恃势致凶之象」。
+- 重写：新增 `_shu_patterns(tian, di)` 逐格判定并返回**并存数格列表**（`ShuXiongResult`
+  新增 `patterns` 字段，`pattern` 保留为主格）+ `_SHU_VERDICT` 14 格原典方针表，
+  按月令逐格定凶：以弱敌强阳月凶、以强伏弱阴月凶、阳数偏少阳月孤睽、阴数偏少阴月百事煎、
+  天数不足秋冬合时、地数太过十月立冬后不害等。
+- 实测：22/56 → 以弱敌强+地数太过（阳月数凶，阴月以弱敌强不记凶）；30/10 → 以强伏弱+
+  地数至弱（阳月「不妨」）；25/30 → 安和自宁（不记凶）。
+- 新增测试 `test_shu_patterns_cover_yuan_dian_taxonomy`（14 格逐格）、
+  `test_shu_xiong_month_direction_follows_book`（阳月/阴月方向）。
+- 回归：**544 passed / 1 error**（同上 pre-existing）；`scripts/heluo_truth_replay.py` 4/4。

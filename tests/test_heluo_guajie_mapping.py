@@ -233,3 +233,38 @@ def test_ye_buye_uses_de_shi_window():
     ye = judge_ye_buye("乾", 6, "甲子")
     assert ye is not None and ye.ye is True
     assert any("得时" in e for e in ye.evidence)
+
+
+def test_shu_patterns_cover_yuan_dian_taxonomy():
+    """原典数论 14 格：旧实现只认 5 格，新实现逐格可辨。"""
+    from tongshu.engines.heluo.guajie import _shu_patterns
+
+    assert _shu_patterns(25, 30) == ["安和自宁"]          # 天地二数皆正
+    assert "孤阳不偶" in _shu_patterns(26, 30)            # 天26-30 地30
+    assert "孤阳自偶" in _shu_patterns(35, 30)            # 天31-41 地30
+    assert "阳数偏少" in _shu_patterns(20, 30)            # 天4-24 地30
+    assert "孤阴背阳" in _shu_patterns(25, 40)            # 天25 地30-60（余偶数）
+    assert "孤阴向阳" in _shu_patterns(25, 45)            # 天25 地40-60（余奇数）
+    assert "阴数偏少" in _shu_patterns(25, 22)            # 天25 地18-28
+    assert "以弱敌强" in _shu_patterns(22, 56)            # 地太过天不足
+    assert "以强伏弱" in _shu_patterns(30, 10)            # 天盛地至弱
+    assert "天数太过" in _shu_patterns(45, 40)
+    assert "天数不足" in _shu_patterns(20, 25)
+    assert "地数至弱" in _shu_patterns(30, 10)
+    assert "地数不足" in _shu_patterns(25, 20)
+    assert "地数太过" in _shu_patterns(30, 60)
+
+
+def test_shu_xiong_month_direction_follows_book():
+    """以弱敌强阳月必凶、阴月尚庶几；以强伏弱阳月不妨、阴月致凶。"""
+    from tongshu.engines.heluo.guajie import judge_shu_xiong
+
+    yang = judge_shu_xiong(22, 56, 3)      # 阳月 地数太过天数不足
+    assert yang.pattern == "以弱敌强" and yang.shu_xiong is True
+    yin = judge_shu_xiong(22, 40, 9)       # 阴月：以弱敌强不记凶、地数得中/太过另断
+    assert "以弱敌强" in yin.patterns
+    strong = judge_shu_xiong(30, 10, 3)    # 以强伏弱 阳月不妨（地数至弱另断）
+    assert strong.pattern == "以强伏弱"
+    assert any("以强伏弱 → 不记数凶" in e for e in strong.evidence)
+    strong_yin = judge_shu_xiong(30, 10, 10)
+    assert any("以强伏弱 → 数凶" in e for e in strong_yin.evidence)

@@ -341,8 +341,9 @@ class ShuXiongResult:
     tian_state: str             # 有余/足/不足
     di_state: str
     shu_xiong: bool             # 数凶
-    pattern: str                # 孤阳不偶/孤阴背阳/以弱敌强/安和自宁…
+    pattern: str                # 主数格（孤阳不偶/孤阴背阳/以弱敌强/安和自宁…）
     evidence: list[str] = field(default_factory=list)
+    patterns: list[str] = field(default_factory=list)   # 全部所犯数格（原典 14 格）
 
 
 @dataclass
@@ -761,62 +762,144 @@ def judge_ye_buye(
 # 数之凶吉（起例卷·数足不足论）
 # ═══════════════════════════════════════════════════════════════════
 
+def _shu_patterns(tian_shu: int, di_shu: int) -> list[str]:
+    """按《河洛真数·起例卷之中·数论》列出命局所犯数格（可多条并存）。
+
+    原典数论共 14 格（天数 7：不足/得中/太过/孤阳不偶/孤阳自偶/阳数偏少/以强伏弱；
+    地数 7：至弱/不足/得中/太过/孤阴背阳/孤阴向阳/阴数偏少），另有跨天地两数的
+    「以弱敌强」「安和自宁」。天数二十五、地数三十为正。
+    """
+    pats: list[str] = []
+    # 跨天地两数：地数太过 + 天数不足 → 小人犯君子，阳月必灭顶
+    if di_shu >= 30 and tian_shu <= 24:
+        pats.append("以弱敌强")
+    # 跨天地两数：天数盛 + 地数至弱/不足 → 恃势致凶（阴月尤验）
+    if tian_shu >= 30 and di_shu <= 12:
+        pats.append("以强伏弱")
+    # 配对格（地数三十、阳有余阴无余）
+    if di_shu == 30:
+        if tian_shu <= 24:
+            pats.append("阳数偏少")
+        elif 26 <= tian_shu <= 30:
+            pats.append("孤阳不偶")
+        elif 31 <= tian_shu <= 41 or tian_shu == 51:
+            pats.append("孤阳自偶")
+    # 配对格（天数二十五、阴有余阳无余；余数奇偶别阴阳）
+    if tian_shu == 25:
+        if 18 <= di_shu <= 28:
+            pats.append("阴数偏少")
+        elif 30 <= di_shu <= 60:
+            pats.append("孤阴背阳" if (di_shu - 30) % 2 == 0 else "孤阴向阳")
+    # 单边天数
+    if tian_shu >= 40:
+        pats.append("天数太过")
+    elif tian_shu <= 24 and "阳数偏少" not in pats and "以弱敌强" not in pats:
+        pats.append("天数不足")
+    elif 25 <= tian_shu <= 39 and not pats:
+        pats.append("天数得中")
+    # 单边地数
+    if di_shu <= 12:
+        pats.append("地数至弱")
+    elif 13 <= di_shu <= 29:
+        pats.append("地数不足")
+    elif di_shu >= 50:
+        pats.append("地数太过")
+    elif 32 <= di_shu <= 45 and not any(p.startswith("地数") for p in pats):
+        pats.append("地数得中")
+    if tian_shu == 25 and di_shu == 30:
+        return ["安和自宁"]
+    return pats
+
+
+# 各数格的吉凶方向与生月（原典原文口径）：阳月=正二三四五六，阴月=七八九十冬腊
+_SHU_VERDICT: dict[str, tuple[bool, str]] = {
+    "以弱敌强": (True, "阴月令逢之尚庶几，阳月令逢之必主灭顶之凶（小人犯君子）"),
+    "以强伏弱": (False, "值阳月令不妨，逢阴月令颇有恃势致凶之象（虽贵不善终）"),
+    "孤阳不偶": (True, "有阳无阴，太燥之象：损子刑妻、性多刚躁，有阴调和方不亢"),
+    "孤阳自偶": (True, "阳极自生其阴，先难后易、先贫后富；辰戌丑未时必克父于幼"),
+    "阳数偏少": (True, "有阴无阳、利女不利男：有福无寿、有官无权、业多劳碌"),
+    "孤阴背阳": (True, "阴凝太柔：损妻伤子、刑害重重，得阳气调和方为福"),
+    "孤阴向阳": (True, "阴极自生阳：横发偶成，六亲孤隔；居阳爻生阳月决主淫乱"),
+    "阴数偏少": (True, "有阳无阴、利男不利女：阳令多富贵，阴令逢之百事煎"),
+    "天数太过": (True, "天数为亢：三月至四月无妨，非时生主凶残夭暴之事"),
+    "天数不足": (True, "阳弱之象：男子福减多夭，多先丧父；十一月十二月生为合时"),
+    "天数得中": (False, "非过非不及：春分前顺时，春分后为不及"),
+    "地数至弱": (True, "阴数至弱：女子不堪，克父母、六亲难安；子午卯酉月时生必克父母于幼稚"),
+    "地数不足": (True, "阴弱之象：女子福鲜，多先丧母；夏至立秋前合节，秋分后主夭"),
+    "地数得中": (False, "阴气正长：卦名爻位吉、有援则富贵荣华"),
+    "地数太过": (True, "阴数太过：主刑伤战戮；十月立冬后未冬至前不害"),
+    "安和自宁": (False, "天地二数无余无不足，最佳，吉凶极定（依卦中断）"),
+}
+
+
 def judge_shu_xiong(tian_shu: int, di_shu: int, birth_month: int) -> ShuXiongResult:
     """
-    数足不足论（原典）：
-      天数二十五为正、地数三十为正；无余无不足=最佳（安和自宁）。
-      天数不足<25；地数不足<30。
-      孤阳不偶：天26-40且地=30（阳有余阴无余）
-      孤阴背阳：地30-60且天=25（阴有余阳无余）
-      以弱敌强：地30-60+且天<24（地太过天不足）→ 阳月令逢之必主灭顶之凶
-      太过有余伤（诗）：有余为凶。
+    数之凶吉（《河洛真数·起例卷之中·数论》14 格 + 卷之上「以强凌弱/以下犯上」）。
+
+    旧实现只识别 5 格（孤阳不偶/孤阴背阳/以弱敌强/太过有余/安和），且把「数有余」
+    一律按阳月记凶；现按原典逐格列方针：
+      · 以弱敌强（地数太过天数不足）：阴月尚庶几，**阳月必灭顶之凶**；
+      · 以强伏弱（天数盛地数至弱）：**阳月不妨**，阴月恃势致凶；
+      · 孤阳/孤阴系列：阴阳失调，不论月份皆主刑害；
+      · 单边不足/太过：按节气合时与否断浅深。
     """
     ev: list[str] = []
     t_state = "有余" if tian_shu > 25 else ("不足" if tian_shu < 25 else "足")
     d_state = "有余" if di_shu > 30 else ("不足" if di_shu < 30 else "足")
     ev.append(f"天数{tian_shu}（正=25，{t_state}）；地数{di_shu}（正=30，{d_state}）")
 
-    pattern = ""
-    shu_xiong = False
-    if t_state == "足" and d_state == "足":
-        pattern = "安和自宁"
-        ev.append("天地二数无余无不足，最佳，吉凶极定（依卦中断）")
-    elif 26 <= tian_shu <= 40 and di_shu == 30:
-        pattern = "孤阳不偶"
-        ev.append("天数26-40、地数30：阳数有余、阴数无余 → 孤阳不偶")
-    elif 30 <= di_shu <= 60 and tian_shu == 25:
-        pattern = "孤阴背阳"
-        ev.append("地数30-60、天数25：阴数有余、阳数无余 → 孤阴背阳")
-    elif di_shu >= 30 and tian_shu <= 24:
-        pattern = "以弱敌强"
-        ev.append("地数30以上、天数24以下：地数太过天数不足 → 以弱敌强")
-    elif t_state == "有余" or d_state == "有余":
-        pattern = "太过有余"
-        ev.append("天数或地数有余 → 太过有余伤（诗曰：太过有余伤，性暴应多狠，祸去有余殃）")
+    pats = _shu_patterns(tian_shu, di_shu)
+    pattern = pats[0] if pats else ""
+    if len(pats) > 1:
+        ev.append("并存数格：" + "、".join(pats[1:]))
 
-    # 数凶：有余/不足 + 生月合时（阳月/阴月）
-    # 卢某：地40有余 + 生三月（谷雨-芒种，阳月）→ 数凶
-    # 生月未知（birth_month<=0）时不得假设阳月，否则会把"未知"判成"数凶"。
+    yang_month = None
     if birth_month and 1 <= birth_month <= 12:
-        yang_month = birth_month in (1, 2, 3, 4, 5, 6)  # 春夏季为阳月（简化，原典按节气细分）
-    else:
-        yang_month = None
-    if pattern in ("孤阳不偶", "孤阴背阳", "以弱敌强", "太过有余"):
+        yang_month = birth_month in (1, 2, 3, 4, 5, 6)
+
+    shu_xiong = False
+    for p in pats:
+        base, text = _SHU_VERDICT.get(p, (False, ""))
+        if not text:
+            continue
         if yang_month is None:
-            shu_xiong = True
-            ev.append("生月未知 → 阳月判据跳过，按数有余直接记数凶（须补生月复核）")
-        elif yang_month:
-            shu_xiong = True
-            ev.append(f"生月{birth_month}月（阳月），数有余逢阳月 → 数凶（不可妄行致凶）")
+            ev.append(f"{p}：{text}（生月未知，月份判据跳过）")
+            shu_xiong = shu_xiong or base
+            continue
+        month_kind = "阳月" if yang_month else "阴月"
+        if p == "以弱敌强":
+            bad = yang_month           # 阴月尚庶几
+        elif p == "以强伏弱":
+            bad = not yang_month       # 阳月不妨
+        elif p == "阳数偏少":
+            bad = yang_month           # 阴令犹可喜，阳月必孤睽
+        elif p == "阴数偏少":
+            bad = not yang_month       # 阳令多富贵，阴令百事煎
+        elif p == "孤阴向阳":
+            bad = yang_month           # 居阳爻生阳月决主淫乱
+        elif p == "孤阳自偶":
+            bad = True                 # 阳令阳爻名显赫，阴爻阴令吉凶频
+        elif p == "天数不足" or p == "地数不足":
+            bad = yang_month           # 十一月十二月合时；夏至立秋前合节
+        elif p == "天数太过":
+            bad = not (birth_month in (3, 4))
+        elif p == "地数太过":
+            bad = birth_month < 9      # 十月立冬后未冬至前不害
         else:
-            ev.append(f"生月{birth_month}月（阴月），数有余逢阴月 → 数凶程度减轻（依爻辞细断）")
-    elif t_state == "不足" or d_state == "不足":
-        shu_xiong = True
-        ev.append("数不足 → 主夭贫贱薄（虚贫之象），须参元气化工与卦爻断")
+            bad = base
+        if bad:
+            shu_xiong = True
+            ev.append(f"生月{birth_month}月（{month_kind}）：{p} → 数凶。原典：{text}")
+        else:
+            ev.append(f"生月{birth_month}月（{month_kind}）：{p} → 不记数凶（须参元气化工与卦爻）。原典：{text}")
+
+    if not pats:
+        ev.append("天地二数均在正数附近，无格可犯（依卦中断）")
     ev.append("判词：数凶者身亡，但德小者不能当之")
 
     return ShuXiongResult(tian_shu=tian_shu, di_shu=di_shu, tian_state=t_state,
-                          di_state=d_state, shu_xiong=shu_xiong, pattern=pattern, evidence=ev)
+                          di_state=d_state, shu_xiong=shu_xiong, pattern=pattern,
+                          evidence=ev, patterns=pats)
 
 
 # ═══════════════════════════════════════════════════════════════════
