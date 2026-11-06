@@ -12,10 +12,11 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **630 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **633 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 | 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
 | 节候卦（二十四节气 × 七十二候） | **72/72 候名按序命中原文，24/24 节候卦由首候派生，八节卦 24/24 与原典首句一致** | `tests/test_heluo_jiehhou_yuanwen.py`，`tests/heluo/test_h11_jiehhou.py` |
 | 化工卦（H6） | **12 月支映射与原典「冬至→惊蛰/春分→芒种/夏至→白露/秋分→大雪」四句一致，三层判据（正体·互体·纳音）+ 四季月坤艮土旺均落地，25 tests** | `tests/heluo/test_h6_huagong_yuanwen.py` |
+| 流时卦接线（每段十二时） | **六段流日各挂 12 时卦，0 缺失（链式流日回归）** | `tests/heluo/test_heluo_liuri_hours.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
 
@@ -77,7 +78,7 @@ python scripts/heluo_truth_replay.py --dump heluo-002
 $env:PYTHONPATH='D:\shuntian\src'
 $env:PYTHONIOENCODING='utf-8'
 python -m pytest tests/test_heluo_truth.py tests/test_heluo_guajie_mapping.py tests/test_heluo_canping_truth.py -q   # 21 passed
-python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 630 passed / 1 pre-existing error
+python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 633 passed / 1 pre-existing error
 python scripts/heluo_truth_replay.py                                                                               # 4/4 PASS
 ```
 
@@ -367,3 +368,14 @@ python scripts/heluo_truth_replay.py                                            
 - 验证：新增 `tests/heluo/test_h6_huagong_yuanwen.py` **25 passed**（原典四句逐字命中、
   12 月支参数化、映射精确三分组、土旺女命/男命、互体、纳音同气/相生/不合、
   反卦、证据串）；全族 **630 passed**；真值 4/4；结构扫描 60 盘 0 问题。
+
+### D-020 流日改链式后，流时卦自第 2 段起静默丢失
+
+- 现象：`canonical.py` 流时接线用「流日段与月卦的单爻差」定位值日爻，只在
+  `len(diffs) == 1` 时调 `compute_liushi`。D-015 把流日改为链式累积后，第 k 段与
+  月卦相差 k 爻，于是第 2~6 段全部跳过，流时卦只剩第 1 段有值（静默缺失，不报错）。
+- 修：直接用 `compute_liuri` 每段已返回的 `flip_index`（本段所变之位=值日爻），
+  六段全部挂 `hours`；`shi_yao_index` 与原典「值日卦前一爻起、子丑寅…进数变」一致。
+- 验证：`tests/heluo/test_heluo_liuri_hours.py` **3 passed**——六段各 12 时、首条为子时、
+  子时 `shi_yao_index == (flip_index+1)%6` 且仅变该一爻、第 6 段与 `compute_liushi`
+  手工结果逐条一致；全族 **633 passed**、真值 4/4、扫描 60 盘 0 问题。

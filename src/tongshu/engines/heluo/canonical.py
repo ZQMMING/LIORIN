@@ -418,13 +418,14 @@ class HeluoCanonical:
                     jie_dt = None
                 liuri = compute_liuri(m["lines"], m["yue_yao_index"], jie_dt)
                 # 流时卦（《河洛真数·起例卷之上·起时卦例》）：以值日卦为本，
-                # 前六时(子~巳)进数变/后六时(午~亥)退数变，阳时变爻阴时取应
+                # 前六时(子~巳)进数变/后六时(午~亥)退数变，阳时变爻阴时取应。
+                # D-020：流日已改链式累积（D-015），第 k 段与月卦相差 k 爻，
+                # 不能再用「与月卦单爻差」判定值日爻，否则第 2 段起流时卦静默丢失；
+                # 直接用 compute_liuri 返回的 flip_index（本段所变之位=值日爻）。
                 for dseg in liuri.days:
-                    diffs = [k for k in range(6) if len(dseg["lines"]) > k and len(m["lines"]) > k
-                             and dseg["lines"][k] != m["lines"][k]]
-                    if len(diffs) == 1:
-                        liushi = compute_liushi(dseg["lines"], diffs[0])
-                        dseg["flip_index"] = diffs[0]
+                    fi = dseg.get("flip_index")
+                    if isinstance(fi, int) and 0 <= fi < 6:
+                        liushi = compute_liushi(dseg["lines"], fi)
                         dseg["hours"] = liushi.hours
                 months.append({
                     "month": m["month"],
