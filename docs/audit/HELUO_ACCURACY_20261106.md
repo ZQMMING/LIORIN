@@ -7,10 +7,11 @@
 | 项 | 结果 | 证据 |
 |---|---|---|
 | 算层真值回放（原典假令 + 三个案例） | **4/4 PASS** | `scripts/heluo_truth_replay.py`，`tests/test_heluo_truth.py` |
-| 掷爻/卦辞映射完整性（64 卦） | **64/64 逐字一致** | `tests/test_heluo_guajie_mapping.py::test_gua_ci_verbatim_for_all_64` |
+| 卦辞映射完整性（64 卦） | **64/64 逐字一致** | `tests/test_heluo_guajie_mapping.py::test_gua_ci_verbatim_for_all_64` |
 | 爻辞/小象映射完整性（384 爻） | **384/384 逐字一致，0 缺失** | `tests/test_heluo_guajie_mapping.py::test_yao_ci_verbatim_for_all_384` |
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
+| 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
 | 全族回归 | **527 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
@@ -46,18 +47,31 @@ python scripts/heluo_truth_replay.py --dump heluo-002
 
 结论：**映射层无丢字、无截断、无改写**。断法本身（叶/不叶、死断诸法、贵贱等）不在本轮断言范围，另见 `guajie.py` 与 H16 独立验证。
 
-## 四、登记的数据问题（未入真值层）
+## 四、卷十参评（金锁银匙歌）原典起数
+
+`canping.qishu(日支, 时支, 纳音五行, 顺/逆)` 三例与原典数字逐字比对：
+
+| 例 | 条件 | 起数 | 原典 | 结果 |
+|---|---|---|---|---|
+| 1 | 戌日寅时 乙卯（纳音水）顺 | 2000+500+14+27+1 | 二千五百四十二 = 2542 | ✅ |
+| 2 | 戌日寅时 乙卯（水）逆 | 2000+900+14+27+1 | 二千九百四十二 = 2942 | ✅ |
+| 3 | 申日申时 戊午（纳音火） | 2000+1300+18+27+2 | 三千三百四十七 = 3347 | ✅ |
+
+诗断库（`data/heluo/canping/raw_shici_jintu_448.json` 等）中三例首句定位也一致：
+掌中秋月扇 → p29 丑酉列；玉壺無別物 → p34 辰宾列；道是無形光 → p53 未未列。
+
+## 五、登记的数据问题（未入真值层）
 
 | 案例 | 问题 | 处置 |
 |---|---|---|
 | 卢某 甲辰 戊辰 丁酉 癸卯 男 | 核证表同时记「天30地40」与「卢某比初六／比→解」，但按同一张表的取数/寄宫/相荡规则推导应为：天30除25余5（中元阳男寄艮→艮）、地40除30余10（遇十不用取1→坎），阳男天卦在上 → **山水蒙**；引擎实测亦为山水蒙（元堂上九）。「比」（上坎下坤）与该表自身规则不合。 | 判为核证表转录可疑（或该案例原始参数不同），**不入真值层**，待回原书影印件复核。 |
 
-## 五、复现命令
+## 六、复现命令
 
 ```powershell
 $env:PYTHONPATH='D:\shuntian\src'
 $env:PYTHONIOENCODING='utf-8'
-python -m pytest tests/test_heluo_truth.py tests/test_heluo_guajie_mapping.py -q   # 11 passed
-python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q      # 527 passed
-python scripts/heluo_truth_replay.py                                               # 4/4 PASS
+python -m pytest tests/test_heluo_truth.py tests/test_heluo_guajie_mapping.py tests/test_heluo_canping_truth.py -q   # 17 passed
+python -m pytest tests -k "heluo or meihua" --continue-on-collection-errors -q                                      # 527 passed
+python scripts/heluo_truth_replay.py                                                                               # 4/4 PASS
 ```
