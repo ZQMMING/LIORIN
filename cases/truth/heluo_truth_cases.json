@@ -1,0 +1,101 @@
+{
+  "schema": "heluo-truth-cases-v1",
+  "created_at": "2026-11-06",
+  "engine": "heluo",
+  "notice": "本文件是河洛理数引擎的真值层：每条 expected 都来自原典明文或原书假令复算（《河洛真数》起例卷 + 三源互证表），不是引擎自证。核证表见 data/heluo/算法原文对照核证表.md（15.1 三源互证）。",
+  "cases": [
+    {
+      "case_id": "heluo-001",
+      "label": "绍兴四年假令复算",
+      "bazi": [["甲", "寅"], ["甲", "戌"], ["己", "卯"], ["壬", "申"]],
+      "gender": "male",
+      "birth_hour": "申",
+      "era": "shang",
+      "birth_year": 1134,
+      "expected": {
+        "tian_shu": 29,
+        "di_shu": 48,
+        "tian_reduced": 4,
+        "di_reduced": 8,
+        "prenatal": "风山渐"
+      },
+      "source": "data/heluo/算法原文对照核证表.md 15.1 #2（《河洛真数》起例卷之上假令）",
+      "verbatim": "绍兴四年甲寅年甲戌月己卯日壬申时：天数29（除25余4巽）、地数48（除30余18→除10只用8艮），阳命男天数卦巽在外/地数卦艮在内→风山渐",
+      "note": "逐字吻合（原书假令，最强互证）。元堂未在原文明示，故不列入本案例断言。"
+    },
+    {
+      "case_id": "heluo-002",
+      "label": "1980 年男命",
+      "bazi": [["庚", "申"], ["壬", "午"], ["丙", "寅"], ["癸", "巳"]],
+      "gender": "male",
+      "birth_hour": "巳",
+      "era": "zhong",
+      "birth_year": 1980,
+      "expected": {
+        "tian_shu": 29,
+        "di_shu": 32,
+        "tian_reduced": 4,
+        "di_reduced": 2,
+        "prenatal": "风地观",
+        "yuantang": "六二",
+        "yuantang_index": 1,
+        "postnatal": "水风井"
+      },
+      "source": "data/heluo/算法原文对照核证表.md 9.1/9.2（天地数取零作卦 1980=观；元堂爻位式 1980观六二；先天换后天 1980观→井）",
+      "verbatim": "1980庚申壬午丙寅癸巳→天29地32；1980=观（天29余4巽/地32余2坤）；1980观六二；1980观→井",
+      "note": "取数、先天卦、元堂、后天卦四段均有原文明示。"
+    },
+    {
+      "case_id": "heluo-003",
+      "label": "1983 年阴男",
+      "bazi": [["癸", "亥"], ["壬", "戌"], ["乙", "未"], ["壬", "午"]],
+      "gender": "male",
+      "birth_hour": "午",
+      "era": "xia",
+      "birth_year": 1983,
+      "expected": {
+        "tian_shu": 18,
+        "di_shu": 44,
+        "tian_reduced": 8,
+        "di_reduced": 4,
+        "prenatal": "风山渐",
+        "yuantang": "初六",
+        "yuantang_index": 0,
+        "postnatal": "火风鼎"
+      },
+      "source": "data/heluo/算法原文对照核证表.md 9.1/9.2（1983癸亥壬戌乙未壬午→天18地44；1983=渐（阴男天18→巽在上/地44→艮在下）；1983渐初六；1983渐→鼎）",
+      "verbatim": "1983癸亥壬戌乙未壬午→天18地44；1983=渐；1983渐初六；1983渐→鼎",
+      "note": "阴男天数卦在上，与 1980 阳男同法；先天与绍兴案同卦而数不同（18/44 对 29/48），可区分取数错误与卦名错误。"
+    },
+    {
+      "case_id": "heluo-004",
+      "label": "纪晓岚",
+      "bazi": [["甲", "辰"], ["辛", "未"], ["丙", "戌"], ["甲", "午"]],
+      "gender": "male",
+      "birth_hour": "午",
+      "era": "shang",
+      "birth_year": 1724,
+      "expected": {
+        "tian_shu": 22,
+        "di_shu": 56,
+        "tian_reduced": 2,
+        "di_reduced": 6,
+        "prenatal": "地天泰",
+        "yuantang": "六四",
+        "yuantang_index": 3,
+        "postnatal": "天雷无妄"
+      },
+      "source": "src/tongshu/engines/heluo/canonical.py GOLDEN_CASES['jixiaolan'] + data/heluo/算法原文对照核证表.md",
+      "verbatim": "甲辰 辛未 丙戌 甲午，午时，1724，男：天22 地56，天余2坤/地余6乾，地天泰，元堂六四，后天天雷无妄",
+      "note": "唯一此前已冻结的 Golden Case；本层将其纳入统一真值回放，避免散落在引擎常量里。"
+    }
+  ],
+  "data_issues": [
+    {
+      "case": "卢某 甲辰 戊辰 丁酉 癸卯 男",
+      "issue": "核证表同时记『天30地40』与『卢某比初六／比→解』，但按同一张核证表给出的取数/寄宫/相荡规则推导：天30除25余5（中元阳男寄艮）→艮、地40除30余10（遇十不用取1）→坎，阳男天数卦在上 → 山水蒙；引擎实测亦为山水蒙（元堂上九）。『比』（上坎下坤）与规则推导不合。",
+      "status": "UNRESOLVED",
+      "action": "不入真值层；登记待回原书影印件复核（可能为核证表转录笔误，或该案例原始参数不同）。"
+    }
+  ]
+}
