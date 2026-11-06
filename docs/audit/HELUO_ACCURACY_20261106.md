@@ -12,7 +12,8 @@
 | 原典断语保全（1088 条） | **1088/1088 全部出现在叶/不叶/岁运三栏，0 丢失** | `test_duans_preserved_without_truncation` |
 | 精义/释义覆盖（64 卦） | 64/64 齐备 | `test_gua_ci_jingyi_covers_all_64` |
 | 卷十参评（金锁银匙歌）起数三例 | **2542 / 2942 / 3347 逐字一致** | `tests/test_heluo_canping_truth.py` |
-| 全族回归 | **527 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 全族回归 | **564 passed**（`-k "heluo or meihua"`，1 error 为子平线 CITATION，pre-existing） | pytest |
+| 结构不变式扫描 | **200 盘 0 问题**（先天六爻/元堂/后天爻变/结构卦名/化工/流年/解层九键） | `scripts/heluo_invariant_scan.py`，`tests/test_heluo_invariant_scan.py` |
 
 ## 二、真值层（`cases/truth/heluo_truth_cases.json`）
 
@@ -182,3 +183,18 @@ python scripts/heluo_truth_replay.py                                            
 - 覆盖数：1 卦（旧）→ **20 卦**（新增 益/巽/丰/复/豫/随/解 的失时余月及巽的季节窗）。
 - 新增断言：`test_de_shi_windows_parsed_from_book_text` 覆盖 20 卦 + 复/益/巽/无妄
   逐条月集合。回归 **547 passed / 1 error**、真值 4/4。
+
+### D-012 结构不变式无护栏（缺自动扫描）
+
+- 现象：算层有 4 案真值、解层有 64/384 逐字映射，但「先天六爻 = 下三爻+上三爻」「后天 =
+  元堂爻变」「结构卦名与上下卦自洽」「元堂阴阳与落爻一致」等结构关系没有自动检查，
+  回归只能覆盖写死的案例。
+- 修：新增 scripts/heluo_invariant_scan.py（随机 N 盘，种子固定，含男女/三元覆盖）与
+  	ests/test_heluo_invariant_scan.py（16 固定盘 + 脚本 12 盘跑通），检查项：
+  ①先天六爻与上下卦一致（TRIGRAM_LINES 下三 + 上三）；
+  ②元堂爻位 0-5 且 yao_nature 与落爻阴阳一致；
+  ③后天 lines = 先天 lines 在元堂位翻转，step1_hexagram 由上/下卦查 SIXTY_FOUR_HEXAGRAMS；
+  ④结构层六爻与 structure.lines 一致、structure.name 与上下卦一致；
+  ⑤化工卦 ∈ 八卦；⑥流年卦数量 ≥30 且上下卦 ∈ 64 卦；
+  ⑦解层返回必含 enming/benming_ye_buye/liunian_hexagram/kuozhan 且叶不叶 evidence 非空。
+- 结果：**200 盘 0 问题**；固化测试 **17 passed**（全族 564 passed）。
