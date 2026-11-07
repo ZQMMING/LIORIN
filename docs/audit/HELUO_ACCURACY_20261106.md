@@ -424,3 +424,21 @@ python scripts/heluo_truth_replay.py                                            
   卦中含四正化工卦（震离兑坎）或坤艮即算「有化工」，不论当令。
 - 两处引文都来自《河洛真数》，不冲突：当令用于「是否得化工之正」，宽口径用于
   「有无化工」的层次判断。已在代码注释标注；后续若做统一口径，须先定层次语义。
+### D-023 生产适配器未接流时层（2026-11-07）
+
+- 现象：`src/tongshu/engines/heluo_adapter.py` 的 `compute_from_chart` 注释写着
+  「流时卦（target_hour）剥离不接」，且 `compute` / `compute_from_context` 签名里
+  根本没有 `target_hour` 参数，`build_guajie_from_result` 的 `target_hour` 分支
+  （匹配 `dseg["hours"]` 中 `hour == target_hour` 的段，取 `shi_yao_index` 爻辞）
+  在生产路径上永远走不到 —— 应期层「流时」在引擎内已实现（D-020 已把六段 hours 挂全），
+  但生产出口缺失。
+- 修：`HeluoAdapter.compute(...)` / `compute_from_context(...)` / `compute_from_chart(...)`
+  增 `target_hour: Optional[int] = None`（1=子 … 12=亥，语义与 `compute_liushi` 对齐），
+  逐层透传到 `build_guajie_from_result(..., target_hour=target_hour)`；注释改为四层爻断说明。
+- 验证（1980-06-22 10:00 男，target 2026-09-01）：
+  · 不传 target_hour → `guajie["liushi_yao"]` 为空；
+  · target_hour=1 → 上九爻辞「或锡之鞶带」；target_hour=6 → 六五「噬干肉，得黄金」；
+  · target_hour=12 → 六五「不富以其邻」；三时辰爻辞互不相同，证明 target_hour 真被消费。
+- 新增 `tests/heluo/test_heluo_liushi_adapter.py` **8 passed**（无时刻不臆造 / 1·3·6·9·12
+  各有流时爻断 / 三时辰互异 / 与 `build_guajie_from_result` 直调逐字段一致）。
+- 回归：heluo+meihua 全量见上方结论表；真值 4/4 不变。

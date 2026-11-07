@@ -71,6 +71,7 @@ class HeluoAdapter:
         target_year: Optional[int] = None,
         target_month: Optional[int] = None,
         target_day: Optional[int] = None,
+        target_hour: Optional[int] = None,
         location: str = "北京",
         timezone: Optional[str] = None,
         apparent_solar: bool = True,
@@ -98,6 +99,7 @@ class HeluoAdapter:
             target_year=target_year,
             target_month=target_month,
             target_day=target_day,
+            target_hour=target_hour,
         )
 
     # ------------------------------------------------------------------
@@ -110,6 +112,7 @@ class HeluoAdapter:
         target_year: Optional[int] = None,
         target_month: Optional[int] = None,
         target_day: Optional[int] = None,
+        target_hour: Optional[int] = None,
     ) -> HeluoResult:
         g = gender or ctx.subject_gender or "male"
         chart = self._bazi_adapter.compute(ctx, gender=g)
@@ -118,6 +121,7 @@ class HeluoAdapter:
             target_year=target_year,
             target_month=target_month,
             target_day=target_day,
+            target_hour=target_hour,
         )
 
     # ------------------------------------------------------------------
@@ -129,6 +133,7 @@ class HeluoAdapter:
         target_year: Optional[int] = None,
         target_month: Optional[int] = None,
         target_day: Optional[int] = None,
+        target_hour: Optional[int] = None,
     ) -> HeluoResult:
         bazi = [
             (
@@ -171,8 +176,9 @@ class HeluoAdapter:
         )
 
         # H8: 解卦层（原典判词）挂载 — 独立于冻结的 calculate，防御性兜底
-        # 四层爻断：仅接流年/流月/流日（target_year/month/day），
-        # 流时卦（target_hour）剥离不接——按爻管时段逐段展开运算量大，按需另行调用。
+        # 四层爻断：流年/流月/流日/流时（target_year/month/day/hour）。
+        # 流时（target_hour，1=子 … 12=亥）按段展开：值日卦起子/丑…进数、午/未…退数，
+        # 有 hours 段时才解析（缺 target_hour 不影响前三层）。
         try:
             from dataclasses import replace
             from .heluo.guajie import build_guajie_from_result
@@ -183,6 +189,7 @@ class HeluoAdapter:
                     target_year=target_year,
                     target_month=target_month,
                     target_day=target_day,
+                    target_hour=target_hour,
                 ),
             )
         except Exception:
