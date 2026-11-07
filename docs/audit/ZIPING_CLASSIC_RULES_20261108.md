@@ -127,24 +127,23 @@ python -m pytest tests -k ziping --ignore=tests/test_ziping_15_2_evidence_proven
 4. D：化气格条件核验（月令化神、无争合、无克）。
 5. 旺衰：p0 只判得令/失令，原典多格成败需身强弱（成格条件依赖），属后续判据补全。
 
-## 六、2026-11-08 裁决：一切基于原典为优先级（用户指令）
+## 六、2026-11-08 裁决复核：原典「本气立格 + 透干定格之真假」（透干优先已回退）
 
-用户裁决「一切基于原典为优先级」后，取格口径定为原典透干优先：
+初判为「透干优先取格」，落地后对照原典逐句复核，结论修正：
 
-- FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.001「格之真者，月支之神，透于天干也」
-- .005「月令所藏不一，而用神遂有变化」 / .006「假使寅月为提，不透甲而透丙」
-- STRUCTURE.GE_JU.CHENG_BAI.002「四季月…取土为格；建禄月劫羊刃亦看月令中人元透干者取格」
+- YUE_LING_GE_JU.001「格之真者，月支之神，透于天干也。以散乱之天干，而寻其得所附于提纲，非格也。」
+  → **本气为格名**，透干决定「格之真/假」（本气不透则格不真、用神散乱），不是换格名。
+- .002「八字用神，专求月令，以日干配月令地支，而生克不同，格局分焉。」
+  → 格由「日干配月令」本气生克立。
+- .005/.006「月令所藏不一，而用神遂有变化」「假使寅月为提，不透甲而透丙」
+  → 例中寅月甲日为**建禄**（本气比劫不可为用），故看人元透干取用神（丙食神）；只在月令本气为比劫(禄/刃)时，格名才看人元透干。
+- CHENG_BAI.002「四季月生人，只当取土为格…建禄月劫羊刃，亦看月令中人元透于天干者取格」
+  → 四季月取土、禄刃看透干，与本条一致。
 
-落地（engines/common/l0_fact_builder.py）：
+因此引擎原有「月令本气立格」为正确口径；此前「一切基于原典」被过度执行为「透干优先换格名」，
+导致 	est_ziping_entry_validation.py 7 条与 	est_ziping_wealth_sha_templates.py 2 条（如
+甲日巳月透戊 应仍为食神格、甲日午月透己 应仍为伤官格）失败——这些测试本就符合原典，故回退引擎改动。
 
-1. 新增 ge_stem / ge_element / ge_ten_god / ge_rule_ref 事实；
-2. 取格顺序：四季月非土日主取本气土（土日主看人元透干）→ 本气为比劫(禄/刃)时格名由禄刃立 → 否则月支藏干中第一个透干者（排除比劫透），皆不透取本气；
-3. shishen_entry / qisha_entry / shangguan_entry 的 is_entry/type 改按取格十神 ge_god；
-4. engines/common/ge_jie_layer.py 格局分支选择器 mqi_god 优先读 ge_ten_god。
-
-对账结果（40 随机盘）：取格不一致 12/40 → **8/40**；成败不一致 27/40 → 28/40（口径差异为主）。
-
-回归：pytest tests -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py → **1169 passed / 13 failed**。
-其中 4 项为 GPT 在途 	ests/test_ziping_relation_presence.py；9 项为 GPT 在途测试中按「本气立格」固化的期望
-（	ests/test_ziping_entry_validation.py 7 项、	ests/test_ziping_wealth_sha_templates.py 2 项），
-按原典透干口径应改为对应格名（如 庚午丙午甲子己卯 甲日午月本气丁伤官、己土财透 → 原典财格，旧测试断言伤官格）。
+回退结果：ziping 回归 **1178 passed / 4 failed**（4 项为 GPT 在途 relation_presence；另 +10 为本轮核验器测试），
+取格对账 12/40（20 盘抽样 7/20），全部差异按上述口径分类：本气立格（引擎对）、禄刃透干（部分对）、
+化气/从格优先级、变体格名——均属待逐项核验项，不再以「透干优先」一刀切。

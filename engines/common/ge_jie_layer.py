@@ -677,8 +677,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
 
     # 3) 六格扩写: PZZQ255原文, 只定格体, 病药层不消费.
     #    纪律: ti_wx=[] 不触发格体过滤, 仅记录格名; 制化关系待格局层扩全后通用落.
-    # 取格十神(原典透干优先, PATCH-GE-TOU): 优先读 ge_ten_god, 缺则回退月令本气
-    mqi_god = facts.get('ge_ten_god') or (facts.get('month_qi_ten_god', '') or '')
+    mqi_god = facts.get('month_qi_ten_god', '') or ''
     mqe = facts.get('month_qi_element', '') or ''
     # 金水伤官例外判定(原典SHANG_GUAN_005"金水伤官要见官"):
     #  日主金(庚辛)或水(壬癸) -> 金水伤官; 或伤官当令金/水(申酉亥子月)亦按金水论

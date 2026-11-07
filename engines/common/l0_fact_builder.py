@@ -231,29 +231,7 @@ def build(pillars, l0_chart=None):
     out['daymaster_element'] = dme
     out['month_supports_daymaster'] = (mqe == dme) or (sheng[mqe] == dme)
     out['month_qi_ten_god'] = ten_god(dg, mqi)
-    # PATCH-GE-TOU 取格十神(原典优先, 2026-11-08 用户裁决「一切基于原典为优先级」):
-    #   FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.001「格之真者，月支之神，透于天干也」/
-    #   .005「月令所藏不一，而用神遂有变化」/ .006「假使寅月为提，不透甲而透丙…」
-    #   月支藏干中透于天干者为格(按 本气→中气→余气 取第一个透出者); 皆不透取本气。
-    #   CHENG_BAI.002「四季月生人，只当取土为格」→ 四季月非土日主取本气土;
-    #   戊己日(土日主)生四季月看人元透出天干者取格。
-    #   建禄月劫/阳刃: 格名由月令本气(禄/刃位)立, 不因透干换名。
-    _mz_tou = [s for s in hidden_stems_f['month'] if s in external_stems]
-    _mqi_god_l0 = ten_god(dg, mqi)
-    if mz in ('辰', '戌', '丑', '未'):
-        ge_stem = _mz_tou[0] if (WUXING.get(dg, '') == '土' and _mz_tou) else mqi
-    elif _mqi_god_l0 in ('比肩', '劫财'):
-        ge_stem = mqi  # 月令为日主之禄/刃: 格名由禄刃立, 不因透干换名
-    else:
-        # 透干取格须排除比劫透(比劫不入八格); 无财官印食伤透则回退本气
-        _tou_nonbj = [s for s in _mz_tou
-                      if ten_god(dg, s) not in ('比肩', '劫财')]
-        ge_stem = _tou_nonbj[0] if _tou_nonbj else mqi
-    out['ge_stem'] = ge_stem
-    out['ge_element'] = WUXING[ge_stem]
-    out['ge_ten_god'] = ten_god(dg, ge_stem)
-    out['ge_rule_ref'] = 'FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.001'
-    ge_god = out['ge_ten_god']
+    # PATCH-165 建禄月劫格入口Fact: 月令=日主禄(比肩)或月劫(劫财)
     mqi_god = ten_god(dg, mqi)
     if mqi_god == '比肩':
         out['jianlu_yuejie_entry'] = {'is_entry': True, 'type': '建禄'}
@@ -263,20 +241,20 @@ def build(pillars, l0_chart=None):
         out['jianlu_yuejie_entry'] = {'is_entry': False, 'type': None}
     # PATCH-167 食神格入口Fact: 月令本气=食神; 配合前提读166, 不判格成
     out['shishen_entry'] = {
-        'is_entry': ge_god == '食神',
-        'type': '食神格' if ge_god == '食神' else None,
+        'is_entry': mqi_god == '食神',
+        'type': '食神格' if mqi_god == '食神' else None,
         'premise_note': '食神生财/制杀前提读166, ≠食神格成',
     }
     # PATCH-168 七煞格入口Fact: 月令本气=七杀; 身强/逢制是后续Rule, 不入口判
     out['qisha_entry'] = {
-        'is_entry': ge_god == '七杀',
-        'type': '七煞格' if ge_god == '七杀' else None,
+        'is_entry': mqi_god == '七杀',
+        'type': '七煞格' if mqi_god == '七杀' else None,
         'premise_note': '印化杀/食神制杀前提读166; 身强/逢制后续Rule, ≠煞格成',
     }
     # PATCH-169 伤官格入口Fact: 月令本气=伤官; 生财/佩印前提读166, ≠格成
     out['shangguan_entry'] = {
-        'is_entry': ge_god == '伤官',
-        'type': '伤官格' if ge_god == '伤官' else None,
+        'is_entry': mqi_god == '伤官',
+        'type': '伤官格' if mqi_god == '伤官' else None,
         'premise_note': '伤官生财/佩印前提读166; 伤官旺/印有根/身强弱后续Rule, ≠伤官格成',
     }
     # PATCH-170 阳刃格入口(仅五阳干, 子平真诠): 日干刃支=月令
