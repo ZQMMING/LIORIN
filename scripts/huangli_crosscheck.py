@@ -57,6 +57,13 @@ def check(start_year: int, end_year: int, step_days: int = 1) -> int:
             bad += 1
             print(f"[日柱] {cur} lunar={ldz} sxtwl={sdz}")
 
+        # 节气：两库同一天只应有一个节气名且一致
+        ljq = lunar.getJieQi() or ""
+        sjq = JIEQI[sd.getJieQi()] if sd.hasJieQi() else ""
+        if ljq != sjq:
+            bad += 1
+            print(f"[节气] {cur} lunar={ljq or '-'} sxtwl={sjq or '-'}")
+
         cur += timedelta(days=step_days)
 
     print(f"[crosscheck] 样本 {total} 天（{start_year}-01-01 .. {end_year}-12-31 步长 {step_days}），不一致 {bad}")
