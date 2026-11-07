@@ -41,44 +41,56 @@ def test_build_context_structure():
 
 
 def test_run_ziping_judgment_core_domains():
-    """端到端: 判断层产出核心三域 (即使为 None 也不崩溃)。"""
+    """端到端: engines(p0) 生产入口 → 五域 (格局成/用药方向, 其余域 fail-closed)。"""
     chart = _make_chart()
     s = run_ziping_judgment(chart)
-    # 原始算法无信号输入时返回 None (需后续注入信号)
-    # 不崩溃即为通过
     assert s is not None
+    # 1990-03-01 12:00 男 → 建禄月劫格成, 用药方向=土 (engines 线实测)
+    assert s.geju is not None and s.geju.conclusion == JudgmentConclusion.ESTABLISHED
+    assert "建禄月劫格" in s.geju.reasoning
+    assert s.yongshen is not None and s.yongshen.conclusion == JudgmentConclusion.PRIMARY
+    assert "土" in s.yongshen.reasoning
+    # p0 线明言不判身强, 十神/事件未输出 → 必须 UNKNOWN 且写明原因
+    for domain in ("wangshuai", "shishen", "shijian"):
+        item = getattr(s, domain)
+        assert item is not None and item.conclusion == JudgmentConclusion.UNKNOWN
+        assert item.reasoning
 
 
 def test_judgment_traceable():
-    """判断结构存在 (即使为 None 也说明算法骨架完整)。"""
+    """判断可追溯: 格局/用神带 rule_refs + 可解析的 p0 切片证据锚。"""
     chart = _make_chart()
     s = run_ziping_judgment(chart)
-    # 原始算法无信号输入时返回 None，这是预期的
-    # 验证 JudgmentSynthesis 结构完整
-    assert hasattr(s, 'wangshuai')
-    assert hasattr(s, 'geju')
-    assert hasattr(s, 'yongshen')
+    assert s.geju is not None
+    assert any(r.startswith("PZZQ") for r in s.geju.rule_refs)
+    assert s.geju.evidence_refs, "格局结论必须带 p0 切片证据锚"
+    assert s.yongshen is not None and "ZIPING_ENGINES_P0" in s.yongshen.rule_refs
+    assert s.yongshen.evidence_refs, "用神结论必须带 p0 切片证据锚"
 
 
 def test_deterministic():
-    """确定性: 相同 chart → 相同结论。"""
+    """确定性: 相同 chart → 相同结论 (忽略 created_at 时间戳)。"""
     chart1 = _make_chart()
     chart2 = _make_chart()
-    s1 = run_ziping_judgment(chart1)
-    s2 = run_ziping_judgment(chart2)
-    # 原始算法无信号时各域均为 None，相同
-    assert s1.wangshuai == s2.wangshuai
-    assert s1.geju == s2.geju
-    assert s1.yongshen == s2.yongshen
+    s1 = run_ziping_judgment(chart1).to_dict()
+    s2 = run_ziping_judgment(chart2).to_dict()
+    for domain in ("wangshuai", "geju", "yongshen", "shishen", "shijian"):
+        for d in (s1[domain], s2[domain]):
+            if d:
+                d.pop("created_at", None)
+        assert s1[domain] == s2[domain]
 
 
 def test_fail_closed_empty_chart():
-    """Fail Closed: 空对象不崩溃，返回 None。"""
+    """Fail Closed: 空对象不崩溃，五域全 UNKNOWN 且带原因。"""
     class Empty:
         pass
     s = run_ziping_judgment(Empty())
-    # 原始算法无 context 时返回 None (fail-closed)
     assert s is not None
+    for domain in ("wangshuai", "geju", "yongshen", "shishen", "shijian"):
+        item = getattr(s, domain)
+        assert item is not None and item.conclusion == JudgmentConclusion.UNKNOWN
+        assert item.reasoning
 
 
 def test_synthesis_to_dict():

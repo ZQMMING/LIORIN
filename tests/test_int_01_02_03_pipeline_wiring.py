@@ -113,21 +113,24 @@ class TestINT01_02_03Wiring(unittest.TestCase):
         self.assertNotIn("evidence_index", text)
 
     def test_t3_baseline_untouched(self):
-        """T-3: 现有回归基线 73 passed 必须维持 (不漂移).
+        """T-3: 现有回归基线 62 passed 必须维持 (不漂移).
 
-        本测试单独跑 4 个核心套件, 任一新增 failure 即 T-3 失败.
+        本测试单独跑 3 个核心套件, 任一新增 failure 即 T-3 失败.
+
+        [2026-11-07 变更] 原第 4 个套件 tests/test_ziping_15_2_evidence_provenance.py
+        属已删除的 ZIPING-V3 线（其 `from tongshu.reasoning.judgment import CITATION`
+        在 V3 移除后无法收集），已随 V3 一并删除；基线 73→62。
         """
         import subprocess
         result = subprocess.run(
             [sys.executable, "-m", "pytest",
              str(_REPO_ROOT / "tests" / "test_p0_evidence_chain.py"),
-             str(_REPO_ROOT / "tests" / "test_ziping_15_2_evidence_provenance.py"),
              str(_REPO_ROOT / "tests" / "test_audit_gates.py"),
              str(_REPO_ROOT / "tests" / "test_api.py"),
              "-q"],
             capture_output=True, text=True, cwd=str(_REPO_ROOT),
         )
-        self.assertIn("73 passed", result.stdout,
+        self.assertIn("62 passed", result.stdout,
                       f"T-3 回归漂移:\n{result.stdout}\n{result.stderr}")
 
 

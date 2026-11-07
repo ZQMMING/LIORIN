@@ -258,6 +258,13 @@ class TONGSHUPipeline:
             provenance_resolver=provenance_resolver,
         )
 
+        # p0 线证据锚 (2026-11-07 子平引擎最终版本 = D:\shuntian-ziping-p0):
+        # 子平引擎的结论证据锚是 p0_v2/六部经典MD文库 的切片 ID
+        # (如 STRUCTURE.GE_JU.CHENG_BAI.001)，每个切片文件带原典原文与来源。
+        # 这些 ID 由 ziping_bridge 写入 claim.evidence_refs，须在 G1 已登记集合中可解析。
+        from .reasoning.p0_evidence import slice_ids as _p0_slice_ids
+        _p0_ids = _p0_slice_ids()
+
         return cls(
 
             schema_dir=repo_root / "docs",
@@ -265,12 +272,12 @@ class TONGSHUPipeline:
             audit_dir=repo_root / "backend" / "audit",
             matcher=matcher,
             mapping_registry=mapping_registry,
-            evidence_ids=loader.evidence_ids | {
+            evidence_ids=(loader.evidence_ids | {
                 # Synthetic BAZI ten-god evidence IDs produced at runtime by compute_stage.
                 # These MUST be in the registered set so G1 evidence_gate accepts them
                 # (the runtime engine emits them; they are NOT in static evidence files).
                 "BZI-TG-year", "BZI-TG-month", "BZI-TG-day", "BZI-TG-hour",
-            },
+            } | set(_p0_ids)),
             temporal_convergence_year=None,  # for_demo: no analysis_date context
             assertion_library=assertion_library,  # P1.6: 生产断言库
             evidence_index=evidence_index,  # G0-1: 树B证据索引（Corpus Base）

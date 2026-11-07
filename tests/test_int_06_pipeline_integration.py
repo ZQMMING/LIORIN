@@ -40,9 +40,12 @@ class TestINT06PipelineWiring(unittest.TestCase):
         from tongshu.pipeline import TONGSHUPipeline
 
         pipeline = TONGSHUPipeline.for_demo(_REPO_ROOT)
+        # [2026-11-07] 子平引擎最终版本 = engines p0 线。p0 线对部分盘明确输出
+        # cheng_bai=NOT_EVALUABLE（成败未核验），此情形不产 claim（证据闸要求结论可证）。
+        # 本用例取 1984-12-07 16:00 男（印格 CHENG + 调候用神已裁定），保证 Composer 有输入。
         result = pipeline.run(
             analysis_date=date(2024, 1, 1),
-            birth_date=(1990, 1, 1, 12),
+            birth_date=(1984, 12, 7, 16),
             gender="male",
             theme="WORK",
         )
@@ -55,6 +58,9 @@ class TestINT06PipelineWiring(unittest.TestCase):
         for c in composer_claims:
             self.assertIn("composer_version", c)
             self.assertEqual(c["composer_version"], "1.0.0")
+            # G1: 每条 claim 必须带可解析的证据锚与规则锚
+            self.assertTrue(c.get("evidence_refs"), f"{c.get('claim_id')} 缺证据锚")
+            self.assertTrue(c.get("rule_refs"), f"{c.get('claim_id')} 缺规则锚")
 
     def test_compute_stage_supports_composer_param(self):
         """ComputeStage.run() 接受 judgment_composer 参数 (INT-06 接入点)."""
