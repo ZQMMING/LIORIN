@@ -147,3 +147,20 @@ python -m pytest tests -k ziping --ignore=tests/test_ziping_15_2_evidence_proven
 回退结果：ziping 回归 **1178 passed / 4 failed**（4 项为 GPT 在途 relation_presence；另 +10 为本轮核验器测试），
 取格对账 12/40（20 盘抽样 7/20），全部差异按上述口径分类：本气立格（引擎对）、禄刃透干（部分对）、
 化气/从格优先级、变体格名——均属待逐项核验项，不再以「透干优先」一刀切。
+## 七、建禄月劫「败格保格名」尝试与回退（2026-11-08）
+
+原典 CHENG_BAI.008「建禄月劫无财官透煞印」为败格，但格名仍在；引擎现状：无配合神时
+ge_jie_layer.py 直接不出格（if ti_wx or _jl_xi），而阳刃格分支却保名 → 内部不一致。
+
+尝试：改为无条件保名（ge=建禄月劫格, 	i_wx 可空），并加 primary_blocked 标记、
+在 
+esolve_yongyao 早退 GE_NAMED_UNRESOLVED（格名存、用神未定，不让调候/扶抑代偿出主药）。
+
+结果：	est_ziping_break_evaluation_completeness 3 例恢复，取格差 12/40→8/40，成败差 27/40→32/40；
+但 	est_ziping_bridge.py 2 例（1990-03-01 盘）因 _attach_ge_evidence 把该盘
+ge_rule_verification 判为 NOT_EVALUABLE（财透+比劫同现），桥接映射为 GEJU UNKNOWN 而红。
+说明该盘本来依赖「无配合不出格」的旧路径规避该证据缺陷，保名后暴露出证据层判定问题。
+
+处置：**回退本次尝试**，基线恢复 1178 passed / 4 failed（4 项为 GPT 在途 relation_presence）。
+待办：先修 _attach_ge_evidence 的财透+比劫同现误判（应只对「财与比劫同现且无制」标未核验），
+再复启保名 + 用神门控；两者需一起提交。
