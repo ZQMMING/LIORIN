@@ -71,29 +71,7 @@
 4. **`cases/golden/ziping_golden_set.json` 仍未接入 replay**（golden_replay 只 hash）；建议后续把 expected 改为真值断言或标注为签名快照（同盲派处理）。
 5. **真值覆盖 7 案 + 3 冲突**，可继续从《子平真诠》《滴天髓》补案（谭延闿/蔡元培两案四柱已解出，但用神两说冲突，暂不入选）。
 
-## 五、p0_v2 切片库恢复（2026-11-07）
-
-**现象**：生产代码 `engines/production_entry.py:278` 有 `from p0_v2.jiu_ying import build_jiu_ying`，
-`engines/common/slice_loader.py` 以 `p0_v2/六部经典MD文库/` 为 canonical 切片源，但主仓 **p0_v2 目录不存在**
-（该目录只存在于旧 worktree `D:\shuntian-ziping-p0`）。后果：
-- `jiu_ying_status` 恒 `NOT_EVALUABLE`，`reason="依赖模块缺失: p0_v2"`；
-- `slice_loader` 无法加载任何切片（932 条规则对生产不可见）。
-
-**处置**：从旧 worktree 恢复 `p0_v2/`（去掉 `output/`、`case_audit/` 两类运行产物与 `__pycache__`，保留代码 +
-`六部经典MD文库` 949 份 MD 切片 + 契约文档）。恢复后实测：
-- `slice_loader.count()` = **932**；
-- `build_jiu_ying("癸未辛酉甲申丙寅", {...})` 返回 7 键（triggered/type/success/evidence/note/rescue_wx/xiang_note），
-  六条判据 id 齐出（JIU_YING.001–.006，.005 含 a~j 子型）。
-
-**口径说明**：`p0_v2/jiu_ying.py` 是探针阶段实现（docstring 自述 .001/.004/.005/.006 需通关事实/相神定位，
-标 PENDING），故 `production_entry` 只把它记为 `jiu_ying_legacy_diagnostic`（`LEGACY_UNVERIFIED`），
-`facts['jiu_ying']` 仍取 `rescue.assess_rescue_scope` 的结构候选——即：**恢复后救应不再是「模块缺失」，
-但仍未升级为「已核验成功」**，与 CODEX_PROGRESS 的三态语义一致。
-
-**回归**：恢复前后 `pytest tests -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py`
-均为 **1205 passed / 5 failed**（4 项 GPT 在途 relation_presence + 1 项 V3 PATTERN 开关），无新增失败。
-
-## 六、复现
+## 五、复现
 
 ```powershell
 $env:PYTHONPATH='D:\shuntian\src'
