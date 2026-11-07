@@ -1,0 +1,1195 @@
+{
+  "contract_id": "PATCH-019",
+  "name": "ADMITTED_RULE Registry（准入规则注册表）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "最终形成 Engine 可调用规则层；当前全部 PENDING_ENGINE_VALIDATION（引擎未接线），无一条 ADMITTED。",
+  "admission_chain": "Rule Candidate → Golden Validation → Conflict Resolver → ADMITTED_RULE → Engine Execution",
+  "rules": [
+    {
+      "rule_id": "CAND-WANG-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "wang_state",
+      "evidence_trace": {
+        "source_id": "YHZP-138-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022A",
+      "golden_validation_stage": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-WANG-002",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "DTS",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "wang_state",
+      "evidence_trace": {
+        "source_id": "DTS-016-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022A",
+      "golden_validation_stage": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-SHUAI-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "shuai_state",
+      "evidence_trace": {
+        "source_id": "YHZP-138-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022A",
+      "golden_validation_stage": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-QIANG-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "qiang_state",
+      "evidence_trace": {
+        "source_id": "YHZP-138-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022A",
+      "golden_validation_stage": "STATIC_PASS"
+    },
+    {
+      "rule_id": "CAND-RUO-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "—",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "strength_state（待 005C）",
+      "evidence_trace": {
+        "source_id": "—",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "—"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ADMISSION",
+      "admission_note": "005A Human 裁决无单锚，保持 PENDING"
+    },
+    {
+      "rule_id": "CAND-ORDER-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "YHZP/PZZQ/SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "order_state",
+      "evidence_trace": {
+        "source_id": "YHZP-138-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP/PZZQ/SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-TIME-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "order_state（带 TIME 标记）",
+      "evidence_trace": {
+        "source_id": "YHZP-138-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-ROOT-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "YHZP/PZZQ/QTBJ/SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "root_state",
+      "evidence_trace": {
+        "source_id": "YHZP-123-003",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP/PZZQ/QTBJ/SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-TREND-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "DTS",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "trend_state",
+      "evidence_trace": {
+        "source_id": "DTS-008-003",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-SEASONAL-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "seasonal_state",
+      "evidence_trace": {
+        "source_id": "QTBJ-018-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-SFTK-ROOT-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "root_state",
+      "evidence_trace": {
+        "source_id": "SFTK-129-038",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "CAND-DTS-ZHENJIA-001",
+      "source_patch": "PATCH-005A",
+      "classical_scope": "DTS",
+      "input_state": [
+        "—"
+      ],
+      "condition": "",
+      "output": "order_state（真神对象）",
+      "evidence_trace": {
+        "source_id": "DTS-023-004",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-S-001",
+      "source_patch": "PATCH-005C",
+      "classical_scope": "YHZP",
+      "input_state": "FCT-GET_ORDER-001",
+      "condition": "得時俱為旺論（子機賦，原文逐字）",
+      "output": "wang_state=WANG（非 strength_state）",
+      "evidence_trace": {
+        "source_id": "—",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-S-002",
+      "source_patch": "PATCH-005C",
+      "classical_scope": "YHZP",
+      "input_state": "FCT-GET_ORDER-001",
+      "condition": "失令便作衰看（子機賦，原文逐字）",
+      "output": "shuai_state=SHUAI（非 WEAK）",
+      "evidence_trace": {
+        "source_id": "—",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-S-003",
+      "source_patch": "PATCH-005C",
+      "classical_scope": "YHZP",
+      "input_state": "FCT-GET_ORDER-001 + FCT-ROOT-001",
+      "condition": "四柱無根得時為旺（原文逐字：无根+得时=旺）",
+      "output": "wang_state=WANG",
+      "evidence_trace": {
+        "source_id": "—",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-S-004",
+      "source_patch": "PATCH-005C",
+      "classical_scope": "YHZP",
+      "input_state": "FCT-ROOT-001 + 结构关系",
+      "condition": "日干無氣遇劫為強（原文逐字：无气+遇劫=强条件）",
+      "output": "qiang_state=QIANG",
+      "evidence_trace": {
+        "source_id": "—",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-001",
+      "source_patch": "PATCH-006",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "八字用神專求月令，以日干配月令地支，格局分財官印食（原文逐字）",
+      "output": "use_god_candidate（月令格局用神候选，须配合顺逆/成败条件）",
+      "evidence_trace": {
+        "source_id": "PZZQ-005-007",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-002",
+      "source_patch": "PATCH-006",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "財官印食順用，煞傷刃劫逆用（原文逐字）",
+      "output": "yong_shen_direction（顺/逆）",
+      "evidence_trace": {
+        "source_id": "PZZQ-005-007",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-003",
+      "source_patch": "PATCH-006",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "何以為病？原八字中所害之神也；何以為藥？得一字以去之（原文逐字）；先看月令從重者論",
+      "output": "bingyao_medicine_candidate（去病之药候选）",
+      "evidence_trace": {
+        "source_id": "SFTK-008-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-004",
+      "source_patch": "PATCH-006",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "调候取用（寒冻取丙等；必须绑定日干×月令×寒暖燥湿条件）",
+      "output": "tiaohou_candidate（调候用神候选）",
+      "evidence_trace": {
+        "source_id": "QTBJ-060-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-005",
+      "source_patch": "PATCH-006",
+      "classical_scope": "DTS",
+      "input_state": [
+        "—"
+      ],
+      "condition": "通关论（DTS_SCOPE_ONLY）",
+      "output": "tong_guan_candidate（通关用神候选，DTS 域内）",
+      "evidence_trace": {
+        "source_id": "DTS-019-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Y-006",
+      "source_patch": "PATCH-006",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "月令既得用神，則別位亦必有相（原文逐字）",
+      "output": "xiang_shen_candidate（相神候选，PZZQ_ONLY）",
+      "evidence_trace": {
+        "source_id": "PZZQ-007-004",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-P-001",
+      "source_patch": "PATCH-007",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "格局分財官印食（原文逐字）",
+      "output": "pattern_candidate（月令格局候选）",
+      "evidence_trace": {
+        "source_id": "PZZQ-005-007",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-P-002",
+      "source_patch": "PATCH-007",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "成格/败格条件（原文逐字；印輕逢煞为已裁决工程执行文本）",
+      "output": "pattern_success_failure_candidate",
+      "evidence_trace": {
+        "source_id": "PZZQ-005-008",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-P-003",
+      "source_patch": "PATCH-007",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "因成得敗/因敗得成（成败互转，原文逐字）",
+      "output": "pattern_transition_candidate",
+      "evidence_trace": {
+        "source_id": "PZZQ-007-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-P-004",
+      "source_patch": "PATCH-007",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "凡看八字先明從化為本，從化不成方論財官，財官無取方論格（原文逐字）",
+      "output": "pattern_entry_order（从化→财官→格局）",
+      "evidence_trace": {
+        "source_id": "SFTK-082-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-B-001",
+      "source_patch": "PATCH-008",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "何以為之病？原八字中所害之神也；何以為之藥？得一字以去之（原文逐字）",
+      "output": "bing_candidate + medicine_candidate",
+      "evidence_trace": {
+        "source_id": "SFTK-008-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-B-002",
+      "source_patch": "PATCH-008",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "先看日干，次看月令，從重者論（原文逐字）",
+      "output": "bingyao_priority_order",
+      "evidence_trace": {
+        "source_id": "SFTK-008-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-B-003",
+      "source_patch": "PATCH-008",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "有病无药（原文逐字）",
+      "output": "bingyao_outcome_candidate（有病无药/有病有药）",
+      "evidence_trace": {
+        "source_id": "SFTK-002-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-T-001",
+      "source_patch": "PATCH-009",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "寒冻取丙（必须绑定日干×月令条件）",
+      "output": "tiaohou_candidate",
+      "evidence_trace": {
+        "source_id": "QTBJ-060-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-T-002",
+      "source_patch": "PATCH-009",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "冰冻结冻用丙（绑定日干×月令）",
+      "output": "tiaohou_candidate",
+      "evidence_trace": {
+        "source_id": "QTBJ-109-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-T-003",
+      "source_patch": "PATCH-009",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "微寒用火温暖（四时调候，原文逐字）",
+      "output": "tiaohou_candidate（SFTK 域）",
+      "evidence_trace": {
+        "source_id": "SFTK-061-006",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Q-001",
+      "source_patch": "PATCH-010",
+      "classical_scope": "DTS",
+      "input_state": [
+        "—"
+      ],
+      "condition": "真假论（命之真者得令，原文逐字）",
+      "output": "zhen_jia_candidate",
+      "evidence_trace": {
+        "source_id": "DTS-023-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Q-002",
+      "source_patch": "PATCH-010",
+      "classical_scope": "DTS",
+      "input_state": [
+        "—"
+      ],
+      "condition": "並無傷官七煞混之…乃為清奇（B1）",
+      "output": "qing_zhuo_candidate（DTS 域）",
+      "evidence_trace": {
+        "source_id": "DTS-022-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-Q-003",
+      "source_patch": "PATCH-010",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "透干會支，取其清者用之，雜而不雜（原文逐字）",
+      "output": "qing_za_candidate（取用层）",
+      "evidence_trace": {
+        "source_id": "PZZQ-007-005",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-C-001",
+      "source_patch": "PATCH-011",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "先明從化為本，從化不成方論財官，財官無取方論格（原文逐字）",
+      "output": "cong_hua_check_order",
+      "evidence_trace": {
+        "source_id": "SFTK-082-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-C-002",
+      "source_patch": "PATCH-011",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "弃命从财（原文逐字条件）",
+      "output": "cong_cai_candidate",
+      "evidence_trace": {
+        "source_id": "SFTK-020-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-C-003",
+      "source_patch": "PATCH-011",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "弃命从杀（原文逐字条件）",
+      "output": "cong_sha_candidate",
+      "evidence_trace": {
+        "source_id": "SFTK-012-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-C-004",
+      "source_patch": "PATCH-011",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "化气十段锦（合化条件原文逐字）",
+      "output": "hua_qi_candidate",
+      "evidence_trace": {
+        "source_id": "YHZP-122-004",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SW-001",
+      "source_patch": "PATCH-013",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "十二长生十二宫定名（长生沐浴冠带临官帝旺衰病死墓绝胎养，阳顺阴逆，原文逐字）",
+      "output": "shengwang_schedule_candidate",
+      "evidence_trace": {
+        "source_id": "YHZP-016-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SW-002",
+      "source_patch": "PATCH-013",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "十二长生逐干（阳顺阴逆，原文逐字）",
+      "output": "shengwang_track_candidate（按日干）",
+      "evidence_trace": {
+        "source_id": "YHZP-015-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SW-003",
+      "source_patch": "PATCH-013",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "生旺死绝方位宜忌（原文逐字）",
+      "output": "shengwang_orientation_candidate",
+      "evidence_trace": {
+        "source_id": "QTBJ-002-003",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SW-004",
+      "source_patch": "PATCH-013",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "伤官行运旺相吉死墓凶（原文逐字）",
+      "output": "shengwang_luck_candidate",
+      "evidence_trace": {
+        "source_id": "SFTK-020-041",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-DZ-001",
+      "source_patch": "PATCH-014",
+      "classical_scope": "DTS",
+      "input_state": [
+        "—"
+      ],
+      "condition": "午之黨多，干頭助子必凶（原文逐字）",
+      "output": "dang_zhong_candidate（DTS 域）",
+      "evidence_trace": {
+        "source_id": "DTS-057-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-DZ-002",
+      "source_patch": "PATCH-014",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "煞旺身健（党众为结构条件，原文逐字）",
+      "output": "sha_wang_structure_candidate",
+      "evidence_trace": {
+        "source_id": "PZZQ-007-027",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-DZ-003",
+      "source_patch": "PATCH-014",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "地支成局（党众之会局，条件断语原文）",
+      "output": "cheng_ju_group_candidate",
+      "evidence_trace": {
+        "source_id": "QTBJ-048-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-DZ-004",
+      "source_patch": "PATCH-014",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "众土党众（病药语境，原文逐字）",
+      "output": "dang_zhong_bingyao_candidate",
+      "evidence_trace": {
+        "source_id": "SFTK-011-054",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SS-001",
+      "source_patch": "PATCH-015",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "子機賦十神体系（原文逐字）",
+      "output": "shi_shen_base_candidate",
+      "evidence_trace": {
+        "source_id": "YHZP-138-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SS-002",
+      "source_patch": "PATCH-015",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "財官印食順用，煞傷刃劫逆用（原文逐字）",
+      "output": "shi_shen_direction_candidate",
+      "evidence_trace": {
+        "source_id": "PZZQ-005-007",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-SS-003",
+      "source_patch": "PATCH-015",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "十神条件断语（印逢官/官逢印，须绑定月日干支条件，原文逐字）",
+      "output": "shi_shen_conditional_candidate",
+      "evidence_trace": {
+        "source_id": "QTBJ-111-003",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-WX-001",
+      "source_patch": "PATCH-016",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "五行总论（寒生水/热生火/风生木/燥生金/湿生土；相生相维相尅相制，原文逐字）",
+      "output": "wuxing_relation_candidate",
+      "evidence_trace": {
+        "source_id": "QTBJ-001-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-WX-002",
+      "source_patch": "PATCH-016",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "五行主性（水主寒，原文逐字）",
+      "output": "wuxing_climate_attribute_candidate",
+      "evidence_trace": {
+        "source_id": "YHZP-118-006",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-WX-003",
+      "source_patch": "PATCH-016",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "五行色数配属（原文逐字）",
+      "output": "wuxing_attribute_candidate",
+      "evidence_trace": {
+        "source_id": "QTBJ-001-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-G-001",
+      "source_patch": "PATCH-012",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "看日主→提纲→财官（原文逐字）",
+      "output": "ganzhi_combo_candidate",
+      "evidence_trace": {
+        "source_id": "YHZP-131-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-G-002",
+      "source_patch": "PATCH-012",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "刑冲会合定义（原文逐字）",
+      "output": "xing_chong_hui_candidate",
+      "evidence_trace": {
+        "source_id": "PZZQ-005-006",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-G-003",
+      "source_patch": "PATCH-012",
+      "classical_scope": "QTBJ",
+      "input_state": [
+        "—"
+      ],
+      "condition": "地支成局组合（条件断语原文）",
+      "output": "di_zhi_cheng_ju_candidate",
+      "evidence_trace": {
+        "source_id": "QTBJ-048-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "QTBJ"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-G-004",
+      "source_patch": "PATCH-012",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "干支组合断语（入墓冲/刑冲，原文逐字）",
+      "output": "ganzhi_combo_candidate（SFTK 域）",
+      "evidence_trace": {
+        "source_id": "SFTK-119-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-L-001",
+      "source_patch": "PATCH-012",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "—"
+      ],
+      "condition": "六亲配属（印母/财父/官子女，原文逐字）",
+      "output": "six_relation_candidate",
+      "evidence_trace": {
+        "source_id": "YHZP-102-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-L-002",
+      "source_patch": "PATCH-012",
+      "classical_scope": "SFTK",
+      "input_state": [
+        "—"
+      ],
+      "condition": "六亲宫位（年祖月父母日夫妻时子女，原文逐字）",
+      "output": "six_relation_palace_candidate",
+      "evidence_trace": {
+        "source_id": "SFTK-007-002",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "SFTK"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-L-003",
+      "source_patch": "PATCH-012",
+      "classical_scope": "DTS",
+      "input_state": [
+        "—"
+      ],
+      "condition": "反局六亲（君赖臣/母慈灭子，原文逐字）",
+      "output": "fan_ju_liuqin_candidate（DTS 结构层）",
+      "evidence_trace": {
+        "source_id": "DTS-045-001",
+        "text_layer": "ORIGINAL/A 或按 source 层",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "PENDING_ENGINE_VALIDATION"
+    },
+    {
+      "rule_id": "RULE-022C-01",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "財多",
+        "身健/身不健"
+      ],
+      "condition": "財多生官須要身健，財多盜氣本身自柔",
+      "output": "财官关系（格内）",
+      "evidence_trace": {
+        "source_id": "YHZP-078-024",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-02",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "身強",
+        "殺淺"
+      ],
+      "condition": "身強殺淺，假殺為權",
+      "output": "假杀为权（格内）",
+      "evidence_trace": {
+        "source_id": "YHZP-079-022",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-03",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "殺旺",
+        "運純/全彰",
+        "身旺"
+      ],
+      "condition": "殺旺運純身旺為官清貴 / 七殺全彰身旺極貧（BY_CONDITION）",
+      "output": "格内两分支",
+      "evidence_trace": {
+        "source_id": "YHZP-076-104+YHZP-076-109",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-04",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "七杀格",
+        "身旺/身弱",
+        "制伏/財生/無制"
+      ],
+      "condition": "喜身旺合殺制伏羊刃；忌身弱見財生無制",
+      "output": "七杀格喜忌（格内）",
+      "evidence_trace": {
+        "source_id": "YHZP-082-001",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-05",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "DTS",
+      "input_state": [
+        "五行中和"
+      ],
+      "condition": "既識中和之正理 / 有病方為貴…中和為至貴",
+      "output": "中和原则（DTS 域）",
+      "evidence_trace": {
+        "source_id": "DTS-017-001+DTS-017-002",
+        "text_layer": "ORIGINAL/A+ANNOTATION/B1",
+        "classical_scope": "DTS"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "PRINCIPLE_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-06",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "傷官用財",
+        "財旺身輕/身旺財淺"
+      ],
+      "condition": "財旺身輕則利印比，身旺財淺則喜財運",
+      "output": "格内双向条件",
+      "evidence_trace": {
+        "source_id": "PZZQ-007-030",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-07",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "PZZQ",
+      "input_state": [
+        "煞食均",
+        "日主根輕"
+      ],
+      "condition": "煞食均而日主根輕則助身",
+      "output": "助身（格内）",
+      "evidence_trace": {
+        "source_id": "PZZQ-007-028",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "PZZQ"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONDITIONAL_RELATION"
+    },
+    {
+      "rule_id": "RULE-022C-08",
+      "source_patch": "PATCH-022D",
+      "classical_scope": "YHZP",
+      "input_state": [
+        "月令"
+      ],
+      "condition": "或身旺或身弱，又看地支有何格局",
+      "output": "月令语境锚",
+      "evidence_trace": {
+        "source_id": "YHZP-063-001",
+        "text_layer": "ORIGINAL/A",
+        "classical_scope": "YHZP"
+      },
+      "golden_pass": false,
+      "status": "ADMITTED",
+      "admission_ref": "PATCH-022D",
+      "admission_type": "CONTEXT_ANCHOR"
+    }
+  ],
+  "acceptance_criteria": [
+    "60+8=68 条规则；12 条 ADMITTED（4 单态+6 条件关系+1 原则+1 语境锚）",
+    "全部 golden_pass=false（动态验证待接线）",
+    "身弱 PENDING（CAND-RUO-001）"
+  ]
+}

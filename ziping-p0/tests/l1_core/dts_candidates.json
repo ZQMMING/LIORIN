@@ -1,0 +1,317 @@
+[
+  {
+    "source_id": "DTS-011-001",
+    "chapter": "通天論·形象論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "兩氣合而成象，象不可破也。",
+    "full_text_length": 13
+  },
+  {
+    "source_id": "DTS-011-002",
+    "chapter": "通天論·形象論",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：天干屬木，地支屬火；天干屬火，地支屬木，其象屬一。若見金水則破，餘仿此。",
+    "full_text_length": 40
+  },
+  {
+    "source_id": "DTS-011-003",
+    "chapter": "通天論·形象論",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：木必得水而生，火以行之，土以培之，金以成之，是以成形。於要緊之地或過或缺，則為害，餘仿此。",
+    "full_text_length": 49
+  },
+  {
+    "source_id": "DTS-011-004",
+    "chapter": "通天論·形象論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "獨象喜行化地，而化神要昌。",
+    "full_text_length": 13
+  },
+  {
+    "source_id": "DTS-011-005",
+    "chapter": "通天論·形象論",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：一者為獨，曲直炎上之類是也。所生者為化神，化神昌旺，其喜氣流行，然後行財官之地方可。",
+    "full_text_length": 46
+  },
+  {
+    "source_id": "DTS-011-006",
+    "chapter": "通天論·形象論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "全象喜行財地，而財神要旺。",
+    "full_text_length": 13
+  },
+  {
+    "source_id": "DTS-011-007",
+    "chapter": "通天論·形象論",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：三者為全，有傷官而又有財是也。主旺喜財旺，而不行官煞之地方可。",
+    "full_text_length": 35
+  },
+  {
+    "source_id": "DTS-011-008",
+    "chapter": "通天論·形象論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "形全者宜損其有餘，形缺者宜補其不足。",
+    "full_text_length": 18
+  },
+  {
+    "source_id": "DTS-012-001",
+    "chapter": "通天論·方局論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "方是方兮局是局，要得方莫混局。",
+    "full_text_length": 15
+  },
+  {
+    "source_id": "DTS-012-002",
+    "chapter": "通天論·方局論",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：寅卯辰東方也，搭一亥卯未，則為太過，豈不為混局哉？",
+    "full_text_length": 29
+  },
+  {
+    "source_id": "DTS-012-003",
+    "chapter": "通天論·方局論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "局混方兮有純疵，行運喜南還喜北。",
+    "full_text_length": 16
+  },
+  {
+    "source_id": "DTS-012-004",
+    "chapter": "通天論·方局論",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：亥卯未木局，混一寅卯辰，則木強，運行南北，雖有純疵俱利。",
+    "full_text_length": 32
+  },
+  {
+    "source_id": "DTS-012-005",
+    "chapter": "通天論·方局論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "若然方局一齊來，須是干頭無反覆。",
+    "full_text_length": 16
+  },
+  {
+    "source_id": "DTS-012-006",
+    "chapter": "通天論·方局論",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：木局木方全者，須天干全順得序，行運不悖尤妙。",
+    "full_text_length": 26
+  },
+  {
+    "source_id": "DTS-012-007",
+    "chapter": "通天論·方局論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "成方干透一元神，生地庫地皆非福。",
+    "full_text_length": 16
+  },
+  {
+    "source_id": "DTS-012-008",
+    "chapter": "通天論·方局論",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：如寅卯辰全者，日主甲乙木，則透元神，而又遇亥之生、未之庫，決不發福，惟有純一少運略好。",
+    "full_text_length": 47
+  },
+  {
+    "source_id": "DTS-012-009",
+    "chapter": "通天論·方局論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "成局干透一官星，左邊右邊空碌碌。",
+    "full_text_length": 16
+  },
+  {
+    "source_id": "DTS-012-010",
+    "chapter": "通天論·方局論",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：甲乙日遇亥卯未全者，庚辛乃木之官也，又見左辰右寅，則名利無成，詳例自見。",
+    "full_text_length": 40
+  },
+  {
+    "source_id": "DTS-012-011",
+    "chapter": "通天論·方局論",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "甲乙日單遇庚辛，亦無成矣。",
+    "full_text_length": 13
+  },
+  {
+    "source_id": "DTS-040-001",
+    "chapter": "六親論·從象",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "從得真者只論從，從神又有吉和凶。",
+    "full_text_length": 16
+  },
+  {
+    "source_id": "DTS-040-002",
+    "chapter": "六親論·從象",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：日主孤弱無氣，天地人元絕無一毫生扶之力，才官強甚，乃為真從也。當論所從之神：如從才，即以才為主，才神是木，又要看意向，或要火、要土、要金，而行運得所者必吉，否則凶，餘皆仿此。",
+    "full_text_length": 91
+  },
+  {
+    "source_id": "DTS-041-001",
+    "chapter": "六親論·化象",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "化得真者只論化，化神還有幾般話。",
+    "full_text_length": 16
+  },
+  {
+    "source_id": "DTS-041-002",
+    "chapter": "六親論·化象",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：如甲日主生於四季，單透一位己土在月時上合之，不遇壬癸甲乙戊己，而有辰字，乃為化得真。又如丙辛生於冬月，戊癸生於夏月，乙庚生於秋月，丁壬生於春月，獨自相合，又得龍以運之，此皆真化矣。又論化神：如甲己土，土陰寒，要火土昌旺；土太旺，要用木為財，木為官，金為食傷，隨其所向論其喜忌。再見甲乙，亦不可以爭合妒合論，蓋化真矣，如烈女不更二夫，歲運遇之皆閑神也。",
+    "full_text_length": 179
+  },
+  {
+    "source_id": "DTS-042-001",
+    "chapter": "六親論·假象",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "真從之家有幾人，假從亦可發其身。",
+    "full_text_length": 16
+  },
+  {
+    "source_id": "DTS-042-002",
+    "chapter": "六親論·假象",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：日主弱矣，才官強矣，不能不從。中有所助及暗生者，從之不真。至於行運才官得地，雖是假從，亦可助富貴，但其人不能免禍，或者心地不端耳。",
+    "full_text_length": 69
+  },
+  {
+    "source_id": "DTS-043-001",
+    "chapter": "六親論·假化",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "假化之人亦多貴，異姓孤兒能出類。",
+    "full_text_length": 16
+  },
+  {
+    "source_id": "DTS-043-002",
+    "chapter": "六親論·假化",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：日主孤弱而遇合神真，不能不化。但暗扶日主，合神又虛弱，又無龍以運之，不為真化。至游歲運扶起合神，制伏助神，雖為假化，亦可取用。雖是異姓孤兒，亦可出類拔萃，但其人多執滯偏拗，作事迍邅，骨肉欠遂。",
+    "full_text_length": 100
+  },
+  {
+    "source_id": "DTS-044-001",
+    "chapter": "六親論·順局",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "一出門來要見兒，吾兒成氣搆門閭。從兒不論身強弱，只要吾兒又遇兒。",
+    "full_text_length": 32
+  },
+  {
+    "source_id": "DTS-044-002",
+    "chapter": "六親論·順局",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：此與從象成象傷官不同，只取我生者為兒。如木遇火成氣象，不論日主強弱，而又看火能生土，氣又成生育之勢，此為一氣流通，必然富貴矣。",
+    "full_text_length": 67
+  },
+  {
+    "source_id": "DTS-045-001",
+    "chapter": "六親論·反局",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "君賴臣生理最微，兒能生母洩天機。母慈滅子關頭異，夫健何為又怕妻。",
+    "full_text_length": 32
+  },
+  {
+    "source_id": "DTS-045-002",
+    "chapter": "六親論·反局",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：木君也，土臣也。木浮水泛，土止水則生木；木旺火熾，金伐木則生火；火旺土焦，水尅火則生土；土重金埋，木尅土則生金；金旺水濁，火尅金則生水，皆君賴臣也，其理最妙。木為母，火為子，木被金傷，火尅金則生木；火遭水尅，土尅水則生火；土遇木傷，金尅木則生土；金逢火煉，水尅火則生金；水因土塞，木尅土則生水，皆兒能生母。母意能奪天機：木母也，火子也，木旺謂之慈母，反使火熾而焚滅子，火土金水亦如之。木夫也，...",
+    "full_text_length": 295
+  },
+  {
+    "source_id": "DTS-046-001",
+    "chapter": "六親論·戰局",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "天戰猶自可，地戰急如火。",
+    "full_text_length": 12
+  },
+  {
+    "source_id": "DTS-046-002",
+    "chapter": "六親論·戰局",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：干頭遇甲乙庚辛，謂之天戰，而得地順靜者無害；地支寅申卯酉，謂之地戰，則干不能為力，其勢迅凶，蓋天主動地主靜故也。若或甲寅乙卯庚申辛酉皆見，謂之天地交戰，必凶無疑。遇歲合之會之，視其勝負，亦有可存可發者。其有兩沖者，只得一個合神有力，或會神庫神貴神，以收其動氣，息其爭氣，亦為佳美。至於喜神伏藏死絕者，又要沖動，引用生發之機也。",
+    "full_text_length": 167
+  },
+  {
+    "source_id": "DTS-047-001",
+    "chapter": "六親論·合局",
+    "text_layer": "ORIGINAL",
+    "evidence_grade": "A",
+    "attribution": "ORIGINAL_AUTHOR",
+    "source_text": "合有宜不宜，合多不為奇。",
+    "full_text_length": 12
+  },
+  {
+    "source_id": "DTS-047-002",
+    "chapter": "六親論·合局",
+    "text_layer": "ANNOTATION",
+    "evidence_grade": "B",
+    "attribution": "ORIGINAL_ANNOTATION",
+    "source_text": "> 注：喜神有能合而助之者，以庚為喜神，得乙合而助金；凶神有能合而去之者，以甲為凶神，得己合而去木；動局有能合而靜者，如子午相沖，得丑未合而靜；生局有能合而成者，如甲生於亥，得寅合而成，皆是也。如助其凶神之合，如己為凶神，甲合之則為羈絆；喜神之合，如乙是喜神，庚合之則羈絆掩蔽；動局之合，丑未喜神，子午合之則閑；生局之合，不喜甲木寅亥合之則助，皆不宜也。大約多合則不流通，不奮發，雖有秀氣，亦不為奇矣...",
+    "full_text_length": 201
+  }
+]

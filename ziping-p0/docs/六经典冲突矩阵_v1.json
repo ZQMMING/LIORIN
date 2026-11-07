@@ -1,0 +1,136 @@
+{
+  "version": "v1",
+  "methodology": "原著优先 + 分源输出 + 冲突保留不裁决",
+  "last_updated": "2026-09-20",
+  "absolute_conflicts": [
+    {
+      "conflict_id": "ABS-001",
+      "dimension": "六亲定位",
+      "nature": "绝对性矛盾",
+      "system_a": {
+        "name": "古法轨（渊海/子平）",
+        "rule": "偏财为父，男命官杀为子女"
+      },
+      "system_b": {
+        "name": "任氏轨（滴天髓阐微）",
+        "rule": "印星统一定父母，男命食伤为子女"
+      },
+      "resolution": "分源输出，两套体系逻辑链完整互不相容",
+      "status": "confirmed"
+    },
+    {
+      "conflict_id": "ABS-002",
+      "dimension": "神煞地位",
+      "nature": "绝对性矛盾",
+      "system_a": {
+        "name": "子平真诠",
+        "rule": "星辰无关格局，格局既成满盘孤辰入煞何损其贵"
+      },
+      "system_b": {
+        "name": "三命通会/渊海子平",
+        "rule": "大量使用神煞断吉凶"
+      },
+      "resolution": "独立轨处理，evidence_grade不高于B级，不进主链",
+      "status": "confirmed"
+    },
+    {
+      "conflict_id": "ABS-003",
+      "dimension": "纳音 vs 正五行",
+      "nature": "绝对性矛盾",
+      "system_a": {
+        "name": "纳音系统",
+        "rule": "丙午得壬子不为破，甲寅得庚申不为刑"
+      },
+      "system_b": {
+        "name": "正五行系统",
+        "rule": "子午冲，寅申冲，刑冲规则明确"
+      },
+      "resolution": "完全隔离，纳音不进主链，两套独立系统",
+      "status": "confirmed"
+    },
+    {
+      "conflict_id": "ABS-004",
+      "dimension": "子平原旨 vs 徐乐吾评注",
+      "nature": "绝对性矛盾",
+      "system_a": {
+        "name": "沈孝瞻原著",
+        "rule": "用神专求月令，格局用神为核心"
+      },
+      "system_b": {
+        "name": "徐乐吾评注",
+        "rule": "用滴天髓/穷通宝鉴的强弱旺衰平衡调候扶抑论解释子平，偷换格局用神为日主旺衰用神"
+      },
+      "resolution": "L0格局轨必须用沈孝瞻原著，不用徐注版；引用徐注时必须标注并隔离",
+      "status": "newly_added",
+      "note": "徐注会污染L0格局轨，导致用神专求月令核心逻辑被篡改"
+    }
+  ],
+  "complementary_conflicts": [
+    {
+      "conflict_id": "COMP-001",
+      "dimension": "用神体系优先级",
+      "nature": "互补性冲突",
+      "rule": [
+        "调候 = 格局用神 → 合一，无冲突",
+        "冬夏生人且两者冲突 → 调候优先",
+        "非冬夏生人且两者冲突 → 格局优先"
+      ],
+      "resolution": "四轨并行，候选集取并集；优先级按上述三条",
+      "status": "corrected",
+      "note": "原方案缺\"合一\"情形，已补"
+    },
+    {
+      "conflict_id": "COMP-002",
+      "dimension": "旺衰 vs 强弱",
+      "nature": "互补性冲突",
+      "rule": "旺衰=月令维度，强弱=力量结构维度",
+      "resolution": "二元组输出，不合并",
+      "status": "corrected",
+      "note": "此二元组为后世归纳，非《子平真诠》原文显式分层；代码中必须标注"
+    },
+    {
+      "conflict_id": "COMP-003",
+      "dimension": "体用 vs 格局",
+      "nature": "互补性冲突",
+      "resolution": "并行输出，不合并",
+      "status": "confirmed"
+    },
+    {
+      "conflict_id": "COMP-004",
+      "dimension": "大运分看模式",
+      "nature": "互补性冲突",
+      "modes": [
+        {
+          "mode": "A",
+          "source": "渊海子平",
+          "rule": "大运重支轻干，流年重干轻支，不分前后五年"
+        },
+        {
+          "mode": "B",
+          "source": "三命通会",
+          "rule": "前五年干兼支，后五年弃干看支"
+        },
+        {
+          "mode": "C",
+          "source": "滴天髓",
+          "rule": "十年一体，盖头截脚修正"
+        },
+        {
+          "mode": "D",
+          "source": "命理约言",
+          "rule": "否定分看"
+        }
+      ],
+      "resolution": "多模式输出，不强行统一",
+      "status": "corrected",
+      "note": "原方案误将《渊海》写为\"前五年天干后五年地支\"，已修正为\"重支轻干\""
+    },
+    {
+      "conflict_id": "COMP-005",
+      "dimension": "病药 vs 中和",
+      "nature": "互补性冲突",
+      "resolution": "两者都是客观特征，并行输出",
+      "status": "confirmed"
+    }
+  ]
+}

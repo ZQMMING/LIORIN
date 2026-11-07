@@ -1,0 +1,82 @@
+[
+  {
+    "assertion_id": "DIAOHOU-DEF-001",
+    "group": "调候定义",
+    "original": "调候用神者，因月令气候之寒暖燥湿，而取调和之神也。",
+    "source": "QTBJ 总论（后世概括）",
+    "semantic": "调候用神是根据月令气候寒暖燥湿选取的调和之神，与格局用神不同",
+    "engine_status": "已实现（qtbj_climate_candidates 日干×月令查表）",
+    "faithful": true,
+    "note": "调候候选独立namespace，不与格局用神混淆"
+  },
+  {
+    "assertion_id": "DIAOHOU-DEF-002",
+    "group": "调候定义",
+    "original": "生于冬月，寒气太重，须火以暖之；生于夏月，热气太甚，须水以润之。",
+    "source": "QTBJ 总论（概括）",
+    "semantic": "冬月需火暖，夏月需水润，是调候最基本原则",
+    "engine_status": "已实现（调候候选表冬月多火、夏月多水）",
+    "faithful": true,
+    "note": "甲木十一月调候丁庚丙，十二月庚丁，符合冬月需火"
+  },
+  {
+    "assertion_id": "DIAOHOU-PRIORITY-001",
+    "group": "调候优先级",
+    "original": "调候用神，喜忌为第一，依《栏江网》。",
+    "source": "梁湘润《用神精义》引QTBJ传统",
+    "semantic": "调候用神在多种用神中居于首位，尤其是生于夏冬气候极端时",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_priority，结构化优先级仲裁）",
+    "faithful": true,
+    "note": "调候优先级已实现：check_yongshen_priority根据原典规则仲裁——调候=格局→合一；冬夏冲突→调候优先；非冬夏冲突→格局优先"
+  },
+  {
+    "assertion_id": "DIAOHOU-PRIORITY-002",
+    "group": "调候优先级",
+    "original": "生于亥子丑或巳午未，调候为急；生于寅卯辰或申酉戌，调候稍缓。",
+    "source": "QTBJ 传统（概括）",
+    "semantic": "气候极端的月份（冬夏）调候急迫，过渡月份（春秋）调候稍缓",
+    "engine_status": "已实现（调候轨激活条件：月支∈{亥子丑巳午未}且原局调候所需极弱）",
+    "faithful": true,
+    "note": "激活条件保守，宁可漏激活不可误激活"
+  },
+  {
+    "assertion_id": "DIAOHOU-GEJU-001",
+    "group": "调候与格局关系",
+    "original": "有调候之格，有不调候之格；调候之格，虽格局平常，亦为有福；不调候之格，虽格局清高，亦主孤贫。",
+    "source": "QTBJ 传统（概括）",
+    "semantic": "调候与格局是两个独立维度，调候得宜可补格局之不足",
+    "engine_status": "已实现（调候轨与格局轨独立输出，互不覆盖）",
+    "faithful": true,
+    "note": "四轨并行层中调候与格局各自记录，互不覆盖"
+  },
+  {
+    "assertion_id": "DIAOHOU-TOUGAN-001",
+    "group": "调候用神透出",
+    "original": "调候用神，以透出天干为贵，藏于地支次之；透干得地，富贵双全。",
+    "source": "QTBJ 传统（概括）",
+    "semantic": "调候用神透出天干且得地（有根）为最佳",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_tou_de，通用透出得地检查）",
+    "faithful": true,
+    "note": "调候透出已实现：check_yongshen_tou_de通用检查函数覆盖所有用神候选（含调候），检查候选五行是否透出天干/在地支有根，输出四态"
+  },
+  {
+    "assertion_id": "DIAOHOU-CLIMATE-001",
+    "group": "寒暖燥湿修正",
+    "original": "月令气候寒暖燥湿，可修正月令\"得时\"的实际效力。",
+    "source": "QTBJ 通篇（D5/T16）",
+    "semantic": "气候因素可修正月令得令的实际效力，如冬月木虽得令但寒，实际效力降低",
+    "engine_status": "已实现（D5气候修正维度，寒暖燥湿状态派生）",
+    "faithful": true,
+    "note": "climate寒暖燥湿结构层已接入，修正月令效力"
+  },
+  {
+    "assertion_id": "DIAOHOU-CANDIDATE-001",
+    "group": "调候候选标准情况",
+    "original": "正月甲木，初春余寒，丙暖癸滋（寒木向阳）。",
+    "source": "QTBJ-003-002 正月甲木",
+    "semantic": "正月甲木标准调候：丙火为先，癸水为佐",
+    "engine_status": "已实现（调候候选表甲木寅月：丙1癸2）",
+    "faithful": true,
+    "note": "甲木十二月调候候选已完整录入"
+  }
+]

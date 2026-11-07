@@ -1,0 +1,39 @@
+{
+  "contract_id": "PATCH-064",
+  "name": "Classical Conflict Resolver Contract 同namespace冲突裁决契约",
+  "principle": "只解决同namespace+不同rule+同output state的冲突; 禁止跨namespace(格局vs旺衰)裁决",
+  "scope_boundary": {
+    "ALLOW": [
+      "pattern_success: RULE-A=SUCCESS vs RULE-B=FAILURE",
+      "strength_state: STRONG vs WEAK (同namespace内)",
+      "use_god: 同PZZQ内两rule对月令用神输出相反"
+    ],
+    "FORBIDDEN": [
+      "climate_use_state vs strength_state (不同维度)",
+      "格局 vs 旺衰 (跨namespace)",
+      "PZZQ格局 vs QTBJ调候"
+    ]
+  },
+  "conflict_types": {
+    "CT1_VERDICT_CONFLICT": "同namespace内两rule对同一状态输出相反值",
+    "CT2_CONDITION_GAP": "一rule条件满足另一rule条件不满足, 需语境判定",
+    "CT3_EVIDENCE_GRADE_MISMATCH": "同namespace内A级rule与B级rule输出相反"
+  },
+  "priority_forbidden": {
+    "no_book_priority": "禁止经典等级排序(PZZQ>DTS>QTBJ)",
+    "no_factor_count": "禁止命中rule数多者胜",
+    "no_score": "禁止权重/百分比裁决",
+    "only": "source匹配scope优先, 无法裁决→UNDETERMINED"
+  },
+  "output_states": {
+    "RESOLVED": "证据链明确, 唯一输出",
+    "DUAL_USE": "不同namespace双用并存(非冲突)",
+    "CONFLICT_UNRESOLVED": "同namespace多rule冲突, 无法唯一裁决",
+    "FAIL_CLOSED": "证据不足/缺准入"
+  },
+  "gc001_dual_use_example": {
+    "use_god_state": "財", "climate_use_state": "癸",
+    "relation": "DUAL_USE",
+    "note": "格局用财+调候用癸, 并存非冲突"
+  }
+}

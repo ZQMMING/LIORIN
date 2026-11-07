@@ -1,0 +1,28 @@
+{
+  "safe": [
+    "common.boolean_enum_test",
+    "common.climate_producer_v2",
+    "common.climate_runtime",
+    "common.coverage_audit",
+    "common.dayun_xiji_v2",
+    "common.execution_demo",
+    "common.gc002_check",
+    "common.gc003_check",
+    "common.gc003_scan",
+    "common.grids_4_check",
+    "common.pzzq_resolver_v2",
+    "common.special_pattern_resolver",
+    "common.special_pattern_runtime",
+    "common.strength_rules_full",
+    "cong_ge_predicate",
+    "huaqi_predicate",
+    "yongshen_v3",
+    "zhuanwang_predicate",
+    "ziping_engine_v2"
+  ],
+  "excluded": [
+    "cong_ge_graph",
+    "huaqi_graph",
+    "zhuanwang_graph"
+  ]
+}

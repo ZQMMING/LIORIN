@@ -1,0 +1,34 @@
+﻿{
+  "contract_id": "PATCH-034",
+  "name": "strength_state 综合裁决（RULE-034-01）",
+  "status": "RULE_CONSTRUCTED",
+  "authorized_producers_before": 0,
+  "authorized_producers_after": ["RULE-034-01"],
+  "composite_domains": ["YHZP(SHUAI/QIANG/WANG)", "SFTK(BINGYAO)", "DTS(ZHONGHE)"],
+  "untriggered_domains": ["PZZQ.strength_condition(路径C非身強帶比)", "SMTH.time_modifier(无大运输入)"],
+  "rules": [
+    {
+      "rule_id": "RULE-034-01",
+      "name": "strength_state 综合裁决（COMPOSITE 谓词）",
+      "namespace": "strength_state",
+      "predicates": [
+        "qiang=強(無氣+遇劫)→STRONG 方向",
+        "wang=旺+根强+帮身→STRONG 方向",
+        "shuai=SHUAI+帮身充足+有根→SLIGHTLY_WEAK（衰中有旺 DTS-016-002 B1）",
+        "shuai=SHUAI+无帮身+无根→WEAK",
+        "病药財多身弱→佐证身弱方向",
+        "其他→UNDETERMINED（FAIL_CLOSED）"
+      ],
+      "forbidden": ["评分", "权重", "百分比", "factor_count→strength", "shuai→WEAK 直映射"],
+      "chart_1983": {"strength_state": "SLIGHTLY_WEAK", "evidence": ["YHZP-138-001", "SFTK-008-001", "DTS-016-002"]}
+    }
+  ],
+  "bug_fixed": "FORBIDDEN 子串包含匹配误报（WEAK in SLIGHTLY_WEAK）→改精确匹配核心值",
+  "gc001_update": "strength_state UNDETERMINED→SLIGHTLY_WEAK；forbidden 去除 SLIGHTLY_WEAK",
+  "acceptance_criteria": [
+    "strength 首次出值且无评分模型",
+    "无单因子触发（shuai 不直接映射 WEAK）",
+    "Golden GC-001 v4 回归通过",
+    "枚举 22/22"
+  ]
+}

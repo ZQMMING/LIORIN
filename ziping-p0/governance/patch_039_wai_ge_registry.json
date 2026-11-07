@@ -1,0 +1,55 @@
+{
+  "contract_id": "PATCH-039",
+  "name": "外格 Registry：从格/专旺/化气/杂格证据冻结",
+  "status": "REGISTERED_PENDING",
+  "principle": "FAIL_CLOSED：无A/B级原文不进规则层；外格与正格分离；从格=日主无气无根+某一行成势+无生扶",
+  "congrid": {
+    "從財格": {
+      "source": "SFTK-020-002", "grade": "A",
+      "definition": "棄命從財：身主無力不能任其財，只得舍命而從；畏身入旺鄉及印生之地",
+      "成_敗": {"成": "日主無根無生扶+財星成局成勢", "敗": "日主有根/見印生扶"},
+      "note": "不論陰陽日主皆從"
+    },
+    "從殺格": {
+      "source": "SFTK-012-002", "grade": "A",
+      "definition": "棄命從殺：日主全無一點生氣，四柱純然官殺，不得已從殺；畏見八字有根處及制殺運",
+      "成_敗": {"成": "日主無根無食制+官殺成勢", "敗": "日主有根/見食制殺"}
+    },
+    "從兒格": {
+      "source": "DTS-044-001", "grade": "A",
+      "definition": "從兒不論身強弱，只要吾兒又遇兒（食傷成勢，兒又生兒=財）",
+      "成_敗": {"成": "食傷成局成勢", "敗": "見印奪食"}
+    },
+    "從勢格": {
+      "source": "DTS-008-003", "grade": "A",
+      "definition": "五陰從勢（概念級）：財官傷皆旺日主無根，從其勢",
+      "成_敗": {"成": "財官傷皆旺+日主無根", "敗": "日主有根有扶"}
+    },
+    "從強格": {
+      "source": "PENDING", "grade": "PENDING",
+      "definition": "比劫印星成勢無財官殺（未釘死A級原文，FAIL_CLOSED不進規則）",
+      "成_敗": "待取证"
+    }
+  },
+  "zhuanwang": {
+    "曲直格": {"source": "YHZP-101-010", "grade": "A", "definition": "甲乙日寅卯辰/亥卯未木局，不見庚辛"},
+    "炎上格": {"source": "YHZP-101-006", "grade": "A", "definition": "丙丁日寅午戌/巳午未火局"},
+    "稼穡格": {"source": "YHZP-101-009", "grade": "A", "definition": "戊己日辰戌丑未全土"},
+    "從革格": {"source": "YHZP-121-003", "grade": "B", "definition": "庚辛日巳酉丑/申酉戌金局（注層）"},
+    "潤下格": {"source": "YHZP-101-007", "grade": "A", "definition": "壬癸日申子辰/亥子丑水局"}
+  },
+  "huaqi": {
+    "甲己化土": {"source": "YHZP-121-003", "grade": "B", "definition": "甲己合化土，月令生旺養庫臨官方化"},
+    "乙庚化金": {"source": "YHZP-121-003", "grade": "B"},
+    "丙辛化水": {"source": "YHZP-121-003", "grade": "B"},
+    "丁壬化木": {"source": "YHZP-121-003", "grade": "B"},
+    "戊癸化火": {"source": "YHZP-121-003", "grade": "B"}
+  },
+  "wait_list": ["從強格(原文PENDING)", "從革格(B级注待升)", "雜格10+(魁罡/金神/日贵/鼠贵/趋乾/井栏)待取证"],
+  "acceptance_criteria": [
+    "外格与正格分离（不进 PZZQ 正格 pipeline）",
+    "从格判定=日主无根无生扶+单行成势（非评分）",
+    "无A/B级原文不进规则层",
+    "先攻破從財/從殺（SFTK A级）"
+  ]
+}

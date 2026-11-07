@@ -1,0 +1,49 @@
+﻿== A. 从势格全部盘(日主本气根 ben_n) ==
+  DT-0423 state=CANDIDATE ben_n=1 戊戌 丁巳 甲寅 己巳
+  QT-0216 state=CANDIDATE ben_n=1 庚申 庚辰 丙午 戊戌
+== B. ben_n==0 的盘 pattern 分布(主从格吸收验证) ==
+  None/None: 635
+  从财格/CONFIRMED: 65
+  从杀格/CONFIRMED: 50
+  从儿格/CONFIRMED: 45
+  mm=母多灭子/印势漂没: 40
+  hq=化木气格: 24
+  从儿格/CANDIDATE: 17
+  从官格/CONFIRMED: 17
+  从杀格/CANDIDATE: 10
+  从官格/CANDIDATE: 9
+  从财格/CANDIDATE: 8
+  mm=土多金熄: 6
+  mm=水多木熄: 2
+  mm=火多土熄: 2
+  lq=两气成象(火土): 1
+  mm=金多水熄: 1
+  lq=两气成象(土金): 1
+  zw=None: 0
+  hq=None: 0
+  mm=None: 0
+  lq=None: 0
+== C. ben_n==0 且无任何 pattern 的盘(从势CONFIRMED候选) ==
+  总数: 570
+  DT-0006 丁亥 庚戌 甲辰 壬申 mm=None lq=None
+  DT-0007 乙亥 庚辰 甲戌 壬申 mm=None lq=None
+  DT-0012 辛卯 丁酉 戊子 戊午 mm=None lq=None
+  DT-0016 辛未 乙未 庚辰 丁亥 mm=None lq=None
+  DT-0023 丙子 己亥 乙亥 丙子 mm=None lq=None
+  DT-0036 戊寅 乙丑 丙寅 庚寅 mm=None lq=None
+  DT-0037 丙子 己亥 乙酉 壬午 mm=None lq=None
+  DT-0039 甲寅 戊辰 丙寅 丙申 mm=None lq=None
+  DT-0040 壬申 甲辰 丙寅 丙申 mm=None lq=None
+  DT-0042 己巳 辛未 壬午 乙巳 mm=None lq=None
+  DT-0044 壬午 己酉 甲申 甲子 mm=None lq=None
+  DT-0052 壬寅 甲辰 丁亥 己酉 mm=None lq=None
+  DT-0061 壬戌 壬子 甲子 戊辰 mm=None lq=None
+  DT-0089 辛卯 丙申 癸卯 壬戌 mm=None lq=None
+  DT-0090 辛卯 丙申 癸卯 甲寅 mm=None lq=None
+  DT-0093 丁未 癸丑 甲辰 甲戌 mm=None lq=None
+  DT-0096 戊寅 庚申 丙申 丙申 mm=None lq=None
+  DT-0097 癸酉 甲子 丙寅 戊戌 mm=None lq=None
+  DT-0098 癸未 乙卯 丙辰 庚寅 mm=None lq=None
+  DT-0113 癸酉 甲子 戊子 戊午 mm=None lq=None
+== 统计 ==
+  跑盘数: 2106

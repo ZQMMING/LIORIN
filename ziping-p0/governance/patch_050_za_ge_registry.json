@@ -1,0 +1,24 @@
+{
+  "contract_id": "PATCH-050",
+  "name": "雜格註冊：REGISTERED_PENDING（不進RULE層）",
+  "principle": "PZZQ-007-011 A級鐵律：月令有用神則不許用外格；PZZQ-007-017 列俗書外格(刑合/朝陽/鼠貴/拱戌)批為「百無一是」；PZZQ-007-018 批「拘泥外格為活變」。雜格混雜後世添加，按PATCH-002神煞同原則：只註冊存在，不進RULE層",
+  "pzzq_stand": {
+    "PZZQ-007-011": "外格者蓋因月令無用權而用之；若月令自有用神豈可別尋外格；有官莫尋格局",
+    "PZZQ-007-017": "列俗書外格(刑合遙迎/井欄朝陽/鼠貴/拱戌)批為謬論百無一是",
+    "PZZQ-007-018": "論格局不知專尋月令而以拘泥外格為活變，皆誤收格局"
+  },
+  "wait_list_registered": [
+    {"格": "魁罡", "條件": "庚辰庚戌壬辰戊戌日", "source": "YHZP待證", "status": "REGISTERED_PENDING"},
+    {"格": "金神", "條件": "癸酉時等", "source": "SFTK-139-005(A)", "status": "REGISTERED_PENDING"},
+    {"格": "井欄叉", "條件": "庚日申子辰全", "source": "SFTK-139-009(A)", "status": "REGISTERED_PENDING"},
+    {"格": "六乙鼠貴", "條件": "乙日丙子時", "source": "PZZQ-007-017批為俗", "status": "EXCLUDED_BY_PZZQ"},
+    {"格": "朝陽格", "條件": "丙日戊己時", "source": "PZZQ-007-017批為俗", "status": "EXCLUDED_BY_PZZQ"},
+    {"格": "日貴/趨乾/合祿/刑合", "條件": "各俗格", "source": "PZZQ-007-017/018批為俗", "status": "EXCLUDED_BY_PZZQ"}
+  ],
+  "acceptance_criteria": [
+    "雜格只註冊存在，不進RULE層",
+    "PZZQ批為俗者(鼠貴/朝陽/合祿/刑合)直接EXCLUDED",
+    "月令有用神則外格不生效(PZZQ-007-011)",
+    "後續若釘死A級原文再升格"
+  ]
+}

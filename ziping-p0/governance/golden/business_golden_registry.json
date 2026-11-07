@@ -1,0 +1,6 @@
+{
+  "registry": "BUSINESS_GOLDEN_REGISTRY",
+  "version": "1.0.0",
+  "governance": "§54/§94：Business Golden 验证真实经典规则/真实输入/真实预期结果/真实证据；未经 Human Architect 审批的 Golden 必须 status=NOT_APPROVED，不得当作 Golden Truth；Agent 只 READ/RUN/REPORT",
+  "golden_list": []
+}

@@ -1,0 +1,30 @@
+﻿==== PATCH-025 Pattern Production Contract ====
+
+==== 循环依赖防护 ====
+  禁止: strength_state → pattern_state（身强身弱不得作为取格依据）
+  禁止: pattern_state → strength_state（格局成立不得反推身强弱）
+  禁止: wang_state/shuai_state/qiang_state → pattern_state（旺衰状态不得进入格局判定输入）
+  格局输入强弱状态检查: 无违规（格局输入=order/month/ten_god/structure/root）
+
+==== 1983-1103 Pattern Producer 输出 ====
+{
+ "state": "pattern_state",
+ "value": "UNDETERMINED",
+ "producer": "PZZQ.pattern",
+ "sources": [
+  "PZZQ.pattern(order_state/month_order/ten_god_relation/structure_relation/root_relation)"
+ ],
+ "evidence_chain": [
+  "PZZQ-005-007 八字用神专求月令"
+ ],
+ "namespace_source": {
+  "PZZQ": "pattern"
+ },
+ "month_order_entry": "戌月戊土用事→财格候选（structure_relation=UNDETERMINED，待透干会支确认）",
+ "forbidden_not_consumed": [
+  "strength_state/wang_state/shuai_state/qiang_state（格局不读强弱）"
+ ]
+}
+
+==== 全局禁令 ====
+  格局成立≠反推身强弱；身强弱≠强行取格；旺衰不进入格局输入

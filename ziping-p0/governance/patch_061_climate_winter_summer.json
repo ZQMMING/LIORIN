@@ -1,0 +1,24 @@
+{
+  "contract_id": "PATCH-061",
+  "name": "QTBJ调候钉原文-冬夏两季",
+  "principle": "冬寒需暖/夏热需润, 逐格钉QTBJ原文; 先冬夏后春秋",
+  "winter_registry": {
+    "甲亥": {"use": "庚丁", "佐": "丙", "忌": "壬水泛身须戊制", "src": "QTBJ-011-001", "done": true},
+    "甲子": {"use": "丁庚", "佐": "丙", "忌": "癸伤丁无戊救/水泛木浮", "src": "QTBJ-012-001", "done": true},
+    "甲丑": {"use": "庚丁", "note": "庚劈甲引丁火通明", "src": "QTBJ-013-001", "done": true},
+    "乙亥": {"use": "丙", "次": "戊", "note": "壬水司令取丙用戊次", "src": "QTBJ-023-001", "done": true},
+    "乙子": {"use": "丙", "忌": "癸冻花木", "note": "一阳来复专用丙火解冻", "src": "QTBJ-024-001", "done": true},
+    "乙丑": {"use": "丙", "note": "木寒宜丙寒谷回春", "src": "QTBJ-025-001", "done": true},
+    "丙亥": {"use": "甲戊庚", "note": "太阳失令见甲戊庚", "src": "QTBJ-036-001", "done": true}
+  },
+  "summer_registry": {
+    "甲巳": {"use": "癸丁", "note": "退气先癸后丁庚太多受病", "src": "QTBJ-006-001", "done": true},
+    "乙巳": {"use": "癸", "佐": "庚辛", "note": "木枯专尚癸水", "src": "QTBJ-017-001", "done": true},
+    "乙午": {"use": "癸丙", "note": "禾稼俱旱癸滋丙癸齐用", "src": "QTBJ-018-001", "done": true},
+    "乙未": {"use": "丙", "佐": "癸", "note": "水多金水丙火为尊癸透大富", "src": "QTBJ-019-001", "done": true},
+    "丙巳": {"use": "壬", "佐": "金", "note": "建禄于巳炎上专用壬水解炎", "src": "QTBJ-030-002", "done": true},
+    "丙午": {"use": "壬庚", "note": "愈炎得壬庚高透", "src": "QTBJ-031-001", "done": true},
+    "丙未": {"use": "壬", "佐": "庚", "note": "二伏生寒壬水为用庚辅佐", "src": "QTBJ-032-001", "done": true}
+  },
+  "acceptance": "冬寒=丙丁火暖/夏热=壬癸水润, 全部钉QTBJ原文; 无评分"
+}

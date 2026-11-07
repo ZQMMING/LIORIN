@@ -1,0 +1,2346 @@
+[
+  {
+    "idx": 1,
+    "file": "bingyao_layer.py",
+    "line": 36,
+    "book": "PZZQ",
+    "eng": "# 病类→药神五行 (单一数据源: check_qubing_level 岁运去病 + appl",
+    "words": [
+      "药神五行",
+      "单一数据源",
+      "岁运去病",
+      "原局药消病共用"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 2,
+    "file": "bingyao_layer.py",
+    "line": 37,
+    "book": "DTS",
+    "eng": "#   依据: PZZQ L957「除其病神, 即谓之药」(以抑为喜则去其抑者为病); SFTK",
+    "words": [
+      "除其病神",
+      "即谓之药",
+      "以抑为喜则去其抑",
+      "用财见比肩为病"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：不必论当令不令，只论取最多最旺，而可以为满局之祖宗者，为源头也。看此源头，流到何方"
+    ]
+  },
+  {
+    "idx": 3,
+    "file": "bingyao_layer.py",
+    "line": 99,
+    "book": "?",
+    "eng": "        'classic': 'SFTK-008-001',\n        'slic",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 4,
+    "file": "bingyao_layer.py",
+    "line": 100,
+    "book": "?",
+    "eng": "        'slice_id': 'PATHOLOGY.QIANG_RUO.004',  ",
+    "words": [
+      "财多身弱"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 5,
+    "file": "bingyao_layer.py",
+    "line": 107,
+    "book": "?",
+    "eng": "        'classic': 'SFTK-008-001',\n        'slic",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 6,
+    "file": "bingyao_layer.py",
+    "line": 108,
+    "book": "?",
+    "eng": "        'slice_id': 'PATHOLOGY.QIANG_RUO.005',  ",
+    "words": [
+      "杀重身轻"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 7,
+    "file": "bingyao_layer.py",
+    "line": 115,
+    "book": "?",
+    "eng": "        'classic': 'PZZQ 食神本属泄气',\n        'slice",
+    "words": [
+      "食神本属泄气"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 8,
+    "file": "bingyao_layer.py",
+    "line": 116,
+    "book": "?",
+    "eng": "        'slice_id': 'PATHOLOGY.QIANG_RUO.020',  ",
+    "words": [
+      "雕枯旺弱四病"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 9,
+    "file": "bingyao_layer.py",
+    "line": 123,
+    "book": "?",
+    "eng": "        'classic': 'YHZP 伤官见官为祸百端',\n        'sli",
+    "words": [
+      "伤官见官为祸百端"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 10,
+    "file": "bingyao_layer.py",
+    "line": 124,
+    "book": "?",
+    "eng": "        'slice_id': 'STRUCTURE.GE_JU.JIU_YING.00",
+    "words": [
+      "伤官格见官"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 11,
+    "file": "bingyao_layer.py",
+    "line": 131,
+    "book": "?",
+    "eng": "        'classic': 'YHZP 枭神夺食',\n        'slice_i",
+    "words": [
+      "枭神夺食"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 12,
+    "file": "bingyao_layer.py",
+    "line": 132,
+    "book": "?",
+    "eng": "        'slice_id': 'PATHOLOGY.JIE_GOU.018',   #",
+    "words": [
+      "枭神夺食补曰"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 13,
+    "file": "bingyao_layer.py",
+    "line": 138,
+    "book": "PZZQ",
+    "eng": "        'name': '用神不在局中',\n        'classic': 'PZ",
+    "words": [
+      "用神不在局中"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "是以善而顺用之，则财喜食神以相生，生官以护财；官喜透财以相生，生印以护官；印喜官煞以相生，劫才以"
+    ]
+  },
+  {
+    "idx": 14,
+    "file": "bingyao_layer.py",
+    "line": 155,
+    "book": "?",
+    "eng": "        'classic': 'DTS 水多以水为病 / SFTK 比劫成党',\n   ",
+    "words": [
+      "水多以水为病",
+      "比劫成党"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": []
+  },
+  {
+    "idx": 15,
+    "file": "bingyao_layer.py",
+    "line": 156,
+    "book": "?",
+    "eng": "        'slice_id': 'PATHOLOGY.QIANG_RUO.001',  ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 16,
+    "file": "bingyao_layer.py",
+    "line": 163,
+    "book": "?",
+    "eng": "        'classic': 'DTS 反局章 君赖臣生(行445) 土重金埋/金旺则水",
+    "words": [
+      "君赖臣生",
+      "土重金埋",
+      "金旺则水浊"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": []
+  },
+  {
+    "idx": 17,
+    "file": "bingyao_layer.py",
+    "line": 164,
+    "book": "?",
+    "eng": "        'slice_id': 'STATE.WANG_SHUAI.FAN_JU.001",
+    "words": [
+      "反局总纲"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 19,
+    "file": "bingyao_layer.py",
+    "line": 177,
+    "book": "?",
+    "eng": "        'classic': 'PZZQ4106 制煞过重同样成病',\n        ",
+    "words": [
+      "制煞过重同样成病"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 22,
+    "file": "bingyao_layer.py",
+    "line": 287,
+    "book": "YHZP",
+    "eng": "    # 核1甲路: 三病原文均字面含「身弱/身轻」前提——CAI_DUO(PZZQ L231",
+    "words": [
+      "三病原文均字面含",
+      "若财多身弱"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 24,
+    "file": "bingyao_layer.py",
+    "line": 426,
+    "book": "?",
+    "eng": "        _no_heavy = not has_heavy_root\n        #",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 26,
+    "file": "bingyao_layer.py",
+    "line": 896,
+    "book": "SFTK",
+    "eng": "# 病类→病神五行 (动态按日主; 供药有效性「病重/病轻」判据)\n#   依据: SFTK L",
+    "words": [
+      "病神五行",
+      "动态按日主",
+      "供药有效性",
+      "四柱纯土水日干则"
+    ],
+    "hit": 2,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 27,
+    "file": "bingyao_layer.py",
+    "line": 916,
+    "book": "PZZQ",
+    "eng": "    依据(原著优先, 各判据带原文):\n      - 消的明文: PZZQ L957「除其",
+    "words": [
+      "原著优先",
+      "消的明文",
+      "除其病神",
+      "即谓之药"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 28,
+    "file": "bingyao_layer.py",
+    "line": 917,
+    "book": "DTS",
+    "eng": "      - 消的明文: PZZQ L957「除其病神, 即谓之药」; SFTK L424「原",
+    "words": [
+      "消的明文",
+      "除其病神",
+      "即谓之药",
+      "原有所害之字而"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：不必论当令不令，只论取最多最旺，而可以为满局之祖宗者，为源头也。看此源头，流到何方"
+    ]
+  },
+  {
+    "idx": 29,
+    "file": "bingyao_layer.py",
+    "line": 919,
+    "book": "DTS",
+    "eng": "      - 药有效性三判据:\n        1. 合判据 (DTS L250 通关「必得引",
+    "words": [
+      "必得引用无合之神",
+      "及刑冲所间之物"
+    ],
+    "hit": 2,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：杀即官也，同流共派者可混也；官非杀也，各立门墙者，不可混也。杀重矣，官从之，非混也"
+    ]
+  },
+  {
+    "idx": 30,
+    "file": "bingyao_layer.py",
+    "line": 923,
+    "book": "SFTK",
+    "eng": "           (原断「甲以乙妹妻庚, 凶为吉兆, 含合忘冲」) → 官不能制劫 → 病不",
+    "words": [
+      "甲以乙妹妻庚",
+      "凶为吉兆",
+      "含合忘冲",
+      "官不能制劫"
+    ],
+    "hit": 2,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 32,
+    "file": "bingyao_layer.py",
+    "line": 989,
+    "book": "DTS",
+    "eng": "        # ① 合判据: 药透干被【非日主他干】紧贴天干五合合走 -> 羁绊, 不能援引",
+    "words": [
+      "药透干被",
+      "非日主他干",
+      "紧贴天干五合合走",
+      "不能援引"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：日主为君，臣神为臣。如甲乙日主，满局皆木，内有一二土气，是君盛臣衰，其势要多方以助"
+    ]
+  },
+  {
+    "idx": 33,
+    "file": "bingyao_layer.py",
+    "line": 990,
+    "book": "PZZQ",
+    "eng": "        #    (DTS L461「羁绊喜神之合, 如乙喜神庚合之则羁绊」; L425",
+    "words": [
+      "羁绊喜神之合",
+      "如乙喜神庚合之则",
+      "真化需得令逢辰独"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 34,
+    "file": "bingyao_layer.py",
+    "line": 1011,
+    "book": "DTS",
+    "eng": "            bing['yao_note'] = ('药(%s)透干被非日主他干紧贴",
+    "words": [
+      "透干被非日主他干",
+      "紧贴天干五合合走",
+      "不能援引"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：日主为君，臣神为臣。如甲乙日主，满局皆木，内有一二土气，是君盛臣衰，其势要多方以助"
+    ]
+  },
+  {
+    "idx": 37,
+    "file": "bingyao_layer.py",
+    "line": 1046,
+    "book": "PZZQ",
+    "eng": "        bing['yao_note'] = ('原局药在(透干/本气根) 且未触合/根",
+    "words": [
+      "原局药在",
+      "且未触合"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 38,
+    "file": "bingyao_layer.py",
+    "line": 1047,
+    "book": "DTS",
+    "eng": "                            '(PZZQ L957 除其病神即谓之药",
+    "words": [
+      "除其病神即谓之药",
+      "得一字以去之"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：不必论当令不令，只论取最多最旺，而可以为满局之祖宗者，为源头也。看此源头，流到何方"
+    ]
+  },
+  {
+    "idx": 39,
+    "file": "bingyao_layer.py",
+    "line": 1059,
+    "book": "DTS",
+    "eng": "    原局药消病(甲路+药有效性三判据): apply_yuanju_yao_enabled ",
+    "words": [
+      "原局药消病"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：杀即官也，同流共派者可混也；官非杀也，各立门墙者，不可混也。杀重矣，官从之，非混也"
+    ]
+  },
+  {
+    "idx": 41,
+    "file": "bingyao_layer.py",
+    "line": 1095,
+    "book": "SFTK",
+    "eng": "        'yao_removed_note': ('原局药消病(甲路): 判据「药透干/",
+    "words": [
+      "原局药消病",
+      "本气根即消"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 42,
+    "file": "daymaster_tian_he.py",
+    "line": 135,
+    "book": "PZZQ",
+    "eng": "            #     隔位说的是【日主被隔开】, 夹是【日主居中】, 二者相反。\n",
+    "words": [
+      "隔位说的是",
+      "日主被隔开",
+      "日主居中",
+      "二者相反"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "如春木冬水、土生四季之类，日与月同，难以作用，类象、属象、冲财、会禄、刑合、遥迎、井栏、朝阳诸格"
+    ]
+  },
+  {
+    "idx": 43,
+    "file": "fan_ju.py",
+    "line": 5,
+    "book": "?",
+    "eng": "准神来源: DTS 京图撰刘基原注 L442-L451「### 十七、反局」\n切片来源: STA",
+    "words": [
+      "准神来源",
+      "京图撰刘基原注"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": []
+  },
+  {
+    "idx": 44,
+    "file": "fan_ju.py",
+    "line": 77,
+    "book": "DTS",
+    "eng": "def _is_wang(facts: Dict[str, Any], wx: str) -> ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 45,
+    "file": "fan_ju.py",
+    "line": 197,
+    "book": "?",
+    "eng": "准神来源: DTS 京图撰刘基原注 L442-L451「### 十七、反局」\n切片来源: STA",
+    "words": [
+      "准神来源",
+      "京图撰刘基原注"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": []
+  },
+  {
+    "idx": 46,
+    "file": "fan_ju.py",
+    "line": 285,
+    "book": "DTS",
+    "eng": "# ===== 实变量定义(依 DTS/PZZQ 原文, 全整数/枚举, 无浮点) =====\n",
+    "words": [
+      "实变量定义",
+      "旺相二态"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 48,
+    "file": "fan_ju.py",
+    "line": 352,
+    "book": "DTS",
+    "eng": "\n    # ---- ① 君赖臣生 DTS L445 + 任氏: 印旺 + 财有气 -> 用财",
+    "words": [
+      "君赖臣生",
+      "用财破印"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 49,
+    "file": "fan_ju.py",
+    "line": 360,
+    "book": "?",
+    "eng": "                      % (yin, '当令旺相' if yin_wang",
+    "words": [
+      "当令旺相"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 50,
+    "file": "fan_ju.py",
+    "line": 361,
+    "book": "DTS",
+    "eng": "            'slice_id': 'STATE.WANG_SHUAI.FAN_JU",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 51,
+    "file": "fan_ju.py",
+    "line": 364,
+    "book": "DTS",
+    "eng": "\n    # ---- ② 母慈灭子 DTS L449 + 任氏: 印旺 + 财无气 -> 顺母",
+    "words": [
+      "母慈灭子",
+      "顺母之性",
+      "不可财破印"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      "天战犹自可，地战急如火。"
+    ]
+  },
+  {
+    "idx": 52,
+    "file": "fan_ju.py",
+    "line": 373,
+    "book": "?",
+    "eng": "                      % (yin, '当令旺相' if yin_wang",
+    "words": [
+      "当令旺相"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 53,
+    "file": "fan_ju.py",
+    "line": 374,
+    "book": "DTS",
+    "eng": "            'slice_id': 'STATE.WANG_SHUAI.FAN_JU",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "天战犹自可，地战急如火。"
+    ]
+  },
+  {
+    "idx": 54,
+    "file": "fan_ju.py",
+    "line": 377,
+    "book": "DTS",
+    "eng": "\n    # ---- ③ 儿能救母 DTS L447 链式: 伤母者(官杀)有气 + 儿(食伤",
+    "words": [
+      "儿能救母"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 55,
+    "file": "fan_ju.py",
+    "line": 386,
+    "book": "?",
+    "eng": "                      % (chen, '有气(透干或根未被合冲)', z",
+    "words": [
+      "透干或根未被合冲"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 56,
+    "file": "fan_ju.py",
+    "line": 387,
+    "book": "DTS",
+    "eng": "            'slice_id': 'STATE.WANG_SHUAI.FAN_JU",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 57,
+    "file": "fan_ju.py",
+    "line": 390,
+    "book": "DTS",
+    "eng": "\n    # ---- ④ 夫健怕妻 DTS L451 + DT-0375: 妻(我克)旺而生我",
+    "words": [
+      "夫健怕妻",
+      "旺而生我克者"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：干头遇庚乙辛谓之天战，而得地支顺者无害；地支寅申卯酉，谓之地战，则天干不能为力。其"
+    ]
+  },
+  {
+    "idx": 58,
+    "file": "fan_ju.py",
+    "line": 398,
+    "book": "?",
+    "eng": "                      % (cai, m_cai, chen, dwx, ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 59,
+    "file": "fan_ju.py",
+    "line": 399,
+    "book": "DTS",
+    "eng": "            'slice_id': 'STATE.WANG_SHUAI.FAN_JU",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：干头遇庚乙辛谓之天战，而得地支顺者无害；地支寅申卯酉，谓之地战，则天干不能为力。其"
+    ]
+  },
+  {
+    "idx": 60,
+    "file": "fan_ju.py",
+    "line": 427,
+    "book": "DTS",
+    "eng": "                          '阈值「成党>=4」为工程整数档, 非原典明",
+    "words": [
+      "为工程整数档",
+      "非原典明文"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：木为母，火为子。木被金伤，火克金则生木；火遭水克，土克水则生火；土遇木伤，金克木则"
+    ]
+  },
+  {
+    "idx": 61,
+    "file": "fan_ju.py",
+    "line": 428,
+    "book": "DTS",
+    "eng": "        'evidence_refs': ['DTS L442 反局章标题', 'DTS",
+    "words": [
+      "反局章标题",
+      "君赖臣生"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 63,
+    "file": "ge_jie_layer.py",
+    "line": 6,
+    "book": "PZZQ",
+    "eng": "第二步(第一步,可控): 伤官带煞无财格 -- 只标格体(伤官+煞), 不动病药层.\n  PZZ",
+    "words": [
+      "伤官带煞无财格",
+      "只标格体",
+      "伤官带煞而无财",
+      "伤官格成也"
+    ],
+    "hit": 2,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 64,
+    "file": "ge_jie_layer.py",
+    "line": 31,
+    "book": "PZZQ",
+    "eng": "    \"\"\"日主视角旺衰tier: 冲拔拓扑后再判element_power_tier.\n  ",
+    "words": [
+      "日主视角旺衰"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 65,
+    "file": "ge_jie_layer.py",
+    "line": 64,
+    "book": "PZZQ",
+    "eng": "        _ben_self = sum(1 for _z in _zhis if GAN",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 66,
+    "file": "ge_jie_layer.py",
+    "line": 125,
+    "book": "DTS",
+    "eng": "    #   dm_ben_eff<=1 / yin_ben_eff<=1 两个整数阈值亦无 ",
+    "words": [
+      "两个整数阈值亦无"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：如甲日主生于四季，单遇一位己土，在月时上合遇壬、癸、甲、乙、戊，而有一辰字，乃为化"
+    ]
+  },
+  {
+    "idx": 67,
+    "file": "ge_jie_layer.py",
+    "line": 174,
+    "book": "PZZQ",
+    "eng": "        #   依据原案:\n        #     PZZQ L565(本案 PZ-",
+    "words": [
+      "依据原案",
+      "丁壬相合",
+      "生于卯月",
+      "木旺秉令"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 68,
+    "file": "ge_jie_layer.py",
+    "line": 176,
+    "book": "PZZQ",
+    "eng": "        #           为丁壬化木格」—— 化气格独立成格, 化神(木)为格体。",
+    "words": [
+      "为丁壬化木格",
+      "化气格独立成格"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 69,
+    "file": "ge_jie_layer.py",
+    "line": 191,
+    "book": "PZZQ",
+    "eng": "                    'po_ge': [],\n               ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 72,
+    "file": "ge_jie_layer.py",
+    "line": 250,
+    "book": "DTS",
+    "eng": "                #   从官格 DTS 无从官格喜用明文 -> xi_wx 留空",
+    "words": [
+      "无从官格喜用明文"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "[DTSL0 越界/空, 全书615行]"
+    ]
+  },
+  {
+    "idx": 73,
+    "file": "ge_jie_layer.py",
+    "line": 293,
+    "book": "PZZQ",
+    "eng": "                'hua_wx': [],  # 化神: 无\n         ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 74,
+    "file": "ge_jie_layer.py",
+    "line": 294,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'组合','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 75,
+    "file": "ge_jie_layer.py",
+    "line": 297,
+    "book": "PZZQ",
+    "eng": "            return facts\n        # 路径二: 食带煞无财弃食就",
+    "words": [
+      "食带煞无财弃食就",
+      "或食带煞而无财"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 76,
+    "file": "ge_jie_layer.py",
+    "line": 310,
+    "book": "PZZQ",
+    "eng": "                'hua_wx': [],\n                'p",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 77,
+    "file": "ge_jie_layer.py",
+    "line": 311,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'组合','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 78,
+    "file": "ge_jie_layer.py",
+    "line": 315,
+    "book": "PZZQ",
+    "eng": "\n    # 1.5) 伤官佩印格: 月令伤官 + 印透. PZZQ255: \"伤官佩印而伤官旺",
+    "words": [
+      "伤官佩印格",
+      "月令伤官",
+      "伤官佩印而伤官旺",
+      "伤官是格体"
+    ],
+    "hit": 2,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 79,
+    "file": "ge_jie_layer.py",
+    "line": 328,
+    "book": "PZZQ",
+    "eng": "                'zhi_wx': [], 'hua_wx': [],\n    ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 80,
+    "file": "ge_jie_layer.py",
+    "line": 329,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'组合','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 81,
+    "file": "ge_jie_layer.py",
+    "line": 349,
+    "book": "PZZQ",
+    "eng": "                'zhi_wx': [], 'hua_wx': [GAN_WX[",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 82,
+    "file": "ge_jie_layer.py",
+    "line": 350,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'组合','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 83,
+    "file": "ge_jie_layer.py",
+    "line": 354,
+    "book": "PZZQ",
+    "eng": "\n    # 3) 六格扩写: PZZQ255原文, 只定格体, 病药层不消费.\n    #  ",
+    "words": [
+      "六格扩写",
+      "只定格体",
+      "不触发格体过滤"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 84,
+    "file": "ge_jie_layer.py",
+    "line": 376,
+    "book": "PZZQ",
+    "eng": "            shangguan = _god_gans('伤官')\n        ",
+    "words": [
+      "官逢刑冲破格"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 85,
+    "file": "ge_jie_layer.py",
+    "line": 406,
+    "book": "PZZQ",
+    "eng": "                if _officer_mixed:\n             ",
+    "words": [
+      "官杀混杂破"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 86,
+    "file": "ge_jie_layer.py",
+    "line": 414,
+    "book": "PZZQ",
+    "eng": "                    'po_ge': _guan_po,\n         ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 87,
+    "file": "ge_jie_layer.py",
+    "line": 435,
+    "book": "PZZQ",
+    "eng": "                    'po_ge': _guan_po_default,\n ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 88,
+    "file": "ge_jie_layer.py",
+    "line": 439,
+    "book": "PZZQ",
+    "eng": "        # 食神制杀格：月令正官+无正官透+透干七杀+食伤透\n        # PZZ",
+    "words": [
+      "食神制杀格",
+      "月令正官",
+      "无正官透",
+      "透干七杀"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 89,
+    "file": "ge_jie_layer.py",
+    "line": 450,
+    "book": "PZZQ",
+    "eng": "                'hua_wx': [],\n                'p",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 90,
+    "file": "ge_jie_layer.py",
+    "line": 451,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'组合','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 91,
+    "file": "ge_jie_layer.py",
+    "line": 463,
+    "book": "PZZQ",
+    "eng": "        self_root = (DM_LU.get(dg) in zhis) or (",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 92,
+    "file": "ge_jie_layer.py",
+    "line": 465,
+    "book": "PZZQ",
+    "eng": "        if guan_gans or cai_gans or (shi_gans an",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 97,
+    "file": "ge_jie_layer.py",
+    "line": 517,
+    "book": "PZZQ",
+    "eng": "                    #   「财轻」在 PZZQ/SFTK 无可量化口径, ",
+    "words": [
+      "无可量化口径",
+      "须案例反标定"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 98,
+    "file": "ge_jie_layer.py",
+    "line": 518,
+    "book": "PZZQ",
+    "eng": "                    'po_ge': [{'type':'组合','matc",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 99,
+    "file": "ge_jie_layer.py",
+    "line": 534,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'组合','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 100,
+    "file": "ge_jie_layer.py",
+    "line": 540,
+    "book": "PZZQ",
+    "eng": "    # 先落官印双全路径: 月令印+官透+印透+官有根+无杀透.\n    # 官无根=官虚浮",
+    "words": [
+      "先落官印双全路径",
+      "官虚浮生印无力"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 101,
+    "file": "ge_jie_layer.py",
+    "line": 568,
+    "book": "PZZQ",
+    "eng": "\n        # PZZQ1113: 官印双全=月令印+官透+官有根+无杀透. 印是格体.\n",
+    "words": [
+      "官印双全",
+      "印是格体"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 102,
+    "file": "ge_jie_layer.py",
+    "line": 581,
+    "book": "PZZQ",
+    "eng": "                    _xi_gans = list(yin_gans)\n  ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 103,
+    "file": "ge_jie_layer.py",
+    "line": 585,
+    "book": "PZZQ",
+    "eng": "                    _xi_gans = list(guan_gans)  ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 104,
+    "file": "ge_jie_layer.py",
+    "line": 591,
+    "book": "PZZQ",
+    "eng": "                    'zhi_wx': [], 'hua_wx': [],\n",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 105,
+    "file": "ge_jie_layer.py",
+    "line": 595,
+    "book": "PZZQ",
+    "eng": "                return facts\n        # PZZQ1113:",
+    "words": [
+      "印轻逢煞",
+      "印是格体"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 106,
+    "file": "ge_jie_layer.py",
+    "line": 604,
+    "book": "PZZQ",
+    "eng": "                'zhi_wx': [], 'hua_wx': [],\n    ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 107,
+    "file": "ge_jie_layer.py",
+    "line": 605,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'组合','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 108,
+    "file": "ge_jie_layer.py",
+    "line": 608,
+    "book": "PZZQ",
+    "eng": "            return facts\n        # PZZQ1113: 印多逢",
+    "words": [
+      "印多逢财财透根轻",
+      "印是格体"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 109,
+    "file": "ge_jie_layer.py",
+    "line": 633,
+    "book": "PZZQ",
+    "eng": "                'po_ge': _yin_po,\n              ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 110,
+    "file": "ge_jie_layer.py",
+    "line": 635,
+    "book": "PZZQ",
+    "eng": "                         if _yin_ren else\n      ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 111,
+    "file": "ge_jie_layer.py",
+    "line": 653,
+    "book": "PZZQ",
+    "eng": "            _yin_xq = [yin_wx_default]\n         ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 112,
+    "file": "ge_jie_layer.py",
+    "line": 655,
+    "book": "PZZQ",
+    "eng": "        else:\n            _yin_rule = 'PZZQ255: ",
+    "words": [
+      "印是格体",
+      "身印旺食伤泄秀为"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 113,
+    "file": "ge_jie_layer.py",
+    "line": 693,
+    "book": "PZZQ",
+    "eng": "                    'po_ge': [{'type':'组合','matc",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 114,
+    "file": "ge_jie_layer.py",
+    "line": 717,
+    "book": "PZZQ",
+    "eng": "                        'hua_wx': [GAN_WX[yin_ga",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 115,
+    "file": "ge_jie_layer.py",
+    "line": 718,
+    "book": "PZZQ",
+    "eng": "                        'po_ge': [{'type':'组合','",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 116,
+    "file": "ge_jie_layer.py",
+    "line": 730,
+    "book": "PZZQ",
+    "eng": "                'zhi_wx': [], 'hua_wx': [],\n    ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 117,
+    "file": "ge_jie_layer.py",
+    "line": 731,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'组合','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 118,
+    "file": "ge_jie_layer.py",
+    "line": 754,
+    "book": "PZZQ",
+    "eng": "                'hua_wx': [],\n                'p",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 119,
+    "file": "ge_jie_layer.py",
+    "line": 755,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'缺失','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 120,
+    "file": "ge_jie_layer.py",
+    "line": 794,
+    "book": "PZZQ",
+    "eng": "                'zhi_wx': [], 'hua_wx': [],\n    ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "何谓败？官逢伤克刑冲，官格败也；财轻比重，财透七煞，财格败也；印轻逢财，或身强印重而透煞，印格败"
+    ]
+  },
+  {
+    "idx": 121,
+    "file": "ge_jie_layer.py",
+    "line": 795,
+    "book": "PZZQ",
+    "eng": "                'po_ge': [{'type':'缺失','match':'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 123,
+    "file": "ge_jie_layer.py",
+    "line": 833,
+    "book": "DTS",
+    "eng": "        _guan_def_xi = _god_gans('正官')\n        #",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：精、气、神，皆无气也，五行大率以金水为精气，木火为神气，而土所以实之者也。有神人不"
+    ]
+  },
+  {
+    "idx": 124,
+    "file": "ge_jie_layer.py",
+    "line": 857,
+    "book": "DTS",
+    "eng": "        elif _ti_gang_tai_wang and _yin_def_xi:\n",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：精、气、神，皆无气也，五行大率以金水为精气，木火为神气，而土所以实之者也。有神人不"
+    ]
+  },
+  {
+    "idx": 125,
+    "file": "ge_jie_layer.py",
+    "line": 876,
+    "book": "PZZQ",
+    "eng": "            'po_ge': _ss_po,  # 枭夺食: 偏印见即夺(就煞印路径",
+    "words": [
+      "偏印见即夺",
+      "就煞印路径除外"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 126,
+    "file": "ge_jie_layer.py",
+    "line": 913,
+    "book": "PZZQ",
+    "eng": "            'po_ge': _sg_po,  # 破格: 伤官见官(非金水)/生财",
+    "words": [
+      "伤官见官",
+      "生财带煞"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 127,
+    "file": "ge_jie_layer.py",
+    "line": 945,
+    "book": "DTS",
+    "eng": "            #   L572 条件含「日主无根或根极弱」——「根极弱」是工程自造词,",
+    "words": [
+      "日主无根或根极弱",
+      "是工程自造词"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：如甲日主生于四季，单遇一位己土，在月时上合遇壬、癸、甲、乙、戊，而有一辰字，乃为化"
+    ]
+  },
+  {
+    "idx": 134,
+    "file": "l0_fact_builder.py",
+    "line": 340,
+    "book": "PZZQ",
+    "eng": "    }\n    # PATCH-190 刑合 Structural Entry (PZZQ0",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "三十二．论正官取运"
+    ]
+  },
+  {
+    "idx": 135,
+    "file": "l0_fact_builder.py",
+    "line": 355,
+    "book": "PZZQ",
+    "eng": "    }\n    # PATCH-190 合禄 Structural Entry (PZZQ0",
+    "words": [
+      "戊日或癸日",
+      "天干不透官星"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "三十二．论正官取运"
+    ]
+  },
+  {
+    "idx": 136,
+    "file": "l0_fact_builder.py",
+    "line": 567,
+    "book": "PZZQ",
+    "eng": "    # 官星地支 = 官星**所坐之支** (PATCH-161, 2026-09-30)\n",
+    "words": [
+      "官星地支",
+      "所坐之支",
+      "官逢伤克刑"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      "用神专寻月令，以四柱配之，必有成败。何谓成？如官逢财印，又无刑冲破害，官格成也。财生官旺，或财逢"
+    ]
+  },
+  {
+    "idx": 137,
+    "file": "l0_fact_builder.py",
+    "line": 582,
+    "book": "?",
+    "eng": "    #   官星受冲判 True -> ge_jie_layer 正官格三分支 not gu",
+    "words": [
+      "正官格三分支"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 138,
+    "file": "l0_fact_builder.py",
+    "line": 630,
+    "book": "PZZQ",
+    "eng": "    }\n    # === PZZQ 冲合互动裁决 (原典: PZZQ 900/1354/3",
+    "words": [
+      "冲合互动裁决",
+      "卯申乙庚暗合"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "若用煞而兼带伤食，运喜身旺印绶之方，伤食亦美，逢官遇财，皆不吉也。"
+    ]
+  },
+  {
+    "idx": 139,
+    "file": "l0_fact_builder.py",
+    "line": 676,
+    "book": "PZZQ",
+    "eng": "    chong_survive = [[a, b] for a, b, i, j in ch",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "三十五、论印绶"
+    ]
+  },
+  {
+    "idx": 140,
+    "file": "l0_fact_builder.py",
+    "line": 680,
+    "book": "PZZQ",
+    "eng": "    #   月令成三会/三合齐全局且z无同气透干→inactive(冲无力); z有透干帮扶",
+    "words": [
+      "月令成三会",
+      "三合齐全局且",
+      "无同气透干",
+      "有透干帮扶有力"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "又有印而兼透官煞者，或合煞，或有制，皆为贵格。如辛亥、庚子、甲辰、乙亥，此合煞留官也；壬子、癸卯"
+    ]
+  },
+  {
+    "idx": 141,
+    "file": "slice_conditions.py",
+    "line": 62,
+    "book": "?",
+    "eng": "    \"CAI_DUO_SHEN_RUO\": {\n        \"slice_id\": \"P",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 142,
+    "file": "slice_conditions.py",
+    "line": 76,
+    "book": "?",
+    "eng": "    \"SHA_ZHONG_SHEN_QING\": {\n        \"slice_id\":",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 143,
+    "file": "slice_conditions.py",
+    "line": 88,
+    "book": "?",
+    "eng": "    \"XIE_QI_TAI_ZHONG\": {\n        \"slice_id\": \"P",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 144,
+    "file": "slice_conditions.py",
+    "line": 100,
+    "book": "?",
+    "eng": "    \"BIJIE_CHENG_DANG\": {\n        \"slice_id\": \"P",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 145,
+    "file": "slice_conditions.py",
+    "line": 109,
+    "book": "?",
+    "eng": "    \"SHANGGUAN_JIAN_GUAN\": {\n        \"slice_id\":",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 146,
+    "file": "slice_conditions.py",
+    "line": 114,
+    "book": "?",
+    "eng": "    \"XIAO_DUO_SHI\": {\n        \"slice_id\": \"PATHO",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 147,
+    "file": "slice_conditions.py",
+    "line": 119,
+    "book": "?",
+    "eng": "    \"YIN_DUO_MAI_ZI\": {\n        \"slice_id\": \"STA",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 148,
+    "file": "slice_conditions.py",
+    "line": 131,
+    "book": "?",
+    "eng": "    \"ZHI_SHA_TAI_GUO\": {\n        \"slice_id\": \"SU",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 149,
+    "file": "slice_loader.py",
+    "line": 9,
+    "book": "?",
+    "eng": "    {\n      \"slice_id\":   \"STRUCTURE.GE_JU.CHENG",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 150,
+    "file": "slice_loader.py",
+    "line": 141,
+    "book": "?",
+    "eng": "        print(\"  %-10s %d\" % (k or \"(空)\", v))\n  ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": []
+  },
+  {
+    "idx": 152,
+    "file": "special_pattern.py",
+    "line": 214,
+    "book": "PZZQ",
+    "eng": "            #     QT-0483(癸卯甲寅庚午丙戌) 庚日主印土(午中己/戌本",
+    "words": [
+      "癸卯甲寅庚午丙戌",
+      "庚日主印土",
+      "戌本气戊",
+      "火生土印根保留"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 155,
+    "file": "special_pattern.py",
+    "line": 246,
+    "book": "PZZQ",
+    "eng": "    # 印透干 + 有根(化根后仍存) -> 不进从格段(真从格定义 SHUAI.003/D",
+    "words": [
+      "化根后仍存",
+      "不进从格段",
+      "真从格定义"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "化气有真有假。上两造为化气之真者，亦有化气有余，而日带根苗劫印者；有日主无根，而化神不足者；更有"
+    ]
+  },
+  {
+    "idx": 157,
+    "file": "special_pattern.py",
+    "line": 366,
+    "book": "PZZQ",
+    "eng": "            # [2026-10-05 PATCH-4b] 移除「合神外官杀有根透干",
+    "words": [
+      "合神外官杀有根透"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 158,
+    "file": "special_pattern.py",
+    "line": 375,
+    "book": "PZZQ",
+    "eng": "            # [2026-10-07 PATCH-4c] 化神库支日主根不阻真化 ",
+    "words": [
+      "化神库支日主根不",
+      "化神当令印根豁免"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 159,
+    "file": "special_pattern.py",
+    "line": 410,
+    "book": "PZZQ",
+    "eng": "    cong = None; side = None; cstate = None\n    ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 160,
+    "file": "special_pattern.py",
+    "line": 424,
+    "book": "PZZQ",
+    "eng": "    if _cong_ban_entry:\n        _ban_reason2 = (",
+    "words": [
+      "印绶有根则不从"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 161,
+    "file": "special_pattern.py",
+    "line": 425,
+    "book": "PZZQ",
+    "eng": "        _ban_reason2 = ('印绶有根则不从(PZZQ L180/L187/",
+    "words": [
+      "印绶有根则不从"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 163,
+    "file": "special_pattern.py",
+    "line": 510,
+    "book": "PZZQ",
+    "eng": "            # [2026-10-07 PATCH-4d] 从格通判据收紧: 印绶有",
+    "words": [
+      "印绶有根则不从",
+      "阳干从严"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 164,
+    "file": "special_pattern.py",
+    "line": 512,
+    "book": "DTS",
+    "eng": "            #        L4936「若透印则身赖印生而不从」/L4939「有印",
+    "words": [
+      "若透印则身赖印生",
+      "有印则印以化煞而",
+      "四处明文"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 165,
+    "file": "special_pattern.py",
+    "line": 520,
+    "book": "PZZQ",
+    "eng": "            if cong and _cong_ban:\n             ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 166,
+    "file": "special_pattern.py",
+    "line": 521,
+    "book": "PZZQ",
+    "eng": "                _ban_reason = ('印绶有根则不从(PZZQ L18",
+    "words": [
+      "印绶有根则不从"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 170,
+    "file": "topology_paths.py",
+    "line": 43,
+    "book": "DTS",
+    "eng": "#\n# DTS L245 原文:\n#   「不必论当令不令, 只论取最多最旺, 而可以为满局之祖",
+    "words": [
+      "不必论当令不令",
+      "只论取最多最旺",
+      "而可以为满局之祖",
+      "为源头也"
+    ],
+    "hit": 4,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：天气欲不降，地气欲上升，欲相和相生也。木土而要火，火金而要土，土水而要金，金水而要"
+    ]
+  },
+  {
+    "idx": 171,
+    "file": "topology_paths.py",
+    "line": 66,
+    "book": "DTS",
+    "eng": "    # 并列处理: 遍历 WX 序, 用 `>` 保留【首个遇到】的最旺者(「更大才替换」)",
+    "words": [
+      "并列处理",
+      "首个遇到",
+      "的最旺者",
+      "更大才替换"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：天气欲不降，地气欲上升，欲相和相生也。木土而要火，火金而要土，土水而要金，金水而要"
+    ]
+  },
+  {
+    "idx": 172,
+    "file": "topology_paths.py",
+    "line": 94,
+    "book": "DTS",
+    "eng": "\n    DTS L245「看此源头, 流到何方」—— 「流到何方」的终点是步骤3\n    「所",
+    "words": [
+      "看此源头",
+      "流到何方",
+      "流到何方",
+      "的终点是步骤"
+    ],
+    "hit": 2,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：天气欲不降，地气欲上升，欲相和相生也。木土而要火，火金而要土，土水而要金，金水而要"
+    ]
+  },
+  {
+    "idx": 173,
+    "file": "topology_paths.py",
+    "line": 234,
+    "book": "DTS",
+    "eng": "                               pan_zhi: List[str",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 174,
+    "file": "topology_paths.py",
+    "line": 348,
+    "book": "DTS",
+    "eng": "#\n# DTS L250 原文:\n#   「天气欲不降, 地气欲上升, 欲相和相生也。",
+    "words": [
+      "天气欲不降",
+      "地气欲上升",
+      "欲相和相生也"
+    ],
+    "hit": 3,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：杀即官也，同流共派者可混也；官非杀也，各立门墙者，不可混也。杀重矣，官从之，非混也"
+    ]
+  },
+  {
+    "idx": 175,
+    "file": "topology_paths.py",
+    "line": 396,
+    "book": "DTS",
+    "eng": "        'emendation_candidate': '「金木而要水」(金克木成关, ",
+    "words": [
+      "金木而要水",
+      "金克木成关",
+      "无第二来源可对照"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "**原注**：杀即官也，同流共派者可混也；官非杀也，各立门墙者，不可混也。杀重矣，官从之，非混也"
+    ]
+  },
+  {
+    "idx": 176,
+    "file": "topology_paths.py",
+    "line": 424,
+    "book": "DTS",
+    "eng": "\n    DTS L250 原文: 「或被刑冲, 或被劫占, 或隔一物, 皆谓之关也」\n    ",
+    "words": [
+      "或被刑冲",
+      "或被劫占",
+      "或隔一物",
+      "皆谓之关也"
+    ],
+    "hit": 4,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：杀即官也，同流共派者可混也；官非杀也，各立门墙者，不可混也。杀重矣，官从之，非混也"
+    ]
+  },
+  {
+    "idx": 177,
+    "file": "topology_paths.py",
+    "line": 450,
+    "book": "DTS",
+    "eng": "# ── 关的拓扑条件常量 ──\n# DTS L250「中间上下远隔, 为物所间; 前后远绝, ",
+    "words": [
+      "中间上下远隔",
+      "为物所间",
+      "前后远绝",
+      "或被刑冲"
+    ],
+    "hit": 6,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：杀即官也，同流共派者可混也；官非杀也，各立门墙者，不可混也。杀重矣，官从之，非混也"
+    ]
+  },
+  {
+    "idx": 178,
+    "file": "topology_paths.py",
+    "line": 522,
+    "book": "DTS",
+    "eng": "                        ) -> Dict[str, Any]:\n   ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：杀即官也，同流共派者可混也；官非杀也，各立门墙者，不可混也。杀重矣，官从之，非混也"
+    ]
+  },
+  {
+    "idx": 179,
+    "file": "topology_paths.py",
+    "line": 528,
+    "book": "DTS",
+    "eng": "          'conditions': {\n            'distance'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "**原注**：杀即官也，同流共派者可混也；官非杀也，各立门墙者，不可混也。杀重矣，官从之，非混也"
+    ]
+  },
+  {
+    "idx": 180,
+    "file": "transit_power.py",
+    "line": 55,
+    "book": "DTS",
+    "eng": "#   落法(方案 C, 2026-10-03 裁定): ling_state 【保枚举不动】,",
+    "words": [
+      "保枚举不动",
+      "加序数字段"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      "阴阳顺逆之说，《洛书》流行之用，其理信有之也，其法不可执一。"
+    ]
+  },
+  {
+    "idx": 181,
+    "file": "transit_power.py",
+    "line": 80,
+    "book": "DTS",
+    "eng": "def _compare_both(month_wx: str, beichong_wx: st",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "阴阳顺逆之说，《洛书》流行之用，其理信有之也，其法不可执一。"
+    ]
+  },
+  {
+    "idx": 182,
+    "file": "transit_power.py",
+    "line": 90,
+    "book": "DTS",
+    "eng": "    ★ 月令作为被冲方时: beichong_wx == month_wx -> ling ",
+    "words": [
+      "月令作为被冲方时",
+      "而冲方必克月令"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 183,
+    "file": "transit_power.py",
+    "line": 151,
+    "book": "DTS",
+    "eng": "    # ★ STEP-DBG-14 六维联动①: 任意支受六冲 -> branch_chon",
+    "words": [
+      "六维联动",
+      "任意支受六冲",
+      "柱位维度"
+    ],
+    "hit": 0,
+    "yi_probe": true,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 184,
+    "file": "transit_power.py",
+    "line": 153,
+    "book": "DTS",
+    "eng": "    #     ->【冲方 = 能克被冲方的那一方】, 由五行相克方向定, 非位置定。\n  ",
+    "words": [
+      "能克被冲方的那一",
+      "由五行相克方向定",
+      "非位置定",
+      "冲者必是"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 185,
+    "file": "transit_power.py",
+    "line": 155,
+    "book": "DTS",
+    "eng": "    #     -> 丑未/辰戌 不互克, 属「四库兄弟之冲」, 无冲方。\n    #   ",
+    "words": [
+      "四库兄弟之冲",
+      "生方怕动库宜开"
+    ],
+    "hit": 2,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 186,
+    "file": "transit_power.py",
+    "line": 215,
+    "book": "DTS",
+    "eng": "            wa, wb = ZHI_WX.get(a, ''), ZHI_WX.g",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 187,
+    "file": "transit_power.py",
+    "line": 225,
+    "book": "DTS",
+    "eng": "                # 兄弟冲: 两支【都】记 BROTHER_CHONG + li",
+    "words": [
+      "非月柱独占"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      ""
+    ]
+  },
+  {
+    "idx": 188,
+    "file": "transit_power.py",
+    "line": 240,
+    "book": "DTS",
+    "eng": "            branch_chong[cf_p]['chong_by'] = bc_",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "阴阳顺逆之说，《洛书》流行之用，其理信有之也，其法不可执一。"
+    ]
+  },
+  {
+    "idx": 189,
+    "file": "transit_power.py",
+    "line": 276,
+    "book": "DTS",
+    "eng": "            row['chong_note'] = (\n              ",
+    "words": [
+      "旺者冲衰衰者拔"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      "阴阳顺逆之说，《洛书》流行之用，其理信有之也，其法不可执一。"
+    ]
+  },
+  {
+    "idx": 190,
+    "file": "wangshuai_multidim.py",
+    "line": 14,
+    "book": "PZZQ",
+    "eng": "\n# 我克者 = 财 (五行生克基本定义; 旁参 PZZQ L241「财为我克」)\n# 注意命名",
+    "words": [
+      "五行生克基本定义",
+      "财为我克",
+      "注意命名"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      "是以善而顺用之，则财喜食神以相生，生官以护财；官喜透财以相生，生印以护官；印喜官煞以相生，劫才以"
+    ]
+  },
+  {
+    "idx": 191,
+    "file": "wangshuai_multidim.py",
+    "line": 18,
+    "book": "PZZQ",
+    "eng": "_WO_KE = {'木': '土', '火': '金', '土': '水', '金': '木'",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "是以善而顺用之，则财喜食神以相生，生官以护财；官喜透财以相生，生印以护官；印喜官煞以相生，劫才以"
+    ]
+  },
+  {
+    "idx": 192,
+    "file": "wangshuai_multidim.py",
+    "line": 24,
+    "book": "PZZQ",
+    "eng": "CONTROL_TG = {'正官', '七杀'}                       ",
+    "words": [],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "是以善而顺用之，则财喜食神以相生，生官以护财；官喜透财以相生，生印以护官；印喜官煞以相生，劫才以"
+    ]
+  },
+  {
+    "idx": 193,
+    "file": "wangshuai_multidim.py",
+    "line": 25,
+    "book": "PZZQ",
+    "eng": "# 依据: PZZQ L241「印为生我, 财为我克, 或偏或正, 气势虽有纯杂之殊, 用法尚无",
+    "words": [
+      "印为生我",
+      "财为我克",
+      "或偏或正",
+      "气势虽有纯杂之殊"
+    ],
+    "hit": 1,
+    "yi_probe": false,
+    "orig_sent": [
+      "成中有败，必是带忌；败中有成，全凭救应。何谓带忌？如正官逢财而又逢伤；透官而又逢合；财旺生官而又"
+    ]
+  },
+  {
+    "idx": 194,
+    "file": "wangshuai_structure.py",
+    "line": 159,
+    "book": "PZZQ",
+    "eng": "                    # 我克 = 财 = 泄耗 (原落 else 被误计为克",
+    "words": [
+      "被误计为克我"
+    ],
+    "hit": 0,
+    "yi_probe": false,
+    "orig_sent": [
+      "是以善而顺用之，则财喜食神以相生，生官以护财；官喜透财以相生，生印以护官；印喜官煞以相生，劫才以"
+    ]
+  }
+]

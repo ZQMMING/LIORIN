@@ -1,0 +1,4940 @@
+[
+ {
+  "cid": "DT-0001",
+  "bz": "辛卯丁酉庚午丙子",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0002",
+  "bz": "庚申庚辰戊辰戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0003",
+  "bz": "辛酉辛丑己酉丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0004",
+  "bz": "壬辰壬寅甲寅庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0005",
+  "bz": "癸酉甲子癸亥辛酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0006",
+  "bz": "丁亥庚戌甲辰壬申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0007",
+  "bz": "乙亥庚辰甲戌壬申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0008",
+  "bz": "甲子戊辰庚申壬午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0009",
+  "bz": "丙子己亥乙丑壬午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0010",
+  "bz": "甲寅壬申癸巳癸亥",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0011",
+  "bz": "癸巳癸亥甲寅壬申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0012",
+  "bz": "辛卯丁酉戊子戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0013",
+  "bz": "辛未辛丑戊辰壬戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0014",
+  "bz": "戊辰壬戌辛未己丑",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0015",
+  "bz": "丙子辛卯壬子癸卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0016",
+  "bz": "辛未乙未庚辰丁亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0017",
+  "bz": "辛丑乙未庚辰丁丑",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0018",
+  "bz": "庚戌乙酉甲寅庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0019",
+  "bz": "丁巳癸丑丁卯丙午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0020",
+  "bz": "庚寅辛巳丙寅辛卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0021",
+  "bz": "戊辰辛酉丙午癸巳",
+  "entail": {
+   "de_ling": [
+    false
+   ],
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0022",
+  "bz": "庚寅壬午丁卯癸卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0023",
+  "bz": "丙子己亥乙亥丙子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0024",
+  "bz": "戊午乙卯癸卯癸亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0025",
+  "bz": "己亥丁卯庚申庚辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0026",
+  "bz": "己酉丁卯庚辰甲申",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0027",
+  "bz": "庚申壬午辛酉癸巳",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0028",
+  "bz": "庚申壬午辛酉甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0029",
+  "bz": "甲申甲戌甲寅甲戌",
+  "entail": {},
+  "events": [
+   "chong",
+   "root_ba"
+  ],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0030",
+  "bz": "戊子戊午戊戌戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0031",
+  "bz": "戊申戊午戊戌戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0032",
+  "bz": "辛卯辛卯辛卯辛卯",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0033",
+  "bz": "辛卯庚寅甲辰丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0034",
+  "bz": "庚寅庚辰甲寅丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0035",
+  "bz": "癸巳丙辰丙午庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0036",
+  "bz": "戊寅乙丑丙寅庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0037",
+  "bz": "丙子己亥乙酉壬午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0038",
+  "bz": "己亥丙子乙丑壬午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0039",
+  "bz": "甲寅戊辰丙寅丙申",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0040",
+  "bz": "壬申甲辰丙寅丙申",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0042",
+  "bz": "己巳辛未壬午乙巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0043",
+  "bz": "己丑丙子丁亥庚子",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0044",
+  "bz": "壬午己酉甲申甲子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0045",
+  "bz": "壬辰己酉甲申甲子",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0046",
+  "bz": "己巳癸酉丙寅庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0047",
+  "bz": "癸亥癸亥丙辰甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0048",
+  "bz": "甲寅庚午乙卯丙子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0049",
+  "bz": "乙丑己卯乙亥壬午",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0050",
+  "bz": "壬申丙午庚午庚辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0051",
+  "bz": "壬午丙午庚申戊寅",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0052",
+  "bz": "壬寅甲辰丁亥己酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0053",
+  "bz": "戊戌庚申癸亥乙卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0054",
+  "bz": "甲子丙寅己巳辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0055",
+  "bz": "甲午丁卯甲午丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0056",
+  "bz": "丁卯乙巳丁卯乙巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0057",
+  "bz": "丙午戊戌丙午戊戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0058",
+  "bz": "戊戌辛酉戊戌辛酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0059",
+  "bz": "戊戌癸亥戊戌癸亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0060",
+  "bz": "癸亥己未癸亥己未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0061",
+  "bz": "壬戌壬子甲子戊辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0062",
+  "bz": "戊寅乙卯甲辰辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0063",
+  "bz": "癸未乙卯甲戌乙亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0064",
+  "bz": "甲寅丁卯甲辰丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0065",
+  "bz": "己未丁丑戊子己未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0066",
+  "bz": "丙寅甲午丙戌乙未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0067",
+  "bz": "庚申乙酉庚戌庚辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0068",
+  "bz": "壬子辛亥癸丑壬子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0069",
+  "bz": "戊申丙辰丁卯甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0070",
+  "bz": "己巳辛未丙午丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0071",
+  "bz": "丁丑庚戌庚子甲申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0072",
+  "bz": "戊申壬戌庚申乙酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0073",
+  "bz": "庚申辛巳丙辰乙未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0074",
+  "bz": "壬子癸丑丙午壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0075",
+  "bz": "甲寅丁卯戊辰己未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0076",
+  "bz": "丙辰庚寅乙卯丁亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0077",
+  "bz": "甲寅乙亥乙卯癸未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0078",
+  "bz": "甲寅丁卯乙未丁亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0079",
+  "bz": "甲寅丁卯乙亥癸未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0080",
+  "bz": "丁卯甲辰甲寅乙亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0081",
+  "bz": "戊寅甲寅甲辰丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0082",
+  "bz": "癸卯丙辰甲辰丙寅",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0083",
+  "bz": "辛未辛卯乙未丁亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0084",
+  "bz": "辛未辛卯乙未戊寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0085",
+  "bz": "庚寅己卯乙亥癸未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0086",
+  "bz": "庚辰癸未乙未癸未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0087",
+  "bz": "己丑壬申丁未丙午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0088",
+  "bz": "癸未乙卯丙午辛卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0089",
+  "bz": "辛卯丙申癸卯壬戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0090",
+  "bz": "辛卯丙申癸卯甲寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0091",
+  "bz": "己巳庚午丙午甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0092",
+  "bz": "丁丑癸卯乙卯己卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0093",
+  "bz": "丁未癸丑甲辰甲戌",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0094",
+  "bz": "丁亥癸丑甲子辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0095",
+  "bz": "丙寅甲午丙午癸巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0096",
+  "bz": "戊寅庚申丙申丙申",
+  "entail": {},
+  "events": [
+   "chong",
+   "root_ba"
+  ],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0097",
+  "bz": "癸酉甲子丙寅戊戌",
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0098",
+  "bz": "癸未乙卯丙辰庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0099",
+  "bz": "戊戌乙丑丙辰己丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0100",
+  "bz": "甲戌丙寅戊寅丙辰",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0101",
+  "bz": "甲戌丙寅戊辰庚申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0102",
+  "bz": "甲辰丁卯甲子戊辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0103",
+  "bz": "癸卯乙卯甲寅乙亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0104",
+  "bz": "乙丑甲申甲申辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0105",
+  "bz": "己巳己巳乙酉丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0106",
+  "bz": "乙丑壬午丙戌甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0107",
+  "bz": "戊寅丁巳丙寅甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0108",
+  "bz": "辛巳丁酉丁酉辛丑",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0109",
+  "bz": "辛亥壬辰丙申己亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0110",
+  "bz": "戊辰戊午戊申己未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0111",
+  "bz": "戊戌丙辰己巳己巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0112",
+  "bz": "壬辰辛亥戊子癸丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0113",
+  "bz": "癸酉甲子戊子戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0114",
+  "bz": "壬申己酉庚子庚辰",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0115",
+  "bz": "庚申乙酉庚戌庚辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0116",
+  "bz": "己卯庚午辛卯甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0117",
+  "bz": "己亥丁卯庚寅丙子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0118",
+  "bz": "壬寅辛亥壬子辛丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0119",
+  "bz": "癸亥癸亥壬子庚子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0120",
+  "bz": "丙辰乙未壬午癸卯",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0121",
+  "bz": "癸卯戊午壬寅丙午",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0122",
+  "bz": "辛巳甲午癸卯癸亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0123",
+  "bz": "己酉丙子癸未戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0124",
+  "bz": "辛酉庚子丙寅癸巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0125",
+  "bz": "辛丑癸巳戊申丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0126",
+  "bz": "辛卯辛卯丙子甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0127",
+  "bz": "庚寅壬午戊午丁巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0128",
+  "bz": "癸酉甲子丁卯丙午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0129",
+  "bz": "戊寅癸亥丁未辛亥",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0130",
+  "bz": "戊辰乙卯辛丑丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0131",
+  "bz": "己巳丁卯辛卯乙未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0132",
+  "bz": "己酉丙寅庚申庚辰",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0133",
+  "bz": "丙申庚寅庚申辛巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0134",
+  "bz": "戊子甲寅戊午甲寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0135",
+  "bz": "己亥丙寅戊子甲寅",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0136",
+  "bz": "戊辰庚申甲子甲子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0137",
+  "bz": "戊午丙辰庚寅丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0138",
+  "bz": "癸亥癸亥丁卯癸卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0139",
+  "bz": "戊辰戊午壬辰甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0140",
+  "bz": "庚申庚辰甲戌丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0141",
+  "bz": "壬子壬子丙戌戊戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0142",
+  "bz": "壬申丙午庚午丙戌",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0143",
+  "bz": "癸丑戊午丙午壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0144",
+  "bz": "癸巳戊午丙午壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0145",
+  "bz": "戊申癸亥丙午壬辰",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0146",
+  "bz": "戊午癸亥丙戌壬辰",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0147",
+  "bz": "壬申丁未丁未癸卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0148",
+  "bz": "甲辰己巳戊辰乙卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0149",
+  "bz": "丙辰辛卯庚申丁丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0150",
+  "bz": "丙辰辛卯乙亥庚辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0151",
+  "bz": "癸亥戊午壬午己酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0152",
+  "bz": "壬辰壬子丙寅癸巳",
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0153",
+  "bz": "甲子乙亥己巳丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0154",
+  "bz": "丙辰丁酉庚午戊寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0155",
+  "bz": "戊午己未壬申辛亥",
+  "entail": {
+   "de_ling": [
+    false
+   ],
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0156",
+  "bz": "辛卯戊戌丙辰己亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0157",
+  "bz": "辛卯戊戌丙辰壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0158",
+  "bz": "壬辰丙午丙午壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0159",
+  "bz": "甲寅戊辰壬辰壬寅",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0160",
+  "bz": "庚申戊寅戊寅庚申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0161",
+  "bz": "己丑辛未丙寅己丑",
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0162",
+  "bz": "辛酉丁酉戊午辛酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0163",
+  "bz": "壬戌壬子庚辰己卯",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0164",
+  "bz": "丙辰癸巳乙丑丙子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0165",
+  "bz": "丙申戊戌丁卯乙巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0166",
+  "bz": "癸亥乙卯壬申乙巳",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0167",
+  "bz": "戊子辛酉戊午丁巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0168",
+  "bz": "壬申辛亥辛酉庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0169",
+  "bz": "癸亥辛酉戊申己未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0170",
+  "bz": "己未癸酉戊戌庚申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0171",
+  "bz": "癸亥甲寅癸亥甲寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0172",
+  "bz": "戊申己未丙戌己丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0173",
+  "bz": "戊辰庚申己酉癸酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0174",
+  "bz": "庚辰己卯壬辰庚子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0175",
+  "bz": "乙酉戊寅癸酉癸丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0176",
+  "bz": "己卯庚午甲寅丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0177",
+  "bz": "丙子乙未丙辰乙未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0178",
+  "bz": "壬戌己酉戊戌乙卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0179",
+  "bz": "庚午己卯壬申己酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0180",
+  "bz": "辛未辛卯壬辰己酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0181",
+  "bz": "癸酉己未丙午癸巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0182",
+  "bz": "戊申戊午丁巳乙巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0183",
+  "bz": "壬子辛亥壬子癸卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0184",
+  "bz": "壬辰壬子壬子癸卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0185",
+  "bz": "戊午丙辰戊辰辛酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0186",
+  "bz": "乙酉辛巳戊午丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0187",
+  "bz": "丁酉乙巳戊午丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0188",
+  "bz": "丁丑丙午己酉辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0189",
+  "bz": "癸酉甲子丙寅乙未",
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0190",
+  "bz": "甲子丙寅己亥辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0191",
+  "bz": "癸未甲子丙寅丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0192",
+  "bz": "乙亥庚辰戊戌丁巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0193",
+  "bz": "癸亥己未丙午己丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0194",
+  "bz": "丁卯丁未庚午己卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0195",
+  "bz": "甲子丙寅己丑甲子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0196",
+  "bz": "壬申壬寅丙子乙未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0197",
+  "bz": "庚申戊寅壬子甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0198",
+  "bz": "乙酉戊寅壬午庚戌",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0199",
+  "bz": "庚戌戊寅癸未癸丑",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0200",
+  "bz": "丙子己亥辛酉己亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0201",
+  "bz": "壬申戊申庚辰甲申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0202",
+  "bz": "壬戌戊申庚寅丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0203",
+  "bz": "辛酉丁酉乙未丁丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0204",
+  "bz": "戊辰辛酉乙亥甲申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0205",
+  "bz": "庚辰庚辰庚申庚辰",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0206",
+  "bz": "癸酉甲子庚辰甲申",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0207",
+  "bz": "壬子辛亥乙亥丙子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0208",
+  "bz": "甲申丙子庚辰戊寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0209",
+  "bz": "己酉丙子庚辰甲申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0210",
+  "bz": "丁丑丙午丙午壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0211",
+  "bz": "癸未丁巳丙午癸巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0212",
+  "bz": "丙辰辛丑庚辰丙子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0213",
+  "bz": "丁未壬子庚戌丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0214",
+  "bz": "癸未丁巳甲午庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0215",
+  "bz": "癸丑丁巳甲辰庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0216",
+  "bz": "己卯辛未丙子辛卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0217",
+  "bz": "壬午乙巳丁丑丙午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0218",
+  "bz": "戊辰乙丑戊戌辛酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0219",
+  "bz": "戊午壬戌丁卯癸卯",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0220",
+  "bz": "癸丑壬戌丙午庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0221",
+  "bz": "丙寅庚寅甲申乙丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0222",
+  "bz": "庚戌己卯甲寅丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0223",
+  "bz": "庚辰壬午甲辰丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0224",
+  "bz": "庚戌甲申甲戌乙丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0225",
+  "bz": "辛酉庚子甲子丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0226",
+  "bz": "丙子己亥丙寅戊子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0227",
+  "bz": "壬午壬寅壬戌庚戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0228",
+  "bz": "丙子丙申丙子丙申",
+  "entail": {
+   "de_di": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0229",
+  "bz": "癸巳壬戌壬午壬寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0230",
+  "bz": "壬子丙午壬子丙午",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0231",
+  "bz": "癸卯乙丑庚申丁丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0232",
+  "bz": "丁未乙巳丁酉癸卯",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0233",
+  "bz": "乙亥庚辰丙申壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0234",
+  "bz": "辛丑辛丑戊戌癸丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0235",
+  "bz": "癸亥甲子丁酉癸卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0236",
+  "bz": "乙未辛巳戊戌丁巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0237",
+  "bz": "戊子癸亥壬戌甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0238",
+  "bz": "庚寅丙戌辛亥辛卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0239",
+  "bz": "丁酉丁未戊戌丁巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0240",
+  "bz": "辛卯辛卯甲辰丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0241",
+  "bz": "癸卯乙丑丙子己丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0242",
+  "bz": "乙卯丁亥戊午丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0243",
+  "bz": "丁巳辛亥戊子戊午",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0244",
+  "bz": "乙亥辛巳丙辰癸巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0245",
+  "bz": "丁亥壬寅丙子丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0246",
+  "bz": "癸巳戊午丙午庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0247",
+  "bz": "甲申丙子壬寅辛亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0248",
+  "bz": "壬申丙午癸亥戊午",
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0249",
+  "bz": "癸卯癸亥丁卯辛亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0250",
+  "bz": "癸酉丁巳丙午壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0251",
+  "bz": "甲午丙寅辛酉己丑",
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0252",
+  "bz": "乙巳辛巳庚辰甲申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0253",
+  "bz": "壬子戊申戊戌辛酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0254",
+  "bz": "癸卯甲寅丁巳己酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0255",
+  "bz": "庚午壬午丙寅庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0256",
+  "bz": "乙卯乙酉庚寅壬午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0257",
+  "bz": "辛丑丙申癸巳庚申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0258",
+  "bz": "庚辰乙酉丁丑乙巳",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0259",
+  "bz": "丁丑壬子丁亥甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0260",
+  "bz": "丙辰庚寅丙午壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0261",
+  "bz": "丁卯甲辰辛亥癸巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0262",
+  "bz": "甲子丙寅戊寅己未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0263",
+  "bz": "丙申己亥庚辰戊寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0264",
+  "bz": "乙亥戊寅丙子甲午",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0265",
+  "bz": "辛巳庚寅丙辰己丑",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0266",
+  "bz": "辛丑癸巳甲子丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0267",
+  "bz": "己酉乙亥丙寅戊子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0268",
+  "bz": "己酉辛未壬寅壬寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0269",
+  "bz": "丁未庚戌庚辰丙子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0270",
+  "bz": "乙未戊寅乙卯庚辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0271",
+  "bz": "癸丑甲寅戊戌庚申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0272",
+  "bz": "戊辰庚申己卯戊辰",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0273",
+  "bz": "乙丑乙酉丙辰辛卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0274",
+  "bz": "己丑戊辰辛亥戊戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0275",
+  "bz": "壬寅壬寅甲寅壬申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0276",
+  "bz": "辛丑辛丑癸酉癸丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0277",
+  "bz": "戊申甲寅壬寅丁未",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0278",
+  "bz": "丁未乙巳甲午丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0279",
+  "bz": "戊戌己未丙辰戊戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0280",
+  "bz": "戊午乙丑戊戌丙辰",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0281",
+  "bz": "己亥丙寅丁亥庚戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0282",
+  "bz": "丁未癸丑庚子丁亥",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0283",
+  "bz": "丁丑癸丑庚子乙酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0284",
+  "bz": "丁丑壬子辛巳丙申",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0285",
+  "bz": "戊子戊午癸酉戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0286",
+  "bz": "乙未辛巳乙亥丙戌",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0287",
+  "bz": "丁巳戊申癸丑乙卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0288",
+  "bz": "乙亥癸酉甲辰丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0289",
+  "bz": "辛酉壬辰丁巳甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0290",
+  "bz": "己巳癸酉壬辰甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0291",
+  "bz": "庚辰壬午乙亥癸未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0292",
+  "bz": "庚辰戊寅乙酉壬午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0293",
+  "bz": "丙辰癸巳丁丑甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0294",
+  "bz": "丙寅辛卯癸酉戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0295",
+  "bz": "辛丑辛卯丙子癸巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0296",
+  "bz": "丁酉癸卯丙辰丙申",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0297",
+  "bz": "癸丑庚申戊午己未",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0298",
+  "bz": "癸未庚申戊戌己未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0299",
+  "bz": "己酉辛未戊辰壬戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0300",
+  "bz": "丁亥壬子癸丑甲寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0301",
+  "bz": "乙卯丙戌乙卯丁亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0302",
+  "bz": "戊寅甲寅丁未辛丑",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0303",
+  "bz": "壬辰己酉辛丑癸巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0304",
+  "bz": "甲午丙寅乙卯己卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0305",
+  "bz": "丁未壬寅乙卯己卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0306",
+  "bz": "辛丑癸巳丙子丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0307",
+  "bz": "癸丑己未丙寅辛卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0308",
+  "bz": "庚戌壬午丙寅己亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0309",
+  "bz": "壬申戊申壬申戊申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0310",
+  "bz": "壬申甲辰壬申戊申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0311",
+  "bz": "癸丑壬戌丁亥壬寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0312",
+  "bz": "壬戌甲辰丁酉己酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0313",
+  "bz": "癸酉戊午庚寅丁丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0314",
+  "bz": "丙寅庚子己亥甲戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0315",
+  "bz": "丙戌辛丑己卯甲子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0316",
+  "bz": "戊辰甲子壬子辛亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0317",
+  "bz": "甲申丙子癸亥癸亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0318",
+  "bz": "甲申庚午丁亥壬寅",
+  "entail": {
+   "de_ling": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0319",
+  "bz": "癸丑乙丑癸丑癸丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0320",
+  "bz": "丁酉甲辰戊戌戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0321",
+  "bz": "丁酉乙巳丁丑丙午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0322",
+  "bz": "癸酉戊午丙辰甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0323",
+  "bz": "庚寅戊子甲寅丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0324",
+  "bz": "甲子丁卯甲寅庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0325",
+  "bz": "乙未庚辰戊辰丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0326",
+  "bz": "丁丑癸卯丙戌辛卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0327",
+  "bz": "丁卯辛亥丙寅丙申",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0328",
+  "bz": "辛巳丙申壬寅庚戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0329",
+  "bz": "戊戌丙辰乙未丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0330",
+  "bz": "壬寅壬寅庚寅戊寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0331",
+  "bz": "丙寅庚寅壬午乙巳",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0332",
+  "bz": "丁卯壬寅庚午丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0333",
+  "bz": "辛巳辛丑乙酉乙酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0334",
+  "bz": "癸卯乙卯甲寅乙亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0335",
+  "bz": "丙午甲午丙午甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0336",
+  "bz": "癸酉癸亥庚申丁亥",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0337",
+  "bz": "丙戌壬辰癸巳甲寅",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0338",
+  "bz": "癸酉乙丑丙申丙申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0339",
+  "bz": "乙丑甲申甲辰己巳",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0340",
+  "bz": "戊辰壬戌甲辰己巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0341",
+  "bz": "己卯丁卯壬午甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0342",
+  "bz": "己卯丁卯壬午癸卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0343",
+  "bz": "丙戌戊戌癸巳壬戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0344",
+  "bz": "癸巳乙卯己亥癸酉",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [
+   "chong"
+  ],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0345",
+  "bz": "丁丑壬寅丙申壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0346",
+  "bz": "乙卯己卯戊辰癸亥",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0347",
+  "bz": "丁卯丙寅辛亥庚寅",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0348",
+  "bz": "癸亥乙卯己未丁卯",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0349",
+  "bz": "己卯甲戌甲子己巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0350",
+  "bz": "甲子丙子甲申己巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0351",
+  "bz": "甲寅丁丑甲戌己巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0352",
+  "bz": "甲寅辛未癸亥戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0353",
+  "bz": "甲辰丁卯壬辰辛亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0354",
+  "bz": "丁卯壬寅癸卯丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0355",
+  "bz": "丁巳癸卯癸卯丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0356",
+  "bz": "己未丁丑丙戌戊戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0357",
+  "bz": "己未辛未丙戌戊戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0358",
+  "bz": "甲午丁丑甲午丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0359",
+  "bz": "辛丑辛丑戊申壬子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0360",
+  "bz": "庚子庚辰戊申辛酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0361",
+  "bz": "壬寅辛亥辛亥壬辰",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0362",
+  "bz": "壬子辛亥辛卯辛卯",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0363",
+  "bz": "壬辰壬子甲寅戊辰",
+  "entail": {
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0364",
+  "bz": "壬戌壬子甲子戊辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0365",
+  "bz": "己巳戊辰辛酉己亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0366",
+  "bz": "戊午丁巳己卯庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0367",
+  "bz": "甲申丙寅甲申庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0368",
+  "bz": "甲申丙子乙酉丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0369",
+  "bz": "丙辰乙未壬辰甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0370",
+  "bz": "癸卯乙卯己卯辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0371",
+  "bz": "癸卯甲寅丁卯甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0372",
+  "bz": "戊戌丙辰辛丑戊戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0373",
+  "bz": "丙戌戊戌辛丑戊戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0374",
+  "bz": "壬子壬寅甲子壬申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0375",
+  "bz": "己亥戊辰甲寅辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0376",
+  "bz": "己巳戊辰甲子辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0377",
+  "bz": "乙亥辛巳丁巳庚戌",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0378",
+  "bz": "癸亥甲子戊戌癸丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0379",
+  "bz": "癸亥癸亥戊午甲寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0380",
+  "bz": "癸酉乙卯丁未辛亥",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0381",
+  "bz": "癸酉辛酉乙卯己卯",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0382",
+  "bz": "壬申壬寅壬午甲辰",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0383",
+  "bz": "壬申壬寅壬申辛丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0384",
+  "bz": "乙亥辛巳戊申甲寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0385",
+  "bz": "乙亥辛巳甲子庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0386",
+  "bz": "辛亥庚寅丙子乙未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0387",
+  "bz": "戊子庚申壬寅辛丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0388",
+  "bz": "丁亥壬寅丙午丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0389",
+  "bz": "己亥甲戌戊寅丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0390",
+  "bz": "丁未壬寅甲子丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0391",
+  "bz": "丁亥壬寅甲戌甲子",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0392",
+  "bz": "丁亥壬寅甲戌甲子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0393",
+  "bz": "甲戌丙寅甲戌乙亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0394",
+  "bz": "甲子甲戌甲寅乙亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0395",
+  "bz": "戊寅甲寅甲寅庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0396",
+  "bz": "癸卯乙卯甲寅辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0397",
+  "bz": "戊午戊午戊午甲寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0398",
+  "bz": "甲寅丙子己酉己巳",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0399",
+  "bz": "戊午甲寅乙卯己卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0400",
+  "bz": "癸卯丙辰甲寅乙亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0401",
+  "bz": "癸亥乙卯甲寅乙亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0402",
+  "bz": "乙亥己卯甲寅甲子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0403",
+  "bz": "己丑丙寅甲子戊辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0404",
+  "bz": "己酉丁卯己卯乙丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0405",
+  "bz": "丙戌乙未丙子甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0406",
+  "bz": "丙戌甲午丙午己丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0407",
+  "bz": "辛巳甲午丙子甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0408",
+  "bz": "癸亥甲子壬申庚子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0409",
+  "bz": "壬寅壬子壬辰壬寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0410",
+  "bz": "癸未癸亥壬子戊申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0411",
+  "bz": "庚辰壬午甲午丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0412",
+  "bz": "丙戌甲午甲申丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0413",
+  "bz": "甲申癸酉庚子乙酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0414",
+  "bz": "壬申壬子庚辰丙子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0415",
+  "bz": "癸亥庚申壬申甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0416",
+  "bz": "癸亥庚申壬子丙午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0417",
+  "bz": "丙寅甲午丙午己丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0418",
+  "bz": "丁卯丙午丙午庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0419",
+  "bz": "己亥丙寅甲寅壬申",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0420",
+  "bz": "庚寅戊寅甲午壬申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0421",
+  "bz": "壬子辛亥甲寅甲子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0422",
+  "bz": "壬寅辛亥甲寅己巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0423",
+  "bz": "戊戌丁巳甲寅己巳",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0424",
+  "bz": "乙丑丙戌丙午庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0425",
+  "bz": "壬戌丙午丙寅己丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0426",
+  "bz": "癸亥辛酉癸丑壬戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0427",
+  "bz": "丁丑辛亥癸亥癸亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0428",
+  "bz": "辛丑己亥辛酉癸巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0429",
+  "bz": "丙寅甲午丙申壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0430",
+  "bz": "丙申甲午丙寅壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0431",
+  "bz": "戊子戊午丙辰戊戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0432",
+  "bz": "庚午乙酉庚午壬午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0433",
+  "bz": "己丑丙子壬辰戊申",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0434",
+  "bz": "辛卯乙未甲子庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0435",
+  "bz": "庚午壬午甲戌庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0436",
+  "bz": "甲子丙子庚辰庚辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0437",
+  "bz": "丁巳壬子辛巳丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0438",
+  "bz": "癸未甲寅戊戌庚申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0439",
+  "bz": "甲寅庚午戊寅甲寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0440",
+  "bz": "甲子丙子癸亥乙卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0441",
+  "bz": "丙申乙未丁未庚戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0442",
+  "bz": "壬寅丁未丙申甲午",
+  "entail": {},
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0443",
+  "bz": "甲辰丙寅丙寅壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0444",
+  "bz": "庚寅己丑丙子乙未",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0445",
+  "bz": "丁亥辛亥辛未壬辰",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0446",
+  "bz": "壬辰甲辰庚午丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0447",
+  "bz": "癸丑戊午壬寅庚戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0448",
+  "bz": "乙亥庚辰丙子庚寅",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0449",
+  "bz": "丁亥丁未乙亥己卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0450",
+  "bz": "丙戌乙未乙巳丁亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0451",
+  "bz": "己巳辛未戊戌己未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0452",
+  "bz": "庚辰己丑己亥壬申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0453",
+  "bz": "壬辰壬子辛酉己丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0454",
+  "bz": "己丑丙子辛酉壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0455",
+  "bz": "甲戌丙子庚子丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0456",
+  "bz": "己巳庚午己亥丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0457",
+  "bz": "辛未戊戌戊戌丁巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0458",
+  "bz": "己丑丁丑己亥乙丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0459",
+  "bz": "丙戌己亥甲戌庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0460",
+  "bz": "庚寅癸未甲午甲戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0461",
+  "bz": "癸酉乙卯庚戌戊寅",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [
+   "he"
+  ],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0462",
+  "bz": "壬辰壬寅己未戊辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0463",
+  "bz": "壬戌甲辰甲戌丙寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0464",
+  "bz": "甲寅丁丑丁卯庚戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0465",
+  "bz": "丁亥壬子庚子辛巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0466",
+  "bz": "戊辰乙卯己卯丙辰",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0467",
+  "bz": "癸未己未庚子甲申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0468",
+  "bz": "癸未癸亥甲午丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0469",
+  "bz": "壬辰己酉癸卯己卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0470",
+  "bz": "己亥甲戌庚子丙子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0471",
+  "bz": "己亥丙子庚子辛巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0472",
+  "bz": "丙申壬辰丙子壬辰",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0473",
+  "bz": "戊午壬戌壬子乙巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0474",
+  "bz": "庚戌辛巳乙卯戊寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0475",
+  "bz": "癸亥乙卯戊午甲寅",
+  "entail": {},
+  "events": [
+   "chong"
+  ],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0476",
+  "bz": "戊子壬戌庚寅癸未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0477",
+  "bz": "戊子己未辛亥戊子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0478",
+  "bz": "癸巳壬戌乙卯戊寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0479",
+  "bz": "癸未庚申甲申乙亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0480",
+  "bz": "壬午甲辰丁巳己酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0481",
+  "bz": "癸未乙卯丙午丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0482",
+  "bz": "戊申庚申壬申甲辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0483",
+  "bz": "己亥癸酉壬申戊申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0484",
+  "bz": "己巳壬申甲寅戊辰",
+  "entail": {
+   "de_ling": [
+    false
+   ],
+   "de_di": [
+    true
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong",
+   "he",
+   "root_ba"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0485",
+  "bz": "庚午丙戌乙卯丁丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0486",
+  "bz": "己丑庚午戊申癸亥",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0487",
+  "bz": "壬子甲辰戊戌丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0488",
+  "bz": "癸巳甲寅丙戌庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0489",
+  "bz": "壬辰甲辰辛酉丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0493",
+  "bz": "己亥丁卯庚申庚辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0494",
+  "bz": "壬寅己酉庚午丙戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0495",
+  "bz": "庚戌壬午丙子壬辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0496",
+  "bz": "乙卯戊子壬辰戊申",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0497",
+  "bz": "丙辰辛卯甲申庚午",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0498",
+  "bz": "丁丑乙巳癸酉壬子",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0499",
+  "bz": "丙寅戊戌丁酉乙巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0500",
+  "bz": "丙子庚寅辛巳戊子",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0501",
+  "bz": "丁亥丙午戊寅甲寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0502",
+  "bz": "己巳戊辰甲子辛未",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0503",
+  "bz": "壬辰壬寅戊戌丙辰",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0504",
+  "bz": "壬午癸丑甲寅丁卯",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0505",
+  "bz": "壬辰乙巳丙子己丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0506",
+  "bz": "乙酉丙戌癸酉丁巳",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0507",
+  "bz": "甲申戊辰戊子戊午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0508",
+  "bz": "癸巳甲子壬子庚戌",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0512",
+  "bz": "庚辰丁亥庚辰丁丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0513",
+  "bz": "乙未戊子庚辰丁丑",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0514",
+  "bz": "戊子乙卯丙寅丁酉",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0515",
+  "bz": "丙申癸巳丙午甲午",
+  "entail": {},
+  "events": [],
+  "eng_events": [
+   "he"
+  ],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0516",
+  "bz": "辛卯甲午丙辰庚寅",
+  "entail": {},
+  "events": [],
+  "eng_events": [],
+  "conflicts": []
+ },
+ {
+  "cid": "DT-0517",
+  "bz": "辛卯甲午乙卯乙酉",
+  "entail": {
+   "de_ling": [
+    false
+   ]
+  },
+  "events": [],
+  "eng_events": [
+   "chong"
+  ],
+  "conflicts": []
+ }
+]

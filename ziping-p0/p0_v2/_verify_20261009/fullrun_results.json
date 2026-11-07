@@ -1,0 +1,441 @@
+{
+  "probe": {
+    "probe_a_keys": 43,
+    "probe_a_bing_list_count": 0,
+    "probe_a_l3_keys": [
+      "boundary_note",
+      "chong_adjust",
+      "chong_by",
+      "chong_role",
+      "dang_duo",
+      "de_di",
+      "de_ling",
+      "dm_ben_eff",
+      "evidence_refs",
+      "fan_ju",
+      "library_open",
+      "ling_state",
+      "ling_state_eff",
+      "root_grade",
+      "root_grade_raw",
+      "strength_verdict",
+      "support_state",
+      "yin_ben_eff"
+    ],
+    "probe_a_ge_cheng_ge": "印格(官印双全)",
+    "probe_a_special_count": 0,
+    "probe_a_yongyao_primary": "水",
+    "probe_a_climate_has": true,
+    "probe_b_bing_count": 1,
+    "probe_b_first_id": "CAI_DUO_SHEN_RUO",
+    "probe_b_first_severity": 3,
+    "probe_b_first_slice_id": "PATHOLOGY.QIANG_RUO.004",
+    "probe_b_debate_state": "PRIMARY_RESOLVED"
+  },
+  "books": {
+    "DTS": {
+      "name": "滴天髓阐微",
+      "cases": 510,
+      "crashes": 0,
+      "bing_dist": {
+        "0": 416,
+        "1": 83,
+        "2+": 11
+      },
+      "slice_none": 0,
+      "slice_total": 105,
+      "domain_dist": {
+        "JIEGOU": 30,
+        "WANGSH": 64,
+        "GEJU": 11
+      },
+      "severity_dist": {
+        "3": 71,
+        "4": 21,
+        "2": 9,
+        "1": 4
+      },
+      "debate_state_dist": {
+        "NO_CANDIDATE": 416,
+        "PRIMARY_RESOLVED": 94
+      },
+      "ge_top10": {
+        "建禄月劫格": 65,
+        "财格": 65,
+        "阳刃格": 49,
+        "伤官格": 42,
+        "食神格": 42,
+        "印格": 36,
+        "印格(印多逢财)": 32,
+        "正官格": 32,
+        "七煞格": 28,
+        "印格(印轻逢煞)": 17
+      },
+      "de_ling_true_pct": 47.06,
+      "de_di_true_pct": 90.78,
+      "dang_duo_true_pct": 57.84,
+      "strength_verdict_dist": {
+        "{'value': ['泄伤', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 132,
+        "{'value': ['泄伤'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 78,
+        "{'value': ['帮身', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 15,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 83,
+        "{'value': ['泄伤', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 10,
+        "{'value': ['帮身', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 23,
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 122,
+        "{'value': ['帮身', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1,
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 6,
+        "{'value': ['泄伤', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 16,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 15,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 4,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1,
+        "{'value': ['帮身', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1,
+        "{'value': ['帮身', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 3
+      },
+      "special_total": 134,
+      "yongyao_primary_dist": {
+        "火": 143,
+        "金": 75,
+        "木": 90,
+        "水": 117,
+        "土": 71,
+        "": 14
+      },
+      "climate_present": 510
+    },
+    "PZZQ": {
+      "name": "子平真诠",
+      "cases": 319,
+      "crashes": 0,
+      "bing_dist": {
+        "0": 263,
+        "1": 45,
+        "2+": 11
+      },
+      "slice_none": 0,
+      "slice_total": 67,
+      "domain_dist": {
+        "WANGSH": 42,
+        "JIEGOU": 17,
+        "GEJU": 8
+      },
+      "severity_dist": {
+        "2": 5,
+        "3": 54,
+        "4": 6,
+        "1": 2
+      },
+      "debate_state_dist": {
+        "NO_CANDIDATE": 263,
+        "PRIMARY_RESOLVED": 56
+      },
+      "ge_top10": {
+        "财格": 45,
+        "建禄月劫格": 31,
+        "七煞格": 25,
+        "阳刃格": 25,
+        "伤官格": 25,
+        "正官格": 24,
+        "食神格": 23,
+        "印格": 16,
+        "印格(印轻逢煞)": 15,
+        "印格(印多逢财)": 11
+      },
+      "de_ling_true_pct": 41.69,
+      "de_di_true_pct": 88.71,
+      "dang_duo_true_pct": 55.49,
+      "strength_verdict_dist": {
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 7,
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 92,
+        "{'value': ['帮身', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 6,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 52,
+        "{'value': ['泄伤', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 90,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 7,
+        "{'value': ['帮身', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 19,
+        "{'value': ['泄伤'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 31,
+        "{'value': ['帮身', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 3,
+        "{'value': ['泄伤', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 9,
+        "{'value': ['泄伤', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 2
+      },
+      "special_total": 69,
+      "yongyao_primary_dist": {
+        "水": 82,
+        "金": 46,
+        "木": 51,
+        "火": 94,
+        "": 10,
+        "土": 36
+      },
+      "climate_present": 319
+    },
+    "QTBJ": {
+      "name": "穷通宝鉴",
+      "cases": 802,
+      "crashes": 0,
+      "bing_dist": {
+        "0": 672,
+        "2+": 17,
+        "1": 113
+      },
+      "slice_none": 0,
+      "slice_total": 147,
+      "domain_dist": {
+        "GEJU": 16,
+        "WANGSH": 83,
+        "JIEGOU": 48
+      },
+      "severity_dist": {
+        "3": 115,
+        "2": 18,
+        "4": 10,
+        "1": 4
+      },
+      "debate_state_dist": {
+        "NO_CANDIDATE": 672,
+        "PRIMARY_RESOLVED": 130
+      },
+      "ge_top10": {
+        "财格": 142,
+        "建禄月劫格": 88,
+        "正官格": 70,
+        "印格": 62,
+        "食神格": 57,
+        "七煞格": 53,
+        "印格(印多逢财)": 48,
+        "伤官格": 37,
+        "印格(印轻逢煞)": 36,
+        "阳刃格": 28
+      },
+      "de_ling_true_pct": 44.39,
+      "de_di_true_pct": 90.27,
+      "dang_duo_true_pct": 58.1,
+      "strength_verdict_dist": {
+        "{'value': ['泄伤'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 99,
+        "{'value': ['泄伤', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 21,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 128,
+        "{'value': ['帮身', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 17,
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 214,
+        "{'value': ['帮身', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 42,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 19,
+        "{'value': ['帮身', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 3,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 6,
+        "{'value': ['帮身', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 2,
+        "{'value': ['帮身', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1,
+        "{'value': ['泄伤', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 196,
+        "{'value': ['泄伤', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 32,
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 8,
+        "{'value': ['帮身', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 10,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 4
+      },
+      "special_total": 160,
+      "yongyao_primary_dist": {
+        "火": 248,
+        "金": 137,
+        "水": 226,
+        "木": 109,
+        "土": 71,
+        "": 11
+      },
+      "climate_present": 802
+    },
+    "SFTK": {
+      "name": "神峰通考",
+      "cases": 155,
+      "crashes": 0,
+      "bing_dist": {
+        "1": 29,
+        "0": 121,
+        "2+": 5
+      },
+      "slice_none": 0,
+      "slice_total": 39,
+      "domain_dist": {
+        "WANGSH": 19,
+        "JIEGOU": 16,
+        "GEJU": 4
+      },
+      "severity_dist": {
+        "2": 7,
+        "3": 28,
+        "1": 4
+      },
+      "debate_state_dist": {
+        "PRIMARY_RESOLVED": 34,
+        "NO_CANDIDATE": 121
+      },
+      "ge_top10": {
+        "正官格": 18,
+        "财格": 16,
+        "建禄月劫格": 15,
+        "印格": 12,
+        "食神格": 10,
+        "印格(印多逢财)": 9,
+        "印格(印轻逢煞)": 8,
+        "七煞格": 8,
+        "阳刃格": 8,
+        "伤官格": 8
+      },
+      "de_ling_true_pct": 49.03,
+      "de_di_true_pct": 92.9,
+      "dang_duo_true_pct": 58.71,
+      "strength_verdict_dist": {
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 43,
+        "{'value': ['泄伤', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 7,
+        "{'value': ['泄伤', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 47,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 20,
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 3,
+        "{'value': ['帮身', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 3,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 2,
+        "{'value': ['泄伤'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 18,
+        "{'value': ['帮身', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 8,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1,
+        "{'value': ['泄伤', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 2
+      },
+      "special_total": 32,
+      "yongyao_primary_dist": {
+        "木": 24,
+        "火": 50,
+        "水": 38,
+        "金": 17,
+        "土": 24,
+        "": 2
+      },
+      "climate_present": 155
+    },
+    "SMTH": {
+      "name": "三命通会",
+      "cases": 114,
+      "crashes": 0,
+      "bing_dist": {
+        "0": 91,
+        "1": 23
+      },
+      "slice_none": 0,
+      "slice_total": 23,
+      "domain_dist": {
+        "WANGSH": 13,
+        "JIEGOU": 10
+      },
+      "severity_dist": {
+        "3": 18,
+        "2": 3,
+        "1": 1,
+        "4": 1
+      },
+      "debate_state_dist": {
+        "NO_CANDIDATE": 91,
+        "PRIMARY_RESOLVED": 23
+      },
+      "ge_top10": {
+        "七煞格": 16,
+        "印格": 12,
+        "正官格": 12,
+        "财格": 11,
+        "阳刃格": 9,
+        "印格(印多逢财)": 9,
+        "建禄月劫格": 7,
+        "食神格": 6,
+        "从儿格": 6,
+        "伤官格": 6
+      },
+      "de_ling_true_pct": 42.98,
+      "de_di_true_pct": 85.96,
+      "dang_duo_true_pct": 63.16,
+      "strength_verdict_dist": {
+        "{'value': ['泄伤'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 16,
+        "{'value': ['泄伤', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 28,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 15,
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 36,
+        "{'value': ['帮身', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 4,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 4,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1,
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 2,
+        "{'value': ['泄伤', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 4,
+        "{'value': ['帮身', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 3,
+        "{'value': ['帮身', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1
+      },
+      "special_total": 40,
+      "yongyao_primary_dist": {
+        "金": 15,
+        "水": 31,
+        "火": 30,
+        "土": 11,
+        "木": 23,
+        "": 4
+      },
+      "climate_present": 114
+    },
+    "YHZP": {
+      "name": "渊海子平",
+      "cases": 206,
+      "crashes": 0,
+      "bing_dist": {
+        "0": 164,
+        "1": 41,
+        "2+": 1
+      },
+      "slice_none": 0,
+      "slice_total": 43,
+      "domain_dist": {
+        "JIEGOU": 21,
+        "WANGSH": 21,
+        "GEJU": 1
+      },
+      "severity_dist": {
+        "3": 37,
+        "4": 2,
+        "2": 4
+      },
+      "debate_state_dist": {
+        "NO_CANDIDATE": 164,
+        "PRIMARY_RESOLVED": 42
+      },
+      "ge_top10": {
+        "财格": 26,
+        "正官格": 21,
+        "印格": 20,
+        "建禄月劫格": 17,
+        "印格(印多逢财)": 15,
+        "七煞格": 15,
+        "食神格": 15,
+        "阳刃格": 11,
+        "印格(印轻逢煞)": 11,
+        "伤官格": 9
+      },
+      "de_ling_true_pct": 44.66,
+      "de_di_true_pct": 87.38,
+      "dang_duo_true_pct": 60.68,
+      "strength_verdict_dist": {
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 61,
+        "{'value': ['泄伤', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 55,
+        "{'value': ['帮身', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 4,
+        "{'value': ['帮身', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 14,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 7,
+        "{'value': ['帮身', '调候'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 3,
+        "{'value': ['泄伤'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 24,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 17,
+        "{'value': ['泄伤', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 5,
+        "{'value': ['帮身'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 3,
+        "{'value': ['泄伤', '调候', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'STRONG', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 7,
+        "{'value': ['帮身', '调候', '从格'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 2,
+        "{'value': ['帮身', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 3,
+        "{'value': ['帮身', '通关'], 'status': 'DTS_CITED', 'predictive': False, 'basis': '取用方向集合(非强弱判定): 帮身/泄伤=DTS L235「衰则喜帮喜助/旺则宜泄宜伤」; 调候=L295/L300 寒暖燥湿; 通关=L250 两神相战需通; 从格=L420 孤立无气财官强。多向并集, 非程级排序(程级属第4层)', 'strength_verdict_enum': {'value': 'EXTREME_WEAK', 'status': 'ENGINE_DEFINED', 'predictive': False, 'basis': 'L110/L230 散句 + ENGINE_DEFINED 合成(非 DTS 判据, 非权威); 降级 meta 供旧消费点临时读, 新代码一律读 direction'}}": 1
+      },
+      "special_total": 54,
+      "yongyao_primary_dist": {
+        "火": 66,
+        "木": 32,
+        "土": 22,
+        "金": 32,
+        "水": 49,
+        "": 5
+      },
+      "climate_present": 206
+    }
+  },
+  "total_cases": 2106,
+  "total_crashes": 0,
+  "anomalies": [],
+  "anomaly_total": 0
+}

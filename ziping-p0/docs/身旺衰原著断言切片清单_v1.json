@@ -1,0 +1,142 @@
+[
+  {
+    "assertion_id": "WS-SEASON-001",
+    "group": "时令基态",
+    "original": "得时俱为旺论，失时便作衰看，虽是至理，亦死法也。",
+    "source": "PZZQ 论十干得时不旺失时不弱 / DTS 通神论",
+    "semantic": "月令得令/失令是旺衰基础判断，但不可机械套用，是\"死法\"",
+    "engine_status": "已实现（wangshuai_structure 输出得令/失令）",
+    "faithful": true,
+    "note": "当前只输出得令/失令事实，不直接推强弱，符合\"死法\"警示"
+  },
+  {
+    "assertion_id": "WS-SEASON-002",
+    "group": "时令基态",
+    "original": "得时不旺，失时不弱。",
+    "source": "PZZQ 第六章 论十干得时不旺失时不弱",
+    "semantic": "得令不一定旺（克泄太重），失令不一定弱（根重/帮扶多）",
+    "engine_status": "已实现（DESHI_BUWANG / SHISHI_BURUO 结构Query）",
+    "faithful": true,
+    "note": "只输出结构匹配，不直接输出\"不旺/不弱\"命题，符合边界"
+  },
+  {
+    "assertion_id": "WS-SEASON-003",
+    "group": "时令基态",
+    "original": "干庚辛而支申酉，无火制而不富，逢土生而必夭，是得时不旺也。",
+    "source": "DTS 通神论",
+    "semantic": "得令但克泄太重（无制），实际不旺",
+    "engine_status": "部分实现（克泄成势已识别，但未与得令组合成\"得时不旺\"结构）",
+    "faithful": true,
+    "note": "DESHI_BUWANG Query条件是得令+有泄，可覆盖此类"
+  },
+  {
+    "assertion_id": "WS-SEASON-004",
+    "group": "时令基态",
+    "original": "干甲乙而支寅卯，遇官透而能受，逢水生而太过，是失时不弱也。",
+    "source": "DTS 通神论",
+    "semantic": "失令但根重/帮扶多，实际不弱",
+    "engine_status": "部分实现（重根已识别，但未与失令组合成\"失时不弱\"结构）",
+    "faithful": true,
+    "note": "SHISHI_BURUO Query条件是失令+有扶，可覆盖此类"
+  },
+  {
+    "assertion_id": "WS-ROOT-001",
+    "group": "根气层级",
+    "original": "长生禄旺，根之重者也；墓库余气，根之轻者也。",
+    "source": "PZZQ / DTS 通神论",
+    "semantic": "根分重轻两级：长生/禄/旺=重根；墓库/余气=轻根",
+    "engine_status": "已实现（daymaster_root_class 八类root_class）",
+    "faithful": true,
+    "note": "HEAVY_LONGSHENG/HEAVY_LU/HEAVY_WANG/HEAVY_REN = 重根；LIGHT_MU_KU_YANG/LIGHT_YU_QI = 轻根"
+  },
+  {
+    "assertion_id": "WS-ROOT-002",
+    "group": "根气层级",
+    "original": "干多不如根重，理固然也。",
+    "source": "PZZQ / DTS 通神论",
+    "semantic": "天干多不如地支根重，根优先于天干",
+    "engine_status": "已实现（根气优先于天干计数）",
+    "faithful": true,
+    "note": "wangshuai_multidim 中重根不为克泄成势所压，符合此原则"
+  },
+  {
+    "assertion_id": "WS-ROOT-003",
+    "group": "根气层级",
+    "original": "得一比肩，不如得支中一墓库，如甲逢未、丙逢戌之类。",
+    "source": "PZZQ / DTS 通神论",
+    "semantic": "1比肩 < 1墓库根（阳干）",
+    "engine_status": "已实现（LIGHT_MU_KU_YANG 轻根 > 单一天干比肩）",
+    "faithful": true,
+    "note": "阳干墓库为轻根，力大于单一天干比肩"
+  },
+  {
+    "assertion_id": "WS-ROOT-004",
+    "group": "根气层级",
+    "original": "得二比肩，不如得一余气，如乙逢辰、丁逢未之类。",
+    "source": "PZZQ / DTS 通神论",
+    "semantic": "2比肩 < 1余气根",
+    "engine_status": "已实现（LIGHT_YU_QI 轻根 > 2天干比肩）",
+    "faithful": true,
+    "note": "余气根为轻根，力大于2天干比肩"
+  },
+  {
+    "assertion_id": "WS-ROOT-005",
+    "group": "根气层级",
+    "original": "得三比肩，不如得一长生禄刃，如甲逢亥子寅卯之类。",
+    "source": "PZZQ / DTS 通神论",
+    "semantic": "3比肩 < 1长生/禄/刃根（重根）",
+    "engine_status": "已实现（HEAVY 重根 > 3天干比肩）",
+    "faithful": true,
+    "note": "重根力大于3天干比肩，符合\"干多不如根重\""
+  },
+  {
+    "assertion_id": "WS-ROOT-006",
+    "group": "根气层级",
+    "original": "人之日主不必生逢禄旺，即月令休囚，而年日时中，得长生禄旺，便不为弱，就使逢库，亦为有根。",
+    "source": "DTS 通神论",
+    "semantic": "失令但年日时有长生禄旺根，不为弱；逢库亦为有根",
+    "engine_status": "已实现（根气检测不限于月令，全局地支都检测）",
+    "faithful": true,
+    "note": "daymaster_root_class 全局检测地支根，不限于月令"
+  },
+  {
+    "assertion_id": "WS-ROOT-YINYANG-001",
+    "group": "阴阳干根",
+    "original": "阳干逢库，如壬逢辰、丙坐戌之类，不以为水火通根身库，甚至求刑冲开之。",
+    "source": "PZZQ / DTS 通神论",
+    "semantic": "阳干逢墓库为有根（通根身库），但有人误以为不是根",
+    "engine_status": "已实现（LIGHT_MU_KU_YANG 阳干墓库为轻根）",
+    "faithful": true,
+    "note": "原文是批判\"不以为通根身库\"之谬，阳干逢库确实有根"
+  },
+  {
+    "assertion_id": "WS-ROOT-YINYANG-002",
+    "group": "阴阳干根",
+    "original": "阴干逢库，如乙逢戌、丁逢丑，不作此论，以戌中无藏木，丑中无藏火也。",
+    "source": "PZZQ",
+    "semantic": "阴干逢相应墓库（无本气藏干）不作有根",
+    "engine_status": "已实现（阴干墓库按藏干精确判定，无本气则NONE）",
+    "faithful": true,
+    "note": "T39精确实现：阴干墓库中无藏干本气则不作有根"
+  },
+  {
+    "assertion_id": "WS-ROOT-YINYANG-003",
+    "group": "阴阳干根",
+    "original": "阴长生不作此论，然亦为明根，可比得一余气。",
+    "source": "PZZQ",
+    "semantic": "阴长生（如乙逢午、丁逢酉）为明根，力约比余气，非重根",
+    "engine_status": "已实现（SPECIAL_LONGSHENG_YIN 特殊根级）",
+    "faithful": true,
+    "note": "独立为SPECIAL级，不伪装成普通LIGHT，符合原典"
+  },
+  {
+    "assertion_id": "WS-CHONG-001",
+    "group": "冲根有效性",
+    "original": "旺者冲衰衰者拔，衰神冲旺旺神发。",
+    "source": "DTS 通神论",
+    "semantic": "冲的结果取决于双方旺衰比较：旺冲衰→衰者根拔；衰冲旺→旺者更旺",
+    "engine_status": "已实现（root_effectiveness_filter 冲支三类：衰者拔/旺神发/两停）",
+    "faithful": true,
+    "note": "基于旺衰有序枚举比较，非数值计算，符合原典"
+  }
+]

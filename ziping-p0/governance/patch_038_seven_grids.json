@@ -1,0 +1,21 @@
+﻿{
+  "contract_id": "PATCH-038",
+  "name": "七格成败全接线（GC-004~007 食神/七煞/伤官/阳刃）",
+  "status": "SEVEN_GRIDS_WIRED",
+  "golden_cases": [
+    {"id": "GC-001", "grid": "财格", "rule": "RULE-035-01", "status": "PASS"},
+    {"id": "GC-002", "grid": "印格", "rule": "RULE-035-02", "status": "PASS"},
+    {"id": "GC-003", "grid": "官格", "rule": "RULE-035-04", "status": "PASS"},
+    {"id": "GC-004", "grid": "食神格", "rule": "RULE-035-03", "status": "PASS"},
+    {"id": "GC-005", "grid": "七煞格", "rule": "RULE-035-05", "status": "PASS"},
+    {"id": "GC-006", "grid": "伤官格", "rule": "RULE-035-06", "status": "PASS"},
+    {"id": "GC-007", "grid": "阳刃格", "rule": "RULE-035-07", "status": "PASS"}
+  ],
+  "pending": [{"grid": "建禄月劫格", "rule": "RULE-035-07", "status": "REGISTERED_PENDING", "note": "临官月支干净候选待扫"}],
+  "bug_fixed": [
+    "grid_name 食伤写死丙→日主阴阳动态",
+    "比劫分支补阳刃判定（甲日主卯月=阳刃非建禄）",
+    "_ten_lists 统一十神动态表"
+  ],
+  "acceptance_criteria": ["七 Golden 全通过", "枚举 22/22", "GC-001~003 回归无破坏"]
+}

@@ -1,0 +1,259 @@
+{
+  "contract_id": "PATCH-004B",
+  "name": "Boolean / Enum / State Model Registry（状态模型治理）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "冻结数据结构和状态类型：Boolean 白名单、Enum 必用状态、Evidence-only 字段、禁止状态 BLOCKLIST、输出 Schema。本契约禁止写任何判断规则。",
+  "parent": "PATCH-004A-R1（b9a6d4f1）",
+  "no_rule_zone": "004B 禁止写任何判断规则；只冻结数据结构与状态类型",
+  "target": "防止 Agent 把经典概念压缩成 Boolean，或把证据字段误当裁决字段",
+  "execution_order": [
+    "1_boolean_whitelist",
+    "2_boolean_forbidden",
+    "3_enum_required",
+    "4_evidence_only",
+    "5_forbidden_state_blocklist",
+    "6_output_schema"
+  ],
+  "1_boolean_whitelist": {
+    "rule": "Boolean 只能表达「明确存在/不存在的客观结构属性」，只输出事实层，不得输出吉凶/强弱/喜忌。",
+    "fields": [
+      {
+        "field": "has_root",
+        "meaning": "是否存在根气证据",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_hidden_stem",
+        "meaning": "是否有藏干",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_combination",
+        "meaning": "是否存在合会刑冲结构",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_transformation_condition",
+        "meaning": "是否满足某转换条件入口",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_clash",
+        "meaning": "是否存在冲合刑害关系",
+        "layer": "FACT"
+      },
+      {
+        "field": "has_support_relation",
+        "meaning": "是否存在生扶关系",
+        "layer": "FACT"
+      }
+    ],
+    "forbidden_output": [
+      "吉/凶",
+      "强/弱",
+      "喜/忌"
+    ]
+  },
+  "2_boolean_forbidden": {
+    "rule": "以下字段禁止 Boolean 化：旺衰、得令、用神喜忌、强弱。",
+    "fields": [
+      {
+        "forbidden": {
+          "strong": true
+        },
+        "reason": "强是关系结果，不是事实",
+        "must": "strength_state: ENUM"
+      },
+      {
+        "forbidden": {
+          "got_order": true
+        },
+        "reason": "got_order=true 易被自动转换为 strong",
+        "must": "order_state: ENUM"
+      },
+      {
+        "forbidden": {
+          "useful": true
+        },
+        "reason": "用神必须经过经典范围+格局+病药+条件",
+        "must": "用神判定 ENUM + Rule Layer"
+      }
+    ]
+  },
+  "3_enum_required": {
+    "rule": "必须 Enum 的状态；任一状态不得由旺/得令/得根直接产生（除非该转换经 004A 登记）。",
+    "states": [
+      {
+        "state_id": "strength_state",
+        "values_human_proposal": null,
+        "note": "PATCH-004B-R1 Human 裁决：采用 PATCH-001 六级，废弃七值方案；STRONG=规则层确认后的强状态（非旺/得令/有根）；UNDETERMINED=证据不足或冲突；禁 definition_type=POWER_LEVEL",
+        "forbidden_source": [
+          "旺",
+          "得令",
+          "得根"
+        ],
+        "values": [
+          "STRONG",
+          "SLIGHTLY_STRONG",
+          "NEUTRAL",
+          "SLIGHTLY_WEAK",
+          "WEAK",
+          "UNDETERMINED"
+        ],
+        "definition_type": "RELATIONAL_RESULT",
+        "semantic_role": "RELATIONAL_STATE"
+      },
+      {
+        "state_id": "wang_state",
+        "values": [
+          "WANG",
+          "PING",
+          "SHUAI",
+          "UNKNOWN"
+        ],
+        "source": "时令状态",
+        "not": "力量评分"
+      },
+      {
+        "state_id": "qiang_state",
+        "values": [
+          "QIANG",
+          "ZHONG",
+          "RUO",
+          "UNKNOWN"
+        ],
+        "source": "关系结构",
+        "not": "力量评分"
+      },
+      {
+        "state_id": "order_state",
+        "values": [
+          "GET_ORDER",
+          "LOSE_ORDER",
+          "IRRELEVANT_ORDER",
+          "UNKNOWN"
+        ],
+        "note": "得令/失令/不论令/未知"
+      },
+      {
+        "state_id": "root_state",
+        "values": [
+          "HAS_ROOT",
+          "NO_ROOT",
+          "UNKNOWN"
+        ],
+        "object_required": true,
+        "note": "必须对象化：root_state(object=daymaster/official/wealth/kill/resource)；禁止 root=true 裸字段；六经典已证官有根/财有根/杀有根/日主有根对象不同"
+      },
+      {
+        "state_id": "support_state",
+        "values": [
+          "NONE",
+          "WEAK",
+          "NORMAL",
+          "STRONG",
+          "EXCESSIVE",
+          "UNDETERMINED"
+        ],
+        "note": "004A 已登记"
+      },
+      {
+        "state_id": "trend_state",
+        "values": [
+          "TREND_TO",
+          "TREND_BURST",
+          "TREND_GROUP",
+          "TREND_HOLD",
+          "UNDETERMINED"
+        ],
+        "note": "004A 已登记"
+      }
+    ]
+  },
+  "4_evidence_only": {
+    "rule": "以下字段只作 Evidence/Reference，禁止进入状态判断。",
+    "fields": [
+      {
+        "field": "classical_quote",
+        "usage": "EVIDENCE_ONLY",
+        "forbidden": "原文命中不得直接进入状态判断"
+      },
+      {
+        "field": "case_reference",
+        "usage": "REFERENCE_ONLY",
+        "forbidden": "命例出现不得形成规则（命例仅 Rule 验证/Golden/Regression）"
+      },
+      {
+        "field": "shen_sha_reference",
+        "usage": "DISPLAY_ONLY",
+        "forbidden": "神煞仅文献检索/参考展示"
+      },
+      {
+        "field": "ruling_schedule",
+        "usage": "TIME_RECORD_ONLY",
+        "forbidden": "人元用事日程仅时间记录；禁 15天=50% 换算（SCHEDULE≠WEIGHT）"
+      }
+    ]
+  },
+  "5_forbidden_state_blocklist": {
+    "rule": "以下状态字段禁止存在（BLOCKLIST）。",
+    "fields": [
+      {
+        "field": "strength_score",
+        "reason": "现代评分模型"
+      },
+      {
+        "field": "wang_score",
+        "reason": "现代评分模型"
+      },
+      {
+        "field": "five_element_score",
+        "reason": "现代评分模型"
+      },
+      {
+        "field": "percentage_strength",
+        "reason": "百分比权重模型"
+      },
+      {
+        "field": "favorable_factor_count",
+        "reason": "因子计数模型（FORBIDDEN-13 延续）"
+      },
+      {
+        "field": "wangqiang_state",
+        "reason": "旺≠强，禁混合状态"
+      },
+      {
+        "field": "overall_power",
+        "reason": "无六经典统一定义"
+      },
+      {
+        "field": "luck_level",
+        "reason": "属业务判断，不属于状态层"
+      }
+    ]
+  },
+  "6_output_schema": {
+    "state_record_schema": {
+      "state_id": "string",
+      "state_type": "BOOLEAN | ENUM | EVIDENCE",
+      "object_type": "string（日主/官/财/杀/印/五行群体…）",
+      "source_scope": "string（六部+域）",
+      "value": "string",
+      "execution_mode": "DIRECT_OUTPUT | CONTEXT_ONLY | RULE_REQUIRED | REFERENCE_ONLY",
+      "can_transition": "boolean",
+      "forbidden_transition": [
+        "array"
+      ]
+    },
+    "validation_rule": "任何 state 输出必须符合本 schema；未登记枚举/字段 FAIL_CLOSED"
+  },
+  "acceptance_criteria": [
+    "Boolean 白名单通过（仅 6 个事实字段）",
+    "Boolean 禁止业务化（旺衰/得令/用神不 Boolean）",
+    "Enum 与经典语义对应（值域绑定 source_ids 或标注 PENDING_UNIFY）",
+    "Evidence 不进入状态（quote/case/shensha/schedule 四类）",
+    "禁止评分模型字段（BLOCKLIST 8 项）",
+    "禁止旺强合并字段（wangqiang_state 禁）",
+    "Object 维度完整（root_state 必须对象化）"
+  ]
+}

@@ -1,0 +1,1062 @@
+{
+  "months": {
+    "寅": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "立春念三丙火用，餘日甲木旺提綱"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": true,
+        "source": "DTS-015-004",
+        "text_layer": "ANNOTATION",
+        "grade": "B",
+        "desc": "立春後七日戊土用事，八日後十四日前者丙火用事，十五日後甲木用事"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "卯": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "驚蟄乙木未用事，春分乙未正相當"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "辰": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "清明乙木十日管，後來八日癸水洋；穀雨前三戊土盛"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "巳": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "立夏又代戊土取，小滿過午丙火光"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "午": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "芒種己土相當好，中停七日土高張；夏至丙丁火旺有土張"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": true,
+        "source": "QTBJ-018-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "五月乙木：上半月屬陽…後下半月屬陰（三伏生寒）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "未": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "小暑十日丁火旺，後來三日乙木芳，己土三日威風盛，大暑己土十日黃"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "申": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "立秋十日壬水漲，處暑十五庚金良"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "酉": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "白露七日庚金旺，八日辛兮祇獨行"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "戌": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "寒露七日辛金管，八日丁火又水降；霜降己土十五日"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "亥": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "立冬七日癸水旺，壬水八日更流忙；小雪七日壬水急，八日甲木又芬芳"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "子": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "大雪七日壬水管，冬至癸水更潺汪"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    },
+    "丑": {
+      "yhzp": {
+        "schedule_match": true,
+        "source": "YHZP-056-001",
+        "text_layer": "ORIGINAL",
+        "grade": "A",
+        "desc": "小寒七日癸水養，八日辛金五庫藏；大寒十日己土勝"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（真诠用月令取格，无精确用事日程）"
+      },
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（仅寅月有具体日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（司權體系無精確日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權零星詩訣，無時間表）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（當權/司權體系無精確日程）"
+      }
+    }
+  },
+  "hours": {
+    "子": {
+      "dts": {
+        "schedule_match": true,
+        "source": "DTS-015-006",
+        "text_layer": "ANNOTATION",
+        "grade": "B",
+        "desc": "前三刻三分壬水用事，後三刻七分癸水用事"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "丑": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "寅": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "卯": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "辰": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "巳": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "午": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "未": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "申": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "酉": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "戌": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    },
+    "亥": {
+      "dts": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND"
+      },
+      "yhzp": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "pzzq": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "qtbj": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "smth": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      },
+      "sftk": {
+        "schedule_match": false,
+        "source": null,
+        "text_layer": null,
+        "grade": null,
+        "desc": "NOT_FOUND（六部无该时支精确用事日程）"
+      }
+    }
+  }
+}

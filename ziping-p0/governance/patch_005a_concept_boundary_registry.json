@@ -1,0 +1,233 @@
+{
+  "contract_id": "PATCH-005A",
+  "name": "旺/强/衰/弱 Concept Boundary Registry（概念边界注册表）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "PATCH-005 第一阶段：把 111 条 ADMISSIBLE_PENDING_RULE 转成 RULE_CANDIDATE_REGISTRY。本阶段只做概念定义、Source 绑定、Object 绑定、Relation 绑定、Allowed/Forbidden Transition；暂不允许生成身强/身弱/喜忌/用神结论。",
+  "parent": "PATCH-004C（fd8ae65d）",
+  "conversion_flow": "Classical Evidence → Concept → State/Factor → Rule Candidate → Golden Validation → Executable Rule",
+  "phase_boundary": {
+    "allowed": ["概念定义", "Source 绑定", "Object 绑定", "Relation 绑定", "Allowed/Forbidden Transition"],
+    "forbidden_now": ["身强/身弱结论", "喜忌结论", "用神结论"]
+  },
+  "phase_005_global_forbidden": [
+    {
+      "id": "FORBIDDEN-005-1",
+      "text": "旺数量统计（旺因素5个/弱因素2个→身强）禁止",
+      "reason": "六经典无因素计数依据"
+    },
+    {
+      "id": "FORBIDDEN-005-2",
+      "text": "五行力量百分比（木40%/火30%）禁止",
+      "reason": "六经典无百分比权重模型"
+    },
+    {
+      "id": "FORBIDDEN-005-3",
+      "text": "得令直接进入 strength_state（if get_order: STRONG）禁止",
+      "reason": "得令≠强"
+    },
+    {
+      "id": "FORBIDDEN-005-4",
+      "text": "单经典覆盖全部旺衰（DTS 旺衰理论=全部子平旺衰算法）禁止",
+      "reason": "六经典独立，禁跨书融合"
+    }
+  ],
+  "book_priority_005A": {
+    "YHZP": "重点（得时俱为旺论/失令便作衰看/四柱无根得时为旺/日干无气遇劫为强）",
+    "DTS": "重点（衰旺真机/旺中有衰 B1 辅助/真神得令/气势关系）",
+    "SFTK": "重点（根气对象化/强杀无根/病药边界）",
+    "PZZQ": "重点（月令入口/用神依赖条件）",
+    "QTBJ": "重点（季节状态/寒暖燥湿）",
+    "SMTH": "只作参考，不进入通用旺衰规则"
+  },
+  "rule_candidate_schema": {
+    "rule_candidate_id": "",
+    "concept_id": "",
+    "classical_scope": "",
+    "source_ids": [],
+    "object_type": "",
+    "relation_type": "",
+    "input_states": [],
+    "output_type": "",
+    "execution_mode": "",
+    "excluded_transition": []
+  },
+  "candidates": [
+    {
+      "rule_candidate_id": "CAND-WANG-001",
+      "concept_id": "CONCEPT_WANG",
+      "concept_definition": "旺=对象在时令中的兴盛状态（非力量幅度，非 STRONG）",
+      "classical_scope": "YHZP",
+      "source_ids": ["YHZP-138-001"],
+      "object_type": "DAY_STEM/五行/十神",
+      "relation_type": "PROSPEROUS_AT",
+      "input_states": [],
+      "output_type": "wang_state",
+      "execution_mode": "DIRECT_OUTPUT",
+      "excluded_transition": ["wang_state→STRONG", "wang_state→strength_state"],
+      "original_text": "得時俱為旺論"
+    },
+    {
+      "rule_candidate_id": "CAND-WANG-002",
+      "concept_id": "CONCEPT_WANG",
+      "concept_definition": "旺中有衰/衰中有旺（原注 B1，只作辅助证据，不作主判）",
+      "classical_scope": "DTS",
+      "source_ids": ["DTS-016-002"],
+      "object_type": "DAY_STEM",
+      "relation_type": "PROSPEROUS_CONTAINED",
+      "input_states": [],
+      "output_type": "wang_state",
+      "execution_mode": "CONTEXT_ONLY",
+      "excluded_transition": ["CONTAINED_WANG→STRONG"],
+      "original_text": "旺中有衰者存，衰中有旺者存（原註）"
+    },
+    {
+      "rule_candidate_id": "CAND-SHUAI-001",
+      "concept_id": "CONCEPT_SHUAI",
+      "concept_definition": "衰=对象在时令中的衰退状态（非 WEAK 同义词）",
+      "classical_scope": "YHZP",
+      "source_ids": ["YHZP-138-001"],
+      "object_type": "DAY_STEM",
+      "relation_type": "SHUAI_CONDITION",
+      "input_states": [],
+      "output_type": "shuai_state",
+      "execution_mode": "DIRECT_OUTPUT",
+      "excluded_transition": ["shuai_state→WEAK（自动）"],
+      "original_text": "失令便作衰看"
+    },
+    {
+      "rule_candidate_id": "CAND-QIANG-001",
+      "concept_id": "CONCEPT_QIANG",
+      "concept_definition": "强=关系结果（日干无气遇劫为强）；结构支撑产生，非时令直接给出",
+      "classical_scope": "YHZP",
+      "source_ids": ["YHZP-138-001"],
+      "object_type": "DAY_STEM",
+      "relation_type": "QIANG_CONDITION（遇劫）",
+      "input_states": [],
+      "output_type": "qiang_state",
+      "execution_mode": "DIRECT_OUTPUT",
+      "excluded_transition": ["qiang_state→STRONG"],
+      "original_text": "日干無氣遇劫為強"
+    },
+    {
+      "rule_candidate_id": "CAND-RUO-001",
+      "concept_id": "CONCEPT_RUO",
+      "concept_definition": "弱=strength_state 体系端；005A 阶段不建立直接触发（无单锚），主为 UNDETERMINED",
+      "classical_scope": "—",
+      "source_ids": [],
+      "object_type": "DAY_STEM",
+      "relation_type": "—",
+      "input_states": [],
+      "output_type": "strength_state（待 005C）",
+      "execution_mode": "RULE_REQUIRED",
+      "excluded_transition": ["日干無氣→WEAK（直接）"],
+      "original_text": "（无单锚，待多源综合）"
+    },
+    {
+      "rule_candidate_id": "CAND-ORDER-001",
+      "concept_id": "CONCEPT_GET_ORDER",
+      "concept_definition": "得令=对象↔月令关系；月提得令是旺衰入口但≠强",
+      "classical_scope": "YHZP/PZZQ/SFTK",
+      "source_ids": ["YHZP-138-001", "PZZQ-005-007", "SFTK-120-004"],
+      "object_type": "DAY_STEM/五神/气象",
+      "relation_type": "GET_ORDER",
+      "input_states": [],
+      "output_type": "order_state",
+      "execution_mode": "DIRECT_OUTPUT",
+      "excluded_transition": ["order_state→STRONG", "order_state→strength_state"],
+      "original_text": "月提得令 / 八字用神專求月令"
+    },
+    {
+      "rule_candidate_id": "CAND-TIME-001",
+      "concept_id": "CONCEPT_GET_TIME",
+      "concept_definition": "得时=四柱无根得时为旺（旺论，非强论）",
+      "classical_scope": "YHZP",
+      "source_ids": ["YHZP-138-001"],
+      "object_type": "DAY_STEM",
+      "relation_type": "GET_TIME",
+      "input_states": [],
+      "output_type": "order_state（带 TIME 标记）",
+      "execution_mode": "DIRECT_OUTPUT",
+      "excluded_transition": ["GET_TIME→STRONG"],
+      "original_text": "四柱無根得時為旺"
+    },
+    {
+      "rule_candidate_id": "CAND-ROOT-001",
+      "concept_id": "CONCEPT_ROOT",
+      "concept_definition": "根=对象化通根关系（日主/官/财/杀/印对象不同）",
+      "classical_scope": "YHZP/PZZQ/QTBJ/SFTK",
+      "source_ids": ["YHZP-123-003", "PZZQ-007-021", "QTBJ-011-001", "SFTK-020-014"],
+      "object_type": "DAY_STEM/官/財/殺/印",
+      "relation_type": "ROOTED_IN",
+      "input_states": [],
+      "output_type": "root_state",
+      "execution_mode": "DIRECT_OUTPUT",
+      "excluded_transition": ["root_state→STRONG", "root_state→favorable"],
+      "original_text": "官星無根官從何出 / 財星無根財從何生"
+    },
+    {
+      "rule_candidate_id": "CAND-TREND-001",
+      "concept_id": "CONCEPT_TREND",
+      "concept_definition": "势=结构趋势状态（五阳从气不从势）；势≠强弱",
+      "classical_scope": "DTS",
+      "source_ids": ["DTS-008-003", "DTS-008-022"],
+      "object_type": "五行群体",
+      "relation_type": "TREND_TO",
+      "input_states": [],
+      "output_type": "trend_state",
+      "execution_mode": "DIRECT_OUTPUT",
+      "excluded_transition": ["trend_state→strength_state"],
+      "original_text": "五陽從氣不從勢"
+    },
+    {
+      "rule_candidate_id": "CAND-SEASONAL-001",
+      "concept_id": "CONCEPT_SEASONAL",
+      "concept_definition": "季节状态=QTBJ 当权/失令（寒暖燥湿体系）",
+      "classical_scope": "QTBJ",
+      "source_ids": ["QTBJ-018-001"],
+      "object_type": "DAY_STEM",
+      "relation_type": "SEASONAL_CONDITION",
+      "input_states": [],
+      "output_type": "seasonal_state",
+      "execution_mode": "CONTEXT_ONLY",
+      "excluded_transition": ["seasonal_state→STRONG", "seasonal_state→统一旺衰公式"],
+      "source_level_note": "⚠️ QTBJ-018-001 为 CANDIDATE_RULE 级（不在 111 条 CORE_RULE_ELIGIBLE）；005B 阶段必须先完成升格核验（或换用 QTBJ-060-001/QTBJ-109-001 调候 CORE 来源），否则 FAIL_CLOSED",
+      "original_text": "（QTBJ 季节当权/失令）"
+    },
+    {
+      "rule_candidate_id": "CAND-SFTK-ROOT-001",
+      "concept_id": "CONCEPT_ROOT",
+      "concept_definition": "强杀无根（SFTK 根气对象化；杀=官杀对象）",
+      "classical_scope": "SFTK",
+      "source_ids": ["SFTK-129-038", "SFTK-020-014"],
+      "object_type": "七殺",
+      "relation_type": "ROOTED_IN（无根）",
+      "input_states": [],
+      "output_type": "root_state",
+      "execution_mode": "DIRECT_OUTPUT",
+      "excluded_transition": ["杀无根→身强"],
+      "original_text": "強殺無根 / 無根棄命從財"
+    },
+    {
+      "rule_candidate_id": "CAND-DTS-ZHENJIA-001",
+      "concept_id": "CONCEPT_TRUE_GOD",
+      "concept_definition": "真神得令（DTS 真假论；真神=月令真神）",
+      "classical_scope": "DTS",
+      "source_ids": ["DTS-023-004"],
+      "object_type": "真神/用神",
+      "relation_type": "GET_ORDER（真神得令）",
+      "input_states": [],
+      "output_type": "order_state（真神对象）",
+      "execution_mode": "CONTEXT_ONLY",
+      "excluded_transition": ["真神得令→身强"],
+      "original_text": "命之真者得令"
+    }
+  ],
+  "acceptance_criteria": [
+    "概念定义不产出身强/身弱/喜忌/用神结论",
+    "每个 candidate 绑定 source_ids（可回查）",
+    "Object 绑定（日主/五行/十神/官杀财印）",
+    "Relation 绑定（PROSPEROUS_AT/GET_ORDER/ROOTED_IN…）",
+    "Forbidden Transition 全部登记（旺≠STRONG 等）",
+    "005 全局禁止 4 项（计数/百分比/得令直入/单经典覆盖）已冻结"
+  ]
+}

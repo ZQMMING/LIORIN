@@ -1,0 +1,112 @@
+[
+  {
+    "assertion_id": "YONGSHEN-GEJU-001",
+    "group": "格局用神(PZZQ)",
+    "original": "八字用神，专求月令，以日干配月令地支，而生克不同，格局分焉。",
+    "source": "PZZQ 论用神",
+    "semantic": "格局用神以月令为核心，日干与月令地支的生克关系决定用神类型",
+    "engine_status": "已实现（yongshen_multi_track ZPZQ轨）",
+    "faithful": true,
+    "note": "L0格局轨使用沈孝瞻原著，非徐乐吾评注"
+  },
+  {
+    "assertion_id": "YONGSHEN-GEJU-002",
+    "group": "格局用神(PZZQ)",
+    "original": "财官印食，此用神之善而顺用之者也；煞伤劫刃，用神之不善而逆用之者也。",
+    "source": "PZZQ 论用神",
+    "semantic": "四吉神（财官印食）顺用，四凶神（煞伤劫刃）逆用",
+    "engine_status": "已实现（格神候选含顺用/逆用分类）",
+    "faithful": true,
+    "note": "顺用逆用只作为分类字段，不进一步解释成吉凶"
+  },
+  {
+    "assertion_id": "YONGSHEN-GEJU-003",
+    "group": "格局用神(PZZQ)",
+    "original": "用神非尽出于月令，故于舍月令别取用神之格局，特别提出。",
+    "source": "PZZQ 论用神",
+    "semantic": "用神不一定都出于月令，有舍月令别取用神的格局（外格/从格等）",
+    "engine_status": "已实现（外格4类+从格/化气特殊格局）",
+    "faithful": true,
+    "note": "外格/从格作为独立entry，不与月令格混淆"
+  },
+  {
+    "assertion_id": "YONGSHEN-DIAOHOU-001",
+    "group": "调候用神(QTBJ)",
+    "original": "调候用神者，因月令气候之寒暖燥湿，而取调和之神也。",
+    "source": "QTBJ 总论（概括）",
+    "semantic": "调候用神根据月令气候寒暖燥湿选取，与格局用神不同",
+    "engine_status": "已实现（yongshen_multi_track QTBJ轨）",
+    "faithful": true,
+    "note": "调候候选独立namespace，日干×月令查表"
+  },
+  {
+    "assertion_id": "YONGSHEN-DIAOHOU-002",
+    "group": "调候用神(QTBJ)",
+    "original": "生于冬月，寒气太重，须火以暖之；生于夏月，热气太甚，须水以润之。",
+    "source": "QTBJ 总论（概括）",
+    "semantic": "冬月需火暖，夏月需水润，是调候最基本原则",
+    "engine_status": "已实现（调候候选表冬月多火、夏月多水）",
+    "faithful": true,
+    "note": "调候轨激活条件：冬夏月份且原局调候所需极弱"
+  },
+  {
+    "assertion_id": "YONGSHEN-BINGYAO-001",
+    "group": "病药用神(SFTK)",
+    "original": "有病方为贵，无伤不是奇。因其病而药之，斯可作为用神。",
+    "source": "SFTK 神峰通考·病药说",
+    "semantic": "病药用神是针对命局之病（太过/不及）选取的药神，去病之神即为用神",
+    "engine_status": "已实现（yongshen_multi_track SFTK轨）",
+    "faithful": true,
+    "note": "病药轨基于bingyao_layer输出，激活条件：存在明显病"
+  },
+  {
+    "assertion_id": "YONGSHEN-TIYONG-001",
+    "group": "体用扶抑(DTS)",
+    "original": "道有体用，要在扶之抑之得其宜。",
+    "source": "DTS 滴天髓·体用",
+    "semantic": "体用扶抑用神根据日主强弱选取：身强宜抑（克泄耗），身弱宜扶（生扶）",
+    "engine_status": "已实现（yongshen_multi_track DTS轨）",
+    "faithful": true,
+    "note": "体用轨基于旺衰结构输出，激活条件：日主明显偏离中和"
+  },
+  {
+    "assertion_id": "YONGSHEN-PRIORITY-001",
+    "group": "用神优先级",
+    "original": "调候用神，喜忌为第一，依《栏江网》。",
+    "source": "梁湘润《用神精义》引QTBJ传统",
+    "semantic": "调候用神在多种用神中居于首位，尤其是生于夏冬气候极端时",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_priority，结构化优先级仲裁）",
+    "faithful": true,
+    "note": "用神优先级已实现：同check_yongshen_priority，四轨并行冲突保留前提下的结构化优先级建议"
+  },
+  {
+    "assertion_id": "YONGSHEN-PRIORITY-002",
+    "group": "用神优先级",
+    "original": "调候=格局用神 → 合一，无冲突；冬夏生人且冲突→调候优先；非冬夏且冲突→格局优先。",
+    "source": "PZZQ+QTBJ综合（用户裁决修正）",
+    "semantic": "用神优先级三条规则：合一情形、冬夏调候优先、非冬夏格局优先",
+    "engine_status": "已实现（_conflict_layer 合一情形检测）",
+    "faithful": true,
+    "note": "合一情形已实现：调候=格局时标记heyi=True，无冲突"
+  },
+  {
+    "assertion_id": "YONGSHEN-TOUGAN-001",
+    "group": "用神透出得地",
+    "original": "用神得地得势，富贵双全；用神无根无气，虚而不实。",
+    "source": "YHZP 渊海子平 / PZZQ 子平真诠（概括）",
+    "semantic": "用神透出天干且在地支有根（得地），力量充足；用神无根则虚",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_tou_de，结构化检查）",
+    "faithful": true,
+    "note": "用神透出得地已实现：检查每个候选五行是否透出天干/在地支有根，输出TOU_AND_DE/TOU_ONLY/DE_ONLY/NO_TOU_NO_DE四态；不做用神最终裁决"
+  },
+  {
+    "assertion_id": "YONGSHEN-CHUNZA-001",
+    "group": "用神清纯混杂",
+    "original": "用神清纯则贵，用神混杂则贱。",
+    "source": "PZZQ 子平真诠 / DTS 滴天髓（概括）",
+    "semantic": "用神单一不杂为清，多种用神交杂为混；清则贵，混则贱",
+    "engine_status": "已实现（yongshen_multi_track check_yongshen_chun_za，结构化检查）",
+    "faithful": true,
+    "note": "用神清纯混杂已实现：统计候选五行种类，输出CHUN(清纯)/WEAK_ZA(微杂)/ZA(混杂)三态；不做用神最终裁决/吉凶/贵贱"
+  }
+]

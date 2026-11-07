@@ -1,0 +1,117 @@
+{
+  "contract_id": "PATCH-022A",
+  "name": "Strength Admission 基础准入（旺/强/衰/弱）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "首批 Rule Admission：CAND-WANG-001/002、CAND-SHUAI-001、CAND-QIANG-001 走完 条件检查→Golden→Conflict→ADMITTED 全链；CAND-RUO-001 保持特殊状态。准入=资格层，非执行层（执行需 022B 引擎接线+动态 Golden）。",
+  "admission_declaration": "ADMITTED ≠ 自动算命；golden_validation_stage=STATIC_PASS（020 静态+5 全局反例拦截通过），动态 Golden 待 022B 引擎接线后逐条补验，届时 golden_pass 方置 true。",
+  "admissions": [
+    {
+      "rule_id": "CAND-WANG-001",
+      "concept": "旺=对象在时令中的兴盛状态（非力量幅度，非 STRONG）",
+      "admission_status": "ADMITTED",
+      "admission_type": "CORE_ADMITTED",
+      "gate": {
+        "six_classics_source": "PASS（YHZP 子机赋）",
+        "precise_chapter": "PASS（YHZP-138-001）",
+        "original_text": "PASS（得時俱為旺論）",
+        "text_layer": "PASS（ORIGINAL）",
+        "evidence_grade": "PASS（A）",
+        "attribution": "PASS（原书正文）",
+        "context_complete": "PASS（时令兴盛语境）",
+        "condition_complete": "PASS（条件=得时）",
+        "no_cross_book_merge": "PASS",
+        "no_annotation_upgrade": "PASS",
+        "golden_loop": "PASS（020 静态 + 反例拦截：旺≠强 BLOCKED）"
+      },
+      "golden_ref": "GC-WQ-001（旺≠强）BLOCKED",
+      "conflict_ref": "CF-001（YHZP 得时旺 vs DTS 旺中有衰 → BY_SCOPE）",
+      "execution_mode": "DIRECT_OUTPUT",
+      "output": "wang_state",
+      "note": "产出 wang_state 时令兴盛状态；禁止 wang_state→STRONG/strength_state"
+    },
+    {
+      "rule_id": "CAND-WANG-002",
+      "concept": "旺中有衰/衰中有旺（DTS 原注 B1，辅助语境）",
+      "admission_status": "ADMITTED",
+      "admission_type": "SUPPORTING_ADMITTED",
+      "gate": {
+        "six_classics_source": "PASS（DTS 衰旺论）",
+        "precise_chapter": "PASS（DTS-016-002）",
+        "original_text": "PASS（旺中有衰者存，衰中有旺者存）",
+        "text_layer": "PASS（原注层 B1，明确标注）",
+        "evidence_grade": "PASS（B1=SUPPORTING_RULE_ONLY + CANDIDATE_RULE + NO_ORIGINAL_UPGRADE）",
+        "attribution": "PASS（原注）",
+        "context_complete": "PASS（衰旺论辅助语境）",
+        "condition_complete": "PASS（条件=衰旺内部存续关系）",
+        "no_cross_book_merge": "PASS",
+        "no_annotation_upgrade": "PASS（B1 不得升 A）",
+        "golden_loop": "PASS（020 反例拦截：旺≠强 BLOCKED）"
+      },
+      "golden_ref": "GC-WQ-001（旺≠强）BLOCKED",
+      "conflict_ref": "CF-001（BY_SCOPE）",
+      "execution_mode": "CONTEXT_ONLY",
+      "output": "wang_state（辅助语境）",
+      "note": "仅作语境辅助证据；禁止 CONTAINED_WANG→STRONG；不得单独驱动核心算法"
+    },
+    {
+      "rule_id": "CAND-SHUAI-001",
+      "concept": "衰=对象在时令中的衰退状态（非 WEAK 同义词）",
+      "admission_status": "ADMITTED",
+      "admission_type": "CORE_ADMITTED",
+      "gate": {
+        "six_classics_source": "PASS（YHZP 子机赋）",
+        "precise_chapter": "PASS（YHZP-138-001）",
+        "original_text": "PASS（失令便作衰看）",
+        "text_layer": "PASS（ORIGINAL）",
+        "evidence_grade": "PASS（A）",
+        "attribution": "PASS（原书正文）",
+        "context_complete": "PASS（失令衰退语境）",
+        "condition_complete": "PASS（条件=失令）",
+        "no_cross_book_merge": "PASS",
+        "no_annotation_upgrade": "PASS",
+        "golden_loop": "PASS（020 静态 + 反例拦截）"
+      },
+      "golden_ref": "GC-DL-001 相关（得令≠强 反例族）",
+      "conflict_ref": "NONE（无冲突）",
+      "execution_mode": "DIRECT_OUTPUT",
+      "output": "shuai_state",
+      "note": "禁止 shuai_state→WEAK（自动）；衰≠弱，两维隔离"
+    },
+    {
+      "rule_id": "CAND-QIANG-001",
+      "concept": "强=关系结果（日干无气遇劫为强）；结构支撑产生，非时令直接给出",
+      "admission_status": "ADMITTED",
+      "admission_type": "CORE_ADMITTED",
+      "gate": {
+        "six_classics_source": "PASS（YHZP 子机赋）",
+        "precise_chapter": "PASS（YHZP-138-001）",
+        "original_text": "PASS（日干無氣遇劫為強）",
+        "text_layer": "PASS（ORIGINAL）",
+        "evidence_grade": "PASS（A）",
+        "attribution": "PASS（原书正文）",
+        "context_complete": "PASS（无气+遇劫 双条件语境）",
+        "condition_complete": "PASS（条件=日干无气 ∧ 遇劫）",
+        "no_cross_book_merge": "PASS",
+        "no_annotation_upgrade": "PASS",
+        "golden_loop": "PASS（020 静态 + 反例拦截：得令≠强/有根≠强 BLOCKED）"
+      },
+      "golden_ref": "GC-DL-001/GC-YG-001（得令≠强、有根≠强）BLOCKED",
+      "conflict_ref": "NONE",
+      "execution_mode": "DIRECT_OUTPUT（双条件结构判断）",
+      "output": "qiang_state",
+      "note": "必须双条件（无气∧遇劫）才触发；禁止单因子触发；禁止 qiang_state→STRONG"
+    }
+  ],
+  "special_status": {
+    "rule_id": "CAND-RUO-001",
+    "status": "PENDING_ADMISSION",
+    "reason": "005A Human 裁决：弱概念六部无单源等价（无单锚），保持 UNDETERMINED 主路径；待 022B 多源综合 + Golden 边界确认后方可再议准入",
+    "admission_gate": "HOLD（条件不完整——无单锚）"
+  },
+  "summary": {
+    "admitted": 4,
+    "pending_admission": 1,
+    "golden_validation_stage": "STATIC_PASS（动态 Golden 待 022B）",
+    "engine_execution": "未启动（ADMITTED=资格层）"
+  }
+}

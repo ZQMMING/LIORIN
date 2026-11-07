@@ -1,0 +1,79 @@
+﻿{
+ "input": {
+  "年柱": "癸亥",
+  "月柱": "壬戌",
+  "日柱": "乙未",
+  "时柱": "壬午"
+ },
+ "L1_object": {
+  "day_master_element": "WOOD",
+  "ten_god_type": {
+   "年柱": "偏印",
+   "月柱": "正印",
+   "日柱": "比肩",
+   "时柱": "正印"
+  }
+ },
+ "L2_boolean": {
+  "has_root": true,
+  "root_detail": [
+   "年柱亥藏甲(中)",
+   "日柱未藏乙(余)"
+  ],
+  "has_visible_resource": true,
+  "has_visible_wealth": false,
+  "has_visible_authority": false,
+  "has_clash": false,
+  "has_combination": true,
+  "combination_detail": [
+   "日柱未-时柱午"
+  ],
+  "has_transformation_condition": "UNKNOWN",
+  "has_following_structure_condition": "UNKNOWN"
+ },
+ "L3_base": {
+  "order_state": "NOT_GET_ORDER",
+  "root_state": {
+   "object": "daymaster",
+   "value": "WEAK_ROOT",
+   "root_q": [
+    "中",
+    "余"
+   ]
+  },
+  "support_state": "PRESENT",
+  "support_detail": [
+   "年柱偏印(通根)",
+   "月柱正印(无根)",
+   "时柱正印(无根)"
+  ]
+ },
+ "L4_relation": {
+  "resource_relation_state": "UNDETERMINED（印透多但财制印存在，关系规则未准入）",
+  "wealth_relation_state": {
+   "status": "UNDETERMINED",
+   "wealth_structure": {
+    "地支得地": [
+     "月柱戌",
+     "日柱未"
+    ],
+    "天干透": []
+   },
+   "daymaster_relation": "未断言",
+   "drain_relation": "UNDETERMINED",
+   "condition_limits": "身健/身弱未断言"
+  },
+  "authority_relation_state": "UNDETERMINED（官杀不透）"
+ },
+ "L5_prosperity": {
+  "wang_state": "UNKNOWN",
+  "shuai_state": "SHUAI"
+ },
+ "L6_strength": {
+  "strength_state": "UNDETERMINED"
+ },
+ "L7_pattern": {
+  "pattern_state": "NOT_STARTED",
+  "use_god_state": "NOT_STARTED"
+ }
+}

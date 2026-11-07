@@ -1,0 +1,21 @@
+{
+  "contract_id": "PATCH-062",
+  "name": "QTBJ调候钉原文-春秋两季",
+  "principle": "春木宜火暖+水滋/秋木宜丁火制金+癸润, 逐格钉原文",
+  "spring_registry": {
+    "甲寅": {"use": "丙癸", "note": "寒木向陽火溫水暖", "src": "QTBJ-003-001", "done": true},
+    "甲卯": {"use": "庚丁", "note": "陽刃架殺庚丁兩透", "src": "QTBJ-004-001", "done": true},
+    "甲辰": {"use": "庚壬", "note": "木氣相竭先庚次壬", "src": "QTBJ-005-001", "done": true},
+    "乙寅": {"use": "丙癸", "note": "丙先癸次, 春乙見丙百花向陽", "src": "QTBJ-014-001", "done": true},
+    "乙卯": {"use": "丙癸", "note": "丙為君癸為臣", "src": "QTBJ-015-001", "done": true},
+    "乙辰": {"use": "癸丙", "note": "陽氣愈熾先癸後丙", "src": "QTBJ-016-001", "done": true}
+  },
+  "autumn_registry": {
+    "甲申": {"use": "丁庚", "note": "木性枯槁先丁後庚", "src": "QTBJ-008-001", "done": true},
+    "甲酉": {"use": "丁丙庚", "note": "木囚金旺丁先次丙庚再", "src": "QTBJ-009-001", "done": true},
+    "甲戌": {"use": "丁癸", "note": "木凋獨愛丁火壬癸滋扶", "src": "QTBJ-010-001", "done": true},
+    "乙申": {"use": "丙癸", "note": "金神司令先丙後癸", "src": "QTBJ-020-001", "done": true},
+    "乙戌": {"use": "癸", "note": "九月乙木根枯賴癸(已釘060)", "src": "QTBJ-022-001", "done": true}
+  },
+  "acceptance": "春秋調候全釘原文; 四時調候體系閉合"
+}

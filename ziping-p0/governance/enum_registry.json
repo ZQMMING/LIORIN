@@ -1,0 +1,1779 @@
+{
+ "registry": "ENUM_REGISTRY",
+ "version": "v1.10.0",
+ "principle": "附录 L-1：值域治理，不负责证明业务语义；每个 Enum 必须包含 enum_id/engine_scope/values/description/source_rule_required；F-1 Human 裁决 2026-09-16：派生枚举全部纳入 Registry，status=ACTIVE（已裁决）或 PENDING（未裁决，禁止 FINAL rule admission）",
+ "enums": [
+  {
+   "enum_id": "engine_status",
+   "engine_scope": [
+    "YUHAI_ZIPING",
+    "ZIPIN_ZHENQUAN",
+    "DI_TIAN_SUI",
+    "QIONGTONG_BAOJIAN",
+    "SANMING_TONGHUI",
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "PASS",
+    "UNKNOWN",
+    "CLASSICAL_DIVERGENCE",
+    "FAIL",
+    "FAIL_CLOSED"
+   ],
+   "description": "§71 Engine Final Status；RULE_NOT_APPLICABLE 不属于此枚举",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "rule_match_state",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "MATCH",
+    "NO_MATCH",
+    "RULE_NOT_APPLICABLE",
+    "UNKNOWN"
+   ],
+   "description": "§36 L-7 Internal Rule Match State",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "text_layer",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "ORIGINAL",
+    "ANNOTATION",
+    "LATER_COMMENTARY",
+    "UNVERIFIED",
+    "NEEDS_REVIEW"
+   ],
+   "description": "附录 D Source Text Layer",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "evidence_grade",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "A",
+    "B",
+    "C",
+    "D"
+   ],
+   "description": "§78 证据质量描述（非概率）：A=ORIGINAL B=ANNOTATION C=LATER_COMMENTARY D=UNVERIFIED/NEEDS_REVIEW",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "pzzq_formation_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "FORMED",
+    "NOT_FORMED",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_STATE"
+  },
+  {
+   "enum_id": "pzzq_destruction_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "DESTROYED",
+    "NOT_DESTROYED",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_STATE"
+  },
+  {
+   "enum_id": "pzzq_rescue_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "RESCUED",
+    "NOT_RESCUED",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_STATE"
+  },
+  {
+   "enum_id": "pzzq_structure_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "VALID",
+    "BROKEN",
+    "VALID_WITH_DEFECT",
+    "BROKEN_WITH_RESCUE",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_STATE"
+  },
+  {
+   "enum_id": "pzzq_chengbai_state",
+   "engine_scope": [
+    "ZIPIN_ZHENQUAN"
+   ],
+   "values": [
+    "CHENG",
+    "BAI",
+    "CHENG_ZHONG_DAI_JI",
+    "BAI_ZHONG_YOU_CHENG",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-2",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "RESULT_STATE"
+  },
+  {
+   "enum_id": "dts_qi_type",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "本气",
+    "中气",
+    "余气"
+   ],
+   "description": "附录 L-3；实现层可使用 ASCII ID",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "dts_support_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "NONE",
+    "WEAK",
+    "NORMAL",
+    "STRONG",
+    "EXCESSIVE",
+    "UNDETERMINED"
+   ],
+   "description": "附录 L-3 + PATCH-001 §7：生扶/支持强度。EXCESSIVE=生扶过旺（生多为克，母慈灭子类）；UNDETERMINED=无法确定。从格专用 dts_cong_support_state（有无生扶）不并入本强度枚举（F-3 裁决）。",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_strength_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "STRONG",
+    "SLIGHTLY_STRONG",
+    "NEUTRAL",
+    "SLIGHTLY_WEAK",
+    "WEAK",
+    "UNDETERMINED"
+   ],
+   "description": "附录 L-3/§G-6：旺≠强；不得使用 score/percentage/probability",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "STRENGTH_STATE",
+   "definition_type": "RELATIONAL_RESULT",
+   "semantic_role": "RELATIONAL_STATE",
+   "state_definition": {
+    "STRONG": "规则层确认后的强状态",
+    "SLIGHTLY_STRONG": "偏强状态",
+    "NEUTRAL": "中和/难偏状态",
+    "SLIGHTLY_WEAK": "偏弱状态",
+    "WEAK": "规则层确认后的弱状态",
+    "UNDETERMINED": "证据不足或冲突"
+   },
+   "validation_schema": {
+    "prohibited_definition_type": [
+     "POWER_LEVEL"
+    ],
+    "prohibited_source": [
+     "旺",
+     "得令",
+     "得根"
+    ],
+    "prohibited_conversion": [
+     "WANG→STRONG",
+     "order_state→STRONG",
+     "root_state→STRONG",
+     "factor_count→STRONG"
+    ]
+   }
+  },
+  {
+   "enum_id": "dts_effect_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "effective",
+    "partially_effective",
+    "ineffective",
+    "blocked",
+    "conditional",
+    "undetermined"
+   ],
+   "description": "附录 L-3 + PATCH-001 §8：效力状态。CONDITIONAL=效力成立但有条件依赖（如伤官配印需身弱方有效）；UNDETERMINED=证据/规则不足以确定效力。",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "EFFECT_STATE"
+  },
+  {
+   "enum_id": "qtbj_requirement_type",
+   "engine_scope": [
+    "QIONGTONG_BAOJIAN"
+   ],
+   "values": [
+    "PRIMARY",
+    "SECONDARY",
+    "AVOID"
+   ],
+   "description": "附录 L-4",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "ROLE_STATE"
+  },
+  {
+   "enum_id": "smth_combination_type",
+   "engine_scope": [
+    "SANMING_TONGHUI"
+   ],
+   "values": [
+    "六合",
+    "三合",
+    "三会",
+    "半合",
+    "拱合",
+    "暗合"
+   ],
+   "description": "附录 L-5",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "smth_completeness",
+   "engine_scope": [
+    "SANMING_TONGHUI"
+   ],
+   "values": [
+    "complete",
+    "incomplete",
+    "UNKNOWN"
+   ],
+   "description": "附录 L-5：半合必须区分 complete/incomplete（§119-24）；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "smth_activation_status",
+   "engine_scope": [
+    "SANMING_TONGHUI"
+   ],
+   "values": [
+    "active",
+    "conditional",
+    "inactive"
+   ],
+   "description": "附录 L-5：神煞存在≠神煞激活（§119-22）",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "sftk_disease_type",
+   "engine_scope": [
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "雕",
+    "枯",
+    "旺",
+    "弱"
+   ],
+   "description": "附录 L-6",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "sftk_medicine_type",
+   "engine_scope": [
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "direct",
+    "indirect",
+    "through_channel",
+    "protective"
+   ],
+   "description": "附录 L-6",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "sftk_dongjing_state",
+   "engine_scope": [
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "动",
+    "静",
+    "动静相兼"
+   ],
+   "description": "附录 L-6",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "sftk_gaitou_state",
+   "engine_scope": [
+    "SHENFENG_TONGKAO"
+   ],
+   "values": [
+    "盖头",
+    "被盖",
+    "无盖头"
+   ],
+   "description": "附录 L-6",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "operator",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "equals",
+    "in",
+    "not_in",
+    "exists",
+    "not_exists"
+   ],
+   "description": "§46 Preconditions 白名单；禁止嵌套/比较符",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "rule_operator",
+   "engine_scope": [
+    "*"
+   ],
+   "values": [
+    "emit",
+    "require",
+    "suppress"
+   ],
+   "description": "§45 Rule 顶层 operator",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "dts_special_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "TRUE_HUA",
+    "TRUE_CONG",
+    "NONE"
+   ],
+   "description": "F-1 2026-09-16：化从互斥单一输出——合化成则 TRUE_HUA、合化不成再论从 TRUE_CONG、均不成立 NONE（Human 最终裁决 2026-09-16）",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "RESULT_STATE"
+  },
+  {
+   "enum_id": "dts_cai_guan_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "NOT_STRONG",
+    "STRONG",
+    "UNKNOWN"
+   ],
+   "description": "F-1 2026-09-16：《滴天髓》從象「才官強甚」——结构事实判定（得令∧(透干∨通根)），禁量化（Human 裁决：不量化）；判定公式（得令∧(透干∨通根)）标 PENDING_VERIFY——Enum 可 ACTIVE，公式须完成 Source→Rule→Evidence→Test 方可 FINAL（P-4）；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "STRENGTH_STATE"
+  },
+  {
+   "enum_id": "dts_cong_support_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "NONE",
+    "HAS_SUPPORT",
+    "UNKNOWN"
+   ],
+   "description": "F-3 2026-09-16：《滴天髓》從象「絕無一毫生扶」(NONE) vs 假象「中有所助及暗生」(HAS_SUPPORT)；与附录 L-3 dts_support_state（NONE/WEAK/NORMAL/STRONG）语义域解耦，不得合并",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_climate",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "寒",
+    "熱",
+    "燥",
+    "濕",
+    "和"
+   ],
+   "description": "F-1 2026-09-16：寒熱燥濕論 DTS-026 单值气候（供 CAND-DTS-080~083 消费）；结构规则可执行、证据链待重绑（寒热.txt Human 裁决：不得 Admission 为最终古典规则集）",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_climate_type",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "COLD_WET",
+    "COLD_DRY",
+    "HOT_WET",
+    "HOT_DRY",
+    "BALANCED"
+   ],
+   "description": "F-1 2026-09-16：寒熱燥濕四象限复合（审计用，规则层不消费）；证据链待重绑",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_day_strength_classic",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "WANG",
+    "SHUAI",
+    "JUN_HENG"
+   ],
+   "description": "F-2 2026-09-16：古典文本语义层（旺/衰/均衡），仅供解释层/清浊组锚点消费；正式字段 day_strength_state 必须用附录 L-3 dts_strength_state，两者隔离不得混用",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "STRENGTH_STATE"
+  },
+  {
+   "enum_id": "dts_pattern",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "兩氣合而成象",
+    "獨象",
+    "全象"
+   ],
+   "description": "F-1 2026-09-16 PENDING：《滴天髓》兩氣/獨象/全象論派生，古典判定阈值（獨象≥6、全象主旺）待多源验证，禁止 FINAL admission",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "PATTERN_STATE"
+  },
+  {
+   "enum_id": "dts_hua_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "真",
+    "假",
+    "未化",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：《滴天髓》化象/假化「合而化/合而不化」派生；真化条件（单透/不遇/有辰/化神得令）口径待 Source→Rule 验证；P-隔离 2026-09-16：special_state 依赖此字段（TRUE_HUA 分支），依赖链待 Human 复核；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_tian_status",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "全一氣",
+    "非全一氣",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：干支总论「天全一氣」派生；对应用例为天干同一行，反例分支未实现；2026-09-16 三态化：DTS-010-004 天全一氣；反例=非全一氣",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_di_status",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "全三物",
+    "非全三物",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：干支总论「地全三物」派生；反例分支未实现；2026-09-16 三态化：DTS-010-006/007 地全三物；反例=非全三物",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_stem_position",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "陽乘陽位",
+    "陰乘陰位",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：干支总论「陽乘陽位/陰乘陰位」派生；值域/激活条件待 Source 验证；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_xing_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "形全",
+    "形缺",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：形全形缺篇「形全」派生；形缺分支未实现；Human 特赦 2026-09-16：len(distinct)==5 属「五行俱全」全集覆盖结构条件，非统计量化，允许保留执行；2026-09-16 三态化：DTS-011-003/008 形全者宜損其有餘，形缺者宜補其不足",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_zhan_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "天戰",
+    "地戰",
+    "無戰",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：战局篇 DTS-046-002「干頭遇甲乙庚辛→天戰；地支寅申卯酉→地戰」；并存时天戰优先（口径记录，待 Source 验证）；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_xiang_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "君亢",
+    "臣過",
+    "母旺子孤",
+    "子衆母衰",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：君臣母子象「子衆母衰」派生；君亢/臣過/母旺子孤 分支未实现，取首命中口径待验证；2026-09-16 三态化：DTS-048/049/050/051 君臣母子四象",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "PATTERN_STATE"
+  },
+  {
+   "enum_id": "dts_fire_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "烈",
+    "不烈",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：情性篇 059「火烈而性燥」派生（月支火∧透火）；旺衰/五行多寡维度待 strength 精度迭代；2026-09-16 三态化：DTS-027-001 火烈",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "STRENGTH_STATE"
+  },
+  {
+   "enum_id": "dts_stimulus",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "金水之激",
+    "非激",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：情性篇 059「遇金水之激」派生（金水同现）；结构事实近似待验证；2026-09-16 三态化：DTS-031 金水之激",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_gold_meets",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "水",
+    "非水",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：情性篇 061「金見水則流通」派生（金水同现）；待 Source 验证；2026-09-16 三态化：DTS-035 金遇水",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_wood_flow",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "奔南",
+    "不奔南",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：情性篇 060「木奔南而軟怯」派生（木火同现）；待 Source 验证；2026-09-16 三态化：DTS-032 木奔南",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_cold_level",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "COLD_WITH_WARM",
+    "COLD_NO_WARM",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生（含暖局基准是否可及存疑——WITH_WARM 与 is_cold 条件文档矛盾，登记待 Human 裁决）；审计用，规则层不消费；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_hot_level",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "HOT_WITH_COOL",
+    "HOT_NO_COOL",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生；审计用，规则层不消费；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_dry_level",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "DRY_WITH_MOIST",
+    "DRY_NO_MOIST",
+    "UNDETERMINED"
+   ],
+   "description": "F-1 2026-09-16 PENDING：寒熱燥濕論细节派生；2026-09-16 已修复藏干湿气 bug（原以干名匹配支名恒 False→改查藏干水行壬/癸）；审计用，规则层不消费；依据《滴天髓·寒溫濕燥論》（DTS-026-002 注「地道有濕燥」），藏干水行（壬/癸）为结构触发条件（2026-09-16 修复藏干湿气 bug 后注记）；2026-09-16 三态化：寒溫濕燥論；地道有濕燥",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_qing_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "一清到底有精神",
+    "清得盡",
+    "清枯",
+    "滿盤濁氣",
+    "半濁半清",
+    "UNDETERMINED"
+   ],
+   "description": "P9 2026-09-16 登记；**结构定义层 APPROVED（Human 裁决 2026-09-16）**——「混」=忌神透干相战（DTS-022-002「並無傷官七煞混之」）、支根比劫=闲神不破局不判浊、禁量化。判定顺序+互斥边界（先判喜神透干→分四态；清枯须喜透=0、半浊半清须喜透>0∧忌透>0）。实现为结构近似，禁止 FINAL admission 待 strength 精度迭代：《滴天髓》清濁論/出身篇 qing_state 派生。原文锚点：DTS-022-001「一清到底有精神」/022-002 注（清=用神得力無雜、濁=忌神與用神不和）/022-003「滿盤濁氣令人苦，一局清枯也苦人，半濁半清猶是可」/DTS-054-003「清得盡時黃榜客」。判定=结构事实（用神透干∧得地、忌神不杂），依赖 day_strength_state 喜用方向；结构口径待 Human 裁决，禁止 FINAL admission",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_qingqi_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "有清氣",
+    "無清氣",
+    "UNDETERMINED"
+   ],
+   "description": "P9 2026-09-16 登记；**结构定义层 APPROVED（Human 裁决 2026-09-16）**（同 dts_qing_state 口径）：《滴天髓》出身篇 DTS-054-005「清氣不嫌官不露」qingqi_state 派生（用神透干∧得地→有清氣）；CAND-DTS-087 消费。依赖 strength 喜用方向；结构口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_guan",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "露",
+    "不露",
+    "UNDETERMINED"
+   ],
+   "description": "P9 2026-09-16 登记；**结构定义层 APPROVED（Human 裁决 2026-09-16）**：《滴天髓》出身篇 DTS-054-005「官不露」guan 显隐派生（官星=克日主行，天干透→露、不透→不露）；CAND-DTS-087 消费；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_zhen_shen_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "得用",
+    "不得用",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》真假論 DTS-023-001/002「令上尋真聚得真…真神得用平生貴」。真神=月令行（令上尋真）；得用=月支行∈喜用∧忌神不透干（不被害）。结构近似，依赖 strength 喜用方向；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "ROLE_STATE"
+  },
+  {
+   "enum_id": "dts_jia_shen_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "用假",
+    "不用假",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》真假論 DTS-023-002 注「參以金水猖狂而用金水，是金水又不得令…用假終為碌碌人」。用假=喜用透干但喜用行≠月支行（用神不得令）。结构近似，依赖 strength；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "ROLE_STATE"
+  },
+  {
+   "enum_id": "dts_jishen_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "太露",
+    "深藏",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》隱顯衆寡論 DTS-027-001「吉神太露，起爭奪之風」+ 027-002 注「局中所喜之神秀於天干者…暗用吉神為妙」。吉神=喜神；太露=喜神透干、深藏=不透。结构近似，依赖 strength；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "ROLE_STATE"
+  },
+  {
+   "enum_id": "dts_xiongwu_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "深藏",
+    "顯現",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》隱顯衆寡論 DTS-027-001「凶物深藏，成養虎之患」+ 027-002 注「局中所忌之神伏藏於地支者」。凶物=忌神；深藏=忌神不透干但现于支/藏干。结构近似，依赖 strength 内部忌神推导；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "ROLE_STATE"
+  },
+  {
+   "enum_id": "dts_wo_shi",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "強衆",
+    "強寡",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》隱顯衆寡論 DTS-027-003「強衆而敵寡者，勢在去其寡；強寡而敵衆者，勢在成乎衆」。我勢=日主行：強（STRONG）∧日主行8字计数≥敌行数→強衆；<敌行数→強寡。相对计数非绝对阈值；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "STRENGTH_STATE"
+  },
+  {
+   "enum_id": "dts_di",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "敵寡",
+    "敵衆",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》隱顯衆寡論 DTS-027-003/004「強衆而敵寡…強寡而敵衆…惡敵而敵衆者滯」。敵勢=忌神行：8字计数<我行→敵寡、≥我行→敵衆。相对计数非绝对阈值；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "STRENGTH_STATE"
+  },
+  {
+   "enum_id": "dts_decai_relation",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "德勝才",
+    "才勝德",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》才德論 DTS-036-001/002「德勝才者，局全君子之風；才勝德者，用顯多能之象」。德勝才=清∧无冲（清利平顺主辅得宜）；才勝德=浊∨冲（混浊破害）。结构近似，依赖 qing_state+冲关系；「陽在內陰在外」未实现；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "ROLE_STATE"
+  },
+  {
+   "enum_id": "dts_wuxing_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "不戾正清和",
+    "濁亂偏枯",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》情性 DTS-052-001「五行不戾，惟正清和；濁亂偏枯，性情乖逆」+ 052-002 注「五氣不乖張者…莫不清和矣，反此者乖戾」。不戾正清和=无冲∧五行覆盖≥4∧清；濁亂偏枯=冲∨偏枯（缺行）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_rigan_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "得氣",
+    "無氣",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》出身 DTS-054-007「日干得氣遇才星」+ 008 注「才星得個門戶，通得官星，有一種清旺之氣」。日干得气=得令∨得地∨得势（有根气）。结构近似=strength 内部三得；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_caixing",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "遇",
+    "不遇",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》出身 DTS-054-007/008「日干得氣遇才星…才星得個門戶，通得官星」。才星遇=财行（我克）透干∨通根（藏干）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_rensha_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "神清氣勢恢",
+    "不恢",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》地位 DTS-055-003/004「刃煞神清氣勢恢…清中精神必異，又或刃煞兩顯也」。刃=日主行帝旺支现；煞=克日主行透干；兩顯∧清→神清氣勢恢。阳刃帝旺位：甲卯/乙寅/丙午/丁巳/戊午/己巳/庚酉/辛申/壬子/癸亥。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_caiguan",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "和",
+    "不和",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》地位 DTS-055-005/006「分藩司牧財官和…方面官，才官為重」。财官和=财行∧官杀行俱现（透干∨通根）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_geju",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "清純",
+    "混濁",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》地位 DTS-055-005/006「格局清純神氣多…必清奇純粹，格正局全」。格局清纯=清（qing_state=一清到底有精神/清得盡）。依赖 qing_state；结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "PATTERN_STATE"
+  },
+  {
+   "enum_id": "dts_yangren_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "戰",
+    "弱",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》情性 DTS-052-022「陽刃局戰則逞威，弱則怕事」。刃=日主行帝旺支现（甲卯/乙寅/丙午/丁巳/戊午/己巳/庚酉/辛申/壬子/癸亥）；戰=刃支逢冲；弱=刃现∧身弱（WEAK）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_yongshen_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "多",
+    "不多",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》情性 DTS-052-022「用神多者情性不常」。用神多=喜用行透干≥2（原文「多」概念，相对计数非绝对阈值）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_zhige_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "濁",
+    "清",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》情性 DTS-052-022「支格濁者虎頭鼠尾」。支格浊=地支显忌神（透干相战之外，地支忌神显）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "PATTERN_STATE"
+  },
+  {
+   "enum_id": "dts_xueqi_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "亂",
+    "和",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-003/004「血氣亂者，平生多病…五氣反逆，上下不通，往來不順，謂之亂」。血气乱=冲∨天战地战（五行反逆）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_jishen_location",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "入五臟",
+    "不入",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-005/006「忌神入五臟而病凶…忌木而入土則脾病」。忌神入五脏=忌神行∧其克行（受克方=五脏）现于局。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_keshen_location",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "遊六經",
+    "不遊",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-007「客神遊六經者，災小」。客神=闲神（非喜非忌）；遊六经=客神现于局。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "EXISTENCE_STATE"
+  },
+  {
+   "enum_id": "dts_pillar_relation",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "地生天",
+    "天合地",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》干支論 DTS-010-012/014「地生天者天衰怕衝」「天合地者地旺宜靜」。日柱关系：地生天=日支行生日干行；天合地=日干与日支藏干五合（甲己/乙庚/丙辛/丁壬/戊癸）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_day_master_strength",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "衰",
+    "旺",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》干支論 DTS-010-012/014 之「天衰」「地旺」。天衰=日主 WEAK（SHUAI）；地旺=日支行==月支行（当令）。结构近似；口径待 Human 裁决；2026-09-16 DEPRECATED：与附录L-3 strength_state 六级冲突，改用 strength_state；古典层用 day_strength_classic（WANG/SHUAI/JUN_HENG）",
+   "source_rule_required": true,
+   "status": "DEPRECATED",
+   "domain": "STRENGTH_STATE"
+  },
+  {
+   "enum_id": "dts_branch_strength",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "旺",
+    "不旺",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》干支論 DTS-010-014「天合地者地旺宜靜」。地旺=日支行==月支行（当令）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "STRENGTH_STATE"
+  },
+  {
+   "enum_id": "dts_wood_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "不受水",
+    "受水",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-009「木不受水者血病」。木不受水=木行现∧水行不现（缺印润）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_earth_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "不受火",
+    "受火",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-009「土不受火者氣傷」。土不受火=土行现∧火行不现。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_jinshui_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "枯傷",
+    "不枯",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-012「金水枯傷而腎經虛」。金水枯伤=金水行现∧不得令（弱）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_shuitu_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "相勝",
+    "不相勝",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 登记（PENDING）：《滴天髓》疾病 DTS-053-012「水土相勝而脾胃洩」。水土相胜=水土同现∧（冲∨克战）。结构近似；口径待 Human 裁决；2026-09-16 三态化：补 UNKNOWN/UNDETERMINED 兜底值（V2.22 附录L 值域治理铁律）",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "dts_xing_ding_state",
+   "engine_scope": [
+    "DI_TIAN_SUI"
+   ],
+   "values": [
+    "定",
+    "不定",
+    "UNDETERMINED"
+   ],
+   "description": "2026-09-16 新建（三态化拆分）：《滴天髓》何知章寿段「柱中無沖無合，無缺無貪，則定性矣」——xing_state 原被「定」（寿段）与「形全/形缺」（形全形缺篇）两语义共用，拆分后 xing_ding_state 承载「性定」语义",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "CONDITION_STATE"
+  },
+  {
+   "enum_id": "day_master_element",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "WOOD",
+    "FIRE",
+    "EARTH",
+    "METAL",
+    "WATER"
+   ],
+   "description": "PATCH-024 对象识别层：日主五行",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "OBJECT_LAYER"
+  },
+  {
+   "enum_id": "ten_god_type",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "比肩",
+    "劫财",
+    "食神",
+    "伤官",
+    "正财",
+    "偏财",
+    "正官",
+    "七杀",
+    "正印",
+    "偏印"
+   ],
+   "description": "PATCH-024 对象识别层：十神",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "OBJECT_LAYER"
+  },
+  {
+   "enum_id": "order_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "GET_ORDER",
+    "NOT_GET_ORDER",
+    "NEUTRAL_ORDER",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-024 基础 Enum 层：月令状态；NEUTRAL_ORDER=不论令/中性",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "BASE_ENUM",
+   "source_ref": [
+    "YHZP-138-001"
+   ]
+  },
+  {
+   "enum_id": "root_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "NO_ROOT",
+    "WEAK_ROOT",
+    "NORMAL_ROOT",
+    "STRONG_ROOT",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-024 基础 Enum 层：根关系状态非日主强弱；必须带 object 字段",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "BASE_ENUM",
+   "object_required": true
+  },
+  {
+   "enum_id": "support_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "NONE",
+    "SUPPORT_PRESENT",
+    "STRONG_RELATION",
+    "EXCESSIVE_RELATION",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-024 基础 Enum 层：印比位置/透藏/月令；非数量；v1.9.3 统一 SUPPORT_PRESENT（与 DRAIN_PRESENT/CONTROL_PRESENT 对称，对齐 023 producer）",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "BASE_ENUM"
+  },
+  {
+   "enum_id": "resource_relation_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "INSUFFICIENT",
+    "BALANCED",
+    "EXCESSIVE",
+    "BLOCKED",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-024 关系 Enum 层：印的位置/透干/月令/财制印/日主承受",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "RELATION_ENUM"
+  },
+  {
+   "enum_id": "wealth_relation_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "INSUFFICIENT",
+    "BALANCED",
+    "EXCESSIVE",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-024 关系 Enum 层：022D-R1 对象化（structure/daymaster_relation/drain_relation/condition_limits）；非财数量",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "RELATION_ENUM",
+   "structure_fields": [
+    "wealth_structure",
+    "daymaster_relation",
+    "drain_relation",
+    "condition_limits"
+   ]
+  },
+  {
+   "enum_id": "authority_relation_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "BALANCED",
+    "PRESSURE",
+    "EXCESSIVE",
+    "CONTROLLED",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-024 关系 Enum 层：官杀关系",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "RELATION_ENUM"
+  },
+  {
+   "enum_id": "wang_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "WANG",
+    "PING",
+    "SHUAI",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-024 旺衰层：时令/季节/月令为主；禁→STRONG",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PROSPERITY",
+   "source_ref": [
+    "YHZP-138-001"
+   ],
+   "prohibited_conversion": [
+    "WANG→STRONG"
+   ]
+  },
+  {
+   "enum_id": "shuai_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "SHUAI",
+    "NOT_SHUAI",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-024 旺衰层：禁→WEAK",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PROSPERITY",
+   "source_ref": [
+    "YHZP-138-001"
+   ],
+   "prohibited_conversion": [
+    "SHUAI→WEAK"
+   ]
+  },
+  {
+   "enum_id": "qiang_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "QIANG",
+    "ZHONG",
+    "RUO",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-024 强弱层：关系结果；CAND-QIANG-001 双条件",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "STRENGTH",
+   "source_ref": [
+    "YHZP-138-001"
+   ]
+  },
+  {
+   "enum_id": "strength_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "STRONG",
+    "SLIGHTLY_STRONG",
+    "NEUTRAL",
+    "SLIGHTLY_WEAK",
+    "WEAK",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-024 强弱层：004B-R1 Human 拍板六级；RELATIONAL_RESULT；产出权限登记见 022D-R1",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "STRENGTH",
+   "definition_type": "RELATIONAL_RESULT",
+   "validation_schema": {
+    "prohibited_definition_type": [
+     "POWER_LEVEL"
+    ],
+    "prohibited_source": [
+     "旺",
+     "得令",
+     "得根"
+    ],
+    "prohibited_conversion": [
+     "WANG→STRONG",
+     "order_state→STRONG",
+     "root_state→STRONG",
+     "factor_count→STRONG"
+    ]
+   }
+  },
+  {
+   "enum_id": "trend_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "TREND",
+    "NEUTRAL",
+    "PENDING",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-023 关系层：PENDING=待 005B TREND factor 审计；当前默认 PENDING",
+   "source_rule_required": true,
+   "status": "PENDING",
+   "domain": "RELATION_ENUM"
+  },
+  {
+   "enum_id": "seasonal_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "SEASONAL_ALIGNED",
+    "SEASONAL_MISALIGNED",
+    "QTBJ_REQUIRED",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-023 旺衰层：调候季节状态；QTBJ_REQUIRED=需穷通宝鉴规则判定；QTBJ 域",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PROSPERITY",
+   "classical_scope": "QTBJ"
+  },
+  {
+   "enum_id": "root_quality",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "STRONG_ROOT",
+    "MEDIUM_ROOT",
+    "WEAK_ROOT",
+    "NO_ROOT",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-023 根质量：根关系状态非日主强弱",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "BASE_ENUM"
+  },
+  {
+   "enum_id": "drain_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "NONE",
+    "DRAIN_PRESENT",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-023 泄耗关系：泄=食伤、耗=财；只登记不量化",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "RELATION_ENUM"
+  },
+  {
+   "enum_id": "control_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "NONE",
+    "CONTROL_PRESENT",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-023 克制关系：制=官杀/克我；只登记不量化",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "RELATION_ENUM"
+  },
+  {
+   "enum_id": "element_relation_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "VISIBLE_SUPPORT",
+    "ROOTED_SUPPORT",
+    "SEASONALLY_SUPPORTED",
+    "EXCESS_CONDITION",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-023A 五行元素关系状态：EXCESS_CONDITION 不自动成立只等待 Rule；按元素实例化 water_relation_state/wood_relation_state 等；禁 water_many",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "ELEMENT_RELATION",
+   "template": true
+  },
+  {
+   "enum_id": "position_priority",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "VISIBLE",
+    "SEASON",
+    "PALACE",
+    "HIDDEN"
+   ],
+   "description": "PATCH-023A 位置权：记录位置非力量；六经典区别透干/得地/司令/藏干",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "GRANULARITY"
+  },
+  {
+   "enum_id": "relation_quantity",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "visible_stem",
+    "hidden_stem",
+    "root_branch",
+    "season_relation"
+   ],
+   "description": "PATCH-023A 关系量：事实数量登记非评分；禁 water_strength=80%",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "GRANULARITY"
+  },
+  {
+   "enum_id": "pattern_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "FORMED",
+    "NOT_FORMED",
+    "CANDIDATE",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-025 格局状态：月令入口→CANDIDATE；成立/不成立待格局成败规则；当前 GC-001=UNDETERMINED",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_STATE"
+  },
+  {
+   "enum_id": "use_god_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "DETERMINED",
+    "CANDIDATE",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-026 PZZQ.use_god 用神状态（USE_GOD）；月令→候选→成立；GC-001=UNDETERMINED",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "USE_STATE"
+  },
+  {
+   "enum_id": "qu_yong_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "DETERMINED",
+    "CANDIDATE",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-026 SFTK.qu_yong 病药取用状态（QU_YONG）；GC-001=UNDETERMINED",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "USE_STATE"
+  },
+  {
+   "enum_id": "climate_use_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "DETERMINED",
+    "CANDIDATE",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-026 QTBJ.climate_use 调候用神状态（CLIMATE_USE）；GC-001=UNDETERMINED",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "USE_STATE"
+  },
+  {
+   "enum_id": "climate_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "UNDETERMINED",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-027 调候状态：QTBJ 规则未准入前仅 UNDETERMINED/UNKNOWN（禁具体寒暖燥湿判定）；规则准入后扩展",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CLIMATE_STATE"
+  },
+  {
+   "enum_id": "use_type",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "USE_GOD",
+    "QU_YONG",
+    "CLIMATE_USE"
+   ],
+   "description": "PATCH-026 用类型防合并标记：三种「用」独立 namespace 不可合并",
+   "source_rule_required": false,
+   "status": "ACTIVE",
+   "domain": "TECHNICAL"
+  },
+  {
+   "enum_id": "climate_type",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "COLD",
+    "WARM",
+    "DRY",
+    "WET",
+    "BALANCED",
+    "UNKNOWN"
+   ],
+   "description": "PATCH-027 调候类型：GC-001=UNKNOWN（无量化依据，禁编数字阈值）；与 DTS 域 dts_climate(寒熱燥濕和) 独立",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "CLIMATE_STATE"
+  },
+  {
+   "enum_id": "pattern_success_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "SUCCESS",
+    "FAILED",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-035 格局成败：PZZQ-005-008 财格成（財格透印位置安帖兩不相剋）/败（財輕比重、財透七煞 双谓词）；败中而成全憑救應",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_SUCCESS"
+  },
+  {
+   "enum_id": "daiji_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "DAIJI",
+    "NO_DAIJI",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-035 带忌：成中有敗必是帶忌（財旺生官又逢傷逢合）；PZZQ-005-008",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_SUCCESS"
+  },
+  {
+   "enum_id": "rescue_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "NO_RESCUE_NEEDED",
+    "RESCUE_PENDING",
+    "RESCUE_PRESENT",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-035 救应：敗中而成全憑救應（財逢劫透食化之/生官制之；逢煞食制煞生財）；PZZQ-005-008",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_SUCCESS"
+  },
+  {
+   "enum_id": "xiangshen_state",
+   "engine_scope": [
+    "ENGINE_COMMON"
+   ],
+   "values": [
+    "PRESENT",
+    "ABSENT",
+    "UNDETERMINED"
+   ],
+   "description": "PATCH-035 相神：PZZQ-007-004 月令既得用神則别位亦必有相；相神 PZZQ_ONLY（022 系列冻结，禁病药救应=相神）",
+   "source_rule_required": true,
+   "status": "ACTIVE",
+   "domain": "PATTERN_SUCCESS",
+   "scope_binding": "PZZQ_ONLY"
+  }
+ ],
+ "changelog": [
+  "v1.10.0 2026-09-16 PATCH-035 新增 4 枚举：pattern_success_state/daiji_state/rescue_state/xiangshen_state（格局成败层，PZZQ-005-008+007-004）",
+  "2026-09-16 v1.7.0 枚举三态/多态化修正：45 条问题枚举（36 二态+9 单值）补 UNKNOWN/UNDETERMINED 兜底；删除 shangguan_ge_state（复用 qing_state）；dts_day_master_strength DEPRECATED（对齐附录L-3 strength_state）；新增 xing_ding_state（拆分 xing_state 语义污染）",
+  {
+   "version": "v1.8.0",
+   "date": "2026-09-16",
+   "reason": "V2.22-PATCH-001 §5/§7/§8/§16：74 条枚举补 domain 状态域标注；dts_effect_state +CONDITIONAL/UNDETERMINED；dts_support_state +EXCESSIVE/UNDETERMINED"
+  },
+  "v1.8.1 PATCH-004B-R1（2026-09-16）：dts_strength_state 补 definition_type=RELATIONAL_RESULT / semantic_role=RELATIONAL_STATE / state_definition / validation_schema（禁 POWER_LEVEL）",
+  {
+   "version": "v1.9.0",
+   "date": "2026-09-16",
+   "patch": "PATCH-024",
+   "changes": [
+    "注册 14 个引擎级枚举（对象/Boolean 事实/基础 Enum/关系 Enum/旺衰/强弱 六类）",
+    "order_state/root_state/support_state/resource_relation_state/wealth_relation_state/authority_relation_state/wang_state/shuai_state/qiang_state/strength_state/day_master_element/ten_god_type 全 ACTIVE",
+    "trend_state/seasonal_state PENDING（值域待审计）"
+   ]
+  },
+  {
+   "version": "v1.9.1",
+   "date": "2026-09-16",
+   "patch": "PATCH-023",
+   "changes": [
+    "新增 root_quality/drain_state/control_state/element_relation_state",
+    "seasonal_state 加 QTBJ_REQUIRED；trend_state 加 PENDING 默认"
+   ]
+  },
+  {
+   "version": "v1.9.2",
+   "date": "2026-09-16",
+   "patch": "PATCH-023A",
+   "changes": [
+    "element_relation_state 细化五值（EXCESS_CONDITION 不自动成立）",
+    "新增 position_priority（VISIBLE/SEASON/PALACE/HIDDEN）与 relation_quantity（事实登记）"
+   ]
+  },
+  {
+   "version": "v1.9.3",
+   "date": "2026-09-16",
+   "patch": "Boolean+Enum Test（023-031 同步）",
+   "changes": [
+    "support_state PRESENT→SUPPORT_PRESENT（与 DRAIN/CONTROL_PRESENT 对称）",
+    "补登记 025/026/027 契约 7 枚举：pattern_state/use_god_state/qu_yong_state/climate_use_state/climate_state/use_type/climate_type",
+    "pattern 用神类 source_rule_required=true（须 Rule Admission 后生效）"
+   ]
+  }
+ ]
+}

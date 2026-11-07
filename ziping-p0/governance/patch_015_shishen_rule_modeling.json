@@ -1,0 +1,33 @@
+{
+  "contract_id": "PATCH-015",
+  "name": "Shi-Shen（十神）Rule Modeling",
+  "status": "FROZEN_DRAFT",
+  "purpose": "十神 Rule Candidate Registry：YHZP 十神体系为核心（财官印食顺/煞伤刃劫逆 已入 006），补十神配属/条件断语域。所有候选 PENDING_GOLDEN。",
+  "parent": "PATCH-014",
+  "concept_boundaries": {
+    "SHI_SHEN_BASE": {
+      "definition": "十神配属（比劫/食伤/财/官杀/印）与顺逆用（财官印食顺，煞伤刃劫逆）",
+      "primary_sources": ["YHZP-138-001（A 子機賦）", "PZZQ-005-007（A 顺逆用）"],
+      "forbidden": ["十神配属=吉凶"]
+    },
+    "SHI_SHEN_CONDITIONAL": {
+      "definition": "十神条件断语（印逢官/官逢印等，须绑定具体格局语境）",
+      "primary_sources": ["QTBJ-111-003（A）"],
+      "forbidden": ["断语脱离语境泛化"]
+    }
+  },
+  "rule_candidates": [
+    {"rule_id": "RULE-SS-001", "status": "PENDING_GOLDEN", "classical_scope": "YHZP", "source_ids": ["YHZP-138-001"], "condition": "子機賦十神体系（原文逐字）", "output": "shi_shen_base_candidate", "excluded": ["配属=吉凶"]},
+    {"rule_id": "RULE-SS-002", "status": "PENDING_GOLDEN", "classical_scope": "PZZQ", "source_ids": ["PZZQ-005-007"], "condition": "財官印食順用，煞傷刃劫逆用（原文逐字）", "output": "shi_shen_direction_candidate", "excluded": ["顺逆=吉凶自动输出"]},
+    {"rule_id": "RULE-SS-003", "status": "PENDING_GOLDEN", "classical_scope": "QTBJ", "source_ids": ["QTBJ-111-003"], "condition": "十神条件断语（印逢官/官逢印，须绑定月日干支条件，原文逐字）", "output": "shi_shen_conditional_candidate", "excluded": ["断语脱离语境"]}
+  ],
+  "conflict_resolver": [
+    {"conflict": "十神配属跨书差异", "resolution": "按书域登记，禁混用（QTBJ 断语≠YHZP 体系）"}
+  ],
+  "golden_cases": [
+    {"case_id": "GOLDEN-015-01", "title": "财官印食顺用", "verify_forbidden": ["顺逆=吉凶"], "expected": "登记方向，配合格局条件"},
+    {"case_id": "GOLDEN-015-02", "title": "印逢官断语", "verify_forbidden": ["断语泛化"], "expected": "绑定具体格局语境"}
+  ],
+  "blocklist": ["十神=吉凶", "跨书十神混用"],
+  "acceptance_criteria": ["十神双体系边界", "3 Rule Candidate PENDING_GOLDEN", "Conflict 1 类", "Golden 2 个"]
+}

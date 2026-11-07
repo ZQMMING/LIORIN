@@ -1,0 +1,42 @@
+{
+ "combo": {
+  "WEAK→STRONG | ling=旺 ben=1 党多=True": 3,
+  "STRONG→WEAK | ling=旺 ben=2 党多=False": 9,
+  "STRONG→WEAK | ling=死 ben=0 党多=True": 14,
+  "STRONG→WEAK | ling=囚 ben=2 党多=True": 3,
+  "STRONG→WEAK | ling=死 ben=2 党多=True": 3,
+  "STRONG→WEAK | ling=旺 ben=1 党多=False": 8,
+  "STRONG→WEAK | ling=旺 ben=3 党多=False": 5,
+  "STRONG→WEAK | ling=死 ben=1 党多=True": 11,
+  "STRONG→WEAK | ling=休 ben=1 党多=True": 5,
+  "STRONG→WEAK | ling=囚 ben=0 党多=True": 6,
+  "STRONG→WEAK | ling=相 ben=0 党多=True": 23,
+  "STRONG→WEAK | ling=囚 ben=1 党多=True": 12,
+  "STRONG→WEAK | ling=囚 ben=2 党多=False": 2,
+  "WEAK→STRONG | ling=旺 ben=2 党多=True": 3,
+  "STRONG→WEAK | ling=休 ben=0 党多=False": 8,
+  "STRONG→WEAK | ling=相 ben=1 党多=False": 3,
+  "STRONG→EXTREME_WEAK | ling=囚 ben=0 党多=False": 9,
+  "STRONG→WEAK | ling=死 ben=1 党多=False": 4,
+  "STRONG→WEAK | ling=休 ben=1 党多=False": 7,
+  "STRONG→EXTREME_WEAK | ling=死 ben=0 党多=False": 7,
+  "STRONG→WEAK | ling=休 ben=0 党多=True": 9,
+  "STRONG→WEAK | ling=相 ben=0 党多=False": 6,
+  "STRONG→WEAK | ling=囚 ben=1 党多=False": 7,
+  "WEAK→STRONG | ling=旺 ben=3 党多=True": 2,
+  "WEAK→STRONG | ling=相 ben=1 党多=True": 1,
+  "STRONG→WEAK | ling=休 ben=2 党多=True": 3,
+  "STRONG→WEAK | ling=死 ben=2 党多=False": 3,
+  "STRONG→WEAK | ling=旺 ben=0 党多=True": 1,
+  "STRONG→WEAK | ling=休 ben=2 党多=False": 1
+ },
+ "attr2": {
+  "丙1-C/丁(三输入全强却案例判弱)": 9,
+  "丙2?(失令+有根+党轻,案例判强→需核党势口径)": 49,
+  "丙2?(失令+无根+党重,案例判强→需核根口径/综合)": 53,
+  "丙1-A(f门槛:失令+有根+党重→f判弱,案例判强)": 37,
+  "丁/丙2(失令+无根+党轻,案例仍判强→案例综合或输入存疑)": 30
+ },
+ "c1": 169,
+ "c2": 9
+}

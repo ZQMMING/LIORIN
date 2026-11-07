@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wisdom.shuntian/schema/evidence.schema.json",
+  "title": "EvidenceRecord",
+  "description": "V2.2.2 FINAL §39 Evidence Registry 记录。Evidence 不得脱离 Source；是证据质量描述，不是概率。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "evidence_id", "source_id", "source_location", "text_layer",
+    "evidence_grade", "rule_id", "fact_ids"
+  ],
+  "properties": {
+    "evidence_id": { "type": "string", "pattern": "^E-[A-Z]{4}-[0-9]{3}-[0-9]{3}$" },
+    "source_id": { "type": "string", "pattern": "^[A-Z]{4}-[0-9]{3}-[0-9]{3}$" },
+    "source_location": { "type": "string", "minLength": 1 },
+    "text_layer": {
+      "type": "string",
+      "enum": ["ORIGINAL", "ANNOTATION", "LATER_COMMENTARY", "UNVERIFIED", "NEEDS_REVIEW"]
+    },
+    "evidence_grade": {
+      "type": "string",
+      "enum": ["A", "B", "C", "D"],
+      "description": "A=ORIGINAL / B=ANNOTATION / C=LATER_COMMENTARY / D=UNVERIFIED·NEEDS_REVIEW。禁止百分比/概率表达"
+    },
+    "rule_id": { "type": "string", "pattern": "^(CAND-)?[A-Z]{4}-[0-9]{3}$" },
+    "fact_ids": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "本 Evidence 支撑的 Fact 列表"
+    }
+  }
+}

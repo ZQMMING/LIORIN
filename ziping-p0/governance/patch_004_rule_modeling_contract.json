@@ -1,0 +1,194 @@
+{
+  "contract_id": "PATCH-004",
+  "name": "Rule Modeling Contract",
+  "status": "FROZEN_DRAFT",
+  "purpose": "规则建模契约：定义从证据许可库（111 ADMISSIBLE_PENDING_RULE）到算法规则的建模规范。本契约只定义建模协议与数据结构，不实现任何算法、不定义任何计算公式、不产出任何业务判断。",
+  "gates": {
+    "evidence_admission": "PASS (PATCH-003B)",
+    "rule_construction": "NOT_STARTED",
+    "rule_conflict_test": "NOT_STARTED",
+    "golden_case_test": "NOT_STARTED",
+    "production_rule": "NOT_STARTED"
+  },
+  "source_of_truth": "governance/patch_003b_rule_admission.json（111 条 CORE_RULE_ELIGIBLE = ADMISSIBLE_PENDING_RULE）",
+  "core_iron_rules": [
+    "ADMISSIBLE_PENDING_RULE ≠ RULE：证据许可库 ≠ 算法规则库",
+    "Boolean 禁止作业务裁决（PATCH-001 铁律）",
+    "禁止旺=STRONG、得令=强、有根=强（003B-03 固化扫描 0 违规延续）",
+    "任何旺衰变量必须携带 OBJECT + SOURCE + RELATION + CLASSICAL_SCOPE 四维",
+    "未登记状态变量/枚举 FAIL_CLOSED（enum_registry 联动）",
+    "PZZQ 清杂 ≠ DTS 清浊：禁止合并（PZZQ-007-005 取用神层面纯杂 / DTS 气象格局清浊）",
+    "DTS 病药 ≠ SFTK 病药：禁止 if DTS_bing: use_SFTK_bingyao()（DTS-017-002 命局缺陷去病思想 / SFTK-008-001 病药诊断体系）",
+    "概念交叉验证与具体算法交叉验证分离",
+    "证据未钉死一律 FAIL_CLOSED，不得模型自行补全"
+  ],
+  "s4_1_state_variables": {
+    "rule": "状态变量必须登记后使用；枚举值来源必须绑定 source_ids；未登记 FAIL_CLOSED。本清单为候选注册表（依据 R1-05 Scope 与 PATCH-001 冻结枚举），具体 Admission 由各域 Rule 完成。",
+    "variables": [
+      {
+        "id": "strength_state",
+        "domain": "domain_01_wang_qiang_shuai",
+        "book_scope": "六部",
+        "values": ["STRONG", "SLIGHTLY_STRONG", "NEUTRAL", "SLIGHTLY_WEAK", "WEAK", "UNDETERMINED"],
+        "source_ids": ["YHZP-138-001", "DTS-016-001", "DTS-016-002", "SFTK-129-038"],
+        "note": "PATCH-001 冻结六级；工程状态容器，不代表六部共享同一套判定算法；禁 WANG→STRONG 自动映射"
+      },
+      {
+        "id": "wang_state",
+        "domain": "domain_01_wang_qiang_shuai",
+        "book_scope": "六部",
+        "values": ["WANG", "NOT_WANG", "CONTAINED_WANG", "UNDETERMINED"],
+        "source_ids": ["YHZP-138-001", "DTS-016-002"],
+        "note": "旺=对象在时令/结构中的兴盛状态（PROSPEROUS_AT/CONTAINED/BLOCKED），非 STRONG 同义词"
+      },
+      {
+        "id": "qiang_state",
+        "domain": "domain_01_wang_qiang_shuai",
+        "book_scope": "六部",
+        "values": ["QIANG", "NOT_QIANG", "UNDETERMINED"],
+        "source_ids": ["YHZP-138-001", "SFTK-120-004"],
+        "note": "强=关系结果（得时/遇劫/党众支撑），与旺分离；旺≠强"
+      },
+      {
+        "id": "shuai_state",
+        "domain": "domain_01_wang_qiang_shuai",
+        "book_scope": "六部",
+        "values": ["SHUAI", "NOT_SHUAI", "UNDETERMINED"],
+        "source_ids": ["YHZP-138-001", "DTS-016-002"],
+        "note": "衰=对象在时令/结构中的衰退状态，≠WEAK（强弱体系）"
+      },
+      {
+        "id": "order_state",
+        "domain": "domain_02_ling_shi_di_gen",
+        "book_scope": "六部",
+        "values": ["GET_ORDER", "NOT_GET_ORDER", "UNDETERMINED"],
+        "source_ids": ["YHZP-030-001", "YHZP-138-001", "PZZQ-005-007", "SFTK-120-004"],
+        "note": "得令=对象↔月令关系；对象可为日主/气象/喜神/真神/用神（DTS-015-003 人元用事）"
+      },
+      {
+        "id": "root_state",
+        "domain": "gen_qi",
+        "book_scope": "六部",
+        "values": ["NONE", "WEAK", "NORMAL", "STRONG", "EXCESSIVE", "UNDETERMINED"],
+        "source_ids": ["YHZP-123-003", "PZZQ-007-021", "DTS-010-003", "DTS-008-021", "QTBJ-011-001", "SFTK-020-014"],
+        "note": "根=对象化通根关系（日主/官/财/杀/印）；ROOT ≠ DAY_MASTER_ONLY；禁 has_root(day_master)→strong"
+      },
+      {
+        "id": "support_state",
+        "domain": "dang_zhong",
+        "book_scope": "六部",
+        "values": ["NONE", "WEAK", "NORMAL", "STRONG", "EXCESSIVE", "UNDETERMINED"],
+        "source_ids": ["PZZQ-007-027", "DTS-057-001"],
+        "note": "党众/生扶=五行群体支撑状态；对象化；不得用数量阈值补精度"
+      },
+      {
+        "id": "seasonal_state",
+        "domain": "domain_02_ling_shi_di_gen",
+        "book_scope": "QTBJ_PRIMARY",
+        "values": ["IN_COMMAND", "OUT_OF_COMMAND", "TRANSITION", "UNDETERMINED"],
+        "source_ids": ["QTBJ-018-001"],
+        "note": "QTBJ 季节主气状态（当权/失令）；SEASONAL_CONDITION"
+      },
+      {
+        "id": "trend_state",
+        "domain": "domain_03_shi",
+        "book_scope": "DTS_PRIMARY",
+        "values": ["TREND_TO", "TREND_BURST", "TREND_GROUP", "TREND_HOLD", "UNDETERMINED"],
+        "source_ids": ["DTS-008-003", "DTS-008-022", "SMTH-035-001", "SFTK-129-038"],
+        "note": "势=结构趋势状态（STRUCTURAL_TREND_STATE）；TREND ≠ STRENGTH"
+      },
+      {
+        "id": "qi_state",
+        "domain": "qi_shi",
+        "book_scope": "六部",
+        "values": ["HAS_QI", "NO_QI", "UNDETERMINED"],
+        "source_ids": ["DTS-035-001", "QTBJ-002-002", "SFTK-133-001"],
+        "note": "气=干支流通/气势状态（氣勢攸長）；与根/旺分离"
+      },
+      {
+        "id": "momentum_state",
+        "domain": "qi_shi",
+        "book_scope": "六部",
+        "values": ["GAINED", "NOT_GAINED", "UNDETERMINED"],
+        "source_ids": [],
+        "note": "待各域 Rule 授权；无来源前 FAIL_CLOSED"
+      }
+    ]
+  },
+  "s4_2_wang_qiang_shuai_weak_separation": {
+    "rule": "旺/强/衰/弱四者分离建模：旺=对象时令兴盛（状态）、强=关系结果（结构）、衰=对象时令衰退（状态）、弱=强度体系端（strength_state）。禁止四者互转。",
+    "mapping": {
+      "YHZP-138-001": "得時俱為旺論→wang_state；遇劫為強→qiang_state；失令便作衰看→shuai_state；日干無氣遇劫為強→qiang_state（非 wang_state）",
+      "DTS-016-002": "旺中有衰/衰中有旺→CONTAINED_WANG；禁 WANG→STRONG",
+      "SFTK-129-038": "失令持勢不作旺格→PROSPEROUS_BLOCKED；势≠旺"
+    }
+  },
+  "s4_3_order_ground_trend_root_relation_model": {
+    "rule": "得令/得地/得势/根气均为对象化关系，各自独立建模，禁止互相推导（得令≠强、得地≠强、得势≠强、根≠得地）。",
+    "relations": [
+      {"id": "GET_ORDER", "object": "DAY_STEM/五神/气象", "source": "YHZP-030-001/YHZP-138-001/PZZQ-005-007/SFTK-120-004", "scope": "domain_02_ling_shi_di_gen", "note": "对象↔月令（提纲）"},
+      {"id": "GET_TIME", "object": "DAY_STEM", "source": "YHZP-138-001", "scope": "domain_02_ling_shi_di_gen", "note": "得時≠得令"},
+      {"id": "ROOTED_IN", "object": "DAY_STEM/官/财/杀/印", "source": "YHZP-123-003/PZZQ-007-021/DTS-010-003/DTS-008-021/QTBJ-011-001/SFTK-020-014", "scope": "gen_qi", "note": "通根/无根；对象化；≠得地"},
+      {"id": "TREND_TO", "object": "五行群体", "source": "DTS-008-003/DTS-008-022/SMTH-035-001/SFTK-129-038", "scope": "domain_03_shi", "note": "势向/势众/势局；≠强弱"},
+      {"id": "RULING_SCHEDULE", "object": "地支藏干", "source": "DTS-015-004/DTS-015-006/YHZP-056-001", "scope": "domain_04_yue_ling", "note": "人元用事日程；SCHEDULE_VARIANT 并存；禁转 WEIGHT"}
+    ]
+  },
+  "s4_4_boolean_enum_rule_design": {
+    "rule": "Boolean 仅允许技术属性（is_present/is_missing/is_verified/is_paraphrase/cross_verified/requires_human_review）；业务裁决必须 Tri-State/Multi-State 枚举；MATCH≠YES；UNKNOWN≠NO；RULE_NOT_APPLICABLE≠NO。",
+    "technical_boolean": ["is_present", "is_missing", "is_verified", "is_paraphrase", "cross_verified", "requires_human_review"],
+    "forbidden_business_boolean": ["is_strong", "is_weak", "is_useful", "is_pattern", "is_successful", "is_effective", "is_disease", "is_medicine", "is_favorable", "is_unfavorable"],
+    "enum_governance": "enum_registry.json 联动：未注册枚举 FAIL_CLOSED；状态类型分层（EXISTENCE/CONDITION/EFFECT/STRENGTH/ROLE/PATTERN/RESULT）；不同状态不得互相替代"
+  },
+  "s4_5_conflict_resolver": {
+    "rule": "多证据/多条件冲突时不得单因子决定。日主得令但无根又被制：禁止得令=True→强。必须进入 Conflict Resolver。",
+    "resolver_protocol": [
+      "1. 冲突输入：多 source 状态证据（如 order_state=GET_ORDER + root_state=NONE + control_state=CONTROLLED）",
+      "2. 主判选择：按 CONCEPT_SCOPE_MATCH 选择经典主判域（见 s4_7）",
+      "3. 冲突裁决：不合并、不平均、不投票；按各经典 rule_boundary 独立登记冲突状态",
+      "4. 冲突输出：CONFLICT ≠ ERROR；保留 source variant（R1-04 SOURCE_ALIGNMENT）",
+      "5. 无法裁决：UNDETERMINED / FAIL_CLOSED，禁止 fallback 到 Boolean/LLM/score/nearest enum"
+    ],
+    "example": {
+      "case": "日主得令、无根、被制",
+      "forbidden": ["order_state=GET_ORDER → strength_state=STRONG"],
+      "required": ["order_state=GET_ORDER", "root_state=NONE", "control_state=CONTROLLED", "→ conflict_resolver → 按 scope 主判 → 输出多源状态或 UNDETERMINED"]
+    }
+  },
+  "s4_6_golden_case_test": {
+    "rule": "Golden Case 为 Rule 验证载体（结构定义，本轮不实现）。命例仅 REFERENCE_ONLY，禁从命例反推规则。",
+    "golden_case_schema": {
+      "case_id": "GOLDEN-001",
+      "pillars": "四柱干支",
+      "expected_states": {"order_state": "...", "root_state": "...", "strength_state": "..."},
+      "evidence_chain": ["source_ids"],
+      "classical_scope": "主判域",
+      "verdict_status": "PENDING/VERIFIED"
+    },
+    "test_types": ["UNIT", "CONFLICT_TEST", "GOLDEN_CASE", "REGRESSION"]
+  },
+  "s4_7_classical_scope_match_priority": {
+    "rule": "六经典优先级不是书间排序，而是 Concept Scope Match：概念所属域决定主判经典。",
+    "priority": [
+      {"concept": "用神", "primary": "PZZQ", "domain": "domain_06_yong_shen", "source": "PZZQ-005-007"},
+      {"concept": "调候", "primary": "QTBJ", "domain": "tiao_hou", "source": "QTBJ-060-001/QTBJ-109-001", "note": "PZZQ-007-003 配氣候互參为 CONTEXTUAL"},
+      {"concept": "通关", "primary": "DTS", "domain": "tong_guan", "source": "DTS-019-001", "note": "DTS_SCOPE_ONLY"},
+      {"concept": "日时断语", "primary": "SMTH", "domain": "ganzhi_zuhe/ming_li", "note": "仅日时语境；不得泛化"},
+      {"concept": "病药", "primary": "SFTK", "domain": "domain_07_bing_yao", "source": "SFTK-008-001", "note": "DTS-017-002 仅为 SUPPORTING_RULE_ONLY"},
+      {"concept": "清浊", "primary": "DTS(结构)", "domain": "domain_08_qing_zhuo_zhen_jia", "source": "DTS-022-002", "note": "PZZQ-007-005 清杂 CONTEXTUAL 不合并"},
+      {"concept": "相神", "primary": "PZZQ", "domain": "xiang_shen", "source": "PZZQ-007-004", "note": "PZZQ_ONLY"},
+      {"concept": "顺逆", "primary": "DTS", "domain": "shun_ni", "source": "DTS-025-001", "note": "DTS_PRIMARY"},
+      {"concept": "格局成败", "primary": "PZZQ", "domain": "geju_chengbai", "source": "PZZQ-005-008"},
+      {"concept": "神煞", "primary": "EXCLUDED", "domain": "shen_sha", "note": "仅文献检索/参考展示"},
+      {"concept": "命例", "primary": "REFERENCE_ONLY", "domain": "ming_li", "note": "禁反推规则"}
+    ]
+  },
+  "next_steps": {
+    "4_1": "状态变量定义：FROZEN_DRAFT（本契约）",
+    "4_2": "旺/强/衰/弱分离模型：FROZEN_DRAFT（本契约）",
+    "4_3": "得令/得地/得势/根气关系模型：FROZEN_DRAFT（本契约）",
+    "4_4": "布尔+枚举规则设计：待 Rule 层",
+    "4_5": "冲突处理机制：协议已定义，待实现",
+    "4_6": "Golden Case 测试：结构已定义，待 Rule 后建设",
+    "final": "以上 4.1-4.3 契约冻结后，才允许进入 4.4 规则设计与旺衰/强弱/用神/格局算法建模"
+  }
+}

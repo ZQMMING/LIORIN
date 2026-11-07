@@ -1,0 +1,24 @@
+  DTS      510 盘   不符 52
+  PZZQ     319 盘   不符 38
+  QTBJ     802 盘   不符 89
+  YHZP     206 盘   不符 20
+  SMTH     114 盘   不符 14
+  SFTK     155 盘   不符 13
+  合计      2106 盘   不符 226
+  有 l3_contract 契约位的盘: 2106
+
+=== 不符分类 ===
+  dm_ben_eff: 引擎1 vs 手算0                   186 盘
+      DT-0008   甲子戊辰庚申壬午          dm_ben_eff
+      DT-0018   庚戌乙酉甲寅庚午          dm_ben_eff
+  dm_ben_eff: 引擎2 vs 手算0                   26 盘
+      DT-0015   丙子辛卯壬子癸卯          dm_ben_eff
+      DT-0057   丙午戊戌丙午戊戌          dm_ben_eff
+  dm_ben_eff: 引擎2 vs 手算1                   10 盘
+      DT-0114   壬申己酉庚子庚辰          dm_ben_eff
+      DT-0170   己未癸酉戊戌庚申          dm_ben_eff
+  dm_ben_eff: 引擎3 vs 手算0                   4 盘
+      PZ-0098   丙子戊戌壬子庚子          dm_ben_eff
+      QT-0677   丙子戊戌壬子庚子          dm_ben_eff
+
+stderr: 

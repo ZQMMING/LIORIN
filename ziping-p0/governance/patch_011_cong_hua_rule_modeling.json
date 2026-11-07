@@ -1,0 +1,77 @@
+{
+  "contract_id": "PATCH-011",
+  "name": "Cong-Hua（从化）Rule Modeling",
+  "status": "FROZEN_DRAFT",
+  "purpose": "从化 Rule Candidate Registry：SFTK 判定入口（先明从化為本）+ 弃命从财/从杀 + YHZP 化气十段锦 + DTS 真从/化象（B1 不泛化）。所有候选 PENDING_GOLDEN。",
+  "parent": "PATCH-010",
+  "concept_boundaries": {
+    "SFTK_CONG_HUA_ENTRY": {
+      "definition": "凡看八字先明從化為本，從化不成方論財官，財官無取方論格（判定顺序门）",
+      "primary_source": "SFTK-082-001（A）",
+      "forbidden": ["从化=通用格局算法"]
+    },
+    "SFTK_QI_MING": {
+      "definition": "弃命从财/弃命从杀（从格条件）",
+      "primary_source": "SFTK-020-002（A）、SFTK-012-002（A）",
+      "forbidden": ["从格条件不全即判从"]
+    },
+    "YHZP_HUA_QI": {
+      "definition": "化气十段锦（合化条件）",
+      "primary_source": "YHZP-122-004（A）",
+      "forbidden": ["争合妒合破格漏判"]
+    },
+    "DTS_CONG_HUA_REF": {
+      "definition": "真从（B1）、化象不遇（B1）",
+      "primary_source": "DTS-040-002（B1）、DTS-041-002（B1）",
+      "forbidden": ["B1 不泛化；DTS-041-002 不遇句按底本（不遇壬癸甲乙戊己）"]
+    }
+  },
+  "rule_candidates": [
+    {
+      "rule_id": "RULE-C-001",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "SFTK",
+      "source_ids": ["SFTK-082-001"],
+      "condition": "先明從化為本，從化不成方論財官，財官無取方論格（原文逐字）",
+      "output": "cong_hua_check_order",
+      "excluded": ["跳级判定"]
+    },
+    {
+      "rule_id": "RULE-C-002",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "SFTK",
+      "source_ids": ["SFTK-020-002"],
+      "condition": "弃命从财（原文逐字条件）",
+      "output": "cong_cai_candidate",
+      "excluded": ["条件不全即判从"]
+    },
+    {
+      "rule_id": "RULE-C-003",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "SFTK",
+      "source_ids": ["SFTK-012-002"],
+      "condition": "弃命从杀（原文逐字条件）",
+      "output": "cong_sha_candidate",
+      "excluded": ["条件不全即判从"]
+    },
+    {
+      "rule_id": "RULE-C-004",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "YHZP",
+      "source_ids": ["YHZP-122-004"],
+      "condition": "化气十段锦（合化条件原文逐字）",
+      "output": "hua_qi_candidate",
+      "excluded": ["争合妒合漏判"]
+    }
+  ],
+  "conflict_resolver": [
+    {"conflict": "SFTK 从格 vs YHZP 化气", "resolution": "从格（弃命）与化气（合化）不同概念，独立登记"},
+    {"conflict": "DTS-041-002 化象不遇异文", "resolution": "底本「不遇壬癸甲乙戊己」，text_variant 留痕（B1 不泛化）"}
+  ],
+  "golden_cases": [
+    {"case_id": "GOLDEN-011-01", "title": "从化先判", "verify_forbidden": ["跳级直接论格局"], "expected": "按 SFTK-082-001 顺序门"},
+    {"case_id": "GOLDEN-011-02", "title": "争合妒合", "verify_forbidden": ["化格破格漏判"], "expected": "YHZP/SFTK 破格条件登记（YHZP-123-004/SFTK-058-013）"}
+  ],
+  "blocklist": ["从化=通用格局", "B1 泛化"],
+  "acceptance_criteria": ["从化四体系边界", "4 Rule Candidate PENDING_GOLDEN", "Conflict 2 类", "Golden 2 个"]
+}

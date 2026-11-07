@@ -1,0 +1,41 @@
+{
+  "contract_id": "PATCH-090",
+  "name": "六经典Coverage Audit v1 命理知识域覆盖闭环",
+  "coverage_by_classic": {
+    "PZZQ": {
+      "done": ["月令取格025", "格局成败035", "相神072", "用神026", "清浊分离023C", "格局岁运059"],
+      "gap": ["格局层次pattern_level(HIGH/MEDIUM/LOW)", "格局救应runtime"]
+    },
+    "DTS": {
+      "done": ["旺衰034", "通关071", "流通071", "五行关系"],
+      "gap": ["形气qi_shape_state", "顺逆trend_direction_state"]
+    },
+    "QTBJ": {
+      "done": ["120月令调候060-066", "主次用degrade067-068", "岁运气候070"],
+      "gap": ["调候制化runtime climate_balance_state"]
+    },
+    "SMTH": {
+      "done": ["外格039-051", "岁运054-059", "案例reference"],
+      "gap": ["traditional_marker_registry(ACTIVE_STRUCTURE/REFERENCE_ONLY/EXCLUDED), 不全部丢弃"]
+    },
+    "SFTK": {
+      "done": ["病药033", "取用026", "特殊验法"],
+      "gap": ["药有效性medicine_effectiveness(有力/无力/被制/被破)"]
+    },
+    "YHZP": {
+      "done": ["十神072", "基础语法", "旺衰表达", "特殊格引用"],
+      "gap": ["六亲完整state(父=偏财年柱/母=正印月柱, 非简单财=妻印=母)"]
+    }
+  },
+  "todo_modules": {
+    "091": "格局层次Producer",
+    "092": "格局救应Runtime",
+    "093": "五行形气Producer",
+    "094": "顺逆趋势Producer",
+    "095": "调候制化Runtime",
+    "096": "病药有效性Runtime",
+    "097": "六亲完整State"
+  },
+  "completion": "规则治理/证据链/四核心状态/调候/岁运/关系/解释 全完成; 六经典覆盖约80%, 缺结构深化",
+  "principle": "不进入批断输出, 先把六经典全部转成可执行可追溯不可越权推理"
+}

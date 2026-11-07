@@ -1,0 +1,34 @@
+{
+  "contract_id": "PATCH-013",
+  "name": "Shengwang-Xiuqiu（生旺休囚/十二长生）Rule Modeling",
+  "status": "FROZEN_DRAFT",
+  "purpose": "十二长生 Rule Candidate Registry：YHZP 十二长生逐干/定名（阳顺阴逆）为主体，PZZQ 阳顺阴逆原则、QTBJ 生旺死绝方位、SMTH 生旺死绝寿夭、SFTK 定名/行运旺相为辅助。所有候选 PENDING_GOLDEN。",
+  "parent": "PATCH-012（0e8788fa）",
+  "concept_boundaries": {
+    "SHENGWANG_SCHEDULE": {
+      "definition": "十二长生逐干（长生沐浴冠带临官帝旺衰病死墓绝胎养，阳顺阴逆）——时间/位置序列，非力量百分比",
+      "primary_sources": ["YHZP-015-002（A）", "YHZP-016-001（A 定名）", "PZZQ-005-002（A 阳顺阴逆）", "SFTK-062-050（A 定名）"],
+      "forbidden": ["十二宫→力量百分比", "阳顺阴逆错配"]
+    },
+    "SHENGWANG_APPLICATION": {
+      "definition": "生旺死绝的应用断语（方位宜忌/寿夭/行运旺相吉死墓凶）",
+      "primary_sources": ["QTBJ-002-003（A）", "SMTH-028-001（A）", "SFTK-020-041（A）"],
+      "forbidden": ["断语脱离日干×月令语境"]
+    }
+  },
+  "rule_candidates": [
+    {"rule_id": "RULE-SW-001", "status": "PENDING_GOLDEN", "classical_scope": "YHZP", "source_ids": ["YHZP-016-001"], "condition": "十二长生十二宫定名（长生沐浴冠带临官帝旺衰病死墓绝胎养，阳顺阴逆，原文逐字）", "output": "shengwang_schedule_candidate", "excluded": ["→力量百分比"]},
+    {"rule_id": "RULE-SW-002", "status": "PENDING_GOLDEN", "classical_scope": "YHZP", "source_ids": ["YHZP-015-002"], "condition": "十二长生逐干（阳顺阴逆，原文逐字）", "output": "shengwang_track_candidate（按日干）", "excluded": ["错配阳顺阴逆"]},
+    {"rule_id": "RULE-SW-003", "status": "PENDING_GOLDEN", "classical_scope": "QTBJ", "source_ids": ["QTBJ-002-003"], "condition": "生旺死绝方位宜忌（原文逐字）", "output": "shengwang_orientation_candidate", "excluded": ["方位→通用吉凶"]},
+    {"rule_id": "RULE-SW-004", "status": "PENDING_GOLDEN", "classical_scope": "SFTK", "source_ids": ["SFTK-020-041"], "condition": "伤官行运旺相吉死墓凶（原文逐字）", "output": "shengwang_luck_candidate", "excluded": ["行运断语泛化"]}
+  ],
+  "conflict_resolver": [
+    {"conflict": "十二宫定名六书表达差异", "resolution": "定名一致（YHZP-016-001/SFTK-062-050 互证）；应用断语按书域登记"}
+  ],
+  "golden_cases": [
+    {"case_id": "GOLDEN-013-01", "title": "阳顺阴逆", "verify_forbidden": ["阳顺阴逆错配"], "expected": "按日干阴阳定顺逆"},
+    {"case_id": "GOLDEN-013-02", "title": "十二宫力量化", "verify_forbidden": ["十二宫→百分比"], "expected": "登记为位置序列，不量化"}
+  ],
+  "blocklist": ["十二宫百分比权重", "生旺死绝=现代评分"],
+  "acceptance_criteria": ["生旺休囚双体系边界", "4 Rule Candidate PENDING_GOLDEN", "Conflict 1 类", "Golden 2 个"]
+}

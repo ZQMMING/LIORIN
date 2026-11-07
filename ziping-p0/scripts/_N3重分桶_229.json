@@ -1,0 +1,3738 @@
+[
+ {
+  "book": "PZZQ",
+  "line": 123,
+  "sent": "四时之运，相生而成，故木生火，火生土，土生金，金生水，水复生",
+  "concept": [
+   "木生火"
+  ],
+  "engine_refs": [
+   "topology_paths.py:L367",
+   "yongshen_engine.py:L313",
+   "yongshen_engine.py:L336",
+   "yongshen_engine.py:L349",
+   "yongshen_engine.py:L639"
+  ],
+  "new_bucket": "弱承载(仅命题断语P)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 370,
+  "sent": "伤官用财，本为贵格，而用之冬水，即使小富，亦多不贵，冻水不能",
+  "concept": [
+   "伤官用财"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 900,
+  "sent": "若用煞而兼带伤食，运喜身旺印绶之方，伤食亦美，逢官遇财，皆不",
+  "concept": [
+   "喜身旺印绶"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L420"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 955,
+  "sent": "食神取运，即以食神所成之局，分而配之。食神生财，财重食轻，则",
+  "concept": [
+   "食神生财"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L499",
+   "ge_jie_layer.py:L4",
+   "ge_jie_layer.py:L275",
+   "ge_jie_layer.py:L282",
+   "ge_jie_layer.py:L294",
+   "golden_cases.py:L166"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1013,
+  "sent": "偏官取运，即以偏官所成之局分而配之。煞用食制，煞重食轻则助食",
+  "concept": [
+   "日主根轻"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L407",
+   "dts_tiyong.py:L28",
+   "dts_tiyong.py:L90",
+   "dts_tiyong.py:L93",
+   "dts_tiyong.py:L94",
+   "dts_tiyong.py:L97"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1074,
+  "sent": "伤官取运，即以伤官所成之局，分而配之。伤官用财，财旺身轻，则",
+  "concept": [
+   "伤官用财"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1077,
+  "sent": "伤官佩印，运行官煞为宜，印运亦吉，伤食不碍，财地则凶。",
+  "concept": [
+   "伤官佩印"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L183",
+   "dayun_xiji.py:L584",
+   "ge_jie_layer.py:L315",
+   "ge_jie_layer.py:L329",
+   "l0_fact_builder.py:L623",
+   "relation_established_173.py:L74"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1123,
+  "sent": "阳刃用煞，煞不甚旺，则运喜助煞；煞若太重，则运喜身旺印绶，伤",
+  "concept": [
+   "喜身旺印绶"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L420"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1263,
+  "sent": "甲乙日主，支全亥卯未或寅卯辰，乃曲直仁寿格也。气势偏旺于木，",
+  "concept": [
+   "从革格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L224",
+   "dayun_xiji.py:L225",
+   "special_pattern.py:L27"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1275,
+  "sent": "丁壬化木，生于春月，时逢甲辰，木之元神透出，乃化木格。气势偏",
+  "concept": [
+   "丁壬化木",
+   "丙辛化水",
+   "乙庚化金",
+   "化气格"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1347,
+  "sent": "乙从庚化，不作印论，丙火临申，坐于病地，四柱无根，时上己丑又",
+  "concept": [
+   "从财格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L220",
+   "dayun_xiji.py:L222*",
+   "dayun_xiji.py:L247",
+   "dayun_xiji.py:L690*",
+   "ge_jie_layer.py:L196*",
+   "ge_jie_layer.py:L204*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1359,
+  "sent": "乙木无根，气势偏于金，为弃命从煞格。金运最美，水土亦吉。木运",
+  "concept": [
+   "从煞格",
+   "从财格"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L250",
+   "dayun_xiji.py:L220",
+   "dayun_xiji.py:L222*",
+   "dayun_xiji.py:L247",
+   "dayun_xiji.py:L690*",
+   "ge_jie_layer.py:L196*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1371,
+  "sent": "此俗所谓井栏叉格。庚金乘旺泄秀，支全申子辰水局。气势偏于金水",
+  "concept": [
+   "井栏叉",
+   "申子辰水局"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L283",
+   "l0_fact_builder.py:L285*",
+   "relation_178.py:L14"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "PZZQ",
+  "line": 1395,
+  "sent": "《喜忌篇》云，“癸日进逢寅位，岁月怕戊已二方”，以寅刑出巳中",
+  "concept": [
+   "从儿格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L220",
+   "dayun_xiji.py:L222*",
+   "dayun_xiji.py:L249",
+   "dayun_xiji.py:L700*",
+   "ge_jie_layer.py:L196*",
+   "ge_jie_layer.py:L204*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 126,
+  "sent": "若柱中多金，名曰杀重身轻，先富後贫，运不相扶，非贫即夭。或庚",
+  "concept": [
+   "杀重身轻"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L105",
+   "bingyao_layer.py:L107",
+   "bingyao_layer.py:L287",
+   "bingyao_layer.py:L288",
+   "bingyao_layer.py:L451",
+   "bingyao_layer.py:L452"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 129,
+  "sent": "或满柱丙火，又加丁火，不见官杀，谓之伤官伤尽最为奇，反成清贵",
+  "concept": [
+   "不见官杀"
+  ],
+  "engine_refs": [
+   "relation_established_173.py:L158",
+   "special_pattern.py:L588"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 476,
+  "sent": "或丙少壬多，而无戊制，名杀重身轻，斯人篌里藏刀，寻非痞棍，或",
+  "concept": [
+   "杀重身轻"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L105",
+   "bingyao_layer.py:L107",
+   "bingyao_layer.py:L287",
+   "bingyao_layer.py:L288",
+   "bingyao_layer.py:L451",
+   "bingyao_layer.py:L452"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 488,
+  "sent": "无壬用癸者，略富贵，且官杀亦要旺有限，丙火无壬，多主贫贼，屡",
+  "concept": [
+   "炎上格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L224",
+   "dayun_xiji.py:L225",
+   "golden_cases.py:L266",
+   "golden_cases.py:L435",
+   "golden_cases.py:L443",
+   "scan_cong_zhuanwang.py:L2"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 602,
+  "sent": "阳刃合杀，威权万里，丁火羊刃太旺，正谓羊刃倒戈，无头之鬼，丙",
+  "concept": [
+   "杀重身轻"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L105",
+   "bingyao_layer.py:L107",
+   "bingyao_layer.py:L287",
+   "bingyao_layer.py:L288",
+   "bingyao_layer.py:L451",
+   "bingyao_layer.py:L452"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 1489,
+  "sent": "辰戌丑未，四土之神，惟未土为极旺，何也，辰土带木气克之，戌土",
+  "concept": [
+   "火炎土燥",
+   "稼穑格"
+  ],
+  "engine_refs": [
+   "climate_structure.py:L7",
+   "climate_structure.py:L132",
+   "climate_structure.py:L136",
+   "special_pattern.py:L27",
+   "special_pattern.py:L634",
+   "yongshen_engine.py:L331"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 1921,
+  "sent": "二月己土，阳气渐升，虽禾稼未成，万物出土，田园未展，先取甲木",
+  "concept": [
+   "癸水润"
+  ],
+  "engine_refs": [
+   "assertion_matcher.py:L85",
+   "climate_producer_v2.py:L73",
+   "qtbj_climate_candidates.py:L270",
+   "qtbj_climate_candidates.py:L290",
+   "qtbj_climate_candidates.py:L294",
+   "qtbj_climate_candidates.py:L298"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 2053,
+  "sent": "三秋己土，万物收藏之际，外虚内实，寒气渐升，须丙火温之，癸水",
+  "concept": [
+   "癸水润"
+  ],
+  "engine_refs": [
+   "assertion_matcher.py:L85",
+   "climate_producer_v2.py:L73",
+   "qtbj_climate_candidates.py:L270",
+   "qtbj_climate_candidates.py:L290",
+   "qtbj_climate_candidates.py:L294",
+   "qtbj_climate_candidates.py:L298"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 2988,
+  "sent": "或支见亥子丑，干出比劫，无丙，名润下格，富贵双全，运喜西北，",
+  "concept": [
+   "润下格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L224",
+   "dayun_xiji.py:L225",
+   "special_pattern.py:L27",
+   "yongshen_engine.py:L636"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 3122,
+  "sent": "或比肩重重，又须戊土，书曰，土止流水福寿全，若戊不见，名水泛",
+  "concept": [
+   "水泛木浮"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L658",
+   "engineering_assumptions.py:L131",
+   "fan_ju.py:L361",
+   "yongshen_multi_track.py:L547",
+   "yongshen_multi_track.py:L562",
+   "yongshen_multi_track.py:L594"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 3251,
+  "sent": "或一派己土，此假从杀格，为人奸诈，且主孤贫，得甲乙出制可救，",
+  "concept": [
+   "从杀格"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L460",
+   "dayun_xiji.py:L220",
+   "dayun_xiji.py:L222*",
+   "dayun_xiji.py:L248",
+   "dayun_xiji.py:L695*",
+   "ge_jie_layer.py:L122"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "QTBJ",
+  "line": 3488,
+  "sent": "水旺居垣须有智，水土混杂必愚顽，壬癸路经南域，主健，富贵堪图",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 102,
+  "sent": "从革格，谓庚辛日干，见申酉戌全，或巳酉丑全，此多剥杂，原非纯",
+  "concept": [
+   "从革格",
+   "润下格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L224",
+   "dayun_xiji.py:L225",
+   "special_pattern.py:L27",
+   "dayun_xiji.py:L224",
+   "dayun_xiji.py:L225",
+   "special_pattern.py:L27"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 108,
+  "sent": "何以为之动也?其体属阳，阳主动。故天行健。圆转循球而无端。故",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 171,
+  "sent": "楠曰：旧注谓有官有印，乃杂气所藏官印也，牵强不可从。或曰：有",
+  "concept": [
+   "印生身"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L584",
+   "dayun_xiji.py:L846",
+   "execution_demo.py:L114",
+   "ge_jie_layer.py:L420",
+   "special_pattern.py:L265",
+   "yongshen_multi_track.py:L500"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 183,
+  "sent": "补曰：真官时遇，谓真正官星，遇于生时，正《渊源》所谓时土正官",
+  "concept": [
+   "正官格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L253",
+   "dayun_xiji.py:L261",
+   "dayun_xiji.py:L593",
+   "ge_jie_layer.py:L369",
+   "ge_jie_layer.py:L392",
+   "ge_jie_layer.py:L409"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 441,
+  "sent": "《格解》又分五行，遇月支偏官，岁时中亦宜制伏为一节。分四柱纯",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 447,
+  "sent": "旧注云：“此七杀即偏官也。”且如甲忌庚为七杀，而甲生于寅地，",
+  "concept": [
+   "食神制杀"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L193",
+   "caige_rule_contract.py:L58",
+   "caige_rule_contract.py:L76",
+   "engineering_assumptions.py:L122",
+   "ge_jie_layer.py:L438",
+   "ge_jie_layer.py:L445"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 453,
+  "sent": "旧注解曰：“伤官本禄之七杀，败财本马之七杀。偏官本身之七杀。",
+  "concept": [
+   "杀重身轻"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L105",
+   "bingyao_layer.py:L107",
+   "bingyao_layer.py:L287",
+   "bingyao_layer.py:L288",
+   "bingyao_layer.py:L451",
+   "bingyao_layer.py:L452"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 483,
+  "sent": "解曰：偏官之格，虽为人凶暴无忌惮。然无制则为七杀，有制则为偏",
+  "concept": [
+   "七杀透"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L333",
+   "ge_jie_layer.py:L340",
+   "ge_jie_layer.py:L406",
+   "l0_fact_builder.py:L570",
+   "qisha_rule_contract.py:L6",
+   "qisha_rule_contract.py:L24"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 501,
+  "sent": "解曰：煞星者，七杀偏官也。制神者，食神也。使月上逢七杀，而有",
+  "concept": [
+   "食神逢枭"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L293*",
+   "shishen_rule_contract.py:L9",
+   "shishen_rule_contract.py:L21",
+   "shishen_rule_contract.py:L39",
+   "shishen_rule_contract.py:L47",
+   "shishen_rule_contract.py:L56"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 525,
+  "sent": "身势太柔，略无一点根气，七杀太重，而满盘重重。三合火木旺乡，",
+  "concept": [
+   "木生火",
+   "杀印相生"
+  ],
+  "engine_refs": [
+   "topology_paths.py:L367",
+   "yongshen_engine.py:L313",
+   "yongshen_engine.py:L336",
+   "yongshen_engine.py:L349",
+   "yongshen_engine.py:L639",
+   "bingyao_layer.py:L208"
+  ],
+  "new_bucket": "弱承载(仅命题断语P)"
+ },
+ {
+  "book": "SFTK",
+  "line": 549,
+  "sent": "癸水生卵，己土杀星，天干透出，是以有杀只论杀。善喜杀衰，要嫌",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 645,
+  "sent": "辛金生于未月，伏制犹炎，喜年上丁壬合杀为贵。月中虽有丁火，丑",
+  "concept": [
+   "丁壬合"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L371",
+   "relation_178.py:L13",
+   "stem_interaction_matrix.py:L9"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 741,
+  "sent": "已生巳月，火土本旺，盖辛金清清透出，已土好泄其精，而从金为用",
+  "concept": [
+   "制杀太过"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L46",
+   "bingyao_layer.py:L175",
+   "bingyao_layer.py:L214",
+   "bingyao_layer.py:L512",
+   "bingyao_layer.py:L570",
+   "bingyao_layer.py:L594"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 960,
+  "sent": "又补曰：食神制杀，化鬼为官，因宜权贵。所谓食居先，杀居后，功",
+  "concept": [
+   "食神制杀"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L193",
+   "caige_rule_contract.py:L58",
+   "caige_rule_contract.py:L76",
+   "engineering_assumptions.py:L122",
+   "ge_jie_layer.py:L438",
+   "ge_jie_layer.py:L445"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 963,
+  "sent": "又补曰：食神制杀，不宜逢枭则祸，故日食神制杀逢枭，不贫则夭，",
+  "concept": [
+   "食神制杀"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L193",
+   "caige_rule_contract.py:L58",
+   "caige_rule_contract.py:L76",
+   "engineering_assumptions.py:L122",
+   "ge_jie_layer.py:L438",
+   "ge_jie_layer.py:L445"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1194,
+  "sent": "癸水合成火局，身主不柔，夫星气轻，正谓有病方为贵也。行南方财",
+  "concept": [
+   "有病方为贵"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L264",
+   "authority_matrix.py:L294",
+   "authority_matrix.py:L365",
+   "bingyao_layer.py:L1217",
+   "meta_unified_output.py:L327",
+   "yongshen_engine.py:L407"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1287,
+  "sent": "然伤官之格，有真伤官，有假伤官。如真伤官者，甲乙日干生于巳午",
+  "concept": [
+   "泄气太重"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L41",
+   "bingyao_layer.py:L113",
+   "bingyao_layer.py:L288",
+   "bingyao_layer.py:L289",
+   "bingyao_layer.py:L492",
+   "bingyao_layer.py:L493"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1293,
+  "sent": "补曰：伤官者，我生彼之谓也。阳见阴，如甲生午月，戊生酉月之类",
+  "concept": [
+   "伤官用财"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1320,
+  "sent": "补曰：凡伤官格，行旺相吉者，是言四柱伤官轻，而运行旺相临官帝",
+  "concept": [
+   "伤官格",
+   "枭神夺食",
+   "食神格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1356,
+  "sent": "再行财旺生官地，财禄无亏得到头。癸水伤官怕见官，最嫌戊己透天",
+  "concept": [
+   "财旺生官"
+  ],
+  "engine_refs": [
+   "domain_fill_producers.py:L8",
+   "ge_jie_layer.py:L484",
+   "relation_established_173.py:L106",
+   "special_pattern.py:L235",
+   "special_pattern.py:L237"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1602,
+  "sent": "乙生寅月进气之木，更通三资身，无奈比劫重重争财，而财不足也。",
+  "concept": [
+   "制杀太过",
+   "财旺生官"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L46",
+   "bingyao_layer.py:L175",
+   "bingyao_layer.py:L214",
+   "bingyao_layer.py:L512",
+   "bingyao_layer.py:L570",
+   "bingyao_layer.py:L594"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1679,
+  "sent": "补曰：印绶生月,干头重重，一见印绶之比肩，又行印旺之运，必伤",
+  "concept": [
+   "日主无根"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L110",
+   "bingyao_layer.py:L405",
+   "bingyao_layer.py:L410",
+   "cong_rules.py:L30",
+   "cong_rules.py:L43",
+   "cong_rules.py:L55"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1823,
+  "sent": "楠曰：阳刃格，六阳日干谓之阳刃理也，六阴日干不谓之刃。但用刃",
+  "concept": [
+   "阳刃格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L314",
+   "dayun_xiji.py:L617",
+   "entry_candidate_contract.py:L30",
+   "ge_jie_layer.py:L735",
+   "ge_jie_layer.py:L749*",
+   "ge_jie_layer.py:L1077*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1826,
+  "sent": "建禄格者，日主得主禄之地，非官禄也。书云月令建禄，多无祖屋，",
+  "concept": [
+   "阳刃格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L314",
+   "dayun_xiji.py:L617",
+   "entry_candidate_contract.py:L30",
+   "ge_jie_layer.py:L735",
+   "ge_jie_layer.py:L749*",
+   "ge_jie_layer.py:L1077*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1862,
+  "sent": "又曰：春夏火逢时旺，秋金冬水一般同。不宜羊刃天干透，运至重逢",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 1946,
+  "sent": "或曰会煞，谓坐见七煞。年时天干显露，地支隐藏。无制伏者是也。",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2024,
+  "sent": "楠曰：杂气财官者，盖辰戌丑未四字，乃天地不正之气，为天地四个",
+  "concept": [
+   "伤官格",
+   "天干透"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2027,
+  "sent": "古歌云：杂气财官印月官，天干透露始为丰。财多官旺宜冲破，切忌",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2048,
+  "sent": "补曰：甲乙生于丑月，丙丁生于辰月，戊己生于戌未月，庚金生于辰",
+  "concept": [
+   "印生身",
+   "财生官"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L584",
+   "dayun_xiji.py:L846",
+   "execution_demo.py:L114",
+   "ge_jie_layer.py:L420",
+   "special_pattern.py:L265",
+   "yongshen_multi_track.py:L500"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2066,
+  "sent": "《集说》云：库财者蓄藏这谓，辰戌丑未是也。如月令透出者，或岁",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2144,
+  "sent": "补曰：官轻印财轻，入墓无妨。如四柱财官，三合太旺，则天元赢弱",
+  "concept": [
+   "伤官格",
+   "土多金埋"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2171,
+  "sent": "己未日主，生于丑月，两土气厚，凡身旺多好泄也。见酉丑结成金局",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2525,
+  "sent": "楠曰：稼穑格者，盖取戊己日干，见辰戌丑未，及巳午未字多，若四",
+  "concept": [
+   "稼穑格"
+  ],
+  "engine_refs": [
+   "special_pattern.py:L27",
+   "special_pattern.py:L634",
+   "yongshen_engine.py:L331",
+   "yongshen_engine.py:L386"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2576,
+  "sent": "诗曰：天干壬癸喜冬临，更值申辰会局成。或是全归亥子丑，等闲平",
+  "concept": [
+   "天干壬癸"
+  ],
+  "engine_refs": [
+   "climate_runtime.py:L58",
+   "state_producer.py:L153"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2597,
+  "sent": "楠曰：从革格，谓庚辛日干，见申酉戌全，或巳酉丑全。此多禄杂，",
+  "concept": [
+   "从革格",
+   "润下格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L224",
+   "dayun_xiji.py:L225",
+   "special_pattern.py:L27",
+   "dayun_xiji.py:L224",
+   "dayun_xiji.py:L225",
+   "special_pattern.py:L27"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2687,
+  "sent": "补曰：盖化成造化，要行木局，禄旺则发。如丁壬化木，月令喜寅，",
+  "concept": [
+   "丁壬化木",
+   "戊癸化火"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2738,
+  "sent": "楠曰：岁德抚杀格者，如四柱日主旺健，见年岁上杀星出，可多假此",
+  "concept": [
+   "杀重身轻"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L105",
+   "bingyao_layer.py:L107",
+   "bingyao_layer.py:L287",
+   "bingyao_layer.py:L288",
+   "bingyao_layer.py:L451",
+   "bingyao_layer.py:L452"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2747,
+  "sent": "问抚杀格，《格解》所收诗歌，喜柱运财旺生杀。《纂要》所载喜食",
+  "concept": [
+   "强杀无根",
+   "杀无根"
+  ],
+  "engine_refs": [
+   "strength_pipeline.py:L116",
+   "bingyao_layer.py:L180",
+   "bingyao_layer.py:L594",
+   "bingyao_layer.py:L613",
+   "ge_jie_layer.py:L821",
+   "strength_pipeline.py:L116"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2846,
+  "sent": "补曰：观此造有，则此格不忌财也。可见古歌有“岁运若逢财旺处，",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2879,
+  "sent": "楠断曰：勾陈得位，以尽戊己为勾陈，其一理也。得位谓财官之地，",
+  "concept": [
+   "杀重身轻",
+   "能任财官",
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L105",
+   "bingyao_layer.py:L107",
+   "bingyao_layer.py:L287",
+   "bingyao_layer.py:L288",
+   "bingyao_layer.py:L451",
+   "bingyao_layer.py:L452"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2900,
+  "sent": "如此二日，生春寅卯月，取伤官格，则文季而不明。生夏干月，官星",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2924,
+  "sent": "生春寅月，正水木伤官泄气，二岁行已卯运，运干头带杀，而又伤官",
+  "concept": [
+   "伤官旺"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L315",
+   "ge_jie_layer.py:L316",
+   "ge_jie_layer.py:L329",
+   "l0_fact_builder.py:L258",
+   "relation_established_173.py:L53",
+   "relation_established_173.py:L68"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 2942,
+  "sent": "又如带杀制伏去留，则不在此限，宜轻重较重。弃命从杀，身弱无根",
+  "concept": [
+   "身弱无根"
+  ],
+  "engine_refs": [
+   "wangshuai_multi_track.py:L178*",
+   "wangshuai_multi_track.py:L180*",
+   "wangshuai_multi_track.py:L193*",
+   "wangshuai_multi_track.py:L216*",
+   "wangshuai_multi_track.py:L221",
+   "wangshuai_multi_track.py:L223*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 3137,
+  "sent": "夫从象者，如甲乙日主无根，遇地支纯金，谓之从金。若四柱纯土，",
+  "concept": [
+   "日主无根"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L110",
+   "bingyao_layer.py:L405",
+   "bingyao_layer.py:L410",
+   "cong_rules.py:L30",
+   "cong_rules.py:L43",
+   "cong_rules.py:L55"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 3143,
+  "sent": "夫化象者，如甲己生人，在辰戌丑未月，天干有一己字合甲字，谓之",
+  "concept": [
+   "甲己化土"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "huaqi_rules.py:L10",
+   "huaqi_rules.py:L39",
+   "special_pattern_resolver.py:L31",
+   "special_pattern_resolver.py:L111",
+   "special_pattern_runtime.py:L42"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 3188,
+  "sent": "夫格局，皆自有定论，今略具而述之。印绶见财行财运，又见死绝入",
+  "concept": [
+   "岁运并临"
+  ],
+  "engine_refs": [
+   "relation_178.py:L106",
+   "relation_178.py:L109"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 3290,
+  "sent": "乙木居亥印生身，逆走西南富贵真。有杀有官犹喜顺，到头大限怕逢",
+  "concept": [
+   "印生身"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L584",
+   "dayun_xiji.py:L846",
+   "execution_demo.py:L114",
+   "ge_jie_layer.py:L420",
+   "special_pattern.py:L265",
+   "yongshen_multi_track.py:L500"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 3413,
+  "sent": "己土巳月身尤旺，印绶伤官格局清。身旺最宜财运遇，无财逆运亦相",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 3569,
+  "sent": "癸水酉月印生身，有杀方为格局真。逆运须知强顺运，功名富贵又超",
+  "concept": [
+   "印生身"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L584",
+   "dayun_xiji.py:L846",
+   "execution_demo.py:L114",
+   "ge_jie_layer.py:L420",
+   "special_pattern.py:L265",
+   "yongshen_multi_track.py:L500"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 4156,
+  "sent": "造化先须看日主，坐官坐印衰强取。天时月令号提纲，原有原无轻重",
+  "concept": [
+   "伤官用财",
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902",
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L39",
+   "bingyao_layer.py:L97"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 4720,
+  "sent": "午火羊刃又伤官，未取伤官宜伤尽。申是偏财喜旺神，酉月财旺生官",
+  "concept": [
+   "财旺生官"
+  ],
+  "engine_refs": [
+   "domain_fill_producers.py:L8",
+   "ge_jie_layer.py:L484",
+   "relation_established_173.py:L106",
+   "special_pattern.py:L235",
+   "special_pattern.py:L237"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 4738,
+  "sent": "午月刃取正印格，未上杂气作官印。七月食神生财旺，八月伤官喜遇",
+  "concept": [
+   "正印格",
+   "食神生财"
+  ],
+  "engine_refs": [
+   "judgment_producer.py:L9",
+   "moon_extractor.py:L100",
+   "moon_extractor.py:L107",
+   "bingyao_layer.py:L499",
+   "ge_jie_layer.py:L4",
+   "ge_jie_layer.py:L275"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 4750,
+  "sent": "戌月借取杂气格，亥上正财生官格。子月偏财明怕劫，丑月杂气取财",
+  "concept": [
+   "财生官"
+  ],
+  "engine_refs": [
+   "daymaster_activity.py:L229",
+   "daymaster_activity.py:L230",
+   "daymaster_power_structure.py:L38",
+   "dayun_xiji.py:L568",
+   "dayun_xiji.py:L573",
+   "dayun_xiji.py:L607"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 4765,
+  "sent": "午月偏官喜枭神，未取杂气用偏印。申月借取伤官格，酉是建禄怕逢",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 4867,
+  "sent": "丙辛化水生冬月，阴日阳时须见清。有土局中须破用，得金相助发前",
+  "concept": [
+   "丙辛化水"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "golden_cases.py:L364",
+   "golden_cases.py:L490",
+   "golden_cases.py:L498",
+   "huaqi_rules.py:L12",
+   "special_pattern_resolver.py:L31"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 4870,
+  "sent": "丁壬歌丁壬化木喜逢寅，亥卯生提是福基。除此二宫皆别论，金多尤",
+  "concept": [
+   "丁壬化木"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5056,
+  "sent": "正月建寅歌   正月寅宫元是木，木生火旺得长生。戌兼午未宫中",
+  "concept": [
+   "木生火"
+  ],
+  "engine_refs": [
+   "topology_paths.py:L367",
+   "yongshen_engine.py:L313",
+   "yongshen_engine.py:L336",
+   "yongshen_engine.py:L349",
+   "yongshen_engine.py:L639"
+  ],
+  "new_bucket": "弱承载(仅命题断语P)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5065,
+  "sent": "庚辛主弱逢寅月，午戌加临会杀星。日主无根宜透土，逆行金水福隆",
+  "concept": [
+   "日主无根"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L110",
+   "bingyao_layer.py:L405",
+   "bingyao_layer.py:L410",
+   "cong_rules.py:L30",
+   "cong_rules.py:L43",
+   "cong_rules.py:L55"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5083,
+  "sent": "庚辛卯月多逢木，日主无根怕旺财。南北两头多有破，如逢申酉福方",
+  "concept": [
+   "日主无根"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L110",
+   "bingyao_layer.py:L405",
+   "bingyao_layer.py:L410",
+   "cong_rules.py:L30",
+   "cong_rules.py:L43",
+   "cong_rules.py:L55"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5188,
+  "sent": "日主无根干上金，月通亥子土来侵。只宜印绶扶身位，何怕提纲损用",
+  "concept": [
+   "日主无根"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L110",
+   "bingyao_layer.py:L405",
+   "bingyao_layer.py:L410",
+   "cong_rules.py:L30",
+   "cong_rules.py:L43",
+   "cong_rules.py:L55"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5239,
+  "sent": "正官格歌   用官喜身旺，嫌刃与冲刑。伤食俱所忌，喜印及财星",
+  "concept": [
+   "正官格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L253",
+   "dayun_xiji.py:L261",
+   "dayun_xiji.py:L593",
+   "ge_jie_layer.py:L369",
+   "ge_jie_layer.py:L392",
+   "ge_jie_layer.py:L409"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5242,
+  "sent": "七杀格歌   七杀喜印刃，伤官与食神。合煞身旺者，所忌见官星",
+  "concept": [
+   "七杀格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L318",
+   "dayun_xiji.py:L319",
+   "dayun_xiji.py:L326",
+   "dayun_xiji.py:L345",
+   "dayun_xiji.py:L706",
+   "dayun_xiji.py:L713"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5416,
+  "sent": "详观三命，细究五行。格局乃八字之枢机，日干为一身之主宰。清浊",
+  "concept": [
+   "官杀透"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L542",
+   "condition_router.py:L19",
+   "ge_jie_layer.py:L552",
+   "ge_jie_layer.py:L581*",
+   "ge_jie_layer.py:L653*",
+   "ge_jie_layer.py:L735"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5419,
+  "sent": "金白水清，聪明特达。土多火少，晦性昏朦。月逢墓库，官杀混杂亦",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5524,
+  "sent": "伤官见官，格中大忌。不损用神，何愁官至。日禄居时，青云得路。",
+  "concept": [
+   "伤官见官"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121",
+   "bingyao_layer.py:L122",
+   "bingyao_layer.py:L533",
+   "ge_jie_layer.py:L881"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5599,
+  "sent": "有病方为贵，无伤不是奇。格中如去病，财禄喜相随。寅卯多金丑，",
+  "concept": [
+   "有病方为贵"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L264",
+   "authority_matrix.py:L294",
+   "authority_matrix.py:L365",
+   "bingyao_layer.py:L1217",
+   "meta_unified_output.py:L327",
+   "yongshen_engine.py:L407"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5775,
+  "sent": "此论六阴朝阳格，辛金至亥为六阴之地，而得子时，故曰六阴尽处一",
+  "concept": [
+   "六阴朝阳"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L323",
+   "l0_fact_builder.py:L331*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5784,
+  "sent": "此论偏官，即七杀，若四柱中全无一点官星，用七杀为偏官。若有正",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 5970,
+  "sent": "印旺无制孤蹇，相停官印超群。 旺财破印命归云，官运拟为贵命。",
+  "concept": [
+   "财破印"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L197",
+   "bingyao_layer.py:L198",
+   "bingyao_layer.py:L852",
+   "dayun_xiji.py:L713",
+   "engineering_assumptions.py:L122",
+   "fan_ju.py:L352"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 6117,
+  "sent": "倒冲食伤杂气。魁罡日禄居时，金神鼠贵井栏叉，又无破，化生为贵",
+  "concept": [
+   "井栏叉"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L283",
+   "l0_fact_builder.py:L285*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 6999,
+  "sent": "注释：凡用印生身，乃为我之福也。运行比印旺地，生扶太过。福满",
+  "concept": [
+   "印生身"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L584",
+   "dayun_xiji.py:L846",
+   "execution_demo.py:L114",
+   "ge_jie_layer.py:L420",
+   "special_pattern.py:L265",
+   "yongshen_multi_track.py:L500"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 7041,
+  "sent": "注释：如乙庚化金，喜见金旺，而妻得依其夫。丁壬化木喜见木旺，",
+  "concept": [
+   "丁壬化木",
+   "乙庚化金"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 7938,
+  "sent": "注释：夫伤官格者，须要身旺敌财。财要生气，不要盗财之气，便是",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 8172,
+  "sent": "注释：凡归禄格无官星者，号曰青云得路，本用财也，固喜伤官食神",
+  "concept": [
+   "食神生财"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L499",
+   "ge_jie_layer.py:L4",
+   "ge_jie_layer.py:L275",
+   "ge_jie_layer.py:L282",
+   "ge_jie_layer.py:L294",
+   "golden_cases.py:L166"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 8235,
+  "sent": "注释：凡化成局者，最怕行禄绝马衰之运。如戊癸化火行水乡，丁壬",
+  "concept": [
+   "丁壬化木",
+   "戊癸化火"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SFTK",
+  "line": 9090,
+  "sent": "官印财食。无破清高。煞伤枭刃。用之最吉。善恶相交。喜去恶而崇",
+  "concept": [
+   "伤官用财",
+   "得时俱为旺论",
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902",
+   "authority_matrix.py:L44",
+   "multifactor_eval.py:L91",
+   "rule_admission.py:L13*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 9114,
+  "sent": "官星怕逢七煞运，七煞犹畏官星临。官杀混杂人必夭，去官留杀仔细",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 9123,
+  "sent": "只怕日干元自弱，财多生煞赶身灾。财多身弱行财运，此处方知下九",
+  "concept": [
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L39",
+   "bingyao_layer.py:L97",
+   "bingyao_layer.py:L99",
+   "bingyao_layer.py:L286",
+   "bingyao_layer.py:L410"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SFTK",
+  "line": 9150,
+  "sent": "日德心善身稳厚，而作事慈祥；魁罡性严有操持，而为人聪敏。金神",
+  "concept": [
+   "火炎土燥"
+  ],
+  "engine_refs": [
+   "climate_structure.py:L7",
+   "climate_structure.py:L132",
+   "climate_structure.py:L136"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 756,
+  "sent": "己土为云。己土生居酉，酉，兑方也，其象为泽。先正曰：“天降时",
+  "concept": [
+   "合而化",
+   "甲己合"
+  ],
+  "engine_refs": [
+   "engineering_assumptions.py:L74",
+   "yongyao_resolve.py:L174",
+   "l0_fact_builder.py:L370",
+   "relation_178.py:L12",
+   "stem_interaction_matrix.py:L9"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 1070,
+  "sent": "甲己化土，喜戊辰时生，四季月其土成象，柱中生旺，有气为上。不",
+  "concept": [
+   "甲己化土"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "huaqi_rules.py:L10",
+   "huaqi_rules.py:L39",
+   "special_pattern_resolver.py:L31",
+   "special_pattern_resolver.py:L111",
+   "special_pattern_runtime.py:L42"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 1073,
+  "sent": "乙庚化金，喜庚辰时生，申酉月其金成象。喜戊土相生，甲己为福。",
+  "concept": [
+   "乙庚化金"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "huaqi_rules.py:L11",
+   "huaqi_rules.py:L40",
+   "special_pattern_resolver.py:L31"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 1076,
+  "sent": "丙辛化水，喜壬辰时生，亥子月其水成象。爱庚字相生之气，乙庚为",
+  "concept": [
+   "丙辛化水"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "golden_cases.py:L364",
+   "golden_cases.py:L490",
+   "golden_cases.py:L498",
+   "huaqi_rules.py:L12",
+   "special_pattern_resolver.py:L31"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 1079,
+  "sent": "丁壬化木，喜甲辰时生，寅卯月其木成象。喜丙辛为福。故此月有丁",
+  "concept": [
+   "丁壬化木"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 1082,
+  "sent": "戊癸化火，喜丙辰时生，已午月其火成象。爱甲字相生，丁壬为福。",
+  "concept": [
+   "戊癸化火"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "huaqi_rules.py:L14",
+   "huaqi_rules.py:L42",
+   "special_pattern_resolver.py:L31",
+   "yongshen_engine.py:L232"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 1613,
+  "sent": "夫德者，本月生旺之德；秀者，合天地中和之气、五行变化而成者也",
+  "concept": [
+   "五行变化"
+  ],
+  "engine_refs": [
+   "month_day_producers.py:L3",
+   "month_day_producers.py:L10",
+   "month_day_producers.py:L12",
+   "time_consumer_contract.py:L10"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 1735,
+  "sent": "厄者，遭乎难者也，常居马前一辰，劫后二辰，死而不生谓之厄。申",
+  "concept": [
+   "亥卯未木局",
+   "寅午戌火局"
+  ],
+  "engine_refs": [
+   "relation_178.py:L15",
+   "special_pattern.py:L192",
+   "special_pattern.py:L253",
+   "topology_paths.py:L150",
+   "relation_178.py:L14",
+   "special_pattern.py:L194"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 1876,
+  "sent": "甲木属阳，乃栋梁之材。喜生秋冬，遇申子月为吉。柱见庚辛，譬斧",
+  "concept": [
+   "伤官生财"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L328*",
+   "l0_fact_builder.py:L258",
+   "l0_fact_builder.py:L622",
+   "relation_established_173.py:L53",
+   "relation_established_173.py:L54",
+   "relation_established_173.py:L60*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 2835,
+  "sent": "丙丁日遇寅午戌局，柱中须有寅字带印为入格，无寅止是九流近贵之",
+  "concept": [
+   "炎上格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L224",
+   "dayun_xiji.py:L225",
+   "golden_cases.py:L266",
+   "golden_cases.py:L435",
+   "golden_cases.py:L443",
+   "scan_cong_zhuanwang.py:L2"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 2851,
+  "sent": "壬癸日见申子辰全，忌引卯巳死绝之地，三刑四冲之乡，死绝则不流",
+  "concept": [
+   "天干壬癸"
+  ],
+  "engine_refs": [
+   "climate_runtime.py:L58",
+   "state_producer.py:L153"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3072,
+  "sent": "《渊源论》：印绶，如甲日遇子月为正印，亥月为偏印，最喜逢天月",
+  "concept": [
+   "财破印",
+   "食伤生财"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L197",
+   "bingyao_layer.py:L198",
+   "bingyao_layer.py:L852",
+   "dayun_xiji.py:L713",
+   "engineering_assumptions.py:L122",
+   "fan_ju.py:L352"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3078,
+  "sent": "戊日逢午月正印，天德在亥，月德在丙，巳月偏印，天德在辛，月德",
+  "concept": [
+   "财破印",
+   "食伤生财"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L197",
+   "bingyao_layer.py:L198",
+   "bingyao_layer.py:L852",
+   "dayun_xiji.py:L713",
+   "engineering_assumptions.py:L122",
+   "fan_ju.py:L352"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3081,
+  "sent": "庚日生午月正印，天德在乾，月德在丙，巳月偏印，天德在辛，月德",
+  "concept": [
+   "财破印"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L197",
+   "bingyao_layer.py:L198",
+   "bingyao_layer.py:L852",
+   "dayun_xiji.py:L713",
+   "engineering_assumptions.py:L122",
+   "fan_ju.py:L352"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3084,
+  "sent": "壬日生酉月正印，天德在寅，月德在庚，申月偏印，天德在癸，月德",
+  "concept": [
+   "财破印"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L197",
+   "bingyao_layer.py:L198",
+   "bingyao_layer.py:L852",
+   "dayun_xiji.py:L713",
+   "engineering_assumptions.py:L122",
+   "fan_ju.py:L352"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3176,
+  "sent": "伤官格用财，亦有用印者。《天玄赋》云：伤官用印宜去财，用财宜",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3182,
+  "sent": "《万祺》云：伤官元辰无官星，又行伤官运，此为窃气太过，即一木",
+  "concept": [
+   "伤官用财",
+   "伤官见官",
+   "枭神夺食"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902",
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3185,
+  "sent": "古歌云：伤官原是产业神，伤尽真为大贵人，若是伤官伤不尽，官来",
+  "concept": [
+   "伤官格",
+   "财旺生官"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3205,
+  "sent": "古歌云：食神制煞吉非常，财旺妻荣子更强，柱中若要吞啖煞，管教",
+  "concept": [
+   "食神制煞"
+  ],
+  "engine_refs": [
+   "yongshen_geju.py:L58"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3278,
+  "sent": "年上阳刃与时上阳刃最重，年上主破败祖基，不受父母产业，平生施",
+  "concept": [
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L39",
+   "bingyao_layer.py:L97",
+   "bingyao_layer.py:L99",
+   "bingyao_layer.py:L286",
+   "bingyao_layer.py:L410"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 3525,
+  "sent": "总歌：正气官星第一格，财官两旺亦同说；官星带合兼坐禄，女命逢",
+  "concept": [
+   "伤官生财",
+   "财多身弱",
+   "财破印",
+   "贪财破印"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L328*",
+   "l0_fact_builder.py:L258",
+   "l0_fact_builder.py:L622",
+   "relation_established_173.py:L53",
+   "relation_established_173.py:L54",
+   "relation_established_173.py:L60*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 4553,
+  "sent": "丙辛化水不相当，有助身强大吉昌；",
+  "concept": [
+   "丙辛化水"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "golden_cases.py:L364",
+   "golden_cases.py:L490",
+   "golden_cases.py:L498",
+   "huaqi_rules.py:L12",
+   "special_pattern_resolver.py:L31"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 8591,
+  "sent": "凡印不论一位二位四位都好，格中不宜见财破印。",
+  "concept": [
+   "财破印"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L197",
+   "bingyao_layer.py:L198",
+   "bingyao_layer.py:L852",
+   "dayun_xiji.py:L713",
+   "engineering_assumptions.py:L122",
+   "fan_ju.py:L352"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 8611,
+  "sent": "凡阳刃格岁运最怕冲合。",
+  "concept": [
+   "阳刃格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L314",
+   "dayun_xiji.py:L617",
+   "entry_candidate_contract.py:L30",
+   "ge_jie_layer.py:L735",
+   "ge_jie_layer.py:L749*",
+   "ge_jie_layer.py:L1077*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 9307,
+  "sent": "如金人得庚辛或申酉为体面，得巳酉丑三合为局势。喜火制土扶，忌",
+  "concept": [
+   "金寒水冷"
+  ],
+  "engine_refs": [
+   "climate_structure.py:L7",
+   "climate_structure.py:L140",
+   "climate_structure.py:L144",
+   "climate_structure.py:L146",
+   "yongshen_engine.py:L340"
+  ],
+  "new_bucket": "弱承载(仅命题断语P)"
+ },
+ {
+  "book": "SMTH",
+  "line": 9724,
+  "sent": "其余诸格并忌煞及填实，岁运并临必死。",
+  "concept": [
+   "岁运并临"
+  ],
+  "engine_refs": [
+   "relation_178.py:L106",
+   "relation_178.py:L109"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 10872,
+  "sent": "如此已立定，然后看其支气，各有所喜所忌之端，不可不详。五气谓",
+  "concept": [
+   "木火土金水"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L165*",
+   "execution_demo.py:L69",
+   "execution_demo.py:L115",
+   "execution_demo.py:L122*",
+   "execution_demo.py:L126",
+   "multifactor_eval.py:L36"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 11628,
+  "sent": "三窃一，如金生三水四水，母生子广，母既当虚，即喜子衰而母在旺",
+  "concept": [
+   "木生火"
+  ],
+  "engine_refs": [
+   "topology_paths.py:L367",
+   "yongshen_engine.py:L313",
+   "yongshen_engine.py:L336",
+   "yongshen_engine.py:L349",
+   "yongshen_engine.py:L639"
+  ],
+  "new_bucket": "弱承载(仅命题断语P)"
+ },
+ {
+  "book": "SMTH",
+  "line": 12886,
+  "sent": "（以上四端，乃战克、击剥之象也。内有刑虚钩远之用，若倒乱中而",
+  "concept": [
+   "财生官"
+  ],
+  "engine_refs": [
+   "daymaster_activity.py:L229",
+   "daymaster_activity.py:L230",
+   "daymaster_power_structure.py:L38",
+   "dayun_xiji.py:L568",
+   "dayun_xiji.py:L573",
+   "dayun_xiji.py:L607"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 13011,
+  "sent": "（大抵用印生人乃为我之福也。柱中原有官煞，转生印旺，不遇财伤",
+  "concept": [
+   "有官煞"
+  ],
+  "engine_refs": [
+   "special_pattern.py:L526",
+   "special_pattern.py:L531"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 13046,
+  "sent": "（从化之妙，还不可穷，务要用心详察。如甲己化上脱水气，而从妻",
+  "concept": [
+   "丁壬化木",
+   "丙辛化水",
+   "乙庚化金",
+   "戊癸化火"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 13243,
+  "sent": "（凡论财为妻室，财逢旺用之年，或有生助进气，当得一妻。若财下",
+  "concept": [
+   "食神制煞"
+  ],
+  "engine_refs": [
+   "yongshen_geju.py:L58"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 13502,
+  "sent": "（道无乎不在，物无乎非道，五行变化，通乎大道，何所不该，其取",
+  "concept": [
+   "五行变化"
+  ],
+  "engine_refs": [
+   "month_day_producers.py:L3",
+   "month_day_producers.py:L10",
+   "month_day_producers.py:L12",
+   "time_consumer_contract.py:L10"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 14148,
+  "sent": "此月令正财格也。财官二格，官当取贵，财当取富。",
+  "concept": [
+   "正财格"
+  ],
+  "engine_refs": [
+   "judgment_producer.py:L8",
+   "yongshen_rules.py:L31"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 14588,
+  "sent": "天地制合煞神，乃天干地支，或是食神制煞，或是羊刃合煞。但制合",
+  "concept": [
+   "食神制煞"
+  ],
+  "engine_refs": [
+   "yongshen_geju.py:L58"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 14776,
+  "sent": "丙日生逢丑月，丑中己土，伤官背禄，主贫。得干支庚辛，金气旺盛",
+  "concept": [
+   "寅午戌火局"
+  ],
+  "engine_refs": [
+   "relation_178.py:L14",
+   "special_pattern.py:L194",
+   "special_pattern.py:L210",
+   "special_pattern.py:L254",
+   "special_pattern.py:L515"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 14971,
+  "sent": "羊刃所以劫财，柱中财多身弱，故羊刃不忌。须并论之。",
+  "concept": [
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L39",
+   "bingyao_layer.py:L97",
+   "bingyao_layer.py:L99",
+   "bingyao_layer.py:L286",
+   "bingyao_layer.py:L410"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 15219,
+  "sent": "戊与癸合，见戊午为得地，戊癸化火，午为火旺之地故也。亦须癸水",
+  "concept": [
+   "戊癸化火"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "huaqi_rules.py:L14",
+   "huaqi_rules.py:L42",
+   "special_pattern_resolver.py:L31",
+   "yongshen_engine.py:L232"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 16715,
+  "sent": "得伤官、食神生财月，吉。又怕见官煞，窃财之气。",
+  "concept": [
+   "食神生财"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L499",
+   "ge_jie_layer.py:L4",
+   "ge_jie_layer.py:L275",
+   "ge_jie_layer.py:L282",
+   "ge_jie_layer.py:L294",
+   "golden_cases.py:L166"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 16900,
+  "sent": "伤官格。身弱，喜刃印相资扶，则吉。",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 16921,
+  "sent": "七煞格。喜财资助，又得印化，最吉。",
+  "concept": [
+   "七煞格"
+  ],
+  "engine_refs": [
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L21",
+   "ge_jie_layer.py:L666",
+   "ge_jie_layer.py:L689",
+   "ge_jie_layer.py:L712*",
+   "ge_jie_layer.py:L726*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 17074,
+  "sent": "伤官格，要柱中重见伤官，如有一位正官，为贵。",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 17134,
+  "sent": "六阴朝阳格。喜印绶、财星，在岁月之中入格，而无财印则减分数。",
+  "concept": [
+   "六阴朝阳"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L323",
+   "l0_fact_builder.py:L331*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 17143,
+  "sent": "柱有官煞，贫穷下贱，运途不喜刑冲。",
+  "concept": [
+   "有官煞"
+  ],
+  "engine_refs": [
+   "special_pattern.py:L526",
+   "special_pattern.py:L531"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "SMTH",
+  "line": 17575,
+  "sent": "天干透财印，贵。不宜北方运，又怕刑冲。宜斟酌。",
+  "concept": [
+   "天干透",
+   "天干透财"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "SMTH",
+  "line": 21486,
+  "sent": "伤官见官，格中大忌；不损用神，何愁官至。",
+  "concept": [
+   "伤官见官"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121",
+   "bingyao_layer.py:L122",
+   "bingyao_layer.py:L533",
+   "ge_jie_layer.py:L881"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 383,
+  "sent": "土命不论胞胎，只论日时，不怕官杀混杂；陽干方论，陰干不取。",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 506,
+  "sent": "如甲用辛官，喜土生官；最怕刑冲破害、陽刃七杀，为贫命；如时干",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 1270,
+  "sent": "年上伤官最可嫌，重怕伤官不可蠲；伤官用财乃为福，财绝官衰福亦",
+  "concept": [
+   "伤官用财"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 1272,
+  "sent": "财多身弱食神来，食神会杀必为灾；会天合地有刑克，更宜达士细推",
+  "concept": [
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L39",
+   "bingyao_layer.py:L97",
+   "bingyao_layer.py:L99",
+   "bingyao_layer.py:L286",
+   "bingyao_layer.py:L410"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 1612,
+  "sent": "伤官见官，为祸百端；若非疾病伤躯，必当官讼囚系、子丧妻伤。",
+  "concept": [
+   "伤官见官"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121",
+   "bingyao_layer.py:L122",
+   "bingyao_layer.py:L533",
+   "ge_jie_layer.py:L881"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 1688,
+  "sent": "伤官用财，伤官处须当发福。",
+  "concept": [
+   "伤官用财"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 1894,
+  "sent": "比劫伤官旺，伤妻更损儿；养子多不肖，乞养总非宜。",
+  "concept": [
+   "伤官旺"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L315",
+   "ge_jie_layer.py:L316",
+   "ge_jie_layer.py:L329",
+   "l0_fact_builder.py:L258",
+   "relation_established_173.py:L53",
+   "relation_established_173.py:L68"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 1982,
+  "sent": "假令，申子辰从水也；不然，五月无水，有火不从也。戊癸化火巳午",
+  "concept": [
+   "戊癸化火"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "huaqi_rules.py:L14",
+   "huaqi_rules.py:L42",
+   "special_pattern_resolver.py:L31",
+   "yongshen_engine.py:L232"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 2216,
+  "sent": "庚遇申子辰，乃井栏叉，又谓之入局，忌丙丁，愁巳午。（井栏叉格",
+  "concept": [
+   "井栏叉"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L283",
+   "l0_fact_builder.py:L285*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 2494,
+  "sent": "比劫伤官旺，伤妻更损儿；养子多不肖，乞养总非宜。",
+  "concept": [
+   "伤官旺"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L315",
+   "ge_jie_layer.py:L316",
+   "ge_jie_layer.py:L329",
+   "l0_fact_builder.py:L258",
+   "relation_established_173.py:L53",
+   "relation_established_173.py:L68"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 2582,
+  "sent": "假令，申子辰从水也；不然，五月无水，有火不从也。戊癸化火巳午",
+  "concept": [
+   "戊癸化火"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "huaqi_rules.py:L14",
+   "huaqi_rules.py:L42",
+   "special_pattern_resolver.py:L31",
+   "yongshen_engine.py:L232"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 2816,
+  "sent": "庚遇申子辰，乃井栏叉，又谓之入局，忌丙丁，愁巳午。（井栏叉格",
+  "concept": [
+   "井栏叉"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L283",
+   "l0_fact_builder.py:L285*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 3786,
+  "sent": "伤官见官，格中反忌；不损用神，何愁官至。",
+  "concept": [
+   "伤官见官"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121",
+   "bingyao_layer.py:L122",
+   "bingyao_layer.py:L533",
+   "ge_jie_layer.py:L881"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 4304,
+  "sent": "其余诸格，并忌杀及填实，岁运并临必死。",
+  "concept": [
+   "岁运并临"
+  ],
+  "engine_refs": [
+   "relation_178.py:L106",
+   "relation_178.py:L109"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 4396,
+  "sent": "杂气财官在月宫，天干透露始为丰；财多官旺宜冲破，却忌干支压伏",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 4776,
+  "sent": "天干壬癸喜冬生，更值申辰会局成；或是全归亥子丑，等闲平步上青",
+  "concept": [
+   "天干壬癸"
+  ],
+  "engine_refs": [
+   "climate_runtime.py:L58",
+   "state_producer.py:L153"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 4888,
+  "sent": "庚日全逢寅午戌，天干透出始为神；重重火旺声名显，命里休囚忌水",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 4938,
+  "sent": "丙辛化水生冬月，陰日见时须有青；有土局中须破用，得金相助发前",
+  "concept": [
+   "丙辛化水"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "golden_cases.py:L364",
+   "golden_cases.py:L490",
+   "golden_cases.py:L498",
+   "huaqi_rules.py:L12",
+   "special_pattern_resolver.py:L31"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 4960,
+  "sent": "丙辛化水生冬月，陰日陽时须见清；有土局中须破用，得金相助发前",
+  "concept": [
+   "丙辛化水"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "golden_cases.py:L364",
+   "golden_cases.py:L490",
+   "golden_cases.py:L498",
+   "huaqi_rules.py:L12",
+   "special_pattern_resolver.py:L31"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 4962,
+  "sent": "丁壬化木喜逢寅，盖世文章绝等伦；曲直更归年月地，少年平步上青",
+  "concept": [
+   "丁壬化木"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 5082,
+  "sent": "正月寅宫元是木，木生火旺土长生；戌兼午未宫中喜，申酉休囚数莫",
+  "concept": [
+   "木生火"
+  ],
+  "engine_refs": [
+   "topology_paths.py:L367",
+   "yongshen_engine.py:L313",
+   "yongshen_engine.py:L336",
+   "yongshen_engine.py:L349",
+   "yongshen_engine.py:L639"
+  ],
+  "new_bucket": "弱承载(仅命题断语P)"
+ },
+ {
+  "book": "YHZP",
+  "line": 5102,
+  "sent": "庚辛卯月多逢木，日主无根怕财旺；南北两头防有破，如逢申酉祸难",
+  "concept": [
+   "日主无根"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L110",
+   "bingyao_layer.py:L405",
+   "bingyao_layer.py:L410",
+   "cong_rules.py:L30",
+   "cong_rules.py:L43",
+   "cong_rules.py:L55"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 5184,
+  "sent": "日主无根干土金，月通亥子土来侵；只宜印绶扶身旺，何怕提纲损用",
+  "concept": [
+   "日主无根"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L110",
+   "bingyao_layer.py:L405",
+   "bingyao_layer.py:L410",
+   "cong_rules.py:L30",
+   "cong_rules.py:L43",
+   "cong_rules.py:L55"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 6035,
+  "sent": "又曰：飞天禄马少人知，辛亥多逢亥位宜，不见官杀无羁绊，少年富",
+  "concept": [
+   "不见官杀"
+  ],
+  "engine_refs": [
+   "relation_established_173.py:L158",
+   "special_pattern.py:L588"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 6064,
+  "sent": "六辛日逢戊子，嫌午未位，运喜西方—此论六阴朝阳格。辛金至亥为",
+  "concept": [
+   "六阴朝阳"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L323",
+   "l0_fact_builder.py:L331*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 6065,
+  "sent": "一阳生，故云六阴朝阳之格，乃谓阴尽还阳。辛用丙官，癸为寿星，",
+  "concept": [
+   "六阴朝阳"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L323",
+   "l0_fact_builder.py:L331*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 6183,
+  "sent": "杀，乃官杀混杂，盖四柱有刑冲害，皆不为贵命看。官来克我，我去",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 6271,
+  "sent": "又云：正财者，喜身旺印绶，忌官星、忌倒食。忌身弱、比肩劫财。",
+  "concept": [
+   "喜身旺印绶"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L420"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 6519,
+  "sent": "时偏官为人性重，刚执不屈，月偏官多者亦然。《四言独步》云：“",
+  "concept": [
+   "杀重身轻"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L105",
+   "bingyao_layer.py:L107",
+   "bingyao_layer.py:L287",
+   "bingyao_layer.py:L288",
+   "bingyao_layer.py:L451",
+   "bingyao_layer.py:L452"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 6752,
+  "sent": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也。忌南方火运，喜",
+  "concept": [
+   "巳酉丑金局"
+  ],
+  "engine_refs": [
+   "relation_178.py:L15",
+   "special_pattern.py:L197",
+   "special_pattern.py:L255"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 6882,
+  "sent": "畏。财官并美，为人怕妻，见杀尤忌。财多身弱，妻反胜夫；财命有",
+  "concept": [
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L39",
+   "bingyao_layer.py:L97",
+   "bingyao_layer.py:L99",
+   "bingyao_layer.py:L286",
+   "bingyao_layer.py:L410"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 7170,
+  "sent": "化象者，乃甲乙日生人，在辰戌丑未月，天干有一己字合甲字，谓之",
+  "concept": [
+   "甲己化土"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "huaqi_rules.py:L10",
+   "huaqi_rules.py:L39",
+   "special_pattern_resolver.py:L31",
+   "special_pattern_resolver.py:L111",
+   "special_pattern_runtime.py:L42"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 7182,
+  "sent": "晦後明之象。日干属戊，得寅午戌火局，或地支午火时，干有丙生在",
+  "concept": [
+   "寅午戌火局"
+  ],
+  "engine_refs": [
+   "relation_178.py:L14",
+   "special_pattern.py:L194",
+   "special_pattern.py:L210",
+   "special_pattern.py:L254",
+   "special_pattern.py:L515"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 7222,
+  "sent": "破害，见七杀、官星、空亡、冲刃必死。杀官大忌，岁运相并必死。",
+  "concept": [
+   "岁运并临"
+  ],
+  "engine_refs": [
+   "relation_178.py:L106",
+   "relation_178.py:L109"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 7237,
+  "sent": "官星。入格者非富即贵，不入格者非夭即贫。官怕伤，财怕劫，印绶",
+  "concept": [
+   "伤官见官"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121",
+   "bingyao_layer.py:L122",
+   "bingyao_layer.py:L533",
+   "ge_jie_layer.py:L881"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 7238,
+  "sent": "端，若非疾病伤躯，必当官讼囚系，子丧妻伤。伤官见官，元有者重",
+  "concept": [
+   "伤官见官"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121",
+   "bingyao_layer.py:L122",
+   "bingyao_layer.py:L533",
+   "ge_jie_layer.py:L881"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 7249,
+  "sent": "去财，方可驰名；伤官用财，伤官处须当发福。入格清奇者富，入格",
+  "concept": [
+   "伤官用财"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 7250,
+  "sent": "四格，财官不纯，非隶卒多是九流。六阴朝阳，季月只当印看。吉神",
+  "concept": [
+   "六阴朝阳"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L323",
+   "l0_fact_builder.py:L331*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 7384,
+  "sent": "伤官旺，伤妻更损儿。养子多不孝，乞养总非宜。惹是招非，只缘水",
+  "concept": [
+   "伤官旺"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L315",
+   "ge_jie_layer.py:L316",
+   "ge_jie_layer.py:L329",
+   "l0_fact_builder.py:L258",
+   "relation_established_173.py:L53",
+   "relation_established_173.py:L68"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 7415,
+  "sent": "土命不论胞胎，只论日时，不怕官杀混杂。",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8066,
+  "sent": "印财不宜身旺地 ，食神最喜劫财乡。官杀混杂，身弱则贫；官",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8134,
+  "sent": "杀重身轻休道弱，如逢印绶作魁星，虽知识此分高下，熟记何须问子",
+  "concept": [
+   "杀重身轻"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L105",
+   "bingyao_layer.py:L107",
+   "bingyao_layer.py:L287",
+   "bingyao_layer.py:L288",
+   "bingyao_layer.py:L451",
+   "bingyao_layer.py:L452"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8151,
+  "sent": "财官印绶 大忌比肩 伤官七杀 反助为权 伤官用财 死宫有子 ",
+  "concept": [
+   "伤官用财"
+  ],
+  "engine_refs": [
+   "ge_jie_layer.py:L881",
+   "ge_jie_layer.py:L886",
+   "ge_jie_layer.py:L902"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8152,
+  "sent": "时上偏财 怕逢兄弟 用印逢财 比肩不忌 伤官见官 格中大忌 ",
+  "concept": [
+   "伤官见官"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121",
+   "bingyao_layer.py:L122",
+   "bingyao_layer.py:L533",
+   "ge_jie_layer.py:L881"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8236,
+  "sent": "正月寅宫原是木，木生火旺土长生，戊兼午未宫中喜，申酉休囚数莫",
+  "concept": [
+   "木生火"
+  ],
+  "engine_refs": [
+   "topology_paths.py:L367",
+   "yongshen_engine.py:L313",
+   "yongshen_engine.py:L336",
+   "yongshen_engine.py:L349",
+   "yongshen_engine.py:L639"
+  ],
+  "new_bucket": "弱承载(仅命题断语P)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8368,
+  "sent": "偏财格遇最难明，日旺却宜高路行，一世因财人谤讪，财多身弱惹灾",
+  "concept": [
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L39",
+   "bingyao_layer.py:L97",
+   "bingyao_layer.py:L99",
+   "bingyao_layer.py:L286",
+   "bingyao_layer.py:L410"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8418,
+  "sent": "壬水伤官怕木浮，见官见杀反为仇，再行财旺生官地，财禄无亏得到",
+  "concept": [
+   "财旺生官"
+  ],
+  "engine_refs": [
+   "domain_fill_producers.py:L8",
+   "ge_jie_layer.py:L484",
+   "relation_established_173.py:L106",
+   "special_pattern.py:L235",
+   "special_pattern.py:L237"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8419,
+  "sent": "癸水伤官怕见官，最嫌戊己透天干，再行财旺生官地，世事纷劳祸百",
+  "concept": [
+   "财旺生官"
+  ],
+  "engine_refs": [
+   "domain_fill_producers.py:L8",
+   "ge_jie_layer.py:L484",
+   "relation_established_173.py:L106",
+   "special_pattern.py:L235",
+   "special_pattern.py:L237"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8433,
+  "sent": "比肩阳刃格非常，要见官星与杀乡，元辰若无官杀制，再行比劫祸难",
+  "concept": [
+   "阳刃格"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L314",
+   "dayun_xiji.py:L617",
+   "entry_candidate_contract.py:L30",
+   "ge_jie_layer.py:L735",
+   "ge_jie_layer.py:L749*",
+   "ge_jie_layer.py:L1077*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8492,
+  "sent": "杂气财官在月宫，天干透露始为丰，财多官旺宜冲破，切忌干支压伏",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8614,
+  "sent": "天干壬癸喜冬生，更值申辰会局成，或是全归亥子丑，等闲平步上青",
+  "concept": [
+   "天干壬癸"
+  ],
+  "engine_refs": [
+   "climate_runtime.py:L58",
+   "state_producer.py:L153"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8650,
+  "sent": "庚日全逢寅午戌，天干透出始为神，重重火旺声名显，命里休囚忌水",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8676,
+  "sent": "丙辛化水生冬月，阴日阳时须见清，有土局中须破用，得金相助发前",
+  "concept": [
+   "丙辛化水"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "golden_cases.py:L364",
+   "golden_cases.py:L490",
+   "golden_cases.py:L498",
+   "huaqi_rules.py:L12",
+   "special_pattern_resolver.py:L31"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 8677,
+  "sent": "丁壬化木喜逢寅，盖世文章绝等伦，曲直更归年月地，少年平步上青",
+  "concept": [
+   "丁壬化木"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 10080,
+  "sent": "印财不宜身旺地 ，食神最喜劫财乡。官杀混杂，身弱则贫；官",
+  "concept": [
+   "官杀混杂"
+  ],
+  "engine_refs": [
+   "daymaster_power_queries.py:L840",
+   "daymaster_power_queries.py:L866",
+   "daymaster_power_queries.py:L894",
+   "ge_jie_layer.py:L406",
+   "ge_jie_layer.py:L414",
+   "ge_jie_layer.py:L435"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 10121,
+  "sent": "故书云：“有病方为贵，无伤不是奇；格中如去病，财禄两相随。”",
+  "concept": [
+   "有病方为贵"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L264",
+   "authority_matrix.py:L294",
+   "authority_matrix.py:L365",
+   "bingyao_layer.py:L1217",
+   "meta_unified_output.py:L327",
+   "yongshen_engine.py:L407"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 10127,
+  "sent": "无光；木日干，则为财多身弱；土日干，则为比肩太重。是则土为诸",
+  "concept": [
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L39",
+   "bingyao_layer.py:L97",
+   "bingyao_layer.py:L99",
+   "bingyao_layer.py:L286",
+   "bingyao_layer.py:L410"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 10187,
+  "sent": "何以为之动也？其体属阳，阳主动，故天行健，团转回圈而无端。故",
+  "concept": [
+   "天干透"
+  ],
+  "engine_refs": [
+   "caige_rule_contract.py:L52",
+   "daymaster_power_queries.py:L14",
+   "daymaster_tou_cang.py:L10",
+   "daymaster_tou_cang.py:L35",
+   "dayun_xiji.py:L811",
+   "dayun_xiji.py:L902"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 10235,
+  "sent": "端，不可不详。五气谓如木火土金水五者，须要各各记住题目，若五",
+  "concept": [
+   "木火土金水"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L165*",
+   "execution_demo.py:L69",
+   "execution_demo.py:L115",
+   "execution_demo.py:L122*",
+   "execution_demo.py:L126",
+   "multifactor_eval.py:L36"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 10999,
+  "sent": "大抵用印生身，乃为我之福也，柱中原有官煞转生印旺，不遇财伤食",
+  "concept": [
+   "印生身",
+   "有官煞"
+  ],
+  "engine_refs": [
+   "dayun_xiji.py:L584",
+   "dayun_xiji.py:L846",
+   "execution_demo.py:L114",
+   "ge_jie_layer.py:L420",
+   "special_pattern.py:L265",
+   "yongshen_multi_track.py:L500"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 11020,
+  "sent": "有原旺之借，岂无恋哉，况比刃又能争合我财，使甲己不能相成，反",
+  "concept": [
+   "乙庚化金"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "huaqi_rules.py:L11",
+   "huaqi_rules.py:L40",
+   "special_pattern_resolver.py:L31"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 11021,
+  "sent": "旺而妻得倚其夫。丁壬化木，喜见木旺而女得倚其母。丙辛化水，喜",
+  "concept": [
+   "丁壬化木",
+   "丙辛化水",
+   "戊癸化火"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "ge_jie_layer.py:L175",
+   "huaqi_rules.py:L13",
+   "huaqi_rules.py:L41",
+   "special_pattern.py:L329",
+   "special_pattern.py:L367"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 11061,
+  "sent": "位都好，格中不宜见财破印。",
+  "concept": [
+   "财破印"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L197",
+   "bingyao_layer.py:L198",
+   "bingyao_layer.py:L852",
+   "dayun_xiji.py:L713",
+   "engineering_assumptions.py:L122",
+   "fan_ju.py:L352"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 11064,
+  "sent": "见阳刃格，岁运最怕冲合，太岁干合日时干者，为晦气煞。日时干支",
+  "concept": [
+   "流年干",
+   "流年干支",
+   "阳刃格"
+  ],
+  "engine_refs": [
+   "liunian_state.py:L5",
+   "liunian_state.py:L71",
+   "liunian_state.py:L95*",
+   "liunian_summary.py:L9",
+   "relation_178.py:L101",
+   "relation_178.py:L105*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 11196,
+  "sent": "合为局势，喜火制土扶，忌金寒水冷，生三秋四季为旺相，春夏为休",
+  "concept": [
+   "金寒水冷"
+  ],
+  "engine_refs": [
+   "climate_structure.py:L7",
+   "climate_structure.py:L140",
+   "climate_structure.py:L144",
+   "climate_structure.py:L146",
+   "yongshen_engine.py:L340"
+  ],
+  "new_bucket": "弱承载(仅命题断语P)"
+ },
+ {
+  "book": "YHZP",
+  "line": 11293,
+  "sent": "运相并，必死。其余诸格并忌煞及填实，岁运并临必死，会诸凶神、",
+  "concept": [
+   "岁运并临"
+  ],
+  "engine_refs": [
+   "relation_178.py:L106",
+   "relation_178.py:L109"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 11336,
+  "sent": "流。官怕伤，财怕劫。印绶见财，愈多愈灾。伤官见官，原有者重，",
+  "concept": [
+   "伤官见官"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121",
+   "bingyao_layer.py:L122",
+   "bingyao_layer.py:L533",
+   "ge_jie_layer.py:L881"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 11377,
+  "sent": "鞭配。财盛刑伤父母，鬼旺後代昌荣。从化忌从返本，平生哀乐无宁",
+  "concept": [
+   "丙辛化水"
+  ],
+  "engine_refs": [
+   "daymaster_tian_he.py:L4",
+   "golden_cases.py:L364",
+   "golden_cases.py:L490",
+   "golden_cases.py:L498",
+   "huaqi_rules.py:L12",
+   "special_pattern_resolver.py:L31"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 11939,
+  "sent": "此月令正印格也。《喜忌篇》云：月生日干无天财，乃印绶之名。又",
+  "concept": [
+   "正印格"
+  ],
+  "engine_refs": [
+   "judgment_producer.py:L9",
+   "moon_extractor.py:L100",
+   "moon_extractor.py:L107"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 12050,
+  "sent": "天地制合煞神，乃天干地支或是食神制煞、或是阳刃合煞，但制合不",
+  "concept": [
+   "食神制煞"
+  ],
+  "engine_refs": [
+   "yongshen_geju.py:L58"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 12073,
+  "sent": "此言伤官格也。《喜忌篇》云：十干背禄，岁时喜见财星。运至比肩",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 12084,
+  "sent": "须丙日健，或寅午戌火局亦旺，可任其财。时支是丑，支中巳酉合庚",
+  "concept": [
+   "寅午戌火局"
+  ],
+  "engine_refs": [
+   "relation_178.py:L14",
+   "special_pattern.py:L194",
+   "special_pattern.py:L210",
+   "special_pattern.py:L254",
+   "special_pattern.py:L515"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 12136,
+  "sent": "凶。阳刃所以劫财，柱中财多身弱，故阳刃不忌，须并论之。",
+  "concept": [
+   "财多身弱"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L39",
+   "bingyao_layer.py:L97",
+   "bingyao_layer.py:L99",
+   "bingyao_layer.py:L286",
+   "bingyao_layer.py:L410"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 12190,
+  "sent": "此井栏叉格也，《喜忌篇》文义同。",
+  "concept": [
+   "井栏叉"
+  ],
+  "engine_refs": [
+   "l0_fact_builder.py:L283",
+   "l0_fact_builder.py:L285*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 12245,
+  "sent": "此独犯所忌，故不吉。伤官见官，惟有财星可以解伤之毒，劝官之怒",
+  "concept": [
+   "伤官见官",
+   "有官煞"
+  ],
+  "engine_refs": [
+   "authority_matrix.py:L269",
+   "bingyao_layer.py:L42",
+   "bingyao_layer.py:L121",
+   "bingyao_layer.py:L122",
+   "bingyao_layer.py:L533",
+   "ge_jie_layer.py:L881"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 12866,
+  "sent": "柱中绝无官煞，值此日为忌。如有官煞等项倚靠，虽犯孤鸾、阴阳差",
+  "concept": [
+   "有官煞"
+  ],
+  "engine_refs": [
+   "special_pattern.py:L526",
+   "special_pattern.py:L531"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ },
+ {
+  "book": "YHZP",
+  "line": 13073,
+  "sent": "官星只一位，是怕比肩分夺，况岁运又逢伤官，其害夫也必矣。若原",
+  "concept": [
+   "伤官格"
+  ],
+  "engine_refs": [
+   "bingyao_layer.py:L123",
+   "bingyao_layer.py:L475*",
+   "entry_candidate_contract.py:L8",
+   "entry_candidate_contract.py:L22",
+   "ge_jie_layer.py:L6",
+   "ge_jie_layer.py:L324*"
+  ],
+  "new_bucket": "真必切(引擎有判据分支)"
+ },
+ {
+  "book": "YHZP",
+  "line": 13138,
+  "sent": "财旺生官格最稀，财官相遇十分奇，夫荣子贵因财旺，贞洁贤良五福",
+  "concept": [
+   "财旺生官"
+  ],
+  "engine_refs": [
+   "domain_fill_producers.py:L8",
+   "ge_jie_layer.py:L484",
+   "relation_established_173.py:L106",
+   "special_pattern.py:L235",
+   "special_pattern.py:L237"
+  ],
+  "new_bucket": "撤出(仅注释·无判据承载)"
+ }
+]

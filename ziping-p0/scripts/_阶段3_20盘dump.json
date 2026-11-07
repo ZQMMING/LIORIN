@@ -1,0 +1,565 @@
+[
+ {
+  "id": "PZ-0001",
+  "bz": "癸酉 辛酉 乙丑 辛巳",
+  "dm": "乙",
+  "verdict": "EXTREME_WEAK",
+  "ge": "七煞格",
+  "xi": [
+   "水"
+  ],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "正财",
+     "偏财"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": true,
+   "病": false,
+   "旺衰": true,
+   "运": true
+  },
+  "snip": "又如许世英造，癸酉 辛酉 乙丑 辛巳，十九误作从煞，不知印绶有根，即不嫌"
+ },
+ {
+  "id": "PZ-0002",
+  "bz": "丁卯 丙午 庚午 己卯",
+  "dm": "庚",
+  "verdict": "WEAK",
+  "ge": "正官格",
+  "xi": [
+   "土"
+  ],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "伤官"
+    ]
+   },
+   {
+    "type": "地支",
+    "match": "ANY",
+    "branch_cond": "刑冲"
+   },
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": true,
+   "运": true
+  },
+  "snip": "阳干则不然，如虞和德造，丁卯 丙午 庚午 己卯，庚金虽弱，透印有根，即不"
+ },
+ {
+  "id": "PZ-0003",
+  "bz": "丙午 庚寅 壬午 壬寅",
+  "dm": "壬",
+  "verdict": "WEAK",
+  "ge": "从财格(破格)",
+  "xi": [
+   "火"
+  ],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "比肩",
+     "劫财"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 1,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "字，经验积久，自能会悟，非文字所能达也(按本章论干支性质，虽为初步，实为"
+ },
+ {
+  "id": "PZ-0004",
+  "bz": "癸未 辛酉 甲申 丙寅",
+  "dm": "甲",
+  "verdict": "WEAK",
+  "ge": "正官格",
+  "xi": [
+   "火"
+  ],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "伤官"
+    ]
+   },
+   {
+    "type": "地支",
+    "match": "ANY",
+    "branch_cond": "刑冲"
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": true,
+   "运": false
+  },
+  "snip": "庚申 己未 戊午 丁巳 丙辰 乙卯 甲寅 丙辛相合，而官旺通根。此为官多"
+ },
+ {
+  "id": "PZ-0005",
+  "bz": "戊子 癸亥 庚寅 戊寅",
+  "dm": "庚",
+  "verdict": "WEAK",
+  "ge": "食神格",
+  "xi": [
+   "土"
+  ],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "偏印"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "甲子 乙丑 丙寅 丁卯 戊辰 己巳 戊癸相合，而癸水通根，泄气太重，以戊"
+ },
+ {
+  "id": "PZ-0006",
+  "bz": "丙午 辛卯 戊寅 甲寅",
+  "dm": "戊",
+  "verdict": "WEAK",
+  "ge": "食神制杀格",
+  "xi": [],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "正财",
+     "偏财"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "丙辛合而不化，无丙可用辛制甲，无辛可用丙化甲，两皆有用，因合而两失其用也"
+ },
+ {
+  "id": "PZ-0007",
+  "bz": "己卯 甲戌 乙亥 己卯",
+  "dm": "乙",
+  "verdict": "WEAK",
+  "ge": "财格",
+  "xi": [],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": true,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "年月甲己，本属无用，因合使两失其用，格局反清。此张绍曾造也。"
+ },
+ {
+  "id": "PZ-0008",
+  "bz": "丁卯 壬子 壬申 甲辰",
+  "dm": "壬",
+  "verdict": "STRONG",
+  "ge": "建禄月劫格",
+  "xi": [
+   "木",
+   "火"
+  ],
+  "po": [
+   {
+    "type": "缺失",
+    "match": "ANY",
+    "forbidden": [
+     "正官",
+     "正财",
+     "偏财"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 1,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": true,
+   "运": true
+  },
+  "snip": "辛亥 庚戌 己酉 戊申 丁未 丙午 本为水木伤官用财，无如丁壬一合，火失"
+ },
+ {
+  "id": "PZ-0009",
+  "bz": "庚申 乙酉 丁丑 庚戌",
+  "dm": "丁",
+  "verdict": "WEAK",
+  "ge": "从财格",
+  "xi": [
+   "金"
+  ],
+  "po": [],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": true,
+   "病": true,
+   "旺衰": false,
+   "运": true
+  },
+  "snip": "丙戌 丁亥 戊子 己丑 庚寅 辛卯 本为火炼真金格局，乙庚相合，印为财破"
+ },
+ {
+  "id": "PZ-0010",
+  "bz": "甲子 丁卯 己亥 戊辰",
+  "dm": "己",
+  "verdict": "WEAK",
+  "ge": null,
+  "xi": null,
+  "po": null,
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "甲己合而间丁，则甲木生火而火生土，所谓以印化官也。此新疆杨增新都督造。"
+ },
+ {
+  "id": "PZ-0011",
+  "bz": "癸巳 壬戌 乙巳 戊寅",
+  "dm": "乙",
+  "verdict": "WEAK",
+  "ge": "财格",
+  "xi": [
+   "水"
+  ],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "戊癸合而间乙，惟其不合，故财局可以用印。此浙江公路局长朱有卿造。见财印用"
+ },
+ {
+  "id": "PZ-0012",
+  "bz": "丁卯 丙午 丙子 壬辰",
+  "dm": "丙",
+  "verdict": "STRONG",
+  "ge": "阳刃格",
+  "xi": [
+   "水"
+  ],
+  "po": [
+   {
+    "type": "缺失",
+    "match": "ANY",
+    "forbidden": [
+     "正官",
+     "七杀"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": true,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "煞刃格，以煞制刃为用。丁壬相合，因遥隔，壬煞不失其用，而煞刃格以成。此龙"
+ },
+ {
+  "id": "PZ-0013",
+  "bz": "乙酉 甲申 丁巳 庚戌",
+  "dm": "丁",
+  "verdict": "WEAK",
+  "ge": "财格",
+  "xi": [
+   "木"
+  ],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "乙庚相合，通月令之气，虽遥隔而仍合，以庚劈甲引丁为用。张耀曾之造也(按此"
+ },
+ {
+  "id": "PZ-0014",
+  "bz": "辛酉 丙申 庚子 丙戌",
+  "dm": "庚",
+  "verdict": "STRONG",
+  "ge": null,
+  "xi": null,
+  "po": null,
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": true,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "此北洋领袖王士珍之造也。辛合丙煞，合一留一，依然为煞刃格也。"
+ },
+ {
+  "id": "PZ-0015",
+  "bz": "壬寅 戊申 丙寅 癸巳",
+  "dm": "丙",
+  "verdict": "WEAK",
+  "ge": "财格",
+  "xi": [],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   },
+   {
+    "type": "冲月令破格",
+    "match": "ANY",
+    "required": [
+     "金"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": true,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "此合官留煞也。又《三命通会》以合为留，以克为去，如此造戊克壬合癸，名去煞"
+ },
+ {
+  "id": "PZ-0016",
+  "bz": "戊戌 甲子 己巳 戊辰",
+  "dm": "己",
+  "verdict": "WEAK",
+  "ge": "财格",
+  "xi": [],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "月令偏财生官，劫财重重，喜得甲己相合，官星之情，专向日主，制住比劫，使不"
+ },
+ {
+  "id": "PZ-0017",
+  "bz": "戊寅 己未 甲寅 乙亥",
+  "dm": "甲",
+  "verdict": "WEAK",
+  "ge": "财格",
+  "xi": [],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "甲用己财；甲己相合，己土之财，专向日主也。见星辰节。 合去合来，各家所说"
+ },
+ {
+  "id": "PZ-0018",
+  "bz": "丙戌 辛卯 辛巳 戊戌",
+  "dm": "辛",
+  "verdict": "WEAK",
+  "ge": "财格",
+  "xi": [
+   "土"
+  ],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "一丙合两辛，官星虽不合去，而用神之情不专矣。"
+ },
+ {
+  "id": "PZ-0019",
+  "bz": "己酉 丙子 戊辰 癸亥",
+  "dm": "戊",
+  "verdict": "WEAK",
+  "ge": "财格",
+  "xi": [
+   "火"
+  ],
+  "po": [
+   {
+    "type": "组合",
+    "match": "ANY",
+    "required": [
+     "七杀"
+    ]
+   }
+  ],
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "丙火调候为用，无如戊癸相合，日主之情，向财不向印，癸水虽不能越戊克丙，而"
+ },
+ {
+  "id": "PZ-0020",
+  "bz": "庚午 乙酉 甲子 乙亥",
+  "dm": "甲",
+  "verdict": "WEAK",
+  "ge": null,
+  "xi": null,
+  "po": null,
+  "yuan_liu": true,
+  "n_bing": 0,
+  "sev": null,
+  "kw": {
+   "格": false,
+   "病": false,
+   "旺衰": false,
+   "运": false
+  },
+  "snip": "**【徐注】**以两合一，用神之情不专，已见上例，若隔位则无碍。如："
+ }
+]

@@ -1,0 +1,668 @@
+[
+  {
+    "id": "A1",
+    "key": "甲寅丁卯乙亥癸未",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "此格以甲乙日干取地支寅卯辰，或亥卯未木局，要不见辛庚之气",
+    "provenance_note": "卷二外十八格·曲直格（寅卯辰三会木）"
+  },
+  {
+    "id": "A2",
+    "key": "丙寅辛卯甲辰戊寅",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "见庚辛即官杀，非此格也",
+    "provenance_note": "卷二外十八格·曲直格（反例：寅卯辰三会木+辛透官杀）"
+  },
+  {
+    "id": "A3",
+    "key": "丙寅甲午丁未戊戌",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "且如丙丁二日见寅午戌全，或巳午未全亦是，但忌水乡金地",
+    "provenance_note": "卷二外十八格·炎上格（寅午戌合火+戌土财星减项）"
+  },
+  {
+    "id": "A4",
+    "key": "壬寅庚寅丙午戊戌",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "忌水乡金地",
+    "provenance_note": "卷二外十八格·炎上格（反例：寅午戌合火+壬透官杀）"
+  },
+  {
+    "id": "A5",
+    "key": "戊辰己未戊戌己丑",
+    "expect_pattern": "一行成象·稼穑",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "以戊己日生值辰戌丑未全者是也，忌东方运及北方财运",
+    "provenance_note": "卷二外十八格·稼穑格（辰戌丑未全）"
+  },
+  {
+    "id": "A6",
+    "key": "甲戌丙未戊辰辛丑",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "忌东方运（木官杀）",
+    "provenance_note": "卷二外十八格·稼穑格（反例：辰戌丑未全+甲透官杀）；D-从格fallback有意留白：专旺不成时不fallback从格族"
+  },
+  {
+    "id": "A7",
+    "key": "庚申辛酉庚戌己丑",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也，忌南方火运",
+    "provenance_note": "卷二外十八格·从革格（申酉戌三会金）"
+  },
+  {
+    "id": "A8",
+    "key": "丙寅庚申辛酉戊戌",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "忌南方火运",
+    "provenance_note": "卷二外十八格·从革格（反例：申酉戌三会金+丙透官杀）；D-从格fallback有意留白"
+  },
+  {
+    "id": "A9",
+    "key": "壬申癸亥壬子辛丑",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "且如壬癸日要申子辰全，或亥子丑全是也，忌辰戌丑未官乡",
+    "provenance_note": "卷二外十八格·润下格（亥子丑三会水）"
+  },
+  {
+    "id": "A10",
+    "key": "戊子癸亥癸丑己未",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "忌辰戌丑未官乡",
+    "provenance_note": "卷二外十八格·润下格（反例：亥子丑三会水+戊透官杀）"
+  },
+  {
+    "id": "li-066",
+    "key": "庚申乙酉庚戌庚辰",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "special": "化金气格",
+    "s_source": "S3@5767-5774 + S2@7154-7155",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
+    "provenance_note": "A:卷二外十八格(支局) / A:卷三论运化气(化气归属)；两庚争合一乙，降MID；F5修正：乙庚化金日主即金，化无所化→优先专旺型；F5修正：转专旺型后档位按专旺规则判定→CONFIRMED"
+  },
+  {
+    "id": "li-071",
+    "key": "戊申壬戌庚申乙酉",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "special": "化金气格",
+    "s_source": "S3@5767-5774",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
+    "provenance_note": "卷二外十八格·从革格；申酉戌全+庚日主+无火破，旧引擎因财星硬闸误杀；修正：戌月季月引化生效→化气型；修正：原文明言得从其类→专旺型，季月引化过生成需修正；裁决：体系冲突——渊海外十八格称从其类(专旺)，子平真诠从化格称化气；本引擎取一格两面A+B俱足→化气型；F5修正：乙庚化金日主即金，化无所化→优先专旺型"
+  },
+  {
+    "id": "R1",
+    "key": "癸亥乙卯乙未壬午",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "S4@4886-4887",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "印露": "A"
+    },
+    "rationale_quote": "有取五行一方秀气者，取甲乙全亥卯未、寅卯辰…以五行各得其全体，所以成格，喜印露而体纯",
+    "provenance_note": "PZZQ沈孝瞻原文；吴相公命例，原著自带锚点"
+  },
+  {
+    "id": "F1",
+    "key": "丙寅甲午丁戌庚辰",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "专旺型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "且如丙丁二日见寅午戌全，或巳午未全亦是，但忌水乡金地",
+    "provenance_note": "卷二外十八格·炎上格；寅午戌合火+庚透财星(减项)，旧引擎因财星硬闸误杀"
+  },
+  {
+    "id": "H1",
+    "key": "庚申乙酉庚戌戊辰",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
+    "provenance_note": "D-透干硬闸实证H1：申酉戌三会金+年庚透+日干庚，本行透干，旧引擎新层均CONFIRMED；修正：两庚争合一个乙→降MID；F5修正：乙庚化金日主即金，化无所化→优先专旺型；F5修正：转专旺型后档位按专旺规则判定→CONFIRMED"
+  },
+  {
+    "id": "H2",
+    "key": "壬申己酉庚戌戊辰",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "此格以庚辛日见巳酉丑金局全，或申酉戌全者是也",
+    "provenance_note": "D-透干硬闸实证H2：申酉戌三会金+只有日干庚透，除日主外无本行透干；旧引擎因tougan_row=0fallback从旺格，新层判CONFIRMED"
+  },
+  {
+    "id": "R3",
+    "key": "壬子辛亥癸丑壬子",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "DTS润下格例",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "地支亥子丑，天透壬癸辛，局成润下",
+    "provenance_note": "DTS滴天髓润下格例；亥子丑三会水+无土官杀，干净正例"
+  },
+  {
+    "id": "R5",
+    "key": "丁巳丙午丙寅乙未",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "千里命稿炎上格例",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "巳午未全，丙丁日，无壬癸亥子",
+    "provenance_note": "千里命稿炎上格例；巳午未三会火+无水官杀，干净正例"
+  },
+  {
+    "id": "G1",
+    "key": "戊戌己未戊辰癸丑",
+    "expect_pattern": "一行成象·稼穑",
+    "expect_type": "专旺型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "以戊己日生值辰戌丑未全者是也，忌东方运及北方财运",
+    "provenance_note": "稼穑格财星减项实证：辰戌丑未全+癸透财星(北方财运)，减项降MID；旧引擎因财星硬闸直接拒"
+  },
+  {
+    "id": "R2",
+    "key": "庚申甲申辛酉戊戌",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "命例集从革格例",
+    "provenance": {
+      "day": "C",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "从革格成也",
+    "provenance_note": "百科/命例集从革格例；申酉戌全+甲木财星虚浮，从革格不忌财，与li-071同族交叉验证"
+  },
+  {
+    "id": "R6",
+    "key": "癸未甲寅乙亥己卯",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "李鸿章命·真诠系",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "亥卯未全+寅月，己土财星虚浮",
+    "provenance_note": "李鸿章命；亥卯未三会木+己土财星透干，曲直格不忌财"
+  },
+  {
+    "id": "G2",
+    "key": "壬子辛亥癸丑丁巳",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "未见"
+    },
+    "rationale_quote": "且如壬癸日要申子辰全，或亥子丑全是也，忌辰戌丑未官乡",
+    "provenance_note": "润下格财星不忌实证：亥子丑三会水+丁火财星透干，润下格只忌土官杀，不忌财"
+  },
+  {
+    "id": "R7",
+    "key": "甲戌丁卯壬寅甲辰",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "real",
+    "s_source": "《子平真诠》卷下·论杂格：「如甲戌、丁卯、壬寅、甲辰，一品贵格命也」",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "有从化取格者，要化出之物，得时乘令，四支局全",
+    "provenance_note": "化气型唯一A级锚点；丁壬合、卯月当令、寅卯辰三会木局全；B独足支局判据已修"
+  },
+  {
+    "id": "Q1",
+    "key": "癸卯丁卯壬寅甲辰",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "有从化取格者，要化出之物，得时乘令，四支局全",
+    "provenance_note": "丁壬化木构造正例；日主壬非木，专靠化气型成立；寅卯辰三会木全；修正：辰中癸水余气算根（root_qi口径统一）"
+  },
+  {
+    "id": "Q2",
+    "key": "辛卯丁卯壬寅甲辰",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "要干头无官无煞，方成格",
+    "provenance_note": "反例：辛金透干克化神木，破格；修正：克化神透干为减项非硬闸→MID"
+  },
+  {
+    "id": "Q3",
+    "key": "丁卯丁卯壬寅甲辰",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "争合妒合降档",
+    "provenance_note": "两丁争合一壬，降MID；规格采真诠系立场"
+  },
+  {
+    "id": "Q4",
+    "key": "甲子丁卯壬午甲辰",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "否则，亥未之月亦是木地，次等之贵",
+    "provenance_note": "卯月当令但木局不全，次等之贵=MID"
+  },
+  {
+    "id": "Q5",
+    "key": "戊辰丁卯壬寅己未",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "财根深，或财透两位，则亦以财为重，不取外格",
+    "provenance_note": "戊己双透+辰未财根深，转正格=REJECT"
+  },
+  {
+    "id": "Q6",
+    "key": "甲辰丁卯壬寅戊子",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "若透财尚可取格",
+    "provenance_note": "财透一位虚浮，尚可取格；化气型不走专旺财星减项表；G7日主有根（壬坐子）→降MID"
+  },
+  {
+    "id": "S1",
+    "key": "戊申丁卯壬子甲辰",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "化神支局判据sanity",
+    "provenance_note": "sanity用例：卯月木令+丁壬合，但木局不全（申卯子辰）；日主水局申子辰全，若误用日主之局会错给CONFIRMED"
+  },
+  {
+    "id": "Q7",
+    "key": "戊辰甲戌己未丁丑",
+    "expect_pattern": "一行成象·稼穑",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "甲己化土，辰戌丑未全",
+    "provenance_note": "甲己化土+四库全+戌月土旺；复用稼穑四库全特判"
+  },
+  {
+    "id": "Q8",
+    "key": "戊申庚申乙酉甲戌",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "乙庚化金，申酉戌全",
+    "provenance_note": "乙庚化金+申酉戌三会金+申月金旺；甲木财透一位虚浮尚可取格"
+  },
+  {
+    "id": "Q9",
+    "key": "甲申丙子辛酉壬辰",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "丙辛化水，申子辰全",
+    "provenance_note": "丙辛化水+申子辰三合水+子月水旺+逢辰引化；G7日主有根（辛见申酉）→降MID"
+  },
+  {
+    "id": "Q10",
+    "key": "丙戌癸巳戊午甲寅",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "戊癸化火，寅午戌全",
+    "provenance_note": "戊癸化火+寅午戌三合火+巳月火旺；癸为合化之干，不算破格；G7日主有根（戊见戌未）→降MID"
+  },
+  {
+    "id": "P1",
+    "key": "辛巳乙酉庚丑壬辰",
+    "expect_pattern": "一行成象·从革",
+    "expect_type": "专旺型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "又得龙以运之",
+    "provenance_note": "乙庚化金+巳酉丑全+见辰引化；辰不在局内，独立验证逢龙作用；F5修正：乙庚化金日主即金，化无所化→优先专旺型"
+  },
+  {
+    "id": "P2",
+    "key": "辛巳乙酉庚寅甲申",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "当令而局不全，次等之贵",
+    "provenance_note": "乙庚化金+酉月当令但局不全+不见辰；修正：局不全+不见辰→REJECT（b3逢龙升档键生效）"
+  },
+  {
+    "id": "P3",
+    "key": "丁巳乙卯壬寅甲辰",
+    "expect_pattern": null,
+    "expect_type": null,
+    "expect_confidence": "REJECT",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "紧贴五合，隔位不论",
+    "provenance_note": "年丁遥合日干壬，被月乙隔开；与Q1同地支，只动天干位置"
+  },
+  {
+    "id": "P4",
+    "key": "壬子丁卯壬寅甲辰",
+    "expect_pattern": "一行成象·曲直",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "日主有根为减项，不破格",
+    "provenance_note": "G7待实现：日主壬坐子（帝旺/刃），化得不彻底，应降MID；与Q1对照（日支寅，壬处病地→CONFIRMED）"
+  },
+  {
+    "id": "P5",
+    "key": "壬辰甲戌己丑丁未",
+    "expect_pattern": "一行成象·稼穑",
+    "expect_type": "化气型",
+    "expect_confidence": "CONFIRMED",
+    "kind": "fixture",
+    "provenance": {
+      "day": "B",
+      "ju": "B",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "rationale_quote": "甲己化土，辰戌丑未全",
+    "provenance_note": "合化之干双方排除验证：甲是克化神之官杀，若只排除己不排除甲→误杀REJECT；与Q7共守四库全特判"
+  },
+  {
+    "id": "R8",
+    "key": "癸巳丁巳癸酉戊午",
+    "expect_pattern": "一行成象·炎上",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "real",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "s_source": "《神峰通考》卷三·从化格类：「宋萧丞相造 癸巳 丁巳 癸酉 戊午 此乃戊癸化火之格」",
+    "provenance_note": "戊癸化火A级锚点。巳月火旺，巳酉丑？不对，地支巳巳酉午。；裁决：两癸争合+支局不全→MID，与原文无条件断语存在体系冲突，provenance降A-"
+  },
+  {
+    "id": "R9",
+    "key": "辛亥辛丑丙子己亥",
+    "expect_pattern": "一行成象·润下",
+    "expect_type": "化气型",
+    "expect_confidence": "MID",
+    "kind": "real",
+    "provenance": {
+      "day": "A",
+      "ju": "A",
+      "no_po": "A",
+      "huaqi归属": "A"
+    },
+    "s_source": "《神峰通考》卷三·从化格类：「方状元造 辛亥 辛丑 丙子 己亥 此乃丙辛化水之相」",
+    "provenance_note": "丙辛化水A级锚点。亥子丑全+冬月。；裁决：两辛争合+己土浊化神→MID，与原文无条件断语存在体系冲突，provenance降A-"
+  }
+]

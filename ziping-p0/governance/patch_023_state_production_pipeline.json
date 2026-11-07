@@ -1,0 +1,97 @@
+{
+  "contract_id": "PATCH-023",
+  "name": "Ziping State Production Pipeline（子平状态生产管线）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "重新定义子平引擎计算架构：先固定六经典分域边界+状态生产顺序，再谈任何 Rule。替代原 PATCH-023「格局/用神 Rule Admission」排期。",
+  "core_principle": [
+    "不能直接从排盘字段→旺弱结论；必须先定义状态生产顺序与六经典证据进入方式",
+    "旺衰不是计算出来的，是规则裁决出来的",
+    "六经典并行扫描、分域落地：不是六本一起定一个算法，而是 排盘事实层→Concept Mapping→各经典状态域→Conflict Resolver→综合 Rule Layer",
+    "Boolean 只回答有没有，不回答强不强",
+    "每个 Rule 必须回到六部指定原典原文证据再决定是否进入算法"
+  ],
+  "six_classics_domain_scope": {
+    "principle": "不是谁级别高，而是谁解决什么问题（SOURCE_PRIORITY=DOMAIN_MATCH）",
+    "table": [
+      {"domain": "月令、格局、用神", "primary": "PZZQ 子平真诠"},
+      {"domain": "旺衰、中和、气势", "primary": "DTS 滴天髓"},
+      {"domain": "调候、寒暖燥湿", "primary": "QTBJ 穷通宝鉴"},
+      {"domain": "病药、取用", "primary": "SFTK 神峰通考"},
+      {"domain": "十神、神煞边界、基础", "primary": "YHZP 渊海子平"},
+      {"domain": "岁运、大运体系", "primary": "SMTH 三命通会（+五行精纪等，须先取证）"}
+    ]
+  },
+  "input_contract": {
+    "name": "L0 Fact Layer（排盘输出，只提供输入）",
+    "fields": ["四柱", "藏干", "十神", "五行分布", "地支关系", "大运流年"],
+    "forbidden": ["L0 不得直接产生 身强/身弱/喜忌/用神"]
+  },
+  "phase_1_boolean_whitelist": {
+    "principle": "只回答有没有",
+    "booleans": [
+      {"id": "has_root", "meaning": "是否存在根气证据"},
+      {"id": "has_support_relation", "meaning": "是否存在生扶关系（印比）"},
+      {"id": "has_control_relation", "meaning": "是否存在克制关系（官杀/金克木等）"},
+      {"id": "has_drain_relation", "meaning": "是否存在泄耗关系（食伤/财等）"},
+      {"id": "has_month_order", "meaning": "是否存在月令（时令状态）判断入口"},
+      {"id": "has_transformation_condition", "meaning": "是否存在化气/从格结构条件"}
+    ]
+  },
+  "enum_layers": [
+    {"layer": "时令状态", "enum_id": "order_state", "values": ["GET_ORDER", "NOT_GET_ORDER", "NEUTRAL_ORDER", "UNKNOWN"], "basis": "月令；乙木戌月→NOT_GET_ORDER"},
+    {"layer": "根状态（对象化）", "enum_id": "root_state", "schema": {"object": "day_master", "root": [{"branch": "亥", "hidden": "甲", "relation": "根"}, {"branch": "未", "hidden": "乙", "relation": "余气根"}]}, "note": "有根≠强；root 列表对象化记录"},
+    {"layer": "根质量", "enum_id": "root_quality", "values": ["STRONG_ROOT", "MEDIUM_ROOT", "WEAK_ROOT", "NO_ROOT", "UNKNOWN"], "note": "仍是根关系，不是日主强弱"},
+    {"layer": "扶助关系", "enum_id": "support_state", "values": ["NONE", "SUPPORT_PRESENT", "STRONG_RELATION", "EXCESSIVE_RELATION", "UNKNOWN"], "note": "印透三≠SUPPORT_STRONG；乙木水透（癸壬壬）→SUPPORT_PRESENT"},
+    {"layer": "泄耗关系", "enum_id": "drain_state", "values": ["NONE", "DRAIN_PRESENT", "UNKNOWN"], "note": "泄=食伤（午丁），耗=财（戌未土）；只登记不量化"},
+    {"layer": "克制关系", "enum_id": "control_state", "values": ["NONE", "CONTROL_PRESENT", "UNKNOWN"], "note": "制=官杀/克我（戌辛藏）；只登记不量化"},
+    {"layer": "季节状态", "enum_id": "seasonal_state", "values": ["SEASONAL_ALIGNED", "SEASONAL_MISALIGNED", "QTBJ_REQUIRED", "UNDETERMINED"], "note": "调候判定需 QTBJ 规则；1983 命局=QTBJ_REQUIRED"},
+    {"layer": "气势状态", "enum_id": "trend_state", "values": ["TREND", "NEUTRAL", "PENDING", "UNKNOWN"], "note": "值域待 005B TREND factor 审计；当前=PENDING"}
+  ],
+  "element_relation_registry": {
+    "name": "Element Relation Registry（五行元素关系注册表）",
+    "principle": "「印多/水多/水木漂」不能 water_count>=3；先按元素建立关系状态，绑定经典",
+    "example_water": {
+      "element": "水",
+      "sources": ["天干壬癸", "地支亥子", "藏干壬癸"],
+      "attributes": ["位置", "透藏", "季节", "作用对象"],
+      "states": ["WATER_SUPPORT_DAYMASTER", "WATER_OVERFLOW_CONDITION", "WATER_COLD_CONDITION", "WATER_UNKNOWN"],
+      "classical_binding": "必须绑定经典（如 QTBJ 调候/水寒、DTS 气势）后才有资格进入 Rule"
+    }
+  },
+  "strength_production_chain": {
+    "name": "强弱生产链（规则裁决非计算）",
+    "chain": ["order_state", "root_state", "support_state", "control_state", "drain_state", "trend_state", "seasonal_state", "→ Factor Matrix", "→ Strength Rule", "→ strength_state"],
+    "forbidden": ["score", "百分比", "权重", "count>=N", "root=true→strong", "support_count>3→strong"]
+  },
+  "rule_consumption_order": {
+    "order": [
+      "① L0 Fact Layer 输入",
+      "② Phase1 Boolean（有没有）",
+      "③ Enum 分层（时令/根/扶助/泄耗/克制/季节/气势）",
+      "④ Element Relation Registry（元素关系，绑定经典）",
+      "⑤ Factor Matrix 组装",
+      "⑥ Strength Rule 裁决（六经典分域证据）",
+      "⑦ 格局/用神（后续 PATCH）"
+    ]
+  },
+  "chart_1983_1103_phase1_output": {
+    "order_state": "NOT_GET_ORDER",
+    "root_state": {"object": "day_master", "root": [{"branch": "亥", "hidden": "甲", "relation": "根"}, {"branch": "未", "hidden": "乙", "relation": "余气根"}]},
+    "root_quality": "WEAK_ROOT（中余根，无本气强根）",
+    "support_state": "SUPPORT_PRESENT（水透三：癸壬壬；仅年癸通根亥）",
+    "drain_state": "DRAIN_PRESENT（泄：午藏丁；耗：戌未土）",
+    "control_state": "CONTROL_PRESENT（制：戌藏辛余气）",
+    "seasonal_state": "QTBJ_REQUIRED",
+    "trend_state": "PENDING",
+    "strength_state": "UNDETERMINED（等待 Strength Rule 裁决）",
+    "note": "第一阶段只输出状态事实，不输出身强身弱"
+  },
+  "acceptance_criteria": [
+    "六经典分域表冻结（DOMAIN_MATCH 非等级）",
+    "Boolean 白名单 6 项（只答有没有）",
+    "Enum 八层注册（含 root_quality/drain/control/seasonal QTBJ_REQUIRED/trend PENDING）",
+    "Element Relation Registry 建立（water 示例绑定经典）",
+    "强弱生产链=规则裁决非计算",
+    "1983 命局第一阶段输出对齐（不含身强弱结论）"
+  ]
+}

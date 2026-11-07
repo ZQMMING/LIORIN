@@ -1,0 +1,33 @@
+{
+  "contract_id": "PATCH-016",
+  "name": "Wuxing-Base（五行基础）Rule Modeling",
+  "status": "FROZEN_DRAFT",
+  "purpose": "五行基础 Rule Candidate Registry：生克制化/旺相休囚死/五行主性（水主寒）等基础层。所有候选 PENDING_GOLDEN。",
+  "parent": "PATCH-015",
+  "concept_boundaries": {
+    "WUXING_SHENG_KE": {
+      "definition": "五行生克/相生相维相尅相制（基础关系层）",
+      "primary_sources": ["QTBJ-001-001（A 五行总论）", "YHZP 五行生克（基础核心）"],
+      "forbidden": ["生克=吉凶"]
+    },
+    "WUXING_ATTRIBUTE": {
+      "definition": "五行主性（水主寒/火主燥等）与色数配属",
+      "primary_sources": ["YHZP-118-006（A 水主寒）", "QTBJ-001-002（A 色数配属）"],
+      "forbidden": ["土主濕 覆盖底本「黃土主溫」（已裁决）"]
+    }
+  },
+  "rule_candidates": [
+    {"rule_id": "RULE-WX-001", "status": "PENDING_GOLDEN", "classical_scope": "QTBJ", "source_ids": ["QTBJ-001-001"], "condition": "五行总论（寒生水/热生火/风生木/燥生金/湿生土；相生相维相尅相制，原文逐字）", "output": "wuxing_relation_candidate", "excluded": ["生克=吉凶"]},
+    {"rule_id": "RULE-WX-002", "status": "PENDING_GOLDEN", "classical_scope": "YHZP", "source_ids": ["YHZP-118-006"], "condition": "五行主性（水主寒，原文逐字）", "output": "wuxing_climate_attribute_candidate", "excluded": ["土主濕 覆盖底本"]},
+    {"rule_id": "RULE-WX-003", "status": "PENDING_GOLDEN", "classical_scope": "QTBJ", "source_ids": ["QTBJ-001-002"], "condition": "五行色数配属（原文逐字）", "output": "wuxing_attribute_candidate", "excluded": ["色数=吉凶"]}
+  ],
+  "conflict_resolver": [
+    {"conflict": "土主溫 vs 土主濕", "resolution": "已裁决采底本「黃土主溫」；「土主濕」记 text_variant 不作 A 级（2026-09-16）"}
+  ],
+  "golden_cases": [
+    {"case_id": "GOLDEN-016-01", "title": "五行生克", "verify_forbidden": ["生克=吉凶"], "expected": "登记关系层"},
+    {"case_id": "GOLDEN-016-02", "title": "土主温", "verify_forbidden": ["土主濕 覆盖底本"], "expected": "按底本執行黃土主溫"}
+  ],
+  "blocklist": ["生克=吉凶", "土主濕=底本"],
+  "acceptance_criteria": ["五行基础双体系边界", "3 Rule Candidate PENDING_GOLDEN", "Conflict 1 类（已裁决）", "Golden 2 个"]
+}

@@ -1,0 +1,156 @@
+﻿{
+  "contract_id": "PATCH-022B",
+  "name": "Strength State Rule 接线",
+  "status": "FROZEN_DRAFT",
+  "chart": {
+    "pillars": {
+      "年柱": "癸亥",
+      "月柱": "壬戌",
+      "日柱": "乙未",
+      "时柱": "壬午"
+    },
+    "day_master": "乙"
+  },
+  "022B_01_factor_collection": {
+    "input_states": {
+      "order_state": "NOT_GET_ORDER（失令：日干克/耗/泄于月令）",
+      "root_state": {
+        "object": "DAY_STEM",
+        "branches": [
+          "年柱",
+          "日柱"
+        ],
+        "value": "HAS_ROOT"
+      },
+      "support_state": {
+        "relations": [
+          "年柱:印",
+          "月柱:印",
+          "日柱:比劫",
+          "时柱:印"
+        ],
+        "value": "HAS_SUPPORT"
+      }
+    },
+    "factor_collection": [
+      {
+        "factor": "GET_ORDER",
+        "relation_record": "NOT_GET_ORDER（失令：日干克/耗/泄于月令）"
+      },
+      {
+        "factor": "ROOT",
+        "relation_record": {
+          "object": "DAY_STEM",
+          "branches": [
+            "年柱",
+            "日柱"
+          ]
+        }
+      },
+      {
+        "factor": "SUPPORT",
+        "relation_record": [
+          "年柱:印",
+          "月柱:印",
+          "日柱:比劫",
+          "时柱:印"
+        ]
+      }
+    ],
+    "evidence_trace": [
+      {
+        "source_id": "YHZP-138-001",
+        "classical_scope": "YHZP"
+      }
+    ],
+    "forbidden_output": "strength_state（未接线）"
+  },
+  "022B_02_rule_match": {
+    "admitted_fired": [
+      {
+        "rule_id": "CAND-SHUAI-001",
+        "trigger": "NOT_GET_ORDER（失令：日干克/耗/泄于月令）",
+        "output": "shuai_state=SHUAI（失令衰退）",
+        "strength_state": "UNDETERMINED（无综合规则）"
+      },
+      {
+        "note": "CAND-QIANG-001 未触发：失令但天干无比劫透（遇劫不成立）或仍有根"
+      }
+    ],
+    "strength_state": "UNDETERMINED",
+    "reason": "无任何 ADMITTED 综合规则授权 factor_collection→strength_state 映射；FAIL_CLOSED 正确行为，不编造综合算法"
+  },
+  "golden_cases": [
+    {
+      "case": "得令但无根",
+      "states": {
+        "order_state": "GET_ORDER",
+        "root_state": {
+          "value": "NO_ROOT"
+        },
+        "support_state": {
+          "value": "NO_SUPPORT"
+        }
+      },
+      "expect": "wang 单态可出；strength_state=UNDETERMINED（禁得令→强）"
+    },
+    {
+      "case": "有根但失令（1983-11-03 真实命局）",
+      "states": null,
+      "expect": "shuai 单态可出；root 登记；strength_state=UNDETERMINED（禁失令→弱自动、禁根→强）"
+    },
+    {
+      "case": "旺但受制",
+      "states": {
+        "order_state": "GET_ORDER",
+        "root_state": {
+          "value": "HAS_ROOT"
+        },
+        "support_state": {
+          "value": "NO_SUPPORT"
+        }
+      },
+      "expect": "wang 单态；strength_state=UNDETERMINED（无综合规则，禁单因子）"
+    },
+    {
+      "case": "强杀无根",
+      "states": {
+        "order_state": "GET_ORDER",
+        "root_state": {
+          "value": "NO_ROOT"
+        },
+        "support_state": {
+          "value": "HAS_SUPPORT"
+        }
+      },
+      "expect": "qiang 单态触发结构；杀根对象化登记；strength_state=UNDETERMINED"
+    },
+    {
+      "case": "身旺遇印",
+      "states": {
+        "order_state": "GET_ORDER",
+        "root_state": {
+          "value": "HAS_ROOT"
+        },
+        "support_state": {
+          "value": "HAS_SUPPORT"
+        }
+      },
+      "expect": "wang+印扶登记；strength_state=UNDETERMINED（无综合规则）"
+    },
+    {
+      "case": "旺中有衰（DTS 辅助）",
+      "states": {
+        "order_state": "GET_ORDER",
+        "root_state": {
+          "value": "HAS_ROOT"
+        },
+        "support_state": {
+          "value": "NO_SUPPORT"
+        }
+      },
+      "expect": "CAND-WANG-002 CONTEXT_ONLY 辅助提示；不得驱动主判；strength_state=UNDETERMINED"
+    }
+  ],
+  "boundary_note": "strength_state 六级（STRONG/SLIGHTLY_STRONG/NEUTRAL/SLIGHTLY_WEAK/WEAK/UNDETERMINED）产出需多因素综合规则准入（022C 候选）；当前全部 UNDETERMINED；禁单因子触发/禁评分/禁 Boolean 直出"
+}

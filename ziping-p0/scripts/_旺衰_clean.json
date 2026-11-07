@@ -1,0 +1,471 @@
+[
+ {
+  "id": "PZ-0001",
+  "bazi": "癸酉 辛酉 乙丑 辛巳",
+  "dm": "乙",
+  "combo": "F/F/F",
+  "engine": "EXTREME_WEAK"
+ },
+ {
+  "id": "PZ-0002",
+  "bazi": "丁卯 丙午 庚午 己卯",
+  "dm": "庚",
+  "combo": "F/F/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0004",
+  "bazi": "癸未 辛酉 甲申 丙寅",
+  "dm": "甲",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0032",
+  "bazi": "壬子 癸丑 丙午 壬辰",
+  "dm": "丙",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0051",
+  "bazi": "丁亥 丙午 壬寅 己酉",
+  "dm": "壬",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0059",
+  "bazi": "己巳 乙亥 壬子 乙巳",
+  "dm": "壬",
+  "combo": "T/T/F",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0074",
+  "bazi": "癸巳 丙辰 壬申 癸卯",
+  "dm": "壬",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0076",
+  "bazi": "丁亥 丙午 壬寅 己酉",
+  "dm": "壬",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0092",
+  "bazi": "丙子 辛丑 乙巳 乙酉",
+  "dm": "乙",
+  "combo": "F/F/F",
+  "engine": "EXTREME_WEAK"
+ },
+ {
+  "id": "PZ-0093",
+  "bazi": "辛酉 庚子 丙寅 癸巳",
+  "dm": "丙",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0109",
+  "bazi": "甲申 丙子 庚辰 甲申",
+  "dm": "庚",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0119",
+  "bazi": "丁未 壬寅 乙卯 己卯",
+  "dm": "乙",
+  "combo": "T/T/F",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0124",
+  "bazi": "己未 癸酉 丁巳 丁未",
+  "dm": "丁",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0126",
+  "bazi": "戊寅 己未 甲寅 乙亥",
+  "dm": "甲",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0127",
+  "bazi": "戊戌 甲子 己巳 戊辰",
+  "dm": "己",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0129",
+  "bazi": "丙戌 辛丑 壬午 戊申",
+  "dm": "壬",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0131",
+  "bazi": "辛未 甲午 丙申 戊戌",
+  "dm": "丙",
+  "combo": "T/T/F",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0141",
+  "bazi": "壬辰 壬子 丙申 癸巳",
+  "dm": "丙",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0151",
+  "bazi": "乙卯 丁亥 丁未 庚戌",
+  "dm": "丁",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0166",
+  "bazi": "壬申 壬子 戊午 乙卯",
+  "dm": "戊",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0168",
+  "bazi": "乙未 甲申 丙申 庚寅",
+  "dm": "丙",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0170",
+  "bazi": "庚戌 戊子 戊子 丙辰",
+  "dm": "戊",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0171",
+  "bazi": "壬辰 乙巳 癸巳 辛酉",
+  "dm": "癸",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0173",
+  "bazi": "乙酉 庚辰 甲午 戊辰",
+  "dm": "甲",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0174",
+  "bazi": "庚辰 戊子 戊寅 甲寅",
+  "dm": "戊",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0176",
+  "bazi": "丙寅 癸巳 癸未 壬戌",
+  "dm": "癸",
+  "combo": "F/F/F",
+  "engine": "EXTREME_WEAK"
+ },
+ {
+  "id": "PZ-0177",
+  "bazi": "丙辰 癸巳 壬戌 壬寅",
+  "dm": "壬",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0178",
+  "bazi": "丙辰 丙申 丙午 壬辰",
+  "dm": "丙",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0182",
+  "bazi": "丙寅 戊戌 辛酉 戊子",
+  "dm": "辛",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0185",
+  "bazi": "庚申 戊寅 丙申 乙未",
+  "dm": "丙",
+  "combo": "T/T/F",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0190",
+  "bazi": "丙寅 戊戌 辛酉 戊子",
+  "dm": "辛",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0194",
+  "bazi": "己巳 癸酉 癸未 庚申",
+  "dm": "癸",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0195",
+  "bazi": "壬寅 戊申 壬辰 壬寅",
+  "dm": "壬",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0199",
+  "bazi": "辛亥 庚子 甲辰 乙亥",
+  "dm": "甲",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0201",
+  "bazi": "庚寅 乙酉 癸亥 丙辰",
+  "dm": "癸",
+  "combo": "T/T/F",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0204",
+  "bazi": "丙午 庚寅 丙午 癸巳",
+  "dm": "丙",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0213",
+  "bazi": "丁未 癸卯 癸亥 癸丑",
+  "dm": "癸",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0214",
+  "bazi": "己未 壬申 戊子 庚申",
+  "dm": "戊",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0215",
+  "bazi": "丁亥 癸卯 癸卯 甲寅",
+  "dm": "癸",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0216",
+  "bazi": "甲午 丁卯 癸丑 丙辰",
+  "dm": "癸",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0219",
+  "bazi": "癸酉 辛酉 己卯 乙亥",
+  "dm": "己",
+  "combo": "F/F/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0223",
+  "bazi": "丙午 癸巳 甲子 丙寅",
+  "dm": "甲",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0227",
+  "bazi": "壬午 癸卯 己巳 辛未",
+  "dm": "己",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0235",
+  "bazi": "乙亥 乙酉 乙卯 丁丑",
+  "dm": "乙",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0236",
+  "bazi": "壬辰 甲辰 丙戌 戊戌",
+  "dm": "丙",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0237",
+  "bazi": "丙寅 戊戌 壬戌 辛丑",
+  "dm": "壬",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0238",
+  "bazi": "戊戌 甲子 丁未 庚戌",
+  "dm": "丁",
+  "combo": "F/T/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0239",
+  "bazi": "甲申 乙亥 丙戌 庚寅",
+  "dm": "丙",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0241",
+  "bazi": "丙子 甲午 辛亥 辛卯",
+  "dm": "辛",
+  "combo": "F/F/F",
+  "engine": "EXTREME_WEAK"
+ },
+ {
+  "id": "PZ-0242",
+  "bazi": "戊辰 甲寅 戊寅 戊午",
+  "dm": "戊",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0246",
+  "bazi": "壬午 己酉 戊午 庚申",
+  "dm": "戊",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0256",
+  "bazi": "壬午 己酉 戊午 庚申",
+  "dm": "戊",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0257",
+  "bazi": "甲子 乙亥 辛未 戊子",
+  "dm": "辛",
+  "combo": "F/F/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0258",
+  "bazi": "己卯 丁丑 丙寅 庚寅",
+  "dm": "丙",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0260",
+  "bazi": "丁酉 己酉 戊子 壬子",
+  "dm": "戊",
+  "combo": "F/F/F",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0263",
+  "bazi": "壬寅 丁未 丙寅 壬辰",
+  "dm": "丙",
+  "combo": "F/T/T",
+  "engine": "WEAK"
+ },
+ {
+  "id": "PZ-0265",
+  "bazi": "癸酉 乙丑 庚寅 丙子",
+  "dm": "庚",
+  "combo": "T/T/F",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0269",
+  "bazi": "戊子 戊午 丙辰 戊戌",
+  "dm": "丙",
+  "combo": "T/T/F",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0280",
+  "bazi": "丙戌 丁酉 庚申 壬午",
+  "dm": "庚",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0292",
+  "bazi": "庚戌 戊子 癸酉 癸亥",
+  "dm": "癸",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0299",
+  "bazi": "戊辰 癸亥 壬午 丙午",
+  "dm": "壬",
+  "combo": "T/T/F",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0302",
+  "bazi": "辛丑 庚寅 甲辰 乙亥",
+  "dm": "甲",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0303",
+  "bazi": "辛亥 庚寅 甲申 丙寅",
+  "dm": "甲",
+  "combo": "T/T/F",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0310",
+  "bazi": "庚申 乙酉 丙申 己丑",
+  "dm": "丙",
+  "combo": "F/F/F",
+  "engine": "EXTREME_WEAK"
+ },
+ {
+  "id": "PZ-0316",
+  "bazi": "癸亥 乙卯 乙未 壬午",
+  "dm": "乙",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0318",
+  "bazi": "戊午 戊午 戊午 戊午",
+  "dm": "戊",
+  "combo": "T/T/T",
+  "engine": "STRONG"
+ },
+ {
+  "id": "PZ-0327",
+  "bazi": "乙未 癸卯 癸卯 甲寅",
+  "dm": "癸",
+  "combo": "F/F/F",
+  "engine": "WEAK"
+ }
+]

@@ -1,0 +1,386 @@
+{
+  "version": "v1",
+  "methodology": "断言切片+原著优先+案例校对佐证",
+  "summary": {
+    "身旺衰": {
+      "total": 14,
+      "faithful": 14,
+      "implemented": 12,
+      "partial": 2,
+      "not_implemented": 0
+    },
+    "格局": {
+      "total": 10,
+      "faithful": 10,
+      "implemented": 4,
+      "partial": 2,
+      "not_implemented": 4
+    },
+    "调候": {
+      "total": 8,
+      "faithful": 8,
+      "implemented": 6,
+      "partial": 2,
+      "not_implemented": 0
+    }
+  },
+  "total": 32,
+  "faithful": 32,
+  "implemented": 22,
+  "partial": 6,
+  "not_implemented": 4,
+  "all_assertions": [
+    {
+      "assertion_id": "WS-SEASON-001",
+      "group": "时令基态",
+      "original": "得时俱为旺论，失时便作衰看，虽是至理，亦死法也。",
+      "source": "PZZQ 论十干得时不旺失时不弱 / DTS 通神论",
+      "semantic": "月令得令/失令是旺衰基础判断，但不可机械套用，是\"死法\"",
+      "engine_status": "已实现（wangshuai_structure 输出得令/失令）",
+      "faithful": true,
+      "note": "当前只输出得令/失令事实，不直接推强弱，符合\"死法\"警示",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-SEASON-002",
+      "group": "时令基态",
+      "original": "得时不旺，失时不弱。",
+      "source": "PZZQ 第六章 论十干得时不旺失时不弱",
+      "semantic": "得令不一定旺（克泄太重），失令不一定弱（根重/帮扶多）",
+      "engine_status": "已实现（DESHI_BUWANG / SHISHI_BURUO 结构Query）",
+      "faithful": true,
+      "note": "只输出结构匹配，不直接输出\"不旺/不弱\"命题，符合边界",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-SEASON-003",
+      "group": "时令基态",
+      "original": "干庚辛而支申酉，无火制而不富，逢土生而必夭，是得时不旺也。",
+      "source": "DTS 通神论",
+      "semantic": "得令但克泄太重（无制），实际不旺",
+      "engine_status": "部分实现（克泄成势已识别，但未与得令组合成\"得时不旺\"结构）",
+      "faithful": true,
+      "note": "DESHI_BUWANG Query条件是得令+有泄，可覆盖此类",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-SEASON-004",
+      "group": "时令基态",
+      "original": "干甲乙而支寅卯，遇官透而能受，逢水生而太过，是失时不弱也。",
+      "source": "DTS 通神论",
+      "semantic": "失令但根重/帮扶多，实际不弱",
+      "engine_status": "部分实现（重根已识别，但未与失令组合成\"失时不弱\"结构）",
+      "faithful": true,
+      "note": "SHISHI_BURUO Query条件是失令+有扶，可覆盖此类",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-ROOT-001",
+      "group": "根气层级",
+      "original": "长生禄旺，根之重者也；墓库余气，根之轻者也。",
+      "source": "PZZQ / DTS 通神论",
+      "semantic": "根分重轻两级：长生/禄/旺=重根；墓库/余气=轻根",
+      "engine_status": "已实现（daymaster_root_class 八类root_class）",
+      "faithful": true,
+      "note": "HEAVY_LONGSHENG/HEAVY_LU/HEAVY_WANG/HEAVY_REN = 重根；LIGHT_MU_KU_YANG/LIGHT_YU_QI = 轻根",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-ROOT-002",
+      "group": "根气层级",
+      "original": "干多不如根重，理固然也。",
+      "source": "PZZQ / DTS 通神论",
+      "semantic": "天干多不如地支根重，根优先于天干",
+      "engine_status": "已实现（根气优先于天干计数）",
+      "faithful": true,
+      "note": "wangshuai_multidim 中重根不为克泄成势所压，符合此原则",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-ROOT-003",
+      "group": "根气层级",
+      "original": "得一比肩，不如得支中一墓库，如甲逢未、丙逢戌之类。",
+      "source": "PZZQ / DTS 通神论",
+      "semantic": "1比肩 < 1墓库根（阳干）",
+      "engine_status": "已实现（LIGHT_MU_KU_YANG 轻根 > 单一天干比肩）",
+      "faithful": true,
+      "note": "阳干墓库为轻根，力大于单一天干比肩",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-ROOT-004",
+      "group": "根气层级",
+      "original": "得二比肩，不如得一余气，如乙逢辰、丁逢未之类。",
+      "source": "PZZQ / DTS 通神论",
+      "semantic": "2比肩 < 1余气根",
+      "engine_status": "已实现（LIGHT_YU_QI 轻根 > 2天干比肩）",
+      "faithful": true,
+      "note": "余气根为轻根，力大于2天干比肩",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-ROOT-005",
+      "group": "根气层级",
+      "original": "得三比肩，不如得一长生禄刃，如甲逢亥子寅卯之类。",
+      "source": "PZZQ / DTS 通神论",
+      "semantic": "3比肩 < 1长生/禄/刃根（重根）",
+      "engine_status": "已实现（HEAVY 重根 > 3天干比肩）",
+      "faithful": true,
+      "note": "重根力大于3天干比肩，符合\"干多不如根重\"",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-ROOT-006",
+      "group": "根气层级",
+      "original": "人之日主不必生逢禄旺，即月令休囚，而年日时中，得长生禄旺，便不为弱，就使逢库，亦为有根。",
+      "source": "DTS 通神论",
+      "semantic": "失令但年日时有长生禄旺根，不为弱；逢库亦为有根",
+      "engine_status": "已实现（根气检测不限于月令，全局地支都检测）",
+      "faithful": true,
+      "note": "daymaster_root_class 全局检测地支根，不限于月令",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-ROOT-YINYANG-001",
+      "group": "阴阳干根",
+      "original": "阳干逢库，如壬逢辰、丙坐戌之类，不以为水火通根身库，甚至求刑冲开之。",
+      "source": "PZZQ / DTS 通神论",
+      "semantic": "阳干逢墓库为有根（通根身库），但有人误以为不是根",
+      "engine_status": "已实现（LIGHT_MU_KU_YANG 阳干墓库为轻根）",
+      "faithful": true,
+      "note": "原文是批判\"不以为通根身库\"之谬，阳干逢库确实有根",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-ROOT-YINYANG-002",
+      "group": "阴阳干根",
+      "original": "阴干逢库，如乙逢戌、丁逢丑，不作此论，以戌中无藏木，丑中无藏火也。",
+      "source": "PZZQ",
+      "semantic": "阴干逢相应墓库（无本气藏干）不作有根",
+      "engine_status": "已实现（阴干墓库按藏干精确判定，无本气则NONE）",
+      "faithful": true,
+      "note": "T39精确实现：阴干墓库中无藏干本气则不作有根",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-ROOT-YINYANG-003",
+      "group": "阴阳干根",
+      "original": "阴长生不作此论，然亦为明根，可比得一余气。",
+      "source": "PZZQ",
+      "semantic": "阴长生（如乙逢午、丁逢酉）为明根，力约比余气，非重根",
+      "engine_status": "已实现（SPECIAL_LONGSHENG_YIN 特殊根级）",
+      "faithful": true,
+      "note": "独立为SPECIAL级，不伪装成普通LIGHT，符合原典",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "WS-CHONG-001",
+      "group": "冲根有效性",
+      "original": "旺者冲衰衰者拔，衰神冲旺旺神发。",
+      "source": "DTS 通神论",
+      "semantic": "冲的结果取决于双方旺衰比较：旺冲衰→衰者根拔；衰冲旺→旺者更旺",
+      "engine_status": "已实现（root_effectiveness_filter 冲支三类：衰者拔/旺神发/两停）",
+      "faithful": true,
+      "note": "基于旺衰有序枚举比较，非数值计算，符合原典",
+      "meta_element": "身旺衰"
+    },
+    {
+      "assertion_id": "GEJU-DEF-001",
+      "group": "格局定义",
+      "original": "八字用神，专求月令，以日干配月令地支，而生克不同，格局分焉。",
+      "source": "PZZQ 论用神",
+      "semantic": "格局以月令为核心，日干与月令地支的生克关系决定格局类型",
+      "engine_status": "已实现（pzzq_producer_v1 月令定格）",
+      "faithful": true,
+      "note": "月令藏干透干关系决定格神候选，符合\"专求月令\"",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "GEJU-DEF-002",
+      "group": "格局定义",
+      "original": "然用神非尽出于月令，故于舍月令别取用神之格局，特别提出，加以说明。",
+      "source": "PZZQ 论用神",
+      "semantic": "用神不一定都出于月令，有舍月令别取用神的格局（如外格）",
+      "engine_status": "已实现（外格4类：井栏叉/六阴朝阳/刑合/合禄）",
+      "faithful": true,
+      "note": "外格作为独立entry，不与月令格混淆",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "GEJU-SHUNNI-001",
+      "group": "顺用逆用",
+      "original": "财官印食，此用神之善而顺用之者也；煞伤劫刃，用神之不善而逆用之者也。",
+      "source": "PZZQ 论用神",
+      "semantic": "四吉神（财官印食）顺用，四凶神（煞伤劫刃）逆用",
+      "engine_status": "已实现（GE_SHEN_CANDIDATE 含顺用/逆用分类字段）",
+      "faithful": true,
+      "note": "顺用逆用只作为原典分类字段，不进一步解释成吉凶成败",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "GEJU-SHUNNI-002",
+      "group": "顺用逆用",
+      "original": "善而顺用之，则财喜食神以相生，生官以护财；官喜透财以相生，生印以护官；印喜官煞以相生，劫才以护印；食喜身旺以相生，生财以护食。",
+      "source": "PZZQ 论用神",
+      "semantic": "顺用四吉神的配合规则：财喜食生官护，官喜财生印护，印喜官杀生劫护，食喜身旺财护",
+      "engine_status": "部分实现（格神候选已输出，但顺用配合规则未结构化）",
+      "faithful": true,
+      "note": "相神层（HOLD）将实现顺用配合的结构化识别",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "GEJU-SHUNNI-003",
+      "group": "顺用逆用",
+      "original": "不善而逆用之，则七煞喜食神以制伏，忌财印以资扶；伤官喜佩印以制伏，生财以化伤；阳刃喜官煞以制伏，忌官煞之俱无；月劫喜透官以制伏。",
+      "source": "PZZQ 论用神",
+      "semantic": "逆用四凶神的配合规则：煞喜食制忌财印，伤官喜佩印生财，阳刃喜官煞制，月劫喜透官制",
+      "engine_status": "部分实现（格神候选已输出，但逆用配合规则未结构化）",
+      "faithful": true,
+      "note": "相神层（HOLD）将实现逆用配合的结构化识别",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "GEJU-GAODI-001",
+      "group": "格局高低",
+      "original": "八字既有用神，必有格局，有格局必有高低...然其理之大纲，亦在有情、有力而已。",
+      "source": "PZZQ 论格局高低",
+      "semantic": "格局高低的核心判断标准是\"有情\"和\"有力\"",
+      "engine_status": "未实现（格局高低=NOT_AUTHORIZED）",
+      "faithful": true,
+      "note": "有情/有力属于EFFECT/HOLD，当前不实现，保留边界",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "GEJU-GAODI-002",
+      "group": "格局高低",
+      "original": "有情者，通根透干，不混不杂是也；有力者，得时得地，不克不破是也。",
+      "source": "PZZQ 论格局高低（后世注解概括）",
+      "semantic": "有情=通根透干不混杂；有力=得时得地不克破",
+      "engine_status": "未实现（格局高低=NOT_AUTHORIZED）",
+      "faithful": true,
+      "note": "结构事实已具备（通根/透干/得令），但有情/有力综合判断未授权",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "GEJU-BIANHUA-001",
+      "group": "用神变化",
+      "original": "用神变化，如甲木生寅月，本为建禄，干透庚金，则为七杀格。",
+      "source": "PZZQ 论用神变化（概括）",
+      "semantic": "月令本气格可因透干不同而变化为其他格",
+      "engine_status": "已实现（USE_GOD_CANDIDATE 候选枚举，多候选并列）",
+      "faithful": true,
+      "note": "只枚举候选变化，不做\"变格成功\"裁决，符合边界",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "GEJU-XIANGSHEN-001",
+      "group": "相神",
+      "original": "相神者，辅助用神之神也。用神如主，相神如辅，主辅得宜，格局乃成。",
+      "source": "PZZQ 论相神（后世概括）",
+      "semantic": "相神是辅助格局之神，与用神配合决定格局成败",
+      "engine_status": "未实现（相神=HOLD，需独立刀+Evidence Boundary Audit）",
+      "faithful": true,
+      "note": "第一刀已明确砍掉相神，保留为后续独立刀",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "GEJU-CHENGBAI-001",
+      "group": "格局成败",
+      "original": "格局既成，即使满盘孤辰入煞，何损其贵？格局既破，即使满盘天德贵人，何以为功？",
+      "source": "PZZQ 论格局成败",
+      "semantic": "格局成败由用神/相神配合决定，与神煞无关",
+      "engine_status": "未实现（成格/败格=NOT_AUTHORIZED）",
+      "faithful": true,
+      "note": "当前只输出格神候选，不做成格/败格判断",
+      "meta_element": "格局"
+    },
+    {
+      "assertion_id": "DIAOHOU-DEF-001",
+      "group": "调候定义",
+      "original": "调候用神者，因月令气候之寒暖燥湿，而取调和之神也。",
+      "source": "QTBJ 总论（后世概括）",
+      "semantic": "调候用神是根据月令气候寒暖燥湿选取的调和之神，与格局用神不同",
+      "engine_status": "已实现（qtbj_climate_candidates 日干×月令查表）",
+      "faithful": true,
+      "note": "调候候选独立namespace，不与格局用神混淆",
+      "meta_element": "调候"
+    },
+    {
+      "assertion_id": "DIAOHOU-DEF-002",
+      "group": "调候定义",
+      "original": "生于冬月，寒气太重，须火以暖之；生于夏月，热气太甚，须水以润之。",
+      "source": "QTBJ 总论（概括）",
+      "semantic": "冬月需火暖，夏月需水润，是调候最基本原则",
+      "engine_status": "已实现（调候候选表冬月多火、夏月多水）",
+      "faithful": true,
+      "note": "甲木十一月调候丁庚丙，十二月庚丁，符合冬月需火",
+      "meta_element": "调候"
+    },
+    {
+      "assertion_id": "DIAOHOU-PRIORITY-001",
+      "group": "调候优先级",
+      "original": "调候用神，喜忌为第一，依《栏江网》。",
+      "source": "梁湘润《用神精义》引QTBJ传统",
+      "semantic": "调候用神在多种用神中居于首位，尤其是生于夏冬气候极端时",
+      "engine_status": "部分实现（调候轨独立输出，但未做跨轨优先级仲裁）",
+      "faithful": true,
+      "note": "用神四轨并行层中调候轨独立激活，冲突保留不裁决",
+      "meta_element": "调候"
+    },
+    {
+      "assertion_id": "DIAOHOU-PRIORITY-002",
+      "group": "调候优先级",
+      "original": "生于亥子丑或巳午未，调候为急；生于寅卯辰或申酉戌，调候稍缓。",
+      "source": "QTBJ 传统（概括）",
+      "semantic": "气候极端的月份（冬夏）调候急迫，过渡月份（春秋）调候稍缓",
+      "engine_status": "已实现（调候轨激活条件：月支∈{亥子丑巳午未}且原局调候所需极弱）",
+      "faithful": true,
+      "note": "激活条件保守，宁可漏激活不可误激活",
+      "meta_element": "调候"
+    },
+    {
+      "assertion_id": "DIAOHOU-GEJU-001",
+      "group": "调候与格局关系",
+      "original": "有调候之格，有不调候之格；调候之格，虽格局平常，亦为有福；不调候之格，虽格局清高，亦主孤贫。",
+      "source": "QTBJ 传统（概括）",
+      "semantic": "调候与格局是两个独立维度，调候得宜可补格局之不足",
+      "engine_status": "已实现（调候轨与格局轨独立输出，互不覆盖）",
+      "faithful": true,
+      "note": "四轨并行层中调候与格局各自记录，互不覆盖",
+      "meta_element": "调候"
+    },
+    {
+      "assertion_id": "DIAOHOU-TOUGAN-001",
+      "group": "调候用神透出",
+      "original": "调候用神，以透出天干为贵，藏于地支次之；透干得地，富贵双全。",
+      "source": "QTBJ 传统（概括）",
+      "semantic": "调候用神透出天干且得地（有根）为最佳",
+      "engine_status": "部分实现（调候候选只输出用神，未判断是否透出得地）",
+      "faithful": true,
+      "note": "调候候选是\"所需\"，不是\"已得\"；透出得地判断属后续应用层",
+      "meta_element": "调候"
+    },
+    {
+      "assertion_id": "DIAOHOU-CLIMATE-001",
+      "group": "寒暖燥湿修正",
+      "original": "月令气候寒暖燥湿，可修正月令\"得时\"的实际效力。",
+      "source": "QTBJ 通篇（D5/T16）",
+      "semantic": "气候因素可修正月令得令的实际效力，如冬月木虽得令但寒，实际效力降低",
+      "engine_status": "已实现（D5气候修正维度，寒暖燥湿状态派生）",
+      "faithful": true,
+      "note": "climate寒暖燥湿结构层已接入，修正月令效力",
+      "meta_element": "调候"
+    },
+    {
+      "assertion_id": "DIAOHOU-CANDIDATE-001",
+      "group": "调候候选标准情况",
+      "original": "正月甲木，初春余寒，丙暖癸滋（寒木向阳）。",
+      "source": "QTBJ-003-002 正月甲木",
+      "semantic": "正月甲木标准调候：丙火为先，癸水为佐",
+      "engine_status": "已实现（调候候选表甲木寅月：丙1癸2）",
+      "faithful": true,
+      "note": "甲木十二月调候候选已完整录入",
+      "meta_element": "调候"
+    }
+  ]
+}

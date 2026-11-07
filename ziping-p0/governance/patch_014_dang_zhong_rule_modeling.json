@@ -1,0 +1,29 @@
+{
+  "contract_id": "PATCH-014",
+  "name": "Dang-Zhong（党众）Rule Modeling",
+  "status": "FROZEN_DRAFT",
+  "purpose": "党众 Rule Candidate Registry：DTS 党众正文（午之黨多→干头助子必凶）、PZZQ 煞旺身健（结构条件）、QTBJ 地支成局（党众之会局）、SFTK 众土党众（病药语境）。所有候选 PENDING_GOLDEN。",
+  "parent": "PATCH-013",
+  "concept_boundaries": {
+    "DANG_ZHONG_STRUCTURE": {
+      "definition": "党众=五行群体势力（地支成局/干头助子）——结构条件，非计数评分",
+      "primary_sources": ["DTS-057-001（A 党众正文）", "PZZQ-007-027（A 煞旺身健）", "QTBJ-048-002（A 地支成局）", "SFTK-011-054（A 众土党众）"],
+      "forbidden": ["党众计数→strength_score", "SMTH-030-002 黨盛為強（引用不实，不得入）"]
+    }
+  },
+  "rule_candidates": [
+    {"rule_id": "RULE-DZ-001", "status": "PENDING_GOLDEN", "classical_scope": "DTS", "source_ids": ["DTS-057-001"], "condition": "午之黨多，干頭助子必凶（原文逐字）", "output": "dang_zhong_candidate（DTS 域）", "excluded": ["党多=必凶 泛化"]},
+    {"rule_id": "RULE-DZ-002", "status": "PENDING_GOLDEN", "classical_scope": "PZZQ", "source_ids": ["PZZQ-007-027"], "condition": "煞旺身健（党众为结构条件，原文逐字）", "output": "sha_wang_structure_candidate", "excluded": ["煞旺→身强"]},
+    {"rule_id": "RULE-DZ-003", "status": "PENDING_GOLDEN", "classical_scope": "QTBJ", "source_ids": ["QTBJ-048-002"], "condition": "地支成局（党众之会局，条件断语原文）", "output": "cheng_ju_group_candidate", "excluded": ["成局=贵 泛化"]},
+    {"rule_id": "RULE-DZ-004", "status": "PENDING_GOLDEN", "classical_scope": "SFTK", "source_ids": ["SFTK-011-054"], "condition": "众土党众（病药语境，原文逐字）", "output": "dang_zhong_bingyao_candidate", "excluded": ["党众脱离病药语境"]}
+  ],
+  "conflict_resolver": [
+    {"conflict": "党众 vs 旺衰", "resolution": "党众是结构条件，不得直接产出旺衰强弱（005B 支持 factor 对象化）"}
+  ],
+  "golden_cases": [
+    {"case_id": "GOLDEN-014-01", "title": "午之党多", "verify_forbidden": ["党多=必凶 泛化"], "expected": "登记结构条件，配合用神/病药判定"},
+    {"case_id": "GOLDEN-014-02", "title": "煞旺身健", "verify_forbidden": ["煞旺→身强"], "expected": "结构条件登记，不产旺衰结论"}
+  ],
+  "blocklist": ["党众计数评分", "黨盛為強（SMTH-030-002）"],
+  "acceptance_criteria": ["党众结构边界", "4 Rule Candidate PENDING_GOLDEN", "Conflict 1 类", "Golden 2 个"]
+}

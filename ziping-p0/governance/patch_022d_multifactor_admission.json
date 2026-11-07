@@ -1,0 +1,35 @@
+{
+  "contract_id": "PATCH-022D",
+  "name": "Multi-Factor Rule Admission + Engine Wiring（多因素规则准入与引擎接线）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "8 条 RULE-022C 多因素关系候选走十一门槛准入；接入引擎；对 1983-11-03 命局跑全量已准入规则条件评估矩阵。",
+  "parent": "PATCH-022C",
+  "admission_type_definition": {
+    "CONDITIONAL_RELATION": "消费状态（身旺/身弱/身强等）作为格内条件变量，产出格内关系结论（如财旺身轻→利印比）；不产生 strength_state 本身",
+    "scope": "strength_state 六级（RELATIONAL_RESULT）产出需消费端状态齐备；当前 身弱 概念 PENDING（005A 无单锚），任何依赖身弱的格内规则条件判定=UNDETERMINED"
+  },
+  "admissions": [
+    {"rule_id": "RULE-022C-01", "admission_status": "ADMITTED", "admission_type": "CONDITIONAL_RELATION", "gate_11": "PASS（YHZP-078-024 A 繼善篇，双分支，条件完整）", "golden_ref": "财多身健/盗气关系链", "conflict": "NONE"},
+    {"rule_id": "RULE-022C-02", "admission_status": "ADMITTED", "admission_type": "CONDITIONAL_RELATION", "gate_11": "PASS（YHZP-079-022 A，双条件）", "golden_ref": "身强杀浅", "conflict": "NONE"},
+    {"rule_id": "RULE-022C-03", "admission_status": "ADMITTED", "admission_type": "CONDITIONAL_RELATION", "gate_11": "PASS（YHZP-076-104/109 A，BY_CONDITION 分支）", "golden_ref": "杀旺运纯/全彰分支", "conflict": "BY_CONDITION 登记"},
+    {"rule_id": "RULE-022C-04", "admission_status": "ADMITTED", "admission_type": "CONDITIONAL_RELATION", "gate_11": "PASS（YHZP-082-001 A，格内条件）", "golden_ref": "七杀格喜忌", "conflict": "NONE"},
+    {"rule_id": "RULE-022C-05", "admission_status": "ADMITTED", "admission_type": "PRINCIPLE_RELATION", "gate_11": "PASS（DTS-017-001 A+B1，DTS 域原则）", "golden_ref": "中和多因素", "conflict": "BY_SCOPE（vs PZZQ 格内身强弱）"},
+    {"rule_id": "RULE-022C-06", "admission_status": "ADMITTED", "admission_type": "CONDITIONAL_RELATION", "gate_11": "PASS（PZZQ-007-030 A，格内双向）", "golden_ref": "伤官财格", "conflict": "NONE"},
+    {"rule_id": "RULE-022C-07", "admission_status": "ADMITTED", "admission_type": "CONDITIONAL_RELATION", "gate_11": "PASS（PZZQ-007-028 A，多因素组合）", "golden_ref": "煞食均根轻", "conflict": "NONE"},
+    {"rule_id": "RULE-022C-08", "admission_status": "ADMITTED", "admission_type": "CONTEXT_ANCHOR", "gate_11": "PASS（YHZP-063-001 A，语境锚）", "golden_ref": "月令入口", "conflict": "NONE"}
+  ],
+  "engine_wiring": {
+    "admitted_total": 12,
+    "breakdown": {"022A 单态": 4, "022D 条件关系": 6, "022D 原则": 1, "022D 语境锚": 1},
+    "strength_state_production": {
+      "mechanism": "strength_state 六级=RELATIONAL_RESULT，须由多因素格内规则消费状态后断言；当前身弱概念 PENDING（CAND-RUO-001 无单锚），依赖身弱的规则条件判定=UNDETERMINED",
+      "current_chart_eval": "1983-11-03 命局：失令（shuai 触发）+亥未通根+印三透；身旺未断言（无得时）、身弱未断言（PENDING）→ 多因素规则条件评估矩阵输出，strength_state=UNDETERMINED（六部无综合授权，FAIL_CLOSED）"
+    }
+  },
+  "acceptance_criteria": [
+    "8 条全部 ADMITTED（7 CONDITIONAL_RELATION + 1 PRINCIPLE + 1 CONTEXT_ANCHOR，022C-05 原则与关系并行）",
+    "引擎已接入 12 条 ADMITTED",
+    "1983-11-03 条件评估矩阵完整输出",
+    "strength_state 保持 UNDETERMINED（无综合授权）——非失败，是当前规则权限内正确输出"
+  ]
+}

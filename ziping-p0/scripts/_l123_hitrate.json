@@ -1,0 +1,103 @@
+{
+ "N": 100,
+ "L1": {
+  "ben_n": {
+   "nonempty": 500,
+   "total": 500
+  },
+  "zhong_n": {
+   "nonempty": 500,
+   "total": 500
+  },
+  "yu_n": {
+   "nonempty": 500,
+   "total": 500
+  },
+  "ju_n": {
+   "nonempty": 500,
+   "total": 500
+  },
+  "banhe_n": {
+   "nonempty": 500,
+   "total": 500
+  },
+  "stem_n": {
+   "nonempty": 500,
+   "total": 500
+  },
+  "ling_state": {
+   "nonempty": 500,
+   "total": 500
+  },
+  "ling_state_eff": {
+   "nonempty": 100,
+   "total": 500
+  },
+  "library_open": {
+   "nonempty": 100,
+   "total": 500
+  },
+  "chong_role": {
+   "nonempty": 100,
+   "total": 500
+  },
+  "chong_adjust": {
+   "nonempty": 100,
+   "total": 500
+  },
+  "chong_by(有冲盘)": {
+   "nonempty": 27,
+   "total": 100
+  }
+ },
+ "L3": {
+  "dm_ben_eff": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "yin_ben_eff": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "ling_state": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "root_grade": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "support_state": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "de_ling": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "de_di": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "dang_duo": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "chong_role": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "ling_state_eff": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "library_open": {
+   "nonempty": 100,
+   "total": 100
+  },
+  "strength_verdict": {
+   "nonempty": 0,
+   "total": 100
+  }
+ }
+}

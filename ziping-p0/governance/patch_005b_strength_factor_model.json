@@ -1,0 +1,157 @@
+{
+  "contract_id": "PATCH-005B",
+  "name": "Strength Factor Model（强度因素证据模型）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "PATCH-005 第二阶段：建立 strength_factor_assessment。输入 7 状态，输出仅 Factor Evidence（factor_collection/evidence_trace/relation_record）；禁止输出 strength_state/weak/strong/身强/身弱/喜忌/用神/格局成败。",
+  "parent": "PATCH-005A（9164b8f4）",
+  "input_allowed_states": ["order_state", "root_state", "support_state", "trend_state", "seasonal_state", "wang_state", "qiang_state"],
+  "output_allowed": ["factor_collection", "evidence_trace", "relation_record"],
+  "output_forbidden": ["strength_state", "weak", "strong", "身强", "身弱", "喜忌", "用神", "格局成败"],
+  "global_forbidden_005": [
+    "旺数量统计（因素计数→身强）",
+    "五行力量百分比（木40%）",
+    "得令直接进入 strength_state",
+    "单经典覆盖全部旺衰"
+  ],
+  "rule_005a_hard_rules": [
+    {
+      "id": "RULE-005A-01",
+      "text": "旺强隔离：禁 IF wang_state==旺 THEN strength_state=STRONG；状态 FAIL_CLOSED"
+    },
+    {
+      "id": "RULE-005A-02",
+      "text": "得令隔离：禁 GET_ORDER→STRONG；允许 GET_ORDER→order_factor"
+    },
+    {
+      "id": "RULE-005A-03",
+      "text": "根对象隔离：root_state 必须带 object（DAYMASTER/OFFICIAL/WEALTH/KILLING/RESOURCE）；禁 root=true 全局变量"
+    },
+    {
+      "id": "RULE-005A-04",
+      "text": "source 不升级：CANDIDATE_RULE 不得自动升 CORE_RULE，除非经 Evidence Verification（QTBJ-018-001 保持 CANDIDATE）"
+    }
+  ],
+  "concept_boundaries_005A": {
+    "WANG": {
+      "definition": "某五行或某对象在特定时令、气势、结构条件下呈现兴盛状态",
+      "allowed_sources": ["得时", "得令", "气势", "结构条件"],
+      "forbidden": ["wang_state→strength_state", "wang_state→strong", "wang_state→favorable"]
+    },
+    "QIANG": {
+      "definition": "由关系条件形成的结构性强状态（非旺/得令/有根）",
+      "allowed_sources": ["日干无气+遇劫=强条件之一（关系确认）"],
+      "forbidden": ["has_root→STRONG", "qiang_state→strong"]
+    },
+    "SHUAI": {
+      "definition": "某对象处于失令、退气或结构不足状态",
+      "forbidden": ["shuai_state→weak（衰≠弱）"]
+    },
+    "WEAK": {
+      "status": "PENDING",
+      "definition": "六部无简单单源等价（弱≠失令/无根/衰）；005B 之前禁止冻结"
+    }
+  },
+  "factors": [
+    {
+      "factor_id": "FCT-GET_ORDER-001",
+      "factor_type": "GET_ORDER",
+      "sub_factors": ["month_order", "seasonal_condition", "ruling_schedule"],
+      "note": "得令必须拆三，不得合并为旺",
+      "object": "DAYMASTER/五神/气象",
+      "relation": "ORDER_RELATION",
+      "source_ids": ["YHZP-138-001", "YHZP-056-001", "PZZQ-005-007", "SFTK-120-004"],
+      "evidence_grade": "A",
+      "forbidden": ["GET_ORDER→STRONG", "month_order=seasonal_condition=ruling_schedule 合并"]
+    },
+    {
+      "factor_id": "FCT-ROOT-001",
+      "factor_type": "ROOT",
+      "sub_factors": ["root_existence", "root_quality", "root_relation"],
+      "note": "根必须拆三：存在/质量/关系；有根≠强",
+      "object": "DAYMASTER/OFFICIAL/WEALTH/KILLING/RESOURCE",
+      "relation": "ROOTED_IN",
+      "source_ids": ["YHZP-123-003", "PZZQ-007-021", "QTBJ-011-001", "SFTK-020-014"],
+      "evidence_grade": "A",
+      "forbidden": ["has_root→STRONG", "root→favorable", "root=true 全局变量"]
+    },
+    {
+      "factor_id": "FCT-SUPPORT-001",
+      "factor_type": "SUPPORT",
+      "sub_factors": ["印比支持", "五行同类", "结构关系"],
+      "note": "扶助拆三：印比/同类/结构；禁 support_count→strength_score",
+      "object": "DAYMASTER",
+      "relation": "SUPPORTED_BY",
+      "source_ids": ["YHZP-073-001"],
+      "evidence_grade": "A",
+      "forbidden": ["support_count→strength_score", "support→strong"]
+    },
+    {
+      "factor_id": "FCT-CONTROL-001",
+      "factor_type": "CONTROL",
+      "sub_factors": ["克我/我克关系登记"],
+      "note": "泄耗克制只登记 RELATION_FACTOR；不定义减弱多少",
+      "object": "DAYMASTER",
+      "relation": "CONTROLLED_BY",
+      "source_ids": ["DTS-012-001"],
+      "evidence_grade": "A",
+      "forbidden": ["control_amount 量化"]
+    },
+    {
+      "factor_id": "FCT-DRAIN-001",
+      "factor_type": "DRAIN",
+      "sub_factors": ["泄气/耗气关系登记"],
+      "note": "只登记 RELATION_FACTOR；不定义减弱多少",
+      "object": "DAYMASTER",
+      "relation": "DRAINED_BY",
+      "source_ids": ["QTBJ-030-001"],
+      "evidence_grade": "A",
+      "forbidden": ["drain_amount 量化"]
+    },
+    {
+      "factor_id": "FCT-TREND-001",
+      "factor_type": "TREND",
+      "sub_factors": ["五阳从气不从势/气势方向"],
+      "note": "势独立；禁 trend→strength",
+      "object": "五行群体",
+      "relation": "TREND_TO",
+      "source_ids": ["DTS-008-003", "DTS-008-022"],
+      "evidence_grade": "A",
+      "forbidden": ["trend→strength_state", "trend=strength"]
+    },
+    {
+      "factor_id": "FCT-SEASONAL-001",
+      "factor_type": "SEASONAL",
+      "sub_factors": ["当权/失令/寒暖燥湿"],
+      "note": "⚠️ QTBJ-018-001 为 CANDIDATE_RULE 级：005B 阶段须先升格核验或换 QTBJ-060-001/QTBJ-109-001（调候 CORE），否则 FAIL_CLOSED",
+      "object": "DAYMASTER",
+      "relation": "SEASONAL_CONDITION",
+      "source_ids": ["QTBJ-018-001", "QTBJ-060-001", "QTBJ-109-001"],
+      "evidence_grade": "A（060/109）；CANDIDATE（018）",
+      "forbidden": ["seasonal→STRONG", "seasonal→统一旺衰公式"]
+    }
+  ],
+  "factor_output_schema": {
+    "factor_type": "GET_ORDER|ROOT|SUPPORT|CONTROL|DRAIN|TREND|SEASONAL",
+    "object": "DAYMASTER|五行|十神",
+    "relation": "ORDER_RELATION|ROOTED_IN|SUPPORTED_BY|CONTROLLED_BY|DRAINED_BY|TREND_TO|SEASONAL_CONDITION",
+    "source_id": "sources.<book>.jsonl 可回查",
+    "scope": "WANG_STATE|QIANG_STATE|SHUAI_STATE|…",
+    "evidence_trace": {"source_id": "", "chapter_id": "", "text_layer": "", "classical_scope": ""}
+  },
+  "risk_audit_005B": {
+    "①_得令": "拆 month_order/seasonal_condition/ruling_schedule；不得合并 得令=旺",
+    "②_根": "拆 root_existence/root_quality/root_relation；不得 有根=强",
+    "③_扶助": "拆 印比支持/五行同类/结构关系；不得 support_count→strength_score",
+    "④_泄耗克制": "只登记 RELATION_FACTOR；不定义减弱多少",
+    "⑤_势": "trend_state 独立；禁 trend→strength"
+  },
+  "acceptance_criteria": [
+    "仅输出 factor_collection/evidence_trace/relation_record",
+    "禁输出 strength_state/身强身弱/喜忌用神/格局成败",
+    "7 factor 全部登记且 source 可回查",
+    "得令/根/扶助 子因子拆分完成",
+    "泄耗克制只登记关系不量化",
+    "trend 独立于 strength",
+    "QTBJ-018-001 CANDIDATE 级标注并 FAIL_CLOSED 规则"
+  ]
+}

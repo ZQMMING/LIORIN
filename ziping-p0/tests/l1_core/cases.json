@@ -1,0 +1,66 @@
+{
+  "_meta": {
+    "version": "v1",
+    "type": "可执行用例",
+    "purpose": "可被脚本运行，输出PASS/FAIL",
+    "rule": "每条用例必须标注支撑哪条断言（traceability）"
+  },
+  "cases": [
+    {
+      "case_id": "c-01",
+      "pillars": ["庚申", "乙酉", "庚戌", "庚辰"],
+      "expect_pattern": "一行成象·从革(化气型)",
+      "expect_conf_min": "confirmed",
+      "notes": "li=66。乙庚秋月独合+有辰引化。B轴俱足。",
+      "supports_assertions": ["a-dts-02", "a-yhzp-01", "a-yhzp-02"]
+    },
+    {
+      "case_id": "c-02",
+      "pillars": ["庚申", "丁亥", "庚戌", "庚辰"],
+      "expect_pattern": "一行成象·从革(专旺型)",
+      "expect_conf_min": "mid",
+      "notes": "Z1'亥月版。局全+透干+日主属行，但月令不当旺。A轴成立，B轴不成立。",
+      "supports_assertions": ["a-yhzp-01"]
+    },
+    {
+      "case_id": "c-03",
+      "pillars": ["庚申", "己丑", "庚戌", "庚辰"],
+      "expect_pattern": "一行成象·从革(专旺型)",
+      "expect_conf_min": "mid",
+      "notes": "Z1'丑月版。局全+透干+日主属行，月令为局支。A轴成立。",
+      "supports_assertions": ["a-yhzp-01"]
+    },
+    {
+      "case_id": "c-04",
+      "pillars": ["丁亥", "壬寅", "丁卯", "甲辰"],
+      "expect_pattern": "一行成象·曲直(专旺型)",
+      "expect_conf_min": "confirmed",
+      "notes": "Z2曲直格。亥卯未全+甲乙透+日主属行。跨五行同构性验证。",
+      "supports_assertions": ["a-yhzp-01"]
+    },
+    {
+      "case_id": "c-05",
+      "pillars": ["戊辰", "己未", "戊戌", "癸丑"],
+      "expect_pattern": "一行成象·稼穑(专旺型)",
+      "expect_conf_min": "candidate",
+      "notes": "Z3稼穑格。四库全未入dm_ju，停在CANDIDATE。",
+      "supports_assertions": ["a-yhzp-01"]
+    },
+    {
+      "case_id": "c-06",
+      "pillars": ["庚申", "乙酉", "丙戌", "庚辰"],
+      "expect_pattern": "不成格（官杀破格）",
+      "expect_conf_min": "none",
+      "notes": "用例2：透丙火必破。验证kepo减项（乙庚化金忌丙火）。",
+      "supports_assertions": ["a-yhzp-03"]
+    },
+    {
+      "case_id": "c-07",
+      "pillars": ["甲寅", "丁卯", "丙午", "戊戌"],
+      "expect_pattern": "不成格（日主非金）",
+      "expect_conf_min": "none",
+      "notes": "用例3：日主甲木必不成从革。验证day_in_row。",
+      "supports_assertions": []
+    }
+  ]
+}

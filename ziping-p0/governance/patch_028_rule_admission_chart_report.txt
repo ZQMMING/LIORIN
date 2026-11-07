@@ -1,0 +1,21 @@
+﻿==== PATCH-028 Rule Admission Layer ====
+
+==== 状态机 ====
+  DRAFT → CANDIDATE → ADMITTED / REJECTED（门槛：证据绑定→11门槛→Golden）
+  ADMITTED=资格层≠自动执行；golden_pass 未过不得进引擎
+
+==== 12 条 ADMITTED 绑定完整性 ====
+  完整绑定: 12 条
+  缺口: 无
+
+==== 禁止链 ====
+  经典原文→状态：FORBIDDEN（原文命中只是 Evidence）
+  必须：原文→规则解析→namespace→producer→state
+
+==== QTBJ-018-001 政策 ====
+  保持 CANDIDATE_RULE，不先升格（先框架后准入，防规则先通过架构后补）
+
+==== 1983-1103 匹配演示 ====
+  CAND-SHUAI-001→shuai_state=SHUAI
+  CAND-QIANG-001 未触发（无天干比劫透）
+  strength_state=UNDETERMINED（无授权综合，FAIL_CLOSED）

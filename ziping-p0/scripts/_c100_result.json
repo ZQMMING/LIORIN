@@ -1,0 +1,1616 @@
+{
+ "sample": 100,
+ "empty_yong": 15,
+ "cong_n": 5,
+ "ge_n": 82,
+ "po_n": 50,
+ "label_cnt": {
+  "good": 34,
+  "neutral": 26,
+  "bad": 32,
+  "mixed": 8
+ },
+ "yong_src_cnt": {},
+ "rows": [
+  {
+   "cid": "DT-0001",
+   "bazi": "辛卯丁酉庚午丙子",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "阳刃格",
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0002",
+   "bazi": "庚申庚辰戊辰戊午",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "建禄月劫格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0003",
+   "bazi": "辛酉辛丑己酉丙寅",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "建禄月劫格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0004",
+   "bazi": "壬辰壬寅甲寅庚午",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "从格(从旺格)",
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0005",
+   "bazi": "癸酉甲子癸亥辛酉",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "建禄月劫格",
+    "po": 1,
+    "bing": 0,
+    "yao": 1,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0006",
+   "bazi": "丁亥庚戌甲辰壬申",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 2,
+    "bing": 0,
+    "yao": 5,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0007",
+   "bazi": "乙亥庚辰甲戌壬申",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 2,
+    "bing": 0,
+    "yao": 5,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0008",
+   "bazi": "甲子戊辰庚申壬午",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印轻逢财)",
+    "po": 1,
+    "bing": 0,
+    "yao": 3,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0009",
+   "bazi": "丙子己亥乙丑壬午",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印多逢财)",
+    "po": 0,
+    "bing": 1,
+    "yao": 4,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0010",
+   "bazi": "甲寅壬申癸巳癸亥",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格",
+    "po": 1,
+    "bing": 0,
+    "yao": 3,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0011",
+   "bazi": "癸巳癸亥甲寅壬申",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0012",
+   "bazi": "辛卯丁酉戊子戊午",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "伤官格(佩印)",
+    "po": 1,
+    "bing": 0,
+    "yao": 3,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0013",
+   "bazi": "辛未辛丑戊辰壬戌",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "建禄月劫格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0014",
+   "bazi": "戊辰壬戌辛未己丑",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格",
+    "po": 2,
+    "bing": 1,
+    "yao": 4,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0015",
+   "bazi": "丙子辛卯壬子癸卯",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "伤官格",
+    "po": 0,
+    "bing": 0,
+    "yao": 2,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0016",
+   "bazi": "辛未乙未庚辰丁亥",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印多逢财)",
+    "po": 0,
+    "bing": 1,
+    "yao": 2,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0017",
+   "bazi": "辛丑乙未庚辰丁丑",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印多逢财)",
+    "po": 1,
+    "bing": 1,
+    "yao": 2,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0018",
+   "bazi": "庚戌乙酉甲寅庚午",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0019",
+   "bazi": "丁巳癸丑丁卯丙午",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "食神格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0020",
+   "bazi": "庚寅辛巳丙寅辛卯",
+   "label": "mixed",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 2,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0021",
+   "bazi": "戊辰辛酉丙午癸巳",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0022",
+   "bazi": "庚寅壬午丁卯癸卯",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "建禄月劫格",
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0023",
+   "bazi": "丙子己亥乙亥丙子",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印多逢财)",
+    "po": 0,
+    "bing": 1,
+    "yao": 1,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0024",
+   "bazi": "戊午乙卯癸卯癸亥",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "食神格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0025",
+   "bazi": "己亥丁卯庚申庚辰",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0026",
+   "bazi": "己酉丁卯庚辰甲申",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0027",
+   "bazi": "庚申壬午辛酉癸巳",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 4,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0028",
+   "bazi": "庚申壬午辛酉甲午",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0029",
+   "bazi": "甲申甲戌甲寅甲戌",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 1,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0030",
+   "bazi": "戊子戊午戊戌戊午",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格",
+    "po": 2,
+    "bing": 1,
+    "yao": 1,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0031",
+   "bazi": "戊申戊午戊戌戊午",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格",
+    "po": 1,
+    "bing": 1,
+    "yao": 1,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0032",
+   "bazi": "辛卯辛卯辛卯辛卯",
+   "label": "bad",
+   "view": {
+    "cong": "从财格",
+    "ling": "囚",
+    "ge": "从财格(破格)",
+    "po": 1,
+    "bing": 0,
+    "yao": 1,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0033",
+   "bazi": "辛卯庚寅甲辰丙寅",
+   "label": "mixed",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "建禄月劫格",
+    "po": 0,
+    "bing": 1,
+    "yao": 4,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0034",
+   "bazi": "庚寅庚辰甲寅丁卯",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": null,
+    "po": 0,
+    "bing": 1,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0035",
+   "bazi": "癸巳丙辰丙午庚寅",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "食神格",
+    "po": 1,
+    "bing": 0,
+    "yao": 3,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0036",
+   "bazi": "戊寅乙丑丙寅庚寅",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "伤官格",
+    "po": 0,
+    "bing": 1,
+    "yao": 2,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0037",
+   "bazi": "丙子己亥乙酉壬午",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印多逢财)",
+    "po": 0,
+    "bing": 1,
+    "yao": 4,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0038",
+   "bazi": "己亥丙子乙丑壬午",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印多逢财)",
+    "po": 0,
+    "bing": 1,
+    "yao": 4,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0039",
+   "bazi": "甲寅戊辰丙寅丙申",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "食神格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0040",
+   "bazi": "壬申甲辰丙寅丙申",
+   "label": "mixed",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "食神格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0042",
+   "bazi": "己巳辛未壬午乙巳",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 1,
+    "yao": 4,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0043",
+   "bazi": "己丑丙子丁亥庚子",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0044",
+   "bazi": "壬午己酉甲申甲子",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0045",
+   "bazi": "壬辰己酉甲申甲子",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 1,
+    "yao": 3,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "DT-0046",
+   "bazi": "己巳癸酉丙寅庚寅",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0047",
+   "bazi": "癸亥癸亥丙辰甲午",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 4,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0048",
+   "bazi": "甲寅庚午乙卯丙子",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "食神格",
+    "po": 1,
+    "bing": 0,
+    "yao": 3,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0049",
+   "bazi": "乙丑己卯乙亥壬午",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0050",
+   "bazi": "壬申丙午庚午庚辰",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": "食神制杀格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "DT-0051",
+   "bazi": "壬午丙午庚申戊寅",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": "食神制杀格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0001",
+   "bazi": "癸酉辛酉乙丑辛巳",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": "七煞格",
+    "po": 1,
+    "bing": 0,
+    "yao": 4,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0002",
+   "bazi": "丁卯丙午庚午己卯",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": "正官格",
+    "po": 1,
+    "bing": 0,
+    "yao": 3,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "PZ-0003",
+   "bazi": "丙午庚寅壬午壬寅",
+   "label": "neutral",
+   "view": {
+    "cong": "从财格",
+    "ling": "休",
+    "ge": "从财格(破格)",
+    "po": 1,
+    "bing": 1,
+    "yao": 5,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "PZ-0004",
+   "bazi": "癸未辛酉甲申丙寅",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": "正官格",
+    "po": 2,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0005",
+   "bazi": "戊子癸亥庚寅戊寅",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "食神格",
+    "po": 1,
+    "bing": 0,
+    "yao": 4,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0006",
+   "bazi": "丙午辛卯戊寅甲寅",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": "食神制杀格",
+    "po": 0,
+    "bing": 0,
+    "yao": 4,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0007",
+   "bazi": "己卯甲戌乙亥己卯",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0008",
+   "bazi": "丁卯壬子壬申甲辰",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "建禄月劫格",
+    "po": 0,
+    "bing": 1,
+    "yao": 4,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0009",
+   "bazi": "庚申乙酉丁丑庚戌",
+   "label": "mixed",
+   "view": {
+    "cong": "从财格",
+    "ling": "囚",
+    "ge": "从财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "PZ-0010",
+   "bazi": "甲子丁卯己亥戊辰",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 4,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0011",
+   "bazi": "癸巳壬戌乙巳戊寅",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0012",
+   "bazi": "丁卯丙午丙子壬辰",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "阳刃格",
+    "po": 0,
+    "bing": 0,
+    "yao": 4,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0013",
+   "bazi": "乙酉甲申丁巳庚戌",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0014",
+   "bazi": "辛酉丙申庚子丙戌",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 4,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0015",
+   "bazi": "壬寅戊申丙寅癸巳",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 2,
+    "bing": 0,
+    "yao": 5,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0016",
+   "bazi": "戊戌甲子己巳戊辰",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0017",
+   "bazi": "戊寅己未甲寅乙亥",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 2,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0018",
+   "bazi": "丙戌辛卯辛巳戊戌",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 4,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0019",
+   "bazi": "己酉丙子戊辰癸亥",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0020",
+   "bazi": "庚午乙酉甲子乙亥",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0021",
+   "bazi": "庚申乙酉癸未乙卯",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格",
+    "po": 1,
+    "bing": 1,
+    "yao": 4,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0022",
+   "bazi": "癸酉癸亥戊子丁巳",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0023",
+   "bazi": "丙戌壬辰丁未壬寅",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "伤官格",
+    "po": 2,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0024",
+   "bazi": "丙午丙申辛卯丙申",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0025",
+   "bazi": "丁亥壬寅丙子丁酉",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印轻逢煞)",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "PZ-0026",
+   "bazi": "癸巳戊午丙午庚寅",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "阳刃格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0027",
+   "bazi": "己卯丁卯壬午甲辰",
+   "label": "neutral",
+   "view": {
+    "cong": "从财格",
+    "ling": "休",
+    "ge": "化木气格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 2
+   }
+  },
+  {
+   "cid": "PZ-0028",
+   "bazi": "戊辰壬戌甲辰己巳",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 2,
+    "bing": 0,
+    "yao": 5,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0029",
+   "bazi": "己卯甲戌甲子己巳",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "PZ-0030",
+   "bazi": "甲辰丁卯壬辰辛亥",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "伤官格",
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "YH-0001",
+   "bazi": "庚子戊子戊寅甲寅",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 5,
+    "yong": "",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "YH-0002",
+   "bazi": "辛未辛丑庚戌庚辰",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格",
+    "po": 2,
+    "bing": 1,
+    "yao": 2,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 2
+   }
+  },
+  {
+   "cid": "YH-0003",
+   "bazi": "戊辰壬戌丁丑丁未",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "伤官格",
+    "po": 2,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 2
+   }
+  },
+  {
+   "cid": "YH-0004",
+   "bazi": "壬申辛亥己巳丙寅",
+   "label": "mixed",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0005",
+   "bazi": "壬寅乙巳癸亥庚申",
+   "label": "mixed",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "金",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0006",
+   "bazi": "丙子己亥戊辰庚申",
+   "label": "neutral",
+   "view": {
+    "cong": "从儿格",
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "YH-0007",
+   "bazi": "丙辰甲午己未丁卯",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(官印双全)",
+    "po": 1,
+    "bing": 0,
+    "yao": 4,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0008",
+   "bazi": "壬申辛亥乙未己卯",
+   "label": "mixed",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印轻逢财)",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0009",
+   "bazi": "甲子丁丑乙丑己卯",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0010",
+   "bazi": "丙子甲午壬辰甲辰",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 2,
+    "bing": 0,
+    "yao": 3,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0011",
+   "bazi": "丁卯壬子乙巳丙子",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格",
+    "po": 1,
+    "bing": 0,
+    "yao": 3,
+    "yong": "火",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0012",
+   "bazi": "庚申戊子庚辰丙戌",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "伤官格(带煞无财)",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0013",
+   "bazi": "己卯癸酉戊寅庚申",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "伤官格",
+    "po": 2,
+    "bing": 0,
+    "yao": 5,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "YH-0014",
+   "bazi": "戊寅癸亥癸亥癸亥",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": null,
+    "po": 0,
+    "bing": 1,
+    "yao": 1,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0015",
+   "bazi": "己卯乙亥癸未甲寅",
+   "label": "neutral",
+   "view": {
+    "cong": null,
+    "ling": "旺",
+    "ge": "建禄月劫格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0016",
+   "bazi": "癸丑己未甲子甲子",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 0,
+    "bing": 0,
+    "yao": 3,
+    "yong": "水",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0017",
+   "bazi": "癸丑乙丑癸丑癸亥",
+   "label": "good",
+   "view": {
+    "cong": null,
+    "ling": "死",
+    "ge": null,
+    "po": 0,
+    "bing": 0,
+    "yao": 4,
+    "yong": "",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0018",
+   "bazi": "丁巳丙午甲寅甲子",
+   "label": "mixed",
+   "view": {
+    "cong": null,
+    "ling": "休",
+    "ge": "伤官格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 0
+   }
+  },
+  {
+   "cid": "YH-0020",
+   "bazi": "丁丑己酉丁丑辛亥",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "囚",
+    "ge": "财格",
+    "po": 1,
+    "bing": 0,
+    "yao": 5,
+    "yong": "土",
+    "ysrc": null,
+    "patn": 1
+   }
+  },
+  {
+   "cid": "YH-0021",
+   "bazi": "甲寅甲戌辛卯戊子",
+   "label": "bad",
+   "view": {
+    "cong": null,
+    "ling": "相",
+    "ge": "印格(印轻逢财)",
+    "po": 1,
+    "bing": 1,
+    "yao": 4,
+    "yong": "木",
+    "ysrc": null,
+    "patn": 0
+   }
+  }
+ ]
+}

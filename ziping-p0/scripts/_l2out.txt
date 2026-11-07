@@ -1,0 +1,78 @@
+========================================================================================
+[1] 唯一性核查  §2.4「十神判定只此一处」
+========================================================================================
+  引擎内 def ten_god: 5 处
+    engines\l0_paipan.py                     L113   def ten_god(day_master: str, other: str) -> str:
+    engines\common\execution_demo.py         L64    def ten_god(g):  ★ 单参签名, 判定不可能正确
+    engines\common\ge_jie_layer.py           L46    def ten_god(dg, stem):  ★ 违反 §2.4(契约禁止重算)
+    engines\common\l0_fact_builder.py        L64    def ten_god(day_stem, other_stem):
+    engines\common\multifactor_eval.py       L57    def ten_god(g):  ★ 单参签名, 判定不可能正确
+
+  _god_gans 实现:
+    L307       def _god_gans(god):
+    L308           return [g for g in gans if ten_god(dg, g) == god]
+    L309   
+    L310       # 正官格: 官逢财印又无刑冲破害. 官透 + 财印辅助 + 无伤官克
+    L311       if mqi_god == '正官':
+    L312           guan_gans = _god_gans('正官')
+    L313           if guan_gans:
+    L314               cai_gans = _god_gans('正财') + _god_gans('偏财')
+    L315               yin_gans = _god_gans('正印') + _god_gans('偏印')
+    L316               shangguan = _god_gans('伤官')
+
+========================================================================================
+[2] 判定核查  10x10=100 组合全枚举
+========================================================================================
+
+  --- l0_fact_builder ---
+    签名参数数: 2
+    调用异常: 0   判定错: 0/100
+
+  --- ge_jie_layer ---
+    签名参数数: 2
+    调用异常: 0   判定错: 0/100
+
+  --- multifactor_eval ---
+    排盘: {"年柱": "癸亥", "月柱": "壬戌", "日柱": "乙未", "时柱": "壬午"}
+    日主: 乙 | order: NOT_GET_ORDER | root: HAS_ROOT ['年柱', '日柱'] | 印透: ['年柱', '月柱', '时柱'] | 财透: [] | 官杀透: [] | 地支土(财)数: 2
+    
+    ==== 条件评估矩阵（12 ADMITTED）====
+    （RULE-022C-01 已改为 wealth_relation_state 登记：财星结构/日主关系/泄耗关系/条件限制，非数量判定）
+      CAND-WANG-001 | 得时俱为旺论
+         触发线索: 得令 | 评估: 条件不满足/未断言
+      CAND-SHUAI-001 | 失令便作衰看
+         触发线索: 失令 | 评估: 条件满足→规则可消费
+      CAND-QIANG-001 | 日干无气遇劫为强
+         触发线索: 无气∧遇劫 | 评估: 条件不满足/未断言
+      RULE-022C-01 | 财多生官须身健/财多盗气自柔（wealth_relation_state）
+         触发线索: 财星结构登记（非数量判定） | 评估: 条件不满足/未断言
+      RULE-022C-02 | 身强杀浅假杀为权
+
+  --- execution_demo ---
+    {
+      "input": "1983-11-03 11:30 男 广东中山（东经约113.4°，真太阳时仍在午时）",
+      "pillars": {
+        "年柱": "癸亥",
+        "月柱": "壬戌",
+        "日柱": "乙未",
+        "时柱": "壬午"
+      },
+      "day_master": "乙（木）",
+      "cang_gan": {
+        "年柱": [
+          "壬",
+          "甲"
+        ],
+
+========================================================================================
+[3] 结构核查  ten_god_members (§2.2 L0 契约字段)
+========================================================================================
+  ten_god_members 存在: ✓
+  类型: list
+  内容: [{"pillar": "year", "type": "stem", "stem": "癸", "branch": "亥", "hidden_index": null, "qi_position": null, "ten_god": "偏印"}, {"pillar": "year", "type": "hidden", "stem": "壬", "branch": "亥", "hidden_index": 0, "qi_position": "本气", "ten_god": "正印"}, {"pillar": "year", "type": "hidden", "stem": "甲", "branch": "亥", "hidden_index": 1, "qi_position": "中气", "ten_god": "劫财"}, {"pillar": "month", "type": "
+    year   null
+    month  null
+    day    null
+    hour   null
+
+  顶层 ten_god(投影): {"year": {"癸": "偏印"}, "month": {"壬": "正印"}, "day": {"乙": "比肩"}, "hour": {"壬": "正印"}}

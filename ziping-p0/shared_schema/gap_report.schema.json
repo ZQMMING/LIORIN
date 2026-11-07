@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wisdom.shuntian/schema/gap_report.schema.json",
+  "title": "GapReportRecord",
+  "description": "V2.2.2 FINAL §95-96 Gap Report：任何无法确定的问题必须进入；禁止用代码掩盖知识缺口。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["gap_id", "engine", "scope", "question", "evidence", "impact", "blocked_phase", "recommendation", "status"],
+  "properties": {
+    "gap_id": { "type": "string", "pattern": "^GAP-[0-9]{3}$" },
+    "engine": {
+      "type": "string",
+      "enum": [
+        "YUHAI_ZIPING", "ZIPING_ZHENQUAN", "DITIANSUI",
+        "QIONGTONG_BAOJIAN", "SANMING_TONGHUI", "SHENFENG_TONGKAO"
+      ]
+    },
+    "scope": { "type": "string", "minLength": 1 },
+    "question": { "type": "string", "minLength": 1 },
+    "evidence": { "type": "string", "minLength": 1 },
+    "impact": { "type": "string", "minLength": 1 },
+    "blocked_phase": { "type": "string", "enum": ["PHASE_0", "PHASE_1", "PHASE_2", "PHASE_3", "PHASE_4", "PHASE_5", "PHASE_6", "PHASE_7", "PHASE_8", "PHASE_9", "PHASE_10", "NONE"] },
+    "recommendation": { "type": "string", "minLength": 1 },
+    "status": { "type": "string", "enum": ["OPEN", "RESOLVED", "HUMAN_REVIEW"] }
+  }
+}

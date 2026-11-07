@@ -1,0 +1,20 @@
+{
+  "_meta": {
+    "direction": "old_special -> pattern_claimed",
+    "frozen_baseline": true,
+    "bijective_check": "tests/test_mapping_bijective.py"
+  },
+  "化金气格": "一行成象·从革",
+  "化木气格": "一行成象·曲直",
+  "化水气格": "一行成象·润下",
+  "化火气格": "一行成象·炎上",
+  "化土气格": "一行成象·稼穑",
+  "曲直格": "一行成象·曲直",
+  "炎上格": "一行成象·炎上",
+  "稼穑格": "一行成象·稼穑",
+  "从革格": "一行成象·从革",
+  "润下格": "一行成象·润下",
+  "专旺格": "__DISAMBIGUATE_BY_BRANCH__",
+  "_note": "凡 old_special 命中 __DISAMBIGUATE_BY_BRANCH__ 者，不得静默 fallback，须进入 l2_divergences 人工裁决，structural 断言报 FAIL。",
+  "_merge_note": "多对一映射为有意合并：化X气格（化气型）与X格（专旺型）合并为同一格局根名，靠pattern_type字段区分。"
+}

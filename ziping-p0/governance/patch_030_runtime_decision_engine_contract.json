@@ -1,0 +1,52 @@
+{
+  "contract_id": "PATCH-030",
+  "name": "Runtime Decision Engine Contract（运行时决策引擎契约）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "把已准入规则接入运行时（治理→执行转折点）：定义执行管线、ADMITTED_RULE 加载、Conflict Resolver、Evidence trace、Reject/Abstain/Unknown 机制。禁止多规则命中后模型自行综合。",
+  "core_prohibition": {
+    "forbidden": "多规则命中 → 模型自行综合/加权/投票/融合 → 生成未经注册结论",
+    "rule": "Result 只能=单个 ADMITTED 规则登记的输出（或 UNDETERMINED/UNKNOWN）；同一 state 多规则冲突→登记冲突→UNDETERMINED；多规则命中不同 state→各自独立输出互不合并"
+  },
+  "execution_pipeline": [
+    "排盘输入 → L0 Fact Layer",
+    "State Producer（023-027 各契约）→ 状态层",
+    "ADMITTED_RULE Match（028 准入 + 029 evidence 绑定）",
+    "Conflict Resolver（同 state 冲突 → UNDETERMINED）",
+    "State 输出（带 evidence trace + producer + namespace_source）"
+  ],
+  "admitted_rule_loading": {
+    "source": "patch_019_admitted_rule_registry.json（12 条）+ patch_028 binding + patch_029 evidence 绑定",
+    "load_gate": ["binding 七字段完整", "evidence_id 存在且 grade≤B", "producer 在 whitelist（024/025/026/027）", "golden_pass 状态登记（当前全 false）"],
+    "note": "加载不等于执行：golden_pass=false 的规则匹配后仅登记 match，不产出已注册结论"
+  },
+  "conflict_resolver": {
+    "trigger": "同一 state 被多条 ADMITTED 规则命中且输出不同",
+    "resolution": "按 classical_scope 匹配优先；无法判定 → UNDETERMINED + conflict 登记",
+    "forbidden": ["评分最高者胜", "平均/权重", "投票", "自动合并"]
+  },
+  "state_mechanism": {
+    "REJECT": "规则被门槛拒绝（如 D 级证据/引用不实）",
+    "ABSTAIN": "规则匹配但条件不完整（候选≠成立，如 structure 未确认）",
+    "UNKNOWN": "无授权综合/无规则覆盖",
+    "UNDETERMINED": "冲突或综合生产条件未满足（FAIL_CLOSED）",
+    "note": "四态可追溯：输出必须带 reason（哪条规则/哪个缺失条件）"
+  },
+  "evidence_trace_output": {
+    "schema": {"state": "", "value": "", "producer": "", "sources": [], "evidence_chain": ["evidence_id 列表"], "namespace_source": {}, "match_result": "MATCHED/ABSTAIN/REJECT/UNKNOWN", "conflict": "NONE/CONFLICT(ids)"}
+  },
+  "chart_1983_1103_demo": {
+    "shuai_state": {"value": "SHUAI", "match_result": "MATCHED", "rule": "CAND-SHUAI-001", "evidence_chain": ["EVID-001"], "note": "order=NOT_GET_ORDER 触发"},
+    "wang_state": {"value": "UNKNOWN", "match_result": "ABSTAIN", "rule": "CAND-WANG-001", "note": "order≠GET_ORDER，条件不完整"},
+    "qiang_state": {"value": "UNKNOWN", "match_result": "ABSTAIN", "rule": "CAND-QIANG-001", "note": "无天干比劫透"},
+    "wealth_relation_state": {"value": "UNDETERMINED", "match_result": "ABSTAIN", "rule": "RULE-022C-01", "note": "财多结构未确认（022D-R1 对象化）"},
+    "strength_state": {"value": "UNDETERMINED", "match_result": "UNKNOWN", "rule": "无授权综合规则", "note": "golden_pass=false，FAIL_CLOSED"}
+  },
+  "acceptance_criteria": [
+    "执行管线冻结（Fact→Producer→Rule Match→Conflict→State）",
+    "ADMITTED_RULE 加载四门槛",
+    "Conflict Resolver：同 state 冲突→UNDETERMINED，禁自行综合",
+    "REJECT/ABSTAIN/UNKNOWN/UNDETERMINED 四态机制",
+    "Evidence trace 输出带 match_result/conflict",
+    "1983-1103：无未经注册结论"
+  ]
+}

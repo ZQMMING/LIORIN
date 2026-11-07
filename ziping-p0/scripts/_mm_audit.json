@@ -1,0 +1,2538 @@
+[
+ {
+  "chart": "辛未乙未庚辰丁亥",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|SHAZHONG-SHENQING|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JISHUAI-CONGSHENG|G",
+  "ctx": "喜其丁火司令，元神发露而为用神，能制辛金之劫。未为火之余气，辰乃木之余气，财官皆通根有气，更妙亥水润土养金而滋木，四柱无缺陷。运走东南，金水虚，木火实，一生无凶无险",
+  "line": "177"
+ },
+ {
+  "chart": "庚戌乙酉甲寅庚午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|ZHONGGU",
+  "ctx": "丁亥\n 丙火生于孟夏，地支两寅一卯，巳火乘权，引出寅中丙火，天干虽逢庚辛，皆虚浮无根。初运壬午癸未无根之水，能泄金气，地支午未南方，又助旺火，财之气克泄已尽，祖业虽",
+  "line": "187"
+ },
+ {
+  "chart": "丁巳癸丑丁卯丙午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|Z",
+  "ctx": "丁亥\n 丙火生于孟夏，地支两寅一卯，巳火乘权，引出寅中丙火，天干虽逢庚辛，皆虚浮无根。初运壬午癸未无根之水，能泄金气，地支午未南方，又助旺火，财之气克泄已尽，祖业虽",
+  "line": "190"
+ },
+ {
+  "chart": "庚寅辛巳丙寅辛卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE",
+  "ctx": " 丙火生于孟夏，地支两寅一卯，巳火乘权，引出寅中丙火，天干虽逢庚辛，皆虚浮无根。初运壬午癸未无根之水，能泄金气，地支午未南方，又助旺火，财之气克泄已尽，祖业虽",
+  "line": "193"
+ },
+ {
+  "chart": "戊辰辛酉丙午癸巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-H",
+  "ctx": " 此造旺财当令，加以年上食神生助，日逢时禄，不为无根，所以身出富家。时透癸水，巳火失势，逢酉邀而拱金矣。五行无木，全赖午火帮身，则癸",
+  "line": "200"
+ },
+ {
+  "chart": "戊辰辛酉丙午癸巳",
+  "kw": "得势",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-H",
+  "ctx": "午 丁卯 癸卯\n 癸未 甲申 乙酉 丙戌 丁亥 戊子\n 此财官虚露无根，枭比当权得势，以四柱观之，贫夭之命。前造身财并旺，反遭破败无寿，此则财官休囚，劫业有寿，不知",
+  "line": "200"
+ },
+ {
+  "chart": "庚寅壬午丁卯癸卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE|GE-QING|GE-Q",
+  "ctx": " 此财官虚露无根，枭比当权得势，以四柱观之，贫夭之命。前造身财并旺，反遭破败无寿，此则财官休囚，",
+  "line": "203"
+ },
+ {
+  "chart": "庚寅壬午丁卯癸卯",
+  "kw": "得势",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE|GE-QING|GE-Q",
+  "ctx": " 此财官虚露无根，枭比当权得势，以四柱观之，贫夭之命。前造身财并旺，反遭破败无寿，此则财官休囚，劫业有寿，不知",
+  "line": "203"
+ },
+ {
+  "chart": "丙子己亥乙亥丙子",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "ZHONGGUA-2SIDE|WUGEN-YOUFU|GE-QUALITY|YUN-SHENG-ROOT|TIANGAN-XINGQING|YONGSHEN-STRUCTURE|Y",
+  "ctx": "乙亥日元，生于亥月，喜其天干两透丙火，不失陽春之景。寒木向陽，清而纯粹，惜乎火土无根，水木太重，读书未售；兼之中年一路水木，生扶太过，局中火土皆伤，以致财鲜聚而志未",
+  "line": "215"
+ },
+ {
+  "chart": "癸巳丙辰丙午庚寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|Z",
+  "ctx": " 此东南之陽暖。天干金水，似乎无根，喜月支辰土，泄火蓄水而生金，庚金挂角逢生，则庚金可用。癸水即庚金之喜神。初运乙",
+  "line": "267"
+ },
+ {
+  "chart": "壬戌壬子甲子戊辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": "。然戊土亦赖有戌土而根固，若有辰而无戌，辰乃湿土，见水则荡，戊土不能植根而虚矣。无根之土，岂能止百川之源？故此造所重者，戌之燥土也。但寒木无陽，必须火以温之，则木方",
+  "line": "382"
+ },
+ {
+  "chart": "壬戌壬子甲子戊辰",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": "一点微金，成之不足，故书香不继，初运火土，不失化之情，财源通裕；至庚申辛酉，辛金得地，而成之异路，加捐仕至州牧；癸运生木泄金，不禄。\n 癸未 乙卯 甲戌 乙亥\n 甲",
+  "line": "382"
+ },
+ {
+  "chart": "丁丑庚戌庚子甲申",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|JIWANG-HU",
+  "ctx": "伤，弱可知矣。运至甲申乙酉，金得地，木无根，破耗异常；丙戌丁运，重振家声。此财多身弱，所谓帮之则有功也。\n 壬子 癸丑 丙午 壬辰\n 甲寅 乙卯 丙辰 丁巳 戊午 ",
+  "line": "432"
+ },
+ {
+  "chart": "丁丑庚戌庚子甲申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|JIWANG-HU",
+  "ctx": "月，建禄必要用财，无如庚辛重叠根深，独印受伤，弱可知矣。运至甲申乙酉，金得地，木无根，破耗异常；丙戌丁运，重振家声。此财多身弱，所谓帮之则有功也。\n 壬子 癸丑 丙",
+  "line": "432"
+ },
+ {
+  "chart": "丁丑庚戌庚子甲申",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|JIWANG-HU",
+  "ctx": "火生于巳月，建禄必要用财，无如庚辛重叠根深，独印受伤，弱可知矣。运至甲申乙酉，金得地，木无根，破耗异常；丙戌丁运，重振家声。此财多身弱，所谓帮之则有功也。\n 壬子 ",
+  "line": "432"
+ },
+ {
+  "chart": "戊申壬戌庚申乙酉",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": "伤，弱可知矣。运至甲申乙酉，金得地，木无根，破耗异常；丙戌丁运，重振家声。此财多身弱，所谓帮之则有功也。\n 壬子 癸丑 丙午 壬辰\n 甲寅 乙卯 丙辰 丁巳 戊午 ",
+  "line": "435"
+ },
+ {
+  "chart": "戊申壬戌庚申乙酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": "月，建禄必要用财，无如庚辛重叠根深，独印受伤，弱可知矣。运至甲申乙酉，金得地，木无根，破耗异常；丙戌丁运，重振家声。此财多身弱，所谓帮之则有功也。\n 壬子 癸丑 丙",
+  "line": "435"
+ },
+ {
+  "chart": "庚申辛巳丙辰乙未",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": "伤，弱可知矣。运至甲申乙酉，金得地，木无根，破耗异常；丙戌丁运，重振家声。此财多身弱，所谓帮之则有功也。\n 壬子 癸丑 丙午 壬辰\n 甲寅 乙卯 丙辰 丁巳 戊午 ",
+  "line": "438"
+ },
+ {
+  "chart": "庚申辛巳丙辰乙未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": "月，建禄必要用财，无如庚辛重叠根深，独印受伤，弱可知矣。运至甲申乙酉，金得地，木无根，破耗异常；丙戌丁运，重振家声。此财多身弱，所谓帮之则有功也。\n 壬子 癸丑 丙",
+  "line": "438"
+ },
+ {
+  "chart": "甲寅丁卯戊辰己未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SH",
+  "ctx": "高翰苑；午运拱寅合卯，采梁栋于邓林，是难哲匠，搜琳琅于瑶圃；爰藉宗工；至酉，乙木无根，金得地，冲破东方秀气，犯事落职，若无亥水化之，岂能免大凶！\n 局混方兮有纯疵，",
+  "line": "451"
+ },
+ {
+  "chart": "丙辰庚寅乙卯丁亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-",
+  "ctx": "高翰苑；午运拱寅合卯，采梁栋于邓林，是难哲匠，搜琳琅于瑶圃；爰藉宗工；至酉，乙木无根，金得地，冲破东方秀气，犯事落职，若无亥水化之，岂能免大凶！\n 局混方兮有纯疵，",
+  "line": "454"
+ },
+ {
+  "chart": "庚辰癸未乙未癸未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|",
+  "ctx": "且月建乃六亲之位，未免分荆破斧，资财耗散。壬运帮身去病，财源稍裕；辛卯庚寅，东方无根之金，功名未能进取，家业不过小康。然格正局真，印星秉令，所以襟怀旷达，八斗才夸，",
+  "line": "507"
+ },
+ {
+  "chart": "己丑壬申丁未丙午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "且月建乃六亲之位，未免分荆破斧，资财耗散。壬运帮身去病，财源稍裕；辛卯庚寅，东方无根之金，功名未能进取，家业不过小康。然格正局真，印星秉令，所以襟怀旷达，八斗才夸，",
+  "line": "510"
+ },
+ {
+  "chart": "癸未乙卯丙午辛卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE",
+  "ctx": "且月建乃六亲之位，未免分荆破斧，资财耗散。壬运帮身去病，财源稍裕；辛卯庚寅，东方无根之金，功名未能进取，家业不过小康。然格正局真，印星秉令，所以襟怀旷达，八斗才夸，",
+  "line": "513"
+ },
+ {
+  "chart": "辛卯丙申癸卯壬戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE",
+  "ctx": "且月建乃六亲之位，未免分荆破斧，资财耗散。壬运帮身去病，财源稍裕；辛卯庚寅，东方无根之金，功名未能进取，家业不过小康。然格正局真，印星秉令，所以襟怀旷达，八斗才夸，",
+  "line": "516"
+ },
+ {
+  "chart": "辛卯丙申癸卯甲寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|WANGCHONG-S",
+  "ctx": "且月建乃六亲之位，未免分荆破斧，资财耗散。壬运帮身去病，财源稍裕；辛卯庚寅，东方无根之金，功名未能进取，家业不过小康。然格正局真，印星秉令，所以襟怀旷达，八斗才夸，",
+  "line": "519"
+ },
+ {
+  "chart": "己巳庚午丙午甲午",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-L",
+  "ctx": "冲，不特官星受伤，而且冲去库根；日主坐下余气，亦是根盘，更嫌戌冲，微根巳气，财多身弱；且旺土愈冲愈旺，则癸水必伤。初运壬子辛水旺之地，荫疪有余；一交庚戌，财煞并旺，",
+  "line": "528"
+ },
+ {
+  "chart": "丁丑癸卯乙卯己卯",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|",
+  "ctx": "冲，不特官星受伤，而且冲去库根；日主坐下余气，亦是根盘，更嫌戌冲，微根巳气，财多身弱；且旺土愈冲愈旺，则癸水必伤。初运壬子辛水旺之地，荫疪有余；一交庚戌，财煞并旺，",
+  "line": "531"
+ },
+ {
+  "chart": "甲戌丙寅戊寅丙辰",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": "春十五日后，正当甲木司令，地支两寅紧克辰戌之土，天干甲木，又制日干之戊，似乎煞旺身弱。然喜无金，则日元之气不泄，更妙无水，则丙火之印不坏，尤羡贴身透丙，化杀生身。由",
+  "line": "585"
+ },
+ {
+  "chart": "甲辰丁卯甲子戊辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|Z",
+  "ctx": "未壬午，生木制金，刑丧早见，荫疪难丰；辛巳庚辰，金逢生地，白手发财数万；己卯运土无根，木得地，遭回禄，破财万余；至寅而亡 。\n 己巳 己巳 乙酉 丙戌\n 戊辰 丁卯",
+  "line": "605"
+ },
+ {
+  "chart": "癸卯乙卯甲寅乙亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHON",
+  "ctx": "未壬午，生木制金，刑丧早见，荫疪难丰；辛巳庚辰，金逢生地，白手发财数万；己卯运土无根，木得地，遭回禄，破财万余；至寅而亡 。\n 己巳 己巳 乙酉 丙戌\n 戊辰 丁卯",
+  "line": "608"
+ },
+ {
+  "chart": "乙丑甲申甲申辛未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|JUECHU-FENGSHENG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIO",
+  "ctx": "未壬午，生木制金，刑丧早见，荫疪难丰；辛巳庚辰，金逢生地，白手发财数万；己卯运土无根，木得地，遭回禄，破财万余；至寅而亡 。\n 己巳 己巳 乙酉 丙戌\n 戊辰 丁卯",
+  "line": "611"
+ },
+ {
+  "chart": "乙丑甲申甲申辛未",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|JUECHU-FENGSHENG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIO",
+  "ctx": "生木制金，刑丧早见，荫疪难丰；辛巳庚辰，金逢生地，白手发财数万；己卯运土无根，木得地，遭回禄，破财万余；至寅而亡 。\n 己巳 己巳 乙酉 丙戌\n 戊辰 丁卯 丙寅 ",
+  "line": "611"
+ },
+ {
+  "chart": "己巳己巳乙酉丙戌",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|XIEQI-TAIZHONG|ZHONGGUA-2SIDE|JIRUO-WUGEN|JISHUAI-CONGSHENG|SHIYONG-YUELIN",
+  "ctx": "午\n 此四柱皆水，又得金生。土衰极者，似水也。初运癸亥，平宁之境；壬戌水无根，土得地，刑丧破耗，家业消亡；辛酉庚申二十年，大得际遇，白手发财十余万；己未运破去数万，",
+  "line": "614"
+ },
+ {
+  "chart": "乙丑壬午丙戌甲午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SID",
+  "ctx": " 此丙戌日元，月时两刃，壬水无根，又逢木泄。火太旺者，似水也。初运庚辰辛巳，金逢生地，孔怀无辅助之人，亲党少知心",
+  "line": "617"
+ },
+ {
+  "chart": "戊寅丁巳丙寅甲午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-",
+  "ctx": "己未 戊午\n 此四柱皆水，又得金生。土衰极者，似水也。初运癸亥，平宁之境；壬戌水无根，土得地，刑丧破耗，家业消亡；辛酉庚申二十年，大得际遇，白手发财十余万；己未运破",
+  "line": "620"
+ },
+ {
+  "chart": "辛巳丁酉丁酉辛丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SI",
+  "ctx": "己未 戊午\n 此四柱皆水，又得金生。土衰极者，似水也。初运癸亥，平宁之境；壬戌水无根，土得地，刑丧破耗，家业消亡；辛酉庚申二十年，大得际遇，白手发财十余万；己未运破",
+  "line": "623"
+ },
+ {
+  "chart": "辛亥壬辰丙申己亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|SHAZHONG-SHENQING|XIEQI-TAIZHONG|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JISH",
+  "ctx": "己未 戊午\n 此四柱皆水，又得金生。土衰极者，似水也。初运癸亥，平宁之境；壬戌水无根，土得地，刑丧破耗，家业消亡；辛酉庚申二十年，大得际遇，白手发财十余万；己未运破",
+  "line": "626"
+ },
+ {
+  "chart": "辛亥壬辰丙申己亥",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|SHAZHONG-SHENQING|XIEQI-TAIZHONG|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JISH",
+  "ctx": "午\n 此四柱皆水，又得金生。土衰极者，似水也。初运癸亥，平宁之境；壬戌水无根，土得地，刑丧破耗，家业消亡；辛酉庚申二十年，大得际遇，白手发财十余万；己未运破去数万，",
+  "line": "626"
+ },
+ {
+  "chart": "戊辰戊午戊申己未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SID",
+  "ctx": "己未 戊午\n 此四柱皆水，又得金生。土衰极者，似水也。初运癸亥，平宁之境；壬戌水无根，土得地，刑丧破耗，家业消亡；辛酉庚申二十年，大得际遇，白手发财十余万；己未运破",
+  "line": "629"
+ },
+ {
+  "chart": "戊戌丙辰己巳己巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHON",
+  "ctx": "己未 戊午\n 此四柱皆水，又得金生。土衰极者，似水也。初运癸亥，平宁之境；壬戌水无根，土得地，刑丧破耗，家业消亡；辛酉庚申二十年，大得际遇，白手发财十余万；己未运破",
+  "line": "632"
+ },
+ {
+  "chart": "壬辰辛亥戊子癸丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": "己未 戊午\n 此四柱皆水，又得金生。土衰极者，似水也。初运癸亥，平宁之境；壬戌水无根，土得地，刑丧破耗，家业消亡；辛酉庚申二十年，大得际遇，白手发财十余万；己未运破",
+  "line": "635"
+ },
+ {
+  "chart": "癸酉甲子戊子壬子",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|ZHONGGUA-2SIDE|RI-BEI-HE|JIRUO-WUGEN|SHIYONG-YUELING-XIANGFU|GE-QING|GE-QU",
+  "ctx": " 此四柱皆水，又得金生。土衰极者，似水也。初运癸亥，平宁之境；壬戌水无根，土得地，刑丧破耗，家业消亡；辛酉庚申二十年，大得际遇，白手发财十余万；己未运破去数万，",
+  "line": "638"
+ },
+ {
+  "chart": "壬申己酉庚子庚辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-",
+  "ctx": "也。初交丙申丁酉，盖头是火，使申酉不能生水，财喜并旺；戊戌运中，家业饶裕；己亥土无根，还喜支会木局，虽有破耗而无大患；一交庚子，家破人亡。\n 癸卯 戊午 壬寅 丙午",
+  "line": "641"
+ },
+ {
+  "chart": "庚申乙酉庚戌庚辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-D",
+  "ctx": "也。初交丙申丁酉，盖头是火，使申酉不能生水，财喜并旺；戊戌运中，家业饶裕；己亥土无根，还喜支会木局，虽有破耗而无大患；一交庚子，家破人亡。\n 癸卯 戊午 壬寅 丙午",
+  "line": "644"
+ },
+ {
+  "chart": "己卯庚午辛卯甲午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|CAIDUO-SHENRUAN|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|SHIYONG-YUELING-XIANGFU|",
+  "ctx": "也。初交丙申丁酉，盖头是火，使申酉不能生水，财喜并旺；戊戌运中，家业饶裕；己亥土无根，还喜支会木局，虽有破耗而无大患；一交庚子，家破人亡。\n 癸卯 戊午 壬寅 丙午",
+  "line": "647"
+ },
+ {
+  "chart": "己亥丁卯庚寅丙子",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-Q",
+  "ctx": "也。初交丙申丁酉，盖头是火，使申酉不能生水，财喜并旺；戊戌运中，家业饶裕；己亥土无根，还喜支会木局，虽有破耗而无大患；一交庚子，家破人亡。\n 癸卯 戊午 壬寅 丙午",
+  "line": "650"
+ },
+ {
+  "chart": "壬寅辛亥壬子辛丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHON",
+  "ctx": "也。初交丙申丁酉，盖头是火，使申酉不能生水，财喜并旺；戊戌运中，家业饶裕；己亥土无根，还喜支会木局，虽有破耗而无大患；一交庚子，家破人亡。\n 癸卯 戊午 壬寅 丙午",
+  "line": "653"
+ },
+ {
+  "chart": "癸亥癸亥壬子庚子",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE",
+  "ctx": "也。初交丙申丁酉，盖头是火，使申酉不能生水，财喜并旺；戊戌运中，家业饶裕；己亥土无根，还喜支会木局，虽有破耗而无大患；一交庚子，家破人亡。\n 癸卯 戊午 壬寅 丙午",
+  "line": "656"
+ },
+ {
+  "chart": "癸酉甲子丁卯丙午",
+  "kw": "日主弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|WA",
+  "ctx": "四冲反为四助，金见水克木而生水，水见木不克火而生木，此自然不隔不占，无阻节之物。日主弱中变旺，运遇水，仍能生木；逢金仍能生水，印绶不伤，所以秋闱早捷，仕至观察。\n 戊",
+  "line": "706"
+ },
+ {
+  "chart": "己酉丙寅庚申庚辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|JUECHU-FENGSHENG|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROO",
+  "ctx": "又得辰时印比帮身，弱中变旺，所谓木嫩金坚。若无丙火，则寅木难存；若无寅木，则丙火无根，必要用财滋杀，木火两字，缺一不可也。甲运入泮；子运会水生木，补廪；癸运有己土当",
+  "line": "726"
+ },
+ {
+  "chart": "丙申庚寅庚申辛巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|JUECHU-FENGSHENG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIO",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "729"
+ },
+ {
+  "chart": "戊子甲寅戊午甲寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|Z",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "733"
+ },
+ {
+  "chart": "己亥丙寅戊子甲寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZH",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "736"
+ },
+ {
+  "chart": "己亥丙寅戊子甲寅",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZH",
+  "ctx": " 壬辰 甲辰\n 己未 庚申 辛酉 壬戌 癸亥 甲子\n 此造四柱皆杀，喜支坐三辰，通根身库，妙在无金，时透食神制杀。辰乃木之余气，正谓一将当关，群凶自败。至癸亥运，食",
+  "line": "736"
+ },
+ {
+  "chart": "戊辰庚申甲子甲子",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|JUECHU-FENGSHENG|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGU",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "739"
+ },
+ {
+  "chart": "戊午丙辰庚寅丙戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "742"
+ },
+ {
+  "chart": "癸亥癸亥丁卯癸卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-QUALITY|YUN-SHENG-ROOT|T",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "745"
+ },
+ {
+  "chart": "癸亥癸亥丁卯癸卯",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-QUALITY|YUN-SHENG-ROOT|T",
+  "ctx": " 壬辰 甲辰\n 己未 庚申 辛酉 壬戌 癸亥 甲子\n 此造四柱皆杀，喜支坐三辰，通根身库，妙在无金，时透食神制杀。辰乃木之余气，正谓一将当关，群凶自败。至癸亥运，食",
+  "line": "745"
+ },
+ {
+  "chart": "庚申庚辰甲戌丙寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "752"
+ },
+ {
+  "chart": "壬申丙午庚午丙戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|SHIYONG-",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "758"
+ },
+ {
+  "chart": "癸丑戊午丙午壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHE",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "762"
+ },
+ {
+  "chart": "癸巳戊午丙午壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHE",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "765"
+ },
+ {
+  "chart": "戊申癸亥丙午壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|JUECHU-FENGSHENG|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|GE",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "768"
+ },
+ {
+  "chart": "戊午癸亥丙戌壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|JUECHU-FENGSHENG|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONG",
+  "ctx": " 丁未 丁未 癸卯\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "771"
+ },
+ {
+  "chart": "壬申丁未丁未癸卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE",
+  "ctx": " 此造日月皆丁未，时杀无根，喜其壬水官星助杀，不宜合也。幸而壬水坐申，合而不化，申金为用，更妙运走西北金水",
+  "line": "774"
+ },
+ {
+  "chart": "辛卯戊戌丙辰己亥",
+  "kw": "得时",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": " 戊寅 戊寅 庚申\n 己卯 庚辰 辛巳 壬午 癸未 甲申\n 此两杀逢四制，幸春木得时乘令，克不尽绝。至午运，补土之不足，去金之有余，登科擢县令：至甲申支，又逢食制，",
+  "line": "805"
+ },
+ {
+  "chart": "辛卯戊戌丙辰壬辰",
+  "kw": "得时",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": " 戊寅 戊寅 庚申\n 己卯 庚辰 辛巳 壬午 癸未 甲申\n 此两杀逢四制，幸春木得时乘令，克不尽绝。至午运，补土之不足，去金之有余，登科擢县令：至甲申支，又逢食制，",
+  "line": "808"
+ },
+ {
+  "chart": "甲寅戊辰壬辰壬寅",
+  "kw": "得时",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": " 戊寅 戊寅 庚申\n 己卯 庚辰 辛巳 壬午 癸未 甲申\n 此两杀逢四制，幸春木得时乘令，克不尽绝。至午运，补土之不足，去金之有余，登科擢县令：至甲申支，又逢食制，",
+  "line": "814"
+ },
+ {
+  "chart": "庚申戊寅戊寅庚申",
+  "kw": "得时",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": " 此两杀逢四制，幸春木得时乘令，克不尽绝。至午运，补土之不足，去金之有余，登科擢县令：至甲申支，又逢食制，",
+  "line": "817"
+ },
+ {
+  "chart": "丙辰癸巳乙丑丙子",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "839"
+ },
+ {
+  "chart": "丙辰癸巳乙丑丙子",
+  "kw": "得地",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": "临旺，采泮水之芹，折蟾宫之桂；壬午癸未，南方火地，出宰名区，莺迁州牧；甲申乙酉金得地，木临绝，虽退归，而安享琴书，其乐自如也。\n 辛未 辛卯 壬辰 己酉 \n 庚寅 ",
+  "line": "839"
+ },
+ {
+  "chart": "丙申戊戌丁卯乙巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "843"
+ },
+ {
+  "chart": "癸亥乙卯壬申乙巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "846"
+ },
+ {
+  "chart": "戊子辛酉戊午丁巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "849"
+ },
+ {
+  "chart": "壬申辛亥辛酉庚寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "852"
+ },
+ {
+  "chart": "癸亥辛酉戊申己未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "856"
+ },
+ {
+  "chart": "己未癸酉戊戌庚申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "859"
+ },
+ {
+  "chart": "癸亥甲寅癸亥甲寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "862"
+ },
+ {
+  "chart": "癸亥甲寅癸亥甲寅",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA",
+  "ctx": " 己酉\n 庚辰 辛巳 壬午 癸未 甲申 乙酉\n 壬水生于卯月，水木伤官。喜其官印通根，年支逢财，伤官有制有化，日元生旺，足以用官。巳运 ，官星临旺，采泮水之芹，折蟾",
+  "line": "862"
+ },
+ {
+  "chart": "癸亥甲寅癸亥甲寅",
+  "kw": "得地",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA",
+  "ctx": "临旺，采泮水之芹，折蟾宫之桂；壬午癸未，南方火地，出宰名区，莺迁州牧；甲申乙酉金得地，木临绝，虽退归，而安享琴书，其乐自如也。\n 辛未 辛卯 壬辰 己酉 \n 庚寅 ",
+  "line": "862"
+ },
+ {
+  "chart": "戊申己未丙戌己丑",
+  "kw": "日主旺",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|SHIYONG",
+  "ctx": "\n 戊申 戊午 丁巳 乙巳\n 己未 庚申 辛酉 壬戌 癸亥 甲子\n 此火土伤官，日主旺极，喜其伤官发泄菁华，更妙财星得用。庚申辛酉运，少年创业，发财十余万；壬戌幸而水",
+  "line": "865"
+ },
+ {
+  "chart": "戊申己未丙戌己丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|SHIYONG",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "865"
+ },
+ {
+  "chart": "戊申己未丙戌己丑",
+  "kw": "得地",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|SHIYONG",
+  "ctx": "临旺，采泮水之芹，折蟾宫之桂；壬午癸未，南方火地，出宰名区，莺迁州牧；甲申乙酉金得地，木临绝，虽退归，而安享琴书，其乐自如也。\n 辛未 辛卯 壬辰 己酉 \n 庚寅 ",
+  "line": "865"
+ },
+ {
+  "chart": "戊辰庚申己酉癸酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "868"
+ },
+ {
+  "chart": "戊辰庚申己酉癸酉",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-",
+  "ctx": " 己酉\n 庚辰 辛巳 壬午 癸未 甲申 乙酉\n 壬水生于卯月，水木伤官。喜其官印通根，年支逢财，伤官有制有化，日元生旺，足以用官。巳运 ，官星临旺，采泮水之芹，折蟾",
+  "line": "868"
+ },
+ {
+  "chart": "戊辰庚申己酉癸酉",
+  "kw": "得地",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-",
+  "ctx": "临旺，采泮水之芹，折蟾宫之桂；壬午癸未，南方火地，出宰名区，莺迁州牧；甲申乙酉金得地，木临绝，虽退归，而安享琴书，其乐自如也。\n 辛未 辛卯 壬辰 己酉 \n 庚寅 ",
+  "line": "868"
+ },
+ {
+  "chart": "庚辰己卯壬辰庚子",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|GE-QUALITY|",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "873"
+ },
+ {
+  "chart": "乙酉戊寅癸酉癸丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-L",
+  "ctx": "\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "876"
+ },
+ {
+  "chart": "乙酉戊寅癸酉癸丑",
+  "kw": "得地",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-L",
+  "ctx": "临旺，采泮水之芹，折蟾宫之桂；壬午癸未，南方火地，出宰名区，莺迁州牧；甲申乙酉金得地，木临绝，虽退归，而安享琴书，其乐自如也。\n 辛未 辛卯 壬辰 己酉 \n 庚寅 ",
+  "line": "876"
+ },
+ {
+  "chart": "己卯庚午甲寅丁卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": " 甲木生于午月，木火伤官。年月两干，土金无根，置之不用；地支两卯一寅，日元强，必以丁火为用，故人权谋异众。丁卯运，入泮登科，",
+  "line": "879"
+ },
+ {
+  "chart": "丙子乙未丙辰乙未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SH",
+  "ctx": "功名难遂。初运丁酉丙申，制化乙木，财喜称心；戊戌十年，熙熙攘攘，日炽日昌；己运土无根，木回克，刑耗并见；一交亥运，木得生火，逢劫，得恶病而亡。\n 五曰伤官用官格\n ",
+  "line": "882"
+ },
+ {
+  "chart": "丙子乙未丙辰乙未",
+  "kw": "得地",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SH",
+  "ctx": "临旺，采泮水之芹，折蟾宫之桂；壬午癸未，南方火地，出宰名区，莺迁州牧；甲申乙酉金得地，木临绝，虽退归，而安享琴书，其乐自如也。\n 辛未 辛卯 壬辰 己酉 \n 庚寅 ",
+  "line": "882"
+ },
+ {
+  "chart": "壬戌己酉戊戌乙卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SH",
+  "ctx": "日元，支类南方，未土秉令，己土透出，火土伤官，藏财受劫，无官则财无存，无财则官亦无根；况火焰土燥，官星并透，以官为用。运至火土，破耗刑丧；乙卯甲寅运，虽能生火，究竟",
+  "line": "886"
+ },
+ {
+  "chart": "壬戌己酉戊戌乙卯",
+  "kw": "得地",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SH",
+  "ctx": "临旺，采泮水之芹，折蟾宫之桂；壬午癸未，南方火地，出宰名区，莺迁州牧；甲申乙酉金得地，木临绝，虽退归，而安享琴书，其乐自如也。\n 辛未 辛卯 壬辰 己酉 \n 庚寅 ",
+  "line": "886"
+ },
+ {
+  "chart": "庚午己卯壬申己酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|WANGCHONG-SHUAI|ZHONGGUA-2",
+  "ctx": "日元，支类南方，未土秉令，己土透出，火土伤官，藏财受劫，无官则财无存，无财则官亦无根；况火焰土燥，官星并透，以官为用。运至火土，破耗刑丧；乙卯甲寅运，虽能生火，究竟",
+  "line": "889"
+ },
+ {
+  "chart": "辛未辛卯壬辰己酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SHUA",
+  "ctx": "日元，支类南方，未土秉令，己土透出，火土伤官，藏财受劫，无官则财无存，无财则官亦无根；况火焰土燥，官星并透，以官为用。运至火土，破耗刑丧；乙卯甲寅运，虽能生火，究竟",
+  "line": "892"
+ },
+ {
+  "chart": "癸酉己未丙午癸巳",
+  "kw": "日主旺",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|GE-QING|GE-QUALITY|",
+  "ctx": "\n 戊申 戊午 丁巳 乙巳\n 己未 庚申 辛酉 壬戌 癸亥 甲子\n 此火土伤官，日主旺极，喜其伤官发泄菁华，更妙财星得用。庚申辛酉运，少年创业，发财十余万；壬戌幸而水",
+  "line": "895"
+ },
+ {
+  "chart": "癸酉己未丙午癸巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|GE-QING|GE-QUALITY|",
+  "ctx": "日元，支类南方，未土秉令，己土透出，火土伤官，藏财受劫，无官则财无存，无财则官亦无根；况火焰土燥，官星并透，以官为用。运至火土，破耗刑丧；乙卯甲寅运，虽能生火，究竟",
+  "line": "895"
+ },
+ {
+  "chart": "癸酉己未丙午癸巳",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|GE-QING|GE-QUALITY|",
+  "ctx": "，喜其伤官发泄菁华，更妙财星得用。庚申辛酉运，少年创业，发财十余万；壬戌幸而水不通根 ，虽有刑耗而无大患；至癸亥运，激火之烈，泄财之气，不禄。\n 壬子 辛亥 壬子 ",
+  "line": "895"
+ },
+ {
+  "chart": "戊申戊午丁巳乙巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-L",
+  "ctx": "乙酉 辛巳 戊午 丙辰\n 庚辰 己卯 戊寅 丁丑 丙子 乙亥\n 此火土当权，乙木无根，以辛金为用。辛丑年入泮，后因运程不合，屡困秋闱。至丑运暗拱金局，科甲连登；丙子",
+  "line": "899"
+ },
+ {
+  "chart": "壬子辛亥壬子癸卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|JIWANG-HUA",
+  "ctx": "乙酉 辛巳 戊午 丙辰\n 庚辰 己卯 戊寅 丁丑 丙子 乙亥\n 此火土当权，乙木无根，以辛金为用。辛丑年入泮，后因运程不合，屡困秋闱。至丑运暗拱金局，科甲连登；丙子",
+  "line": "902"
+ },
+ {
+  "chart": "壬辰壬子壬子癸卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|JIWANG-HUA",
+  "ctx": "乙酉 辛巳 戊午 丙辰\n 庚辰 己卯 戊寅 丁丑 丙子 乙亥\n 此火土当权，乙木无根，以辛金为用。辛丑年入泮，后因运程不合，屡困秋闱。至丑运暗拱金局，科甲连登；丙子",
+  "line": "905"
+ },
+ {
+  "chart": "戊午丙辰戊辰辛酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-",
+  "ctx": "乙酉 辛巳 戊午 丙辰\n 庚辰 己卯 戊寅 丁丑 丙子 乙亥\n 此火土当权，乙木无根，以辛金为用。辛丑年入泮，后因运程不合，屡困秋闱。至丑运暗拱金局，科甲连登；丙子",
+  "line": "908"
+ },
+ {
+  "chart": "乙酉辛巳戊午丙辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|",
+  "ctx": " 此火土当权，乙木无根，以辛金为用。辛丑年入泮，后因运程不合，屡困秋闱。至丑运暗拱金局，科甲连登；丙子",
+  "line": "911"
+ },
+ {
+  "chart": "乙酉戊寅壬午庚戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|XIEQI-TAIZHONG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI",
+  "ctx": "禄，必用丙火无疑。不知水势猖狂，病窃去命主无元神，不但不能官，即或用官，而丙火全无根气，必须用己土之印，使其止水生金卫火。丙入亥宫临绝，欲使丙火生土，而丙火先受水克",
+  "line": "975"
+ },
+ {
+  "chart": "乙酉戊寅壬午庚戌",
+  "kw": "通根",
+  "excluded": false,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|XIEQI-TAIZHONG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI",
+  "ctx": " 壬水生于立春二十二日，正当甲木真神司令，而天干土金并透，地支通根戌酉，此谓真神失势，假神得局，用以庚金化煞，法当以假作真，纯粹可观。虽嫌支全火局",
+  "line": "975"
+ },
+ {
+  "chart": "乙酉戊寅壬午庚戌",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|XIEQI-TAIZHONG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI",
+  "ctx": "干比肩帮身，又能润土养金。第中运南方，生杀坏印，奔驰不遇；至甲申，运转西方，用神得地，得军功飞升知县：乙酉更佳，仁至州牧：一交丙，坏庚，不禄。\n 丙子 己亥 辛酉 ",
+  "line": "975"
+ },
+ {
+  "chart": "庚戌戊寅癸未癸丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SH",
+  "ctx": "禄，必用丙火无疑。不知水势猖狂，病窃去命主无元神，不但不能官，即或用官，而丙火全无根气，必须用己土之印，使其止水生金卫火。丙入亥宫临绝，欲使丙火生土，而丙火先受水克",
+  "line": "978"
+ },
+ {
+  "chart": "庚戌戊寅癸未癸丑",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SH",
+  "ctx": "干比肩帮身，又能润土养金。第中运南方，生杀坏印，奔驰不遇；至甲申，运转西方，用神得地，得军功飞升知县：乙酉更佳，仁至州牧：一交丙，坏庚，不禄。\n 丙子 己亥 辛酉 ",
+  "line": "978"
+ },
+ {
+  "chart": "丙子己亥辛酉己亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|ZHONGGUA-2SIDE|RI-BE",
+  "ctx": "禄，必用丙火无疑。不知水势猖狂，病窃去命主无元神，不但不能官，即或用官，而丙火全无根气，必须用己土之印，使其止水生金卫火。丙入亥宫临绝，欲使丙火生土，而丙火先受水克",
+  "line": "981"
+ },
+ {
+  "chart": "壬申戊申庚辰甲申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|",
+  "ctx": " 庚金生于七月，地支三申，旺之极矣，时干甲木无根，用年干壬水，泄其刚杀之气。所嫌者，月干枭神夺食。初年运走土金，刑丧早见，祖业无",
+  "line": "991"
+ },
+ {
+  "chart": "庚辰庚辰庚申庚辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|JIWANG-HU",
+  "ctx": "壬戌 辛酉 庚申 己未 戊午\n 庚辰日元，支逢禄旺，水本当权，又会水局，天干枯木无根，置之不论，谓金水二人同心，必须顺其金水之性。故癸亥壬运，荫庇有余；戌运制水，还",
+  "line": "1010"
+ },
+ {
+  "chart": "癸酉甲子庚辰甲申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": " 庚辰日元，支逢禄旺，水本当权，又会水局，天干枯木无根，置之不论，谓金水二人同心，必须顺其金水之性。故癸亥壬运，荫庇有余；戌运制水，还",
+  "line": "1013"
+ },
+ {
+  "chart": "甲申丙子庚辰戊寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE",
+  "ctx": " 此寒金冷水，木凋土寒，若非寅时，则年月木火无根，不能作用矣，所谓寒虽甚，要暖有气也。由引论之，年得者寅也，地气上升，木火绝处逢",
+  "line": "1026"
+ },
+ {
+  "chart": "己酉丙子庚辰甲申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": "乙卯 甲寅 癸丑 壬子 辛亥\n 此支类南方,又生巳时，暖之至矣。天干丙癸，地支全无根气，所谓暖之至，寒无根，反以无寒为美。所以初运丙辰，叨荫庇之福；乙卯甲寅，泄水生",
+  "line": "1029"
+ },
+ {
+  "chart": "丁丑丙午丙午壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SI",
+  "ctx": "乙卯 甲寅 癸丑 壬子 辛亥\n 此支类南方,又生巳时，暖之至矣。天干丙癸，地支全无根气，所谓暖之至，寒无根，反以无寒为美。所以初运丙辰，叨荫庇之福；乙卯甲寅，泄水生",
+  "line": "1032"
+ },
+ {
+  "chart": "癸未丁巳丙午癸巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|JIWANG-HUAI",
+  "ctx": " 此支类南方,又生巳时，暖之至矣。天干丙癸，地支全无根气，所谓暖之至，寒无根，反以无寒为美。所以初运丙辰，叨荫庇之福；乙卯甲寅，泄水生",
+  "line": "1035"
+ },
+ {
+  "chart": "丙辰辛丑庚辰丙子",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SI",
+  "ctx": "独杀留清，推其木火运中，名利双全，不知支中重重湿土，年干丙火，合辛化水，时干丙火无根，只有寒湿之气，并无生发之意，只得用水，不能用火矣。所以初运壬寅癸卯，制土卫水，",
+  "line": "1045"
+ },
+ {
+  "chart": "丁未壬子庚戌丙戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": " 丙辰 乙卯 甲寅 癸丑 壬子 辛亥\n 甲午日元，支全巳午未，燥烈极矣。天干金水无根，反激火之烈，只可顺火之气也。初运木火，顺其气势，财喜频增，至癸丑，叹刑丧，遭挫",
+  "line": "1048"
+ },
+ {
+  "chart": "癸未丁巳甲午庚午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|GE-QUALITY|SHI-ZHU-",
+  "ctx": " 甲午日元，支全巳午未，燥烈极矣。天干金水无根，反激火之烈，只可顺火之气也。初运木火，顺其气势，财喜频增，至癸丑，叹刑丧，遭挫",
+  "line": "1051"
+ },
+ {
+  "chart": "己卯辛未丙子辛卯",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": "丙午\n 丙午 丁未 戊申 己酉 庚戌 辛亥\n 丁火生于孟夏，柱中劫旺逢枭，天干壬无根，置之不用。最喜丑中一点财星，深藏归库，丑为湿土，能泄火气，不但无争夺之风，反有",
+  "line": "1064"
+ },
+ {
+  "chart": "壬午乙巳丁丑丙午",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|Z",
+  "ctx": " 丁火生于孟夏，柱中劫旺逢枭，天干壬无根，置之不用。最喜丑中一点财星，深藏归库，丑为湿土，能泄火气，不但无争夺之风，反有",
+  "line": "1067"
+ },
+ {
+  "chart": "戊辰乙丑戊戌辛酉",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": " 此造重重厚土，乙木无根，伤官又旺，其势足以敌官星之寡。故初交丙寅丁卯，官星得地，刑耗多端；戊辰得际遇，",
+  "line": "1077"
+ },
+ {
+  "chart": "戊午壬戌丁卯癸卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": " 此伤官当令，印星并见，官煞虽透无根，势在去官。初年运走北方，官星得势，一事无成；丙寅丁卯，生助火土，经营发财巨万；",
+  "line": "1080"
+ },
+ {
+  "chart": "戊午壬戌丁卯癸卯",
+  "kw": "得势",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": " 此伤官当令，印星并见，官煞虽透无根，势在去官。初年运走北方，官星得势，一事无成；丙寅丁卯，生助火土，经营发财巨万；戊辰己巳，去尽官煞，一子登科，晚景",
+  "line": "1080"
+ },
+ {
+  "chart": "丙寅庚寅甲申乙丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "土以成之，方能化土生金，斩削以成真。初游幕，获利纳捐，至癸未运出仕；甲申乙酉，木无根，金得地，从佐二升知县而迁州牧。\n 庚辰 壬午 甲辰 丁卯\n 癸未 甲申 乙酉 ",
+  "line": "1093"
+ },
+ {
+  "chart": "庚戌己卯甲寅丁卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2",
+  "ctx": "土以成之，方能化土生金，斩削以成真。初游幕，获利纳捐，至癸未运出仕；甲申乙酉，木无根，金得地，从佐二升知县而迁州牧。\n 庚辰 壬午 甲辰 丁卯\n 癸未 甲申 乙酉 ",
+  "line": "1096"
+ },
+ {
+  "chart": "丙子己亥丙寅戊子",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|JUECHU-FENGSHENG|BIJIE-PARTY|ROOT-STRUC",
+  "ctx": "卯 甲辰 乙巳 丙午 丁未 戊申\n 壬水生于孟春，支全火局，虽年月两透比肩，皆属无根。天干坎衰，地支离旺，用庚金以降之也。惜乎运途东南，在外奔驰四十年，一无成就；至",
+  "line": "1116"
+ },
+ {
+  "chart": "壬午壬寅壬戌庚戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|SHIYONG-YUELING-XIANGFU|GE-QING|GE-QUALI",
+  "ctx": " 壬水生于孟春，支全火局，虽年月两透比肩，皆属无根。天干坎衰，地支离旺，用庚金以降之也。惜乎运途东南，在外奔驰四十年，一无成就；至",
+  "line": "1119"
+ },
+ {
+  "chart": "丙子丙申丙子丙申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "ZHONGGUA-2SIDE|WUGEN-YOUFU|SHIYONG-YUELING-XIANGFU|GE-QING|GE-QUALITY|YUN-SHENG-ROOT|SHI-Z",
+  "ctx": " 此造地支，两申两子，水逢生旺，金作水论；天干四丙，地支无根，离衰坎旺，须以木运和之也。惜乎五行不顺，五十年西北金水之地，故艰难险阻，刑伤颠",
+  "line": "1122"
+ },
+ {
+  "chart": "乙亥庚辰丙申壬辰",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|CAIDUO-SHENRUAN|SHAZHONG-SHENQING|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUA",
+  "ctx": " 丙火生于季春，印绶通根生旺，日主坐财，时干又透壬水，必以乙木为用。可嫌者，乙庚化金，生杀坏印，其妻不贤",
+  "line": "1162"
+ },
+ {
+  "chart": "辛丑辛丑戊戌癸丑",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2",
+  "ctx": "巳\n 庚辰 己卯 戊寅 丁丑 丙子 乙亥\n 戊土生于巳月，柱中火土本旺，辛金露而无根；兼之己时，丁火独透克辛，局中全无湿气；更嫌年干乙木，助火之烈，所以克两妻，生十",
+  "line": "1189"
+ },
+ {
+  "chart": "乙未辛巳戊戌丁巳",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": " 戊土生于巳月，柱中火土本旺，辛金露而无根；兼之己时，丁火独透克辛，局中全无湿气；更嫌年干乙木，助火之烈，所以克两妻，生十",
+  "line": "1195"
+ },
+ {
+  "chart": "戊子癸亥壬戌甲辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "卯 辛卯 甲辰 丁卯\n 庚寅 己丑 戊子 丁亥 丙戌 乙酉\n 此造春木雄壮，金透无根，喜其丁火透露，伤其辛金，所以已丑戊子运中，不但得子不育，而且财多破耗，丁亥支拱",
+  "line": "1198"
+ },
+ {
+  "chart": "庚寅丙戌辛亥辛卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE",
+  "ctx": "卯 辛卯 甲辰 丁卯\n 庚寅 己丑 戊子 丁亥 丙戌 乙酉\n 此造春木雄壮，金透无根，喜其丁火透露，伤其辛金，所以已丑戊子运中，不但得子不育，而且财多破耗，丁亥支拱",
+  "line": "1201"
+ },
+ {
+  "chart": "丁酉丁未戊戌丁巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|J",
+  "ctx": "卯 辛卯 甲辰 丁卯\n 庚寅 己丑 戊子 丁亥 丙戌 乙酉\n 此造春木雄壮，金透无根，喜其丁火透露，伤其辛金，所以已丑戊子运中，不但得子不育，而且财多破耗，丁亥支拱",
+  "line": "1204"
+ },
+ {
+  "chart": "辛卯辛卯甲辰丁卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|SHIYONG-YUE",
+  "ctx": " 此造春木雄壮，金透无根，喜其丁火透露，伤其辛金，所以已丑戊子运中，不但得子不育，而且财多破耗，丁亥支拱",
+  "line": "1208"
+ },
+ {
+  "chart": "癸卯乙丑丙子己丑",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|XIEQI-TAIZHONG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI",
+  "ctx": "辛亥 戊子 戊午\n 庚戌 己酉 戊申 丁未 丙午 乙巳\n 此造柱中三火二土，似乎旺相，不知亥子当权，冲坏印绶，天干火土虚脱，其祖上大富，至父辈破败；兼之初运西金地，",
+  "line": "1218"
+ },
+ {
+  "chart": "癸卯乙丑丙子己丑",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|XIEQI-TAIZHONG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI",
+  "ctx": "退气，日主衰弱，全赖乙木生火而卫官。年月官印相生，亦出身官家，至亥支入泮；壬戌水通根，破耗异常加捐出仕，不过清规；至酉运，财星坏印，竟伏国刑。\n 乙卯 丁亥 戊午 ",
+  "line": "1218"
+ },
+ {
+  "chart": "癸卯乙丑丙子己丑",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|XIEQI-TAIZHONG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI",
+  "ctx": "头，巳火亦伤，必作弱推，用以巳火。初运东方木土，出身遗业丰厚，丙子火不通根，官星得地，定多破耗，丑运生金泄火刑克异常，定粗十去八九，夫妇皆亡。\n\n",
+  "line": "1218"
+ },
+ {
+  "chart": "丁亥壬寅丙子丁酉",
+  "kw": "通根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|ZHONGG",
+  "ctx": " 丙火生于春初，谓相火有焰，不作旺论。月干壬水通根，亥子杀旺无制，喜其丁壬寅亥合而化印，以杂为恩。时支财星，生官坏印，以杂为恩。时",
+  "line": "1236"
+ },
+ {
+  "chart": "甲申丙子壬寅辛亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": " 壬水生于仲冬，羊刃当权，年月木火无根，日支食神冲破，似乎平常。然喜日寅时亥，乃木火生地；寅亥合，则木火之气愈贯；子申",
+  "line": "1249"
+ },
+ {
+  "chart": "甲申丙子壬寅辛亥",
+  "kw": "失令",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": "，凡巨富之命，财星不多，只要生化有情，即是财气通门户，若财临旺地，不宜见官，日主失令，必要比劫助之，期为美也。\n 壬申 丙午 癸亥 戊午\n 丁未 戊申 己酉 庚戌 ",
+  "line": "1249"
+ },
+ {
+  "chart": "癸卯癸亥丁卯辛亥",
+  "kw": "身旺",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIYONG-YUELING-XIANGFU|GE-",
+  "ctx": "助起官星，以成既济。三旬外运走北方水地，登科发甲，名利双辉。勿以官杀混杂为嫌也，身旺者，必要官杀混杂而发也。\n 甲午 丙寅 辛酉 己丑\n 丁卯 戊辰 己巳 庚午 辛",
+  "line": "1259"
+ },
+ {
+  "chart": "癸卯癸亥丁卯辛亥",
+  "kw": "身强",
+  "excluded": false,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIYONG-YUELING-XIANGFU|GE-",
+  "ctx": "亥\n 庚金生于立夏前五日，土当令，火未司权，庚金之生坐实，且辰支申昌，生扶并旺，身强杀浅。嫌其财露无根逢劫，所以出身贫寒；一交丁运，官星元神发露，戊寅己卯两年，财星",
+  "line": "1259"
+ },
+ {
+  "chart": "癸卯癸亥丁卯辛亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIYONG-YUELING-XIANGFU|GE-",
+  "ctx": "前五日，土当令，火未司权，庚金之生坐实，且辰支申昌，生扶并旺，身强杀浅。嫌其财露无根逢劫，所以出身贫寒；一交丁运，官星元神发露，戊寅己卯两年，财星得地，喜用齐来，科",
+  "line": "1259"
+ },
+ {
+  "chart": "癸卯癸亥丁卯辛亥",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIYONG-YUELING-XIANGFU|GE-",
+  "ctx": "\n 丁卯 戊辰 己巳 庚午 辛未 壬申\n 此造财临旺地，官遇长生，日主坐禄，印绶通根，天干四字，地支皆临禄旺，五行无水，清而纯粹。春金虽弱，喜其时印通根得用，庚运帮",
+  "line": "1259"
+ },
+ {
+  "chart": "癸卯癸亥丁卯辛亥",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIYONG-YUELING-XIANGFU|GE-",
+  "ctx": "杀浅。嫌其财露无根逢劫，所以出身贫寒；一交丁运，官星元神发露，戊寅己卯两年，财星得地，喜用齐来，科甲联登，又入词林。书云，“以杀化权，定显露门贵客”，此之谓也。\n ",
+  "line": "1259"
+ },
+ {
+  "chart": "癸酉丁巳丙午壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|JIWANG-HU",
+  "ctx": "前五日，土当令，火未司权，庚金之生坐实，且辰支申昌，生扶并旺，身强杀浅。嫌其财露无根逢劫，所以出身贫寒；一交丁运，官星元神发露，戊寅己卯两年，财星得地，喜用齐来，科",
+  "line": "1262"
+ },
+ {
+  "chart": "甲午丙寅辛酉己丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": "前五日，土当令，火未司权，庚金之生坐实，且辰支申昌，生扶并旺，身强杀浅。嫌其财露无根逢劫，所以出身贫寒；一交丁运，官星元神发露，戊寅己卯两年，财星得地，喜用齐来，科",
+  "line": "1265"
+ },
+ {
+  "chart": "乙巳辛巳庚辰甲申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|Z",
+  "ctx": "前五日，土当令，火未司权，庚金之生坐实，且辰支申昌，生扶并旺，身强杀浅。嫌其财露无根逢劫，所以出身贫寒；一交丁运，官星元神发露，戊寅己卯两年，财星得地，喜用齐来，科",
+  "line": "1268"
+ },
+ {
+  "chart": "壬子戊申戊戌辛酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "\n 此造财藏杀露，杀印相生，又联珠相生，似乎贵格，所以祖业二十余万；不知年干之杀无根，其菁华尽被印绶窃去，必用酉金之财。盖头覆之以土。似科有情，但木旺土虚，相火逢生",
+  "line": "1275"
+ },
+ {
+  "chart": "癸卯甲寅丁巳己酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": " 此造财藏杀露，杀印相生，又联珠相生，似乎贵格，所以祖业二十余万；不知年干之杀无根，其菁华尽被印绶窃去，必用酉金之财。盖头覆之以土。似科有情，但木旺土虚，相火逢生",
+  "line": "1278"
+ },
+ {
+  "chart": "丁丑壬子丁亥甲辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|YIN-PARTY|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JISHUAI-CONG",
+  "ctx": "也。\n 丙辰 庚寅 丙午 壬辰\n 辛卯 壬辰 癸巳 甲午 乙未 丙申\n 此造财绝无根，官又无气，兼之运走东南之地，幼年丧父，依母转嫁他姓；数年母死，牧牛度日，稍长则",
+  "line": "1298"
+ },
+ {
+  "chart": "丙辰庚寅丙午壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|JIWANG-HU",
+  "ctx": " 此造财绝无根，官又无气，兼之运走东南之地，幼年丧父，依母转嫁他姓；数年母死，牧牛度日，稍长则",
+  "line": "1301"
+ },
+ {
+  "chart": "甲子丙寅戊寅己未",
+  "kw": "得时",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SH",
+  "ctx": "申 己亥 庚辰 戊寅\n 庚子 辛丑 壬寅 癸卯 甲辰 乙巳 丙午\n 此寒金喜火，得时支寅木之生，则火有焰，然有财杀，必先身旺。妙在年支坐禄，三印贴生，更妙亥水当权，",
+  "line": "1312"
+ },
+ {
+  "chart": "丙申己亥庚辰戊寅",
+  "kw": "得时",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE",
+  "ctx": " 此寒金喜火，得时支寅木之生，则火有焰，然有财杀，必先身旺。妙在年支坐禄，三印贴生，更妙亥水当权，",
+  "line": "1315"
+ },
+ {
+  "chart": "乙亥戊寅丙子甲午",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-",
+  "ctx": "旺木，所谓忌神辗转攻也。初交丁丑，生助用神，祖业十余万，其乐自如；一交丙子，火不通根，父母双亡，连遭回禄；乙亥水木并旺，又遭回禄，克三妻四子，赴水而亡。\n 辛巳 庚",
+  "line": "1322"
+ },
+ {
+  "chart": "己酉辛未壬寅壬寅",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-Q",
+  "ctx": "诰封者，土金有情之妙也。其为人贪恶两备者，不能化杀之故也，婬靡无礼者，火不现，水得地之故也。盖寅申冲，则丙火必坏，丑戌刑则丁火亦伤，兼之癸水透，则日主之心志必合，而",
+  "line": "1338"
+ },
+ {
+  "chart": "丁未庚戌庚辰丙子",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SI",
+  "ctx": "诰封者，土金有情之妙也。其为人贪恶两备者，不能化杀之故也，婬靡无礼者，火不现，水得地之故也。盖寅申冲，则丙火必坏，丑戌刑则丁火亦伤，兼之癸水透，则日主之心志必合，而",
+  "line": "1341"
+ },
+ {
+  "chart": "乙丑乙酉丙辰辛卯",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|CAIDUO-SHENRUAN|YIN-PARTY|WANGCHONG-SHUAI|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUF",
+  "ctx": "无从引助；然春土气虚，藏财可用，初运东方木地，疪荫有余；寅运得一子。乙丑运，土又通根而夭。\n 壬寅 壬寅 甲寅 壬申\n 癸卯 甲辰 乙巳 丙午 丁未 戊申\n 春木重",
+  "line": "1357"
+ },
+ {
+  "chart": "戊申甲寅壬寅丁未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SHUAI|HE-HUA",
+  "ctx": "生于孟春，土虚木盛。制杀太过。寅申逢冲，本是克木，不知木旺金缺。金反被伤，则戊土无根依抚，而日主之壬水，可任性而行，见其财星有势，自然从财而去，以致伤夫败业，弃子从",
+  "line": "1379"
+ },
+ {
+  "chart": "丁未乙巳甲午丁卯",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "。北方水旺，又有干癸克丁，丑未冲去丁火余气，五行无木，未得生化之情。时干之丁虚脱无根，焉能管伏庚金？而日主之情，不顾丁火可知，所以水性杨花也。\n 丁丑 癸丑 庚子 ",
+  "line": "1382"
+ },
+ {
+  "chart": "戊戌己未丙辰戊戌",
+  "kw": "身旺",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": "品格端庄，持身贞洁。惜丙火太旺，生助伤官，以臻镜破钗分。然喜巳丑拱金，财星得用，身旺以财为子，教子成名，两子皆贵，受三品之封。\n 丙寅 辛卯 癸酉 戊午\n 庚寅 己",
+  "line": "1385"
+ },
+ {
+  "chart": "戊戌己未丙辰戊戌",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1385"
+ },
+ {
+  "chart": "戊戌己未丙辰戊戌",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": "。北方水旺，又有干癸克丁，丑未冲去丁火余气，五行无木，未得生化之情。时干之丁虚脱无根，焉能管伏庚金？而日主之情，不顾丁火可知，所以水性杨花也。\n 丁丑 癸丑 庚子 ",
+  "line": "1385"
+ },
+ {
+  "chart": "戊戌己未丙辰戊戌",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": "\n 此造官星食神坐禄，印绶当令逢生，财生官旺，不伤印绶，印绶当令，足以扶身，食神得地，一气相生，五行停匀，安详纯粹。夫荣子贵，受两代一品之封。\n 乙亥 癸酉 甲辰 ",
+  "line": "1385"
+ },
+ {
+  "chart": "戊午乙丑戊戌丙辰",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SH",
+  "ctx": "。北方水旺，又有干癸克丁，丑未冲去丁火余气，五行无木，未得生化之情。时干之丁虚脱无根，焉能管伏庚金？而日主之情，不顾丁火可知，所以水性杨花也。\n 丁丑 癸丑 庚子 ",
+  "line": "1388"
+ },
+ {
+  "chart": "己亥丙寅丁亥庚戌",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-L",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1391"
+ },
+ {
+  "chart": "己亥丙寅丁亥庚戌",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-L",
+  "ctx": "。北方水旺，又有干癸克丁，丑未冲去丁火余气，五行无木，未得生化之情。时干之丁虚脱无根，焉能管伏庚金？而日主之情，不顾丁火可知，所以水性杨花也。\n 丁丑 癸丑 庚子 ",
+  "line": "1391"
+ },
+ {
+  "chart": "己亥丙寅丁亥庚戌",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-L",
+  "ctx": "\n 此造官星食神坐禄，印绶当令逢生，财生官旺，不伤印绶，印绶当令，足以扶身，食神得地，一气相生，五行停匀，安详纯粹。夫荣子贵，受两代一品之封。\n 乙亥 癸酉 甲辰 ",
+  "line": "1391"
+ },
+ {
+  "chart": "丁未癸丑庚子丁亥",
+  "kw": "身旺",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|GE-QUAL",
+  "ctx": "品格端庄，持身贞洁。惜丙火太旺，生助伤官，以臻镜破钗分。然喜巳丑拱金，财星得用，身旺以财为子，教子成名，两子皆贵，受三品之封。\n 丙寅 辛卯 癸酉 戊午\n 庚寅 己",
+  "line": "1394"
+ },
+ {
+  "chart": "丁未癸丑庚子丁亥",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|GE-QUAL",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1394"
+ },
+ {
+  "chart": "丁未癸丑庚子丁亥",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|GE-QUAL",
+  "ctx": "。北方水旺，又有干癸克丁，丑未冲去丁火余气，五行无木，未得生化之情。时干之丁虚脱无根，焉能管伏庚金？而日主之情，不顾丁火可知，所以水性杨花也。\n 丁丑 癸丑 庚子 ",
+  "line": "1394"
+ },
+ {
+  "chart": "丁未癸丑庚子丁亥",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|GE-QUAL",
+  "ctx": "\n 此造官星食神坐禄，印绶当令逢生，财生官旺，不伤印绶，印绶当令，足以扶身，食神得地，一气相生，五行停匀，安详纯粹。夫荣子贵，受两代一品之封。\n 乙亥 癸酉 甲辰 ",
+  "line": "1394"
+ },
+ {
+  "chart": "丁丑癸丑庚子乙酉",
+  "kw": "身旺",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": "品格端庄，持身贞洁。惜丙火太旺，生助伤官，以臻镜破钗分。然喜巳丑拱金，财星得用，身旺以财为子，教子成名，两子皆贵，受三品之封。\n 丙寅 辛卯 癸酉 戊午\n 庚寅 己",
+  "line": "1397"
+ },
+ {
+  "chart": "丁丑癸丑庚子乙酉",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1397"
+ },
+ {
+  "chart": "丁丑癸丑庚子乙酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1397"
+ },
+ {
+  "chart": "丁丑癸丑庚子乙酉",
+  "kw": "通根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": " 庚金生于季冬，不但寒金喜火，而且时逢陽刃印绶当权，足以用火敌寒；月干癸水，通根禄支，克绝丁火，其意足以欺官；时逢乙木，喜而合之，其情必向财矣。所以背夫而去，婬",
+  "line": "1397"
+ },
+ {
+  "chart": "丁丑癸丑庚子乙酉",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": "\n 此造官星食神坐禄，印绶当令逢生，财生官旺，不伤印绶，印绶当令，足以扶身，食神得地，一气相生，五行停匀，安详纯粹。夫荣子贵，受两代一品之封。\n 乙亥 癸酉 甲辰 ",
+  "line": "1397"
+ },
+ {
+  "chart": "丁丑壬子辛巳丙申",
+  "kw": "身旺",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|SHI-GUI-LU|ZHONG",
+  "ctx": "品格端庄，持身贞洁。惜丙火太旺，生助伤官，以臻镜破钗分。然喜巳丑拱金，财星得用，身旺以财为子，教子成名，两子皆贵，受三品之封。\n 丙寅 辛卯 癸酉 戊午\n 庚寅 己",
+  "line": "1400"
+ },
+ {
+  "chart": "丁丑壬子辛巳丙申",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|SHI-GUI-LU|ZHONG",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1400"
+ },
+ {
+  "chart": "丁丑壬子辛巳丙申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|SHI-GUI-LU|ZHONG",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1400"
+ },
+ {
+  "chart": "丁丑壬子辛巳丙申",
+  "kw": "通根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|SHI-GUI-LU|ZHONG",
+  "ctx": "金，生于寅时，年时两支逢生得禄，火水干透，无相克之势，有生化之情。财星得地，四柱通根，五行不悖，气静和平纯粹，生化有情。夫荣子贵，受一品之封。\n 辛酉 壬辰 丁巳 ",
+  "line": "1400"
+ },
+ {
+  "chart": "丁丑壬子辛巳丙申",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|SHI-GUI-LU|ZHONG",
+  "ctx": "\n 此造官星食神坐禄，印绶当令逢生，财生官旺，不伤印绶，印绶当令，足以扶身，食神得地，一气相生，五行停匀，安详纯粹。夫荣子贵，受两代一品之封。\n 乙亥 癸酉 甲辰 ",
+  "line": "1400"
+ },
+ {
+  "chart": "戊子戊午癸酉戊午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SHUAI|HE-HUASHEN-DESHI|ZHON",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1403"
+ },
+ {
+  "chart": "乙未辛巳乙亥丙戌",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1406"
+ },
+ {
+  "chart": "乙未辛巳乙亥丙戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1406"
+ },
+ {
+  "chart": "乙未辛巳乙亥丙戌",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "\n 此造官星食神坐禄，印绶当令逢生，财生官旺，不伤印绶，印绶当令，足以扶身，食神得地，一气相生，五行停匀，安详纯粹。夫荣子贵，受两代一品之封。\n 乙亥 癸酉 甲辰 ",
+  "line": "1406"
+ },
+ {
+  "chart": "丁巳戊申癸丑乙卯",
+  "kw": "身旺",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-H",
+  "ctx": "品格端庄，持身贞洁。惜丙火太旺，生助伤官，以臻镜破钗分。然喜巳丑拱金，财星得用，身旺以财为子，教子成名，两子皆贵，受三品之封。\n 丙寅 辛卯 癸酉 戊午\n 庚寅 己",
+  "line": "1409"
+ },
+ {
+  "chart": "丁巳戊申癸丑乙卯",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-H",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1409"
+ },
+ {
+  "chart": "丁巳戊申癸丑乙卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-H",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1409"
+ },
+ {
+  "chart": "丁巳戊申癸丑乙卯",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-H",
+  "ctx": " 此造官星食神坐禄，印绶当令逢生，财生官旺，不伤印绶，印绶当令，足以扶身，食神得地，一气相生，五行停匀，安详纯粹。夫荣子贵，受两代一品之封。\n 乙亥 癸酉 甲辰 ",
+  "line": "1409"
+ },
+ {
+  "chart": "乙亥癸酉甲辰丙寅",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORIT",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1412"
+ },
+ {
+  "chart": "乙亥癸酉甲辰丙寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORIT",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1412"
+ },
+ {
+  "chart": "乙亥癸酉甲辰丙寅",
+  "kw": "通根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORIT",
+  "ctx": "金，生于寅时，年时两支逢生得禄，火水干透，无相克之势，有生化之情。财星得地，四柱通根，五行不悖，气静和平纯粹，生化有情。夫荣子贵，受一品之封。\n 辛酉 壬辰 丁巳 ",
+  "line": "1412"
+ },
+ {
+  "chart": "乙亥癸酉甲辰丙寅",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORIT",
+  "ctx": "官星财星助金，生于寅时，年时两支逢生得禄，火水干透，无相克之势，有生化之情。财星得地，四柱通根，五行不悖，气静和平纯粹，生化有情。夫荣子贵，受一品之封。\n 辛酉 壬",
+  "line": "1412"
+ },
+ {
+  "chart": "辛酉壬辰丁巳甲辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE|S",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1415"
+ },
+ {
+  "chart": "己巳癸酉壬辰甲辰",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1418"
+ },
+ {
+  "chart": "己巳癸酉壬辰甲辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1418"
+ },
+ {
+  "chart": "庚辰壬午乙亥癸未",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1421"
+ },
+ {
+  "chart": "庚辰壬午乙亥癸未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1421"
+ },
+ {
+  "chart": "庚辰戊寅乙酉壬午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1424"
+ },
+ {
+  "chart": "丙辰癸巳丁丑甲辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1427"
+ },
+ {
+  "chart": "丙寅辛卯癸酉戊午",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SHUA",
+  "ctx": "丁未 戊申 己酉 庚戌 辛亥\n 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1430"
+ },
+ {
+  "chart": "辛丑辛卯丙子癸巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-HE|GE-QUALITY|SH",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1433"
+ },
+ {
+  "chart": "丁酉癸卯丙辰丙申",
+  "kw": "旺相",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|WANGCHONG-SHUAI|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-QUALITY|",
+  "ctx": " 丙火生于仲春，官透财藏，印星秉令，比劫邦身，似乎旺相。第嫌卯酉逢冲，癸丁相克，木火损而金水存，虽赖时干丙火之助，但丙临申位，亦自顾不",
+  "line": "1436"
+ },
+ {
+  "chart": "丁酉癸卯丙辰丙申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|WANGCHONG-SHUAI|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-QUALITY|",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1436"
+ },
+ {
+  "chart": "癸丑庚申戊午己未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1439"
+ },
+ {
+  "chart": "癸未庚申戊戌己未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1442"
+ },
+ {
+  "chart": "己酉辛未戊辰壬戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "丁巳 戊午 己未 庚申\n 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1445"
+ },
+ {
+  "chart": "丁亥壬子癸丑甲寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": " 癸水生于仲冬，支全亥子丑，北方一气，其势泛滥，一点丁火无根，最喜寅时，纳水而泄其菁华。甲木夫星坐禄，故为人聪明貌美，端庄幽娴；更喜运走东南",
+  "line": "1448"
+ },
+ {
+  "chart": "乙卯丙戌乙卯丁亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-",
+  "ctx": " 癸卯 甲辰 乙巳 丙午 丁未 戊申 己酉 庚戌\n 春木森森，旺之极矣。时干己土无根，以丁火为主。丁壬之合，去水却妙，化木不宜，所以出身贫寒。喜其运走南方火地，不但",
+  "line": "1451"
+ },
+ {
+  "chart": "戊寅甲寅丁未辛丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": " 癸卯 甲辰 乙巳 丙午 丁未 戊申 己酉 庚戌\n 春木森森，旺之极矣。时干己土无根，以丁火为主。丁壬之合，去水却妙，化木不宜，所以出身贫寒。喜其运走南方火地，不但",
+  "line": "1454"
+ },
+ {
+  "chart": "壬辰己酉辛丑癸巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": " 癸卯 甲辰 乙巳 丙午 丁未 戊申 己酉 庚戌\n 春木森森，旺之极矣。时干己土无根，以丁火为主。丁壬之合，去水却妙，化木不宜，所以出身贫寒。喜其运走南方火地，不但",
+  "line": "1457"
+ },
+ {
+  "chart": "甲午丙寅乙卯己卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|TENGLUO-XIJIA|BIJIE-PARTY|ROOT-STRUCK|R",
+  "ctx": " 癸卯 甲辰 乙巳 丙午 丁未 戊申 己酉 庚戌\n 春木森森，旺之极矣。时干己土无根，以丁火为主。丁壬之合，去水却妙，化木不宜，所以出身贫寒。喜其运走南方火地，不但",
+  "line": "1460"
+ },
+ {
+  "chart": "丁未壬寅乙卯己卯",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|SHI-",
+  "ctx": " 春木森森，旺之极矣。时干己土无根，以丁火为主。丁壬之合，去水却妙，化木不宜，所以出身贫寒。喜其运走南方火地，不但",
+  "line": "1463"
+ },
+ {
+  "chart": "辛丑癸巳丙子丁酉",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE",
+  "ctx": "见酉子，更不宜再会金局，则巳火之禄，非日干有也。虽丁火可以帮身，癸水伤之，谓财多身弱，兼之官星又旺，日主虚弱极矣。且初交壬运逢杀，辛亥年天干逢壬癸克丙丁，地支亥冲巳",
+  "line": "1473"
+ },
+ {
+  "chart": "辛丑癸巳丙子丁酉",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE",
+  "ctx": "，以杀化权；更喜财滋弱杀，定然名利双全。惜支全火局，寅亥又化木而生火，年月之庚壬无根而少生扶，至丁巳年，巳亥冲去壬水之禄，丁火合去壬水之用，死于疳症。\n 壬申 戊申",
+  "line": "1473"
+ },
+ {
+  "chart": "癸丑己未丙寅辛卯",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": "生，又生夏令，财官为用，伤官为喜，伤生财，财又生官，似乎生化有情。殊不知前则财多身弱，以官作杀，此则财绝官休，恐难厚享。癸水官星生未月，火土枯干，余气在丑，蓄水藏金",
+  "line": "1476"
+ },
+ {
+  "chart": "癸丑己未丙寅辛卯",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": "，以杀化权；更喜财滋弱杀，定然名利双全。惜支全火局，寅亥又化木而生火，年月之庚壬无根而少生扶，至丁巳年，巳亥冲去壬水之禄，丁火合去壬水之用，死于疳症。\n 壬申 戊申",
+  "line": "1476"
+ },
+ {
+  "chart": "庚戌壬午丙寅己亥",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-",
+  "ctx": "气贯生时，足以纳水，不但易养成人，可遂书香之志。然官杀一类，勿以官为喜，杀为憎，身弱者官皆是杀，身旺者杀皆是官，只要无财有印，便为佳造。如云丁火死寅，谬之极矣。寅中",
+  "line": "1479"
+ },
+ {
+  "chart": "庚戌壬午丙寅己亥",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-",
+  "ctx": "，以杀化权；更喜财滋弱杀，定然名利双全。惜支全火局，寅亥又化木而生火，年月之庚壬无根而少生扶，至丁巳年，巳亥冲去壬水之禄，丁火合去壬水之用，死于疳症。\n 壬申 戊申",
+  "line": "1479"
+ },
+ {
+  "chart": "壬申戊申壬申戊申",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SID",
+  "ctx": "气贯生时，足以纳水，不但易养成人，可遂书香之志。然官杀一类，勿以官为喜，杀为憎，身弱者官皆是杀，身旺者杀皆是官，只要无财有印，便为佳造。如云丁火死寅，谬之极矣。寅中",
+  "line": "1482"
+ },
+ {
+  "chart": "壬申甲辰壬申戊申",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-L",
+  "ctx": "气贯生时，足以纳水，不但易养成人，可遂书香之志。然官杀一类，勿以官为喜，杀为憎，身弱者官皆是杀，身旺者杀皆是官，只要无财有印，便为佳造。如云丁火死寅，谬之极矣。寅中",
+  "line": "1485"
+ },
+ {
+  "chart": "癸丑壬戌丁亥壬寅",
+  "kw": "身旺",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|LIGHT-ROOT|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE|SHIYONG-YUELING-XIANGFU|",
+  "ctx": "水，不但易养成人，可遂书香之志。然官杀一类，勿以官为喜，杀为憎，身弱者官皆是杀，身旺者杀皆是官，只要无财有印，便为佳造。如云丁火死寅，谬之极矣。寅中甲木，乃丁之嫡母",
+  "line": "1488"
+ },
+ {
+  "chart": "庚寅戊子甲寅丙寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|GE-QING|",
+  "ctx": "庚午 辛未 壬申 癸酉\n 甲木生于促春，支逢禄刃，干透比肩，旺之极矣，时上庚金，无根为忌，月干丁火为用，通辉之气。所以早登之路，仁至观察；惜无土之闲神，运至壬申，金",
+  "line": "1553"
+ },
+ {
+  "chart": "甲子丁卯甲寅庚午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": " 甲木生于促春，支逢禄刃，干透比肩，旺之极矣，时上庚金，无根为忌，月干丁火为用，通辉之气。所以早登之路，仁至观察；惜无土之闲神，运至壬申，金",
+  "line": "1556"
+ },
+ {
+  "chart": "戊戌丙辰乙未丙戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|SHIYONG",
+  "ctx": "壬戌 辛酉 庚申 己未 戊午 丁巳\n 庚金生于孟冬，水势当权，金逢禄旺，时干丁火无根，局中气势金水，亦是从金水而论，丁反为病。初交癸亥，去其丁火，其乐自如；壬戌运入",
+  "line": "1590"
+ },
+ {
+  "chart": "壬寅壬寅庚寅戊寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|JUECHU-FENGSHENG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|SHIYONG-YUELING-XIANGFU",
+  "ctx": "壬戌 辛酉 庚申 己未 戊午 丁巳\n 庚金生于孟冬，水势当权，金逢禄旺，时干丁火无根，局中气势金水，亦是从金水而论，丁反为病。初交癸亥，去其丁火，其乐自如；壬戌运入",
+  "line": "1593"
+ },
+ {
+  "chart": "壬寅壬寅庚寅戊寅",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|JUECHU-FENGSHENG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|SHIYONG-YUELING-XIANGFU",
+  "ctx": "神。初行甲运，早采芹香；癸丑北方湿土，亦作水论，登科发甲；壬子印星照临，辛亥金不通根，支逢生旺，仕至黄堂；一交庚砘，土金并旺，触其旺神，故不能免咎也。\n 丙午 甲午",
+  "line": "1593"
+ },
+ {
+  "chart": "丙寅庚寅壬午乙巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|CAIDUO-SHENRUAN|XIEQI-TAIZHONG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-C",
+  "ctx": "壬戌 辛酉 庚申 己未 戊午 丁巳\n 庚金生于孟冬，水势当权，金逢禄旺，时干丁火无根，局中气势金水，亦是从金水而论，丁反为病。初交癸亥，去其丁火，其乐自如；壬戌运入",
+  "line": "1596"
+ },
+ {
+  "chart": "丙寅庚寅壬午乙巳",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|CAIDUO-SHENRUAN|XIEQI-TAIZHONG|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-C",
+  "ctx": "神。初行甲运，早采芹香；癸丑北方湿土，亦作水论，登科发甲；壬子印星照临，辛亥金不通根，支逢生旺，仕至黄堂；一交庚砘，土金并旺，触其旺神，故不能免咎也。\n 丙午 甲午",
+  "line": "1596"
+ },
+ {
+  "chart": "丁卯壬寅庚午丙戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|LIGHT-ROOT|JUECHU-FENGSHENG|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|SHI-GUI-LU|ZHON",
+  "ctx": "壬戌 辛酉 庚申 己未 戊午 丁巳\n 庚金生于孟冬，水势当权，金逢禄旺，时干丁火无根，局中气势金水，亦是从金水而论，丁反为病。初交癸亥，去其丁火，其乐自如；壬戌运入",
+  "line": "1600"
+ },
+ {
+  "chart": "辛巳辛丑乙酉乙酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIYONG-YUELING-XIANGFU|GE-",
+  "ctx": "壬戌 辛酉 庚申 己未 戊午 丁巳\n 庚金生于孟冬，水势当权，金逢禄旺，时干丁火无根，局中气势金水，亦是从金水而论，丁反为病。初交癸亥，去其丁火，其乐自如；壬戌运入",
+  "line": "1603"
+ },
+ {
+  "chart": "辛巳辛丑乙酉乙酉",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIYONG-YUELING-XIANGFU|GE-",
+  "ctx": "神。初行甲运，早采芹香；癸丑北方湿土，亦作水论，登科发甲；壬子印星照临，辛亥金不通根，支逢生旺，仕至黄堂；一交庚砘，土金并旺，触其旺神，故不能免咎也。\n 丙午 甲午",
+  "line": "1603"
+ },
+ {
+  "chart": "癸卯乙卯甲寅乙亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHON",
+  "ctx": "壬戌 辛酉 庚申 己未 戊午 丁巳\n 庚金生于孟冬，水势当权，金逢禄旺，时干丁火无根，局中气势金水，亦是从金水而论，丁反为病。初交癸亥，去其丁火，其乐自如；壬戌运入",
+  "line": "1606"
+ },
+ {
+  "chart": "丙午甲午丙午甲午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE",
+  "ctx": "壬戌 辛酉 庚申 己未 戊午 丁巳\n 庚金生于孟冬，水势当权，金逢禄旺，时干丁火无根，局中气势金水，亦是从金水而论，丁反为病。初交癸亥，去其丁火，其乐自如；壬戌运入",
+  "line": "1609"
+ },
+ {
+  "chart": "癸酉癸亥庚申丁亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|SHIYONG",
+  "ctx": " 庚金生于孟冬，水势当权，金逢禄旺，时干丁火无根，局中气势金水，亦是从金水而论，丁反为病。初交癸亥，去其丁火，其乐自如；壬戌运入",
+  "line": "1612"
+ },
+ {
+  "chart": "丙戌壬辰癸巳甲寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": " 癸水生于季春，柱中财、官、伤三者并旺，印星伏而无气，日主休囚无根，惟官星当令，须从官星之势。所喜坐下财星，引通伤官之气，至甲午运，会成火局生官，",
+  "line": "1615"
+ },
+ {
+  "chart": "癸酉乙丑丙申丙申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-QING|GE-QUALITY|YUN-SHEN",
+  "ctx": " 丙火生丑临申，衰绝无气，酉丑拱金，月乙木凋枯无根，官星坐财，伤逢财化，从化金水之势。癸亥运中，入泮登科；辛酉庚申，去印生官，由县",
+  "line": "1618"
+ },
+ {
+  "chart": "乙丑甲申甲辰己巳",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|JUECHU-FENGSHENG|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIO",
+  "ctx": " 辛酉\n 此与前造只换一卯字，化象更真，化神更有余。嫌其癸劫争财，年干己土，透隔无根，不能去其癸水。午火未能流行。此癸水，真乃夺标之客也。虽中乡榜，终不能出仕。\n ",
+  "line": "1628"
+ },
+ {
+  "chart": "戊辰壬戌甲辰己巳",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DES",
+  "ctx": " 辛酉\n 此与前造只换一卯字，化象更真，化神更有余。嫌其癸劫争财，年干己土，透隔无根，不能去其癸水。午火未能流行。此癸水，真乃夺标之客也。虽中乡榜，终不能出仕。\n ",
+  "line": "1631"
+ },
+ {
+  "chart": "己卯丁卯壬午癸卯",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "CAIDUO-SHENRUAN|SHAZHONG-SHENQING|HE-HUASHEN-DESHI|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JI",
+  "ctx": " 此与前造只换一卯字，化象更真，化神更有余。嫌其癸劫争财，年干己土，透隔无根，不能去其癸水。午火未能流行。此癸水，真乃夺标之客也。虽中乡榜，终不能出仕。\n ",
+  "line": "1637"
+ },
+ {
+  "chart": "己卯丁卯壬午癸卯",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|SHAZHONG-SHENQING|HE-HUASHEN-DESHI|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JI",
+  "ctx": "戊戌 癸巳 壬戌\n 己亥 庚子 辛丑 壬寅 癸卯 甲辰\n 癸水生于季秋，丙火透而通根，化火斯真。嫌其时透壬水克丙，只中乡榜，直至卯运，壬水绝地，挑知县，历三任而不升",
+  "line": "1637"
+ },
+ {
+  "chart": "丙戌戊戌癸巳壬戌",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|SHAZHONG-SHENQING|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JISHUAI-CONGSHENG|S",
+  "ctx": " 癸水生于季秋，丙火透而通根，化火斯真。嫌其时透壬水克丙，只中乡榜，直至卯运，壬水绝地，挑知县，历三任而不升",
+  "line": "1640"
+ },
+ {
+  "chart": "己卯甲戌甲子己巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-D",
+  "ctx": "未 壬申 癸酉\n 壬水生于仲春，虽时逢禄印，而化神当令，又年干元神透出，时干辛金无根临绝，丁火合神，足以克之。辛金不能生水，则亥水非壬之禄旺，乃甲之长生，日干不得不",
+  "line": "1672"
+ },
+ {
+  "chart": "甲子丙子甲申己巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|XIEQI-TAIZHONG|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-Q",
+  "ctx": "未 壬申 癸酉\n 壬水生于仲春，虽时逢禄印，而化神当令，又年干元神透出，时干辛金无根临绝，丁火合神，足以克之。辛金不能生水，则亥水非壬之禄旺，乃甲之长生，日干不得不",
+  "line": "1675"
+ },
+ {
+  "chart": "甲子丙子甲申己巳",
+  "kw": "通根",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|XIEQI-TAIZHONG|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-Q",
+  "ctx": "寅 丁丑 甲戌 己巳\n 戊寅 己卯 庚辰 辛巳 壬午 癸未\n 甲木生于丑月，己土通根临旺，年之禄比，见丁火有相生之谊，无争妒之势，虽是假化，动有情而不悖。至庚辰运，",
+  "line": "1675"
+ },
+ {
+  "chart": "甲子丙子甲申己巳",
+  "kw": "失令",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|XIEQI-TAIZHONG|ZHONGGUA-2SIDE|RI-BEI-HE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-Q",
+  "ctx": "仲冬，印绶当权，本是杀印相生，无如坐下绝地，虚极不受水生，见己土贪合，合神虽真而失令，必赖丙火之生，解其寒凝之气。嫌其旺水秉令，则火亦虚脱，不能生扶，化神假而不清，",
+  "line": "1675"
+ },
+ {
+  "chart": "甲寅丁丑甲戌己巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "未 壬申 癸酉\n 壬水生于仲春，虽时逢禄印，而化神当令，又年干元神透出，时干辛金无根临绝，丁火合神，足以克之。辛金不能生水，则亥水非壬之禄旺，乃甲之长生，日干不得不",
+  "line": "1678"
+ },
+ {
+  "chart": "甲寅辛未癸亥戊午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": "未 壬申 癸酉\n 壬水生于仲春，虽时逢禄印，而化神当令，又年干元神透出，时干辛金无根临绝，丁火合神，足以克之。辛金不能生水，则亥水非壬之禄旺，乃甲之长生，日干不得不",
+  "line": "1681"
+ },
+ {
+  "chart": "甲辰丁卯壬辰辛亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|SHI-G",
+  "ctx": " 壬水生于仲春，虽时逢禄印，而化神当令，又年干元神透出，时干辛金无根临绝，丁火合神，足以克之。辛金不能生水，则亥水非壬之禄旺，乃甲之长生，日干不得不",
+  "line": "1684"
+ },
+ {
+  "chart": "己未辛未丙戌戊戌",
+  "kw": "身强",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|LIGHT-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": " 甲木生于季冬，火虚而幸通根有焰，格取从儿。木虽进气，又逢禄比帮身，所谓从儿不论身强弱，非身弱论也。前造过于燥烈。此则湿土逢燥,地润天和，生肓不悖。联登甲第，仕至待",
+  "line": "1703"
+ },
+ {
+  "chart": "甲午丁丑甲午丙寅",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-L",
+  "ctx": "季冬，火虚而幸通根有焰，格取从儿。木虽进气，又逢禄比帮身，所谓从儿不论身强弱，非身弱论也。前造过于燥烈。此则湿土逢燥,地润天和，生肓不悖。联登甲第，仕至待郎。\n 辛",
+  "line": "1706"
+ },
+ {
+  "chart": "甲申丙子乙酉丙戌",
+  "kw": "通根",
+  "excluded": false,
+  "engine_qs": "XIEQI-TAIZHONG|TENGLUO-XIJIA|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|GE-QUALITY|YUN-S",
+  "ctx": "酉 戊戌 己亥 庚子 辛丑 壬寅 癸卯\n 壬水生于季夏，休囚之地，喜其三逢辰支，通根身库，辰土能蓄水养木，甲乙并透，通根制土，儿能生母。微嫌丙火泄木生土，功名不过一",
+  "line": "1747"
+ },
+ {
+  "chart": "癸卯甲寅丁卯甲辰",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "SHISHI-BURUO|SHAZHONG-SHENQING|YIN-PARTY|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIY",
+  "ctx": "一交庚申，助起日元，顺母之性，大得际遇；及辛酉，拱保辰丑，捐纳出仕；壬戌运，土又得地，诖误落职。\n 丙戌 戊戌 辛丑 戊戌\n 己亥 庚子 辛丑 壬寅 癸卯 甲辰\n ",
+  "line": "1760"
+ },
+ {
+  "chart": "戊戌丙辰辛丑戊戌",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": "一交庚申，助起日元，顺母之性，大得际遇；及辛酉，拱保辰丑，捐纳出仕；壬戌运，土又得地，诖误落职。\n 丙戌 戊戌 辛丑 戊戌\n 己亥 庚子 辛丑 壬寅 癸卯 甲辰\n ",
+  "line": "1763"
+ },
+ {
+  "chart": "辛亥庚寅丙子乙未",
+  "kw": "通根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE",
+  "ctx": " 庚子 己亥 戊戌 丁酉 丙申\n 丙午日元，生于寅月，天干两适丁飊一可知矣。壬水通根亥支，正杀印相生。所嫌者本壬寅亥支，正确样印相生，所嫌者丁壬寅亥，以致劫刃肆逞，",
+  "line": "1824"
+ },
+ {
+  "chart": "辛亥庚寅丙子乙未",
+  "kw": "得时",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE",
+  "ctx": "。\n 丁亥 壬寅 甲戌 甲子\n 辛丑 庚子 己亥 戊戌 丁酉 丙申\n 甲生寅月，得时当令，如用丁火，壬水合去，如用戊土，寅亥生合克戌，一生成败不一，刑耗多端。还喜中",
+  "line": "1824"
+ },
+ {
+  "chart": "戊子庚申壬寅辛丑",
+  "kw": "得时",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SHUA",
+  "ctx": "。\n 丁亥 壬寅 甲戌 甲子\n 辛丑 庚子 己亥 戊戌 丁酉 丙申\n 甲生寅月，得时当令，如用丁火，壬水合去，如用戊土，寅亥生合克戌，一生成败不一，刑耗多端。还喜中",
+  "line": "1827"
+ },
+ {
+  "chart": "丁亥壬寅丙午丁酉",
+  "kw": "通根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|ZHONGG",
+  "ctx": " 丙午日元，生于寅月，天干两适丁飊一可知矣。壬水通根亥支，正杀印相生。所嫌者本壬寅亥支，正确样印相生，所嫌者丁壬寅亥，以致劫刃肆逞，",
+  "line": "1830"
+ },
+ {
+  "chart": "丁亥壬寅丙午丁酉",
+  "kw": "得时",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|ZHONGG",
+  "ctx": "。\n 丁亥 壬寅 甲戌 甲子\n 辛丑 庚子 己亥 戊戌 丁酉 丙申\n 甲生寅月，得时当令，如用丁火，壬水合去，如用戊土，寅亥生合克戌，一生成败不一，刑耗多端。还喜中",
+  "line": "1830"
+ },
+ {
+  "chart": "甲戌丙寅甲戌乙亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "，戌得生拱之情，则上安遭遇下全。己巳运，火土并旺，科甲连登；庚是辛未，火得地，金无根，又有两火回克，庚辛不能抗君，午未足以益臣，仁至藩臬；壬申间寅克丙，逆君之性，不",
+  "line": "1852"
+ },
+ {
+  "chart": "甲子甲戌甲寅乙亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|Z",
+  "ctx": "初运北主水旺。助君之势，刑丧破耗，祖业不保；丁丑运，火土齐来，稍成家业；戊寅己卯无根，木临旺，回禄三次，起倒异常，刑妻克子，至卯而亡。\n\n",
+  "line": "1855"
+ },
+ {
+  "chart": "戊寅甲寅甲寅庚午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|JIWANG-HU",
+  "ctx": " 甲寅日元，年月皆寅，满盘皆木，时上庚金无根，臣盛君衰极矣。喜其午时流通木性，则戊土弱而有根，臣心顺矣，又逢丙辰、丁巳、戊午",
+  "line": "1865"
+ },
+ {
+  "chart": "丙戌甲午丙午己丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": " 辛卯 庚寅 己丑 戊子\n 丙火生于午月午时，木从火势烈之极矣，无土以顺其性，金无根，水无源，激其猛烈之性，所以幼失父母，依兄嫂居。好勇不安分，年十六七，身材雄伟，",
+  "line": "1923"
+ },
+ {
+  "chart": "辛巳甲午丙子甲午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SHUAI|SHI-GUI-",
+  "ctx": " 丙火生于午月午时，木从火势烈之极矣，无土以顺其性，金无根，水无源，激其猛烈之性，所以幼失父母，依兄嫂居。好勇不安分，年十六七，身材雄伟，",
+  "line": "1926"
+ },
+ {
+  "chart": "丙寅甲午丙午己丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-",
+  "ctx": "庚寅\n 乙巳 甲辰 癸卯 壬寅 辛丑 庚子\n 丙午日元，生于午月，年时寅卯，庚金无根，置之不用，格成炎上；局中无土吐秀，书香不利，行伍出身。至卯运得官，壬运失职；寅",
+  "line": "1976"
+ },
+ {
+  "chart": "丁卯丙午丙午庚寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE",
+  "ctx": " 丙午日元，生于午月，年时寅卯，庚金无根，置之不用，格成炎上；局中无土吐秀，书香不利，行伍出身。至卯运得官，壬运失职；寅",
+  "line": "1979"
+ },
+ {
+  "chart": "乙丑丙戌丙午庚寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SH",
+  "ctx": "庚戌 辛亥 壬子\n 丙寅日元，生地午月，支全火局，陽明之气，第此缘劫刃当权，壬水无根，置之不用，不及前造多矣。丑中辛金伏郁，所喜者，运走西北陰浊之地。出身吏部，发财",
+  "line": "2009"
+ },
+ {
+  "chart": "壬戌丙午丙寅己丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": " 丙寅日元，生地午月，支全火局，陽明之气，第此缘劫刃当权，壬水无根，置之不用，不及前造多矣。丑中辛金伏郁，所喜者，运走西北陰浊之地。出身吏部，发财",
+  "line": "2012"
+ },
+ {
+  "chart": "丙寅甲午丙申壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZH",
+  "ctx": "乙酉 丙戌 丁亥 戊子\n 甲木生于午月，支中三午一戌，火炎土燥，伤官肆逞，月壬水无根，全赖庚金滋水，所以科甲联合。其仕路蹭蹬者，只因地支皆火，无干金水，木无托根之地",
+  "line": "2032"
+ },
+ {
+  "chart": "丙申甲午丙寅壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZH",
+  "ctx": "乙酉 丙戌 丁亥 戊子\n 甲木生于午月，支中三午一戌，火炎土燥，伤官肆逞，月壬水无根，全赖庚金滋水，所以科甲联合。其仕路蹭蹬者，只因地支皆火，无干金水，木无托根之地",
+  "line": "2035"
+ },
+ {
+  "chart": "戊子戊午丙辰戊戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG",
+  "ctx": "乙酉 丙戌 丁亥 戊子\n 甲木生于午月，支中三午一戌，火炎土燥，伤官肆逞，月壬水无根，全赖庚金滋水，所以科甲联合。其仕路蹭蹬者，只因地支皆火，无干金水，木无托根之地",
+  "line": "2038"
+ },
+ {
+  "chart": "庚午乙酉庚午壬午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|ZHONGGUA-2SIDE|RI-BE",
+  "ctx": "乙酉 丙戌 丁亥 戊子\n 甲木生于午月，支中三午一戌，火炎土燥，伤官肆逞，月壬水无根，全赖庚金滋水，所以科甲联合。其仕路蹭蹬者，只因地支皆火，无干金水，木无托根之地",
+  "line": "2041"
+ },
+ {
+  "chart": "己丑丙子壬辰戊申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SID",
+  "ctx": "乙酉 丙戌 丁亥 戊子\n 甲木生于午月，支中三午一戌，火炎土燥，伤官肆逞，月壬水无根，全赖庚金滋水，所以科甲联合。其仕路蹭蹬者，只因地支皆火，无干金水，木无托根之地",
+  "line": "2044"
+ },
+ {
+  "chart": "辛卯乙未甲子庚午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|SHIYONG-",
+  "ctx": "乙酉 丙戌 丁亥 戊子\n 甲木生于午月，支中三午一戌，火炎土燥，伤官肆逞，月壬水无根，全赖庚金滋水，所以科甲联合。其仕路蹭蹬者，只因地支皆火，无干金水，木无托根之地",
+  "line": "2048"
+ },
+ {
+  "chart": "庚午壬午甲戌庚午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIYONG-YUELING-XIANGFU|GE-",
+  "ctx": " 甲木生于午月，支中三午一戌，火炎土燥，伤官肆逞，月壬水无根，全赖庚金滋水，所以科甲联合。其仕路蹭蹬者，只因地支皆火，无干金水，木无托根之地",
+  "line": "2051"
+ },
+ {
+  "chart": "癸未甲寅戊戌庚申",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SHUAI|SHI-GU",
+  "ctx": "庚午 戊寅 甲寅\n 辛未 壬申 癸酉 甲戌 乙亥 丙子\n 局中七杀五见，一庚临午无根，所谓弱神无根，宜去之，旺神太过，宜泄之也。且午火则和矣。喜其午火当令，全无水气",
+  "line": "2067"
+ },
+ {
+  "chart": "甲寅庚午戊寅甲寅",
+  "kw": "无根",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|GE-QING|GE-QUALITY|CAI-",
+  "ctx": " 局中七杀五见，一庚临午无根，所谓弱神无根，宜去之，旺神太过，宜泄之也。且午火则和矣。喜其午火当令，全无水气",
+  "line": "2070"
+ },
+ {
+  "chart": "丙申乙未丁未庚戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SH",
+  "ctx": " 丙申 甲午\n 戊申 己酉 庚戌 辛亥 壬子 癸丑\n 丙火生于未月午时，年干壬水无根，申金远隔，本不能生水，又被寅冲午劫，则肺气愈亏。兼之丁壬相合化木，从火则心火愈",
+  "line": "2080"
+ },
+ {
+  "chart": "壬寅丁未丙申甲午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZH",
+  "ctx": " 丙火生于未月午时，年干壬水无根，申金远隔，本不能生水，又被寅冲午劫，则肺气愈亏。兼之丁壬相合化木，从火则心火愈",
+  "line": "2083"
+ },
+ {
+  "chart": "己巳辛未戊戌己未",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "火，得申时壬水逢生，格成假从财，故遗业丰厚，读书入学，妻子两全，若一见火，为财多身弱，一事无成。至甲午运，木无根而从火，己巳年火土并旺，气血必伤，病患肠胃血症而亡。",
+  "line": "2128"
+ },
+ {
+  "chart": "己巳辛未戊戌己未",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "财，故遗业丰厚，读书入学，妻子两全，若一见火，为财多身弱，一事无成。至甲午运，木无根而从火，己巳年火土并旺，气血必伤，病患肠胃血症而亡。\n 金水伤官，寒则冷嗽，热则",
+  "line": "2128"
+ },
+ {
+  "chart": "庚辰己丑己亥壬申",
+  "kw": "身弱",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "火，得申时壬水逢生，格成假从财，故遗业丰厚，读书入学，妻子两全，若一见火，为财多身弱，一事无成。至甲午运，木无根而从火，己巳年火土并旺，气血必伤，病患肠胃血症而亡。",
+  "line": "2131"
+ },
+ {
+  "chart": "庚辰己丑己亥壬申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "财，故遗业丰厚，读书入学，妻子两全，若一见火，为财多身弱，一事无成。至甲午运，木无根而从火，己巳年火土并旺，气血必伤，病患肠胃血症而亡。\n 金水伤官，寒则冷嗽，热则",
+  "line": "2131"
+ },
+ {
+  "chart": "壬辰壬子辛酉己丑",
+  "kw": "衰弱",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": "之地，名利两全。其不用火者，身衰之故也。凡金水伤官用火，必要身旺逢财，中和用水，衰弱有土也。\n 己巳 庚午 己亥 丙寅\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 己土",
+  "line": "2142"
+ },
+ {
+  "chart": "壬辰壬子辛酉己丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": "水为用者十有八九；取火者必要木火齐来，又要日元旺相，此造日元虽旺，局中少木，虚火无根，必以水为用神也。壬申运由教习得知县，辛未支丁丑年，火土并旺，合取壬水，子水亦伤",
+  "line": "2142"
+ },
+ {
+  "chart": "己丑丙子辛酉壬辰",
+  "kw": "衰弱",
+  "excluded": false,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": "之地，名利两全。其不用火者，身衰之故也。凡金水伤官用火，必要身旺逢财，中和用水，衰弱有土也。\n 己巳 庚午 己亥 丙寅\n 己巳 戊辰 丁卯 丙寅 乙丑 甲子\n 己土",
+  "line": "2145"
+ },
+ {
+  "chart": "己丑丙子辛酉壬辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY",
+  "ctx": "水为用者十有八九；取火者必要木火齐来，又要日元旺相，此造日元虽旺，局中少木，虚火无根，必以水为用神也。壬申运由教习得知县，辛未支丁丑年，火土并旺，合取壬水，子水亦伤",
+  "line": "2145"
+ },
+ {
+  "chart": "甲戌丙子庚子丙戌",
+  "kw": "身旺",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|LIGHT-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|GE-QING|GE-QUALITY|SHI-",
+  "ctx": "愈，加捐出仕辛巳长生之地，名利两全。其不用火者，身衰之故也。凡金水伤官用火，必要身旺逢财，中和用水，衰弱有土也。\n 己巳 庚午 己亥 丙寅\n 己巳 戊辰 丁卯 丙寅",
+  "line": "2148"
+ },
+ {
+  "chart": "甲戌丙子庚子丙戌",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|LIGHT-ROOT|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|GE-QING|GE-QUALITY|SHI-",
+  "ctx": "申丁酉，西方金地。至乙未甲午，木火相生，土愈燥，竟得蛇皮疯，所谓皮痒也。癸巳运水无根，不能克火及激其焰，其疾卒以亡身。此火土逼干癸水，肾家绝也。\n 己丑 丁丑 己亥",
+  "line": "2148"
+ },
+ {
+  "chart": "己巳庚午己亥丙寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-",
+  "ctx": "申丁酉，西方金地。至乙未甲午，木火相生，土愈燥，竟得蛇皮疯，所谓皮痒也。癸巳运水无根，不能克火及激其焰，其疾卒以亡身。此火土逼干癸水，肾家绝也。\n 己丑 丁丑 己亥",
+  "line": "2152"
+ },
+ {
+  "chart": "辛未戊戌戊戌丁巳",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-",
+  "ctx": "申丁酉，西方金地。至乙未甲午，木火相生，土愈燥，竟得蛇皮疯，所谓皮痒也。癸巳运水无根，不能克火及激其焰，其疾卒以亡身。此火土逼干癸水，肾家绝也。\n 己丑 丁丑 己亥",
+  "line": "2155"
+ },
+ {
+  "chart": "己丑丁丑己亥乙丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|LIGHT-ROOT|BIJIE-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SID",
+  "ctx": " 己土生于季冬，支逢三丑，日主本旺，过于寒湿，丁火无根，不能去其寒湿之气。乙木凋枯，置之不用，书香难就；己土属脾，寒而且湿，故幼多疮毒",
+  "line": "2158"
+ },
+ {
+  "chart": "丙戌己亥甲戌庚午",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-HE|GE-QING|G",
+  "ctx": " 甲木生于亥月，印虽当令，四柱土多克水，天干庚金无根，又与亥水远隔，戌中辛金郁而爱騻，午丙引出戌中丁火，亥水被戌土制定，不能克火，所",
+  "line": "2161"
+ },
+ {
+  "chart": "壬辰己酉癸卯己卯",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|WANGCHONG-SH",
+  "ctx": "令制杀，辰中木有余气而生身，病在申金，无此尽美，所以天资过人。丁卯年合杀，而印星得地，中乡榜，辛未年去其子水，木火皆得余气，春闱亦捷。究竟申金为嫌，不得大用归班；更",
+  "line": "2204"
+ },
+ {
+  "chart": "己亥甲戌庚子丙子",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|LIGHT-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|HE-HUASHEN-DESHI|ZHONGGUA-",
+  "ctx": "令制杀，辰中木有余气而生身，病在申金，无此尽美，所以天资过人。丁卯年合杀，而印星得地，中乡榜，辛未年去其子水，木火皆得余气，春闱亦捷。究竟申金为嫌，不得大用归班；更",
+  "line": "2207"
+ },
+ {
+  "chart": "丙申壬辰丙子壬辰",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "SHAZHONG-SHENQING|ZHONGGUA-2SIDE|WUGEN-YOUFU|JISHUAI-CONGSHENG|SHIYONG-YUELING-XIANGFU|GE-",
+  "ctx": "令制杀，辰中木有余气而生身，病在申金，无此尽美，所以天资过人。丁卯年合杀，而印星得地，中乡榜，辛未年去其子水，木火皆得余气，春闱亦捷。究竟申金为嫌，不得大用归班；更",
+  "line": "2213"
+ },
+ {
+  "chart": "庚戌辛巳乙卯戊寅",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-HE|SHIYONG-YUEL",
+  "ctx": "甲寅\n 甲寅 癸丑 壬子 辛亥 庚戌 己酉\n 戊土生于仲春，官杀并旺临禄，又才星得地生扶，虽坐下午火印绶，虚土不能纳火各成充命从杀一既从，水作混论，郅了运冲去午火，",
+  "line": "2219"
+ },
+ {
+  "chart": "癸亥乙卯戊午甲寅",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|RI-BEI-HE|GE-QING|GE-Q",
+  "ctx": " 戊土生于仲春，官杀并旺临禄，又才星得地生扶，虽坐下午火印绶，虚土不能纳火各成充命从杀一既从，水作混论，郅了运冲去午火，",
+  "line": "2222"
+ },
+ {
+  "chart": "癸巳壬戌乙卯戊寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|SHIYONG-YUE",
+  "ctx": "丁巳 己酉\n 乙巳 丙午 丁未 戊申 己酉 庚戌\n 丁火生于季春，官星虽起，坐下无根，其气归木。日主临旺，时财拱会有情，却与官星不通；且中年运走土金，财得泮溢，官星",
+  "line": "2236"
+ },
+ {
+  "chart": "癸巳壬戌乙卯戊寅",
+  "kw": "得时",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2SIDE|SHIYONG-YUE",
+  "ctx": "，用巳火秀气，戌土火库收之，壬癸克之。格局本无出色，且辛金司令，壬水进气通源，幸得时透戊土，去浊留清，文望若高山北斗，品行似良玉精金，中运逢火，丙子优贡。惜子水得地",
+  "line": "2236"
+ },
+ {
+  "chart": "癸未庚申甲申乙亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|JUECHU-FENGSHENG|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROO",
+  "ctx": "丁巳 己酉\n 乙巳 丙午 丁未 戊申 己酉 庚戌\n 丁火生于季春，官星虽起，坐下无根，其气归木。日主临旺，时财拱会有情，却与官星不通；且中年运走土金，财得泮溢，官星",
+  "line": "2239"
+ },
+ {
+  "chart": "壬午甲辰丁巳己酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|HE-HUASHEN-",
+  "ctx": " 丁火生于季春，官星虽起，坐下无根，其气归木。日主临旺，时财拱会有情，却与官星不通；且中年运走土金，财得泮溢，官星",
+  "line": "2242"
+ },
+ {
+  "chart": "癸未乙卯丙午丁酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|WA",
+  "ctx": "\n 己亥 癸酉 壬申 戊申\n 壬申 辛未 庚午 己巳 戊辰 丁卯\n 此造官杀并透无根，金水太旺，大不及前造之纯粹也。喜其运走南方火土，精足神旺。至未运，早游泮水，五",
+  "line": "2245"
+ },
+ {
+  "chart": "戊申庚申壬申甲辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|YIN-PARTY|ROOT-GAN-PRIORITY|SHI-GUI-LU|",
+  "ctx": "\n 己亥 癸酉 壬申 戊申\n 壬申 辛未 庚午 己巳 戊辰 丁卯\n 此造官杀并透无根，金水太旺，大不及前造之纯粹也。喜其运走南方火土，精足神旺。至未运，早游泮水，五",
+  "line": "2248"
+ },
+ {
+  "chart": "己亥癸酉壬申戊申",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|Z",
+  "ctx": " 此造官杀并透无根，金水太旺，大不及前造之纯粹也。喜其运走南方火土，精足神旺。至未运，早游泮水，五",
+  "line": "2251"
+ },
+ {
+  "chart": "己巳壬申甲寅戊辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|JUECHU-FENGSHENG|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "\n 丙火生于孟春，官透为用，清而纯粹，惜乎金水遥隔，无相生之意；且木火并旺，金水无根，书香不继，游幕捐给县令，究竟财官不通门户，丁丑年大运在戌，火土当权，得疾而亡。",
+  "line": "2258"
+ },
+ {
+  "chart": "庚午丙戌乙卯丁丑",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|ZHONGGUA-2SIDE|RI-BEI-",
+  "ctx": "\n 丙火生于孟春，官透为用，清而纯粹，惜乎金水遥隔，无相生之意；且木火并旺，金水无根，书香不继，游幕捐给县令，究竟财官不通门户，丁丑年大运在戌，火土当权，得疾而亡。",
+  "line": "2261"
+ },
+ {
+  "chart": "己丑庚午戊申癸亥",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|XIEQI-TAIZHONG|HEAVY-ROOT|BIJIE-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORI",
+  "ctx": "\n 丙火生于孟春，官透为用，清而纯粹，惜乎金水遥隔，无相生之意；且木火并旺，金水无根，书香不继，游幕捐给县令，究竟财官不通门户，丁丑年大运在戌，火土当权，得疾而亡。",
+  "line": "2264"
+ },
+ {
+  "chart": "壬子甲辰戊戌丙辰",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|DESHI-BUWANG|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": "\n 丙火生于孟春，官透为用，清而纯粹，惜乎金水遥隔，无相生之意；且木火并旺，金水无根，书香不继，游幕捐给县令，究竟财官不通门户，丁丑年大运在戌，火土当权，得疾而亡。",
+  "line": "2267"
+ },
+ {
+  "chart": "癸巳甲寅丙戌庚寅",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|SHISHI-BURUO|HEAVY-ROOT|YIN-PARTY|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHO",
+  "ctx": " 丙火生于孟春，官透为用，清而纯粹，惜乎金水遥隔，无相生之意；且木火并旺，金水无根，书香不继，游幕捐给县令，究竟财官不通门户，丁丑年大运在戌，火土当权，得疾而亡。",
+  "line": "2270"
+ },
+ {
+  "chart": "壬辰甲辰辛酉丁酉",
+  "kw": "无根",
+  "excluded": true,
+  "engine_qs": "REN-CAIGUAN|XIEQI-TAIZHONG|HEAVY-ROOT|ROOT-STRUCK|ROOT-GAN-PRIORITY|SHI-GUI-LU|ZHONGGUA-2S",
+  "ctx": " 辛金生于季春，支逢辰酉，干透壬丁，似乎佳美，不知地支湿土逢金，丁火虚无根，甲木虽有生火，地支辰酉化金，亦自顾不暇，捐纳部属，不但财多破耗，而且不能得缺。",
+  "line": "2273"
+ },
+ {
+  "chart": "乙酉丙戌癸酉丁巳",
+  "kw": "得地",
+  "excluded": true,
+  "engine_qs": "CAIDUO-SHENRUAN|ZHONGGUA-2SIDE|WUGEN-YOUFU|SHIYONG-YUELING-XIANGFU|GE-QUALITY|YUN-SHENG-RO",
+  "ctx": " 癸酉日元，生于戌月，地支官印相生，肖可知矣。所嫌者，天士内财得地，兼之乙木助火克金，所以书香难遂。喜秋金有气，异路出身，至巳运逢财坏印，丁艰回籍",
+  "line": "2339"
+ }
+]

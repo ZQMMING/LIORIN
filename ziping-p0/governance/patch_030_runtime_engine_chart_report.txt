@@ -1,0 +1,21 @@
+﻿==== PATCH-030 Runtime Decision Engine Contract ====
+
+==== ADMITTED_RULE 加载门槛 ====
+  binding七字段 / evidence grade≤B / producer whitelist / golden_pass 登记（当前全 false）
+
+==== 1983-1103 运行时匹配（禁自行综合） ====
+  CAND-WANG-001: {'state': 'wang_state', 'value': 'UNKNOWN', 'match_result': 'ABSTAIN', 'producer': '024', 'evidence_chain': ['EVID-001'], 'golden_pass': False}
+  CAND-WANG-002: {'state': 'wang_state(SUPPORTING)', 'value': 'UNKNOWN', 'match_result': 'ABSTAIN', 'producer': '024', 'evidence_chain': ['EVID-002'], 'golden_pass': False}
+  CAND-SHUAI-001: {'state': 'shuai_state', 'value': 'SHUAI', 'match_result': 'MATCHED', 'producer': '024', 'evidence_chain': ['EVID-001'], 'golden_pass': False}
+  CAND-QIANG-001: {'state': 'qiang_state', 'value': 'UNKNOWN', 'match_result': 'ABSTAIN', 'producer': '024', 'evidence_chain': ['EVID-001'], 'golden_pass': False}
+  RULE-022C-01: {'state': 'wealth_relation_state', 'value': 'UNDETERMINED', 'match_result': 'ABSTAIN', 'producer': '022D', 'evidence_chain': ['EVID-003'], 'golden_pass': False}
+  RULE-022C-05: {'state': 'context_marker', 'value': 'context_marker(不产出 strength)', 'match_result': 'ABSTAIN', 'producer': '022D', 'evidence_chain': ['EVID-007'], 'golden_pass': False}
+
+==== 四态机制 ====
+  REJECT=门槛拒绝（D级/引用不实）｜ABSTAIN=条件不完整候选不成立｜UNKNOWN=无授权综合｜UNDETERMINED=冲突/综合条件未满足
+
+==== 冲突演示（CONTRACT_DEMO，非真实规则） ====
+  若同 state 两规则命中输出不同 → UNDETERMINED + conflict 登记（禁评分/投票/合并）
+
+==== 核心禁令 ====
+  多规则命中 → 模型自行综合 → 未经注册结论：FORBIDDEN

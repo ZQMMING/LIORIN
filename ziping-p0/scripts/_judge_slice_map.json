@@ -1,0 +1,2775 @@
+{
+ "judge_points": [
+  {
+   "file": "bingyao_layer.py",
+   "line": 36,
+   "slices": [],
+   "origlines": [
+    "PZZQL957",
+    "SFTKL424"
+   ],
+   "text": "#   依据: PZZQ L957「除其病神, 即谓之药」(以抑为喜则去其抑者为病); SFTK L424 病药说"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 37,
+   "slices": [],
+   "origlines": [
+    "DTSL240"
+   ],
+   "text": "#   「用财见比肩为病喜官杀为药, 用食神伤官以印为病喜财为药」; DTS L240「格中如去病,财禄两相宜」。"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 99,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'PATHOLOGY.QIANG_RUO.004',   # DTS 准(财多身弱)"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 100,
+   "slices": [
+    "PATHOLOGY",
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_support': ['PATHOLOGY.QIANG_RUO.009', 'PATHOLOGY.QIANG_RUO.010'],"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 107,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'PATHOLOGY.QIANG_RUO.005',   # DTS 准(杀重身轻)"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 108,
+   "slices": [
+    "PATHOLOGY",
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_support': ['PATHOLOGY.QIANG_RUO.009', 'PATHOLOGY.QIANG_RUO.010'],"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 115,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'PATHOLOGY.QIANG_RUO.020',   # SFTK 雕枯旺弱四病(旁参)"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 116,
+   "slices": [
+    "STRUCTURE..001"
+   ],
+   "origlines": [],
+   "text": "'slice_support': ['STRUCTURE.GE_JU.SHI_SHEN.001'],  # PZZQ 食神本属泄气"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 123,
+   "slices": [
+    "STRUCTURE..003"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'STRUCTURE.GE_JU.JIU_YING.003',  # DTS 准(伤官格见官)"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 124,
+   "slices": [
+    "STRUCTURE..001"
+   ],
+   "origlines": [],
+   "text": "'slice_support': ['STRUCTURE.GE_JU.SHANG_GUAN.001'],"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 131,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'PATHOLOGY.JIE_GOU.018',   # SFTK 枭神夺食补曰(旁参)"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 132,
+   "slices": [
+    "PATHOLOGY",
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_support': ['PATHOLOGY.JIE_GOU.016', 'PATHOLOGY.JIE_GOU.017'],"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 138,
+   "slices": [],
+   "origlines": [
+    "PZZQL241"
+   ],
+   "text": "'classic': 'PZZQ241/255',"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 155,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'PATHOLOGY.QIANG_RUO.001',   # DTS 三十二、众寡(强众) 准"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 156,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_support': ['PATHOLOGY.QIANG_RUO.020'],"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 163,
+   "slices": [
+    "STATE..001"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'STATE.WANG_SHUAI.FAN_JU.001',  # DTS 反局总纲 准"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 164,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "'slice_support': ['PATHOLOGY.ZHI_FA.010'],"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 176,
+   "slices": [],
+   "origlines": [
+    "PZZQL4106"
+   ],
+   "text": "'classic': 'PZZQ4106 制煞过重同样成病',"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 177,
+   "slices": [
+    "SUI_YUN..009"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.009',  # SFTK 制伏太过(旁参)"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 213,
+   "slices": [],
+   "origlines": [
+    "PZZQL4106"
+   ],
+   "text": "'classic': 'PZZQ4106 身旺者宜财',"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 286,
+   "slices": [],
+   "origlines": [
+    "PZZQL2319"
+   ],
+   "text": "# 核1甲路: 三病原文均字面含「身弱/身轻」前提——CAI_DUO(PZZQ L2319「若财多身弱」/"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 287,
+   "slices": [],
+   "origlines": [
+    "YHZPL2915",
+    "DTSL334"
+   ],
+   "text": "#   YHZP L2915「日主身弱之人最忌财星过多」)、SHA_ZHONG(DTS L334「杀重身轻」/"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 288,
+   "slices": [],
+   "origlines": [
+    "YHZPL4923",
+    "PZZQL3930"
+   ],
+   "text": "#   YHZP L4923「杀重身轻终有败」)、XIE_QI(PZZQ L3930「身轻泄气太重」/"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 426,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "# STEP-L7-1 (2026-10, 切片校准): 兜底分支对齐 PATHOLOGY.QIANG_RUO.004"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 570,
+   "slices": [],
+   "origlines": [
+    "PZZQL4106"
+   ],
+   "text": "# 5b. 制杀太过 (PZZQ4106\"制煞过重同样成病\"):"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 896,
+   "slices": [],
+   "origlines": [
+    "SFTKL424"
+   ],
+   "text": "#   依据: SFTK L424「四柱纯土水日干则为杀重身轻…土为诸格之病」+「用财见比肩为病喜官杀为药」"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 916,
+   "slices": [],
+   "origlines": [
+    "PZZQL957",
+    "SFTKL424"
+   ],
+   "text": "- 消的明文: PZZQ L957「除其病神, 即谓之药」; SFTK L424「原有所害之字而"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 917,
+   "slices": [],
+   "origlines": [
+    "DTSL240"
+   ],
+   "text": "得一字以去之」; DTS L240「格中如去病, 财禄两相宜」。"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 919,
+   "slices": [],
+   "origlines": [
+    "DTSL250"
+   ],
+   "text": "1. 合判据 (DTS L250 通关「必得引用无合之神及刑冲所间之物」):"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 923,
+   "slices": [],
+   "origlines": [
+    "SFTKL424"
+   ],
+   "text": "2. 根判据 (SFTK L424「或本身病重而药少…又宜行运以取其中和」):"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 925,
+   "slices": [],
+   "origlines": [
+    "PZZQL3977",
+    "QTBJL774"
+   ],
+   "text": "3. 势判据 (PZZQ L3977「透己土财以解之, 惜病重药轻」/ QTBJ L774"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 989,
+   "slices": [],
+   "origlines": [
+    "DTSL461"
+   ],
+   "text": "#    (DTS L461「羁绊喜神之合, 如乙喜神庚合之则羁绊」; L425 真化需得令逢辰独自合;"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 990,
+   "slices": [],
+   "origlines": [
+    "PZZQL421"
+   ],
+   "text": "#     PZZQ L421「合而不化…两失其用」——合即牵绊)。"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 1011,
+   "slices": [],
+   "origlines": [
+    "DTSL461",
+    "PZZQL421"
+   ],
+   "text": "'(DTS L461 羁绊喜神之合; L425/PZZQ L421)' % '、'.join(yao_wx))"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 1035,
+   "slices": [],
+   "origlines": [
+    "PZZQL3977"
+   ],
+   "text": "# ③ 势判据: 病 combo > 药 combo -> 病重药轻 (PZZQ L3977 惜病重药轻)"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 1040,
+   "slices": [],
+   "origlines": [
+    "PZZQL3977"
+   ],
+   "text": "'(PZZQ L3977 惜病重药轻)' % (bs_wx, bing_combo, yao_combo))"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 1046,
+   "slices": [],
+   "origlines": [
+    "PZZQL957",
+    "SFTKL424"
+   ],
+   "text": "'(PZZQ L957 除其病神即谓之药; SFTK L424 得一字以去之; '"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 1047,
+   "slices": [],
+   "origlines": [
+    "DTSL240"
+   ],
+   "text": "'DTS L240 格中如去病财禄两相宜)')"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 1059,
+   "slices": [],
+   "origlines": [
+    "DTSL250",
+    "SFTKL424"
+   ],
+   "text": "2026-10-06: 三判据(合/根/势)各有原文(DTS L250 无合之神 / SFTK L424 病重而药少 /"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 1060,
+   "slices": [],
+   "origlines": [
+    "PZZQL3977",
+    "QTBJL774"
+   ],
+   "text": "PZZQ L3977+QTBJ L774 病重药轻), 已落; 干run见 apply_yuanju_yao 注释。"
+  },
+  {
+   "file": "bingyao_layer.py",
+   "line": 1095,
+   "slices": [],
+   "origlines": [
+    "SFTKL424",
+    "PZZQL957"
+   ],
+   "text": "'默认关闭; 药有效性(被合/无力/病重药少)待核 SFTK L424/PZZQ L957 原文; '"
+  },
+  {
+   "file": "daymaster_tian_he.py",
+   "line": 135,
+   "slices": [],
+   "origlines": [
+    "PZZQL536"
+   ],
+   "text": "#   依据: PZZQ L536「两乙合庚, 甲日隔之, 仍作合煞留官, 无减福也」"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 5,
+   "slices": [
+    "STATE..001"
+   ],
+   "origlines": [],
+   "text": "切片来源: STATE.WANG_SHUAI.FAN_JU.001~004 (文库已建, 已校验)"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 77,
+   "slices": [],
+   "origlines": [
+    "DTSL357"
+   ],
+   "text": "\"\"\"旺: ling_state ∈ {旺, 相}。DTS L357「伤重印轻身弱」等全用相对旺衰, 非绝对阈值。\"\"\""
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 197,
+   "slices": [
+    "STATE..001"
+   ],
+   "origlines": [],
+   "text": "切片来源: STATE.WANG_SHUAI.FAN_JU.001~004 (文库已建, 已校验)"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 285,
+   "slices": [],
+   "origlines": [
+    "DTSL357"
+   ],
+   "text": "# 「旺」: 旺相二态。 DTS L357「伤重印轻身弱」等全用相对旺衰, 非绝对阈值。"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 323,
+   "slices": [],
+   "origlines": [
+    "PZZQL3574"
+   ],
+   "text": "\"\"\"判反局四句。DTS 准神 L442-L451 + 任氏「印旺/财星有气」分野 + PZZQ L3574-3577。"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 352,
+   "slices": [],
+   "origlines": [
+    "DTSL445"
+   ],
+   "text": "# ---- ① 君赖臣生 DTS L445 + 任氏: 印旺 + 财有气 -> 用财破印 ----"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 360,
+   "slices": [
+    "STATE..001"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'STATE.WANG_SHUAI.FAN_JU.001',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 361,
+   "slices": [],
+   "origlines": [
+    "DTSL445"
+   ],
+   "text": "'classic_line': 'DTS L445「水泛木浮, 土止水则生木……皆君赖臣生也」; 任氏「君赖臣生, 局中印绶虽旺, 柱中财星有气, 可用财破印也」',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 364,
+   "slices": [],
+   "origlines": [
+    "DTSL449"
+   ],
+   "text": "# ---- ② 母慈灭子 DTS L449 + 任氏: 印旺 + 财无气 -> 顺母之性, 不可财破印 ----"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 373,
+   "slices": [
+    "STATE..003"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'STATE.WANG_SHUAI.FAN_JU.003',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 374,
+   "slices": [],
+   "origlines": [
+    "DTSL449"
+   ],
+   "text": "'classic_line': 'DTS L449「木母也, 火子也, 太旺谓之慈母, 反使火炽百焚灭, 是谓灭子」; 任氏「母慈灭子, 纵有财星无气, 未可以财星破印也」',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 377,
+   "slices": [],
+   "origlines": [
+    "DTSL447"
+   ],
+   "text": "# ---- ③ 儿能救母 DTS L447 链式: 伤母者(官杀)有气 + 儿(食伤)能克之 ----"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 386,
+   "slices": [
+    "STATE..002"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'STATE.WANG_SHUAI.FAN_JU.002',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 387,
+   "slices": [],
+   "origlines": [
+    "DTSL447"
+   ],
+   "text": "'classic_line': 'DTS L447「木被金伤, 火克金则生木; 火遭水克, 土克水则生火……皆儿能生母之意」',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 390,
+   "slices": [],
+   "origlines": [
+    "DTSL451"
+   ],
+   "text": "# ---- ④ 夫健怕妻 DTS L451 + DT-0375: 妻(我克)旺而生我克者 -> 反制我 ----"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 398,
+   "slices": [
+    "STATE..004"
+   ],
+   "origlines": [],
+   "text": "'slice_id': 'STATE.WANG_SHUAI.FAN_JU.004',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 399,
+   "slices": [],
+   "origlines": [
+    "DTSL451"
+   ],
+   "text": "'classic_line': 'DTS L451「木是夫也, 土是妻也。木虽旺, 土能生金而克木, 是谓夫健而怕妻」; DT-0375「四柱土多, 时透辛金, 土生金, 金克木, 谓夫健怕妻」',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 427,
+   "slices": [],
+   "origlines": [
+    "DTSL442",
+    "DTSL445"
+   ],
+   "text": "'evidence_refs': ['DTS L442 反局章标题', 'DTS L445 君赖臣生',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 428,
+   "slices": [],
+   "origlines": [
+    "DTSL447",
+    "DTSL449",
+    "DTSL451"
+   ],
+   "text": "'DTS L447 儿能救母', 'DTS L449 母慈灭子', 'DTS L451 夫健怕妻',"
+  },
+  {
+   "file": "fan_ju.py",
+   "line": 429,
+   "slices": [],
+   "origlines": [
+    "PZZQL3574"
+   ],
+   "text": "'PZZQ L3574-3577 身印三元', '任氏 印旺/财星有气分野'],"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 6,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "PZZQ255: \"伤官带煞而无财...伤官格成也\". 杀是格体非破格; 身弱用印(第二步改)."
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 31,
+   "slices": [],
+   "origlines": [
+    "PZZQL800"
+   ],
+   "text": "根气判据(PZZQ L800「长生、禄、帝旺为重根, 墓库余气为轻根」;"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 64,
+   "slices": [],
+   "origlines": [
+    "PZZQL800"
+   ],
+   "text": "# 根气判据: PZZQ L800「长生禄帝旺为重根」+ L1075「日时逢刃帮身敌煞」"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 125,
+   "slices": [],
+   "origlines": [
+    "DTSL420"
+   ],
+   "text": "#   准神 DTS L420(SHUAI.003)「日主孤立无气, 无地人元, 绝无一毫生扶之意, 财官强甚, 乃为真从也」"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 174,
+   "slices": [],
+   "origlines": [
+    "PZZQL565"
+   ],
+   "text": "#     PZZQ L565(本案 PZ-0027)「丁壬相合, 生于卯月, 木旺秉令, 时逢辰, 木之原神透出,"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 176,
+   "slices": [],
+   "origlines": [
+    "PZZQL1034"
+   ],
+   "text": "#     PZZQ L1034(孙岳造)「丁壬相合, 月时卯寅, 化气格真, 化神喜行旺地, 旺之极者, 亦喜其泄」"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 191,
+   "slices": [],
+   "origlines": [
+    "PZZQL565"
+   ],
+   "text": "'rule': ('PZZQ L565: 日干与紧邻干五合+化神得月令+原神透出->化气格; '"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 205,
+   "slices": [],
+   "origlines": [
+    "PZZQL4936"
+   ],
+   "text": "# 从格破格检查(PZZQ4936/4941/4943/4944):"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 223,
+   "slices": [],
+   "origlines": [
+    "PZZQL4941"
+   ],
+   "text": "# 印透干+印原始本气根=不从(PZZQ4941\"从财格而有印,须看印是否通根\"): 不从->走正格(财格佩印), 非破格"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 250,
+   "slices": [],
+   "origlines": [
+    "DTSL0"
+   ],
+   "text": "#   从杀格 DTS 0 命中(且本表写作\"从煞格\") -> 留空, UNDEFINED(存疑)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 293,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ANY','required':['偏印']}, {'type':'组合','match':'ALL','required':['正财','偏财','七杀']}],  # PZ"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 294,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 食神生财+身旺 -> 食格成; 成格之神(食神)为喜, 财(生财)亦喜; 破格: 枭夺食/生财露煞',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 297,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "# 路径二: 食带煞无财弃食就煞透印. PZZQ255: \"或食带煞而无财, 弃食就煞而透印, 食格成也\""
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 310,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ALL','required':['正财','偏财','七杀']}],  # PZZQ258: 生财露煞(财且煞, 财非单忌)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 311,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 食带煞无财弃食就煞透印 -> 食格成; 格体=煞+印; 喜神=印(弃食就煞); 破格: 生财露煞',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 315,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "# 1.5) 伤官佩印格: 月令伤官 + 印透. PZZQ255: \"伤官佩印而伤官旺,印有根\"."
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 328,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ALL','required':['正财','偏财','七杀']}],  # PZZQ258: 伤官生财带煞(财且煞, 财非单忌)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 329,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 伤官佩印伤旺印根->伤官格成; 伤官是格体不报泄气(UNVERIFIED: 伤官旺/印有根判据); 破格: 生财带煞',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 349,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财露(本路径已含带煞, 财单见即破)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 350,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 伤官带煞无财 -> 伤官格成; 杀是格体非破格; 身弱用印; 破格: 财露',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 354,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "# 3) 六格扩写: PZZQ255原文, 只定格体, 病药层不消费."
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 376,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "# PZZQ258: 官逢刑冲破格. 官星受冲->不成格(破格)."
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 406,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "# PZZQ258 官杀混杂破格(官不清): 七杀透干盖官即破; 定格层已核官杀并见"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 414,
+   "slices": [],
+   "origlines": [
+    "PZZQL255",
+    "PZZQL258"
+   ],
+   "text": "'rule': 'PZZQ255: 官逢财印又无刑冲破害->官格成; 官是格体非杀病; 喜神=财印; 破格: 伤官克/刑冲/官杀混杂(PZZQ258)',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 435,
+   "slices": [],
+   "origlines": [
+    "PZZQL255",
+    "PZZQL258"
+   ],
+   "text": "'rule': 'PZZQ255: 正官格; 官是格体; 破格: 伤官克/刑冲/官杀混杂(PZZQ258)',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 439,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "# PZZQ255: 身强七煞逢制(食制)->煞格成; 食伤是制杀格体"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 450,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财透无制(食制已立, 财单见即破)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 451,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 月令官+透杀+食伤透->食神制杀格成; 食伤+煞是格体; 破格: 财透无制',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 463,
+   "slices": [],
+   "origlines": [
+    "PZZQL1113"
+   ],
+   "text": "# PZZQ1113: \"财生官旺...月令星旺,四柱有官\" -- 财当令+官透即可, 不要求财透(UNVERIFIED: 官无根/官杀混杂)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 465,
+   "slices": [],
+   "origlines": [
+    "PZZQL1113"
+   ],
+   "text": "# PZZQ1113: 财生官旺/财格透印不要求身旺. 财格成->财过滤, 不要求dm_tier>=2."
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 476,
+   "slices": [],
+   "origlines": [
+    "PZZQL1838"
+   ],
+   "text": "#  四路径全空: 喜神留空 — 徐注PZZQ1838「无财与印,不能用官; 无官或食,不能用财」"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 486,
+   "slices": [],
+   "origlines": [
+    "PZZQL1836"
+   ],
+   "text": "#     徐注 PZZQ1836「相神又名喜神…主为用,佐其主者为相」"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 487,
+   "slices": [],
+   "origlines": [
+    "PZZQL1838"
+   ],
+   "text": "#     徐注 PZZQ1838「无财与印,不能用官; 无官或食,不能用财」"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 503,
+   "slices": [],
+   "origlines": [
+    "PZZQL1838"
+   ],
+   "text": "# 四路径全空: 留空。徐注PZZQ1838「无官或食,不能用财」-> 财不独用为喜神"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 517,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ANY','required':['七杀']}],  # PZZQ258: 财透七煞"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 518,
+   "slices": [],
+   "origlines": [
+    "PZZQL1113"
+   ],
+   "text": "'rule': 'PZZQ1113: 财生官/财逢食生身强/财格透印->财格成; 财格成->财过滤不要求身旺; 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 534,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 财格; 财是格体; 喜食伤(财不忌伤, 伤官制比劫护财); 破格: 财透煞(财轻比重无判据, 已撤, 见 TODO-17)',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 540,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "# 官无根=官虚浮生印无力(UNVERIFIED); 杀透=官杀混杂破格(PZZQ258)."
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 568,
+   "slices": [],
+   "origlines": [
+    "PZZQL1113"
+   ],
+   "text": "# PZZQ1113: 官印双全=月令印+官透+官有根+无杀透. 印是格体."
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 581,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "_rule = ('PZZQ255: 印格带伤食(官杀透+食伤透+印制食伤)->印格成; '"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 585,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "_rule = ('PZZQ255: 官印双全+官有根+无杀透->印格成; 印是格体; 喜神=官; 破格: 财破印')"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 591,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 印轻逢财(财破印, 财单见即忌)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 595,
+   "slices": [],
+   "origlines": [
+    "PZZQL1113"
+   ],
+   "text": "# PZZQ1113: 印轻逢煞=月令印+煞透+印不透. 印是格体(UNVERIFIED: 印轻判据=印不透)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 604,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 印轻逢财(财破印, 财单见即忌)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 605,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 印轻逢煞+印不透->印格成; 印是格体; 喜神=煞(生印)+印(生身); 破格: 财破印',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 608,
+   "slices": [],
+   "origlines": [
+    "PZZQL1113"
+   ],
+   "text": "# PZZQ1113: 印多逢财财透根轻=月令印+财透. 印是格体, 不报印多埋子(UNVERIFIED: 财透根轻判据)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 633,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': ('PZZQ255: 印多重(印多用财抑太过, 无防财破)->喜财, 财不作破格忌'"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 635,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'PZZQ255: 印轻财重无劫救->贪财破印, 喜比劫制财救印; 破格: 财破印'),"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 653,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "_yin_rule = ('PZZQ255: 印格带伤食(官杀透+食伤透+印制食伤)->喜印(印制伤兼护官); 破格: 财破印')"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 655,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "_yin_rule = 'PZZQ255: 印格成; 印是格体; 身印旺食伤泄秀为喜/印浅身轻喜印护身; 破格: 财破印'"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 693,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'rule': 'PZZQ258: 七煞逢财无制->破格; 杀病照报',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 717,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财透无制(印化已立, 财单见即破)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 718,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 身强七煞逢制(食制/印化)->煞格成; 煞是格体不报杀重病; 破格: 财透无制',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 730,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财']}],  # PZZQ258: 财透无制(财单见即忌)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 731,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 七煞格; 煞是格体; 喜神=食(制)/印(化); 财是破格忌不入喜; 破格: 财透无制',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 754,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'缺失','match':'ANY','forbidden':['正官','七杀']}],  # PZZQ258: 阳刃无官煞(缺失才破, 非忌神)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 755,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 阳刃透官煞露财印不见伤官->刃格成; 官煞制刃是喜神, 印护刃亦喜, 财单用所不喜; 破格: 无官煞',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 794,
+   "slices": [],
+   "origlines": [
+    "PZZQL258"
+   ],
+   "text": "'po_ge': [{'type':'缺失','match':'ANY','forbidden':['正官','正财','偏财']}],  # PZZQ258: 无财官/透煞印(缺失才破, 非忌神)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 795,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 建禄月劫透官逢财印/透财逢食伤/透煞遇制伏/无财官用伤食泄秀->成; 配合神入ti_wx; 破格: 无财官',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 804,
+   "slices": [],
+   "origlines": [
+    "PZZQL4106"
+   ],
+   "text": "# 制杀太过检查(PZZQ4106\"制煞过重同样成病\"): 杀透 + 食伤当令(前提) + 杀无本气根/根被六冲 -> 格不成"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 833,
+   "slices": [],
+   "origlines": [
+    "DTSL215"
+   ],
+   "text": "# DTS L215(体用章, 准神primary):「提纲食伤财官太旺, 则取年月时上印比为喜神」"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 857,
+   "slices": [],
+   "origlines": [
+    "DTSL215"
+   ],
+   "text": "# DTS L215「提纲食伤财官太旺, 则取年月时上印比为喜神」(准神primary)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 876,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 食神格成; 食神是格体; 喜神=财(有财则富)/煞印(带煞就煞印)/官(护食); 破格: 枭夺食',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 913,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "'rule': 'PZZQ255: 伤官格成; 伤官是格体; 喜神=财(用财)/官(金水见官)/印(身弱)/煞印(伤多用煞印); 破格: 伤官见官(非金水)/生财带煞',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 945,
+   "slices": [],
+   "origlines": [
+    "DTSL420"
+   ],
+   "text": "# 准神依据: DTS L420(SHUAI.003)「日主孤立无气, 无地人元, 绝无一毫生扶之意, 财官强甚, 乃为真从也」"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 982,
+   "slices": [],
+   "origlines": [
+    "PZZQL5000"
+   ],
+   "text": "# PZZQ5000\"从杀忌食伤\"; 财生煞顺旺势为喜"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 986,
+   "slices": [],
+   "origlines": [
+    "PZZQL4943"
+   ],
+   "text": "# PZZQ4943\"原有食伤则能化比劫而生财\": 食伤化劫生财为喜"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 990,
+   "slices": [],
+   "origlines": [
+    "PZZQL4960"
+   ],
+   "text": "# PZZQ4960\"以见财为美\": 财为喜"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 1000,
+   "slices": [],
+   "origlines": [
+    "PZZQL4943"
+   ],
+   "text": "'rule': '专旺/从格兜底(P0): 正格不成->从格; ti_wx=所从之神五行; 喜神=从财食伤/从杀从官从儿财(PZZQ4943/4960)',"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 1044,
+   "slices": [],
+   "origlines": [
+    "DTSL210",
+    "PZZQL4652"
+   ],
+   "text": "# 规则钉死, 同源 scripts/ti_wx_impact.rule_ti_wx (DTS L210 准神 + PZZQ L4652)"
+  },
+  {
+   "file": "ge_jie_layer.py",
+   "line": 1065,
+   "slices": [],
+   "origlines": [
+    "DTSL210",
+    "PZZQL4652"
+   ],
+   "text": "依据 DTS L210「建禄月劫羊刃, 当看月令中人元透于天干者取格」+ PZZQ L4652 同向."
+  },
+  {
+   "file": "l0_fact_builder.py",
+   "line": 340,
+   "slices": [],
+   "origlines": [
+    "PZZQL035"
+   ],
+   "text": "# PATCH-190 刑合 Structural Entry (PZZQ035): 癸日+甲寅时+无申(申冲寅)+天干无戊己(无官杀)"
+  },
+  {
+   "file": "l0_fact_builder.py",
+   "line": 355,
+   "slices": [],
+   "origlines": [
+    "PZZQL035"
+   ],
+   "text": "# PATCH-190 合禄 Structural Entry (PZZQ035): 戊日或癸日+庚申时+天干不透官星"
+  },
+  {
+   "file": "l0_fact_builder.py",
+   "line": 567,
+   "slices": [],
+   "origlines": [
+    "PZZQL255"
+   ],
+   "text": "# 依据 PZZQ255「官逢伤克刑冲, 官格败也」: 受刑冲的是**官星本身**,"
+  },
+  {
+   "file": "l0_fact_builder.py",
+   "line": 582,
+   "slices": [
+    "FOUNDATION"
+   ],
+   "origlines": [],
+   "text": "#   依据 FOUNDATION.TOU_CANG.CANG_GAN_BEI_CHONG_001(旁参)「不透要冲, 既透怕冲」——"
+  },
+  {
+   "file": "l0_fact_builder.py",
+   "line": 630,
+   "slices": [],
+   "origlines": [
+    "PZZQL900"
+   ],
+   "text": "# === PZZQ 冲合互动裁决 (原典: PZZQ 900/1354/3228 卯申乙庚暗合; PZ-0034 冲解会; PZ-0046 暗合解冲; PZ-0047 刑合) ==="
+  },
+  {
+   "file": "l0_fact_builder.py",
+   "line": 676,
+   "slices": [],
+   "origlines": [
+    "PZZQL847"
+   ],
+   "text": "# 3.5) 明合解冲 + 冲无力(原典 PZZQ847-850 会合解冲, 2695 会局单支冲无力)."
+  },
+  {
+   "file": "l0_fact_builder.py",
+   "line": 680,
+   "slices": [],
+   "origlines": [
+    "PZZQL874"
+   ],
+   "text": "#   争合(解神被另一会合拉走, PZZQ874)/第三支位置 UNVERIFIED, 登记下一轮."
+  },
+  {
+   "file": "slice_conditions.py",
+   "line": 62,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "\"slice_id\": \"PATHOLOGY.QIANG_RUO.004\","
+  },
+  {
+   "file": "slice_conditions.py",
+   "line": 76,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "\"slice_id\": \"PATHOLOGY.QIANG_RUO.005\","
+  },
+  {
+   "file": "slice_conditions.py",
+   "line": 88,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "\"slice_id\": \"PATHOLOGY.QIANG_RUO.020\","
+  },
+  {
+   "file": "slice_conditions.py",
+   "line": 100,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "\"slice_id\": \"PATHOLOGY.QIANG_RUO.001\","
+  },
+  {
+   "file": "slice_conditions.py",
+   "line": 109,
+   "slices": [
+    "STRUCTURE..003"
+   ],
+   "origlines": [],
+   "text": "\"slice_id\": \"STRUCTURE.GE_JU.JIU_YING.003\","
+  },
+  {
+   "file": "slice_conditions.py",
+   "line": 114,
+   "slices": [
+    "PATHOLOGY"
+   ],
+   "origlines": [],
+   "text": "\"slice_id\": \"PATHOLOGY.JIE_GOU.018\","
+  },
+  {
+   "file": "slice_conditions.py",
+   "line": 119,
+   "slices": [
+    "STATE..001"
+   ],
+   "origlines": [],
+   "text": "\"slice_id\": \"STATE.WANG_SHUAI.FAN_JU.001\","
+  },
+  {
+   "file": "slice_conditions.py",
+   "line": 131,
+   "slices": [
+    "SUI_YUN..009"
+   ],
+   "origlines": [],
+   "text": "\"slice_id\": \"SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.009\","
+  },
+  {
+   "file": "slice_loader.py",
+   "line": 9,
+   "slices": [
+    "STRUCTURE..001"
+   ],
+   "origlines": [],
+   "text": "\"slice_id\":   \"STRUCTURE.GE_JU.CHENG_BAI.001\","
+  },
+  {
+   "file": "slice_loader.py",
+   "line": 141,
+   "slices": [
+    "STRUCTURE..001"
+   ],
+   "origlines": [],
+   "text": "s = get_slice(\"STRUCTURE.GE_JU.CHENG_BAI.001\")"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 211,
+   "slices": [],
+   "origlines": [
+    "PZZQL2923"
+   ],
+   "text": "#     印根被化 -> 从财成立, PZZQ L2923 原文「支逢寅午戌三合会局, 以丙火从财为用」。"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 214,
+   "slices": [],
+   "origlines": [
+    "PZZQL180"
+   ],
+   "text": "#     -> 印绶有根则不从, PZZQ L180。"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 236,
+   "slices": [],
+   "origlines": [
+    "PZZQL4941"
+   ],
+   "text": "#          PZZQ4941\"印须通根才不从\"是从格成立后内部的破格判定(ge_jie_layer印不从fallthrough), 非rootless门槛"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 241,
+   "slices": [],
+   "origlines": [
+    "PZZQL4941"
+   ],
+   "text": "#   而非「印星在天干出现即不从」。PZZQ4941「从财格而有印, 须看印是否通根」是补充判据。"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 246,
+   "slices": [],
+   "origlines": [
+    "PZZQL187"
+   ],
+   "text": "#   依据 PZZQ L187(沈孝瞻原案 丁卯丙午庚午己卯)「庚金虽弱, 透印有根, 即不能从」"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 247,
+   "slices": [],
+   "origlines": [
+    "PZZQL4936"
+   ],
+   "text": "#        PZZQ L4936《论杂格》「若透印则身赖印生而不从」"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 366,
+   "slices": [],
+   "origlines": [
+    "PZZQL565"
+   ],
+   "text": "#   原案铁证: PZZQ L565(本案 PZ-0027)「丁壬相合, 生于卯月, 木旺秉令, 时逢辰,"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 375,
+   "slices": [],
+   "origlines": [
+    "PZZQL1034"
+   ],
+   "text": "#   依据: PZZQ L1034 孙岳造(戊寅乙卯丁未壬寅)「丁壬相合, 月时卯寅, 化气格真」——"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 410,
+   "slices": [],
+   "origlines": [
+    "PZZQL180"
+   ],
+   "text": "# [2026-10-07 PATCH-4d-2] 印根/阳干检测提前到入口: 印绶有根则不从(PZZQ L180/L187/L4936/L4939)、"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 424,
+   "slices": [],
+   "origlines": [
+    "PZZQL180"
+   ],
+   "text": "_ban_reason2 = ('印绶有根则不从(PZZQ L180/L187/L4936/L4939)' if _yin_root_any2 > 0"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 425,
+   "slices": [],
+   "origlines": [
+    "PZZQL179"
+   ],
+   "text": "else '阳干微根不能从(PZZQ L179, 五阳从气不从势)')"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 449,
+   "slices": [],
+   "origlines": [
+    "PZZQL4939"
+   ],
+   "text": "out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', '从杀无伤食制煞(PZZQ L4939)', 'SPECIAL_FAIL', None,"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 510,
+   "slices": [],
+   "origlines": [
+    "PZZQL180"
+   ],
+   "text": "#   依据: PZZQ L180「然或印绶有根则又不嫌身弱」/L187「透印有根即不能从」/"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 512,
+   "slices": [],
+   "origlines": [
+    "DTSL47"
+   ],
+   "text": "#        L179 阳干「略有根或印有根即不能从」(五阳从气不从势, DTS L47)"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 520,
+   "slices": [],
+   "origlines": [
+    "PZZQL180"
+   ],
+   "text": "_ban_reason = ('印绶有根则不从(PZZQ L180/L187/L4936/L4939)' if _yin_root_any > 0"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 521,
+   "slices": [],
+   "origlines": [
+    "PZZQL179"
+   ],
+   "text": "else '阳干微根不能从(PZZQ L179, 五阳从气不从势)')"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 538,
+   "slices": [],
+   "origlines": [
+    "PZZQL4937"
+   ],
+   "text": "out['patterns'].append(_pat('ZP-SPECIAL-CONG-BAN', '从财无官煞(PZZQ L4937)', 'SPECIAL_FAIL', None,"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 638,
+   "slices": [],
+   "origlines": [
+    "DTSL2251"
+   ],
+   "text": "# 非一行专旺(阳干长生在印母之宫, 如壬生申, 申本气庚金是印, 不作水比劫成方); DTS L2251 金印3/水纯根1, 任注喜土火官杀科甲, 非润下"
+  },
+  {
+   "file": "special_pattern.py",
+   "line": 743,
+   "slices": [],
+   "origlines": [
+    "DTSL862"
+   ],
+   "text": "# 假两气排除(DTS L862癸亥甲寅): 月令食伤当令, 且日主本气根支被六合化为食伤(寅亥合木、水根化木),"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 43,
+   "slices": [],
+   "origlines": [
+    "DTSL245"
+   ],
+   "text": "# DTS L245 原文:"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 66,
+   "slices": [],
+   "origlines": [
+    "DTSL245"
+   ],
+   "text": "#   其余并列者记入 tied_with。DTS L245「取最多最旺」在并列时本就无唯一解,"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 94,
+   "slices": [],
+   "origlines": [
+    "DTSL245"
+   ],
+   "text": "DTS L245「看此源头, 流到何方」—— 「流到何方」的终点是步骤3"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 234,
+   "slices": [],
+   "origlines": [
+    "DTSL183"
+   ],
+   "text": "\"\"\"★ 主判据(甲版·同五行) 判方局混局 —— DTS L183-L193"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 348,
+   "slices": [],
+   "origlines": [
+    "DTSL250"
+   ],
+   "text": "# DTS L250 原文:"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 396,
+   "slices": [],
+   "origlines": [
+    "DTSL250"
+   ],
+   "text": "'note': ('按 DTS L250 底本原样落, 一字不改。'"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 424,
+   "slices": [],
+   "origlines": [
+    "DTSL250"
+   ],
+   "text": "DTS L250 原文: 「或被刑冲, 或被劫占, 或隔一物, 皆谓之关也」"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 450,
+   "slices": [],
+   "origlines": [
+    "DTSL250"
+   ],
+   "text": "# DTS L250「中间上下远隔, 为物所间; 前后远绝, 或被刑冲, 或被劫占, 或隔一物」"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 522,
+   "slices": [],
+   "origlines": [
+    "DTSL250"
+   ],
+   "text": "\"\"\"判两支之间是否成关 —— DTS L250「皆谓之关也」"
+  },
+  {
+   "file": "topology_paths.py",
+   "line": 528,
+   "slices": [],
+   "origlines": [
+    "DTSL250"
+   ],
+   "text": "'distance': 'SPAN_ONE' | 'REMOTE' | None,   DTS L250 远隔/远绝/隔一物"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 55,
+   "slices": [],
+   "origlines": [
+    "DTSL108"
+   ],
+   "text": "#     chong_adjust : -1 / 0 / +1  (DTS L108「拔」= -1 / 不变 = 0 / 「发」= +1)"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 80,
+   "slices": [],
+   "origlines": [
+    "DTSL108"
+   ],
+   "text": "\"\"\"被冲方的序数修正 —— DTS L108/L110「两方对比」结构 (2026-10-03 裁定)。"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 90,
+   "slices": [],
+   "origlines": [
+    "DTSL106"
+   ],
+   "text": "而冲方必克月令(能克方为冲方, DTS L106) -> 冲方恒「囚」;"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 151,
+   "slices": [],
+   "origlines": [
+    "DTSL106"
+   ],
+   "text": "#   DTS L106 原注「如我寅彼申, 申能克寅, 是彼冲我; 我子彼午, 子能克午, 是我冲彼」"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 153,
+   "slices": [],
+   "origlines": [
+    "DTSL102"
+   ],
+   "text": "#   DTS L102 原注「冲者必是相克, 及四库兄弟之冲, 所以必动」"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 155,
+   "slices": [],
+   "origlines": [
+    "DTSL96"
+   ],
+   "text": "#   DTS L96/L98「生方怕动库宜开…辰戌丑未四库也, 宜冲开」"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 215,
+   "slices": [],
+   "origlines": [
+    "DTSL106"
+   ],
+   "text": "if WX_KE.get(wa) == wb:          # a 冲 b  (DTS L106 能克方为冲方)"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 225,
+   "slices": [],
+   "origlines": [
+    "DTSL96"
+   ],
+   "text": "# DTS L96/L98「四库也, 宜冲开」—— 布尔, 不塞进 adj 的 ±1"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 240,
+   "slices": [],
+   "origlines": [
+    "DTSL108"
+   ],
+   "text": "# 被冲方: 受作用, 按两方对比判 adj (DTS L108/L110)"
+  },
+  {
+   "file": "transit_power.py",
+   "line": 276,
+   "slices": [],
+   "origlines": [
+    "DTSL108"
+   ],
+   "text": "'DTS L108「旺者冲衰衰者拔, 衰神冲旺旺神发」L110「子旺午衰, 冲则午拔不能立; '"
+  },
+  {
+   "file": "wangshuai_multidim.py",
+   "line": 14,
+   "slices": [],
+   "origlines": [
+    "PZZQL241"
+   ],
+   "text": "# 我克者 = 财 (五行生克基本定义; 旁参 PZZQ L241「财为我克」)"
+  },
+  {
+   "file": "wangshuai_multidim.py",
+   "line": 18,
+   "slices": [],
+   "origlines": [
+    "PZZQL241"
+   ],
+   "text": "# 克我者 = 官杀 (PZZQ L241「官煞, 克我者也」)"
+  },
+  {
+   "file": "wangshuai_multidim.py",
+   "line": 24,
+   "slices": [],
+   "origlines": [
+    "PZZQL241"
+   ],
+   "text": "# 依据: PZZQ L241「印为生我, 财为我克, 或偏或正, 气势虽有纯杂之殊, 用法尚无大异。"
+  },
+  {
+   "file": "wangshuai_multidim.py",
+   "line": 25,
+   "slices": [],
+   "origlines": [
+    "PZZQL261"
+   ],
+   "text": "#       官煞, 克我者也」+ PZZQ L261「克我者——正官与七煞——性质善恶判然」。"
+  },
+  {
+   "file": "wangshuai_structure.py",
+   "line": 159,
+   "slices": [],
+   "origlines": [
+    "PZZQL241"
+   ],
+   "text": "# 依据: PZZQ L241「财为我克」; 五行生克「我克者为财」"
+  }
+ ],
+ "engine_cited_sids": {
+  "PATHOLOGY": 19,
+  "STRUCTURE..001": 4,
+  "STRUCTURE..003": 2,
+  "STATE..001": 5,
+  "SUI_YUN..009": 2,
+  "STATE..003": 1,
+  "STATE..002": 1,
+  "STATE..004": 1,
+  "FOUNDATION": 1
+ },
+ "engine_cited_origlines": {
+  "PZZQL957": 4,
+  "SFTKL424": 7,
+  "DTSL240": 3,
+  "PZZQL241": 5,
+  "PZZQL4106": 4,
+  "PZZQL2319": 1,
+  "YHZPL2915": 1,
+  "DTSL334": 1,
+  "YHZPL4923": 1,
+  "PZZQL3930": 1,
+  "DTSL250": 8,
+  "PZZQL3977": 4,
+  "QTBJL774": 2,
+  "DTSL461": 2,
+  "PZZQL421": 2,
+  "PZZQL536": 1,
+  "DTSL357": 2,
+  "PZZQL3574": 2,
+  "DTSL445": 3,
+  "DTSL449": 3,
+  "DTSL447": 3,
+  "DTSL451": 3,
+  "DTSL442": 1,
+  "PZZQL255": 27,
+  "PZZQL800": 2,
+  "DTSL420": 2,
+  "PZZQL565": 3,
+  "PZZQL1034": 2,
+  "PZZQL4936": 2,
+  "PZZQL4941": 3,
+  "DTSL0": 1,
+  "PZZQL258": 18,
+  "PZZQL1113": 6,
+  "PZZQL1838": 3,
+  "PZZQL1836": 1,
+  "DTSL215": 2,
+  "PZZQL5000": 1,
+  "PZZQL4943": 2,
+  "PZZQL4960": 1,
+  "DTSL210": 2,
+  "PZZQL4652": 2,
+  "PZZQL035": 2,
+  "PZZQL900": 1,
+  "PZZQL847": 1,
+  "PZZQL874": 1,
+  "PZZQL2923": 1,
+  "PZZQL180": 5,
+  "PZZQL187": 1,
+  "PZZQL179": 2,
+  "PZZQL4939": 1,
+  "DTSL47": 1,
+  "PZZQL4937": 1,
+  "DTSL2251": 1,
+  "DTSL862": 1,
+  "DTSL245": 3,
+  "DTSL183": 1,
+  "DTSL108": 4,
+  "DTSL106": 3,
+  "DTSL102": 1,
+  "DTSL96": 2,
+  "PZZQL261": 1
+ },
+ "with_slice": 33,
+ "only_orig": 161,
+ "both": 0,
+ "missing_sids": [
+  "STRUCTURE..001",
+  "STATE..003",
+  "SUI_YUN..009",
+  "STATE..004",
+  "STATE..001",
+  "FOUNDATION",
+  "PATHOLOGY",
+  "STRUCTURE..003",
+  "STATE..002"
+ ],
+ "never_used_sids": [
+  "DEBATE.CONFLICT.DUO_JIE.001",
+  "DEBATE.CONFLICT.DUO_JIE.002",
+  "DEBATE.CONFLICT.LIU_PAI.001",
+  "DEBATE.CONFLICT.LIU_PAI.002",
+  "DEBATE.CONFLICT.LIU_PAI.003",
+  "DEBATE.CONFLICT.LIU_PAI.004",
+  "DEBATE.CONFLICT.LIU_PAI.005",
+  "DEBATE.CONFLICT.LIU_PAI.006",
+  "DEBATE.CONFLICT.LIU_PAI.007",
+  "DEBATE.CONFLICT.LI_WAI.001",
+  "DEBATE.CONFLICT.LI_WAI.002",
+  "DEBATE.CONFLICT.LI_WAI.003",
+  "DEBATE.CONFLICT.LI_WAI.004",
+  "DEBATE.CONFLICT.LI_WAI.005",
+  "DEBATE.CONFLICT.LI_WAI.006",
+  "DEBATE.CONFLICT.LI_WAI.007",
+  "DEBATE.CONFLICT.LI_WAI.008",
+  "DEBATE.CONFLICT.LI_WAI.009",
+  "DEBATE.CONFLICT.LI_WAI.010",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.001",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.002",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.003",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.004",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.005",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.006",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.007",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.008",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.009",
+  "DEBATE.CONFLICT.YOU_XIAN_JI.010",
+  "DEBATE.CONFLICT.ZHENG_JU_LIAN.001",
+  "DEBATE.CONFLICT.ZHENG_JU_LIAN.002",
+  "DEBATE.CONFLICT.ZHENG_JU_LIAN.003",
+  "DEBATE.CONFLICT.ZHENG_JU_LIAN.004",
+  "DEBATE.CONFLICT.ZHENG_JU_LIAN.005",
+  "DEBATE.CONFLICT.ZHENG_JU_LIAN.006",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.001",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.002",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.003",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.004",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.005",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.006",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.007",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.008",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.009",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.010",
+  "DEBATE.CONFLICT.ZHEN_JIA_BING.011",
+  "DEBATE.CONFLICT.ZHU_CI_BING.001",
+  "DEBATE.CONFLICT.ZHU_CI_BING.002",
+  "DEBATE.CONFLICT.ZHU_CI_BING.003",
+  "DEBATE.CONFLICT.ZHU_CI_BING.004",
+  "DEBATE.CONFLICT.ZHU_CI_BING.005",
+  "DEBATE.CONFLICT.ZHU_CI_BING.006",
+  "DEBATE.CONFLICT.ZHU_CI_BING.007",
+  "DUANYU.BING_YAO.BING_YAO_FU.001",
+  "DUANYU.BING_YAO.XUAN_JI_FU.001",
+  "DUANYU.GE_JU.BI_YUAN_FU.001",
+  "DUANYU.GE_JU.DTS_ZONG_LUN.001",
+  "DUANYU.GE_JU.JIN_SHENG_YU_ZHEN_FU.001",
+  "DUANYU.GE_JU.JIN_YU_FU.001",
+  "DUANYU.GE_JU.YAO_XIANG_FU.001",
+  "DUANYU.REN_SHI.LIU_QIN_JIE_YAO_GE.001",
+  "DUANYU.REN_SHI.LIU_QIN_ZONG_PIAN.001",
+  "DUANYU.REN_SHI.LUN_LIU_QIN_FU.001",
+  "DUANYU.REN_SHI.NV_MING_ZONG_DUAN_GE.001",
+  "DUANYU.REN_SHI.WEI_JING_PIAN.001",
+  "DUANYU.REN_SHI.XIANG_XIN_FU.001",
+  "DUANYU.REN_SHI.YA_QUAN_ZHAI_JIN.001",
+  "DUANYU.REN_SHI.YIN_MING_FU.001",
+  "DUANYU.WANG_SHUAI.GU_SUI_FU.001",
+  "DUANYU.WANG_SHUAI.MING_TONG_FU.001",
+  "DUANYU.WANG_SHUAI.MING_TONG_FU.002",
+  "DUANYU.WANG_SHUAI.MING_TONG_FU.003",
+  "DUANYU.WANG_SHUAI.WU_XING_SHENG_KE_FU.001",
+  "DUANYU.WANG_SHUAI.WU_XING_YUAN_LI_XIAO_XI_FU.001",
+  "DUANYU.WANG_SHUAI.YUAN_LI_FU.001",
+  "DUANYU.WANG_SHUAI.YUAN_LI_FU.002",
+  "DUANYU.YONG_SHEN.QU_YONG_SHEN_FU.001",
+  "DUANYU.YONG_SHEN.TIAO_HOU_FU.001",
+  "DUANYU.ZA_FU.AI_ZENG_FU.001",
+  "DUANYU.ZA_FU.DTS_ZHEN_YUAN.001",
+  "DUANYU.ZA_FU.JIN_DING_SHEN_MI_FU.001",
+  "DUANYU.ZA_FU.LUO_LU_ZI_XIAO_XI_FU.001",
+  "DUANYU.ZA_FU.LUO_LU_ZI_XIAO_XI_FU.002",
+  "DUANYU.ZA_FU.LUO_YI_FU.001",
+  "DUANYU.ZA_FU.REN_JIAN_LUN.001",
+  "DUANYU.ZA_FU.YOU_WEI_FU.001",
+  "DUANYU.ZA_FU.ZAO_WEI_LUN.001",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.001",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.002",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.003",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.004",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.005",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.006",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.007",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.008",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.009",
+  "FOUNDATION.MONTH_COMMAND.TI_GANG.010",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_CHONG.001",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_CHONG.002",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_CHONG.003",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_CHONG.004",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_CHONG.005",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_CHONG.006",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_CHONG.007",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_HE.001",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_HE.002",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_BEI_XING.001",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.001",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.002",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.003",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.004",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.005",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.006",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.007",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.008",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.009",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.010",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.011",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.012",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.013",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_GE_JU.014",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_TIAO_HOU.001",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_TIAO_HOU.002",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_TIAO_HOU.003",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_TIAO_HOU.004",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_TIAO_HOU.005",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_TIAO_HOU.006",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_WANG_SHUAI.001",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_WANG_SHUAI.002",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_WANG_SHUAI.003",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_WANG_SHUAI.004",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_WANG_SHUAI.005",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_WANG_SHUAI.006",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_WANG_SHUAI.007",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_WANG_SHUAI.008",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_WANG_SHUAI.009",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_YOU_XIAN_JI.001",
+  "FOUNDATION.MONTH_COMMAND.YUE_LING_YOU_XIAN_JI.002",
+  "FOUNDATION.PALACE.GONG_WEI_BEI_CHONG.001",
+  "FOUNDATION.PALACE.GONG_WEI_BEI_CHONG.002",
+  "FOUNDATION.PALACE.GONG_WEI_BEI_CHONG.003",
+  "FOUNDATION.PALACE.GONG_WEI_BEI_CHONG.004",
+  "FOUNDATION.PALACE.GONG_WEI_BEI_CHONG.005",
+  "FOUNDATION.PALACE.GONG_WEI_BEI_HE.001",
+  "FOUNDATION.PALACE.GONG_WEI_XING_SHEN.001",
+  "FOUNDATION.PALACE.GONG_WEI_XING_SHEN.002",
+  "FOUNDATION.PALACE.GONG_WEI_XING_SHEN.003",
+  "FOUNDATION.PALACE.GONG_WEI_XING_SHEN.004",
+  "FOUNDATION.PALACE.GONG_WEI_XING_SHEN.005",
+  "FOUNDATION.PALACE.GONG_WEI_XING_SHEN.006",
+  "FOUNDATION.PALACE.GONG_WEI_XING_SHEN.007",
+  "FOUNDATION.PALACE.NIAN_ZHU.001",
+  "FOUNDATION.PALACE.NIAN_ZHU.002",
+  "FOUNDATION.PALACE.NIAN_ZHU.003",
+  "FOUNDATION.PALACE.NIAN_ZHU.004",
+  "FOUNDATION.PALACE.NIAN_ZHU.005",
+  "FOUNDATION.PALACE.NIAN_ZHU.006",
+  "FOUNDATION.PALACE.NIAN_ZHU.007",
+  "FOUNDATION.PALACE.NIAN_ZHU.008",
+  "FOUNDATION.PALACE.NIAN_ZHU.009",
+  "FOUNDATION.PALACE.RI_ZHU.001",
+  "FOUNDATION.PALACE.RI_ZHU.002",
+  "FOUNDATION.PALACE.RI_ZHU.003",
+  "FOUNDATION.PALACE.RI_ZHU.004",
+  "FOUNDATION.PALACE.RI_ZHU.005",
+  "FOUNDATION.PALACE.RI_ZHU.006",
+  "FOUNDATION.PALACE.RI_ZHU.007",
+  "FOUNDATION.PALACE.SHI_ZHU.001",
+  "FOUNDATION.PALACE.SHI_ZHU.002",
+  "FOUNDATION.PALACE.SHI_ZHU.003",
+  "FOUNDATION.PALACE.SHI_ZHU.004",
+  "FOUNDATION.PALACE.SHI_ZHU.005",
+  "FOUNDATION.PALACE.SHI_ZHU.006",
+  "FOUNDATION.PALACE.SHI_ZHU.007",
+  "FOUNDATION.PALACE.YUE_ZHU.001",
+  "FOUNDATION.PALACE.YUE_ZHU.002",
+  "FOUNDATION.PALACE.YUE_ZHU.003",
+  "FOUNDATION.PALACE.YUE_ZHU.004",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_CHONG.001",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_CHONG.002",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_CHONG.003",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_CHONG.004",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_CHONG.005",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_CHONG.006",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_CHONG.007",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_HAI.001",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_HAI.002",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_HAI.003",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_HE.001",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_HE.002",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_HE.003",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_PO.001",
+  "FOUNDATION.RELATION.DI_ZHI_LIU_PO.002",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_HE.001",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_HE.002",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_HE.003",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_HUI.001",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_HUI.002",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_XING.001",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_XING.002",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_XING.003",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_XING.004",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_XING.005",
+  "FOUNDATION.RELATION.DI_ZHI_SAN_XING.006",
+  "FOUNDATION.RELATION.GAN_HE.001",
+  "FOUNDATION.RELATION.GAN_HE.002",
+  "FOUNDATION.RELATION.GAN_HE.003",
+  "FOUNDATION.RELATION.GAN_HE.004",
+  "FOUNDATION.RELATION.GAN_HE.005",
+  "FOUNDATION.RELATION.GAN_HE.006",
+  "FOUNDATION.RELATION.GAN_HE.007",
+  "FOUNDATION.RELATION.GAN_HE.008",
+  "FOUNDATION.RELATION.GAN_HE.009",
+  "FOUNDATION.RELATION.GAN_HE.010",
+  "FOUNDATION.RELATION.GAN_HE.011",
+  "FOUNDATION.RELATION.GAN_HE.012",
+  "FOUNDATION.RELATION.GAN_HE.013",
+  "FOUNDATION.RELATION.GAN_HE.014",
+  "FOUNDATION.RELATION.GAN_HE.015",
+  "FOUNDATION.RELATION.SHI_SHEN.001",
+  "FOUNDATION.RELATION.SHI_SHEN.002",
+  "FOUNDATION.RELATION.SHI_SHEN.003",
+  "FOUNDATION.RELATION.SHI_SHEN.004",
+  "FOUNDATION.RELATION.SHI_SHEN.005",
+  "FOUNDATION.RELATION.WU_XING_SHENG_KE.001",
+  "FOUNDATION.RELATION.WU_XING_SHENG_KE.002",
+  "FOUNDATION.RELATION.WU_XING_SHENG_KE.003",
+  "FOUNDATION.RELATION.WU_XING_SHENG_KE.004",
+  "FOUNDATION.RELATION.WU_XING_SHENG_KE.005",
+  "FOUNDATION.RELATION.WU_XING_SHENG_KE.006",
+  "FOUNDATION.RELATION.WU_XING_SHENG_KE.007",
+  "FOUNDATION.RELATION.WU_XING_SHENG_KE.008",
+  "FOUNDATION.RELATION.WU_XING_SHENG_KE.009",
+  "FOUNDATION.TOU_CANG.BEN_QI_TOU.001",
+  "FOUNDATION.TOU_CANG.BEN_QI_TOU.002",
+  "FOUNDATION.TOU_CANG.CANG_GAN_BEI_CHONG.001",
+  "FOUNDATION.TOU_CANG.CANG_GAN_BEI_CHONG.002",
+  "FOUNDATION.TOU_CANG.CANG_GAN_BEI_CHONG.003",
+  "FOUNDATION.TOU_CANG.CANG_GAN_BEI_HE.001",
+  "FOUNDATION.TOU_CANG.CANG_GAN_GE.001",
+  "FOUNDATION.TOU_CANG.CANG_GAN_TOU_CHU.001",
+  "FOUNDATION.TOU_CANG.CANG_GAN_TOU_CHU.002",
+  "FOUNDATION.TOU_CANG.CANG_GAN_TOU_CHU.003",
+  "FOUNDATION.TOU_CANG.CANG_GAN_TOU_CHU.004",
+  "FOUNDATION.TOU_CANG.CANG_GAN_TOU_CHU.005",
+  "FOUNDATION.TOU_CANG.TONG_GEN.001",
+  "FOUNDATION.TOU_CANG.TONG_GEN.002",
+  "FOUNDATION.TOU_CANG.TONG_GEN.003",
+  "FOUNDATION.TOU_CANG.TONG_GEN.004",
+  "FOUNDATION.TOU_CANG.TONG_GEN.005",
+  "FOUNDATION.TOU_CANG.TOU_GAN.001",
+  "FOUNDATION.TOU_CANG.TOU_GAN.002",
+  "FOUNDATION.TOU_CANG.TOU_GAN.003",
+  "FOUNDATION.TOU_CANG.TOU_GAN_BEI_HE.001",
+  "FOUNDATION.TOU_CANG.TOU_GAN_BEI_HE.002",
+  "FOUNDATION.TOU_CANG.TOU_GAN_BEI_HE.003",
+  "FOUNDATION.TOU_CANG.TOU_GAN_BEI_KE.001",
+  "FOUNDATION.TOU_CANG.TOU_GAN_BEI_KE.002",
+  "FOUNDATION.TOU_CANG.YU_QI_TOU.001",
+  "FOUNDATION.TOU_CANG.YU_QI_TOU.002",
+  "FOUNDATION.TOU_CANG.ZHONG_QI_TOU.001",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.001",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.002",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.003",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.004",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.005",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.006",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.007",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.008",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.009",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.010",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.011",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.012",
+  "LIU_QIN.REN_SHI.FU_GUI_PIN_JIAN.013",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.001",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.002",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.003",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.004",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.005",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.006",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.007",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.008",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.009",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.010",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.011",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.012",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.013",
+  "LIU_QIN.REN_SHI.JI_XIONG_SHOU_YAO.014",
+  "LIU_QIN.REN_SHI.LIU_QIN.001",
+  "LIU_QIN.REN_SHI.LIU_QIN.002",
+  "LIU_QIN.REN_SHI.LIU_QIN.003",
+  "LIU_QIN.REN_SHI.LIU_QIN.004",
+  "LIU_QIN.REN_SHI.LIU_QIN.005",
+  "LIU_QIN.REN_SHI.LIU_QIN.006",
+  "LIU_QIN.REN_SHI.LIU_QIN.007",
+  "LIU_QIN.REN_SHI.LIU_QIN.008",
+  "LIU_QIN.REN_SHI.LIU_QIN.009",
+  "LIU_QIN.REN_SHI.LIU_QIN.010",
+  "LIU_QIN.REN_SHI.LIU_QIN.011",
+  "LIU_QIN.REN_SHI.LIU_QIN.012",
+  "LIU_QIN.REN_SHI.LIU_QIN.013",
+  "LIU_QIN.REN_SHI.LIU_QIN.014",
+  "LIU_QIN.REN_SHI.LIU_QIN.015",
+  "LIU_QIN.REN_SHI.LIU_QIN.016",
+  "LIU_QIN.REN_SHI.LIU_QIN.017",
+  "LIU_QIN.REN_SHI.LIU_QIN.018",
+  "LIU_QIN.REN_SHI.LIU_QIN.019",
+  "LIU_QIN.REN_SHI.LIU_QIN.020",
+  "LIU_QIN.REN_SHI.LIU_QIN.021",
+  "LIU_QIN.REN_SHI.LIU_QIN.022",
+  "LIU_QIN.REN_SHI.LIU_QIN.023",
+  "LIU_QIN.REN_SHI.NV_MING.001",
+  "LIU_QIN.REN_SHI.NV_MING.002",
+  "LIU_QIN.REN_SHI.NV_MING.003",
+  "LIU_QIN.REN_SHI.NV_MING.004",
+  "LIU_QIN.REN_SHI.NV_MING.005",
+  "LIU_QIN.REN_SHI.NV_MING.006",
+  "LIU_QIN.REN_SHI.NV_MING.007",
+  "LIU_QIN.REN_SHI.NV_MING.008",
+  "LIU_QIN.REN_SHI.NV_MING.009",
+  "LIU_QIN.REN_SHI.NV_MING.010",
+  "LIU_QIN.REN_SHI.NV_MING.011",
+  "LIU_QIN.REN_SHI.NV_MING.012",
+  "LIU_QIN.REN_SHI.NV_MING.013",
+  "LIU_QIN.REN_SHI.NV_MING.014",
+  "LIU_QIN.REN_SHI.NV_MING.015",
+  "LIU_QIN.REN_SHI.NV_MING.016",
+  "LIU_QIN.REN_SHI.NV_MING.017",
+  "LIU_QIN.REN_SHI.NV_MING.018",
+  "LIU_QIN.REN_SHI.NV_MING.019",
+  "LIU_QIN.REN_SHI.NV_MING.020",
+  "LIU_QIN.REN_SHI.XING_QING.001",
+  "LIU_QIN.REN_SHI.XING_QING.002",
+  "LIU_QIN.REN_SHI.XING_QING.003",
+  "LIU_QIN.REN_SHI.XING_QING.004",
+  "LIU_QIN.REN_SHI.XING_QING.005",
+  "LIU_QIN.REN_SHI.XING_QING.006",
+  "LIU_QIN.REN_SHI.XING_QING.007",
+  "LIU_QIN.REN_SHI.XING_QING.008",
+  "LIU_QIN.REN_SHI.XING_QING.009",
+  "LIU_QIN.REN_SHI.XING_QING.010",
+  "LIU_QIN.REN_SHI.XING_QING.011",
+  "LIU_QIN.REN_SHI.XING_QING.012",
+  "LIU_QIN.REN_SHI.XING_QING.013",
+  "LIU_QIN.REN_SHI.XING_QING.014",
+  "LIU_QIN.REN_SHI.XING_QING.015",
+  "LIU_QIN.REN_SHI.XING_QING.016",
+  "LIU_QIN.REN_SHI.XING_QING.017",
+  "LIU_QIN.REN_SHI.XING_QING.018",
+  "LIU_QIN.REN_SHI.XING_QING.019",
+  "LIU_QIN.REN_SHI.XING_QING.020",
+  "LIU_QIN.REN_SHI.XING_QING.021",
+  "LIU_QIN.REN_SHI.XING_QING.022",
+  "LIU_QIN.REN_SHI.XING_QING.023",
+  "LIU_QIN.REN_SHI.XING_QING.024",
+  "LIU_QIN.REN_SHI.XING_QING.025",
+  "LIU_QIN.REN_SHI.XING_QING.026",
+  "LIU_QIN.REN_SHI.XING_QING.027",
+  "LIU_QIN.REN_SHI.XING_QING.028",
+  "MEDICINE.YONG_SHEN.BING_YAO.001",
+  "MEDICINE.YONG_SHEN.BING_YAO.002",
+  "MEDICINE.YONG_SHEN.BING_YAO.003",
+  "MEDICINE.YONG_SHEN.BING_YAO.004",
+  "MEDICINE.YONG_SHEN.BING_YAO.005",
+  "MEDICINE.YONG_SHEN.BING_YAO.006",
+  "MEDICINE.YONG_SHEN.FU_YI.001",
+  "MEDICINE.YONG_SHEN.FU_YI.002",
+  "MEDICINE.YONG_SHEN.FU_YI.003",
+  "MEDICINE.YONG_SHEN.FU_YI.004",
+  "MEDICINE.YONG_SHEN.FU_YI.005",
+  "MEDICINE.YONG_SHEN.FU_YI.006",
+  "MEDICINE.YONG_SHEN.FU_YI.007",
+  "MEDICINE.YONG_SHEN.FU_YI.008",
+  "MEDICINE.YONG_SHEN.FU_YI.009",
+  "MEDICINE.YONG_SHEN.FU_YI.010",
+  "MEDICINE.YONG_SHEN.FU_YI.011",
+  "MEDICINE.YONG_SHEN.FU_YI.012",
+  "MEDICINE.YONG_SHEN.FU_YI.013",
+  "MEDICINE.YONG_SHEN.FU_YI.014",
+  "MEDICINE.YONG_SHEN.FU_YI.015",
+  "MEDICINE.YONG_SHEN.FU_YI.016",
+  "MEDICINE.YONG_SHEN.FU_YI.017",
+  "MEDICINE.YONG_SHEN.FU_YI.018",
+  "MEDICINE.YONG_SHEN.FU_YI.019",
+  "MEDICINE.YONG_SHEN.HUA_SHEN.001",
+  "MEDICINE.YONG_SHEN.HUA_SHEN.002",
+  "MEDICINE.YONG_SHEN.HUA_SHEN.003",
+  "MEDICINE.YONG_SHEN.HUA_SHEN.004",
+  "MEDICINE.YONG_SHEN.HUA_SHEN.005",
+  "MEDICINE.YONG_SHEN.HUA_SHEN.006",
+  "MEDICINE.YONG_SHEN.HUA_SHEN.007",
+  "MEDICINE.YONG_SHEN.HUA_SHEN.008",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.001",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.002",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.003",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.004",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.005",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.006",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.007",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.008",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.009",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.010",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.011",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.012",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.013",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.014",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.015",
+  "MEDICINE.YONG_SHEN.TIAO_HOU.016",
+  "MEDICINE.YONG_SHEN.TONG_GUAN.001",
+  "MEDICINE.YONG_SHEN.TONG_GUAN.002",
+  "MEDICINE.YONG_SHEN.TONG_GUAN.003",
+  "MEDICINE.YONG_SHEN.TONG_GUAN.004",
+  "MEDICINE.YONG_SHEN.TONG_GUAN.005",
+  "MEDICINE.YONG_SHEN.XI_JI.001",
+  "MEDICINE.YONG_SHEN.XI_JI.002",
+  "MEDICINE.YONG_SHEN.XI_JI.003",
+  "MEDICINE.YONG_SHEN.XI_JI.004",
+  "MEDICINE.YONG_SHEN.XI_JI.005",
+  "MEDICINE.YONG_SHEN.XI_JI.006",
+  "MEDICINE.YONG_SHEN.XI_JI.007",
+  "MEDICINE.YONG_SHEN.XI_JI.008",
+  "MEDICINE.YONG_SHEN.XI_JI.009",
+  "MEDICINE.YONG_SHEN.XI_JI.010",
+  "MEDICINE.YONG_SHEN.XI_JI.011",
+  "MEDICINE.YONG_SHEN.XI_JI.012",
+  "MEDICINE.YONG_SHEN.XI_JI.013",
+  "MEDICINE.YONG_SHEN.XI_JI.014",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.001",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.002",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.003",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.004",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.005",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.006",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.007",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.008",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.009",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.010",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_BIAN_HUA.011",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_ZHEN_JIA.001",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_ZHEN_JIA.002",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_ZHEN_JIA.003",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_ZHEN_JIA.004",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_ZHEN_JIA.005",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_ZHEN_JIA.006",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_ZHEN_JIA.007",
+  "MEDICINE.YONG_SHEN.YONG_SHEN_ZHEN_JIA.008",
+  "PATHOLOGY.GE_JU_BING.001",
+  "PATHOLOGY.GE_JU_BING.002",
+  "PATHOLOGY.GE_JU_BING.003",
+  "PATHOLOGY.GE_JU_BING.004",
+  "PATHOLOGY.GE_JU_BING.005",
+  "PATHOLOGY.GE_JU_BING.006",
+  "PATHOLOGY.GE_JU_BING.007",
+  "PATHOLOGY.GE_JU_BING.008",
+  "PATHOLOGY.GE_JU_BING.009",
+  "PATHOLOGY.GE_JU_BING.010",
+  "PATHOLOGY.GE_JU_BING.011",
+  "PATHOLOGY.JIE_GOU.001",
+  "PATHOLOGY.JIE_GOU.002",
+  "PATHOLOGY.JIE_GOU.003",
+  "PATHOLOGY.JIE_GOU.004",
+  "PATHOLOGY.JIE_GOU.005",
+  "PATHOLOGY.JIE_GOU.006",
+  "PATHOLOGY.JIE_GOU.007",
+  "PATHOLOGY.JIE_GOU.008",
+  "PATHOLOGY.JIE_GOU.009",
+  "PATHOLOGY.JIE_GOU.010",
+  "PATHOLOGY.JIE_GOU.011",
+  "PATHOLOGY.JIE_GOU.012",
+  "PATHOLOGY.JIE_GOU.013",
+  "PATHOLOGY.JIE_GOU.014",
+  "PATHOLOGY.JIE_GOU.015",
+  "PATHOLOGY.JIE_GOU.016",
+  "PATHOLOGY.JIE_GOU.017",
+  "PATHOLOGY.JIE_GOU.018",
+  "PATHOLOGY.JIE_GOU.019",
+  "PATHOLOGY.JIE_GOU.020",
+  "PATHOLOGY.JIE_GOU.021",
+  "PATHOLOGY.JIE_GOU.022",
+  "PATHOLOGY.JIE_GOU.023",
+  "PATHOLOGY.JIE_GOU.024",
+  "PATHOLOGY.JIE_GOU.025",
+  "PATHOLOGY.JIE_GOU.026",
+  "PATHOLOGY.QIANG_RUO.001",
+  "PATHOLOGY.QIANG_RUO.002",
+  "PATHOLOGY.QIANG_RUO.003",
+  "PATHOLOGY.QIANG_RUO.004",
+  "PATHOLOGY.QIANG_RUO.005",
+  "PATHOLOGY.QIANG_RUO.006",
+  "PATHOLOGY.QIANG_RUO.007",
+  "PATHOLOGY.QIANG_RUO.008",
+  "PATHOLOGY.QIANG_RUO.009",
+  "PATHOLOGY.QIANG_RUO.010",
+  "PATHOLOGY.QIANG_RUO.011",
+  "PATHOLOGY.QIANG_RUO.012",
+  "PATHOLOGY.QIANG_RUO.013",
+  "PATHOLOGY.QIANG_RUO.014",
+  "PATHOLOGY.QIANG_RUO.015",
+  "PATHOLOGY.QIANG_RUO.016",
+  "PATHOLOGY.QIANG_RUO.017",
+  "PATHOLOGY.QIANG_RUO.018",
+  "PATHOLOGY.QIANG_RUO.019",
+  "PATHOLOGY.QIANG_RUO.020",
+  "PATHOLOGY.QIANG_RUO.021",
+  "PATHOLOGY.QIANG_RUO.022",
+  "PATHOLOGY.QIANG_RUO.023",
+  "PATHOLOGY.QIANG_RUO.024",
+  "PATHOLOGY.QIANG_RUO.025",
+  "PATHOLOGY.QIANG_RUO.026",
+  "PATHOLOGY.QIANG_RUO.027",
+  "PATHOLOGY.QIANG_RUO.028",
+  "PATHOLOGY.QI_HOU.001",
+  "PATHOLOGY.QI_HOU.002",
+  "PATHOLOGY.QI_HOU.003",
+  "PATHOLOGY.QI_HOU.004",
+  "PATHOLOGY.QI_HOU.005",
+  "PATHOLOGY.QI_HOU.006",
+  "PATHOLOGY.QI_HOU.007",
+  "PATHOLOGY.QI_HOU.008",
+  "PATHOLOGY.QI_HOU.009",
+  "PATHOLOGY.QI_HOU.010",
+  "PATHOLOGY.QI_HOU.011",
+  "PATHOLOGY.QI_HOU.012",
+  "PATHOLOGY.QI_HOU.013",
+  "PATHOLOGY.QI_HOU.014",
+  "PATHOLOGY.QI_HOU.015",
+  "PATHOLOGY.QI_HOU.016",
+  "PATHOLOGY.QI_HOU.017",
+  "PATHOLOGY.QI_HOU.018",
+  "PATHOLOGY.QI_HOU.019",
+  "PATHOLOGY.QI_HOU.020",
+  "PATHOLOGY.QI_HOU.021",
+  "PATHOLOGY.QI_HOU.022",
+  "PATHOLOGY.QI_HOU.023",
+  "PATHOLOGY.WU_XING_BING.001",
+  "PATHOLOGY.WU_XING_BING.002",
+  "PATHOLOGY.WU_XING_BING.003",
+  "PATHOLOGY.WU_XING_BING.004",
+  "PATHOLOGY.WU_XING_BING.005",
+  "PATHOLOGY.WU_XING_BING.006",
+  "PATHOLOGY.WU_XING_BING.007",
+  "PATHOLOGY.WU_XING_BING.008",
+  "PATHOLOGY.WU_XING_BING.009",
+  "PATHOLOGY.WU_XING_BING.010",
+  "PATHOLOGY.WU_XING_BING.011",
+  "PATHOLOGY.WU_XING_BING.012",
+  "PATHOLOGY.ZHI_FA.001",
+  "PATHOLOGY.ZHI_FA.002",
+  "PATHOLOGY.ZHI_FA.003",
+  "PATHOLOGY.ZHI_FA.004",
+  "PATHOLOGY.ZHI_FA.005",
+  "PATHOLOGY.ZHI_FA.006",
+  "PATHOLOGY.ZHI_FA.007",
+  "PATHOLOGY.ZHI_FA.008",
+  "PATHOLOGY.ZHI_FA.009",
+  "PATHOLOGY.ZHI_FA.010",
+  "PATHOLOGY.ZHI_FA.011",
+  "PATHOLOGY.ZHI_FA.012",
+  "PATHOLOGY.ZHI_FA.013",
+  "PATHOLOGY.ZHI_FA.014",
+  "PATHOLOGY.ZHI_FA.015",
+  "PATHOLOGY.ZHI_FA.016",
+  "PATHOLOGY.ZHI_FA.017",
+  "PATHOLOGY.ZHI_FA.018",
+  "PATHOLOGY.ZHI_FA.019",
+  "PATHOLOGY.ZHI_FA.020",
+  "PATHOLOGY.ZHI_FA.021",
+  "SHEN_SHA.XING_SHA.DONG_XING.001",
+  "SHEN_SHA.XING_SHA.DONG_XING.002",
+  "SHEN_SHA.XING_SHA.DONG_XING.003",
+  "SHEN_SHA.XING_SHA.DONG_XING.004",
+  "SHEN_SHA.XING_SHA.DONG_XING.005",
+  "SHEN_SHA.XING_SHA.DONG_XING.006",
+  "SHEN_SHA.XING_SHA.DONG_XING.007",
+  "SHEN_SHA.XING_SHA.DONG_XING.008",
+  "SHEN_SHA.XING_SHA.DONG_XING.009",
+  "SHEN_SHA.XING_SHA.GUI_REN.001",
+  "SHEN_SHA.XING_SHA.GUI_REN.002",
+  "SHEN_SHA.XING_SHA.GUI_REN.003",
+  "SHEN_SHA.XING_SHA.GUI_REN.004",
+  "SHEN_SHA.XING_SHA.GUI_REN.005",
+  "SHEN_SHA.XING_SHA.GUI_REN.006",
+  "SHEN_SHA.XING_SHA.GUI_REN.007",
+  "SHEN_SHA.XING_SHA.GUI_REN.008",
+  "SHEN_SHA.XING_SHA.GUI_REN.009",
+  "SHEN_SHA.XING_SHA.GUI_REN.010",
+  "SHEN_SHA.XING_SHA.GUI_REN.011",
+  "SHEN_SHA.XING_SHA.GUI_REN.012",
+  "SHEN_SHA.XING_SHA.GUI_REN.013",
+  "SHEN_SHA.XING_SHA.GUI_REN.014",
+  "SHEN_SHA.XING_SHA.GUI_REN.015",
+  "SHEN_SHA.XING_SHA.GUI_REN.016",
+  "SHEN_SHA.XING_SHA.GUI_REN.017",
+  "SHEN_SHA.XING_SHA.GUI_REN.018",
+  "SHEN_SHA.XING_SHA.GUI_REN.019",
+  "SHEN_SHA.XING_SHA.GU_XING.001",
+  "SHEN_SHA.XING_SHA.GU_XING.002",
+  "SHEN_SHA.XING_SHA.GU_XING.003",
+  "SHEN_SHA.XING_SHA.GU_XING.004",
+  "SHEN_SHA.XING_SHA.GU_XING.005",
+  "SHEN_SHA.XING_SHA.GU_XING.006",
+  "SHEN_SHA.XING_SHA.GU_XING.007",
+  "SHEN_SHA.XING_SHA.GU_XING.008",
+  "SHEN_SHA.XING_SHA.GU_XING.009",
+  "SHEN_SHA.XING_SHA.GU_XING.010",
+  "SHEN_SHA.XING_SHA.GU_XING.011",
+  "SHEN_SHA.XING_SHA.GU_XING.012",
+  "SHEN_SHA.XING_SHA.GU_XING.013",
+  "SHEN_SHA.XING_SHA.GU_XING.014",
+  "SHEN_SHA.XING_SHA.GU_XING.015",
+  "SHEN_SHA.XING_SHA.GU_XING.016",
+  "SHEN_SHA.XING_SHA.GU_XING.017",
+  "SHEN_SHA.XING_SHA.GU_XING.018",
+  "SHEN_SHA.XING_SHA.GU_XING.019",
+  "SHEN_SHA.XING_SHA.GU_XING.020",
+  "SHEN_SHA.XING_SHA.JI_XING.001",
+  "SHEN_SHA.XING_SHA.JI_XING.002",
+  "SHEN_SHA.XING_SHA.JI_XING.003",
+  "SHEN_SHA.XING_SHA.JI_XING.004",
+  "SHEN_SHA.XING_SHA.JI_XING.005",
+  "SHEN_SHA.XING_SHA.JI_XING.006",
+  "SHEN_SHA.XING_SHA.JI_XING.007",
+  "SHEN_SHA.XING_SHA.JI_XING.008",
+  "SHEN_SHA.XING_SHA.JI_XING.009",
+  "SHEN_SHA.XING_SHA.JI_XING.010",
+  "SHEN_SHA.XING_SHA.JI_XING.011",
+  "SHEN_SHA.XING_SHA.JI_XING.012",
+  "SHEN_SHA.XING_SHA.JI_XING.013",
+  "SHEN_SHA.XING_SHA.JI_XING.014",
+  "SHEN_SHA.XING_SHA.JI_XING.015",
+  "SHEN_SHA.XING_SHA.JI_XING.016",
+  "SHEN_SHA.XING_SHA.JI_XING.017",
+  "SHEN_SHA.XING_SHA.JI_XING.018",
+  "SHEN_SHA.XING_SHA.JI_XING.019",
+  "SHEN_SHA.XING_SHA.JI_XING.020",
+  "SHEN_SHA.XING_SHA.JI_XING.021",
+  "SHEN_SHA.XING_SHA.JI_XING.022",
+  "SHEN_SHA.XING_SHA.JI_XING.023",
+  "SHEN_SHA.XING_SHA.JI_XING.024",
+  "SHEN_SHA.XING_SHA.JI_XING.025",
+  "SHEN_SHA.XING_SHA.TAO_HUA.001",
+  "SHEN_SHA.XING_SHA.TAO_HUA.002",
+  "SHEN_SHA.XING_SHA.TAO_HUA.003",
+  "SHEN_SHA.XING_SHA.TAO_HUA.004",
+  "SHEN_SHA.XING_SHA.TAO_HUA.005",
+  "SHEN_SHA.XING_SHA.TAO_HUA.006",
+  "SHEN_SHA.XING_SHA.TAO_HUA.007",
+  "SHEN_SHA.XING_SHA.TAO_HUA.008",
+  "SHEN_SHA.XING_SHA.TAO_HUA.009",
+  "SHEN_SHA.XING_SHA.TAO_HUA.010",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.001",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.002",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.003",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.004",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.005",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.006",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.007",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.008",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.009",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.010",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.011",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.012",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.013",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.014",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.015",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.016",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.017",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.018",
+  "SHEN_SHA.XING_SHA.XIONG_SHA.019",
+  "STATE.WANG_SHUAI.DE_DI.001",
+  "STATE.WANG_SHUAI.DE_DI.002",
+  "STATE.WANG_SHUAI.DE_DI.003",
+  "STATE.WANG_SHUAI.DE_DI.004",
+  "STATE.WANG_SHUAI.DE_DI.005",
+  "STATE.WANG_SHUAI.DE_DI.006",
+  "STATE.WANG_SHUAI.DE_LING.001",
+  "STATE.WANG_SHUAI.DE_LING.002",
+  "STATE.WANG_SHUAI.DE_LING.003",
+  "STATE.WANG_SHUAI.DE_LING.004",
+  "STATE.WANG_SHUAI.DE_LING.005",
+  "STATE.WANG_SHUAI.DE_LING.006",
+  "STATE.WANG_SHUAI.DE_LING.008",
+  "STATE.WANG_SHUAI.DE_SHI.001",
+  "STATE.WANG_SHUAI.DE_SHI.002",
+  "STATE.WANG_SHUAI.DE_SHI.003",
+  "STATE.WANG_SHUAI.DE_SHI.004",
+  "STATE.WANG_SHUAI.DE_SHI.005",
+  "STATE.WANG_SHUAI.FAN_JU.001",
+  "STATE.WANG_SHUAI.FAN_JU.002",
+  "STATE.WANG_SHUAI.FAN_JU.003",
+  "STATE.WANG_SHUAI.FAN_JU.004",
+  "STATE.WANG_SHUAI.GEN_QI.001",
+  "STATE.WANG_SHUAI.PAN_DUAN_FA.001",
+  "STATE.WANG_SHUAI.SHUAI.001",
+  "STATE.WANG_SHUAI.SHUAI.002",
+  "STATE.WANG_SHUAI.SHUAI.003",
+  "STATE.WANG_SHUAI.SHUAI.004",
+  "STATE.WANG_SHUAI.SHUAI.005",
+  "STATE.WANG_SHUAI.SHUAI.006",
+  "STATE.WANG_SHUAI.TAI_WANG_RUO.001",
+  "STATE.WANG_SHUAI.TAI_WANG_RUO.002",
+  "STATE.WANG_SHUAI.TAI_WANG_RUO.003",
+  "STATE.WANG_SHUAI.TAI_WANG_RUO.004",
+  "STATE.WANG_SHUAI.TAI_WANG_RUO.005",
+  "STATE.WANG_SHUAI.TAI_WANG_RUO.006",
+  "STATE.WANG_SHUAI.TAI_WANG_RUO.007",
+  "STATE.WANG_SHUAI.TAI_WANG_RUO.008",
+  "STATE.WANG_SHUAI.TONG_GEN.001",
+  "STATE.WANG_SHUAI.WANG.001",
+  "STATE.WANG_SHUAI.WANG.002",
+  "STATE.WANG_SHUAI.WANG.003",
+  "STATE.WANG_SHUAI.WANG.004",
+  "STATE.WANG_SHUAI.WANG.005",
+  "STATE.WANG_SHUAI.WANG.006",
+  "STATE.WANG_SHUAI.ZHONG_HE.001",
+  "STATE.WANG_SHUAI.ZHONG_HE.002",
+  "STATE.WANG_SHUAI.ZHONG_HE.003",
+  "STATE.WANG_SHUAI.ZHONG_HE.004",
+  "STRUCTURE.GE_JU.CHENG_BAI.001",
+  "STRUCTURE.GE_JU.CHENG_BAI.002",
+  "STRUCTURE.GE_JU.CHENG_BAI.003",
+  "STRUCTURE.GE_JU.CHENG_BAI.004",
+  "STRUCTURE.GE_JU.CHENG_BAI.005",
+  "STRUCTURE.GE_JU.CHENG_BAI.006",
+  "STRUCTURE.GE_JU.CHENG_BAI.007",
+  "STRUCTURE.GE_JU.CHENG_BAI.008",
+  "STRUCTURE.GE_JU.CHENG_BAI.009",
+  "STRUCTURE.GE_JU.CHENG_BAI.010",
+  "STRUCTURE.GE_JU.CHENG_BAI.011",
+  "STRUCTURE.GE_JU.CHENG_BAI.012",
+  "STRUCTURE.GE_JU.CONG_GE.001",
+  "STRUCTURE.GE_JU.CONG_GE.002",
+  "STRUCTURE.GE_JU.CONG_GE.003",
+  "STRUCTURE.GE_JU.CONG_GE.004",
+  "STRUCTURE.GE_JU.DING_GE_FA.001",
+  "STRUCTURE.GE_JU.DING_GE_FA.002",
+  "STRUCTURE.GE_JU.DING_GE_FA.003",
+  "STRUCTURE.GE_JU.DING_GE_FA.004",
+  "STRUCTURE.GE_JU.DING_GE_FA.005",
+  "STRUCTURE.GE_JU.DING_GE_FA.006",
+  "STRUCTURE.GE_JU.DING_GE_FA.007",
+  "STRUCTURE.GE_JU.DING_GE_FA.008",
+  "STRUCTURE.GE_JU.DING_GE_FA.009",
+  "STRUCTURE.GE_JU.DING_GE_FA.010",
+  "STRUCTURE.GE_JU.DING_GE_FA.011",
+  "STRUCTURE.GE_JU.DING_GE_FA.012",
+  "STRUCTURE.GE_JU.GAO_DI.001",
+  "STRUCTURE.GE_JU.GAO_DI.002",
+  "STRUCTURE.GE_JU.GAO_DI.003",
+  "STRUCTURE.GE_JU.GAO_DI.004",
+  "STRUCTURE.GE_JU.GAO_DI.005",
+  "STRUCTURE.GE_JU.GAO_DI.006",
+  "STRUCTURE.GE_JU.GAO_DI.007",
+  "STRUCTURE.GE_JU.GAO_DI.008",
+  "STRUCTURE.GE_JU.HUA_GE.001",
+  "STRUCTURE.GE_JU.HUA_GE.002",
+  "STRUCTURE.GE_JU.HUA_GE.003",
+  "STRUCTURE.GE_JU.HUA_GE.004",
+  "STRUCTURE.GE_JU.HUA_GE.005",
+  "STRUCTURE.GE_JU.HUA_GE.006",
+  "STRUCTURE.GE_JU.HUA_GE.007",
+  "STRUCTURE.GE_JU.JIAN_LU_YANG_REN.001",
+  "STRUCTURE.GE_JU.JIAN_LU_YANG_REN.002",
+  "STRUCTURE.GE_JU.JIAN_LU_YANG_REN.003",
+  "STRUCTURE.GE_JU.JIAN_LU_YANG_REN.004",
+  "STRUCTURE.GE_JU.JIAN_LU_YANG_REN.005",
+  "STRUCTURE.GE_JU.JIAN_LU_YANG_REN.006",
+  "STRUCTURE.GE_JU.JIU_YING.001",
+  "STRUCTURE.GE_JU.JIU_YING.002",
+  "STRUCTURE.GE_JU.JIU_YING.003",
+  "STRUCTURE.GE_JU.JIU_YING.004",
+  "STRUCTURE.GE_JU.JIU_YING.005",
+  "STRUCTURE.GE_JU.JIU_YING.006",
+  "STRUCTURE.GE_JU.PI_CAI.001",
+  "STRUCTURE.GE_JU.PI_GUAN.001",
+  "STRUCTURE.GE_JU.PI_GUAN.002",
+  "STRUCTURE.GE_JU.PI_GUAN.003",
+  "STRUCTURE.GE_JU.PI_GUAN.004",
+  "STRUCTURE.GE_JU.PI_YIN.001",
+  "STRUCTURE.GE_JU.PI_YIN.002",
+  "STRUCTURE.GE_JU.SHANG_GUAN.001",
+  "STRUCTURE.GE_JU.SHANG_GUAN.002",
+  "STRUCTURE.GE_JU.SHANG_GUAN.003",
+  "STRUCTURE.GE_JU.SHANG_GUAN.004",
+  "STRUCTURE.GE_JU.SHANG_GUAN.005",
+  "STRUCTURE.GE_JU.SHANG_GUAN.006",
+  "STRUCTURE.GE_JU.SHANG_GUAN.007",
+  "STRUCTURE.GE_JU.SHANG_GUAN.008",
+  "STRUCTURE.GE_JU.SHI_SHEN.001",
+  "STRUCTURE.GE_JU.SHI_SHEN.002",
+  "STRUCTURE.GE_JU.SHI_SHEN.003",
+  "STRUCTURE.GE_JU.WAI_GE.001",
+  "STRUCTURE.GE_JU.WAI_GE.002",
+  "STRUCTURE.GE_JU.WAI_GE.003",
+  "STRUCTURE.GE_JU.WAI_GE.004",
+  "STRUCTURE.GE_JU.WAI_GE.005",
+  "STRUCTURE.GE_JU.WAI_GE.006",
+  "STRUCTURE.GE_JU.WAI_GE.007",
+  "STRUCTURE.GE_JU.WAI_GE.008",
+  "STRUCTURE.GE_JU.WAI_GE.009",
+  "STRUCTURE.GE_JU.WAI_GE.010",
+  "STRUCTURE.GE_JU.WAI_GE.011",
+  "STRUCTURE.GE_JU.WAI_GE.012",
+  "STRUCTURE.GE_JU.WAI_GE.013",
+  "STRUCTURE.GE_JU.WAI_GE.014",
+  "STRUCTURE.GE_JU.WAI_GE.015",
+  "STRUCTURE.GE_JU.WAI_GE.016",
+  "STRUCTURE.GE_JU.ZHENG_CAI.001",
+  "STRUCTURE.GE_JU.ZHENG_CAI.002",
+  "STRUCTURE.GE_JU.ZHENG_CAI.003",
+  "STRUCTURE.GE_JU.ZHENG_GUAN.001",
+  "STRUCTURE.GE_JU.ZHENG_GUAN.002",
+  "STRUCTURE.GE_JU.ZHENG_GUAN.003",
+  "STRUCTURE.GE_JU.ZHENG_GUAN.004",
+  "STRUCTURE.GE_JU.ZHENG_YIN.001",
+  "STRUCTURE.GE_JU.ZHENG_YIN.002",
+  "STRUCTURE.GE_JU.ZHENG_YIN.003",
+  "STRUCTURE.GE_JU.ZHENG_YIN.004",
+  "STRUCTURE.GE_JU.ZHUAN_WANG.001",
+  "STRUCTURE.GE_JU.ZHUAN_WANG.002",
+  "STRUCTURE.GE_JU.ZHUAN_WANG.003",
+  "STRUCTURE.GE_JU.ZHUAN_WANG.004",
+  "STRUCTURE.GE_JU.ZHUAN_WANG.005",
+  "STRUCTURE.GE_JU.ZHUAN_WANG.006",
+  "STRUCTURE.GE_JU.ZHUAN_WANG.007",
+  "STRUCTURE.GE_JU.ZHUAN_WANG.008",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.001",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.002",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.003",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.004",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.005",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.006",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.007",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.008",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.009",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.010",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.011",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_GE_JU.012",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.001",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.002",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.003",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.004",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.005",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.006",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.007",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.008",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.009",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.010",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.011",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.012",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.013",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.014",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.015",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.016",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.017",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.018",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.019",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.020",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.021",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.022",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.023",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.024",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.025",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.026",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.027",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.028",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_WANG_SHUAI.029",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_XIN_BING.001",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_XIN_BING.002",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_YIN_DONG.001",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_YIN_DONG.002",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_YIN_DONG.003",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.001",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.002",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.003",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.004",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.005",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.006",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.007",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.008",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.009",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.010",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.011",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.012",
+  "SUI_YUN.RE_EVALUATION.DA_YUN_ZHI_YU.013",
+  "SUI_YUN.RE_EVALUATION.FAN_YIN_FU_YIN.001",
+  "SUI_YUN.RE_EVALUATION.FAN_YIN_FU_YIN.002",
+  "SUI_YUN.RE_EVALUATION.FAN_YIN_FU_YIN.003",
+  "SUI_YUN.RE_EVALUATION.FAN_YIN_FU_YIN.004",
+  "SUI_YUN.RE_EVALUATION.FAN_YIN_FU_YIN.005",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.001",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.002",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.003",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.004",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.005",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.006",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.007",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.008",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.009",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.010",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.011",
+  "SUI_YUN.RE_EVALUATION.LIU_NIAN.012",
+  "SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.001",
+  "SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.002",
+  "SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.003",
+  "SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.004",
+  "SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.005",
+  "SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.006",
+  "SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.007",
+  "SUI_YUN.RE_EVALUATION.YUN_XIAN.001",
+  "SUI_YUN.RE_EVALUATION.YUN_XIAN.002",
+  "SUI_YUN.RE_EVALUATION.YUN_XIAN.003",
+  "SUI_YUN.RE_EVALUATION.YUN_XIAN.004",
+  "SUI_YUN.RE_EVALUATION.YUN_XIAN.005",
+  "SUI_YUN.RE_EVALUATION.YUN_XIAN.006"
+ ]
+}

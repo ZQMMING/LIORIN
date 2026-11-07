@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wisdom.shuntian/schema/rule.schema.json",
+  "title": "Rule",
+  "description": "V2.22 §45 Rule Registry 正式结构。output 最小结构为单对象（field/value）；多输出 Rule 允许对象数组（§45 为'至少包含'的最小结构，数组扩展用于多输出真实数据）。",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "rule_id",
+    "engine",
+    "source_ids",
+    "scope",
+    "preconditions",
+    "operator",
+    "output",
+    "version",
+    "status"
+  ],
+  "properties": {
+    "rule_id": {
+      "type": "string",
+      "pattern": "^(CAND-)?[A-Z]{3,4}-[0-9]{3}$",
+      "description": "候选前缀 CAND- 在 Human 审批后去除"
+    },
+    "engine": {
+      "type": "string",
+      "enum": [
+        "YUHAI_ZIPING",
+        "ZIPING_ZHENQUAN",
+        "DITIANSUI",
+        "QIONGTONG_BAOJIAN",
+        "SANMING_TONGHUI",
+        "SHENFENG_TONGKAO"
+      ]
+    },
+    "source_ids": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{3,4}-[0-9]{3}-[0-9]{3}$"
+      },
+      "description": "Rule 证据链：每一条 Rule 必须绑定至少一个 Source（V2.22 §63 Phase 4）"
+    },
+    "rule_type": {
+      "type": "string",
+      "enum": [
+        "definition",
+        "resolution",
+        "effectiveness",
+        "activation",
+        "diagnosis",
+        "medicine"
+      ]
+    },
+    "scope": {
+      "type": "string",
+      "enum": [
+        "natal",
+        "dayun",
+        "liunian",
+        "liuyue",
+        "decade"
+      ]
+    },
+    "subject": {
+      "type": "string"
+    },
+    "predicate": {
+      "type": "string"
+    },
+    "preconditions": {
+      "$ref": "#/$defs/preconditions"
+    },
+    "operator": {
+      "type": "string",
+      "enum": [
+        "emit",
+        "require",
+        "suppress"
+      ],
+      "description": "Rule 顶层动作（V2.22 §45 operator；知识工程候选数据 operation 字段映射至此）"
+    },
+    "output": {
+      "type": [
+        "object",
+        "array"
+      ],
+      "description": "§45 最小结构 output 为单对象；多输出 Rule 为对象数组（保持一层）",
+      "anyOf": [
+        {
+          "$ref": "#/$defs/output_item"
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/output_item"
+          }
+        }
+      ]
+    },
+    "evidence_requirement": {
+      "type": "string",
+      "enum": [
+        "A",
+        "B",
+        "C",
+        "D"
+      ],
+      "description": "Phase 5 迁移至 Evidence Registry（§39/§64）"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "CANDIDATE",
+        "APPROVED",
+        "REJECTED",
+        "NEEDS_REVIEW",
+        "FROZEN"
+      ]
+    },
+    "notes": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "preconditions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "conditions"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "conjunction",
+            "disjunction"
+          ]
+        },
+        "conditions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/condition"
+          },
+          "description": "保持一层结构，禁止嵌套 conditions"
+        }
+      }
+    },
+    "condition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "operator",
+        "value"
+      ],
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "operator": {
+          "type": "string",
+          "enum": [
+            "equals",
+            "in",
+            "not_in",
+            "exists",
+            "not_exists"
+          ],
+          "description": "V2.22 §46 白名单；禁止 > < >= <="
+        },
+        "value": {}
+      }
+    },
+    "output_item": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "value"
+      ],
+      "properties": {
+        "field": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "boolean"
+          ]
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "contract_id": "PATCH-029",
+  "name": "Classical Evidence Binding Layer（经典证据绑定层）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "建立 经典依据→Rule→Evidence→Admission 绑定：rule 必须引用 evidence_id（非自由文本）；原文/注解/后世整理/现代解释四层分离；证据分级 A/B/C/D。",
+  "evidence_schema": {
+    "required_fields": ["evidence_id", "classic", "work", "chapter", "quotation", "translation_layer", "interpretation_layer", "grade"],
+    "note": "translation_layer=文本层（ORIGINAL/ANNOTATION/QUOTED/UNVERIFIED）；interpretation_layer=解释层（ORIGINAL_AUTHOR/ORIGINAL_ANNOTATION/REN_TIEQIAO/LATER_COMMENTARY/MODERN）"
+  },
+  "layer_separation": {
+    "原文层": "A_ORIGINAL / ORIGINAL_AUTHOR——可直接作为原典规则依据",
+    "注解层": "B_ANNOTATION / ORIGINAL_ANNOTATION(B1)·REN_TIEQIAO(B2)——传统注释证据，可作 B 级候选，不得升级 A",
+    "后世整理层": "C / LATER_COMMENTARY(B3)——仅 SUPPORTING，不得独立建规则",
+    "现代解释层": "D / MODERN——禁止进入规则层（现代命理文章不是原典依据）",
+    "prohibition": "现代解释 ≠ 原典规则；rule 的 evidence_chain 不得引用 D 级"
+  },
+  "evidence_grade_scale": {
+    "A": "原文明确（ORIGINAL）",
+    "B": "原文+传统注解（ANNOTATION，含原注 B1/任氏 B2）",
+    "C": "后世整理（LATER_COMMENTARY）",
+    "D": "现代解释（MODERN，禁入规则层）"
+  },
+  "rule_evidence_requirement": {
+    "forbidden": "rule_id → 自由文本（如 rule:{经典某句}）",
+    "required": "rule_id → evidence_id → classic_source（evidence_id 必须存在于 evidence 注册表）"
+  },
+  "grade_mapping_to_prior_registry": {
+    "A": "= A_ORIGINAL / ORIGINAL_AUTHOR（R1 attribution 132 条）",
+    "B": "= B_ANNOTATION / ORIGINAL_ANNOTATION(B1 124 条)+REN_TIEQIAO(B2 0 条未转录)",
+    "C": "= LATER_COMMENTARY(B3 1 条)",
+    "D": "= 现代解释（非原典，禁止进入 Rule Admission）"
+  },
+  "chart_1983_1103_demo": {
+    "binding_check": "12 条 ADMITTED 的 evidence_chain 全部转为 evidence_id 引用；校验：evidence 存在 + grade ≤ B（无 C/D 进规则层）",
+    "note": "QTBJ 调候锚（EVID-013）保持 CANDIDATE：grade B/C 混合，未升格前 FAIL_CLOSED"
+  },
+  "acceptance_criteria": [
+    "evidence schema 八字段冻结",
+    "四层分离（原文/注解/后世整理/现代解释）",
+    "rule 必须引用 evidence_id（禁自由文本）",
+    "A/B/C/D 分级冻结，D 级禁入规则层",
+    "12 条 ADMITTED evidence 绑定校验通过（grade ≤ B）"
+  ]
+}

@@ -1,0 +1,38 @@
+{
+  "a_items_now_fixed": [
+    "A1: severity 序数 0/1/2/3/4 — 已实现，Probe 2 severity=3",
+    "A2: bing_domain 字段 — 已实现，Probe 2 bing_domain='WANGSH'",
+    "A3: slice_id 依据链 — 已实现，Probe 2 slice_id='PATHOLOGY.QIANG_RUO.004'",
+    "A7: l3_contract 结构 — 已实现，18 键含 strength_verdict",
+    "B4: liuhe_canceled 编造六合边 — 已修复，代码仅用 _HE_T 合法对",
+    "B5: chong_survive 双向双计 — 已修复，代码有序枚举不产生反向对"
+  ],
+  "a_items_still_open": [
+    "A4: bing_by_domain 五域并行结构 — 缺失，domain_primaries={} 空字典",
+    "A5: 域间全保留不选唯一主病 — 部分，bing_debate 仍输出 primary 单值",
+    "A6: 用神多味并列 by_domain — 部分，yongyao 只输出 {primary, ji_shen}",
+    "B3: dm_tier 同名不同义 — 仍存在，transit_power.py:480 vs ge_jie_layer.py:29"
+  ],
+  "dead_modules": [
+    "engines/common/climate_producer.py",
+    "engines/common/dayun_xiji.py",
+    "engines/common/dayun_xiji_v2.py",
+    "engines/common/strength_rules.py",
+    "engines/common/strength_rules_full.py",
+    "engines/common/bingyao_rules.py",
+    "engines/common/special_pattern_resolver.py",
+    "engines/common/special_pattern_runtime.py"
+  ],
+  "float_violations": 1.0,
+  "key_findings": [
+    "paipan() 返回 36 键（架构文档记 34 键，有偏差）",
+    "is_xix_shen() B1 描述有误：已在 bingyao_layer.py:501-503 接线调用",
+    "P3 岁运在 bazi_gate 主链不可达，无 dayun/liunian/qiyun 输出键",
+    "production_entry.py 可选注入 dayun_summary/liunian_summary，fail-closed",
+    "浮点违规 1 处：qiyun.py:62 的 diff / 3.0，属 P3 岁运非主链模块",
+    "架构文档 §7.1 A1/A2/A3/A7 记录滞后于代码实现",
+    "双版本模块：climate_producer_v2 活，dayun_xiji_v2 死，strength_rules_full 死",
+    "pzzq_producer_v1 被 pzzq_resolver_v2/yongshen_geju 依赖，双向活"
+  ],
+  "report_path": "D:/shuntian-ziping-p0/p0_v2/_verify_20261009/代码层核对报告.md"
+}

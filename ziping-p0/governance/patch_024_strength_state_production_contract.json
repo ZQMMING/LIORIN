@@ -1,0 +1,47 @@
+{
+  "contract_id": "PATCH-024",
+  "name": "Strength State Production Contract（强弱状态生产契约）",
+  "status": "FROZEN_DRAFT",
+  "note": "024 重新定义为 Strength State Production Contract（七层架构内容已并入 PATCH-023 State Production Pipeline）",
+  "purpose": "冻结谁有资格生产 strength_state/wang_state/qiang_state；不直接生成身强身弱结论——任何结论必须带 producer_trace/evidence_chain/namespace_source 可追溯。",
+  "producer_whitelist": [
+    {"state": "wang_state", "producers": [{"classical_scope": "YHZP", "namespace": "wang_expression", "rule_ref": "CAND-WANG-001（得時俱為旺論 YHZP-138-001 A）", "mode": "DIRECT"}, {"classical_scope": "DTS", "namespace": "wang_relation", "rule_ref": "CAND-WANG-002（旺中有衰 B1）", "mode": "SUPPORTING"}]},
+    {"state": "shuai_state", "producers": [{"classical_scope": "YHZP", "namespace": "wang_expression", "rule_ref": "CAND-SHUAI-001（失令便作衰看 YHZP-138-001 A）", "mode": "DIRECT"}]},
+    {"state": "qiang_state", "producers": [{"classical_scope": "YHZP", "namespace": "wang_expression", "rule_ref": "CAND-QIANG-001（日干無氣遇劫為強 YHZP-138-001 A）", "mode": "DIRECT"}]},
+    {"state": "strength_state", "producers": [
+      {"classical_scope": "DTS", "namespace": "strength_relation", "mode": "INPUT"},
+      {"classical_scope": "PZZQ", "namespace": "strength_condition", "mode": "INPUT"},
+      {"classical_scope": "YHZP", "namespace": "support_relation", "mode": "INPUT"},
+      {"classical_scope": "SMTH", "namespace": "time_modifier", "mode": "INPUT"},
+      "note": "strength_state 是综合生产结果（RELATIONAL_RESULT），无单一经典直接生产；须经本契约 024 登记资格后由 Producer Layer 组合生产"
+    ]}
+  ],
+  "input_layers": {
+    "allowed": ["事实层（L0/L1 Boolean+Enum）", "关系层（L2 granularity + L4 relation states）", "结构层（PZZQ structure_relation）", "时间修正层（SMTH time_modifier）"],
+    "forbidden": ["裸 surface 直判（strength/water_many）", "数量评分", "百分比/权重"]
+  },
+  "output_schema": {
+    "required_fields": ["state", "value", "producer", "sources", "evidence_chain", "namespace_source"],
+    "example": {
+      "state": "strength_state",
+      "value": "UNDETERMINED（待 Producer Layer 授权组合）",
+      "producer": "024",
+      "sources": ["DTS.strength_relation", "PZZQ.strength_condition"],
+      "evidence_chain": ["YHZP-138-001(得时俱为旺论/失令便作衰看)", "YHZP-063-001(身旺身弱月令入口)"],
+      "namespace_source": {"DTS": "strength_relation", "PZZQ": "strength_condition"}
+    }
+  },
+  "traceability_rule": "任何身强/身弱/旺/衰结论必须可追溯：不是某经典直接说，而是经过 024 生产契约生成（producer+sources+evidence_chain）",
+  "chart_1983_1103_producer_demo": {
+    "wang_state": {"value": "UNKNOWN（无得时证据）", "producer": "YHZP.wang_expression(CAND-WANG-001)", "trace": "order=NOT_GET_ORDER→未触发"},
+    "shuai_state": {"value": "SHUAI", "producer": "YHZP.wang_expression(CAND-SHUAI-001)", "trace": "order=NOT_GET_ORDER→触发", "evidence_chain": ["YHZP-138-001 失令便作衰看"]},
+    "qiang_state": {"value": "UNKNOWN（无天干比劫透）", "producer": "YHZP.wang_expression(CAND-QIANG-001)", "trace": "双条件未齐"},
+    "strength_state": {"value": "UNDETERMINED", "producer": "024", "sources": ["DTS.strength_relation(PENDING)", "PZZQ.strength_condition(UNDETERMINED)", "YHZP.support_relation(SUPPORT_PRESENT)", "SMTH.time_modifier(未启动)"], "note": "综合生产条件未授权组合→FAIL_CLOSED 正确"}
+  },
+  "acceptance_criteria": [
+    "Producer 白名单冻结（wang/shuai/qiang/strength 各自生产者）",
+    "输入仅四层（事实/关系/结构/时间修正）",
+    "输出 schema 带 producer/sources/evidence_chain/namespace_source",
+    "1983-1103 演示：所有结论可追溯，无裸直判"
+  ]
+}

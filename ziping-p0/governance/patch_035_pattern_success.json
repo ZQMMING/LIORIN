@@ -1,0 +1,41 @@
+﻿{
+  "contract_id": "PATCH-035",
+  "name": "格局成败 Production（RULE-035-01）",
+  "status": "RULE_CONSTRUCTED",
+  "evidence": [
+    {"source_id": "PZZQ-005-008", "grade": "A", "quotation": "財格透印而位置安帖、兩不相剋，財格成也；財輕比重，財透七煞，財格敗也；成中有敗，必是帶忌；敗中而成，全憑救應"},
+    {"source_id": "PZZQ-007-004", "grade": "A", "quotation": "月令既得用神，則别位亦必有相"}
+  ],
+  "rules": [
+    {
+      "rule_id": "RULE-035-01",
+      "name": "财格成败判定（谓词式）",
+      "namespace": "PZZQ.pattern_success",
+      "producer": "025 pattern_success_state",
+      "predicates": {
+        "成": "財格透印（印透∧财不透，干支分离位置安帖）→SUCCESS",
+        "败1": "財輕比重=财透∧比劫透（双谓词）→FAILED",
+        "败2": "財透七煞=财透∧七煞透（双谓词）→FAILED",
+        "带忌": "財旺生官又逢傷逢合=财透∧官透∧伤官透→DAIJI",
+        "救应": "財逢劫→透食化之或生官制之；逢煞→食制煞生財或存財合煞（登记参照）"
+      },
+      "chart_1983": {
+        "pattern_success_state": "SUCCESS(路径C財格透印)",
+        "daiji_state": "NO_DAIJI",
+        "rescue_state": "NO_RESCUE_NEEDED",
+        "xiangshen_state": "PRESENT(印（癸壬壬透三）)",
+        "xiangshen_scope": "PZZQ_ONLY"
+      },
+      "forbidden": ["计数评分", "比劫数>财数", "成败=清浊", "病药救应=相神"]
+    }
+  ],
+  "enum_registry": "v1.10.0（+4：pattern_success_state/daiji_state/rescue_state/xiangshen_state，105 枚举）",
+  "gc001_update": "v5：+pattern_success/daiji/rescue/xiangshen 4 状态",
+  "acceptance_criteria": [
+    "pattern_success 出值且无评分模型",
+    "败条件双谓词同时成立才触发",
+    "相神 PZZQ_ONLY（禁病药救应=相神）",
+    "成败≠清浊 namespace 隔离",
+    "Golden GC-001 v5 回归通过；枚举 22/22"
+  ]
+}

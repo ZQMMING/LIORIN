@@ -1,0 +1,27 @@
+{
+  "contract_id": "PATCH-075",
+  "name": "Explanation Contract 解释层契约",
+  "three_rules": {
+    "R1_ONLY_CONSUME": {
+      "allow": ["State", "Relation", "Evidence"],
+      "forbid": ["Raw Fact", "Raw Rule", "未注册概念"]
+    },
+    "R2_NO_PRODUCE_STATE": {
+      "forbid_example": "解释: 财多耗身 → 自动生成 strength=WEAK",
+      "note": "解释不产生新state, 不绕过Pattern Producer/Conflict Resolver/Evidence Binding"
+    },
+    "R3_OUTPUT_MUST_HAVE_CHAIN": {
+      "schema": {
+        "statement": "财格透印, 印为相神辅助格局",
+        "source_state": ["pattern_state", "xiangshen_state"],
+        "relation": "SUPPORT",
+        "evidence": ["PZZQ-007-004"]
+      }
+    }
+  },
+  "guard_against": [
+    "模型看到财格+身弱+财旺自行生成财格破",
+    "解释层绕过Producer/Resolver/Evidence直接综合"
+  ],
+  "pipeline_final": "四柱→事实→Producer→State→Relation→Explanation(只追溯)"
+}

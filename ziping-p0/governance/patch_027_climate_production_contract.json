@@ -1,0 +1,47 @@
+{
+  "contract_id": "PATCH-027",
+  "name": "Climate Production Contract（调候生产契约）",
+  "status": "FROZEN_DRAFT",
+  "purpose": "冻结调候状态（climate_state）生产边界：QTBJ.climate 生产者、输入域、禁读路径、输出 schema。保持寒暖≠旺衰、燥湿≠强弱、调候用≠格局用。",
+  "producer_whitelist": {
+    "climate_state": [
+      {"classical_scope": "QTBJ", "namespace": "climate", "mode": "DIRECT", "note": "调候主体系（穷通宝鉴十干逐月寒暖燥湿）"},
+      {"classical_scope": "DTS", "namespace": "climate", "mode": "SUPPORTING", "note": "寒温湿燥论（DTS-026 系，B1 原注）仅辅助，不升级主判"}
+    ]
+  },
+  "input_namespace": {
+    "QTBJ.climate": {
+      "allowed_states": ["month_order", "daymaster", "seasonal_state", "temperature_condition", "dryness_wetness"],
+      "forbidden_states": ["strength_state", "wang_state", "shuai_state", "qiang_state", "pattern_state", "use_god_state"],
+      "note": "调候输入仅季节/月令/日主/寒暖/燥湿；seasonal_state 须 QTBJ 规则升格（当前 QTBJ-018-001 仍 CANDIDATE_RULE，未升格前 FAIL_CLOSED）"
+    }
+  },
+  "forbidden_paths": [
+    {"from": "climate_state", "to": "strength_state", "reason": "寒暖≠旺衰（QTBJ 域表禁 strength/wang/qiang）"},
+    {"from": "climate_state", "to": "pattern_state", "reason": "调候≠格局判定"},
+    {"from": "climate_use_state", "to": "use_god_state", "reason": "调候用≠格局用（026 已拆三用）"},
+    {"from": "climate_use_state", "to": "qu_yong_state", "reason": "调候用≠病药取用"},
+    {"from": "climate_state", "to": "climate_use_state", "reason": "调候状态不自动产生调候用神（须 QTBJ.climate_use 026 契约另行生产）"}
+  ],
+  "concept_boundaries": {
+    "寒暖": {"neq": "旺衰", "note": "寒暖是季节气候维度，不是日主强弱维度"},
+    "燥湿": {"neq": "强弱", "note": "燥湿是湿度维度，不产生力量结论"},
+    "调候用": {"neq": "格局用", "note": "CLIMATE_USE 与 USE_GOD 独立（026 冻结）"}
+  },
+  "output_schema": {
+    "required_fields": ["state", "value", "producer", "sources", "evidence_chain", "namespace_source", "climate_type", "season_source", "temperature_source"],
+    "note": "climate_type（寒/暖/燥/湿/平/UNKNOWN）；season_source（节气/月令来源）；temperature_source（温度证据来源）——全部可追溯"
+  },
+  "chart_1983_1103_producer_demo": {
+    "fact_layer": {"month_order": "戌", "daymaster": "乙木", "seasonal_state": "QTBJ_REQUIRED", "temperature_condition": "UNDETERMINED（燥湿未量化，禁编数字阈值）", "dryness_wetness": "UNDETERMINED（水透三为寒湿事实证据，但禁自动转调候结论）"},
+    "climate_state": {"value": "UNDETERMINED（QTBJ 调候规则未准入：QTBJ-018-001 仍 CANDIDATE_RULE，须升格核验或换 QTBJ-060-001/109-001）", "producer": "QTBJ.climate", "sources": ["QTBJ.climate(month/daymaster/seasonal/temperature/dryness)"], "evidence_chain": ["QTBJ 十干逐月调候体系（规则未准入）"], "namespace_source": {"QTBJ": "climate"}, "climate_type": "UNKNOWN", "season_source": "戌月（寒露后霜降前）", "temperature_source": "UNDETERMINED（无量化依据，FAIL_CLOSED）"},
+    "note": "climate_use_state 由 026 QTBJ.climate_use 另行生产，本契约不重复生产用神"
+  },
+  "acceptance_criteria": [
+    "调候生产者冻结：QTBJ.climate DIRECT + DTS.climate SUPPORTING",
+    "输入仅季节/月令/日主/寒暖/燥湿五域",
+    "禁 climate→strength/pattern；climate_use→use_god/qu_yong；climate→climate_use 自动",
+    "输出含 climate_type/season_source/temperature_source/evidence_chain",
+    "1983-1103：climate=UNDETERMINED（规则未准入 FAIL_CLOSED），事实层登记燥湿证据"
+  ]
+}

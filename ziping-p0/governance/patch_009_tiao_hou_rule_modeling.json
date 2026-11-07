@@ -1,0 +1,63 @@
+{
+  "contract_id": "PATCH-009",
+  "name": "Tiao-Hou（调候）Rule Modeling",
+  "status": "FROZEN_DRAFT",
+  "purpose": "调候 Rule Candidate Registry：QTBJ 为主（寒冻取丙/冰冻结冻用丙），SFTK 微寒用火、PZZQ 金寒水冻配气候互参、DTS 寒热病症为辅助。所有候选 PENDING_GOLDEN。",
+  "parent": "PATCH-008",
+  "concept_boundaries": {
+    "QTBJ_TIAO_HOU_CORE": {
+      "definition": "日干×月令×寒暖燥湿取用（冻土取丙/寒水取丙等），必须绑定具体月日干支条件",
+      "primary_source": "QTBJ-060-001（A）、QTBJ-109-001（A）",
+      "forbidden": ["调候条件泛化成通用用神", "调候替代 PZZQ 格局用神"]
+    },
+    "SFTK_TIAO_HOU_AUX": {
+      "definition": "四时调候（微寒用火温暖）",
+      "primary_source": "SFTK-061-006（A）",
+      "forbidden": ["SFTK 调候=QTBJ 调候"]
+    },
+    "PZZQ_TIAO_HOU_CONTEXT": {
+      "definition": "配气候互参（金寒水冻影响格局）",
+      "primary_source": "PZZQ-007-003（A）",
+      "forbidden": ["调候替代格局"]
+    }
+  },
+  "rule_candidates": [
+    {
+      "rule_id": "RULE-T-001",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "QTBJ",
+      "source_ids": ["QTBJ-060-001"],
+      "condition": "寒冻取丙（必须绑定日干×月令条件）",
+      "output": "tiaohou_candidate",
+      "excluded": ["印旺殺高式泛化（须月日干支条件）"]
+    },
+    {
+      "rule_id": "RULE-T-002",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "QTBJ",
+      "source_ids": ["QTBJ-109-001"],
+      "condition": "冰冻结冻用丙（绑定日干×月令）",
+      "output": "tiaohou_candidate",
+      "excluded": ["泛化为 调候=贵"]
+    },
+    {
+      "rule_id": "RULE-T-003",
+      "status": "PENDING_GOLDEN",
+      "classical_scope": "SFTK",
+      "source_ids": ["SFTK-061-006"],
+      "condition": "微寒用火温暖（四时调候，原文逐字）",
+      "output": "tiaohou_candidate（SFTK 域）",
+      "excluded": ["SFTK 调候=QTBJ 调候"]
+    }
+  ],
+  "conflict_resolver": [
+    {"conflict": "QTBJ 调候 vs PZZQ 格局", "resolution": "各自域内登记；调候不得替代格局用神"},
+    {"conflict": "调候 vs 病药", "resolution": "调候取寒暖，病药去害神，两体系分离"}
+  ],
+  "golden_cases": [
+    {"case_id": "GOLDEN-009-01", "title": "冬生寒局", "verify_forbidden": ["调候替代格局用神"], "expected": "tiaohou_candidate 与 use_god_candidate 各自登记"},
+    {"case_id": "GOLDEN-009-02", "title": "印旺杀高", "verify_forbidden": ["印旺→贵 泛化"], "expected": "须绑定具体月日干支条件"}
+  ],
+  "blocklist": ["统一调候喜忌算法", "调候=贵 泛化", "调候百分比"],
+  "acceptance_criteria": ["调候三书边界", "3 Rule Candidate PENDING_GOLDEN", "Conflict 2 类", "Golden 2 个"]
+}
