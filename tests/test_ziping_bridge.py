@@ -61,15 +61,26 @@ def test_judgment_traceable():
 
 
 def test_deterministic():
-    """确定性: 相同 chart → 相同结论。"""
+    """确定性: 相同 chart → 相同结论 (created_at 时间戳不参与比对)。"""
     chart1 = _make_chart()
     chart2 = _make_chart()
     s1 = run_ziping_judgment(chart1)
     s2 = run_ziping_judgment(chart2)
-    # 原始算法无信号时各域均为 None，相同
-    assert s1.wangshuai == s2.wangshuai
-    assert s1.geju == s2.geju
-    assert s1.yongshen == s2.yongshen
+
+    def _core(d):
+        return {k: (v.domain.value, v.conclusion.value, v.reasoning) if v else None
+                for k, v in d.items() if k in ("wangshuai", "geju", "yongshen",
+                                               "shishen", "shijian")}
+
+    d1 = s1.to_dict()
+    d2 = s2.to_dict()
+    for key in ("wangshuai", "geju", "yongshen", "shishen", "shijian"):
+        a, b = d1.get(key), d2.get(key)
+        if a is None or b is None:
+            assert a == b
+            continue
+        assert (a["domain"], a["conclusion"], a["reasoning"]) == \
+               (b["domain"], b["conclusion"], b["reasoning"])
 
 
 def test_fail_closed_empty_chart():

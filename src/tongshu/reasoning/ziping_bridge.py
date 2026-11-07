@@ -64,10 +64,16 @@ def build_context(chart: Any) -> Dict[str, Any]:
 
 
 def run_ziping_judgment(chart: Any) -> JudgmentSynthesis:
-    """对 CanonicalBaziChart 执行五大域判断。
+    """对 CanonicalBaziChart 执行五大域判断 (V3 引擎真实接线).
 
     BZ-FNDR-15 (⑮-0 接入契约): Ziping 入口接收 CanonicalBaziChart.
     真实生产路径必须经过 assert_canonical_gate(require_factory=True).
+
+    2026-11-07 (㊼s1) 修复「生产链路空转」:
+      旧实现 `JudgmentFactory.judge_all({}, context)` 传空 signals,
+      五域恒 None/UNKNOWN. 现改为调用 `ziping_v3.runner.run_ziping`
+      (真引擎) 并把 旺衰/格局/用神 三域映射为 JudgmentSynthesis;
+      十神/事件两域引擎未输出 → UNKNOWN (fail-closed, 不伪造).
 
     Args:
         chart: CanonicalBaziChart 实例
@@ -83,9 +89,13 @@ def run_ziping_judgment(chart: Any) -> JudgmentSynthesis:
         from tongshu.models.canonical_bazi import assert_canonical_gate
         assert_canonical_gate(chart, require_factory=False)
         context = build_context(chart)
-        # 判断层只消费确定性事实；空 day_master 时 judge_all 各域 fail-closed
-        signals_by_domain: Dict[JudgmentDomain, list] = {}
-        return JudgmentFactory.judge_all(signals_by_domain, context)
+        # 缺 day_master 等关键事实 → 直接 fail-closed
+        if not context["natal"]["day_master"]:
+            signals_by_domain: Dict[JudgmentDomain, list] = {}
+            return JudgmentFactory.judge_all(signals_by_domain, context)
+        from .ziping_v3.runner import run_ziping
+        result = run_ziping(chart, enable_pattern=True)
+        return _synthesis_from_v3(result)
     except Exception as e:  # pragma: no cover - 防御性
         from .judgment import DomainJudgment
         unknown = DomainJudgment(
@@ -94,6 +104,93 @@ def run_ziping_judgment(chart: Any) -> JudgmentSynthesis:
             reasoning=f"接线异常: {type(e).__name__}: {e}",
         )
         return JudgmentSynthesis(wangshuai=unknown)
+
+
+# V3 旺衰六态 → 辨层结论 (旺/衰/中和三值; 「旺而不强」「衰而不弱」归其本侧)
+_V3_WANGSHUAI = {
+    "STRONG": JudgmentConclusion.STRONG,
+    "WANG_BUT_NOT_STRONG": JudgmentConclusion.STRONG,
+    "BALANCED": JudgmentConclusion.MODERATE,
+    "SHUAI_BUT_NOT_WEAK": JudgmentConclusion.WEAK,
+    "WEAK": JudgmentConclusion.WEAK,
+}
+
+
+def _v3_judgment(result: Dict[str, Any], domain: str) -> Dict[str, Any]:
+    for item in (result.get("judgments") or []):
+        if item.get("domain") == domain:
+            return item
+    return {}
+
+
+def _dj(domain: JudgmentDomain, conclusion: JudgmentConclusion,
+        reasoning: str, v3_item: Dict[str, Any]) -> Any:
+    from .judgment import DomainJudgment
+    return DomainJudgment(
+        domain=domain,
+        conclusion=conclusion,
+        reasoning=reasoning,
+        rule_refs=list(v3_item.get("matched_rule_ids") or []),
+    )
+
+
+def _synthesis_from_v3(result: Dict[str, Any]) -> JudgmentSynthesis:
+    """V3 引擎输出 → 五大域 JudgmentSynthesis (三域映射, 两域 fail-closed)."""
+    unk = JudgmentConclusion.UNKNOWN
+
+    # --- 旺衰 ---
+    st = (result.get("strength") or {}).get("state")
+    wangshuai = None
+    if st in _V3_WANGSHUAI:
+        wangshuai = _dj(
+            JudgmentDomain.WANGSHUAI, _V3_WANGSHUAI[st],
+            f"旺衰: {st}",
+            _v3_judgment(result, "STRENGTH"),
+        )
+    else:
+        wangshuai = _dj(
+            JudgmentDomain.WANGSHUAI, unk,
+            f"旺衰未裁: {st or 'FACT_MISSING'}",
+            _v3_judgment(result, "STRENGTH"),
+        )
+
+    # --- 格局: 仅「已成立」(_FORMED) 记 ESTABLISHED, 候选/未裁 fail-closed ---
+    pat = _v3_judgment(result, "PATTERN")
+    pat_state = pat.get("state") or ""
+    if pat_state.endswith("_FORMED"):
+        geju = _dj(JudgmentDomain.GEJU, JudgmentConclusion.ESTABLISHED,
+                   f"格局: {pat_state}", pat)
+    elif pat_state == "NOT_APPLICABLE":
+        geju = _dj(JudgmentDomain.GEJU, JudgmentConclusion.ESTABLISHED,
+                   "格局: 特殊格成立(普通格不适用)", pat)
+    else:
+        geju = _dj(JudgmentDomain.GEJU, unk,
+                   f"格局未成立(候选/未裁): {pat_state or 'UNDETERMINED'}", pat)
+
+    # --- 用神: 有主用神 → PRIMARY, 否则 fail-closed ---
+    ys = result.get("yongshen") or {}
+    main = ys.get("main")
+    if main:
+        quote = str(ys.get("classic_quote") or "")
+        yongshen = _dj(
+            JudgmentDomain.YONGSHEN, JudgmentConclusion.PRIMARY,
+            f"主用神: {main}（依据 {ys.get('basis') or 'ENGINE'}）"
+            + (f"；引: {quote}" if quote else ""),
+            _v3_judgment(result, "YONG-CLIMATE") or _v3_judgment(result, "YONG-PATTERN"),
+        )
+    else:
+        yongshen = _dj(JudgmentDomain.YONGSHEN, unk,
+                       f"用神未裁: {ys.get('basis') or 'FAIL_CLOSED'}",
+                       _v3_judgment(result, "YONG-PATTERN"))
+
+    # --- 十神 / 事件: V3 未输出该两域 (不伪造) ---
+    shishen = _dj(JudgmentDomain.SHISHEN, unk, "十神语义域: V3 引擎未输出 (fail-closed)", {})
+    shijian = _dj(JudgmentDomain.SHIJIAN, unk, "事件域: V3 引擎未输出 (fail-closed)", {})
+
+    return JudgmentSynthesis(
+        wangshuai=wangshuai, geju=geju, yongshen=yongshen,
+        shishen=shishen, shijian=shijian,
+    )
 
 
 def synthesis_to_dict(synthesis: JudgmentSynthesis) -> dict:

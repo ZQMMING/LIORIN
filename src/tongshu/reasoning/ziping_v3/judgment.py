@@ -266,15 +266,57 @@ def derive_party_structure(ctx: EngineContext, derived: ZiPingDerivedFact,
             opposition.add("官杀")          # 克我
 
     day_branch_root = _day_branch_root(ctx, derived)
+    day_el = ctx.element_of_stem(ctx.fact.day_master)
+    day_ju = False
+    for j in (party.get("ju") or []):
+        el = j.get("element", "")
+        if not el or not day_el:
+            continue
+        if el == day_el:
+            support.add("比劫局")
+            day_ju = True
+        elif _generates(el, day_el):
+            support.add("印局")
+        elif _generates(day_el, el):
+            opposition.add("食伤局")
+        elif _controls(day_el, el):
+            opposition.add("财局")
+        elif _controls(el, day_el):
+            opposition.add("官杀局")
     if day_branch_root:
         support.add("日支根")
     if de_ling:
         support.add("月令")
 
+    # 对立是否「有力」: 对立五行于四支藏干有本气/中气之根
+    # (滴天髓: 克需有力, 虚浮之克与仅余气之根不作降旺)
+    rooted_els = set()
+    for _pos, _h in (ctx.fact.hidden_stems or {}).items():
+        if not isinstance(_h, dict):
+            continue
+        for _slot in ("main", "middle"):
+            _e = ctx.element_of_stem(_h.get(_slot, ""))
+            if _e:
+                rooted_els.add(_e)
+    opposed_els = set()
+    for item in (party.get("opposed") or []):
+        _e = ctx.element_of_stem(item.get("stem", ""))
+        if _e:
+            opposed_els.add(_e)
+    # 降旺只见「克我」之官杀: 有力之克方使旺者不旺
+    # (滴天髓: 旺则宜泄宜伤; 食伤/财耗 属宜泄之列, 不改变旺衰判定)
+    guansha_effective = any(
+        _controls(_e, day_el) and _e in rooted_els for _e in opposed_els
+    ) if day_el else False
+    opposition_rooted = bool(opposed_els & rooted_els)
+
     return {
         "SUPPORT_STRUCTURE": sorted(support),
         "OPPOSITION_STRUCTURE": sorted(opposition),
         "day_branch_root": day_branch_root,
+        "DAY_JU": "TRUE" if day_ju else "FALSE",
+        "OPPOSITION_ROOTED": "TRUE" if opposition_rooted else "FALSE",
+        "GUANSHA_EFFECTIVE": "TRUE" if guansha_effective else "FALSE",
         "state": "DETERMINED",
     }
 
@@ -328,22 +370,45 @@ def judge_strength(
     #   月令支持    = 月令 ∈ SUPPORT_STRUCTURE (与 de_ling 同义, 作交叉校验)
     #   有效支持存在 = 印星 或 比劫 或 日支根 ∈ SUPPORT (任一结构成立即可)
     #   对立结构存在 = 食伤/财耗/官杀 任一 ∈ OPPOSITION
-    _HELP = {"印星", "比劫", "日支根"}
-    _OPPOSE = {"食伤", "财耗", "官杀"}
+    _HELP = {"印星", "比劫", "日支根", "印局", "比劫局"}
+    _OPPOSE = {"食伤", "财耗", "官杀", "食伤局", "财局", "官杀局"}
     month_support = "月令" in support
     help_exists = bool(support & _HELP)
     opposing_exists = bool(opposition & _OPPOSE)
     opposing_absent = not opposing_exists
     support_absent = not help_exists
+    # 局成: 日主五行 三合/三会 成局 → 帮身之党已成 (子平真诠/滴天髓 以局论党)
+    day_ju = party.get("DAY_JU") == "TRUE"
+    # 对立有力: 「克我」之官杀于藏干有本气/中气之根; 虚浮之克不作降旺 (滴天髓: 克需有力)
+    opposing_effective = opposing_exists and party.get("GUANSHA_EFFECTIVE") == "TRUE"
 
+    # STRENGTH-016 成局: 日主之局成 → 强 (不论月令得失)
+    # 子平真诠: 「三合成局」论党; 滴天髓: 局成则气聚一方
+    if day_ju and eff_root_exists:
+        return JudgmentBuilder.from_hits(
+            "STRENGTH", "STRONG",
+            _synth_rule("STRENGTH-016", "E-DT-STRENGTH-016"),
+        )
+    # STRENGTH-017 得令有根有助, 对立虚浮 → 强 (滴天髓: 克需有力, 虚浮之克不作降旺)
+    if month_support and opposing_exists and not opposing_effective \
+            and eff_root_exists and help_exists:
+        return JudgmentBuilder.from_hits(
+            "STRENGTH", "STRONG",
+            _synth_rule("STRENGTH-017", "E-DT-STRENGTH-017"),
+        )
     # STRENGTH-010 身强: 得令 + 有效根 + 有效支持 + 对立缺失
     if month_support and eff_root_exists and help_exists and opposing_absent:
         return JudgmentBuilder.from_hits(
             "STRENGTH", "STRONG",
             _synth_rule("STRENGTH-010", "E-DT-STRENGTH-010"),
         )
-    # STRENGTH-011 得令不旺: 得令 + 对立存在 (不论根是否有效)
+    # STRENGTH-011 得令不旺: 得令 + 有力对立 (不论根是否有效)
     # 滴天髓: 「犹如春木虽强, 金太重而木亦危」— 得令但对抗强即不旺
+    if month_support and opposing_effective:
+        return JudgmentBuilder.from_hits(
+            "STRENGTH", "WANG_BUT_NOT_STRONG",
+            _synth_rule("STRENGTH-011", "E-DT-STRENGTH-011"),
+        )
     if month_support and opposing_exists:
         return JudgmentBuilder.from_hits(
             "STRENGTH", "WANG_BUT_NOT_STRONG",

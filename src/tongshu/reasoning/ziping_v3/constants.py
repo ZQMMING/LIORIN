@@ -55,6 +55,23 @@ PILLAR_ORDER = ("YEAR", "MONTH", "DAY", "HOUR")
 # 墓库支
 STORE_BRANCHES = {"CHEN", "XU", "CHOU", "WEI"}
 
+# 三合局 (生旺墓 三支全 → 成局)
+# 依据: 子平真诠/滴天髓 皆以「三合成局」论党, 成局者不按单支论强弱.
+SANHE_JU = {
+    "WATER": ("SHEN", "ZI", "CHEN"),
+    "WOOD": ("HAI", "MAO", "WEI"),
+    "FIRE": ("YIN", "WU", "XU"),
+    "METAL": ("SI", "YOU", "CHOU"),
+}
+
+# 三会方 (方局 三支全 → 成方; 与三合局同列结构)
+SANHUI_JU = {
+    "WOOD": ("YIN", "MAO", "CHEN"),
+    "FIRE": ("SI", "WU", "WEI"),
+    "METAL": ("SHEN", "YOU", "XU"),
+    "WATER": ("HAI", "ZI", "CHOU"),
+}
+
 # 四时归类 (月支→季)
 SEASON_OF_MONTH = {
     "YIN": "SPRING", "MAO": "SPRING", "CHEN": "SPRING",

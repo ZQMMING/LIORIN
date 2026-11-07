@@ -15,12 +15,44 @@ from __future__ import annotations
 
 from typing import Any, Dict, List, Optional
 
-from .constants import STEM_ELEMENT, GENERATES, CONTROLS
+from .constants import (
+    STEM_ELEMENT, GENERATES, CONTROLS,
+    SANHE_JU, SANHUI_JU, PILLAR_ORDER,
+)
 from .types import FrozenBaziFact, ZiPingDerivedFact
 
 
 def _stem_element(stem: str) -> str:
     return STEM_ELEMENT.get(stem, "")
+
+
+_ELEMENT_STEM = {
+    "WOOD": "JIA", "FIRE": "BING", "EARTH": "WU",
+    "METAL": "GENG", "WATER": "REN",
+}
+
+
+def _stem_of_element(element: str) -> str:
+    """五行 → 代表天干 (仅用于复用 _classify_party 的五行归类逻辑)."""
+    return _ELEMENT_STEM.get(element, "")
+
+
+def detect_ju(fact: FrozenBaziFact) -> List[Dict[str, Any]]:
+    """成局结构: 三合局 / 三会方 (三支全, 结构性枚举, 无计数).
+
+      日主之局成 → 帮身之党 (如 申子辰 水局, 壬癸日)
+      局克日 / 日克局 / 局生泄日 → 对立之党
+    只认三支齐备 (半合不算成局, 避免把「拱合」提升为「成局」).
+    """
+    branches = {fact.pillar_branch(p) for p in PILLAR_ORDER} - {""}
+    out: List[Dict[str, Any]] = []
+    for el, need in SANHE_JU.items():
+        if set(need) <= branches:
+            out.append({"kind": "SANHE", "element": el, "branches": list(need)})
+    for el, need in SANHUI_JU.items():
+        if set(need) <= branches:
+            out.append({"kind": "SANHUI", "element": el, "branches": list(need)})
+    return out
 
 
 def _classify_party(day_element: str, stem: str) -> Optional[str]:
@@ -168,12 +200,19 @@ def derive_party(fact: FrozenBaziFact) -> Dict[str, Any]:
     else:
         party_state = "UNDETERMINED"
 
+    # --- 成局 (三合/三会) 归党 (结构性, 不计数) ---
+    ju = detect_ju(fact)
+    for j in ju:
+        el = j.get("element", "")
+        j["align"] = _classify_party(day_el, _stem_of_element(el))
+
     return {
         "day_master": day,
         "aligned": aligned,
         "opposed": opposed,
         "aligned_roots": len(aligned),
         "opposed_roots": len(opposed),
+        "ju": ju,
         "party_state": party_state,
         "state": "DETERMINED",
     }
