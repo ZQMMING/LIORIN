@@ -129,6 +129,13 @@ def _hanzao_shishang_rank(climate: Dict[str, Any],
         return {'rank': 'DEMOTE', 'wx': _shishang,
                 'reason': ['候干表已候食伤, 不重复走寒燥交互'],
                 'refs': ['候干轨覆盖']}
+    # ★ V7.184: 候干表【有候干】时一律让位。寒燥交互是「候干表未录此职能」时的补位推导,
+    #   不得反压 QTBJ 已录候干(第一顺位)。002 案 庚亥月候干=丁(火), 旧逻辑把食伤(水)升为候神,
+    #   与本盘「泄气太重取印」及冬月「金水伤官要燥」皆相反。
+    if cands:
+        return {'rank': 'DEMOTE', 'wx': _shishang,
+                'reason': ['候干表已有候干, 寒燥交互让位(调候候干为第一顺位)'],
+                'refs': ['QTBJ 候干表', 'DTS L295/L300']}
     if month_branch not in _HANZAO:
         return {'rank': 'DEMOTE', 'wx': _shishang,
                 'reason': ['月令%s非寒燥交互临界(寒燥互证 DTS L30)' % month_branch],

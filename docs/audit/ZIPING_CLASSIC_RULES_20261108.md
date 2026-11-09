@@ -296,3 +296,20 @@ WANGSHUAI 领域结论带 `STATE.WANG_SHUAI.*` 切片作 rule_refs/evidence_refs
 
 **回归**：关键四文件 94 passed；`pytest -k ziping` **1879 passed / 9 failed**（9 项与 V7.182 基线同集合，均为 GPT 在途语义分歧，无新增）。
 
+## 十二、病药层两处门控：泄气太重不得被格成豁免、寒燥交互不得反压候干（V7.184，2026-11-09）
+
+**现象**：PZZQ 002（戊子 癸亥 庚寅 戊寅，食神格）与 010（丁卯 癸丑 丙申 戊子，伤官格）用神仍偏移。002 沈断「泄气太重，以戊土扶身制伤」，引擎主药却是调候水（泄气方向）。
+
+**根因一（bingyao_layer.py）**：格体病过滤（`bing_list` 的 L4 门控）对「格体 = 病五行」一律按格成豁免——食神格成 → 食伤（水）为格体喜神 → 泄气太重病被 `continue` 删掉，只剩「财多身弱」，药随主病偏移。原典 L3930「食伤旺而生财，为身轻泄气太重」明示**身轻（日主无有效根）时泄气即病**，与格成与否无关。
+
+**根因二（tiaohou_rank.py）**：`_hanzao_shishang_rank` 的寒燥交互推导在「候干表未候食伤」时把**食伤五行**升为候神（002 升水）。但 002 候干表已有丁火（QTBJ 庚亥月 order1=丁、order2=丙），该推导反压已录候干，且方向与「金水伤官要燥」相反（寒月补水、越补越寒）。
+
+**修法**：
+1. `bingyao_layer.py` 格体过滤：仅 `XIE_QI_TAI_ZHONG` 例外——身弱（`_shen_ruo`）且食伤成党时报病（新增注释 V7.184）；财多身弱等其余格体病仍按格成豁免（避免 004 财格被误报、药翻成比劫）。
+2. `tiaohou_rank.py`：`_hanzao_shishang_rank` 在「候干表非空」时直接 `DEMOTE`（让位 QTBJ 候干，第一顺位），仅候干表为空（如 NOT_REGISTERED）才走寒燥交互补位。
+3. `tests/test_ziping_entry_validation.py` 的 `test_entry_routes_actual_resolved_primary_disease`（辛未 庚寅 壬午 庚戌）按原典改锚：主病 `CAI_DUO_SHEN_RUO→XIE_QI_TAI_ZHONG`、bing_wx 火→木（壬日食伤=木）、winner_shen 水→金（克木之药）。
+
+**实测**：002 → 主病「泄气太重(木→水)」、药=制(土) 命中「以戊土扶身制伤」；004 仍 HIT（格体豁免未动）；原典 12 案覆盖率 **10/12 → 11/12**（唯一余 MISS=010：丙日水旺，原典取劫帮身，引擎源1 取印，属断法分歧，登记）。`tests/test_ziping_yong_coverage.py` 护栏同步升到 ≥11。
+
+**回归**：`pytest -k ziping` **1881 passed / 9 failed**（9 项与 V7.183 基线同集合，均为 GPT 在途语义分歧，无新增）。
+

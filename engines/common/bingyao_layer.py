@@ -561,10 +561,12 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
             matched = ['食伤不重(他干%d+本根%d+局票=%d<%d, 非党众) -> 非「泄气太重」(PZZQ L768「火之党众, 木泄气太重, 虽秉令而不强」)' % (
                 _xt_q, _xb_q, _x_combo, DANG_COMBO)]
     # 成格喜神过滤: 食神生财格成, 食神为成格喜神, 泄气病不报; 过旺(combo>=阈值)例外仍报
+    # ★ V7.184: 仅【日主不弱】时豁免。身弱(无有效根)而食伤成党, 格体虽为喜亦属「身轻泄气太重」
+    #   (PZZQ L3930「食伤旺而生财, 为身轻泄气太重」), 不得因格成而静默不报, 否则药落空。
     if ok:
         from engines.common.ge_jie_layer import is_xix_shen
         _xt, _xb = _tou_ben(xie_wx)
-        if is_xix_shen(facts, xie_wx, _xt + _xb + _ju_piao(xie_wx)):
+        if is_xix_shen(facts, xie_wx, _xt + _xb + _ju_piao(xie_wx)) and not _shen_ruo:
             ok = False
     # 财透闸门: 食伤生财泄秀, 财透则不报泄气病(UNVERIFIED: 财无根/印克食伤待校)
     if ok:
@@ -824,8 +826,12 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         for _b in bing_list:
             if _b.get('bing_id') in _WS_DOMAIN:   # STEP-1: 旺衰域原则不受 L4 过滤
                 if _b.get('bing_id') in _NONYIN_WS and _bwx.get(_b['bing_id'], '') in _ti_wx:
-                    if _cheng_bai != 'PO' or _geju_n == 0:
-                        continue  # 格成/成中有败/无GEJU破格 -> 格体不报
+                    if _b.get('bing_id') != 'XIE_QI_TAI_ZHONG' and (
+                            _cheng_bai != 'PO' or _geju_n == 0):
+                        continue  # 格成/成中有败/无GEJU破格 -> 格体为喜, 不报
+                    # ★ V7.184: 泄气太重例外——日主身弱(无有效根)而食伤成党, 格体虽为喜亦属
+                    #   「身轻泄气太重」(PZZQ L3930「食伤旺而生财, 为身轻泄气太重」), 不得按格成静默豁免;
+                    #   报出后由病药层取印/比劫为药(002 案)。财多身弱等其余格体病仍按格成豁免。
                     _kept.append(_b)  # 真格败(PO) 且 格局域破格>=1 -> 格体转忌, 报
                     continue
                 _kept.append(_b)

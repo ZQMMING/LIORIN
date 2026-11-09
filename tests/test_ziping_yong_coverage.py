@@ -1,7 +1,7 @@
 """子平用神覆盖率锚点：原典 12 案回放（PZZQ 沈孝瞻断语为真值）。
 
 V7.182 起，格用神按八格原典判据派生（透干十神 + 藏干计数），
-用神覆盖率由 2/12 提升到 10/12；本测试把该数字固化为护栏，
+用神覆盖率由 2/12 提升到 11/12；本测试把该数字固化为护栏，
 并逐案锁定原典明文可裁的用神五行，防止回退。
 """
 from __future__ import annotations
@@ -48,4 +48,4 @@ def test_yong_coverage_at_least_10_of_12():
         "ziping_pzzq_replay", REPO / "scripts" / "ziping_pzzq_replay.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    assert mod.run(verbose=False) >= 10
+    assert mod.run(verbose=False) >= 11
