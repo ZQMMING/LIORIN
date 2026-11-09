@@ -128,10 +128,22 @@ def _engines_p0_synthesis(result: Dict[str, Any]) -> JudgmentSynthesis:
     wx = pm.get("wuxing")
     state = yy.get("state")
     yy_ev = p0_evidence.resolve(list(yy.get("evidence_refs") or []))
-    if not yy_ev and state == "GE_FALLBACK":
-        # 格体喜神派生用药，其依据即格局证据
+    _ge_yong = pm.get("kind") == "格局用神"
+    if (not yy_ev and state == "GE_FALLBACK" and ge_verifiable
+            and cheng == "CHENG" and ge_name
+            and str(yy.get("ge_fallback_source") or "").startswith("源2:格体喜神")):
+        # 仅对已核验成格的格体喜神复用格局依据；救应/其他路径需独立证据。
         yy_ev = ge_ev
-    if wx and state not in ("PATTERN_CONFLICT_NOT_EVALUABLE", "NO_CANDIDATE") and yy_ev:
+    if (not yy_ev and _ge_yong and state in ("NO_BING", "NO_BING_GE_XIJI")
+            and ge_verifiable and cheng == "CHENG" and ge_name):
+        # 无病时格之用神：用神由已核验之格局派生(PZZQ 论用神/论八格)，共用格证据锚。
+        yy_ev = ge_ev
+    if (wx in ("木", "火", "土", "金", "水")
+            and (state in ("YONGYAO_RESOLVED", "GE_FALLBACK") or _ge_yong)
+            and yy.get("evidence_status") != "NOT_EVALUABLE"
+            and yy.get("primary_selection_status") != "NOT_EVALUABLE"
+            and pm.get("stem_equivalence_status") != "NOT_EVALUABLE"
+            and pm.get("candidate_source_verification") != "SOURCE_VERSION_CONFLICT" and yy_ev):
         yongshen = DomainJudgment(
             domain=JudgmentDomain.YONGSHEN,
             conclusion=JudgmentConclusion.PRIMARY,

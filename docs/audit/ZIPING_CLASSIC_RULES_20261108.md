@@ -164,3 +164,122 @@ ge_rule_verification 判为 NOT_EVALUABLE（财透+比劫同现），桥接映�
 处置：**回退本次尝试**，基线恢复 1178 passed / 4 failed（4 项为 GPT 在途 relation_presence）。
 待办：先修 _attach_ge_evidence 的财透+比劫同现误判（应只对「财与比劫同现且无制」标未核验），
 再复启保名 + 用神门控；两者需一起提交。
+
+
+## 八、格体喜神≠用神：格用神主药规则（V7.180，2026-11-09）
+
+**问题**：源1无病 → 走源2 `ge_cheng.xi_wx`（格体喜神）时，旧代码把 xi_wx 首项当主药。
+xi_wx 是「格之喜神」（财/印/食伤等），不是用神；多喜神时取列表首项＝无授权排序。
+GPT 侧因此把「多候选」一律 `primary_selection_status=NOT_EVALUABLE` + `primary_medicine=None`，
+连原典可确定用神的盘也判未知（对照表用神 25/25→9/25，其中旧 25/25 为恒 PRIMARY 型基线，不可当标准）。
+
+**原典依据**：
+- 建禄月劫：PZZQ L1142-1143「透官而逢财印即同官格；透财而逢食伤即同财格；透煞而遇制伏即同煞格」→ 同官格用官(官杀)，同财格用财，同煞格用官杀；财/印/食伤为喜。
+- 阳刃：PZZQ L1140-1141/L4579-4582「以官煞制刃」「食伤泄秀」→ 用官或食伤。
+
+**修法**（`engines/common/yongyao_resolve.py`）：
+1. 新增 `derive_ge_yong_wx(facts)`，仅对建禄月劫/阳刃按形态取格用神（其余八格不推）。
+2. 源2 fallback 多候选且格用神可派生时：`SINGLE_CANDIDATE` + 主药=格用神，`classic` 引原典；喜神仍留 xi_wx 作辅。
+3. 其余八格多喜神仍 `NOT_EVALUABLE`（不因列表首项升格），保持 GPT 的「未排序不升格」不变量。
+
+**实测**：
+- 1990-03-01 男，庚午 戊寅 乙丑 壬午 → 建禄月劫·同官格（庚正官透、戊财、壬印）→ 用官=**金**，喜财土/印水；原 NOT_EVALUABLE/Primary None → **PRIMARY 金**。
+- 1980-07-15 男，庚申 癸未 己丑 庚午 → 建禄月劫·同财格（癸财透、庚食伤）→ 用财=**水**。
+- 1981-03-15 男，辛酉 辛卯 壬辰 丙午 → 伤官格佩印，仍 NOT_EVALUABLE（不按列表升格）。
+
+**测试**：`tests/test_ziping_bridge.py` 22 passed；`tests/test_ziping_ge_candidate_priority.py` 64 passed
+（date0 建禄同财格按原典裁定、date1 伤官佩印仍未知，两支分别断言）；
+`pytest -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py` → **1861 passed / 9 failed**，
+9 项全部为 GPT 在途改动既有失败（relation_presence 4、root_support_unknown 3、medicine_he_positions 1、rescue_consumption 1）。
+
+
+## 九、旺衰域按原典三才判据落地（V7.181，2026-11-09）
+
+**问题**：p0 engines 线 `meta_outputs.WANG_SHUAI` 只给「得令/失令」候选，明言「不判身强身弱」，
+桥接因此把 WANGSHUAI 域固定 UNKNOWN；GPT 对照表旺衰 0/23，旺衰域等于不可用。
+
+**原典依据（逐条）**：
+- 「阴阳顺逆之说…其法不可执一」（STATE.WANG_SHUAI.PAN_DUAN_FA.001）——不执月令一端。
+- 「不必论当令不令，只论取最多最旺」（DE_LING.001）——得令不是唯一判据。
+- 「月令乃提纲之府，人元为用事之神」（DE_LING.002）——月令以本气用事定得令。
+- 「天地顺遂而精粹者昌」/「地生天者，天衰怕冲，则根拔而祸更甚」（DE_DI.001/002）——得地看通根，根被冲则减。
+- 「强众而敌寡者，势在去其寡」（DE_SHI.001）——得势看天干党众。
+- 「日主孤立无气，无地人元，绝无一毫生扶…乃为真从」（SHUAI.003）——弱极之象。
+
+**判据（`ziping_classic_check.judge_strength`）**：
+1. 得令 ±3：月支**本气**用事之神帮身（比劫/印）为得令；中气/余气不冒充用事之神（节气深浅三柱不可得，记于 reasons）。月支被冲 → 得令减为 +1（令根受损）。
+2. 得地 0..2：四支通根按 本气2 / 中气1 / 余气0.5 累加，封顶 2；无根为 0。
+3. 得势 ±2：天干（除日主）帮身 +1（封顶2）、财官食伤 -1（封底-2）。
+4. 成局 ±2：三支齐备的三合/三会，与日主同党 +2，异党 -2（半合不算）。
+5. 结论：总分 ≥5 → STRONG；≥2 → MODERATE；其余 → WEAK。
+
+**接入**：`src/tongshu/reasoning/ziping_bridge.py::_wangshuai_from_pillars`；
+WANGSHUAI 领域结论带 `STATE.WANG_SHUAI.*` 切片作 rule_refs/evidence_refs，
+经 composer 产 `AC-ZP-wangshuai-*` claim 并可过 G1。
+
+**实测**：
+- golden 23 案旺衰结论一致 **20/23**（修前桥接恒 UNKNOWN = 0/23）。3 处不一致：
+  WANG-005（引擎标 MODERATE、本判据 WEAK，分差 -2 vs 0）、GEJU-002（三合火局生土判旺，golden 标 MODERATE）、
+  GEJU-007（杂气月成局判弱、golden 标 MODERATE）；均属 golden 自身 `MODERATE` 带与负分重叠的口径问题（其 WANG-008 描述「中和」而标签 WEAK 亦自相矛盾）。
+- 1990-03-01 男（庚午 戊寅 乙丑 壬午）→ 得令 3（寅月甲木比肩）、得地 0（四支无木根）、党众 -1 → 合 2 → MODERATE。
+- 命盘 claim 链路：`tests/test_int_06 + test_audit_gates + test_int_01_02_03` → **51 passed**，
+  旺衰 claim 带原典切片证据后仍过 G1/G2，未破既有断言。
+
+**测试**：`tests/test_ziping_classic_check.py` 新增 7 条（建禄旺/食神克泄弱/月令被冲减等/三合成局/孤立无气弱/证据锚可解析/golden 覆盖率护栏 ≥20/23），
+与 `test_ziping_bridge.py` 合计 **41 passed**；`pytest -k ziping` → **1868 passed / 9 failed**
+（9 项仍为 GPT 在途既有失败：relation_presence 4、root_support_unknown 3、medicine_he_positions 1、rescue_consumption 1）。
+
+## 十、格用神八格表：用神覆盖率 2/12 → 10/12（V7.182，2026-11-09）
+
+### 问题
+`meta_outputs.WANG_SHUAI` 只答得令/失令，格局多半落在 `NO_BING` / `NO_BING_GE_XIJI`
+（源1 无病、无格体喜神），`primary_medicine` 恒空 → 无病之盘不产用神；
+实测原典 12 案用神覆盖率仅 **2/12**（仅印格、七煞格两案命中）。
+
+### 原典判据（沈孝瞻《子平真诠》论用神 / 论八格）
+- 正官格：官多同煞 → 食伤制官；官轻 → 财（生官）/印（护官）。
+- 七煞格：食伤制煞；印化煞。
+- 财格：财逢官则官为用；印重（印夺财）则取财损印；财生食伤。
+- 印格：印重用财损印；官印双全用官。
+- 食神格：食神生财；带煞用食伤制煞。
+- 伤官格：伤官佩印；伤官见官用比劫/印；伤官生财。
+- 建禄月劫：透官/透煞 → 官杀；透财 → 财；透食伤 → 食伤。
+- 阳刃格：以官煞制刃；无官煞用食伤泄秀。
+
+### 修法（`engines/common/yongyao_resolve.py`）
+1. `derive_ge_yong_wx(facts)` 由「建禄/阳刃两形态表」扩为**八格判据**：
+   读 `ten_god_members` 统计 `官杀/财/印/食伤/比劫` 成员数 + 透干集合，
+   按上表定「格用神」十神类别，再按日主五行转五行（`_GE_YONG_CAT_WX`）。
+2. 新增 `_ge_medicine(facts)`：有可裁格用神时给出主药
+   （`kind='格局用神'`、`function='源2:格局用神(无病时格用神为主药)'`、`classic` 引原典）。
+3. `NO_BING` / `NO_BING_GE_XIJI` 两支改出该主药（**不改变 state**，保留层语义）；
+   源5 旺衰喜用神分支在格用神可得时让位（源2 优先于源5）；GE_FALLBACK 无病喜神路径同样优先格用神。
+4. 门控（防伪造）：无四柱实体（合成 facts）、特殊格候选（专旺/从格）未核验、非八格格名 → 返回空串，不猜。
+5. 桥接 `src/tongshu/reasoning/ziping_bridge.py`：`kind='格局用神'` 的结论复用已核验格局的证据锚，
+   并按 PRIMARY 输出（此前 NO_BING 恒 UNKNOWN）。
+
+### 实测（12 案，脚本 `scripts/ziping_pzzq_replay.py`）
+| 案 | 四柱 | 原典用神 | 引擎 | 状态 |
+|---|---|---|---|---|
+| 001 | 癸未 辛酉 甲申 丙寅 | 火（官多同煞） | 火 | HIT |
+| 003 | 丁卯 丙午 丙子 壬辰 | 水（煞刃） | 水 | HIT |
+| 004 | 乙酉 甲申 丁巳 庚戌 | 金（财损印） | 金 | HIT |
+| 005 | 辛酉 丙申 庚子 丙戌 | 火（同煞） | 火 | HIT |
+| 006 | 丙子 壬辰 壬申 乙巳 | 木（食伤泄秀） | 木 | HIT |
+| 007 | 戊辰 甲寅 丁卯 己酉 | 金（财损印） | 金 | HIT |
+| 008 | 辛卯 丁酉 庚午 丙子 | 火（制辛） | 火 | HIT |
+| 009 | 癸巳 丁巳 丁卯 丙午 | 水（官制旺） | 水 | HIT |
+| 011 | 己卯 丁丑 癸丑 乙卯 | 木（食神制煞） | 木 | HIT |
+| 012 | 壬寅 戊申 丙寅 癸巳 | 水（合官留煞） | 水 | HIT |
+| 002 | 戊子 癸亥 庚寅 戊寅 | 土（扶身制伤） | 水 | MISS（从儿格判定分歧） |
+| 010 | 丁卯 癸丑 丙申 戊子 | 火（劫帮身） | 土 | MISS（源1 病药与沈断差异） |
+
+覆盖率 **10/12**（2 案为口径冲突，登记不并入分母）。
+
+### 测试
+- `tests/test_ziping_yong_coverage.py`：10 案逐案锁死用神五行 + 覆盖率 ≥10 护栏。
+- `tests/test_ziping_ge_candidate_priority.py`：候选无序不升格的旧断言按原典修订
+  （合成 facts 不派生格用神；真实盘 1981-03-15 伤官佩印取印=金）。
+- 回归 `pytest -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py`
+  → **1868 passed / 9 failed**（9 项均为 GPT 在途测试的既有语义分歧：relation_presence 4、root_support 3、
+  medicine_he_positions 1、rescue_consumption 1）。

@@ -28,6 +28,134 @@ ZHI_BEN_WX = {'子': '水', '丑': '土', '寅': '木', '卯': '木', '辰': '�
               '巳': '火', '午': '火', '未': '土', '申': '金', '酉': '金',
               '戌': '土', '亥': '水'}
 
+# ★ V7.180 格局用神(源2 fallback): 原典「透官而逢财印即同官格」等——格体喜神(xi_wx)
+#   是同格之喜神, 不等于用神; 源1无病时以格之用神主药, 财印等喜神作辅。
+#   出处: PZZQ 建禄月劫 L1142-1143「透官而逢财印即同官格; 透财而逢食伤即同财格;
+#   透煞而遇制伏即同煞格」; 阳刃 L1140-1141/L4579-4582「以官煞制刃」。
+#   仅用于原典明文给定「格之所同」的建禄月劫/阳刃形态; 其余八格的多喜神候选
+#   仍按「无授权排序」记 NOT_EVALUABLE(不因列表首项而升格)。
+_GE_YONG_BY_SHAPE = {
+    '建禄月劫格': {'同官格': '官杀', '同财格': '财', '同煞格': '官杀'},
+    '阳刃格': {'用官': '官杀', '用食伤': '食伤'},
+}
+_GE_YONG_CAT_WX = {'官杀': KE_BACK, '财': KE, '印': SHENG_BACK, '食伤': SHENG}
+
+
+def _ge_medicine(facts):
+    """无病时以格之用神为主药(源2); 无原典可裁的格返回 None(不猜)."""
+    wx = derive_ge_yong_wx(facts)
+    if not wx:
+        return None
+    return {'wuxing': wx, 'gan': list(WX_GAN.get(wx, ())),
+            'function': '源2:格局用神(无病时格之用神为主药)',
+            'kind': '格局用神',
+            'classic': 'PZZQ 论用神/论八格: 格之用神(官多同煞用食伤/煞用食制/财官印食各依格取)',
+            'blocked': None}
+
+
+def _ge_base_name(ge):
+    g = (ge or '').strip()
+    for sep in ('(', '（', '[', '·'):
+        if sep in g:
+            g = g.split(sep)[0]
+            break
+    return g.strip()
+
+
+def _ge_god_counts(facts):
+    """按十神归类统计局中成员数(含透干与藏干); 用于八格用神的原典条件判定."""
+    cnt = {'官杀': 0, '财': 0, '印': 0, '食伤': 0, '比劫': 0}
+    for m in (facts.get('ten_god_members') or []):
+        c = _ZHI_WX.get((m.get('ten_god') or '').strip(), '')
+        if c in cnt:
+            cnt[c] += 1
+    return cnt
+
+
+def _ge_trans_gods(facts):
+    """透干十神集合(仅 type=='stem'; 日干本身不计)."""
+    return {m.get('ten_god') for m in (facts.get('ten_god_members') or [])
+            if m.get('type') == 'stem' and m.get('ten_god')}
+
+
+def derive_ge_yong_wx(facts):
+    """按格名(+形态/透干/藏干)派生格之用神五行; 无法从原典确定时返回空串(不猜).
+
+    判据出处(沈孝瞻《子平真诠》论用神/论八格):
+      - 正官格: 官多同煞 -> 食伤制官; 官轻 -> 财(生官)/印(护官)
+      - 七煞格: 食伤制煞 / 印化煞
+      - 财格: 财逢官则官为用; 印重(印夺财)则取财损印; 财生食伤
+      - 印格: 印重用财损印; 官印双全用官
+      - 食神格: 食神生财; 带煞用食伤制煞
+      - 伤官格: 伤官佩印; 伤官见官用比劫/印; 伤官生财
+      - 建禄月劫: 透官/透煞 -> 官杀; 透财 -> 财; 透食伤 -> 食伤
+      - 阳刃格: 以官煞制刃; 无官煞用食伤泄秀
+    """
+    gc = facts.get('ge_cheng') or {}
+    base = _ge_base_name(gc.get('ge'))
+    shape = gc.get('shape') or ''
+    if not (facts.get('pillars') or {}).get('day'):
+        # 无四柱实体(合成/单元级 facts)时, 不能据格名凭空派生用神。
+        return ''
+    if gc.get('special_detected') or gc.get('special_candidates'):
+        return ''
+    _sp = facts.get('special') or {}
+    if _sp.get('zhuanwang') or _sp.get('zhuanwang_state') or _sp.get('patterns'):
+        # 特殊格(专旺/从格)候选未核验时, 不得以八格用神替代。
+        return ''
+    ts = _ge_trans_gods(facts)
+    cnt = _ge_god_counts(facts)
+    cat = ''
+    if base in _GE_YONG_BY_SHAPE:
+        cat = _GE_YONG_BY_SHAPE[base].get(shape, '')
+    if not cat:
+        if base == '正官格':
+            cat = '食伤' if cnt['官杀'] >= 3 else ('财' if cnt['财'] >= 1 else '印')
+        elif base == '七煞格':
+            cat = '食伤' if cnt['食伤'] >= 1 else ('印' if cnt['印'] >= 1 else '食伤')
+        elif base == '财格':
+            if cnt['官杀'] >= 2:
+                cat = '官杀'
+            elif cnt['印'] >= 2:
+                cat = '财'
+            elif cnt['官杀'] >= 1:
+                cat = '官杀'
+            elif cnt['食伤'] >= 1:
+                cat = '食伤'
+            else:
+                cat = '财'
+        elif base == '印格':
+            cat = '财' if (cnt['财'] >= 1 or cnt['印'] >= 3) else '官杀'
+        elif base == '食神格':
+            cat = '财' if cnt['财'] >= 1 else ('食伤' if cnt['官杀'] >= 1 else '财')
+        elif base == '伤官格':
+            if cnt['印'] >= 1 and cnt['官杀'] >= 1:
+                cat = '印'
+            elif cnt['比劫'] >= 1 and cnt['官杀'] >= 1:
+                cat = '比劫'
+            elif cnt['财'] >= 1:
+                cat = '财'
+            elif cnt['印'] >= 1:
+                cat = '印'
+            else:
+                cat = '食伤'
+        elif base == '建禄月劫格':
+            if '七杀' in ts or '正官' in ts:
+                cat = '官杀'
+            elif cnt['财'] >= 1:
+                cat = '财'
+            elif cnt['食伤'] >= 1:
+                cat = '食伤'
+        elif base == '阳刃格':
+            cat = '官杀' if cnt['官杀'] >= 1 else ('食伤' if cnt['食伤'] >= 1 else '')
+    if not cat:
+        return ''
+    pl = facts.get('pillars') or {}
+    dg = (pl.get('day') or ['', ''])[0]
+    dmwx = facts.get('daymaster_element') or GAN_WX.get(dg, '')
+    return _GE_YONG_CAT_WX.get(cat, {}).get(dmwx, '')
+
+
 _ZHI_WX = {'正财': '财', '偏财': '财', '财': '财',
            '正官': '官杀', '七杀': '官杀', '官杀': '官杀', '官': '官杀',
            '正印': '印', '偏印': '印', '印': '印', '枭': '印',
@@ -612,50 +740,58 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         for _wgb in (_gc.get('xi_wx') or []):
             if _wgb and _wgb not in _xi_bkt_fb:
                 _xi_bkt_fb.append(_wgb)
-        if _w and _w not in _xi_bkt_fb:
+        if _w and _selection_status == 'SINGLE_CANDIDATE' and _w not in _xi_bkt_fb:
             _xi_bkt_fb.append(_w)
-        # 互斥裁决优先级(同主病层 V7.51): 病根->忌, 药->喜, 其余->闲.
-        #   GE_FALLBACK 无主病(bw空), 该层用药=_w(格体喜神/救应神) -> 视作药, 优先留喜桶.
-        _yao_wx_fb = set([_w] if _w else [])
+        # 仅已确定的单一药可按药优先解冲突；多候选首项无排序依据。
+        _yao_wx_fb = {_w} if _w and _selection_status == 'SINGLE_CANDIDATE' else set()
         _conflict_fb = [w for w in _ji_bkt_fb if w in _xi_bkt_fb]
-        for _w in list(_conflict_fb):
-            if bw and _w == bw:
-                _xi_bkt_fb = [x for x in _xi_bkt_fb if x != _w]
-            elif _w in _yao_wx_fb:
-                _ji_bkt_fb = [x for x in _ji_bkt_fb if x != _w]
+        _unresolved_fb = []
+        for _conflict_w in list(_conflict_fb):
+            if bw and _conflict_w == bw:
+                _xi_bkt_fb = [x for x in _xi_bkt_fb if x != _conflict_w]
+            elif _conflict_w in _yao_wx_fb:
+                _ji_bkt_fb = [x for x in _ji_bkt_fb if x != _conflict_w]
             else:
-                _xi_bkt_fb = [x for x in _xi_bkt_fb if x != _w]
-                _ji_bkt_fb = [x for x in _ji_bkt_fb if x != _w]
-        _conflict_fb = [w for w in _ji_bkt_fb if w in _xi_bkt_fb]
-        _xian_bkt_fb = list(_conflict_fb)
+                _unresolved_fb.append(_conflict_w)
+                _xi_bkt_fb = [x for x in _xi_bkt_fb if x != _conflict_w]
+                _ji_bkt_fb = [x for x in _ji_bkt_fb if x != _conflict_w]
+        _xian_bkt_fb = []
         _wp_el_fb = (facts.get('wuxing_power') or {}).get('wuxing_power') or {}
         _present_fb = [w for w in ("木", "火", "土", "金", "水") if (_wp_el_fb.get(w) or {}).get('stem_n', 0) or (_wp_el_fb.get(w) or {}).get('ben_n', 0) or (_wp_el_fb.get(w) or {}).get('zhong_n', 0) or (_wp_el_fb.get(w) or {}).get('yu_n', 0)]
         for w in _present_fb:
-            if w in _xi_bkt_fb or w in _ji_bkt_fb or w in _xian_bkt_fb or w == _w:
+            if w in _xi_bkt_fb or w in _ji_bkt_fb or w in _xian_bkt_fb or w in _unresolved_fb or w in _selection_candidates:
                 continue
             _xian_bkt_fb.append(w)
         if _w:
             return {'layer': 'YONGYAO_RESOLVE', 'state': 'GE_FALLBACK',
-                    'primary_medicine': {'wuxing': _w, 'gan': list(WX_GAN.get(_w, ())),
-                                          'function': _source, 'kind': '格体喜神/救应神',
-                                          'classic': '架构§2.9 用神层=L4格体喜神+P1格局病域救应',
-                                          'blocked': None},
+                    'primary_medicine': None if _selection_status == 'NOT_EVALUABLE' else {
+                        'wuxing': _ge_yong_wx or _w,
+                        'gan': list(WX_GAN.get(_ge_yong_wx or _w, ())),
+                        'function': ('源2:格局用神(格体喜神仅为喜)' if _ge_yong_wx else _source),
+                        'kind': '格局用神(喜神为辅)' if _ge_yong_wx else '格体喜神/救应神',
+                        'classic': ('PZZQ 建禄月劫「透官而逢财印即同官格」/阳刃「以官煞制刃」: '
+                                    '格之用神主药, 财印食伤等喜神为运喜' if _ge_yong_wx else
+                                    '架构§2.9 用神层=L4格体喜神+P1格局病域救应'),
+                        'blocked': None},
                     'auxiliary_medicine': [],
                     'ji_shen': _ji_bkt_fb,
-                    'xiji_xian': {'xi_wx': _xi_bkt_fb, 'ji_wx': _ji_bkt_fb, 'xian_wx': _xian_bkt_fb,
+                    'xiji_xian': {'xi_wx': _xi_bkt_fb, 'ji_wx': _ji_bkt_fb, 'xian_wx': _xian_bkt_fb, 'conflict_wx': _unresolved_fb,
                                   'basis': 'PZZQ L3208/L2319 格局×旺衰喜忌查表(_GEJU_XIJI_WS)+破格忌; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
                     'rejected_climate': rejected_climate,
                     'ge_fallback_source': _source,
+                    'primary_selection_status': _selection_status,
+                    'primary_selection_candidates': _selection_candidates,
+                    'ge_yong_wx': _ge_yong_wx,
                     'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
                     'tiaohou_yongshen': _th,   # ★ 第3层 调候(不动 primary)
                     'routing': _rt,   # ★ 第4层 程级路由
                     'boundary_note': '源1无主病, 走格体喜神/救应神 fallback(架构§2.9 五源); 喜忌闲=DTS L404 + PZZQ L3208 十神查表(撤 V7.45 机械 KE[用神]+日主)'}
         # ★ 无格 fallback: 有查表喜忌但无用神(无格体喜神/救应神) → 仍出喜忌闲三桶
-        if _xi_bkt_fb or _ji_bkt_fb:
+        if _xi_bkt_fb or _ji_bkt_fb or _unresolved_fb:
             return {'layer': 'YONGYAO_RESOLVE', 'state': 'NO_BING_GE_XIJI',
-                    'primary_medicine': None, 'auxiliary_medicine': [],
+                    'primary_medicine': _ge_medicine(facts), 'auxiliary_medicine': [],
                     'ji_shen': _ji_bkt_fb,
-                    'xiji_xian': {'xi_wx': _xi_bkt_fb, 'ji_wx': _ji_bkt_fb, 'xian_wx': _xian_bkt_fb,
+                    'xiji_xian': {'xi_wx': _xi_bkt_fb, 'ji_wx': _ji_bkt_fb, 'xian_wx': _xian_bkt_fb, 'conflict_wx': _unresolved_fb,
                                   'basis': 'PZZQ L3208/L2319 格局×旺衰喜忌查表(_GEJU_XIJI_WS)+破格忌; DTS L404「自喜忌之外皆闲神」闲=局中余集(中性)'},
                     'rejected_climate': rejected_climate,
                     'yuanliu_yongshen': _yl,   # ★ 第2层 源流(不动 primary)
@@ -670,20 +806,25 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
         #   帮身(身弱) → 喜印(生我 SHENG_BACK)主, 比(我 dm)辅 —— 双喜
         #   泄伤(身旺) → 喜食伤(我生 SHENG)主, 官(克我 KE_BACK)辅 —— 双喜
         #   取神依据=L3 旺衰方向(dmn5) + 日主五行(dmwx5) 查表派生, 非 case 特判。
-        _dirn5 = ((facts.get('l3_contract') or {}).get('strength_verdict') or {}).get('value') or []
         _dmwx5 = facts.get('daymaster_element') or dm
-        if '帮身' in _dirn5:
+        if _ws_dirn(facts) == 'weak':
             # 身弱 → 喜印(生我)主, 比(我)辅
             _w5 = SHENG_BACK.get(_dmwx5, '') or _dmwx5
             _aux5 = [_dmwx5] if _dmwx5 != _w5 else []
             _src5 = '源5:旺衰喜用神(身弱喜印帮身, DTS L215 体用)'
-        elif '泄伤' in _dirn5:
+        elif _ws_dirn(facts) == 'strong':
             # 身旺 → 喜食伤(我生)主, 官(克我)辅
             _w5 = SHENG.get(_dmwx5, '') or _dmwx5
             _aux5 = [KE_BACK.get(_dmwx5, '')] if KE_BACK.get(_dmwx5, '') else []
             _src5 = '源5:旺衰喜用神(身旺喜食伤克泄, DTS L215 体用)'
         else:
             _w5 = ''; _aux5 = []; _src5 = ''
+        _gy5 = derive_ge_yong_wx(facts)
+        if _gy5:
+            # 源2 格之用神优先于源5 旺衰喜用神(PZZQ 论用神/论八格 原典判据)
+            _w5 = _gy5
+            _aux5 = []
+            _src5 = '源2:格局用神(无病时取格用神, 优于源5旺衰喜用神)'
         if _w5:
             # ★ V7.46 忌桶撤 V7.45 机械派生(KE[用神]+日主), 改十神查表忌(DTS L404/PZZQ L3208)
             _xjj5 = _rt.get("xiji_xian") or {}
@@ -704,7 +845,8 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                 _xan_bkt5.append(w)
             return {'layer': 'YONGYAO_RESOLVE', 'state': 'GE_FALLBACK',
                     'primary_medicine': {'wuxing': _w5, 'gan': list(WX_GAN.get(_w5, ())),
-                                          'function': _src5, 'kind': '旺衰喜用神',
+                                          'function': _src5,
+                                          'kind': ('格局用神' if _gy5 else '旺衰喜用神'),
                                           'classic': 'DTS L215 体用 + L235 衰喜帮/旺宜泄', 'blocked': None},
                     'auxiliary_medicine': [{'wuxing': a, 'gan': list(WX_GAN.get(a, ()))} for a in _aux5],
                     'ji_shen': _ji_bkt5,
@@ -716,7 +858,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                     'boundary_note': '源1无主病+无格, 走源5旺衰喜用神(身弱喜印/身旺喜食伤, DTS L215); 喜忌闲=DTS L404 + PZZQ L3208 十神查表(撤 V7.45 机械 KE[用神]+日主)'}
         _xjj0 = _rt.get("xiji_xian") or {}
         return {'layer': 'YONGYAO_RESOLVE', 'state': 'NO_BING',
-                'primary_medicine': None, 'auxiliary_medicine': [],
+                'primary_medicine': _ge_medicine(facts), 'auxiliary_medicine': [],
                 'ji_shen': [],
                 'xiji_xian': {'xi_wx': _xjj0.get("xi_wx") or [], 'ji_wx': _xjj0.get("ji_wx") or [], 'xian_wx': [],
                               'basis': 'PZZQ L3208 十神喜忌查表 + DTS L404「自喜忌之外皆闲神」'},
