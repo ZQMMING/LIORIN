@@ -440,6 +440,14 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 _yin_bn = int(((facts.get('wuxing_power',{}).get('wuxing_power',{}) or {}).get(_YIN_WX,{}) or {}).get('ben_n',0) or 0)
                 if _yin_tou and _yin_bn >= 1:
                     _not_cong = True
+            if _ct == '从儿格':
+                # V7.183: 从儿格须「印无根不得相从」(PZZQ 4941 同条: 从财格有印须看印是否通根;
+                #   002 案 戊子 癸亥 庚寅 戊寅: 戊印透干、寅中戊余气根 -> 沈断「泄气太重, 以戊土扶身制伤为用」= 正格伤食佩印, 非从)。
+                #   印有任一余气根即不从; 从财格只用本气根(ben_n)是原条明文, 从儿另按「透干有根」判。
+                _YIN_WX = {v: k for k, v in _SH.items()}.get(_dm_wx, '')
+                _yin_rd = ((facts.get('wuxing_power', {}).get('wuxing_power', {}) or {}).get(_YIN_WX, {}) or {}).get('root_detail', {}) or {}
+                if _yin_tou and _yin_rd:
+                    _not_cong = True
             if _ct == '从杀格':
                 # 从杀格破格(PZZQ"有弃命从煞者...若有伤食则煞受制而不从,有印则印以化煞而不从"):
                 #   伤食透干+伤食有本气根(制煞有力)->破格报病; 伤食虚透无根=假从不破格(DT-0109己土伤官虚透无根)

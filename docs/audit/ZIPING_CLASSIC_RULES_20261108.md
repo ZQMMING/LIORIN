@@ -283,3 +283,16 @@ WANGSHUAI 领域结论带 `STATE.WANG_SHUAI.*` 切片作 rule_refs/evidence_refs
 - 回归 `pytest -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py`
   → **1868 passed / 9 failed**（9 项均为 GPT 在途测试的既有语义分歧：relation_presence 4、root_support 3、
   medicine_he_positions 1、rescue_consumption 1）。
+
+## 十一、从儿格印根门控：印透干且有根则不从（V7.183，2026-11-09）
+
+**现象**：PZZQ 002 戊子 癸亥 庚寅 戊寅，引擎判 `从儿格 CONFIRMED`（ti_wx=水），沈孝瞻原文断「泄气太重，以戊土扶身制伤为用」= 正格伤食佩印。用神因此取水（泄气方向），与原典相反。
+
+**根因**：`engines/common/ge_jie_layer.py` 从格覆盖正格分支中，从财格已按「印透干 + 印本气根 → 不从」门控（`_yin_bn >= 1`），从杀格按「印透化煞 → 不从」门控，**从儿格缺同等门控**。002 之戊印透干、寅中戊为余气根（`wuxing_power['土'].root_detail = {'寅':'YU'}`），引擎只看本气根（`ben_n=0`）故未拦。
+
+**修法**（`ge_jie_layer.py` 从儿格分支，V7.183）：印透干且印五行 `root_detail` 非空（含本气/中气/余气任一根）→ `_not_cong = True`，回落正格判定。依据《子平真诠》4941 同条「从财格而有印，须看印是否通根」与「印无根不得相从」；从财格仍按原文只认本气根，从儿格按「透干有根」从严。
+
+**实测**：002 → `ge=食神格`（非从格）、`po_ge` 报「枭夺食」结构；用神仍取调候水（本层见「十二」节待办）。新增 `tests/test_ziping_cong_gate.py`（2 条：002 不得判从、从格成立须 cong_type 与 CONFIRMED 同现）。
+
+**回归**：关键四文件 94 passed；`pytest -k ziping` **1879 passed / 9 failed**（9 项与 V7.182 基线同集合，均为 GPT 在途语义分歧，无新增）。
+
