@@ -37,13 +37,14 @@ from .judgment import (
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 
 
-def _unknown(domain: JudgmentDomain, reasoning: str) -> DomainJudgment:
+def _unknown(domain: JudgmentDomain, reasoning: str, evidence_refs=None) -> DomainJudgment:
     """fail-closed 单域判断: 明确给出未知原因, 不伪造结论。"""
     return DomainJudgment(
         domain=domain,
         conclusion=JudgmentConclusion.UNKNOWN,
         reasoning=reasoning,
         rule_refs=["ZIPING_ENGINES_P0"],
+        evidence_refs=list(evidence_refs or []),
     )
 
 
@@ -81,11 +82,118 @@ def _ge_evidence_refs(gc: Dict[str, Any]) -> list:
     return p0_evidence.resolve(refs)
 
 
-def _engines_p0_synthesis(result: Dict[str, Any]) -> JudgmentSynthesis:
+_SHISHEN_ANCHOR = "FOUNDATION.RELATION.SHI_SHEN.001"
+_WX_CAT_ORDER = ("比劫", "食伤", "财", "官杀", "印")
+
+
+def _wx_category(wx: str, daymaster_wx: str) -> str:
+    """五行 → 相对日主的十神大类（比劫/食伤/财/官杀/印）。"""
+    from .ziping_classic_check import GEN, KE
+
+    if not wx or not daymaster_wx:
+        return ""
+    if wx == daymaster_wx:
+        return "比劫"
+    if GEN.get(daymaster_wx) == wx:
+        return "食伤"
+    if KE.get(daymaster_wx) == wx:
+        return "财"
+    if KE.get(wx) == daymaster_wx:
+        return "官杀"
+    if GEN.get(wx) == daymaster_wx:
+        return "印"
+    return ""
+
+
+def _shishen_from_facts(facts: Dict[str, Any], refs: list) -> DomainJudgment:
+    """十神域: 以 wuxing_power 计最旺十神, 对照喜神/病神判吉凶(原典·论十神)。
+
+    - 十神名以《三命通会》论十神（印食官财四纲）为锚 (FOUNDATION.RELATION.SHI_SHEN.001)；
+    - 喜 = 用药五行 ∪ 格用神五行；忌 = 主病五行（且非喜）；
+    - 最旺十神既非喜亦非忌 → UNKNOWN（不硬断吉凶）。
+    """
+    dm = facts.get("daymaster_element") or ""
+    wp = (facts.get("wuxing_power") or {}).get("wuxing_power") or {}
+    if not dm or not wp:
+        return _unknown(JudgmentDomain.SHISHEN,
+                        "缺日主五行或五行力量表, 十神强弱不可计", evidence_refs=refs)
+    scores: Dict[str, float] = {}
+    for wx, row in wp.items():
+        if not isinstance(row, dict):
+            continue
+        scores[wx] = (2.0 * float(row.get("ben_n") or 0)
+                      + 1.0 * float(row.get("zhong_n") or 0)
+                      + 0.5 * float(row.get("yu_n") or 0)
+                      + 1.0 * float(row.get("stem_n") or 0)
+                      + 2.0 * float(row.get("ju_n") or 0)
+                      + 1.0 * float(row.get("banhe_n") or 0))
+    if not scores:
+        return _unknown(JudgmentDomain.SHISHEN, "五行力量表为空", evidence_refs=refs)
+    best_wx = max(scores, key=lambda w: (scores[w], w))
+    cat = _wx_category(best_wx, dm)
+    med = (((facts.get("__yongyao") or {}).get("primary_medicine")) or {}).get("wuxing")
+    ge_yong = (facts.get("__ge_yong_wx") or "")
+    bing = (((facts.get("__bing") or {}).get("primary_bing")) or {}).get("bing_wx")
+    xi_set = {w for w in (med, ge_yong) if w}
+    ji_set = {w for w in (bing,) if w and w not in xi_set}
+    detail = (f"最旺十神: {cat}({best_wx}) 权重{scores[best_wx]:g}; "
+              f"药={med or '-'} 格用神={ge_yong or '-'} 病={bing or '-'}")
+    if best_wx in xi_set:
+        concl = JudgmentConclusion.SEMANTIC_POSITIVE
+        why = f"{detail}; 最旺十神为用药/格用神五行 → 十神吉"
+    elif best_wx in ji_set:
+        concl = JudgmentConclusion.SEMANTIC_NEGATIVE
+        why = f"{detail}; 最旺十神为病五行 → 十神凶(病神当权)"
+    else:
+        return _unknown(JudgmentDomain.SHISHEN,
+                        f"{detail}; 最旺十神非喜非忌, 吉凶不硬断", evidence_refs=refs)
+    refs2 = [r for r in refs if r] + [_SHISHEN_ANCHOR]
+    return DomainJudgment(
+        domain=JudgmentDomain.SHISHEN,
+        conclusion=concl,
+        reasoning=why,
+        rule_refs=["ZIPING_ENGINES_P0", _SHISHEN_ANCHOR],
+        evidence_refs=refs2,
+    )
+
+
+def _wangshuai_from_pillars(pillars: Optional[Dict[str, list]]) -> DomainJudgment:
+    """旺衰域：得令/得地/得势 三才合参 + 成局（原典判据独立实现）。
+
+    依据 STATE.WANG_SHUAI.PAN_DUAN_FA.001「其法不可执一」、DE_LING.001
+    「不必论当令不令」、DE_DI.001、DE_SHI.001，见 ziping_classic_check.judge_strength。
+    """
+    if not pillars:
+        return _unknown(JudgmentDomain.WANGSHUAI, "四柱缺失，旺衰不判")
+    try:
+        from .ziping_classic_check import judge_strength
+
+        r = judge_strength(pillars)
+    except Exception as exc:  # pragma: no cover - 防御性
+        return _unknown(JudgmentDomain.WANGSHUAI,
+                        f"旺衰判据异常: {type(exc).__name__}: {exc}")
+    concl = {
+        "STRONG": JudgmentConclusion.STRONG,
+        "MODERATE": JudgmentConclusion.MODERATE,
+        "WEAK": JudgmentConclusion.WEAK,
+    }[r["conclusion"]]
+    return DomainJudgment(
+        domain=JudgmentDomain.WANGSHUAI,
+        conclusion=concl,
+        reasoning=(f"旺衰(三才合参)={r['conclusion']}(score={r['score']}): "
+                   + "；".join(r["reasons"])),
+        rule_refs=["ZIPING_ENGINES_P0"] + list(r["basis"]),
+        evidence_refs=list(r["basis"]),
+    )
+
+
+def _engines_p0_synthesis(result: Dict[str, Any],
+                          pillars: Optional[Dict[str, list]] = None) -> JudgmentSynthesis:
     """engines(p0 线) production_entry 输出 → 五大域。
 
     映射口径(不夸大):
-    - 旺衰: p0 线只输出得令/失令候选, 明言"不判身强身弱" → UNKNOWN。
+    - 旺衰: p0 线自身只出得令/失令候选; 本桥接按原典三才判据独立计算
+      （得令/得地/得势/成局），结论带原典切片证据锚。
     - 格局: ge_cheng['cheng_bai'] CHENG→ESTABLISHED / BAI→BROKEN / 其余 UNKNOWN。
     - 用神: zhenglun.yongyao.primary_medicine.wuxing → PRIMARY(用药方向, 非吉凶裁决)。
     - 十神/事件: p0 线未输出 → UNKNOWN。
@@ -101,8 +209,9 @@ def _engines_p0_synthesis(result: Dict[str, Any]) -> JudgmentSynthesis:
     cheng = gc.get("cheng_bai")
     ge_name = gc.get("ge") or ""
     ge_ev = _ge_evidence_refs(gc)
+    ge_verifiable = gc.get("ge_rule_verification") != "NOT_EVALUABLE"
     rule_refs = [r for r in ("ZIPING_ENGINES_P0", _rule_id(gc)) if r]
-    if cheng == "CHENG" and ge_name and ge_ev:
+    if cheng == "CHENG" and ge_name and ge_ev and ge_verifiable:
         geju = DomainJudgment(
             domain=JudgmentDomain.GEJU,
             conclusion=JudgmentConclusion.ESTABLISHED,
@@ -110,7 +219,7 @@ def _engines_p0_synthesis(result: Dict[str, Any]) -> JudgmentSynthesis:
             rule_refs=rule_refs,
             evidence_refs=ge_ev,
         )
-    elif cheng == "BAI" and ge_ev:
+    elif cheng == "BAI" and ge_name and ge_ev and ge_verifiable:
         geju = DomainJudgment(
             domain=JudgmentDomain.GEJU,
             conclusion=JudgmentConclusion.BROKEN,
@@ -154,15 +263,22 @@ def _engines_p0_synthesis(result: Dict[str, Any]) -> JudgmentSynthesis:
         )
     else:
         yongshen = _unknown(JudgmentDomain.YONGSHEN,
-                            f"用药未裁定/无证据锚: state={state!r} refs={len(yy_ev)}")
+                            f"用药未裁定/无证据锚: state={state!r} "
+                            f"selection={yy.get('primary_selection_status')!r} refs={len(yy_ev)}; "
+                            "证据仅供候选追溯，不代表用药结论成立",
+                            evidence_refs=yy_ev)
+
+    _facts_for_shishen = dict(facts)
+    _facts_for_shishen["__yongyao"] = yy or {}
+    _facts_for_shishen["__bing"] = (result.get("zhenglun") or {}).get("zhuangui") or {}
+    _facts_for_shishen["__ge_yong_wx"] = str(pm.get("ge_yong_wx") or "") if isinstance(pm, dict) else ""
+    _shishen_refs = list(ge_ev) + list(yy_ev)
 
     return JudgmentSynthesis(
-        wangshuai=_unknown(
-            JudgmentDomain.WANGSHUAI,
-            "p0 线旺衰轨只输出得令/失令候选(PZZQ「旺衰只回答得令/失令, 不回答身强身弱」), 不判身强身弱"),
+        wangshuai=_wangshuai_from_pillars(pillars),
         geju=geju,
         yongshen=yongshen,
-        shishen=_unknown(JudgmentDomain.SHISHEN, "p0 engines 线未输出十神域"),
+        shishen=_shishen_from_facts(_facts_for_shishen, _shishen_refs),
         shijian=_unknown(JudgmentDomain.SHIJIAN, "p0 engines 线未输出事件域"),
     )
 
@@ -270,7 +386,7 @@ def run_ziping_judgment(chart: Any) -> JudgmentSynthesis:
             shijian=_unknown(JudgmentDomain.SHIJIAN, reason),
         )
 
-    return _engines_p0_synthesis(result)
+    return _engines_p0_synthesis(result, pillars)
 
 
 def synthesis_to_dict(synthesis: JudgmentSynthesis) -> dict:

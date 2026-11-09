@@ -313,3 +313,32 @@ WANGSHUAI 领域结论带 `STATE.WANG_SHUAI.*` 切片作 rule_refs/evidence_refs
 
 **回归**：`pytest -k ziping` **1881 passed / 9 failed**（9 项与 V7.183 基线同集合，均为 GPT 在途语义分歧，无新增）。
 
+## 十三、十神域落地：最旺十神 × 喜忌判吉凶（V7.185，2026-11-09）
+
+### 问题
+p0 engines 线只到「格/病/药」层，`ziping_bridge` 对 SHISHEN 恒返回 UNKNOWN（"p0 engines 线未输出十神域"），V13 断言里没有十神 claim。
+
+### 原典判据
+《三命通会·论十神》（切片 `FOUNDATION.RELATION.SHI_SHEN.001`）：「徐子平论格局，独以印、食、官、财四者为纲…生我者印绶，我生者食神，克我者官煞，我克者妻财。」→ 十神按生克五类（比劫/食伤/财/官杀/印），吉凶随其在局中的喜忌地位而定，不单独论十神本身。
+
+### 修法
+1. `src/tongshu/reasoning/ziping_bridge.py` 新增 `_wx_category(wx, daymaster_wx)`（五行→十神大类，取自 `ziping_classic_check.GEN/KE`）与 `_shishen_from_facts(facts, refs)`。
+2. 强弱取 p0 的 `wuxing_power`：`ben_n*2 + zhong_n*1 + yu_n*0.5 + stem_n*1 + ju_n*2 + banhe_n*1`，取分值最高五行 → 十神大类（等分时按五行名稳定取）。
+3. 喜忌口径：喜 = 用药五行 ∪ 格用神五行；忌 = 主病五行且不在喜。最旺十神属喜 → `SEMANTIC_POSITIVE`；属忌 → `SEMANTIC_NEGATIVE`；两者皆非 → UNKNOWN（不硬断）。
+4. 证据锚：`FOUNDATION.RELATION.SHI_SHEN.001` 入 rule_refs/evidence_refs，并复用格局/用药证据锚（G1 要求可解析）。
+
+### 实测（PZZQ 12 案）
+- 002 戊子癸亥庚寅戊寅：食伤(水)最旺且为病 → **SEMANTIC_NEGATIVE**；
+- 004 乙酉甲申丁巳庚戌：财(金)最旺且为用药 → **SEMANTIC_POSITIVE**；
+- 007 戊辰甲寅丁卯己酉：印(木)最旺且为病 → **SEMANTIC_NEGATIVE**；
+- 011 己卯丁丑癸丑乙卯：食伤(木)最旺且为用药 → **SEMANTIC_POSITIVE**；
+- 其余 8 案最旺十神非喜非忌 → UNKNOWN（诚实留白）。
+
+### 端到端
+1984-12-07 16:00 男（印格，药=火，病=水）：pipeline `validation_passed=True`，原子断言新增
+`AC-ZP-shishen-semantic_negative`（证据锚 `FOUNDATION.RELATION.SHI_SHEN.001` + 格局切片）。
+
+### 测试与回归
+- 新增 `tests/test_ziping_shishen.py`（5 passed：三案结论 + 证据锚解析 + pipeline claim）；
+- `test_ziping_shishen + bridge + audit_gates + int_06 + classic_check` **90 passed**；
+- `pytest -k ziping` **1886 passed / 9 failed**（9 项均 GPT 在途既有失败，无新增）。
