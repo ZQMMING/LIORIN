@@ -172,6 +172,20 @@ def _has_ten_god(p: Dict[str, List[str]], tg: str) -> bool:
     return False
 
 
+
+def _count_ten_god(p: Dict[str, List[str]], tgs) -> int:
+    """统计十神（含藏干）出现次数——用于「轻/重」量词判据（印轻/印多/财轻比重）。"""
+    dm = _zhengyan(p)[0]
+    n = 0
+    for s in _transparent(p):
+        if ten_god(dm, s) in tgs:
+            n += 1
+    for _s, b in _pillars(p):
+        for h in HIDDEN.get(b, ()):
+            if ten_god(dm, h) in tgs:
+                n += 1
+    return n
+
 def _trans_ten_god(p: Dict[str, List[str]], tg: str) -> bool:
     """该十神是否透于天干。"""
     dm = _zhengyan(p)[0]
@@ -229,8 +243,17 @@ def judge_cheng_bai(p: Dict[str, List[str]]) -> Dict[str, object]:
             add("CHENG", "印轻逢煞")
         if sha and guan:
             add("CHENG", "官印双全")
-        if cai and not sha:
-            add("NOT_EVALUABLE", "印轻逢财(须辨印轻重)")
+        # V7.189 量词落地: 「印轻逢财」败(.008) vs 「印多逢财而财透根轻」成(.007)
+        _yin_n = _count_ten_god(p, ("正印", "偏印"))
+        _cai_t = _trans_ten_god(p, "正财") or _trans_ten_god(p, "偏财")
+        if cai and not sha and _yin_n <= 1:
+            add("BAI", "印轻逢财(印%d见)" % _yin_n)
+            state = "BAI"
+        elif cai and not sha and _yin_n >= 3:
+            add("CHENG", "印多逢财(印重, 财透根轻不为害)" if _cai_t else "印多逢财")
+            state = "CHENG"
+        elif cai and not sha:
+            add("NOT_EVALUABLE", "印逢财(须辨印轻印重)")
         if sha:
             state = "CHENG"
     # 食神格
@@ -250,10 +273,18 @@ def judge_cheng_bai(p: Dict[str, List[str]]) -> Dict[str, object]:
             state = "CHENG"
     # 七煞格
     elif name == "七煞格":
-        zhi = any(t in ("食神", "伤官", "正印", "偏印", "阳刃") for t in [])
+        # V7.189: 「七煞逢财无制」败(.008) / 「身强七煞逢制」成(.007)
+        zhi = _has_ten_god(p, "食神") or _has_ten_god(p, "伤官")
         cai = _has_ten_god(p, "正财") or _has_ten_god(p, "偏财")
-        if cai:
-            add("NOT_EVALUABLE", "七煞逢财(须辨有无制)")
+        _st7 = judge_strength(p).get("conclusion", "")
+        if cai and not zhi:
+            add("BAI", "七煞逢财无制")
+            state = "BAI"
+        elif cai and zhi and _st7 == "STRONG":
+            add("CHENG", "身强七煞逢制")
+            state = "CHENG"
+        elif cai and zhi:
+            add("NOT_EVALUABLE", "七煞逢财有制(须辨制神有力)")
         if broken:
             add("BAI", "七煞逢冲")
         if broken:
@@ -277,12 +308,19 @@ def judge_cheng_bai(p: Dict[str, List[str]]) -> Dict[str, object]:
     elif name == "阳刃格":
         guan = _has_ten_god(p, "正官") or _has_ten_god(p, "七杀")
         shang = _has_ten_god(p, "伤官")
-        if guan and not shang:
-            add("CHENG", "阳刃透官煞，不见伤官")
+        cai_yin = (_has_ten_god(p, "正财") or _has_ten_god(p, "偏财")
+                   or _has_ten_god(p, "正印") or _has_ten_god(p, "偏印"))
+        # .007 「阳刃透官煞而露财印，不见伤官」: 财印亦须露
+        if guan and not shang and cai_yin:
+            add("CHENG", "阳刃透官煞而露财印，不见伤官")
         if not guan:
             add("BAI", "阳刃无官煞")
             state = "BAI"
-        elif not shang:
+        elif guan and shang:
+            add("NOT_EVALUABLE", "官煞与伤官并透(须辨制刃/伤官两势)")
+        elif guan and not shang and not cai_yin:
+            add("NOT_EVALUABLE", "阳刃透官煞(须辨财印)")
+        elif guan and not shang:
             state = "CHENG"
     # 建禄月劫格
     elif name == "建禄月劫格":

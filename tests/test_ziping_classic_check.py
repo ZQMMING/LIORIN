@@ -207,3 +207,38 @@ def test_golden_wangshuai_coverage_floor():
         ok += judge_strength(p)["conclusion"] == w["conclusion"]
     assert tot == 23
     assert ok >= 20, f"coverage {ok}/{tot}"
+
+def test_cheng_bai_yin_light_meets_cai_is_bai():
+    """CHENG_BAI.008: 印轻逢财 -> 败（量词落地）。"""
+    p = pillars("戊戌 甲子 甲午 丙寅")
+    r = judge_cheng_bai(p)
+    assert r["ge"] == "印格", r
+    assert r["state"] == "BAI", r
+    assert any("印轻逢财" in c["clause"] for c in r["clauses"])
+
+
+def test_cheng_bai_yin_many_meets_cai_is_cheng():
+    """CHENG_BAI.007: 印多逢财而财透根轻 -> 成。"""
+    p = pillars("壬戌 辛亥 甲辰 丁卯")
+    r = judge_cheng_bai(p)
+    assert r["ge"] == "印格", r
+    assert r["state"] == "CHENG", r
+    assert any("印多逢财" in c["clause"] for c in r["clauses"])
+
+
+def test_cheng_bai_sha_with_cai_controlled_strong_is_cheng():
+    """CHENG_BAI.007: 身强七煞逢制 -> 成（王克敏 申子辰比劫局帮身）。"""
+    p = pillars("丙子 壬辰 壬申 乙巳")
+    r = judge_cheng_bai(p)
+    assert r["ge"] == "七煞格", r
+    assert r["state"] == "CHENG", r
+    assert any("身强七煞逢制" in c["clause"] for c in r["clauses"])
+
+
+def test_cheng_bai_yangren_guan_shang_both_records_clause():
+    """官煞与伤官并透: 不臆断, 记录须辨条款。"""
+    p = pillars("丁卯 丙午 丙子 壬辰")
+    r = judge_cheng_bai(p)
+    assert r["ge"] == "阳刃格", r
+    assert r["state"] == "NOT_EVALUABLE", r
+    assert any("并透" in c["clause"] for c in r["clauses"])
