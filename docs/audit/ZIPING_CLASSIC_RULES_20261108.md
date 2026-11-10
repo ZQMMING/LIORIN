@@ -549,3 +549,11 @@ V7.186 时选的锚 `SUI_YUN.RE_EVALUATION.LIU_NIAN.005`（滴天髓「何为好
 
 - 本节全部为引擎侧显式化登记与守卫，**不新增任何断语行为**；COV-013 两主题维持无结论输出，COV-006/COV-028 待裁决项不动。
 - 提交范围：`src/tongshu/reasoning/ziping_no_evidence.py`（新）、`tests/test_ziping_no_evidence.py`（新）、`src/tongshu/reasoning/ziping_bridge.py`（注释）、本节文档。
+
+### 4. COV-014/027/029 同类登记补齐（V7.195，引擎侧缺省行为类全收口）
+
+- COV-014（从格破格后格局域喜神重定）：登记 `COV-014-CONG`——CONG_GE_001 只到「既从矣，当论所从之神」，破格后喜神未言 → 从格 PO 结论不得臆造/重定格局域喜神（八格破格救应喜神另有 PZZQ 成败救应章明文，不在本条）。从格入口走 `facts['special']`（special_pattern.py 属 GPT 热区，与 pzzq-018 同轨协调），协调落地前登记生效。
+- COV-027（赋文专篇缺篇）：登记 `COV-027-FU`——六部底本无太微赋/病药赋/取用神赋独立专篇（事实排除已定）→ 引擎遇名目不得默认按赋文处理；实测 ziping 判定线（src/tongshu/reasoning + engines/common）三名目零锚点占用，守卫测试锁定。
+- COV-029（缺省行为三件套）：登记 `COV-029-DELING`（①得时口径冲突——以 DE_LING.005 为准，judge_strength 已按此实现且「相气」零命中，§二十二已核验）/ `COV-029-JIXIONG`（②PZZQ 无吉凶寿夭专论——yongyao_resolve.py:15 明示「只裁决用药方向, 不判吉凶寿夭」，天然 fail-closed）/ `COV-029-SAME8ZI`（③同八字异寿夭——不可执行，报不可判）。守卫：寿夭字样仅允许 yongyao 免责声明 1 处；classic_check 无相气口径。
+- 登记表现在 7 条目（COV-013-1/2、COV-014-CONG、COV-027-FU、COV-029-①②③），fail-closed 钩子三分支测试全覆盖；no_evidence 套件 8 测试 + shijian/bridge 邻接套件 27 passed。
+- registry 状态建议（GPT 线同步）：COV-013①②/014/027/029 状态 待补（引擎侧）→ 已补（引擎侧登记+守卫）；COV-019 → 已补（窄口径，附 §二十三.2 证据链）。

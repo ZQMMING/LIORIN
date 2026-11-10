@@ -9,6 +9,7 @@
   3) COV-013-2: bridge 无小运计算路径（源码不含 '小运'）
 """
 import inspect
+from pathlib import Path
 
 import pytest
 
@@ -18,7 +19,11 @@ from src.tongshu.reasoning.ziping_no_evidence import (
     assert_topic_not_concluded,
 )
 
-_REQUIRED = {"COV-013-1", "COV-013-2"}
+_REQUIRED = {
+    "COV-013-1", "COV-013-2",
+    "COV-014-CONG", "COV-027-FU",
+    "COV-029-DELING", "COV-029-JIXIONG", "COV-029-SAME8ZI",
+}
 
 
 def test_registry_completeness():
@@ -36,6 +41,12 @@ def test_hook_fail_closed():
         assert_topic_not_concluded("COV-013-1")
     with pytest.raises(NotImplementedError):
         assert_topic_not_concluded("COV-013-2")
+    with pytest.raises(NotImplementedError):
+        assert_topic_not_concluded("COV-014-CONG")
+    with pytest.raises(NotImplementedError):
+        assert_topic_not_concluded("COV-027-FU")
+    with pytest.raises(NotImplementedError):
+        assert_topic_not_concluded("COV-029-JIXIONG")
     with pytest.raises(KeyError):
         assert_topic_not_concluded("COV-999-9")
 
@@ -83,3 +94,45 @@ def test_no_xiaoyun_computation():
     assert not re.search(r"def\s+\w*小运\w*|小运\s*=", src), (
         "COV-013-2 守卫: bridge 出现小运函数/赋值路径"
     )
+
+
+_ZIPING_LINE_DIRS = [
+    Path(__file__).resolve().parent.parent / "src" / "tongshu" / "reasoning",
+    Path(__file__).resolve().parent.parent / "engines" / "common",
+]
+
+
+def _ziping_line_sources():
+    """ziping 判定线源码；排除登记模块自身（登记条目自引用不算占用）。"""
+    out = {}
+    for d in _ZIPING_LINE_DIRS:
+        for p in sorted(d.glob("*.py")):
+            if p.name == "ziping_no_evidence.py":
+                continue
+            out[p.name] = p.read_text(encoding="utf-8", errors="replace")
+    return out
+
+
+def test_no_fu_zhuan_anchors():
+    """COV-027: 太微赋/病药赋/取用神赋 三名目在 ziping 判定线零锚点占用。"""
+    for name, src in _ziping_line_sources().items():
+        for fu in ("太微赋", "病药赋", "取用神赋"):
+            assert fu not in src, f"COV-027 守卫: {name} 出现 {fu} 锚点"
+
+
+def test_shouyao_disclaimer_only():
+    """COV-029②③: 寿夭仅允许出现在 yongyao_resolve 免责声明，无寿夭判定域。"""
+    hits = []
+    for name, src in _ziping_line_sources().items():
+        for i, line in enumerate(src.splitlines(), 1):
+            if "寿夭" in line:
+                hits.append((name, i, line.strip()))
+    assert len(hits) == 1, f"COV-029 守卫: 寿夭出现 {len(hits)} 处, 期望仅 yongyao 免责声明 1 处"
+    name, _, line = hits[0]
+    assert name == "yongyao_resolve.py" and "不判吉凶寿夭" in line, hits
+
+
+def test_no_xiangqi_deshi_branch():
+    """COV-029①: judge_strength 按 DE_LING.005 口径, 不得实现「相气算得时」。"""
+    src = _ziping_line_sources()["ziping_classic_check.py"]
+    assert "相气" not in src, "COV-029① 守卫: classic_check 出现相气得时口径"

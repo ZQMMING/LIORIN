@@ -40,6 +40,77 @@ NO_EVIDENCE_TOPICS = {
         ),
         "guard": "无小运计算路径（测试结构守卫：bridge 源码不含 '小运'）",
     },
+    "COV-014-CONG": {
+        "cov_id": "COV-014",
+        "topic": "从格破格后格局域喜神如何重定",
+        "verdict": "NO_EVIDENCE",
+        "evidence": (
+            "CONG_GE_001（DTS 下篇从象章，authority=primary）只到「既从矣，当论所从之神」，"
+            "破格后喜神未言（Coverage_Closure_Registry COV-014）"
+        ),
+        "default_behavior": (
+            "fail-closed: 从格破格（PO）结论不得臆造/重定格局域喜神；"
+            "八格（非从格）破格后的救应喜神另有 PZZQ 成败救应章明文承载，不在本条范围"
+        ),
+        "guard": (
+            "从格入口 facts['special'] 属 special_pattern.py（GPT 热区，pzzq-018 同轨协调）；"
+            "协调落地前本条登记生效，不得在从格 PO 路径新增喜神重定"
+        ),
+    },
+    "COV-027-FU": {
+        "cov_id": "COV-027",
+        "topic": "赋文专篇缺篇（太微赋/病药赋/取用神赋/调候赋）",
+        "verdict": "NO_EVIDENCE",
+        "evidence": (
+            "六部底本无独立专篇（事实排除已定，_问题清单.md）；"
+            "调候思想仅由 TIAO_HOU_FU.001（YHZP金玉赋二句）代表（Coverage_Closure_Registry COV-027）"
+        ),
+        "default_behavior": (
+            "fail-closed: 引擎遇太微赋/病药赋/取用神赋名目不得默认按赋文处理；"
+            "ziping 线（src/tongshu/reasoning + engines/common）三名目零锚点占用"
+        ),
+        "guard": "测试结构守卫：ziping 判定线不含三名目锚点标识符",
+    },
+    "COV-029-DELING": {
+        "cov_id": "COV-029①",
+        "topic": "「月令相气也算得时」（交办口径）vs SMTH 旺相休囚死（DE_LING.005）",
+        "verdict": "NO_EVIDENCE",
+        "evidence": (
+            "两口径冲突，裁决以 DE_LING.005（SMTH 旺相休囚死，旁参）为准，"
+            "不得按交办口径实现（Coverage_Closure_Registry COV-029①）"
+        ),
+        "default_behavior": (
+            "fail-closed: judge_strength 得令按 DE_LING.005 语义（本气人元用事±3、"
+            "不据中气余气冒充、月令受冲打折），不实现「相气算得时」——已核验合规"
+            "（ziping_classic_check.py:401-416，审计 §二十二；'相气' 零命中）"
+        ),
+        "guard": "既有 judge_strength 语义测试锁定；登记备案防口径回灌",
+    },
+    "COV-029-JIXIONG": {
+        "cov_id": "COV-029②",
+        "topic": "PZZQ 无吉凶寿夭断命专论",
+        "verdict": "NO_EVIDENCE",
+        "evidence": (
+            "PZZQ 无吉凶寿夭断命专论（Coverage_Closure_Registry COV-029②，"
+            "来源 04_岁运人事/02_人事论断/_问题清单.md 存疑2）"
+        ),
+        "default_behavior": (
+            "fail-closed: 引擎不得默认为吉；yongyao_resolve.py:15 明示"
+            "「只裁决用药方向, 不判吉凶寿夭」——已天然 fail-closed"
+        ),
+        "guard": "测试结构守卫：寿夭字样仅允许出现在该免责声明注释",
+    },
+    "COV-029-SAME8ZI": {
+        "cov_id": "COV-029③",
+        "topic": "SMTH 行2960 同八字异寿夭",
+        "verdict": "NO_EVIDENCE",
+        "evidence": (
+            "SMTH 行2960 同八字异寿夭属哲学论说，不可执行"
+            "（Coverage_Closure_Registry COV-029③，_问题清单.md 存疑3）"
+        ),
+        "default_behavior": "fail-closed: 报不可判，不得二选一；引擎无寿夭判定域",
+        "guard": "无寿夭判定域（同 COV-029-JIXIONG 守卫）",
+    },
 }
 
 
