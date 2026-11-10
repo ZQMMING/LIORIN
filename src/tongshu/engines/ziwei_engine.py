@@ -499,12 +499,13 @@ class ZiweiChart:
 
 
 class ZiweiEngine:
-    def __init__(self, node_modules_dir: Path | None = None, backend: str = "auto"):
+    def __init__(self, node_modules_dir: Path | None = None, backend: str = "native"):
         """backend:
-        - "auto"（默认）：iztro 可用则走 iztro；不可用则按既有契约 raise / stub（行为不变）。
-        - "native"：强制走 `ziwei_natal` 原生实现，完全不依赖 node/iztro。
-          原生实现与本引擎的 isztro 路径共用同一盘面后处理（postprocess_natal_palaces），
-          在 17040 盘上已核对到逐字段一致（见 docs/audit/ZIWEI_ACCURACY_20261104.md）。
+        - "native"（默认，2026-11-10 接线裁决）：强制走 `ziwei_natal` 原生实现，
+          完全不依赖 node/iztro。原生实现与本引擎的 iztro 路径共用同一盘面后处理
+          （postprocess_natal_palaces），在 17040 盘上已核对到逐字段一致
+          （见 docs/audit/ZIWEI_ACCURACY_20261104.md）；Golden 80 案语义字段双后端全一致。
+        - "auto"：iztro 可用则走 iztro；不可用则按既有契约 raise / stub（行为不变）。
         """
         if backend not in ("auto", "native"):
             raise ValueError(f"backend 必须 auto/native，收到 {backend!r}")
@@ -1246,9 +1247,12 @@ class ZiweiEngine:
         _fd_zhi = ""
         _fd_mutagen = []
         _fd_luck_branch = ""
-        if flow_day is not None and self._backend != "native":
+        if flow_day is not None:
             try:
-                _fd = self._resolve_flow_day(lunar_date, hour, gender, flow_day)
+                if self._backend == "native":
+                    _fd = self._resolve_flow_day_native(flow_day)
+                else:
+                    _fd = self._resolve_flow_day(lunar_date, hour, gender, flow_day)
                 _fd_gan = _fd.get("gan", "")
                 _fd_zhi = _fd.get("zhi", "")
                 _fd_mutagen = _fd.get("mutagen", [])
@@ -1345,6 +1349,26 @@ class ZiweiEngine:
                 "dec_star": v.get("decStar"),
             }
         return out
+
+    def _resolve_flow_day_native(self, flow_day):
+        """Z76: 流日参数契约（原生后端）——不依赖 node/iztro。
+
+        - 流日干支来源：lunar_python `getDayInGanZhi()`（日柱口径与黄历双库
+          1900-2100 逐日核对 0 差异，见 scripts/huangli_crosscheck.py）。
+        - 流日四化来源：`GAN_SIHUA[日干]`（禄权科忌序），与 iztro daily.mutagen
+          逐星一致（2026-11-10 丁未/庚子双例核对）。
+        - luck_branch（iztro daily 流日命宫）：其推导规则未在库内核实
+          （iztro 内部算法，非原典明文）→ 原生路径置空（宁缺勿猜），
+          消费方 daily_luck_palace 随之为空；登记于 docs/audit/ZIWEI_ACCURACY_20261104.md。
+        """
+        from lunar_python import Solar
+
+        fy, fmo, fd = flow_day
+        gz = Solar.fromYmd(fy, fmo, fd).getLunar().getDayInGanZhi()
+        gan = gz[0] if gz else ""
+        zhi = gz[1] if len(gz) >= 2 else ""
+        mutagen = list(GAN_SIHUA.get(gan, ()))
+        return {"gan": gan, "zhi": zhi, "mutagen": mutagen, "luck_branch": ""}
 
     def _resolve_flow_day(self, lunar_date, hour, gender, flow_day):
         """Z76: 流日参数契约——调 iztro daily 层拿流日干支+四化。

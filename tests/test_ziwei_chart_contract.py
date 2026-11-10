@@ -64,16 +64,25 @@ def test_full_chart_and_compute_share_structural_contract():
     assert set(computed.palaces) == set(full.palaces)
 
 
-@pytest.mark.skipif(not (NODE_MODULES / "iztro").exists(), reason="real iztro unavailable")
 def test_solar_adapter_has_complete_top_level_contract():
+    # 2026-11-10 接线裁决: 默认后端切 native(零 node 依赖); 契约完整性以默认路径为准。
     chart = ZiweiSolarAdapter().compute(1984, 11, 9, 10, gender="male")
-    assert chart.source == "iztro"
+    assert chart.source == "native"
     assert len(chart.palaces) == 12
     assert chart.soul_earthly_branch
     assert chart.body_earthly_branch
     assert chart.palaces == chart.palace_data["palaces"]
     assert chart.palaces["命宫"]["major"]
     assert len(chart.palace_stems) == 12
+
+
+@pytest.mark.skipif(not (NODE_MODULES / "iztro").exists(), reason="real iztro unavailable")
+def test_solar_adapter_iztro_backend_same_contract():
+    chart = ZiweiSolarAdapter(backend="iztro").compute(1984, 11, 9, 10, gender="male")
+    assert chart.source == "iztro"
+    assert len(chart.palaces) == 12
+    assert chart.palaces == chart.palace_data["palaces"]
+    assert chart.palaces["命宫"]["major"]
 
 
 def test_evidence_producer_consumes_real_chart_palaces():

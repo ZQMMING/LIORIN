@@ -171,8 +171,9 @@ class TestZiweiAdapterPolicyRatified(unittest.TestCase):
         ctx = _ctx("1990-05-15", "10:00", "Asia/Shanghai", "Beijing")
         result = adapter.compute(ctx, gender="male")
         self.assertIsInstance(result, ZiweiChart)
-        # iztro 已安装，source 应为 'iztro'；若未安装则为 'stub'
-        self.assertIn(result.source, ["iztro", "stub"])
+        # 2026-11-10 接线裁决: 默认后端 native（零 node 依赖）；auto 路径 iztro 已安装
+        # 走 iztro，未安装按契约 fail-closed（stub 由显式构造产生）
+        self.assertIn(result.source, ["native", "iztro", "stub"])
 
     def test_adapter_policy_is_shared_reference(self):
         policy = ZiweiCalculationPolicy()

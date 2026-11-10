@@ -440,3 +440,23 @@ MCP 形态为 `codegraph serve --mcp`，供支持的客户端后续接入。
 7. ~~`classical_detail` 解层通道按原典重建~~（已完成：9 出口接线，反假命中纪律 + 9 组回归）。
 8. ~~把 `ziwei_natal` 提升为可选原生主路径~~（已完成：`backend="native"` 可选，
    适配器 auto 模式在缺 iztro 时自动退回原生；**切换为默认后端属接线裁决**，待定）。
+
+## 接线裁决落地（2026-11-10，统一接线阶段）
+
+**裁决**：默认后端切 native（此项即上文 §待定 第 8 条的「接线裁决」）。依据：
+- Golden 80 案语义字段（命宫/身宫/五行局/紫微/十二宫主星）双后端全一致（本日复验 `scripts/ziwei_golden_accuracy.py` 80/80）。
+- 后端 parity 脚本 11/11 全一致（`scripts/ziwei_backend_parity.py`）。
+- 历史证据：17040 盘逐字段一致（`docs/audit/ZIWEI_ACCURACY_20261104.md` 主体）+ 长生/博士 12 神男女顺逆 4260 盘 0 不一致。
+
+**落地改动**：
+1. `ZiweiEngine.__init__` 与 `ZiweiSolarAdapter.__init__` 默认 `backend="auto"` → `"native"`（"auto"/"iztro" 仍为合法选项）。
+2. `solar_to_chart(..., source=)` 参数化（原硬编码 `'iztro'`）；adapter compute 按 actual backend 报 source——native 路径此前谎报 iztro。
+3. **流日参数契约（Z76）原生路径补齐**：新增 `ZiweiEngine._resolve_flow_day_native`——日干支= lunar_python `getDayInGanZhi()`（日柱口径与黄历双库 1900-2100 逐日 0 差异，`scripts/huangli_crosscheck.py`）；四化=`GAN_SIHUA[日干]`（与 iztro daily.mutagen 逐星一致：丁未/庚子/辛亥/乙亥/癸亥 5 例核对 0 差异）；`full_chart(flow_day=)` 门改为按 backend 分派。
+4. Golden 基线重录：`scripts/golden_replay.py --snapshot` → ziwei hash e5a44edf→6e4a1323（to_dict 展示层差异所致，语义字段不变）；meihua/huangli/yijing/ziping hash 不变。
+
+**登记（宁缺勿猜）**：
+- `luck_branch`（流日命宫）：iztro daily 内部算法（非原典明文，库内两条口径不一致——`ziwei/rules/decadal.py`「命宫顺数到日支」vs iztro 输出），原生路径置空，消费方 `daily_luck_palace` 随之为空；待原典口径裁决。
+- to_dict 展示层差异：杂耀 adjective 排序（集合等序异）、ages 流岁列表（native 未实现）、sign/zodiac/time_range 空串、lunar_date_text 格式（「农历1984年1月1日」vs「一九八四年正月初一」）、time_text（「第5时」vs「巳时」）。语义字段无差异。
+- golden_replay blind hash 每次运行漂移（6fc927a5→1f0355bd，15 分钟内）——疑含时变字段（流日/流时锚定当天），待单独审计；本日 --snapshot 记录的是当天值，基线对 blind 引擎不具备跨日可比性。
+
+**回归**：`pytest tests/ -k ziwei` **608 passed / 1 skipped**（0 failed；含 chart_contract 改判 native+iztro 双路径、p014 ratified source 白名单扩 native）；`pytest tests/test_p014.py` 13 passed。

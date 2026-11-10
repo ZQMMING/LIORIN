@@ -127,7 +127,7 @@ def compute_via_solar(year: int, month: int, day: int, hour: int,
     return json.loads(proc.stdout)
 
 
-def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
+def solar_to_chart(solar_input: SolarInput, raw_result: dict, source: str = "iztro") -> ZiweiChart:
     """将 bySolar 结果转换为 ZiweiChart（与 full_chart 同一后处理口径）
 
     Z-ACC(2026-11-04) 修复：此前本路径只做字段搬运，缺
@@ -232,7 +232,7 @@ def solar_to_chart(solar_input: SolarInput, raw_result: dict) -> ZiweiChart:
             'body_earthly_branch': body_branch,
             'palaces': palace_data,
         },
-        source='iztro',
+        source=source,
         soul_earthly_branch=soul_branch,
         body_earthly_branch=body_branch,
         palaces=palace_data,
@@ -287,11 +287,14 @@ class ZiweiSolarAdapter:
     """
 
     def __init__(self, engine: Optional[ZiweiEngine] = None, policy: Optional[ZiweiCalculationPolicy] = None,
-                 backend: str = "auto"):
+                 backend: str = "native"):
         """backend:
-        - "auto"（默认）：有 node_modules/iztro 走 iztro；缺失则自动退回原生实现
-          （`ziwei_natal.native_raw_chart` + lunar_python 农历换算），不再 throw/stub。
-        - "iztro" / "native"：强制指定后端。
+        - "native"（默认，2026-11-10 接线裁决）：`ziwei_natal.native_raw_chart` + lunar_python
+          农历换算，零 node 依赖。与 iztro 路径在 Golden 80 案语义字段（命宫/身宫/五行局/
+          紫微/十二宫主星）全一致；to_dict 展示层差异（杂耀排序/ages/sign/zodiac/
+          lunar_date_text 格式）登记于 docs/audit/ZIWEI_ACCURACY_20261104.md。
+        - "auto"：有 node_modules/iztro 走 iztro；缺失则退回原生实现。
+        - "iztro"：强制 iztro 路径。
         """
         if backend not in ("auto", "iztro", "native"):
             raise ValueError(f"backend 必须 auto/iztro/native，收到 {backend!r}")
@@ -333,9 +336,11 @@ class ZiweiSolarAdapter:
 
         if self._use_native():
             raw = native_solar_chart(year, month, day, hour, gender)
+            _src = "native"
         else:
             raw = compute_via_solar(year, month, day, hour, gender)
-        return solar_to_chart(SolarInput(year, month, day, hour, gender), raw)
+            _src = "iztro"
+        return solar_to_chart(SolarInput(year, month, day, hour, gender), raw, source=_src)
     
     @property
     def engine(self):
