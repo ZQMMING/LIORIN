@@ -342,3 +342,24 @@ p0 engines 线只到「格/病/药」层，`ziping_bridge` 对 SHISHEN 恒返回
 - 新增 `tests/test_ziping_shishen.py`（5 passed：三案结论 + 证据锚解析 + pipeline claim）；
 - `test_ziping_shishen + bridge + audit_gates + int_06 + classic_check` **90 passed**；
 - `pytest -k ziping` **1886 passed / 9 failed**（9 项均 GPT 在途既有失败，无新增）。
+
+## 十四、事件域落地：流年冲为事件触发符号（V7.186，2026-11-10）
+
+### 问题
+p0 engines 线传 `liunian`（干支）时输出 `liunian_summary`（liunian_transit.clash / clash_facts / liunian_root_clash_facts / sanhe_ju / sanhui_ju 等），但桥接此前未消费，SHIJIAN 恒 UNKNOWN。
+
+### 原典判据
+切片 `SUI_YUN.RE_EVALUATION.LIU_NIAN.005`（流年重估）、`SUI_YUN.RE_EVALUATION.DA_YUN_YIN_DONG.002`（大运引动）：流年与大运对原局的再评估是岁运层事件来源；冲是岁运触发符号，实际作用需按本运喜忌核验（p0 明示「实际作用未核验」）。
+
+### 修法（`src/tongshu/reasoning/ziping_bridge.py`）
+1. 新增 `_ganzhi_of_year(year)`（(year-4)%10/%12）与 `_shijian_from_facts(result)`：无 liunian_summary → UNKNOWN（未指定分析年）；流年支与命局无冲（两类 clash_facts 均空）→ EVENT_ABSENT（无事件触发符号）；有冲 → EVENT_EXIST（触发符号=流年冲，实际作用未核验，不判吉凶/应期）。
+2. `run_ziping_judgment(chart, target_year=None)` 把 target_year 干支传给 `production_entry(FrozenCanonicalBaziChart(pillars=..., liunian=...))`；`compute_stage.py` 传 `analysis_date.year`。
+3. fail-closed 保持：`JudgmentClaimComposer._FC_BLOCKED_DOMAINS={"SHIJIAN"}`（15.14 method audit）不变 → SHIJIAN 有域判断但 0 claim，等治理放行。
+
+### 实测（1990 庚午 戊寅 乙丑 壬午 男）
+target 2024 甲辰 / 2026 丙午 → EVENT_ABSENT；2027 丁未 → EVENT_EXIST「触发 丑未冲」；target_year=None → UNKNOWN。
+
+### 测试与回归
+- `tests/test_ziping_shijian.py` 4 passed（UNKNOWN/EVENT_EXIST+锚/ABSENT/composer fail-closed）；
+- 相关七文件（shijian+shishen+bridge+audit_gates+int_06+classic_check+yong_coverage）**105 passed**；
+- `pytest -k ziping` **1890 passed / 9 failed**（9 项均 GPT 在途既有失败，无新增）。

@@ -157,6 +157,54 @@ def _shishen_from_facts(facts: Dict[str, Any], refs: list) -> DomainJudgment:
     )
 
 
+_SHIJIAN_ANCHORS = ("SUI_YUN.RE_EVALUATION.LIU_NIAN.005",
+                    "SUI_YUN.RE_EVALUATION.DA_YUN_YIN_DONG.002")
+
+
+def _ganzhi_of_year(year: int) -> str:
+    """公历年 → 六十甲子干支（1984 甲子基准；(year-4)%10 / (year-4)%12）。"""
+    from .ziping_classic_check import BRANCHES, STEMS
+
+    if not year:
+        return ""
+    return STEMS[(int(year) - 4) % 10] + BRANCHES[(int(year) - 4) % 12]
+
+
+def _shijian_from_facts(result: Dict[str, Any]) -> DomainJudgment:
+    """事件域: 以分析年流年冲合事实判事件存在性（原典·岁运）。
+
+    口径(不夸大): 只判"有无冲(事件触发符号)", 冲的实际作用 p0 明示未核验,
+    故 reasoning 带 boundary; 无分析年/无流年事实 → UNKNOWN。
+    """
+    ls = result.get("liunian_summary") or {}
+    if not ls:
+        return _unknown(JudgmentDomain.SHIJIAN,
+                        "未指定分析年, 流年事实未出 → 事件域不判")
+    ly = ls.get("liunian") or ""
+    transit = ls.get("liunian_transit") or {}
+    pairs = [c.get("pair") for c in (transit.get("clash_facts") or []) if c.get("pair")]
+    root_pairs = [c.get("pair") for c in (ls.get("liunian_root_clash_facts") or [])
+                  if c.get("pair")]
+    if not (pairs or root_pairs):
+        return DomainJudgment(
+            domain=JudgmentDomain.SHIJIAN,
+            conclusion=JudgmentConclusion.EVENT_ABSENT,
+            reasoning=f"分析年流年 {ly}: 流年支与命局四支无冲 → 无事件触发符号；"
+                      "（流年合/运限吉凶另属解层，不在本域）",
+            rule_refs=["ZIPING_ENGINES_P0", _SHIJIAN_ANCHORS[0]],
+            evidence_refs=list(_SHIJIAN_ANCHORS),
+        )
+    shown = [f"{a}{b}冲" for a, b in (pairs + root_pairs)]
+    return DomainJudgment(
+        domain=JudgmentDomain.SHIJIAN,
+        conclusion=JudgmentConclusion.EVENT_EXIST,
+        reasoning=f"分析年流年 {ly}: 触发 {', '.join(shown)}；"
+                  "冲为事件触发符号，实际作用 p0 明示未核验（不判吉凶/应期）",
+        rule_refs=["ZIPING_ENGINES_P0", _SHIJIAN_ANCHORS[0], _SHIJIAN_ANCHORS[1]],
+        evidence_refs=list(_SHIJIAN_ANCHORS),
+    )
+
+
 def _wangshuai_from_pillars(pillars: Optional[Dict[str, list]]) -> DomainJudgment:
     """旺衰域：得令/得地/得势 三才合参 + 成局（原典判据独立实现）。
 
@@ -188,7 +236,8 @@ def _wangshuai_from_pillars(pillars: Optional[Dict[str, list]]) -> DomainJudgmen
 
 
 def _engines_p0_synthesis(result: Dict[str, Any],
-                          pillars: Optional[Dict[str, list]] = None) -> JudgmentSynthesis:
+                          pillars: Optional[Dict[str, list]] = None,
+                          target_year: Optional[int] = None) -> JudgmentSynthesis:
     """engines(p0 线) production_entry 输出 → 五大域。
 
     映射口径(不夸大):
@@ -279,7 +328,7 @@ def _engines_p0_synthesis(result: Dict[str, Any],
         geju=geju,
         yongshen=yongshen,
         shishen=_shishen_from_facts(_facts_for_shishen, _shishen_refs),
-        shijian=_unknown(JudgmentDomain.SHIJIAN, "p0 engines 线未输出事件域"),
+        shijian=_shijian_from_facts(result),
     )
 
 
@@ -314,7 +363,7 @@ def build_context(chart: Any) -> Dict[str, Any]:
     return {"natal": {"pillars": pillars, "day_master": day_master}}
 
 
-def run_ziping_judgment(chart: Any) -> JudgmentSynthesis:
+def run_ziping_judgment(chart: Any, target_year: Optional[int] = None) -> JudgmentSynthesis:
     """对 CanonicalBaziChart 执行五大域判断。
 
     BZ-FNDR-15 (⑮-0 接入契约): Ziping 入口接收 CanonicalBaziChart.
@@ -365,7 +414,9 @@ def run_ziping_judgment(chart: Any) -> JudgmentSynthesis:
             FrozenCanonicalBaziChart,
             production_entry,
         )
-        result = production_entry(FrozenCanonicalBaziChart(pillars=pillars))
+        _liunian = _ganzhi_of_year(target_year) if target_year else None
+        result = production_entry(FrozenCanonicalBaziChart(
+            pillars=pillars, liunian=_liunian))
     except Exception as exc:  # pragma: no cover - 防御性
         return JudgmentSynthesis(
             wangshuai=_unknown(JudgmentDomain.WANGSHUAI,
@@ -386,7 +437,7 @@ def run_ziping_judgment(chart: Any) -> JudgmentSynthesis:
             shijian=_unknown(JudgmentDomain.SHIJIAN, reason),
         )
 
-    return _engines_p0_synthesis(result, pillars)
+    return _engines_p0_synthesis(result, pillars, target_year=target_year)
 
 
 def synthesis_to_dict(synthesis: JudgmentSynthesis) -> dict:
