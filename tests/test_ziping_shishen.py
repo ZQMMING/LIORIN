@@ -22,6 +22,10 @@ def _pillars(*p):
         (("乙酉", "甲申", "丁巳", "庚戌"), "SEMANTIC_POSITIVE"),
         # 1990 庚午 戊寅 乙丑 壬午: 最旺食伤(火)非喜非忌 → 不硬断
         (("庚午", "戊寅", "乙丑", "壬午"), "UNKNOWN"),
+        # 001 癸未 辛酉 甲申 丙寅: 官多同煞, 最旺官杀(金)=病 → 凶
+        (("癸未", "辛酉", "甲申", "丙寅"), "SEMANTIC_NEGATIVE"),
+        # 009 朱家骅 癸巳 丁巳 丁卯 丙午: 日元太旺, 最旺比劫(火)=病 → 凶
+        (("癸巳", "丁巳", "丁卯", "丙午"), "SEMANTIC_NEGATIVE"),
     ],
 )
 def test_shishen_conclusion(case, expected):

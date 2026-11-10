@@ -363,3 +363,27 @@ target 2024 甲辰 / 2026 丙午 → EVENT_ABSENT；2027 丁未 → EVENT_EXIST�
 - `tests/test_ziping_shijian.py` 4 passed（UNKNOWN/EVENT_EXIST+锚/ABSENT/composer fail-closed）；
 - 相关七文件（shijian+shishen+bridge+audit_gates+int_06+classic_check+yong_coverage）**105 passed**；
 - `pytest -k ziping` **1890 passed / 9 failed**（9 项均 GPT 在途既有失败，无新增）。
+
+## 十五、十神域忌神反向推导：无病盘也可判最旺十神吉凶（V7.187，2026-11-10）
+
+### 问题
+V7.185 十神域只在「有病药锚」时出结论（PZZQ 4/12），无病盘（GE_FALLBACK/NO_BING）的最旺十神全部 UNKNOWN。
+
+### 原典判据（沈孝瞻配合论，仅限「制」形明确的格用神类别）
+- 用=食伤（官多同煞 / 食伤制煞）→ 所制之**官杀**为病（最旺官杀=病神当权→凶）；
+- 用=官杀（阳刃「以官煞制刃」 / 建禄「透官而逢财印即同官格」 / 财旺生官护财）→ **比劫**为病（刃/禄成党→凶）；
+- 印/财/比劫类用神配合形态不唯一（印既化杀亦制食伤），**不反推**，宁缺勿猜。
+
+### 修法（`src/tongshu/reasoning/ziping_bridge.py`，仅桥接、不动引擎）
+1. `_shishen_from_facts` 增忌神反向推导（格用神类别∈{食伤,官杀}），并并入 zhuangui/bingyao 的病五行集合；
+2. 格用神五行取值修正：引擎在「源2 override」路径只回填 `pm.kind="格局用神"` 而不回填 `yy.ge_yong_wx` → kind 白名单内直接取 `pm.wuxing`；
+3. reasoning 带格用神类别与病集合，证据锚不变（`FOUNDATION.RELATION.SHI_SHEN.001`）。
+
+### 实测（PZZQ 12 案，4/12 → **10/12**）
+- 001 官杀(金)最旺=病 → 凶（沈：官多同煞以丙火制官）；003/005/008 比劫最旺=病 → 凶（阳刃/建禄以官煞制刃）；
+- 009 比劫(火)最旺=病 → 凶（沈：日元太旺取癸水抑制）；012 比劫最旺=病 → 凶（比劫夺财）；
+- 006/010 最旺十神非喜非忌 → UNKNOWN（诚实留白，010 沈取劫帮身属配合级分歧，已登记）。
+
+### 测试与回归
+- `tests/test_ziping_shishen.py` 扩至 6 例（+001/009），相关六文件 **88 passed**；
+- `pytest -k ziping` **1892 passed / 9 failed**（9 项均 GPT 在途既有失败，无新增）。

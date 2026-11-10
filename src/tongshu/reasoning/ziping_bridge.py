@@ -136,8 +136,21 @@ def _shishen_from_facts(facts: Dict[str, Any], refs: list) -> DomainJudgment:
     bing = (((facts.get("__bing") or {}).get("primary_bing")) or {}).get("bing_wx")
     xi_set = {w for w in (med, ge_yong) if w}
     ji_set = {w for w in (bing,) if w and w not in xi_set}
+    # 病反向推导（沈孝瞻配合论, 仅限「制」形明确的格用神类别）：
+    #   用=食伤（官多同煞/食伤制煞）→ 所制之官杀为病；
+    #   用=官杀（阳刃以官煞制刃 / 建禄透官同官格 / 财旺生官护财）→ 比劫为病。
+    #   印/财/比劫类用神配合形态不唯一（化杀亦制食伤等），不反推，宁缺勿猜。
+    _ge_yong_cat = _wx_category(ge_yong, dm) if ge_yong else ""
+    from .ziping_classic_check import KE as _KE_BRIDGE
+
+    _sha_wx = next((w for w, tgt in _KE_BRIDGE.items() if tgt == dm), "")  # 克我者=官杀
+    if _ge_yong_cat == "食伤" and _sha_wx and _sha_wx not in xi_set:
+        ji_set.add(_sha_wx)
+    elif _ge_yong_cat == "官杀" and dm not in xi_set:
+        ji_set.add(dm)
     detail = (f"最旺十神: {cat}({best_wx}) 权重{scores[best_wx]:g}; "
-              f"药={med or '-'} 格用神={ge_yong or '-'} 病={bing or '-'}")
+              f"药={med or '-'} 格用神={ge_yong or '-'}({(_ge_yong_cat or '-')}), "
+              f"病={sorted(ji_set) if ji_set else '-'}")
     if best_wx in xi_set:
         concl = JudgmentConclusion.SEMANTIC_POSITIVE
         why = f"{detail}; 最旺十神为用药/格用神五行 → 十神吉"
@@ -320,7 +333,13 @@ def _engines_p0_synthesis(result: Dict[str, Any],
     _facts_for_shishen = dict(facts)
     _facts_for_shishen["__yongyao"] = yy or {}
     _facts_for_shishen["__bing"] = (result.get("zhenglun") or {}).get("zhuangui") or {}
-    _facts_for_shishen["__ge_yong_wx"] = str(pm.get("ge_yong_wx") or "") if isinstance(pm, dict) else ""
+    # 格用神五行: 引擎把「格局用神」kind 的主药即格用神（源2 override 路径
+    # 不回填 yy.ge_yong_wx），kind 白名单内直接取 pm.wuxing，其余取回填字段。
+    _gy_wx = ""
+    if isinstance(pm, dict) and pm.get("kind") == "格局用神":
+        _gy_wx = str(pm.get("wuxing") or "")
+    _gy_wx = _gy_wx or str((yy or {}).get("ge_yong_wx") or "")
+    _facts_for_shishen["__ge_yong_wx"] = _gy_wx
     _shishen_refs = list(ge_ev) + list(yy_ev)
 
     return JudgmentSynthesis(
