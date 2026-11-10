@@ -6,7 +6,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import pytest
 
-from src.tongshu.reasoning.ziping_bridge import run_ziping_judgment
+from src.tongshu.reasoning.ziping_bridge import _SHIJIAN_ANCHORS, run_ziping_judgment
 
 
 @pytest.fixture(scope="module")
@@ -48,3 +48,27 @@ def test_composer_keeps_shijian_fail_closed(chart):
     assert synth.shijian.conclusion.value == "EVENT_EXIST"
     ids = [c.get("claim_id") for c in JudgmentClaimComposer(provenance_resolver=None).compose(synth)]
     assert not any("shijian" in (i or "") for i in ids)
+
+def test_shijian_taisui_chong_yun():
+    """V7.192: 太岁冲运(流年支冲当前大运支)是事件触发符号。
+
+    1984 甲子 丙子 乙亥 甲申 男(起运约9.69岁, 第1运丁丑):
+    2003 癸未 → 未丑冲大运, 且未不冲命局(子子亥申) → 仅运冲触发。
+    """
+    from tongshu.engines.bazi_engine import BaziEngine
+
+    chart = BaziEngine().compute((1984, 12, 7, 16), gender="male")
+    synth = run_ziping_judgment(chart, target_year=2003)
+    assert synth.shijian.conclusion.value == "EVENT_EXIST"
+    assert "流年冲大运" in synth.shijian.reasoning
+    assert "未丑" in synth.shijian.reasoning
+    assert "未核验" in synth.shijian.reasoning
+    assert synth.shijian.rule_refs == ["ZIPING_ENGINES_P0"] + list(_SHIJIAN_ANCHORS)
+    assert synth.shijian.evidence_refs == list(_SHIJIAN_ANCHORS)
+
+
+def test_shijian_absent_mentions_dayun(chart):
+    """无冲时 EVENT_ABSENT 的口径覆盖「命局及当前大运」。"""
+    synth = run_ziping_judgment(chart, target_year=2001)
+    assert synth.shijian.conclusion.value == "EVENT_ABSENT"
+    assert "当前大运" in synth.shijian.reasoning

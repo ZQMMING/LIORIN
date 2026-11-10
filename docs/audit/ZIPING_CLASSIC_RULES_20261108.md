@@ -474,3 +474,13 @@ PZZQ《论偏官》：制化路径不止食神——「有用食神制煞者…�
 ### 测试与回归
 - `tests/test_ziping_yong_coverage.py` 10→14 锚 + 护栏 ≥15 → **15 passed**；
 - 全量 `pytest -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py` → **1888 passed / 9 failed**（9 项=GPT 在途既有，无新增）；40 盘对账 取格 8/40、成败 27/40 持平。
+
+## 二十一、V7.192 事件域：太岁冲运接线（宁缺勿猜口径）
+
+**日期**: 2026-11-10　**范围**: `src/tongshu/reasoning/ziping_bridge.py` / `tests/test_ziping_shijian.py`
+
+- 大运数据源：`engines` 层 `luck_pillars`（干支拼音）→ 桥层 `_PINYIN_STEM/_PINYIN_BRANCH` 映射中文干支，`_dayun_from_chart(chart)` 返回（大运列表, 起运岁 start_age）；`_current_dayun(dayun, start_age, target_year, birth_year)` 按 `idx=int((age-start_age)//10)` 取当前运，越界回退 `None`（宁缺勿猜，不臆测运限）。
+- 触发判据扩展：`_shijian_from_facts(result, current_dayun)` 在「流年支冲命局四支」之外新增「流年支冲当前大运支」（CHONG 六冲表），证据对记为 `X Y(流年冲大运)` 与命局冲对并列；有冲对 → `EVENT_EXIST`（措辞保持「冲为事件触发符号，实际作用 p0 明示未核验（不判吉凶/应期）」）；无冲 → `EVENT_ABSENT`，措辞从「命局四支」扩为「命局四支及当前大运」。
+- 消歧实测：1984 甲子 丙子 乙亥 甲申 男（起运约 9.69 岁，第 1 运丁丑）——2003 癸未：未不冲命局（子子亥申）但冲大运丑 → **仅运冲触发** EVENT_EXIST ✓；2001 辛巳：命局与大运均无冲 → EVENT_ABSENT 且措辞含「当前大运」✓。
+- 测试：`test_shijian_taisui_chong_yun`（自建 1984 盘，断言触发对/锚点/未核验措辞）+ `test_shijian_absent_mentions_dayun`；六套件 104 passed，全量 ziping 1894 passed / 9 failed（GPT 在途既有），PZZQ 15/16（KNOWN_CONFLICTS 6 案不变）。
+- 口径声明：太岁冲运只提供**触发符号**，应期/吉凶仍属解层（fail-closed 未实现不输出）；`current_dayun` 缺失（无 luck_pillars/越界）时行为与 V7.186 完全一致（纯命局冲）。

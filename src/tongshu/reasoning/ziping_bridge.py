@@ -181,6 +181,47 @@ _SHIJIAN_ANCHORS = ("SUI_YUN.RE_EVALUATION.LIU_NIAN.005",
                     "SUI_YUN.RE_EVALUATION.DA_YUN_YIN_DONG.002")
 
 
+_PINYIN_STEM = {"JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU": "戊",
+                "JI": "己", "GENG": "庚", "XIN": "辛", "REN": "壬", "GUI": "癸"}
+_PINYIN_BRANCH = {"ZI": "子", "CHOU": "丑", "YIN": "寅", "MAO": "卯", "CHEN": "辰", "SI": "巳",
+                  "WU": "午", "WEI": "未", "SHEN": "申", "YOU": "酉", "XU": "戌", "HAI": "亥"}
+
+
+def _dayun_from_chart(chart: Any):
+    """BaziChart.luck_pillars(拼音 Pillar) → 中文干支列表 + 起运岁。
+
+    Returns: (dayun_ganzhi_list, start_age)；不可用 → ([], None)（不猜）。
+    """
+    try:
+        pillars = list(getattr(chart, "luck_pillars", None) or [])
+        out = []
+        for p in pillars:
+            hs = _PINYIN_STEM.get(str(getattr(p, "heavenly_stem", "")).upper())
+            eb = _PINYIN_BRANCH.get(str(getattr(p, "earthly_branch", "")).upper())
+            if hs and eb:
+                out.append(hs + eb)
+        sa = getattr(chart, "start_age", None)
+        if not out or sa is None:
+            return out, None
+        return out, float(sa)
+    except Exception:
+        return [], None
+
+
+def _current_dayun(dayun: list, start_age: Optional[float],
+                   target_year: Optional[int], birth_year: Optional[int]):
+    """target_year 所在大运干支；越界/未知 → None（不猜）。"""
+    if not dayun or start_age is None or not target_year or not birth_year:
+        return None
+    age = target_year - birth_year
+    if age < 0:
+        return None
+    idx = int((age - start_age) // 10)
+    if 0 <= idx < len(dayun):
+        return dayun[idx]
+    return None
+
+
 def _ganzhi_of_year(year: int) -> str:
     """公历年 → 六十甲子干支（1984 甲子基准；(year-4)%10 / (year-4)%12）。"""
     from .ziping_classic_check import BRANCHES, STEMS
@@ -190,7 +231,8 @@ def _ganzhi_of_year(year: int) -> str:
     return STEMS[(int(year) - 4) % 10] + BRANCHES[(int(year) - 4) % 12]
 
 
-def _shijian_from_facts(result: Dict[str, Any]) -> DomainJudgment:
+def _shijian_from_facts(result: Dict[str, Any],
+                        current_dayun: Optional[str] = None) -> DomainJudgment:
     """事件域: 以分析年流年冲合事实判事件存在性（原典·岁运）。
 
     口径(不夸大): 只判"有无冲(事件触发符号)", 冲的实际作用 p0 明示未核验,
@@ -205,16 +247,23 @@ def _shijian_from_facts(result: Dict[str, Any]) -> DomainJudgment:
     pairs = [c.get("pair") for c in (transit.get("clash_facts") or []) if c.get("pair")]
     root_pairs = [c.get("pair") for c in (ls.get("liunian_root_clash_facts") or [])
                   if c.get("pair")]
-    if not (pairs or root_pairs):
+    # V7.192: 太岁冲运(流年支冲当前大运支)亦是事件触发符号(原典·岁运冲战)
+    yun_pairs = []
+    if current_dayun and len(current_dayun) >= 2:
+        from .ziping_classic_check import CHONG as _CHONG
+        _ly_branch = ly[-1] if len(ly) >= 2 else ""
+        if _ly_branch and _CHONG.get(_ly_branch) == current_dayun[-1]:
+            yun_pairs = [f"{_ly_branch}{current_dayun[-1]}(流年冲大运)"]
+    if not (pairs or root_pairs or yun_pairs):
         return DomainJudgment(
             domain=JudgmentDomain.SHIJIAN,
             conclusion=JudgmentConclusion.EVENT_ABSENT,
-            reasoning=f"分析年流年 {ly}: 流年支与命局四支无冲 → 无事件触发符号；"
+            reasoning=f"分析年流年 {ly}: 流年支与命局四支及当前大运无冲 → 无事件触发符号；"
                       "（流年合/运限吉凶另属解层，不在本域）",
             rule_refs=["ZIPING_ENGINES_P0", _SHIJIAN_ANCHORS[0]],
             evidence_refs=list(_SHIJIAN_ANCHORS),
         )
-    shown = [f"{a}{b}冲" for a, b in (pairs + root_pairs)]
+    shown = [f"{a}{b}冲" for a, b in (pairs + root_pairs)] + yun_pairs
     return DomainJudgment(
         domain=JudgmentDomain.SHIJIAN,
         conclusion=JudgmentConclusion.EVENT_EXIST,
@@ -257,7 +306,8 @@ def _wangshuai_from_pillars(pillars: Optional[Dict[str, list]]) -> DomainJudgmen
 
 def _engines_p0_synthesis(result: Dict[str, Any],
                           pillars: Optional[Dict[str, list]] = None,
-                          target_year: Optional[int] = None) -> JudgmentSynthesis:
+                          target_year: Optional[int] = None,
+                          current_dayun: Optional[str] = None) -> JudgmentSynthesis:
     """engines(p0 线) production_entry 输出 → 五大域。
 
     映射口径(不夸大):
@@ -356,7 +406,7 @@ def _engines_p0_synthesis(result: Dict[str, Any],
         geju=geju,
         yongshen=yongshen,
         shishen=_shishen_from_facts(_facts_for_shishen, _shishen_refs),
-        shijian=_shijian_from_facts(result),
+        shijian=_shijian_from_facts(result, current_dayun),
     )
 
 
@@ -443,8 +493,16 @@ def run_ziping_judgment(chart: Any, target_year: Optional[int] = None) -> Judgme
             production_entry,
         )
         _liunian = _ganzhi_of_year(target_year) if target_year else None
+        _dayun, _start_age = _dayun_from_chart(chart)
+        _birth_year = None
+        _bdt = getattr(chart, "birth_datetime", None)
+        try:
+            if _bdt is not None:
+                _birth_year = int(getattr(_bdt, "year", None) or 0) or None
+        except Exception:
+            _birth_year = None
         result = production_entry(FrozenCanonicalBaziChart(
-            pillars=pillars, liunian=_liunian))
+            pillars=pillars, liunian=_liunian, dayun=(_dayun or None)))
     except Exception as exc:  # pragma: no cover - 防御性
         return JudgmentSynthesis(
             wangshuai=_unknown(JudgmentDomain.WANGSHUAI,
@@ -465,7 +523,9 @@ def run_ziping_judgment(chart: Any, target_year: Optional[int] = None) -> Judgme
             shijian=_unknown(JudgmentDomain.SHIJIAN, reason),
         )
 
-    return _engines_p0_synthesis(result, pillars, target_year=target_year)
+    _cur_dyun = _current_dayun(_dayun, _start_age, target_year, _birth_year)
+    return _engines_p0_synthesis(result, pillars, target_year=target_year,
+                                 current_dayun=_cur_dyun)
 
 
 def synthesis_to_dict(synthesis: JudgmentSynthesis) -> dict:
