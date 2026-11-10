@@ -216,7 +216,13 @@ def _dayun_from_chart(chart: Any):
 
 def _current_dayun(dayun: list, start_age: Optional[float],
                    target_year: Optional[int], birth_year: Optional[int]):
-    """target_year 所在大运干支；越界/未知 → None（不猜）。"""
+    """target_year 所在大运干支；越界/未知 → None（不猜）。
+
+    COV-013① 显式登记（NO_EVIDENCE, fail-closed）: 大运仅作事件域触发符号
+    （见 _shijian_from_facts），不参与喜忌/旺衰/用神重定——岁运篇底本无
+    「大运改变原局喜用神性质」明文；登记与守卫见 ziping_no_evidence.py。
+    COV-013②: 小运起法两说（COV-006）待裁决且底本零命中，引擎不计算小运。
+    """
     if not dayun or start_age is None or not target_year or not birth_year:
         return None
     age = target_year - birth_year
@@ -243,6 +249,8 @@ def _shijian_from_facts(result: Dict[str, Any],
 
     口径(不夸大): 只判"有无冲(事件触发符号)", 冲的实际作用 p0 明示未核验,
     故 reasoning 带 boundary; 无分析年/无流年事实 → UNKNOWN。
+    COV-013① NO_EVIDENCE: current_dayun 在此仅作冲触发符号，不含喜忌重定语义
+    （登记与结构守卫见 ziping_no_evidence.py + tests/test_ziping_no_evidence.py）。
     """
     ls = result.get("liunian_summary") or {}
     if not ls:

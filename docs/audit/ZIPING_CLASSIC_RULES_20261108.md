@@ -523,3 +523,29 @@ V7.186 时选的锚 `SUI_YUN.RE_EVALUATION.LIU_NIAN.005`（滴天髓「何为好
 
 - COV-001（岁运层命例型切片=0，D5 无承载）：本域 claim 只报触发符号不报吉凶，不受命例型缺口影响；岁运**吉凶/应期**解层在 D5 证据补齐前维持 fail-closed 不输出。
 - COV-004（SMTH 行957 命例未切）/ COV-013②（小运×大运冲刑）：引擎均不消费，无缺口行为。
+
+## 二十三、COV 引擎侧执行：NO_EVIDENCE 显式登记 + COV-019 实测纠偏（V7.194，2026-11-10）
+
+**背景**：GPT 线《必补项登记_Coverage_Closure_Registry.md》（COV-001~029）总则：「宁缺勿滥/宁漏勿错」不得作为覆盖缺口结案理由；引擎必需且底本无确定答案的主题必须显式登记 NO_EVIDENCE，缺省行为 fail-closed——报「无原文依据」，不输出结论。本节执行引擎侧三项（用户 m10560「执行」指令）。
+
+### 1. COV-013①② 显式 NO_EVIDENCE 登记（引擎侧缺省行为落盘）
+
+- 新登记模块 `src/tongshu/reasoning/ziping_no_evidence.py`：机器可读 `NO_EVIDENCE_TOPICS` 表（COV-013-1 大运改变原局喜用神性质 / COV-013-2 小运与大运相冲相刑主灾，各含 verdict/evidence/default_behavior/guard 四字段）+ fail-closed 钩子 `assert_topic_not_concluded(topic_id)`（未登记→KeyError；NO_EVIDENCE→NotImplementedError 不输出结论；verdict 变更→RuntimeError 须走裁决）。
+- 缺省行为（当前即成立，登记使其显式化）：
+  - COV-013-1：`current_dayun` 仅流向事件域触发符号（`_shijian_from_facts`：流年冲命局 + 流年冲大运）；不参与任何喜忌/旺衰/用神重定——岁运篇底本检索零命中（登记表证据栏）。
+  - COV-013-2：引擎不计算小运（ziping 线零计算路径）；小运起法两说另见 COV-006 待裁决。
+- 结构守卫测试 `tests/test_ziping_no_evidence.py`（4 测试）：登记表完整性、钩子 fail-closed 三分支、**current_dayun 白名单**（`inspect` 扫 ziping_bridge：签名含 current_dayun 的函数仅限 `_shijian_from_facts`/`_engines_p0_synthesis`/`run_ziping_judgment`，且综合层内出现次数锁定 2=签名+转交事件域，新增大运参与喜忌路径即测试报警）、无小运计算标识符/函数。`ziping_bridge.py` `_current_dayun`/`_shijian_from_facts` 文档串加 COV 指针注释（V7.194）。
+- 回归：no_evidence+shijian+bridge+yong_coverage 4 套件 39 passed。
+
+### 2. COV-019 实测纠偏（登记描述与 live 线不符，证据链存档）
+
+- 登记表 COV-019 称「引擎 L0 `combination_facts.anhe` 键在但恒 []（relations_builder L127 注释『排盘引擎无此域』）」。**实测（2026-11-10）该描述不适用于 live 生产线**：
+  - live 线 `engines/common/l0_fact_builder.py:651-661` **已实现 anhe**：PZZQ 明文窄口径——只认卯申（卯藏乙/申藏庚本气=乙庚合，锚 PZZQ 900/1354/3228），仅相邻成立，且带暗合解冲裁决（PZ-0046 卯被申合→卯酉冲解）；引建于 2026-11-03 提交 `970edc8a`（P0 接线），早于登记表创建（11-10）。
+  - `engines/common/relations_builder.py:127` 注释「BANHE/ANHUI/SELF 排盘引擎无此域」指 relations **类型层**兜底（且 ANHUI 暗会类型实际存在于 :254-269，与 anhe 暗合是两回事），非「anhe 键恒空」。
+  - 「恒空」描述对应 `ziping-p0/`（2026-11-03 冻结副本 `ziping-p0/engines/common/l0_fact_builder.py:118` 仅初始化无实现），生产 bridge 走 live `engines.production_entry`，不受冻结副本影响。
+- 处置：registry 系 GPT 线未跟踪文件，按铁律不代改；建议 COV-019 状态改「已补（窄口径）」——live 线按原典明文窄口径实现卯申暗合+解冲，其余支对无原典明文 fail-closed 不产出暗合，即「显式登记+fail-closed」选项在引擎层的落地形态。指针见 `ziping_no_evidence.py` 模块注释。
+
+### 3. 边界
+
+- 本节全部为引擎侧显式化登记与守卫，**不新增任何断语行为**；COV-013 两主题维持无结论输出，COV-006/COV-028 待裁决项不动。
+- 提交范围：`src/tongshu/reasoning/ziping_no_evidence.py`（新）、`tests/test_ziping_no_evidence.py`（新）、`src/tongshu/reasoning/ziping_bridge.py`（注释）、本节文档。
