@@ -460,3 +460,17 @@ PZZQ《论偏官》：制化路径不止食神——「有用食神制煞者…�
 ### 测试与回归
 - `pytest -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py` → **1888 passed / 9 failed**（9 项=GPT 在途既有，无新增）；
 - 40 盘对账：取格 8/40、成败 27/40（基线持平）；PZZQ 用神覆盖 11/12；bridge+classic_check 37 passed。
+
+## 二十、原典扩案 12→21 与两处配合判据（V7.191，2026-11-10）
+
+### 扩案
+从《子平真诠》原文再采 9 案（四柱 + 沈明示用神/断语），回放量具 `scripts/ziping_pzzq_replay.py` 由 12 案扩到 **21 案**：锁定 15（全 HIT）+ 已知冲突 6（pzzq-010 官杀双病、017 财格身弱用印/官杀、018 从势阈值、019 财格用禄比、020 印重财损印 vs 食泄秀、021 调候口径）。沈未明示用神的虞和德案（「透印有根不能从」——引擎正官格/不从与沈一致，用神系推断）不入断言。
+
+### V7.191 两处配合判据（`yongyao_resolve.derive_ge_yong_wx`）
+1. **日主合财 → 财为用**：财透干与日主五合（甲己/乙庚/丙辛/丁壬/戊癸）→ 财之情专向日主（PZZQ「甲用己财；甲己相合，己土之财，专向日主也」）。pzzq-015 甲寅日己未月 → 土 ✓。
+2. **合煞留官 → 官为用**：正官格官杀并透、七杀透干被天干五合合去（`stem_combination_facts.wuhe` 覆盖）→ 留官为用（PZZQ「两乙合庚，仍作合煞留官，无减福也」高太尉案）。pzzq-016 庚午乙酉甲子乙亥 → 金 ✓。
+- 新增模块级 `STEM_HE_F` 天干五合伙伴表。
+
+### 测试与回归
+- `tests/test_ziping_yong_coverage.py` 10→14 锚 + 护栏 ≥15 → **15 passed**；
+- 全量 `pytest -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py` → **1888 passed / 9 failed**（9 项=GPT 在途既有，无新增）；40 盘对账 取格 8/40、成败 27/40 持平。

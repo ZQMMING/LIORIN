@@ -1,4 +1,4 @@
-"""子平用神覆盖率锚点：原典 12 案回放（PZZQ 沈孝瞻断语为真值）。
+"""子平用神覆盖率锚点：原典 21 案回放（PZZQ 沈孝瞻断语为真值）。
 
 V7.182 起，格用神按八格原典判据派生（透干十神 + 藏干计数），
 用神覆盖率由 2/12 提升到 11/12；本测试把该数字固化为护栏，
@@ -26,6 +26,10 @@ CASES = [
     (["癸巳", "丁巳", "丁卯", "丙午"], "水"),  # 取年上癸水抑制
     (["己卯", "丁丑", "癸丑", "乙卯"], "木"),  # 食神制煞
     (["壬寅", "戊申", "丙寅", "癸巳"], "水"),  # 合官留煞
+    (["甲子", "丁卯", "己亥", "戊辰"], "火"),  # 以印化官(杨增新) V7.191 扩案
+    (["戊戌", "甲子", "己巳", "戊辰"], "木"),  # 用官制劫护财 V7.191 扩案
+    (["戊寅", "己未", "甲寅", "乙亥"], "土"),  # 甲用己财(日主合财) V7.191 扩案
+    (["庚午", "乙酉", "甲子", "乙亥"], "金"),  # 合煞留官(高太尉) V7.191 扩案
 ]
 
 
@@ -43,9 +47,9 @@ def test_yong_wuxing_matches_classic_case(pillars, expected_wuxing):
 
 
 def test_yong_coverage_at_least_10_of_12():
-    """原典 12 案（含 2 案已知口径冲突）整体覆盖率护栏。"""
+    """原典 21 案（含 6 案已知口径冲突/配合分歧）整体覆盖率护栏。"""
     spec = importlib.util.spec_from_file_location(
         "ziping_pzzq_replay", REPO / "scripts" / "ziping_pzzq_replay.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    assert mod.run(verbose=False) >= 11
+    assert mod.run(verbose=False) >= 15

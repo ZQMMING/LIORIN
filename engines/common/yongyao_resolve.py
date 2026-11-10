@@ -105,16 +105,36 @@ def derive_ge_yong_wx(facts):
         return ''
     ts = _ge_trans_gods(facts)
     cnt = _ge_god_counts(facts)
+    # V7.191: 天干五合事实(闲神合煞/日主合财)参与格用神判定
+    _wuhe_stems = set()
+    for _p in ((facts.get('stem_combination_facts') or {}).get('wuhe') or []):
+        for _s in _p:
+            _wuhe_stems.add(_s)
+    _cai_stems = [m.get('stem') for m in (facts.get('ten_god_members') or [])
+                  if m.get('type') == 'stem' and _ZHI_WX.get(m.get('ten_god'), '') == '财']
     cat = ''
     if base in _GE_YONG_BY_SHAPE:
         cat = _GE_YONG_BY_SHAPE[base].get(shape, '')
     if not cat:
         if base == '正官格':
-            cat = '食伤' if cnt['官杀'] >= 3 else ('财' if cnt['财'] >= 1 else '印')
+            # V7.191: 官杀并透而煞被合去(闲神合煞) -> 留官为用(PZZQ「合煞留官,无减福」高太尉案)
+            _sha_trans = [m.get('stem') for m in (facts.get('ten_god_members') or [])
+                          if m.get('type') == 'stem' and m.get('ten_god') == '七杀']
+            _guan_members = [m for m in (facts.get('ten_god_members') or [])
+                             if m.get('ten_god') == '正官']
+            if _sha_trans and _guan_members and all(_s in _wuhe_stems for _s in _sha_trans):
+                cat = '官杀'
+            else:
+                cat = '食伤' if cnt['官杀'] >= 3 else ('财' if cnt['财'] >= 1 else '印')
         elif base == '七煞格':
             cat = '食伤' if cnt['食伤'] >= 1 else ('印' if cnt['印'] >= 1 else '食伤')
         elif base == '财格':
-            if cnt['官杀'] >= 2:
+            # V7.191: 财透干与日主五合 -> 财之情专向日主, 财为用
+            # (PZZQ「甲用己财;甲己相合,己土之财,专向日主也」)
+            _dg0 = ((facts.get('pillars') or {}).get('day') or ['', ''])[0]
+            if any((_s and (_s == _dg0 or STEM_HE_F.get(_s) == _dg0)) for _s in _cai_stems):
+                cat = '财'
+            elif cnt['官杀'] >= 2:
                 cat = '官杀'
             elif cnt['印'] >= 2:
                 cat = '财'
@@ -156,6 +176,9 @@ def derive_ge_yong_wx(facts):
     return _GE_YONG_CAT_WX.get(cat, {}).get(dmwx, '')
 
 
+# V7.191: 天干五合伙伴表(甲己/乙庚/丙辛/丁壬/戊癸)
+STEM_HE_F = {'甲': '己', '己': '甲', '乙': '庚', '庚': '乙', '丙': '辛',
+             '辛': '丙', '丁': '壬', '壬': '丁', '戊': '癸', '癸': '戊'}
 _ZHI_WX = {'正财': '财', '偏财': '财', '财': '财',
            '正官': '官杀', '七杀': '官杀', '官杀': '官杀', '官': '官杀',
            '正印': '印', '偏印': '印', '印': '印', '枭': '印',
