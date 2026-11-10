@@ -557,3 +557,37 @@ V7.186 时选的锚 `SUI_YUN.RE_EVALUATION.LIU_NIAN.005`（滴天髓「何为好
 - COV-029（缺省行为三件套）：登记 `COV-029-DELING`（①得时口径冲突——以 DE_LING.005 为准，judge_strength 已按此实现且「相气」零命中，§二十二已核验）/ `COV-029-JIXIONG`（②PZZQ 无吉凶寿夭专论——yongyao_resolve.py:15 明示「只裁决用药方向, 不判吉凶寿夭」，天然 fail-closed）/ `COV-029-SAME8ZI`（③同八字异寿夭——不可执行，报不可判）。守卫：寿夭字样仅允许 yongyao 免责声明 1 处；classic_check 无相气口径。
 - 登记表现在 7 条目（COV-013-1/2、COV-014-CONG、COV-027-FU、COV-029-①②③），fail-closed 钩子三分支测试全覆盖；no_evidence 套件 8 测试 + shijian/bridge 邻接套件 27 passed。
 - registry 状态建议（GPT 线同步）：COV-013①②/014/027/029 状态 待补（引擎侧）→ 已补（引擎侧登记+守卫）；COV-019 → 已补（窄口径，附 §二十三.2 证据链）。
+
+## 二十四、COV-006 小运起法裁决落码：醉醒子法（V7.196，2026-11-10）
+
+**裁决**：用户 m10713 问「子平引擎有小运算法吗？」（ziping 线 grep 零计算路径+V7.194 守卫锁定）→ 材料三选项（A 醉醒子法/B 古法/C 维持 fail-closed）→ 用户 m10735 选 **A=醉醒子法**。
+
+### 1. 取法锚与算法规格
+
+- 锚：`SUI_YUN.RE_EVALUATION.YUN_XIAN.002`（三命通会 行940 醉醒子：「男女小运皆由时生而行之，逆顺亦以年定…堕地即行乙丑，二岁丙寅，一位一年，周而复始…童限未交大运，专用此法」）+ `YUN_XIAN.006`（神峰通考「大运折除成岁，小运逆顺由时」，独立佐证）。落选：古法 `YUN_XIAN.001`（起点依据「解者谓」推演、单一承载、与渊海变体 `YUN_XIAN.004` 正面冲突）、渊海变体 `YUN_XIAN.004`。
+- 算法规格：堕地（虚岁1）行**时柱次一位**，一位一年，60 甲子周而复始；**逆顺以年命阴阳定**（阳年甲丙戊庚壬顺行、阴年逆行，男女同法）——从切片已校验语义注释「逆顺以年命阴阳定」。原文「阴命阳年逆行亦然」存在文本疑义（若「年定」=年干阴阳，该例应为「阴命阴年」）；本项目取年干阴阳读法（切片注释口径）。禄命线旧注释 `bazi_engine.py:302`「男顺女逆」为另一种读法，该线已弃用醉醒子，不受影响。
+- 虚岁口径：堕地=虚岁1（与盲派 nominal_age、禄命线 2026-10-21 用户核验口径一致）。
+
+### 2. 落码（ziping 线，排盘事实层）
+
+- `ziping_bridge.py`：`_XIAOYUN_ANCHORS`/`_YANG_STEMS`/`_xiaoyun_from_chart(chart)`（返回 `(时柱干支, forward)` 或 `(None, None)` 不猜）+ `_current_xiaoyun(hour, forward, birth_year, target_year)`（虚岁→干支）。
+- **消费边界（COV-013② fail-closed 维持）**：小运=排盘事实层时间线；不参与喜忌/旺衰重定、不独立出吉凶断语、不作为事件域触发符号——小运吉凶属「与大运及柱中用神日主较量」框架（YUN_XIAN.002/003/005 旁参语义），未立项不消费。
+- `ziping_no_evidence.py`：COV-013-2 default_behavior/guard 更新（起法已裁决落码；「冲刑主灾」断语仍零命中 NO_EVIDENCE）+ 新增 `DECIDED_TOPICS["COV-006"]` 裁决存档（锚/落选方案及理由/规格/消费边界/engine_site）。
+- `tests/test_ziping_no_evidence.py`：`test_no_xiaoyun_computation` → `test_xiaoyun_zuixingzi_algorithm`（原文样例：阳年甲子时 1岁乙丑/2岁丙寅/3岁丁卯；阴年逆行 1岁乙丑/2岁甲子/3岁癸亥；周而复始：壬戌时 1岁癸亥/2岁甲子；年阴阳定方向；六分支不猜）+ `test_cov006_decision_recorded`。守卫升级：xiaoyun 标识符仅限 `{_xiaoyun_from_chart, _current_xiaoyun}`，`_engines_p0_synthesis`/`_shijian_from_facts`/`run_ziping_judgment` 禁消费。
+- smoke 实测：阳年甲子时 ('甲子',True) 1岁乙丑/2岁丙寅/3岁丁卯 ✓；阴年逆行 ✓；wrap ✓；`_ganzhi_of_year(1984)=甲子` ✓（编辑事故恢复核验）。
+
+### 3. 跨线现状登记（禄命线不动，差异留痕）
+
+禄命线（bazi 排盘/luming）已有用户落定口径，本节**不改**：
+
+- `engines/bazi_engine.py:2096-2100`：2026-10-21 **用户定夺取古法**——男 1岁丙寅顺行/女 1岁壬申逆行，1岁=起点本身，虚岁 seq0+step*(age-1)（用户核验过旧式错位一年）；醉醒子「由时生而行之」为备查未采用。
+- `engines/bazi_engine_spec.py:1268-1304`：2026-09-14 裁决一=五行精纪卷33 古法（宋代四方一致，SOURCE_VERIFIED）。
+- `luming/engine.py:1177-1179`：2026-10-21 统一用古法 xiao_yun_pillars（修复厄会②运层/流年层卯/丑错位）。
+
+**差异表**：禄命线=古法（起点丙寅/壬申、性别定方向、1岁=起点本身）；子平线=醉醒子（起点时柱次位、年干阴阳定方向、1岁=次位）。同一排盘事实两线答案不同——底本并录两说未裁断（切片备注「SMTH并录两说，未裁断」）+ 两线用户分别裁决（2026-10-21 古法 / 2026-11-10 醉醒子）。如需平台统一为一法，属独立裁决立项（涉及禄命线厄会②/发祸三重件等消费面重验），不在本节。
+
+### 4. 边界与提交
+
+- 本节全部为子平线引擎侧（`src/tongshu/reasoning/` + `tests/test_ziping_no_evidence.py` + 本文档）；不触 bazi_engine/luming/bazi_engine_spec。
+- COV-013② 结论输出维持 0；小运无吉凶断语；「冲刑主灾」维持 NO_EVIDENCE。
+- registry 状态建议（GPT 线同步）：COV-006 → 已裁决（醉醒子法，子平线；禄命线古法维持，见 §二十四.3）。

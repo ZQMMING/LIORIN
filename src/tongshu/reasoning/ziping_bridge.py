@@ -234,6 +234,57 @@ def _current_dayun(dayun: list, start_age: Optional[float],
     return None
 
 
+_XIAOYUN_ANCHORS = [
+    # COV-006 已裁决(醉醒子法, 2026-11-10): 排盘事实层唯一取法
+    "SUI_YUN.RE_EVALUATION.YUN_XIAN.002",  # SMTH 行940: 男女小运皆由时生而行之, 逆顺亦以年定; 阳命阳年甲子时生堕地即行乙丑, 二岁丙寅, 一位一年
+    "SUI_YUN.RE_EVALUATION.YUN_XIAN.006",  # 神峰通考: 大运折除成岁, 小运逆顺由时 (独立佐证)
+]
+_YANG_STEMS = set("甲丙戊庚壬")
+
+
+def _xiaoyun_from_chart(chart: Any):
+    """醉醒子小运起法 (COV-006 已裁决): 时柱次位起, 阳年顺行/阴年逆行。
+
+    规则(锚 SUI_YUN.RE_EVALUATION.YUN_XIAN.002): 男女小运皆由时生而行之,
+    逆顺亦以年定; 堕地(虚岁1)行时柱次一位, 一位一年, 周而复始;
+    阳年(甲丙戊庚壬)顺行, 阴年逆行。男女同法(年阴阳定方向, 不分性别)。
+    返回: (hour_ganzhi, forward) 或 (None, None)(不猜)。
+
+    消费边界(COV-013② fail-closed 维持): 本函数仅产出排盘事实层时间线;
+    小运吉凶属「与大运及柱中用神日主较量」框架(未立项), 不参与喜忌/旺衰
+    重定, 不独立出吉凶断语, 不作为事件域触发符号。
+    """
+    try:
+        pillars = chart.get_pillars_chinese()
+        hour = str(pillars.get("hour") or "")
+        year = str(pillars.get("year") or "")
+    except Exception:
+        return None, None
+    if len(hour) != 2 or len(year) != 2:
+        return None, None
+    forward = year[0] in _YANG_STEMS
+    return hour, forward
+
+
+def _current_xiaoyun(hour_ganzhi: Optional[str], forward: Optional[bool],
+                     birth_year: Optional[int], target_year: Optional[int]):
+    """target_year 所在小运干支(醉醒子法); 未知 → None(不猜)。虚岁=堕地1岁。"""
+    if not hour_ganzhi or forward is None or not birth_year or not target_year:
+        return None
+    from .ziping_classic_check import BRANCHES, STEMS
+
+    seq = [STEMS[i % 10] + BRANCHES[i % 12] for i in range(60)]
+    try:
+        base = seq.index(hour_ganzhi)
+    except ValueError:
+        return None
+    nominal_age = int(target_year) - int(birth_year) + 1
+    if nominal_age < 1:
+        return None
+    step = (nominal_age - 1) * (1 if forward else -1)
+    return seq[(base + 1 + step) % 60]
+
+
 def _ganzhi_of_year(year: int) -> str:
     """公历年 → 六十甲子干支（1984 甲子基准；(year-4)%10 / (year-4)%12）。"""
     from .ziping_classic_check import BRANCHES, STEMS

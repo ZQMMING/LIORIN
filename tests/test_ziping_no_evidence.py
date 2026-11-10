@@ -15,8 +15,13 @@ import pytest
 
 from src.tongshu.reasoning import ziping_bridge
 from src.tongshu.reasoning.ziping_no_evidence import (
+    DECIDED_TOPICS,
     NO_EVIDENCE_TOPICS,
     assert_topic_not_concluded,
+)
+from src.tongshu.reasoning.ziping_bridge import (
+    _current_xiaoyun,
+    _xiaoyun_from_chart,
 )
 
 _REQUIRED = {
@@ -80,20 +85,66 @@ def test_dayun_confined_to_event_domain():
     )
 
 
-def test_no_xiaoyun_computation():
-    """COV-013-2: 引擎不计算小运（COV-006 待裁决前缺省行为）。
+def test_xiaoyun_zuixingzi_algorithm():
+    """COV-006 已裁决(醉醒子法): 时柱次位起, 阳年顺/阴年逆, 一位一年(虚岁)。
 
-    守卫对象是计算路径而非字面提及（登记注释允许提及小运）：
-    不存在 xiaoyun 标识符、不存在名字含小运的函数/变量。
+    COV-013② 守卫升级: 小运计算路径存在, 但 xiaoyun 标识符仅限事实层两函数,
+    综合层/事件域/入口不消费（较量框架立项前禁止）。
     """
     import re
-    src = inspect.getsource(ziping_bridge)
-    assert not re.search(r"xiaoyun|xiao_yun", src, re.IGNORECASE), (
-        "COV-013-2 守卫: bridge 出现小运计算标识符"
-    )
-    assert not re.search(r"def\s+\w*小运\w*|小运\s*=", src), (
-        "COV-013-2 守卫: bridge 出现小运函数/赋值路径"
-    )
+    allowed = {"_xiaoyun_from_chart", "_current_xiaoyun"}
+    hits = set()
+    for name, fn in inspect.getmembers(ziping_bridge, inspect.isfunction):
+        if re.search(r"xiaoyun", inspect.getsource(fn), re.IGNORECASE):
+            hits.add(name)
+    assert hits <= allowed, f"COV-013② 守卫: xiaoyun 标识符泄出到 {hits - allowed}"
+    assert hits == allowed, f"事实层函数缺失: {allowed - hits}"
+    # 综合层/事件域/入口不得消费小运
+    for fn_name in ("_engines_p0_synthesis", "_shijian_from_facts", "run_ziping_judgment"):
+        fn = getattr(ziping_bridge, fn_name)
+        assert not re.search(r"xiaoyun", inspect.getsource(fn), re.IGNORECASE), (
+            f"COV-013② 守卫: {fn_name} 消费小运（较量框架立项前禁止）"
+        )
+    # 原文样例: 阳命阳年 甲子时生 堕地(虚岁1)乙丑 2岁丙寅
+    assert _current_xiaoyun("甲子", True, 1984, 1984) == "乙丑"
+    assert _current_xiaoyun("甲子", True, 1984, 1985) == "丙寅"
+    assert _current_xiaoyun("甲子", True, 1984, 1986) == "丁卯"
+    # 阴年逆行: 1岁乙丑 2岁甲子 3岁癸亥
+    assert _current_xiaoyun("甲子", False, 1985, 1985) == "乙丑"
+    assert _current_xiaoyun("甲子", False, 1985, 1986) == "甲子"
+    assert _current_xiaoyun("甲子", False, 1985, 1987) == "癸亥"
+    # 周而复始: 壬戌时(58) 阳年 1岁癸亥 2岁甲子
+    assert _current_xiaoyun("壬戌", True, 1984, 1984) == "癸亥"
+    assert _current_xiaoyun("壬戌", True, 1984, 1985) == "甲子"
+    # 年阴阳定方向: 甲阳顺/乙阴逆
+    assert _xiaoyun_from_chart(_FakeChart("甲子", "甲子")) == ("甲子", True)
+    assert _xiaoyun_from_chart(_FakeChart("甲子", "乙丑")) == ("甲子", False)
+    # 不猜: 缺参数/坏干支 → None
+    assert _current_xiaoyun(None, True, 1984, 1984) is None
+    assert _current_xiaoyun("甲子", None, 1984, 1984) is None
+    assert _current_xiaoyun("甲子", True, None, 1984) is None
+    assert _current_xiaoyun("甲子", True, 1984, None) is None
+    assert _current_xiaoyun("甲子", True, 1984, 1980) is None  # 未出生
+    assert _current_xiaoyun("坏支", True, 1984, 1984) is None
+    assert _xiaoyun_from_chart(_FakeChart("", "甲子")) == (None, None)
+
+
+class _FakeChart:
+    def __init__(self, hour, year):
+        self._p = {"hour": hour, "year": year}
+
+    def get_pillars_chinese(self):
+        return self._p
+
+
+def test_cov006_decision_recorded():
+    """COV-006 裁决存档: 醉醒子法 + 双锚 + 拒绝理由。"""
+    d = DECIDED_TOPICS["COV-006"]
+    assert "醉醒子" in d["decision"]
+    assert "SUI_YUN.RE_EVALUATION.YUN_XIAN.002" in d["anchors"]
+    assert "SUI_YUN.RE_EVALUATION.YUN_XIAN.006" in d["anchors"]
+    assert d["rejected"], "裁决须记录落选方案及理由"
+    assert "较量" in d["consumption_boundary"]
 
 
 _ZIPING_LINE_DIRS = [

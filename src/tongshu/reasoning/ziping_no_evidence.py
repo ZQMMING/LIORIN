@@ -10,7 +10,8 @@
   明文窄口径实现卯申相邻暗合（锚 PZZQ 900/1354/3228）+ 暗合解冲（PZ-0046）；
   其余支对无原典明文 → fail-closed 不产出暗合（窄口径即显式缺省行为，证据链见
   docs/audit/ZIPING_CLASSIC_RULES_20261108.md §二十三）。
-- COV-006 小运起法两说：待裁决，裁决前引擎不计算小运（同 COV-013② 缺省行为）。
+- COV-006 小运起法：已裁决（2026-11-10，用户选 A=醉醒子法）——见模块尾
+  DECIDED_TOPICS；排盘事实层落码 ziping_bridge._xiaoyun_from_chart/_current_xiaoyun。
 """
 
 NO_EVIDENCE_TOPICS = {
@@ -32,13 +33,19 @@ NO_EVIDENCE_TOPICS = {
         "verdict": "NO_EVIDENCE",
         "evidence": (
             "岁运篇底本检索零命中（Coverage_Closure_Registry COV-013② 证据栏）；"
-            "小运起法两说另见 COV-006 待裁决"
+            "小运起法已另裁（见 DECIDED_TOPICS['COV-006']），但「冲刑主灾」断语语义仍无明文"
         ),
         "default_behavior": (
-            "fail-closed: 引擎不计算小运（ziping 线 grep '小运' 零命中），"
-            "不输出小运相关结论"
+            "fail-closed: 小运起法已裁决落码（醉醒子法，排盘事实层时间线，"
+            "ziping_bridge._xiaoyun_from_chart/_current_xiaoyun），但「小运×大运冲刑主灾」"
+            "断语零命中——小运不参与喜忌/旺衰重定、不独立出吉凶断语、不作为事件域触发符号；"
+            "小运吉凶须待「与大运及柱中用神日主较量」框架立项后按 YUN_XIAN.002/003/005 "
+            "旁参语义消费"
         ),
-        "guard": "无小运计算路径（测试结构守卫：bridge 源码不含 '小运'）",
+        "guard": (
+            "测试结构守卫：xiaoyun 标识符仅存在于事实层函数（_xiaoyun_from_chart/"
+            "_current_xiaoyun），综合层/事件域/喜忌路径无小运占用"
+        ),
     },
     "COV-014-CONG": {
         "cov_id": "COV-014",
@@ -129,3 +136,35 @@ def assert_topic_not_concluded(topic_id: str) -> None:
     raise NotImplementedError(
         f"{topic_id} {t['topic']}: 无原文依据（{t['evidence']}），fail-closed 不输出结论"
     )
+
+
+# ── 已裁决条目（裁决记录存档；与 NO_EVIDENCE_TOPICS 互补，状态流转留痕）──
+
+DECIDED_TOPICS = {
+    "COV-006": {
+        "topic": "小运起法两说/三说并存未裁",
+        "decision": "醉醒子法（用户 2026-11-10 选 A）",
+        "anchors": [
+            "SUI_YUN.RE_EVALUATION.YUN_XIAN.002",  # SMTH 行940: 男女小运皆由时生而行之, 逆顺亦以年定, 一位一年
+            "SUI_YUN.RE_EVALUATION.YUN_XIAN.006",  # 神峰通考: 大运折除成岁, 小运逆顺由时（独立佐证）
+        ],
+        "rejected": [
+            "古法（男起丙寅顺/女起壬申逆, YUN_XIAN.001）：仅一本承载且起点依据为「解者谓」推演，"
+            "并与渊海子平变体（YUN_XIAN.004 不问阴阳皆起丙寅）正面冲突",
+            "渊海子平变体（YUN_XIAN.004）：与古法女命起壬申冲突，无独立佐证",
+        ],
+        "rationale": (
+            "①SMTH+神峰通考两本独立佐证；②算法完全确定（时柱已知，无推演争议）；"
+            "③「童限未交大运专用此法」与引擎大运起运前空白段天然契合（补大运之不足的分工）"
+        ),
+        "spec": (
+            "堕地(虚岁1)行时柱次一位，一位一年，周而复始；阳年(甲丙戊庚壬)顺行、"
+            "阴年逆行；男女同法（年阴阳定方向，不分性别）"
+        ),
+        "consumption_boundary": (
+            "小运时间线属排盘事实层；吉凶消费须待「与大运及柱中用神日主较量」框架立项"
+            "（YUN_XIAN.002/003/005 旁参语义），COV-013② fail-closed 维持"
+        ),
+        "engine_site": "ziping_bridge._xiaoyun_from_chart / _current_xiaoyun",
+    },
+}
