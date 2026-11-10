@@ -33,6 +33,7 @@ CASES = [
     (["庚申", "乙酉", "癸未", "乙卯"], "木"),  # 印格用食(朱家宝) V7.201 扩案
     (["癸巳", "壬戌", "乙巳", "戊寅"], "水"),  # 财局可以用印(朱有卿) V7.203 扩案
     (["癸酉", "癸亥", "戊子", "丁巳"], "火"),  # 争合用禄比, 时逢归禄(王某) V7.203 扩案
+    (["丁卯", "癸丑", "丙申", "戊子"], "火"),  # 水旺火弱用劫帮身(蔡孑民) V7.204 扩案
 ]
 
 
@@ -106,4 +107,4 @@ def test_yong_coverage_at_least_10_of_12():
         "ziping_pzzq_replay", REPO / "scripts" / "ziping_pzzq_replay.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    assert mod.run(verbose=False) >= 18
+    assert mod.run(verbose=False) >= 19

@@ -1185,6 +1185,37 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     if bw == '水':
         add('火', '暖', '丙丁暖化寒湿')
 
+    # ★ V7.204 扶抑扶边(DTS L215 体用正法+PZZQ 扶抑章两案亲证):
+    #   「日主弱, 则提纲有物, 帮身以制其神者亦皆为我用; 提纲食伤财官太旺,
+    #    则取年月时上印比为喜神」——身弱(得令得地双失: 日主 ben_n==0 且
+    #   ling_state∈休/囚/死)且病∈{官杀/食伤/财}(印病走泄损 V7.201、比劫病
+    #   走制, 均不在此列)时, 扶边(印/劫)入局, 透干有力者优先
+    #   (蔡孑民 丁劫透年干, PZZQ L975「水旺火弱, 用劫帮身」; 伍朝枢
+    #   财官两旺身弱用印 L971); 同档印主比辅(DTS L215 喜印主比辅)。
+    #   扶边不受 _safe 帮病剔除约束: L215 该款为身弱取喜神的明文规则,
+    #   印比扶身不因兼生次病而废(蔡造火生土伤官, 沈仍用劫)。
+    if bw in (KE_BACK.get(dm, ''), SHENG.get(dm, ''), KE.get(dm, '')) and bw:
+        _dm_p = ((facts.get('wuxing_power') or {}).get('wuxing_power') or {}).get(dm) or {}
+        if _dm_p.get('ben_n') == 0 and _dm_p.get('ling_state') in ('休', '囚', '死'):
+            _fu_cands = []
+            for _fwx, _ftag in ((SHENG_BACK.get(dm, ''), '印'), (dm, '劫')):
+                if not _fwx:
+                    continue
+                _tier = None  # 0=透干(年月时干), 1=藏支(年月时支); None=年月时不见
+                if _pl:
+                    if any(GAN_WX.get(_pl[p][0]) == _fwx for p in ('year', 'month', 'hour')):
+                        _tier = 0
+                    elif any(ZHI_BEN_WX.get(_pl[p][1]) == _fwx for p in ('year', 'month', 'hour')):
+                        _tier = 1
+                if _tier is not None:
+                    _fu_cands.append((_tier, 0 if _ftag == '印' else 1, _fwx, _ftag))
+            if _fu_cands:
+                _tier, _yin, _fwx, _ftag = min(_fu_cands)
+                edges.append({'wuxing': _fwx, 'gan': list(WX_GAN.get(_fwx, ())),
+                              'kind': '扶',
+                              'function': '%s%s扶身(身弱印比喜神, DTS L215/PZZQ L971·L975)' % (_ftag, _fwx),
+                              'accepted': True, 'reject_reason': ''})
+
     accepted = [e for e in edges if e['accepted']]
     # 去重(同五行保留kind最优: 制>化>帮/暖)
     seen = {}
@@ -1240,6 +1271,13 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                 _xt, _xb = _tou_ben(_xie['wuxing'])
                 if _xt >= 1 or _xb >= 1:
                     zhu = _xie
+    # ★ V7.204 扶升主: 身弱+食伤财官病 → 扶边(印/劫)优先于制(DTS L215「提纲食伤
+    #   财官太旺, 取年月时上印比为喜神」; 蔡孑民 L975 用劫帮身/伍朝枢 L971 用印,
+    #   病药制边让位)。扶边被天干五合合绊(medicine_blocked)则不升, 维持原主不猜。
+    _fu_zhu = next((e for e in uniq if e['kind'] == '扶'
+                    and not any(m.get('wuxing') == e['wuxing'] for m in medicine_blocked)), None)
+    if _fu_zhu is not None:
+        zhu = _fu_zhu
     if zhu is None and uniq:
         zhu = uniq[0]
     fu = [e for e in uniq if e is not zhu]
