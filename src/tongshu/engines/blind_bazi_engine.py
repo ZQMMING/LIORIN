@@ -510,10 +510,12 @@ class BlindBaziResult:
 
     def to_dict(self) -> dict:
         return {
-            'main_branches': list(self.main_branches),
-            'guest_branches': list(self.guest_branches),
-            'ti_branches': list(self.ti_branches),
-            'yong_branches': list(self.yong_branches),
+            # 主位/宾位/体/用四组支为 Set 语义(无内在顺序); 序列化统一排序,
+            # 否则跨进程 PYTHONHASHSEED 随机化导致 golden hash 漂移 (V7.202).
+            'main_branches': sorted(self.main_branches),
+            'guest_branches': sorted(self.guest_branches),
+            'ti_branches': sorted(self.ti_branches),
+            'yong_branches': sorted(self.yong_branches),
             'ti_stems': self.ti_stems,
             'yong_stems': self.yong_stems,
             'zuo_gong': self.zuo_gong,
@@ -2759,8 +2761,9 @@ class BlindBaziEngine:
         # 日干与日支同时做功且方向相反(ch1 "日主与日支同时做功, 以日主为准; 两者相反也反局"):
         # 意向冲突 → FAN_JU。势 UNDETERMINED 时保留旧单五行≥3支口径兜底(不消费势)。
         shi = getattr(result, "shi_direction", "UNDETERMINED")
-        shi_ctrl = list(getattr(result, "shi_controlled", []) or [])
-        shi_party = list(getattr(result, "shi_party", []) or [])
+        # V7.202: Set 源序列化排序(PYTHONHASHSEED 跨进程顺序噪声, f-string 嵌入须稳定)
+        shi_ctrl = sorted(getattr(result, "shi_controlled", []) or [])
+        shi_party = sorted(getattr(result, "shi_party", []) or [])
         # 喜 = 势本党 + 生势五行(去重) —— L1 推论, 直接由 shi_party 算, 不依赖独立忌喜层
         _gen_to = {}
         for _g, _t in GENERATES.items():
@@ -2914,8 +2917,8 @@ class BlindBaziEngine:
                     if g not in xishen_all:
                         xishen_all.append(g)
             # 日支追求: 追求势所制(忌)=逆势; 追求势本党/生势(喜)=顺势
-            branch_pursues_ctrl = [el for el in branch_pursue_els if el in shi_ctrl]
-            branch_pursues_party = [el for el in branch_pursue_els if el in xishen_all]
+            branch_pursues_ctrl = sorted(el for el in branch_pursue_els if el in shi_ctrl)
+            branch_pursues_party = sorted(el for el in branch_pursue_els if el in xishen_all)
             stem_active = bool(stem_pursue_els)   # 日干是否在做功(合/生)
             if branch_pursues_ctrl and not branch_pursues_party:
                 if stem_active:
@@ -3990,7 +3993,7 @@ class BlindBaziEngine:
         # ㊻s88 P1 域层接线: 财域此前各判各的, 未接 L1 势向.
         _cai_el = CONTROLS.get(STEM_ELEMENT.get(day_master, ""), "")   # 财星五行(日主所克)
         _cai_ys = next((g for g, t in GENERATES.items() if t == _cai_el), "")  # 财原神(生财者=食伤)
-        shi_ctrl = list(getattr(result, "shi_controlled", []) or [])
+        shi_ctrl = sorted(getattr(result, "shi_controlled", []) or [])
         shi_zhicaixiang = bool(shi_ctrl) and (_cai_el in shi_ctrl or _cai_ys in shi_ctrl)
         _shi_zhicaixiang_out = "SHI_ZHICAI" if shi_zhicaixiang else "UNDETERMINED"
         result.wealth_event_structure = {
