@@ -457,6 +457,6 @@ MCP 形态为 `codegraph serve --mcp`，供支持的客户端后续接入。
 **登记（宁缺勿猜）**：
 - `luck_branch`（流日命宫）：iztro daily 内部算法（非原典明文，库内两条口径不一致——`ziwei/rules/decadal.py`「命宫顺数到日支」vs iztro 输出），原生路径置空，消费方 `daily_luck_palace` 随之为空；待原典口径裁决。
 - to_dict 展示层差异：杂耀 adjective 排序（集合等序异）、ages 流岁列表（native 未实现）、sign/zodiac/time_range 空串、lunar_date_text 格式（「农历1984年1月1日」vs「一九八四年正月初一」）、time_text（「第5时」vs「巳时」）。语义字段无差异。
-- golden_replay blind hash 每次运行漂移（6fc927a5→1f0355bd，15 分钟内）——疑含时变字段（流日/流时锚定当天），待单独审计；本日 --snapshot 记录的是当天值，基线对 blind 引擎不具备跨日可比性。
+- ~~golden_replay blind hash 每次运行漂移（6fc927a5→1f0355bd，15 分钟内）——疑含时变字段（流日/流时锚定当天），待单独审计~~ **【已结案 2026-11-10 V7.202，勘误】**：非时变字段——盲派 `to_dict` 四组 Set 支（main/guest/ti/yong_branches）与 `zheng_fan_ju_detail` f-string 嵌入（shi_ctrl/shi_party/branch_pursues_ctrl）未排序，跨进程 PYTHONHASHSEED 随机化导致顺序噪声；排序修复后 hash 稳定 `10d1dab644ac75e1`（三连一致），真值 13/13+事件 6/6+不变式 100 盘 0 问题。提交 296b537b。
 
 **回归**：`pytest tests/ -k ziwei` **608 passed / 1 skipped**（0 failed；含 chart_contract 改判 native+iztro 双路径、p014 ratified source 白名单扩 native）；`pytest tests/test_p014.py` 13 passed。
