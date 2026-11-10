@@ -232,7 +232,7 @@ class ComputeStage:
         if judgment_composer is not None:
             try:
                 from ..reasoning.ziping_bridge import run_ziping_judgment
-                _synth = run_ziping_judgment(bazi_chart)
+                _synth = run_ziping_judgment(bazi_chart, target_year=analysis_date.year)
                 _claims = judgment_composer.compose(_synth)
                 if _claims:
                     judgment_claims = list(judgment_claims or []) + _claims
