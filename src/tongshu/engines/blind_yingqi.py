@@ -223,8 +223,22 @@ class BlindYingqiEngine:
             target_year: 目标公历年份
         """
         chart = self.bazi_engine.compute(birth, gender=gender)
-        birth_year = birth[0]
+        return self.analyze_from_chart(
+            chart, birth_year=birth[0], gender=gender,
+            target_age=target_age, target_year=target_year,
+        )
 
+    def analyze_from_chart(self, chart: BaziChart, birth_year: int, gender: str,
+                           target_age: Optional[int] = None,
+                           target_year: Optional[int] = None) -> YingqiResult:
+        """S0 契约入口：消费既有 BaziChart（主链排盘结果），禁止重排盘。
+
+        盲派架构铁律 §70/§90：盲派唯一共同消费层 = 八字排盘引擎输出的基础事实。
+        analyze() 自 birth 元组重排盘（民用时，无真太阳时政策），主链盘经
+        TimeResolver/CalculationContext 定盘——两者时辰可能不同。生产路径
+        （ComputeStage BZ-BLIND-001）必须走本入口把主链 chart 直传，保证
+        应期层与真值层消费同一张盘；birth_year 仅参与年龄/流年换算。
+        """
         # ── fail-closed 输入守卫（规范 §55/E4，盲派规则 V1-FINAL §46）──
         # 越界目标（负年龄 / 出生前年份 / 超设计范围）必须拒绝计算并抛 ValueError，
         # 不得静默返回结果。设计范围 = 大限末段 (55,150) 含上界 149。

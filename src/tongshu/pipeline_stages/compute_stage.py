@@ -141,6 +141,7 @@ class ComputeStage:
             effective_gender = calc_context.subject_gender or gender
             bazi_chart = self._bazi_adapter.compute(calc_context, gender=effective_gender)
             year, month, day, hour = calc_context.bazi_view
+            birth_year = year  # bazi_view 即出生阳历视图（供盲派应层年龄换算）
             ziwei_chart = self._ziwei_adapter.compute(year, month, day, hour, gender=effective_gender)
         else:
             # 无 calc_context：为保证排盘恒真太阳时（不再民用时直排），
@@ -149,6 +150,7 @@ class ComputeStage:
             from datetime import date as _date
             from ..engines.time.resolver import TimeResolver
             by, bm, bd, bh = birth_date
+            birth_year = by  # 无 ctx 兜底分支的出生年（供盲派应层年龄换算）
             _default_ctx = TimeResolver().resolve_context(
                 birth_date=_date(by, bm, bd),
                 hour=bh,
@@ -191,8 +193,15 @@ class ComputeStage:
         # 1d. 盲派引擎（BZ-BLIND-001 接入）
         # 数据流: BaziChart（主链八字排盘结果）→ BlindBaziEngine.compute_from_chart()
         #     → BlindBaziResult → BlindSchoolFeatureAdapter.adapt() → FeatureMapResult
-        # 任何失败降级为 None，不影响既有主链路。
-        blind_result = self._compute_blind(bazi_chart, gender)
+        # V-BLIND-W1（统一接线 2026-11-10）：真值层之上补齐 应期层（BlindYingqiEngine,
+        # S0 analyze_from_chart 消费主链 chart，目标年 = analysis_date.year）与
+        # 判定层（judge_blind，L2 事件候选，消费 L1 raw 结果 + YingqiResult）。
+        # 任何一层失败独立降级为 None，不影响既有主链路。
+        blind_feature_map, blind_yingqi, blind_judgment = self._compute_blind(
+            bazi_chart, gender,
+            birth_year=birth_year,
+            target_year=analysis_date.year,
+        )
 
         # 2. 信号提取（Bazi only - P1-C fix keeps Ziwei separate）
         build_result = self.signal_engine.build(
@@ -300,7 +309,9 @@ class ComputeStage:
             yi_structure=yi_structure,
             yi_interpretation=yi_interpretation,
             meihua_result=meihua_result,
-            blind_result=blind_result,  # BZ-BLIND-001: 盲派 FeatureMapResult | None
+            blind_result=blind_feature_map,  # BZ-BLIND-001: 盲派 FeatureMapResult | None
+            blind_yingqi=blind_yingqi,       # V-BLIND-W1: YingqiResult | None
+            blind_judgment=blind_judgment,   # V-BLIND-W1: BlindJudgmentResult | None
             # BZ-FNDR-15: ⑮-0 接入契约 — 装上 canonical_bazi_chart 给下游 Ziping 消费
             canonical_bazi_chart=canonical_bazi_chart,
         )
@@ -373,25 +384,59 @@ class ComputeStage:
         self,
         bazi_chart,
         gender: str,
-    ) -> Any:
-        """盲派引擎（BZ-BLIND-001 接入主 Pipeline）。
+        birth_year: int | None = None,
+        target_year: int | None = None,
+    ) -> tuple[Any, Any, Any]:
+        """盲派引擎（BZ-BLIND-001 + V-BLIND-W1 应期/判定层接线）。
 
-        数据流：BaziChart（主链八字排盘结果）→ BlindBaziEngine.compute_from_chart()
-            → BlindBaziResult → BlindSchoolFeatureAdapter.adapt() → FeatureMapResult
+        数据流：BaziChart（主链八字排盘结果）
+            → BlindBaziEngine.compute_from_chart() → BlindBaziResult（L1 真值层）
+            → BlindSchoolFeatureAdapter.adapt() → FeatureMapResult（特征映射）
+            → BlindYingqiEngine.analyze_from_chart() → YingqiResult（L1f 应期层，
+              S0 契约消费主链 chart，禁止重排盘；目标年 = analysis_date.year）
+            → judge_blind() → BlindJudgmentResult（L2 解层事件候选）
 
         约束（盲派架构铁律 §70/§90）：盲派唯一共同消费层 = 八字排盘引擎输出的
-        基础事实；compute_from_chart 吃外部 BaziChart、禁止重排盘。
-        任何失败降级为 None，绝不让盲派错误中断既有主链路。
+        基础事实；compute_from_chart / analyze_from_chart 吃外部 BaziChart、
+        禁止重排盘。三层任何失败各自降级为 None，绝不让盲派错误中断既有主链路。
+        应期层仅在 birth_year 与 target_year 均可得时启用（缺参=None 降级，
+        引擎自身对越界/缺目标 fail-closed 抛 ValueError，同样降级不中断）。
         """
+        feature_map = None
+        yingqi = None
+        judgment = None
+        raw_blind = None
         try:
             if self._blind_engine is None:
                 from ..engines.blind_bazi_engine import BlindBaziEngine
                 self._blind_engine = BlindBaziEngine()
-            blind = self._blind_engine.compute_from_chart(bazi_chart, gender=gender)
-            return self._blind_adapter.adapt(blind)
+            raw_blind = self._blind_engine.compute_from_chart(bazi_chart, gender=gender)
+            feature_map = self._blind_adapter.adapt(raw_blind)
         except Exception as exc:  # noqa: BLE001 — 盲派降级，不中断主管道
             log.warning("Blind integration failed (degraded, 不影响主链路): %s", exc)
-            return None
+            return None, None, None
+
+        # 应期层（V-BLIND-W1）：独立 try，失败降级不伤真值层。
+        if birth_year is not None and target_year is not None:
+            try:
+                from ..engines.blind_yingqi import BlindYingqiEngine
+                _yq = BlindYingqiEngine()
+                yingqi = _yq.analyze_from_chart(
+                    bazi_chart, birth_year=birth_year, gender=gender,
+                    target_year=target_year,
+                )
+            except Exception as exc:  # noqa: BLE001 — 应期层降级
+                log.warning("Blind yingqi failed (degraded): %s", exc)
+
+        # 判定层（V-BLIND-W1）：消费 L1 raw 真值 + L1f 应期；应期缺省时以 None
+        # 传入（judge_blind 契约允许 yingqi_result=None），失败降级。
+        try:
+            from ..engines.blind_judgment import judge_blind
+            judgment = judge_blind(bazi_chart, raw_blind, yingqi)
+        except Exception as exc:  # noqa: BLE001 — 判定层降级
+            log.warning("Blind judgment failed (degraded): %s", exc)
+
+        return feature_map, yingqi, judgment
 
     @staticmethod
     def _bazi_to_heluo_pillars(bazi_chart) -> list[tuple[str, str]]:

@@ -127,6 +127,13 @@ class ComputeResult:
     meihua_result: Any = None         # MeihuaResult | FeatureMapResult | None
     # BZ-BLIND-001: 盲派引擎输出（可选项，None = 未启用/降级）
     blind_result: Any = None          # FeatureMapResult | None
+    # BZ-BLIND-001 应期层 + 判定层接线（V-BLIND-W1，统一接线阶段 2026-11-10）：
+    # blind_yingqi = YingqiResult | None（消费主链 BaziChart，S0 analyze_from_chart，
+    #   目标年 = analysis_date.year）；blind_judgment = BlindJudgmentResult | None
+    #   （L2 解层事件候选，消费 L1 raw BlindBaziResult + YingqiResult）。
+    # 两者独立降级为 None，不影响既有主链路与 blind_result 契约。
+    blind_yingqi: Any = None          # YingqiResult | None
+    blind_judgment: Any = None        # BlindJudgmentResult | None
 
     # BZ-FNDR-15 (⑮-0 接入契约): CanonicalBaziChart 字段.
     # 由 compute_stage 内部通过 CanonicalBaziChart.from_bazi_chart(bazi_chart) 构造,

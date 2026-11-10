@@ -104,6 +104,28 @@ class TestBlindMainchain(unittest.TestCase):
         self.assertEqual(cr.blind_result.engine, "BLIND_SCHOOL")
         self.assertGreater(cr.blind_result.resolved, 0)
 
+    def test_blind_yingqi_and_judgment_populated(self):
+        """V-BLIND-W1: 应期层 + 判定层接线——生产 callers 不再缺位。
+
+        应期层 S0 契约：analyze_from_chart 消费主链 BaziChart（目标年 =
+        analysis_date.year），与真值层同盘；判定层消费 L1 raw + YingqiResult。
+        """
+        cr = self._run()
+        # 应期层：目标年 2026 - 出生 1980 = 46 岁，在 0-149 设计范围内 → 产出
+        self.assertIsNotNone(cr.blind_yingqi)
+        self.assertEqual(cr.blind_yingqi.flow_year, 2026)
+        self.assertEqual(cr.blind_yingqi.age, 46)
+        self.assertEqual(cr.blind_yingqi.nominal_age, 47)  # 虚岁
+        self.assertIsInstance(cr.blind_yingqi.yingqi_events, list)
+        # 判定层：BlindJudgmentResult 结构（status ∈ {PRODUCED,PARTIAL,UNDETERMINED}）
+        self.assertIsNotNone(cr.blind_judgment)
+        self.assertIn(
+            cr.blind_judgment.status,
+            ("PRODUCED", "PARTIAL", "UNDETERMINED"),
+        )
+        self.assertEqual(cr.blind_judgment.method_scope, "DUAN_JIANYE")
+        self.assertIsInstance(cr.blind_judgment.event_candidates, list)
+
     def test_mainchain_not_broken(self):
         """既有引擎结果不因盲派接入而破坏。"""
         cr = self._run()
@@ -120,6 +142,21 @@ class TestBlindDegradation(unittest.TestCase):
     def setUpClass(cls):
         cls.pipeline = TONGSHUPipeline.for_demo(_REPO_ROOT)
         cls.stage = _make_stage(cls.pipeline)
+
+    def test_yingqi_target_before_birth_degrades_only_yingqi(self):
+        """V-BLIND-W1: 应期越界（目标年早于出生年）→ 仅应期层 None，
+        真值层/判定层照常产出（fail-closed 引擎异常被链路降级吸收）。"""
+        cr = self.stage.run(
+            analysis_date=date(1979, 1, 1),  # 目标年 < 出生年 1980 → yingqi ValueError
+            birth_date=(1980, 6, 22, 10),
+            gender="male",
+            theme="WORK",
+            request_id="RR-TEST-BLIND-0003",
+            trace_id="TRACE-TEST-BLIND-0003",
+        )
+        self.assertIsNotNone(cr.blind_result)   # 真值层不受影响
+        self.assertIsNone(cr.blind_yingqi)      # 应期层降级
+        self.assertIsNotNone(cr.blind_judgment)  # 判定层以 yingqi=None 照常产出
 
     def test_blind_failure_degrades_gracefully(self):
         original = self.stage._blind_engine
