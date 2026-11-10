@@ -34,6 +34,7 @@ CASES = [
     (["癸巳", "壬戌", "乙巳", "戊寅"], "水"),  # 财局可以用印(朱有卿) V7.203 扩案
     (["癸酉", "癸亥", "戊子", "丁巳"], "火"),  # 争合用禄比, 时逢归禄(王某) V7.203 扩案
     (["丁卯", "癸丑", "丙申", "戊子"], "火"),  # 水旺火弱用劫帮身(蔡孑民) V7.204 扩案
+    (["己酉", "丙子", "戊辰", "癸亥"], "火"),  # 佩印×财专向->用印(L531 丙火调候) V7.205 扩案
 ]
 
 
@@ -101,10 +102,28 @@ def test_wuhe_span_state_three_states():
         F(("癸", "巳"), ("壬", "戌"), ("乙", "巳"), ("戊", "寅")), "癸", "戊")[0] == "remote_no"
 
 
+def test_peiyin_cai_special_toward_still_uses_yin():
+    """V7.205 佩印×财专向并存→用神归印(PZZQ L530-531: 戊癸相合仅致「日主之情向财
+    不向印」=用神之情不专之瑕 L533, 用神仍是丙火印; L3341 孤财不贵佩印帮身即印取贵);
+    印被财合去之佩印仍用财(张耀曾 004 V7.203 终裁); 非佩印财专向仍用财(015)。"""
+    from engines.production_entry import FrozenCanonicalBaziChart, production_entry
+
+    def _got(pillars):
+        pl = {pos: [p[0], p[1]] for pos, p in zip(
+            ("year", "month", "day", "hour"), pillars)}
+        result = production_entry(FrozenCanonicalBaziChart(pillars=pl))
+        yy = ((result.get("zhenglun") or {}).get("yongyao") or {})
+        return ((yy.get("primary_medicine") or {}).get("wuxing") or "")
+
+    assert _got(["己酉", "丙子", "戊辰", "癸亥"]) == "火"   # 021 佩印+戊癸合->印
+    assert _got(["戊寅", "己未", "甲寅", "乙亥"]) == "土"   # 015 非佩印专向->财
+    assert _got(["乙酉", "甲申", "丁巳", "庚戌"]) == "金"   # 004 印被合去->财
+
+
 def test_yong_coverage_at_least_10_of_12():
     """原典 21 案（含 6 案已知口径冲突/配合分歧）整体覆盖率护栏。"""
     spec = importlib.util.spec_from_file_location(
         "ziping_pzzq_replay", REPO / "scripts" / "ziping_pzzq_replay.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    assert mod.run(verbose=False) >= 19
+    assert mod.run(verbose=False) >= 20

@@ -148,7 +148,15 @@ def derive_ge_yong_wx(facts):
             _he_dm = [_s for _s in _cai_stems
                       if _s and (_s == _dg0 or STEM_HE_F.get(_s) == _dg0)]
             if len(_he_dm) == 1:
-                cat = '财'
+                # ★ V7.205 财专向×佩印并存时用神归印 (PZZQ L530-531 亲证: 己酉丙子戊辰
+                #   癸亥「丙火调候为用, 无如戊癸相合, 日主之情, 向财不向印」——戊癸合
+                #   仅致「用神之情不专」之瑕(L533), 用神仍是丙火印; L3341「孤财不贵,
+                #   佩印帮身, 即印取贵」+L3344「需要佩印, 必是身弱」)。印被财合去之佩印
+                #   另经下方终裁裁用财(张耀曾 004, 印乙被庚五合去 L495)。非佩印仍用财
+                #   (015 甲用己财专向 L521)。
+                if shape != '佩印':
+                    cat = '财'
+                # 佩印形态: 不即裁, 落入下方佩印终裁(无印财五合对/未合去→印)。
             elif len(_he_dm) > 1:
                 _hr = ((facts.get('pillars') or {}).get('hour') or ['', ''])[1]
                 if _hr and _LU_ZHI.get(_dg0) == _hr:

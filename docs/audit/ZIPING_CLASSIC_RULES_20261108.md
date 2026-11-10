@@ -721,3 +721,11 @@ V7.199 落码后全量回归新增 20 失败，逐案取证（探针 `_probe_yr_
 
 **验证**：五案探针全对——010 got=火 kind=扶 ✓（收平）、002 got=土 kind=制 不变 ✓（泄气病扶边印土与制边同元素，去重保制，行为不变）、007 got=金 不变 ✓（印病不在 scope）、020 got=木 kind=泄 不变 ✓（V7.201 保持）、009 got=水 不变 ✓（身旺扶门 off）；replay **19/19**（010 入断言分母，known conflicts 剩 018/021）；40盘对账 12案 12/12、取格 1/40+特格族 2、成败 2/40+特格族 1 基线不变（audit 比对取格/成败，不涉用神层）；六套件 83 passed（yong_coverage +010 锚，护栏 ≥18→≥19）。
 **备注**：引擎 primary bing 诊断（伤官土太重）与沈断（水旺官杀）仍异——本轮收平的是用神层结果（扶边判据对两类病同出印比喜神，DTS L215 对「食伤财官」并列覆盖）；诊断层差异登记备查，不动 GPT-M bingyao_layer。
+
+## 二十六.5 V7.205 调候案收平：佩印×财专向并存用神归印（2026-11-10，Round 26）
+
+- **案情**：pzzq-021 己酉 丙子 戊辰 癸亥（戊日主 子月正财格）。沈徐注 PZZQ L530-531「丙火调候为用，无如戊癸相合，日主之情，向财不向印，癸水虽不能越戊克丙，而日主向用之情不专矣」+L533「用神之情，不向日主…皆非美朕也」。**021 并非调候优先级冲突**（前登记口径有误）：用神=丙火印（佩印+调候双职），戊癸合只是「用神之情不专」之瑕。财格佩印 L3341「孤财不贵，佩印帮身，即印取贵」+L3344 徐注「盖需要佩印，必是身弱…财印相战，不得已而用之」+L3447-3448「财格佩印…其最要之条件即为财印两不相碍」。
+- **引擎实况**：ge=财格 CHENG shape=佩印 xi=['火']（格层已正确喜印）；GE_FALLBACK dump：ge_fallback_source=源2:格体喜神(xi_wx)/primary_selection_status=SINGLE_CANDIDATE/candidates=[火]/ge_yong_wx=水——fallback 自身选中火，但发射处 'wuxing': _ge_yong_wx or _w（V7.180）无条件用格神财水盖过喜神火。
+- **方案二轮**：①GE_FALLBACK 发射改 _use_gy（仅 NOT_EVALUABLE 或同值时用格神）→ 021 火 ✓ 但 016 高太尉翻 MISS（ge 层 CZP 形态 xi=合煞神 vs ti=官，derive_ge_yong_wx=金 才是正用神）→ **回退发射改动**（恢复原 or _w）。②根修=derive_ge_yong_wx 财格分支：len(_he_dm)==1（财专向）时 gate if shape != '佩印': cat='财'——佩印形态不即裁，落入既有 V7.203 佩印终裁（无印财五合对/未合去→印；合去→财张耀曾 004）。
+- **验证**：九案探针全 HIT（021 火/016 金回退生效/004 张耀曾 金 印被合去→用财/015 土 NO_BING 路径 shape≠佩印 不受影响）；replay **20/20**（021 入 CASES，KNOWN_CONFLICTS 收敛至仅 {018}）；六套件 85 passed（+021 锚+test_peiyin_cai_special_toward_still_uses_yin 三案断言 021 火/015 土/004 金，护栏≥20）；audit 40盘基线不变（取格 1/40 甲午己巳壬午壬寅+特格族 2；成败 2/40 乙未丁亥丙申辛卯、丙寅己亥丁卯辛亥+特格族 1）；全量 ziping 回归 16 failed/1905 passed 0 新增。
+- **提交**：仅子平 4 文件（yongyao_resolve.py/ziping_pzzq_replay.py/test_ziping_yong_coverage.py/本审计文档）。V7.200 教训（016 翻 MISS）本轮验证前置，未重演。
