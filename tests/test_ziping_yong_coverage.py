@@ -30,6 +30,7 @@ CASES = [
     (["戊戌", "甲子", "己巳", "戊辰"], "木"),  # 用官制劫护财 V7.191 扩案
     (["戊寅", "己未", "甲寅", "乙亥"], "土"),  # 甲用己财(日主合财) V7.191 扩案
     (["庚午", "乙酉", "甲子", "乙亥"], "金"),  # 合煞留官(高太尉) V7.191 扩案
+    (["庚申", "乙酉", "癸未", "乙卯"], "木"),  # 印格用食(朱家宝) V7.201 扩案
 ]
 
 
@@ -64,10 +65,22 @@ def test_qisha_jiuying_baizhongyoucheng_tan_yankai():
     assert pm.get("wuxing") == "木", pm
 
 
+def test_yinzhong_liangshuo_discriminator_preserves_cai_side():
+    """V7.201 印重两说判别式护栏: 制药(财)透干或本气根在→用财损印不变;
+    财不透无本气根而食伤透/本气根在→泄升主(朱家宝 L543/L1146)。
+    pzzq-007 财坐酉本气根 → 用金(财)不受泄边影响。"""
+    yy = _medicine(["戊辰", "甲寅", "丁卯", "己酉"])
+    pm = yy.get("primary_medicine") or {}
+    assert pm.get("wuxing") == "金", pm
+    edges = yy.get("all_edges") or []
+    jin = [e for e in edges if e.get("wuxing") == "金"]
+    assert jin and jin[0].get("accepted"), edges
+
+
 def test_yong_coverage_at_least_10_of_12():
     """原典 21 案（含 6 案已知口径冲突/配合分歧）整体覆盖率护栏。"""
     spec = importlib.util.spec_from_file_location(
         "ziping_pzzq_replay", REPO / "scripts" / "ziping_pzzq_replay.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    assert mod.run(verbose=False) >= 15
+    assert mod.run(verbose=False) >= 16

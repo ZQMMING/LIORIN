@@ -1095,6 +1095,12 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     add(KE_BACK.get(bw, ''), '制', '克病(%s)' % bw)
     # 化 (病所生, 泄病)
     add(SHENG.get(bw, ''), '化', '泄病之气(%s生? )' % bw)
+    # ★ V7.201 印病食伤泄边: 病=印(生我)时食伤(我生)=泄身之旺。
+    #   原典: PZZQ L1146 成句「身印两旺, 用食伤泄」; L543 朱家宝造(庚申乙酉癸未乙卯)
+    #   「印格用食」亲证——印重而财不透, 用食非用财。仅印病加此边:
+    #   泄气太重之病源即食伤不可再泄; 官杀/财/比劫病各有对位边(杀重药=食伤制煞等)。
+    if bw == SHENG_BACK.get(dm, ''):
+        add(SHENG.get(dm, ''), '泄', '食伤泄身之旺(身印两旺用食伤泄)')
     # 帮 (比劫 + 印)
     add(dm, '帮', '比劫帮身')
     add(SHENG_BACK.get(dm, ''), '帮', '印生身')
@@ -1139,6 +1145,24 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
                             'note': '药%s被%s合绊, 制病力失; 需岁运解合, 或改取印化/比劫帮' % (g, other)})
 
     zhu = next((e for e in uniq if e['kind'] == '制'), None)
+    # ★ V7.201 印病泄主裁决(透干/本气根判别): 制药(财)全无透干且无本气根(仅藏中余
+    #   =虚财, PZZQ L1130「财无根气不能用财破印」)而食伤泄透干或本气根在局时,
+    #   泄升主——朱家宝 L543「印格用食」亲证(财不透用食);
+    #   pzzq-007 财坐酉本气根→制保持不受影响; 制无根而泄亦无根→维持原主药不猜。
+    if zhu is not None and bw == SHENG_BACK.get(dm, ''):
+        _wp_el = (facts.get('wuxing_power') or {}).get('wuxing_power') or {}
+
+        def _tou_ben(wx):
+            _e = _wp_el.get(wx) or {}
+            return int(_e.get('stem_n') or 0), int(_e.get('ben_n') or 0)
+
+        _zt, _zb = _tou_ben(zhu['wuxing'])
+        if _zt == 0 and _zb == 0:
+            _xie = next((e for e in uniq if e['kind'] == '泄'), None)
+            if _xie is not None:
+                _xt, _xb = _tou_ben(_xie['wuxing'])
+                if _xt >= 1 or _xb >= 1:
+                    zhu = _xie
     if zhu is None and uniq:
         zhu = uniq[0]
     fu = [e for e in uniq if e is not zhu]
