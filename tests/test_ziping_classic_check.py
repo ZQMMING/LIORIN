@@ -38,20 +38,22 @@ def test_hidden_table_covers_12_branches():
     assert HIDDEN["申"] == ("庚", "壬", "戊")
 
 
-def test_ge_by_transparent_stem_not_benqi():
-    """YES_LING_GE_JU.001: 月支之神透于天干者为格（透干优先于本气）。"""
-    # 壬寅 戊申 丙寅 癸巳: 申月藏庚(偏财)/壬(七杀)/戊(食神), 透壬 -> 七煞格(非本气财格)
+def test_ge_benqi_month_qi_names_the_ge():
+    """2026-11-10 对齐 bac206b8 裁决: 本气立格为格名, 透干只定「格之真假」
+    (YUE_LING_GE_JU.001「格之真者，月支之神，透于天干也」)。
+    壬寅 戊申 丙寅 癸巳: 申月本气庚(偏财)->财格; 壬透只定真假(透财为真格)。"""
     p = pillars("壬寅 戊申 丙寅 癸巳")
     ge = derive_ge(p)
-    assert ge["ge"] == "七煞格", ge
-    assert ge["via"] == "透干"
+    assert ge["ge"] == "财格", ge
+    assert ge["via"] == "本气"
 
 
-def test_ge_falls_back_to_benqi_when_none_transparent():
-    # 乙卯 壬午 丁巳 己酉: 午月藏丁(比肩)/己(食神), 透己 -> 食神格; 己透即食神
+def test_ge_lu_jie_month_names_yangren_by_benqi():
+    """月令本气为比劫时格名=禄/刃(用神另看人元透干配合)。
+    乙卯 壬午 丁巳 己酉: 午月本气丁(比肩), 丁禄在午 -> 建禄月劫格; 己(食神)透定真假。"""
     p = pillars("乙卯 壬午 丁巳 己酉")
     ge = derive_ge(p)
-    assert ge["ge"] == "食神格", ge
+    assert ge["ge"] == "建禄月劫格", ge
 
 
 def test_ge_seasonal_month_takes_earth_benqi():
@@ -71,12 +73,23 @@ def test_ge_jianlu_yuejie_and_yangren():
 
 
 def test_cheng_bai_guange_requires_cai_or_yin():
-    """CHENG_BAI.007: 官逢财印。官无财印 -> 不成。"""
+    """CHENG_BAI.007: 官逢财印又无刑冲破害 -> 成。
+    2026-11-10 修正: 食神不克官(徐注 L1149 伤克=伤官), 癸印透+未中己财见 -> 官逢财印 CHENG。"""
     p = pillars("癸未 辛酉 甲申 丙寅")
     r = judge_cheng_bai(p)
     assert r["ge"] == "正官格"
-    # 无财印但见伤克 -> 败
+    assert r["state"] == "CHENG", r
+    assert any("官逢财印" in c["clause"] for c in r["clauses"])
+
+
+def test_cheng_bai_guange_shangguan_tou_is_bai():
+    """CHENG_BAI.008: 官逢伤克(伤官透干) -> 败, 财印不豁免。
+    戊申 辛酉 甲申 丁卯: 甲日主酉月正官格, 丁伤官透年/时支卯, 申酉无刑冲。"""
+    p = pillars("戊申 辛酉 甲申 丁卯")
+    r = judge_cheng_bai(p)
+    assert r["ge"] == "正官格"
     assert r["state"] == "BAI", r
+    assert any("伤克" in c["clause"] for c in r["clauses"])
 
 
 def test_cheng_bai_wealth_with_sha_is_bai():
@@ -109,12 +122,13 @@ def test_ge_detail_does_not_claim_unexposed_month_stem_is_transparent():
 
 
 def test_ge_detail_identifies_exposed_month_stem():
+    """本气立格下 detail 如实记录: 本气庚未透干(壬透不换格名, 只定真假)。"""
     from tongshu.reasoning.ziping_classic_check import derive_ge
     pillars = {'year': ['壬', '寅'], 'month': ['戊', '申'],
                'day': ['丙', '寅'], 'hour': ['癸', '巳']}
     result = derive_ge(pillars)
-    assert result['stem'] == '壬'
-    assert '透干壬' in result['detail']
+    assert result['stem'] == '庚'
+    assert '未透干' in result['detail']
 
 
 # ============================================================
@@ -235,10 +249,47 @@ def test_cheng_bai_sha_with_cai_controlled_strong_is_cheng():
     assert any("身强七煞逢制" in c["clause"] for c in r["clauses"])
 
 
-def test_cheng_bai_yangren_guan_shang_both_records_clause():
-    """官煞与伤官并透: 不臆断, 记录须辨条款。"""
+def test_cheng_bai_yangren_sha_ren_cheng():
+    """龙济光 L1223 原典亲证「煞刃格成也」: 官煞透+无伤官透即成, 财印非前提
+    (L1140「以官煞制刃，格局最美…以财印并见为吉」)。V7.198b 撤财印露门。"""
     p = pillars("丁卯 丙午 丙子 壬辰")
     r = judge_cheng_bai(p)
     assert r["ge"] == "阳刃格", r
-    assert r["state"] == "NOT_EVALUABLE", r
-    assert any("并透" in c["clause"] for c in r["clauses"])
+    assert r["state"] == "CHENG", r
+    assert any("官煞制刃" in c["clause"] for c in r["clauses"])
+
+
+def test_cheng_bai_qisha_shizhi_cai_zhongge_jiuying_czp():
+    """PZZQ L1210/L1212 救应篇亲证(谭延闿): 「食神制煞，而中隔以财，格之败也。
+    喜乙丁隔癸，木不生火，煞坐食地，为败中有成…财逢煞而食神制煞以生，有救应，
+    即是败中有成，为贵也」——食/伤制神透+财透党煞+非身强(不满足 .007 成句) ->
+    CHENG_ZHONG_YOU_PO, 用神专取食神(L993 扶抑篇同案「取食神制煞为用」)。"""
+    p = pillars("己卯 丁丑 癸丑 乙卯")
+    r = judge_cheng_bai(p)
+    assert r["ge"] == "七煞格", r
+    assert r["state"] == "CHENG_ZHONG_YOU_PO", r
+    assert any("败中有成" in c["clause"] for c in r["clauses"])
+
+
+def test_cheng_bai_yangren_guan_shang_bingtou_shi_you_san():
+    """石友三 L1220「时透七煞制刃为用，格之成也。无如月干辛金合丙，年上癸水制煞，
+    为成中有败也」: 官煞+伤官并透+印不透, 官煞被合去(丙辛五合) -> 成中有败(CZP);
+    官煞未被合 -> 带伤食制官煞格破 L1245(BAI); 印透 -> 须辨重印 NE(宁缺勿猜)。"""
+    p = pillars("癸巳 辛酉 庚申 丙戌")
+    r = judge_cheng_bai(p)
+    assert r["ge"] == "阳刃格", r
+    assert r["state"] == "CHENG_ZHONG_YOU_PO", r
+    assert any("成中有败" in c["clause"] for c in r["clauses"])
+
+    # 官煞未被合去: 丁官五合伙伴壬不在干 -> 纯制 -> L1245 格破 BAI
+    p_nohe = pillars("癸巳 辛酉 庚申 丁巳")  # 庚日主: 丁=正官透时, 癸=伤官透年, 印土不透
+    r_nohe = judge_cheng_bai(p_nohe)
+    assert r_nohe["ge"] == "阳刃格", r_nohe
+    assert r_nohe["state"] == "BAI", r_nohe
+    assert any("带伤食" in c["clause"] for c in r_nohe["clauses"])
+
+    p2 = pillars("庚辰 癸卯 甲寅 丁卯")  # 煞庚透+伤丁透+印癸透(构造盘, 核验器不校历法)
+    r2 = judge_cheng_bai(p2)
+    assert r2["ge"] == "阳刃格", r2
+    assert r2["state"] == "NOT_EVALUABLE", r2
+    assert any("重印" in c["clause"] for c in r2["clauses"])

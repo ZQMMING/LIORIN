@@ -46,6 +46,24 @@ def test_yong_wuxing_matches_classic_case(pillars, expected_wuxing):
     assert pm.get("wuxing") == expected_wuxing
 
 
+def test_qisha_jiuying_baizhongyoucheng_tan_yankai():
+    """V7.199 救应篇明文(PZZQ L1210/L1212 谭延闿案亲证): 食神制煞而中隔以财,
+    「财逢煞而食神制煞以生, 有救应, 即是败中有成, 为贵也」——V7.198 曾因
+    tier<2 不满足 .007 成句落 NOT_EVALUABLE 断用神链路(NE 被 _usable_ge_cheng
+    拒绝); 现按救应通道判 CZP, 用神=食神(木)恢复。"""
+    pl = {pos: [s, b] for pos, (s, b) in zip(
+        ("year", "month", "day", "hour"),
+        (("己", "卯"), ("丁", "丑"), ("癸", "丑"), ("乙", "卯")))}
+    result = production_entry(FrozenCanonicalBaziChart(pillars=pl))
+    gc = (result.get("engine_result") or {}).get("ge_cheng") or {}
+    assert gc.get("ge") == "七煞格(败中有成)", gc
+    assert gc.get("cheng_bai") == "CHENG_ZHONG_YOU_PO", gc
+    assert "败中有成" in (gc.get("rule") or "")
+    yy = (result.get("zhenglun") or {}).get("yongyao") or {}
+    pm = yy.get("primary_medicine") or {}
+    assert pm.get("wuxing") == "木", pm
+
+
 def test_yong_coverage_at_least_10_of_12():
     """原典 21 案（含 6 案已知口径冲突/配合分歧）整体覆盖率护栏。"""
     spec = importlib.util.spec_from_file_location(

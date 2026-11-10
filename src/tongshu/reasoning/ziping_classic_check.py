@@ -98,34 +98,26 @@ def _hidden_visible(p: Dict[str, List[str]], b: str) -> List[str]:
 
 
 def derive_ge(p: Dict[str, List[str]]) -> Dict[str, object]:
-    """月令取格（原典: 月支之神透于天干；四季月看人元透干；比劫→建禄月劫）。
+    """月令取格（2026-11-10 对齐 bac206b8 裁决/审计文档§六: 本气立格为格名，透干只定
+    「格之真假」——YUE_LING_GE_JU.001「格之真者，月支之神，透于天干也」；月令本气为
+    比劫时格名=禄/刃，用神另看人元透干配合。四季月非土日主本气土）。
 
     Returns:
-        {"ge": str|None, "ten_god": str, "via": "透干"|"本气"|"四季土", "detail": str}
+        {"ge": str|None, "ten_god": str, "via": "透干"|"本气"|"四季土格", "detail": str}
     """
     dm, mb = _zhengyan(p)
     hidden = _hidden_visible(p, mb)
     trans = set(_transparent(p))
 
-    # 四季月(CHENG_BAI.002): 非土日主「只当取土为格」(本气土); 土日主看人元透干
+    # 四季月(CHENG_BAI.002): 非土日主「只当取土为格」(本气土); 土日主本气=比劫→禄刃条款
     if mb in ("辰", "戌", "丑", "未") and STEM_ELEM[dm] != "土":
         chosen, via = hidden[0], "四季土格"
     else:
-        # 透出优先：按 本气→中气→余气 顺序找第一个透出的藏干
-        chosen = None
-        for h in hidden:
-            if h in trans:
-                chosen = h
-                break
-        if chosen is None:
-            chosen = hidden[0]  # 本气
+        # 2026-11-10 回撤「透出优先」: 透干不定格名只定真假（bac206b8 revert PATCH-GE-TOU）
+        chosen = hidden[0]
         via = "透干" if chosen in trans else "本气"
 
     tg = ten_god(dm, chosen)
-
-    # 四季月（辰戌丑未）且藏干有透 → 仍按透干取格（原典「看人元透出天干者取格」）
-    if mb in ("辰", "戌", "丑", "未") and chosen in trans:
-        via = "四季土透干"
 
     ge = GE_NAME.get(tg)
     if tg == "比肩":
@@ -136,6 +128,12 @@ def derive_ge(p: Dict[str, List[str]]) -> Dict[str, object]:
             ge = "阳刃格"
         else:
             ge = "建禄月劫格"
+    # 刃表特例(V7.83 裁决锚 PZZQ L4505): 戊日午月本气丁=正印, 仍作阳刃论——
+    #   阳刃以禄前一位支论, 不问本气十神: 甲刃卯/丙刃午/戊刃午/庚刃酉/壬刃子。
+    #   (其余阳干刃支本气即劫财, 上分支已覆盖; 此特例只实际改写 戊午。)
+    _RENGE = {"甲": "卯", "丙": "午", "戊": "午", "庚": "酉", "壬": "子"}
+    if ge != "阳刃格" and STEM_YANG[dm] and _RENGE.get(dm) == mb:
+        ge = "阳刃格"
     evidence = f"透干{chosen}" if chosen in trans else f"本气{chosen}（未透干）"
     return {"ge": ge, "ten_god": tg, "via": via, "stem": chosen,
             "detail": f"月支{mb}藏{'/'.join(hidden)}，{evidence}({tg}) → {ge}"}
@@ -209,28 +207,34 @@ def judge_cheng_bai(p: Dict[str, List[str]]) -> Dict[str, object]:
     # 官格（正官）
     if name == "正官格":
         cai, yin = _has_ten_god(p, "正财") or _has_ten_god(p, "偏财"), _has_ten_god(p, "正印") or _has_ten_god(p, "偏印")
-        shang = _has_ten_god(p, "伤官") or _has_ten_god(p, "食神")
-        if cai or yin:
-            add("CHENG", "官逢财印")
-        if not broken and (cai or yin):
-            add("CHENG", "无刑冲破害")
+        # 2026-11-10 对齐败句(CHENG_BAI.008 L1145「官逢伤克刑冲」): 伤克=伤官【透干】克官
+        # (引擎 V7.170 锚 L2825「透丁则伤官, 逢午不作此例」; 食神不克官、藏干伤官力微不作伤克);
+        # 刑冲=月令官星逢刑冲(徐注 L1149「冲官星者，非伤即刃，同为破格」);
+        # 害/破不在败句、只破成句「无刑冲破害」(.007) → 既有财印又只害破 = 成句不备败句未触
+        # → NOT_EVALUABLE(宁缺勿猜)。
+        shang = _trans_ten_god(p, "伤官")
+        _chong_xing = bool(rel["冲"] or rel["刑"])
         if shang:
-            add("BAI", "官逢伤克")
-        if broken:
-            add("BAI", "官逢刑冲破害")
-        if shang or broken:
+            add("BAI", "官逢伤克(伤官透干)")
             state = "BAI"
-        elif cai or yin:
+        elif _chong_xing:
+            add("BAI", "官逢刑冲")
+            state = "BAI"
+        elif (cai or yin) and not broken:
+            add("CHENG", "官逢财印又无刑冲破害")
             state = "CHENG"
+        elif cai or yin:
+            add("NOT_EVALUABLE", "官逢财印然月令有害破(败句只载伤克刑冲)")
     # 财格
     elif name == "财格":
         guan = _has_ten_god(p, "正官") or _has_ten_god(p, "七杀")
-        sha = _has_ten_god(p, "七杀")
+        # 2026-11-10: 「财透七煞」须煞透干(徐注 L1151「财透七煞，则财不为我用而党煞」;
+        # 引擎 V7.169 透口径锚 L1145/L1243/L1246/L1492, 藏支煞有制不破 毛状元反例 L3487)
+        sha = _trans_ten_god(p, "七杀")
         if guan:
             add("CHENG", "财生官旺")
         if sha:
             add("BAI", "财透七煞")
-        if sha:
             state = "BAI"
         elif guan:
             state = "CHENG"
@@ -258,24 +262,41 @@ def judge_cheng_bai(p: Dict[str, List[str]]) -> Dict[str, object]:
             state = "CHENG"
     # 食神格
     elif name == "食神格":
+        # V7.198 生财露煞/食神生财口径(PZZQ L1132 徐注「月令食神，四柱见财，为食神生财，
+        # 格之正也。若四柱透煞，则食神制煞为用，忌财党煞，故以无财为美」+ L1115 成句
+        # 「食神生财，或食带煞而无财，弃食就煞而透印，食格成也」+ L1154「露煞则财转而生煞」):
+        # 成句/败句的财都是【见】(含藏干), 煞按透干(「露煞」), 枭=偏印透干。
+        # 旧透干口径系把 PZ-0118(枭夺食·财制枭语境「无财为救应」)误挪用, 已纠正。
         cai = _has_ten_god(p, "正财") or _has_ten_god(p, "偏财")
-        xiao = _has_ten_god(p, "偏印")
-        sha = _has_ten_god(p, "七杀")
+        xiao = _trans_ten_god(p, "偏印")
+        sha = _trans_ten_god(p, "七杀")
+        yin_t = _trans_ten_god(p, "正印") or _trans_ten_god(p, "偏印")
         if cai:
             add("CHENG", "食神生财")
+        if sha and not cai and yin_t:
+            # 成句: 食带煞而无财, 弃食就煞而透印(转败为成)
+            add("CHENG", "弃食就煞透印")
         if xiao:
             add("BAI", "食神逢枭")
         if cai and sha:
             add("BAI", "生财露煞")
         if xiao or (cai and sha):
             state = "BAI"
+        elif sha and not cai and yin_t:
+            state = "CHENG"
         elif cai:
             state = "CHENG"
     # 七煞格
     elif name == "七煞格":
         # V7.189: 「七煞逢财无制」败(.008) / 「身强七煞逢制」成(.007)
-        zhi = _has_ten_god(p, "食神") or _has_ten_god(p, "伤官")
-        cai = _has_ten_god(p, "正财") or _has_ten_god(p, "偏财")
+        # V7.198 制化=食制/伤驾/印化(V7.190 引擎 has_zhi 镜像, 透干口径):
+        # 藏支食神不构成「逢制」的机读判据。
+        zhi = (_trans_ten_god(p, "食神") or _trans_ten_god(p, "伤官")
+               or _trans_ten_god(p, "正印") or _trans_ten_god(p, "偏印"))
+        shi_t = _trans_ten_god(p, "食神")
+        shang_t = _trans_ten_god(p, "伤官")
+        # 2026-11-10: 煞党煞之财须透干(徐注 L1155「财党煞攻身」; 引擎 V7.169 透口径)
+        cai = _trans_ten_god(p, "正财") or _trans_ten_god(p, "偏财")
         _st7 = judge_strength(p).get("conclusion", "")
         if cai and not zhi:
             add("BAI", "七煞逢财无制")
@@ -283,59 +304,138 @@ def judge_cheng_bai(p: Dict[str, List[str]]) -> Dict[str, object]:
         elif cai and zhi and _st7 == "STRONG":
             add("CHENG", "身强七煞逢制")
             state = "CHENG"
+        elif cai and (shi_t or shang_t):
+            # V7.199: 救应篇明文(PZZQ L1210/L1212 谭延闿案亲证): 食神制煞而中隔以财,
+            # 「财逢煞而食神制煞以生, 有救应, 即是败中有成, 为贵也」——食/伤制神透+
+            # 财透党煞+非身强(不满足 .007 成句) -> 败中有成, 用神专取食神。
+            add("CHENG_ZHONG_YOU_PO", "食神制煞而中隔以财, 败中有成(救应)")
+            state = "CHENG_ZHONG_YOU_PO"
         elif cai and zhi:
-            add("NOT_EVALUABLE", "七煞逢财有制(须辨制神有力)")
-        if broken:
-            add("BAI", "七煞逢冲")
-        if broken:
-            state = "BAI"
+            add("NOT_EVALUABLE", "七煞逢财有制(印化+财透, 须辨制神有力)")
+        # 2026-11-10 删「七煞逢冲」: 败格权威句(.008/STRUCTURE_GE_JU_CHENG_BAI_008 L258)
+        # 七煞只有「逢财无制」, 无逢冲条款; 旧条款月支任意刑冲害破都触发=过度延伸。
     # 伤官格
     elif name == "伤官格":
         cai = _has_ten_god(p, "正财") or _has_ten_god(p, "偏财")
-        guan = _has_ten_god(p, "正官")
+        guan = _trans_ten_god(p, "正官")
         yin = _has_ten_god(p, "正印") or _has_ten_god(p, "偏印")
+        sha_t = _trans_ten_god(p, "七杀")
+        # 2026-11-10 金水例外(徐注 L1156「惟金水伤官，金寒水冷，调候为急，可以见官」):
+        # 窄口径=金日主(庚辛)生于水月(亥子)——金寒水冷专指冬月金伤官。
+        _jshui = STEM_ELEM[dm] == "金" and mb in ("亥", "子")
         if cai:
             add("CHENG", "伤官生财")
         if yin:
             add("CHENG", "伤官佩印")
-        if guan and not cai and not yin:
+        if guan and not cai and not yin and not _jshui:
             add("BAI", "伤官见官(无财无印)")
-        if cai:
+        if cai and sha_t:
+            add("BAI", "伤官生财带煞(财转生煞)")
+        if cai and sha_t:
+            state = "BAI"
+        elif cai:
             state = "CHENG"
-        elif guan and not yin:
+        elif guan and not yin and not _jshui:
             state = "BAI"
     # 阳刃格
     elif name == "阳刃格":
-        guan = _has_ten_god(p, "正官") or _has_ten_god(p, "七杀")
-        shang = _has_ten_god(p, "伤官")
-        cai_yin = (_has_ten_god(p, "正财") or _has_ten_god(p, "偏财")
-                   or _has_ten_god(p, "正印") or _has_ten_god(p, "偏印"))
-        # .007 「阳刃透官煞而露财印，不见伤官」: 财印亦须露
-        if guan and not shang and cai_yin:
-            add("CHENG", "阳刃透官煞而露财印，不见伤官")
+        # V7.198 全透干口径(「透官煞」「露财印」「不见伤官」皆为干头判据; L1223 案证
+        # 「丁卯 丙午 丙子 壬辰，煞刃格成也」=乙印透年干成):
+        # V7.198b 撤「财印露门」: L1140 徐注「以官煞制刃，格局最美…以财印并见为吉」
+        # ——财印是辅弼非前提; L1220 石友三/L1223 龙济光两案财印不透而格成。败句
+        # 只有「阳刃无官煞」(L1148/L1159)。
+        guan = _trans_ten_god(p, "正官") or _trans_ten_god(p, "七杀")
+        # V7.199b L1245「带伤食制官煞」=食神+伤官并计(镜像引擎 po required 食神+伤官)
+        shang = _trans_ten_god(p, "伤官") or _trans_ten_god(p, "食神")
+        cai_yin = (_trans_ten_god(p, "正财") or _trans_ten_god(p, "偏财")
+                   or _trans_ten_god(p, "正印") or _trans_ten_god(p, "偏印"))
+        yin_t = _trans_ten_god(p, "正印") or _trans_ten_god(p, "偏印")
+        if guan and not shang:
+            # L1140「月令阳刃，以官煞制刃…以不见伤官为格之成也」+ L1223 煞刃格成
+            add("CHENG", "官煞制刃为用" + ("，财印并见为吉" if cai_yin else "（财印未露，L1220/L1223 制刃即成）"))
+            state = "CHENG"
         if not guan:
             add("BAI", "阳刃无官煞")
             state = "BAI"
         elif guan and shang:
-            add("NOT_EVALUABLE", "官煞与伤官并透(须辨制刃/伤官两势)")
-        elif guan and not shang and not cai_yin:
-            add("NOT_EVALUABLE", "阳刃透官煞(须辨财印)")
-        elif guan and not shang:
-            state = "CHENG"
+            # L1245 并透两势: 得重印以去食则成; 重印量化无原典判据(宁缺勿猜):
+            # 印透 -> 须辨重印 NE; 印不透 -> 伤官制官煞破刃用 -> 败。
+            if yin_t:
+                add("NOT_EVALUABLE", "官煞与伤官并透(须辨重印以去食)")
+            else:
+                # V7.199b 成中有败镜像(PZZQ L1220 石友三「时透七煞，制刃为用，格之成也。
+                # 无如月干辛金合丙，年上癸水制煞，为成中有败也」+ L1222 郭松龄
+                # 「亦成中有败也」): 官煞被合去(五合伙伴在干) -> 成中有败;
+                # 未被合(伤食纯制) -> 带伤食制官煞而格破(L1245)。
+                _WUHE = {"甲": "己", "己": "甲", "乙": "庚", "庚": "乙",
+                         "丙": "辛", "辛": "丙", "丁": "壬", "壬": "丁",
+                         "戊": "癸", "癸": "戊"}
+                _ks_stems = [s for s in _transparent(p)
+                             if ten_god(dm, s) in ("正官", "七杀")]
+                _hequ = any(_WUHE.get(s) in _transparent(p) for s in _ks_stems)
+                if _hequ:
+                    add("CHENG_ZHONG_YOU_PO", "官煞制刃为成, 官煞被合去/伤食制官煞 -> 成中有败(石友三 L1220 辛合丙)")
+                    state = "CHENG_ZHONG_YOU_PO"
+                else:
+                    add("BAI", "带伤食制官煞而格破(印不透无从去食)")
+                    state = "BAI"
     # 建禄月劫格
     elif name == "建禄月劫格":
-        guan = _has_ten_god(p, "正官")
-        cai = _has_ten_god(p, "正财") or _has_ten_god(p, "偏财")
-        sha = _has_ten_god(p, "七杀")
-        if guan and cai:
-            add("CHENG", "透官逢财")
-        if cai and _has_ten_god(p, "食神"):
-            add("CHENG", "透财逢食伤")
-        if not guan and not cai and sha:
-            add("BAI", "建禄月劫无财官透煞")
-            state = "BAI"
-        elif guan or cai:
+        # 2026-11-10 镜像引擎禄劫路径(PZZQ L1142 原文逐字): 「透官而逢财印/透财而
+        # 逢食伤/透煞而遇制伏」——命名人元(官/财/煞)须【透干】; 配合神(财印/食伤)
+        # 「逢/遇」=见(含藏干)。
+        guan_t = _trans_ten_god(p, "正官")
+        cai_t = _trans_ten_god(p, "正财") or _trans_ten_god(p, "偏财")
+        sha_t = _trans_ten_god(p, "七杀")
+        cai_seen = _has_ten_god(p, "正财") or _has_ten_god(p, "偏财")
+        yin_seen = _has_ten_god(p, "正印") or _has_ten_god(p, "偏印")
+        shi_seen = _has_ten_god(p, "食神") or _has_ten_god(p, "伤官")
+        # V7.199b 「遇制伏」=功能要求须透干(镜像引擎 shi_t, 七煞格 V7.190 has_zhi 同口径)
+        shi_t = _trans_ten_god(p, "食神") or _trans_ten_god(p, "伤官")
+        guan_seen = _has_ten_god(p, "正官")
+        yin_t = _trans_ten_god(p, "正印") or _trans_ten_god(p, "偏印")
+        if guan_t and (cai_seen or yin_seen):
+            add("CHENG", "透官而逢财印(同官格)")
             state = "CHENG"
+        if cai_t and shi_seen:
+            add("CHENG", "透财而逢食伤(同财格)")
+            state = "CHENG"
+        if sha_t and shi_t:
+            add("CHENG", "透煞而遇制伏(同煞格)")
+            state = "CHENG"
+        # 败句(.008 L1147「无财官，透煞印」/徐注 L1160「煞生印，转而助身，其旺无极」):
+        # 财官全无(藏亦无)+煞印双透
+        if (not guan_seen and not cai_seen) and sha_t and yin_t:
+            add("BAI", "建禄月劫无财官透煞印")
+            state = "BAI"
+        # 泄秀成路(引擎 path④, PZZQ「无财官而用伤食泄其太过亦为秀气」)
+        # V7.199b 全透干口径(镜像引擎 path④ `not guan and not cai_t and not sha and shi_t`):
+        #   泄秀=财官煞【透干】全无+食伤【透】(1980-04-15 庚申庚辰戊午戊午 契约)。
+        if state == "NOT_EVALUABLE" and not guan_t and not cai_t and not sha_t and shi_t:
+            add("CHENG", "无财官煞用伤食泄秀")
+            state = "CHENG"
+
+    # V7.199b 全局: 四生/四专月令逢冲破格(PZZQ L2023-2026 徐注: 「忌者冲而去之为成,
+    # 喜者逢冲为败」随支而有成有败 + L2686 寅申巳亥「气尚微弱, 逢冲则坏」; 四库
+    # 「不忌刑冲」)——镜像引擎 apply_he_po_ge: 六格月令本气即格神=喜者(mwx∈ti|xi 恒真)
+    # → 被存活冲则格破(四生+四专同一确定性口径); 建禄月劫格/阳刃格月令=比劫(身非格神,
+    # 忌者冲而去之为成——龙济光 L1223 煞刃格成), .008 禄劫败句亦无冲条 → 不判。
+    # 月支被年/日支六冲(相邻位) 且 月支/冲伴不参与六合(合解未验, 宁缺勿猜) -> 败。
+    _SIX_GE = ("正官格", "财格", "印格", "食神格", "七煞格", "伤官格")
+    if name in _SIX_GE and mb in ("寅", "申", "巳", "亥", "子", "午", "卯", "酉") and rel["冲"]:
+        _pl = _pillars(p)
+        _year_b, _day_b = _pl[0][1], _pl[2][1]
+        _partners = [b for b in rel["冲"] if b in (_year_b, _day_b)]
+        if _partners:
+            _LH6 = {"子": "丑", "丑": "子", "寅": "亥", "亥": "寅", "卯": "戌",
+                    "戌": "卯", "辰": "酉", "酉": "辰", "巳": "申", "申": "巳",
+                    "午": "未", "未": "午"}
+            _all_b = [b for _s, b in _pl]
+            _has_lh = (any(_LH6.get(mb) == b for b in _all_b if b != mb)
+                       or any(_LH6.get(pb) in _all_b for pb in _partners))
+            if not _has_lh:
+                add("BAI", "四生四专月令逢冲(喜者逢冲为败, L2023-2026/L2686)")
+                state = "BAI"
 
     return {
         "ge": name,

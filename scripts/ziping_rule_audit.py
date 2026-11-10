@@ -42,6 +42,36 @@ CASES = [
 
 POS = ("year", "month", "day", "hour")
 
+# 成败等价类(2026-11-10): 核验器 BAI 与引擎 PO/CHENG_ZHONG_YOU_PO 是同一判定族
+# (败格, 格名仍存, PZZQ L1149「败者犯格之忌也」); NOT_EVALUABLE 双方一致; CHENG=成。
+CB_EQUIV = {
+    "BAI": {"BAI", "PO", "CHENG_ZHONG_YOU_PO"},
+    "PO": {"BAI", "PO", "CHENG_ZHONG_YOU_PO"},
+    "CHENG_ZHONG_YOU_PO": {"BAI", "PO", "CHENG_ZHONG_YOU_PO"},
+    "CHENG": {"CHENG"},
+    "NOT_EVALUABLE": {"NOT_EVALUABLE"},
+}
+
+
+def cb_agree(a: str, b: str) -> bool:
+    return b in CB_EQUIV.get(a, {a})
+
+
+# 特格族: 化气/从格/专旺等核验器无判据的格名前缀 → 归特格族单独计数, 不算取格差异
+SPECIAL_GE_PREFIXES = ("化", "从", "专旺", "曲直", "炎上", "稼穑", "从革", "润下")
+
+
+def ge_base(name) -> str:
+    """剥离括号后缀(印格(官印双全)≡印格)并识别特格族。"""
+    if not isinstance(name, str):
+        return ""
+    return name.split("(")[0]
+
+
+def is_special_ge(name) -> bool:
+    base = ge_base(name)
+    return any(base.startswith(pre) for pre in SPECIAL_GE_PREFIXES)
+
 
 def to_pillars(bazi: str) -> dict:
     parts = bazi.split()
@@ -64,16 +94,21 @@ def main() -> int:
         c_ge = derive_ge(p)
         c_cb = judge_cheng_bai(p)
         e = engine_ge(p)
-        mark = "  " if (c_ge["ge"] == e["ge"] and c_cb["state"] == e["state"]) else "!!"
+        mark = "  " if (ge_base(c_ge["ge"]) == ge_base(e["ge"])
+                        and cb_agree(c_cb["state"], e["state"])) else "!!"
         print(f"{mark} {name:6s} {bazi} | 核验={c_ge['ge']}/{c_cb['state']} 引擎={e['ge']}/{e['state']}")
-        if c_ge["ge"] != e["ge"]:
+        if ge_base(c_ge["ge"]) != ge_base(e["ge"]):
             print(f"      取格差异: 核验={c_ge['detail']} | 引擎 rule={e['rule']}")
 
     random.seed(20261107)
     ge_diff = 0
     cb_diff = 0
+    special_diff = 0
+    special_cb_diff = 0
     ge_samples = []
     cb_samples = []
+    special_samples = []
+    special_cb_samples = []
     total = 0
     for i in range(n):
         y = random.randint(1950, 2005)
@@ -87,22 +122,38 @@ def main() -> int:
         e = engine_ge(p)
         total += 1
         bazi = " ".join(p[k][0] + p[k][1] for k in POS)
-        if c_ge["ge"] != e["ge"]:
-            ge_diff += 1
-            if len(ge_samples) < 6:
-                ge_samples.append((bazi, c_ge["ge"], e["ge"], c_ge["detail"]))
-        if c_cb["state"] != e["state"]:
-            cb_diff += 1
-            if len(cb_samples) < 6:
-                cb_samples.append((bazi, c_cb["state"], e["state"], c_cb["ge"], [c["clause"] for c in c_cb["clauses"]]))
+        if ge_base(c_ge["ge"]) != ge_base(e["ge"]):
+            if is_special_ge(c_ge["ge"]) or is_special_ge(e["ge"]):
+                # 特格族(化气/从格/专旺): 核验器无判据, 登记族计数不算差异
+                special_diff += 1
+                if len(special_samples) < 6:
+                    special_samples.append((bazi, c_ge["ge"], e["ge"]))
+            else:
+                ge_diff += 1
+                if len(ge_samples) < 6:
+                    ge_samples.append((bazi, c_ge["ge"], e["ge"], c_ge["detail"]))
+        if not cb_agree(c_cb["state"], e["state"]):
+            if is_special_ge(c_ge["ge"]) or is_special_ge(e["ge"]):
+                # A2 特格族成败(化气/从格/专旺): 核验器无判据, 成败不可比, 登记族计数
+                special_cb_diff += 1
+                if len(special_cb_samples) < 6:
+                    special_cb_samples.append((bazi, c_cb["state"], e["state"], c_ge["ge"], e["ge"]))
+            else:
+                cb_diff += 1
+                if len(cb_samples) < 6:
+                    cb_samples.append((bazi, c_cb["state"], e["state"], c_cb["ge"], [c["clause"] for c in c_cb["clauses"]]))
 
     print(f"\n== 随机 {total} 盘 ==")
-    print(f"取格不一致 {ge_diff}/{total}")
+    print(f"取格不一致 {ge_diff}/{total}（特格族另计 {special_diff}）")
     for s in ge_samples:
         print(f"  {s[0]} 核验={s[1]} 引擎={s[2]} | {s[3]}")
-    print(f"成败不一致 {cb_diff}/{total}")
+    for s in special_samples:
+        print(f"  [特格族] {s[0]} 核验={s[1]} 引擎={s[2]}")
+    print(f"成败不一致 {cb_diff}/{total}（特格族成败另计 {special_cb_diff}）")
     for s in cb_samples:
         print(f"  {s[0]} 核验={s[1]} 引擎={s[2]} | 格={s[3]} | {s[4]}")
+    for s in special_cb_samples:
+        print(f"  [特格族成败] {s[0]} 核验={s[1]}({s[3]}) 引擎={s[2]}({s[4]})")
     return 0
 
 
