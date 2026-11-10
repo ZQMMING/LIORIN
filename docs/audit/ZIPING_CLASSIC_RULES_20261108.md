@@ -441,3 +441,22 @@ PZZQ L984/L986「日元太旺」均以三合成局论旺；DE_LING.001 得令以
 ### 测试与回归
 - `tests/test_ziping_classic_check.py` 19→23 passed（新增四锚：印轻逢财 BAI / 印多逢财 CHENG / 身强七煞逢制 CHENG / 阳刃并透条款）；
 - 40 盘对账：取格不一致 **8/40**、成败不一致 **27/40**（与 V7.188 基线持平——新机判把原「静默跳过」变成显式条款，分歧面不增不减）；PZZQ 用神覆盖 11/12 不变。
+
+## 十九、引擎侧伤官制煞入格（V7.190，2026-11-10）
+
+### 问题（对账锚：王克敏 丙子 壬辰 壬申 乙巳）
+引擎七煞格破格判据 `has_zhi = bool(shi_gans or yin_gans)` 只认 **食神/印**；王克敏乙**伤官**透干（制煞）被判「七煞逢财无制 → PO（伪败格）」——「有制未核验」被当成「无制」出确定性败格结论，与核验器 CHENG「身强七煞逢制」冲突。
+
+### 原典依据
+PZZQ《论偏官》：制化路径不止食神——「有用食神制煞者…有用伤官驾煞者（伤官合煞）…用印化煞」；.008「七煞逢财无制」的「制」包含食/伤/印三路，乙伤官透干即「有制」，不得判败。
+
+### 修法（`engines/common/ge_jie_layer.py` 七煞分支，4 处）
+1. 增 `shang_gans = _god_gans('伤官')`，`has_zhi = bool(shi_gans or shang_gans or yin_gans)`（破格门槛修正：有伤官即非「无制」）。
+2. 成格路径喜神 `_zhi_gans = shi_gans or shang_gans`（食/伤制煞喜制神，兼财去印存食；无食伤退印化）。
+3. `zhi_wx` 取 `_zhi_gans[0]` 五行。
+4. 哑巴标签喜神回退链补伤官。
+- 王克敏实测：`七煞格(破格)/PO` → `七煞格(逢制)/CHENG`（PZZQ255），与核验器、沈断一致。
+
+### 测试与回归
+- `pytest -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py` → **1888 passed / 9 failed**（9 项=GPT 在途既有，无新增）；
+- 40 盘对账：取格 8/40、成败 27/40（基线持平）；PZZQ 用神覆盖 11/12；bridge+classic_check 37 passed。

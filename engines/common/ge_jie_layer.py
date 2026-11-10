@@ -1173,9 +1173,12 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                       else (facts.get('month_qi_element', '') or ''))
         if True:
             shi_gans = _god_gans('食神')
+            # V7.190: 伤官亦制煞(原典 PZZQ 论偏官「有用伤官驾煞者/伤官合煞」,
+            #   与食神制煞同为制化路径)——乙伤官透而判「无制」是伪败格。
+            shang_gans = _god_gans('伤官')
             yin_gans = _god_gans('正印') + _god_gans('偏印')
             cai_gans = _god_gans('正财') + _god_gans('偏财')
-            has_zhi = bool(shi_gans or yin_gans)
+            has_zhi = bool(shi_gans or shang_gans or yin_gans)
             # 原典PI_GUAN_002: 七煞用印(印有情)/食制(煞旺食强身健)/财去印存食(食被制时) — 喜神按制化路径取
             def _qisha_xi():
                 _x = []
@@ -1207,15 +1210,16 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     # 成格时按成格路径收窄喜神(原典PI_GUAN_001/002逐案):
                     #  食制路径: 喜神=食(制煞); 印化路径: 喜神=印(化煞);
                     #  食被印制时借财去印存食, 财亦入喜(对照表"煞用财: 财以去印存食")
-                    if shi_gans:
-                        _qisha_xi = list(shi_gans) + list(cai_gans)   # 食制: 喜食, 兼财(去印存食)
+                    _zhi_gans = shi_gans or shang_gans  # V7.190
+                    if _zhi_gans:
+                        _qisha_xi = list(_zhi_gans) + list(cai_gans)   # 食/伤制煞: 喜制神, 兼财(去印存食)
                     else:
                         _qisha_xi = list(yin_gans) + list(cai_gans)   # 印化: 喜印, 兼财(借财清格)
                     facts['ge_cheng'] = {
                         'ge': '七煞格(逢制)', 'xi_wx': sorted(set(GAN_WX[g] for g in _qisha_xi)),
                         'ti_wx': [sha_wx],
                         'overpower_combo': 6,
-                        'zhi_wx': [GAN_WX[shi_gans[0]]] if shi_gans else [],
+                        'zhi_wx': [GAN_WX[_zhi_gans[0]]] if _zhi_gans else [],  # V7.190
                         'hua_wx': [GAN_WX[yin_gans[0]]] if yin_gans else [],
                         # ★ V7.55 破格要件=「有财而无制」(原典 PZZQ L1146/L1155); 成格已逢制 -> 财党煞受制, 不破格.
                         #   「忌财生煞」为行运之忌(L4152), 非原局破格.
@@ -1227,7 +1231,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             # 不成格: 哑巴标签
             # 喜神按原典PI_GUAN_002逐案收窄: 食制喜食(不并财印, 对照表"煞用食制不要露财透印");
             # 无食时印化喜印; 财是破格忌(七煞逢财无制), 不入喜
-            _qisha_def_xi = shi_gans if shi_gans else yin_gans
+            _qisha_def_xi = shi_gans if shi_gans else (shang_gans if shang_gans else yin_gans)  # V7.190
             facts['ge_cheng'] = {
                 'ge': '七煞格', 'xi_wx': sorted(set(GAN_WX[g] for g in _qisha_def_xi)),
                 'ti_wx': [GAN_WX[sha_gans[0]]] if sha_gans else [],
