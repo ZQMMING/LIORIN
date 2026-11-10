@@ -136,19 +136,49 @@ def derive_ge_yong_wx(facts):
             #   (L543 禄比分财->用印火) 的判别=「印是否被财合去」, 而遥隔合终裁(L480-495
             #   「制于势/各视其格局配合」)机器缺判 —— stem_combination_facts.wuhe 不分间隔/遥隔,
             #   单 gate 会翻 004。维持配合级登记, 详见 ZIPING_CLASSIC_RULES §二十六。
+            # V7.203 判据层落地（§二十六.3）:
+            #   ①争合修正(PZZQ L541-543 王某案「两癸合戊, 虽不以合论, 而终有合意。
+            #     为财格用禄比…时逢归禄」): 与日主五合的财>1=争合妒合(L545 两壬夹丁),
+            #     不作「专向日主」论 → 不走单财专向, 归禄在时(禄支==时支)则用禄
+            #     (L543「时逢归禄」亲证: 戊禄巳=火); 争合而禄不在时不猜。
+            #   ②佩印合去终裁(PZZQ L476-496): 佩印形态+印财五合对存在时, 按三态
+            #     裁「印是否被财合去」——合去(adjacent/remote_he)→用财(张耀曾 L495);
+            #     未合(blocked/remote_no)→财局可以用印(朱有卿 L486)。
             _dg0 = ((facts.get('pillars') or {}).get('day') or ['', ''])[0]
-            if any((_s and (_s == _dg0 or STEM_HE_F.get(_s) == _dg0)) for _s in _cai_stems):
+            _he_dm = [_s for _s in _cai_stems
+                      if _s and (_s == _dg0 or STEM_HE_F.get(_s) == _dg0)]
+            if len(_he_dm) == 1:
                 cat = '财'
-            elif cnt['官杀'] >= 2:
-                cat = '官杀'
-            elif cnt['印'] >= 2:
-                cat = '财'
-            elif cnt['官杀'] >= 1:
-                cat = '官杀'
-            elif cnt['食伤'] >= 1:
-                cat = '食伤'
-            else:
-                cat = '财'
+            elif len(_he_dm) > 1:
+                _hr = ((facts.get('pillars') or {}).get('hour') or ['', ''])[1]
+                if _hr and _LU_ZHI.get(_dg0) == _hr:
+                    cat = _LU_WX.get(_dg0, '')
+            if not cat and shape == '佩印':
+                _yin_stems = [m.get('stem') for m in (facts.get('ten_god_members') or [])
+                              if m.get('type') == 'stem' and _ZHI_WX.get(m.get('ten_god'), '') == '印']
+                _hequ = False
+                for _y in _yin_stems:
+                    for _c in _cai_stems:
+                        if not _y or not _c or STEM_HE_F.get(_y) != _c:
+                            continue
+                        _st = _wuhe_span_state(facts, _y, _c)
+                        if _st[0] in ('adjacent', 'remote_he'):
+                            _hequ = True
+                if _hequ:
+                    cat = '财'
+                elif _yin_stems:
+                    cat = '印'
+            if not cat:
+                if cnt['官杀'] >= 2:
+                    cat = '官杀'
+                elif cnt['印'] >= 2:
+                    cat = '财'
+                elif cnt['官杀'] >= 1:
+                    cat = '官杀'
+                elif cnt['食伤'] >= 1:
+                    cat = '食伤'
+                else:
+                    cat = '财'
         elif base == '印格':
             cat = '财' if (cnt['财'] >= 1 or cnt['印'] >= 3) else '官杀'
         elif base == '食神格':
@@ -184,6 +214,53 @@ def derive_ge_yong_wx(facts):
 # V7.191: 天干五合伙伴表(甲己/乙庚/丙辛/丁壬/戊癸)
 STEM_HE_F = {'甲': '己', '己': '甲', '乙': '庚', '庚': '乙', '丙': '辛',
              '辛': '丙', '丁': '壬', '壬': '丁', '戊': '癸', '癸': '戊'}
+
+# ★ V7.203 五合终裁判据层(PZZQ 论十干配合性情 L476-496):
+#   合之成立分三态——紧贴作合(span=1); 间一位而间干克其配偶=「制于势然也,
+#   合而不敢合, 有若无」(L481), 间干不克=「间隔非必克制也」仍作合论(L482 徐注
+#   杨增新 甲己间丁 以印化官); 遥隔(年↔时, span=3)=「合而不能合也, 半合也」,
+#   「或虽遥隔而仍作合论, 各视其格局配合而已」——亲证成立条件=配偶得禄或刃
+#   于月令「通月令之气」(L495 张耀曾 庚禄在申 → 乙庚遥隔仍合), 反证=朱有卿
+#   戊墓在戌(禄巳/刃午不在月支)且间乙克戊 → 不合(L486)。
+_LU_ZHI = {'甲': '寅', '乙': '卯', '丙': '巳', '丁': '午', '戊': '巳',
+           '己': '午', '庚': '申', '辛': '酉', '壬': '亥', '癸': '子'}
+_REN_ZHI = {'甲': '卯', '丙': '午', '戊': '午', '庚': '酉', '壬': '子'}
+_LU_WX = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '火',
+          '己': '火', '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+
+
+def _wuhe_span_state(facts, a, b):
+    """五合终裁三态(PZZQ L476-496). 返回 (state, reason);
+    state ∈ adjacent/blocked/remote_he/remote_no/unknown."""
+    pl = facts.get('pillars') or {}
+    _pos = {}
+    for _i, _p in enumerate(('year', 'month', 'day', 'hour')):
+        _g = ((pl.get(_p) or ['', ''])[0])
+        if _g:
+            _pos[_g] = _i
+    if a not in _pos or b not in _pos:
+        return ('unknown', '位置缺失不猜')
+    _span = abs(_pos[a] - _pos[b])
+    if _span == 0:
+        return ('unknown', '同干非合对')
+    if _span == 1:
+        return ('adjacent', '紧贴作合')
+    if _span == 2:
+        _mids = [g for g, i in _pos.items()
+                 if min(_pos[a], _pos[b]) < i < max(_pos[a], _pos[b])]
+        for _m in _mids:
+            if KE.get(GAN_WX.get(_m, '')) == GAN_WX.get(a, '') or \
+               KE.get(GAN_WX.get(_m, '')) == GAN_WX.get(b, ''):
+                return ('blocked', '制于势然也, 合而不敢合(L481)')
+        return ('adjacent', '间隔非必克制, 仍作合论(L482)')
+    # span==3 遥隔(年↔时)
+    _mb = ((pl.get('month') or ['', ''])[1])
+    if _mb and (_REN_ZHI.get(a) == _mb or _REN_ZHI.get(b) == _mb or
+                _LU_ZHI.get(a) == _mb or _LU_ZHI.get(b) == _mb):
+        return ('remote_he', '通月令之气, 虽遥隔而仍合(L495)')
+    return ('remote_no', '遥隔合而不能合, 各视其格局配合(L488-491)')
+
+
 _ZHI_WX = {'正财': '财', '偏财': '财', '财': '财',
            '正官': '官杀', '七杀': '官杀', '官杀': '官杀', '官': '官杀',
            '正印': '印', '偏印': '印', '印': '印', '枭': '印',

@@ -31,6 +31,8 @@ CASES = [
     (["戊寅", "己未", "甲寅", "乙亥"], "土"),  # 甲用己财(日主合财) V7.191 扩案
     (["庚午", "乙酉", "甲子", "乙亥"], "金"),  # 合煞留官(高太尉) V7.191 扩案
     (["庚申", "乙酉", "癸未", "乙卯"], "木"),  # 印格用食(朱家宝) V7.201 扩案
+    (["癸巳", "壬戌", "乙巳", "戊寅"], "水"),  # 财局可以用印(朱有卿) V7.203 扩案
+    (["癸酉", "癸亥", "戊子", "丁巳"], "火"),  # 争合用禄比, 时逢归禄(王某) V7.203 扩案
 ]
 
 
@@ -77,10 +79,31 @@ def test_yinzhong_liangshuo_discriminator_preserves_cai_side():
     assert jin and jin[0].get("accepted"), edges
 
 
+def test_wuhe_span_state_three_states():
+    """V7.203 五合终裁三态(PZZQ L476-496): 紧贴作合/间干克其配偶=制于势不敢合(L481)/
+    遥隔得禄刃于月令仍合(L495 张耀曾 庚禄在申, 反证朱有卿 戊墓在戌 L486)。"""
+    from engines.common.yongyao_resolve import _wuhe_span_state
+
+    def F(*ps):
+        return {'pillars': {p: list(q) for p, q in zip(
+            ("year", "month", "day", "hour"), ps)}}
+
+    assert _wuhe_span_state(
+        F(("甲", "子"), ("己", "丑"), ("丙", "寅"), ("庚", "卯")), "甲", "己")[0] == "adjacent"
+    assert _wuhe_span_state(
+        F(("甲", "子"), ("庚", "丑"), ("己", "寅"), ("丙", "卯")), "甲", "己")[0] == "blocked"
+    assert _wuhe_span_state(
+        F(("甲", "子"), ("丙", "丑"), ("己", "寅"), ("丙", "卯")), "甲", "己")[0] == "adjacent"
+    assert _wuhe_span_state(
+        F(("乙", "酉"), ("甲", "申"), ("丁", "巳"), ("庚", "戌")), "乙", "庚")[0] == "remote_he"
+    assert _wuhe_span_state(
+        F(("癸", "巳"), ("壬", "戌"), ("乙", "巳"), ("戊", "寅")), "癸", "戊")[0] == "remote_no"
+
+
 def test_yong_coverage_at_least_10_of_12():
     """原典 21 案（含 6 案已知口径冲突/配合分歧）整体覆盖率护栏。"""
     spec = importlib.util.spec_from_file_location(
         "ziping_pzzq_replay", REPO / "scripts" / "ziping_pzzq_replay.py")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
-    assert mod.run(verbose=False) >= 16
+    assert mod.run(verbose=False) >= 18
