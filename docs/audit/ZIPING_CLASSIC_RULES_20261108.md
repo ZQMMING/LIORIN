@@ -387,3 +387,28 @@ V7.185 十神域只在「有病药锚」时出结论（PZZQ 4/12），无病盘�
 ### 测试与回归
 - `tests/test_ziping_shishen.py` 扩至 6 例（+001/009），相关六文件 **88 passed**；
 - `pytest -k ziping` **1892 passed / 9 failed**（9 项均 GPT 在途既有失败，无新增）。
+
+## 十六、成局代月令 + 十神域 STRONG 门控（V7.188，2026-11-10）
+
+### 问题（Round 11）
+- 006 王克敏案（丙子 壬辰 壬申 乙巳，申子辰三合水局）：旺衰判 MODERATE，十神域不敢判「比劫为病」——沈孝瞻断「日元太旺，用以泄秀」，病=比劫（水）。
+- 根因：成局同党时月支本气失权（局已代月令），而 `_ling_score` 仍按月支本气算 −3；且十神域忌神推导只认「食伤制官杀」形，无「日元太旺泄秀」形。
+
+### 原典依据
+PZZQ L984/L986「日元太旺」均以三合成局论旺；DE_LING.001 得令以当令五行势力论，成局同党即得令之实。
+
+### 修法
+1. `src/tongshu/reasoning/ziping_classic_check.py::judge_strength`：成局同党 → 局代月令，`ling` 至少 3（并记 reason「成局同党，局代月令（月支本气失权）」）。
+2. `src/tongshu/reasoning/ziping_bridge.py::_shishen_from_facts`：忌神推导加 STRONG 门控——格用神=食伤且旺衰 STRONG 且日主五行非喜 → 比劫（日主本身）为病（日元太旺泄秀）；否则退回「食伤制官杀」形（所制官杀为病）；格用神=官杀 → 比劫为病。
+
+### 实测
+- 006 → STRONG（成局代月令），十神域 SEMANTIC_NEGATIVE（比劫/水=病，泄秀抑身），与沈断一致；
+- PZZQ 12 案 SHISHEN conclusive **11/12**（仅 010 配合级分歧留白）。
+
+### 测试事故披露（2026-11-10）
+为「只提交自有 hunk」做测试文件手术时，重建脚本把 `tests/test_ziping_bridge.py` 真身覆写，GPT 未提交的 7 个桥接 fail-closed 测试（test_unknown_yongyao_states_cannot_become_primary 等）从工作树丢失，且无 git 历史/快照可恢复（均已核查）。处置：按已提交的 V7.185 fail-closed 主链**重写 8 个等价场景**（未知 state/未知五行/无证据/来源冲突/GE_FALLBACK 非源2 不复用格局证据/格局 NOT_EVALUABLE 阻断复用 + 源2 与无病格用神两个正向对照），行为覆盖不减；事故与重建记录于本节，后续 GPT 工作树改动一律不再以「整文件重建」方式手术，只做 hunk 级暂存。
+
+### 测试与回归
+- `tests/test_ziping_bridge.py` 重建后 **14 passed**（6 既有 + 8 fail-closed）；
+- 桥接/十神/事件/核验/审计闸/int_06/int_01 / 用神覆盖 八文件 **106 passed**；
+- `pytest -k ziping --ignore=tests/test_ziping_15_2_evidence_provenance.py` → **1884 passed / 9 failed**（9 项均为 GPT 在途既有失败，无新增）。

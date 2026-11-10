@@ -98,3 +98,112 @@ def test_basis_points_to_yuanwen_slices():
     r = judge_cheng_bai(pillars("癸未 辛酉 甲申 丙寅"))
     assert "STRUCTURE.GE_JU.CHENG_BAI.007" in r["basis"]
     assert "STRUCTURE.GE_JU.CHENG_BAI.008" in r["basis"]
+def test_ge_detail_does_not_claim_unexposed_month_stem_is_transparent():
+    from tongshu.reasoning.ziping_classic_check import derive_ge
+    pillars = {'year': ['甲', '午'], 'month': ['丁', '卯'],
+               'day': ['壬', '戌'], 'hour': ['丙', '午']}
+    result = derive_ge(pillars)
+    assert result['stem'] == '乙'
+    assert '未透干' in result['detail']
+    assert '透干乙' not in result['detail']
+
+
+def test_ge_detail_identifies_exposed_month_stem():
+    from tongshu.reasoning.ziping_classic_check import derive_ge
+    pillars = {'year': ['壬', '寅'], 'month': ['戊', '申'],
+               'day': ['丙', '寅'], 'hour': ['癸', '巳']}
+    result = derive_ge(pillars)
+    assert result['stem'] == '壬'
+    assert '透干壬' in result['detail']
+
+
+# ============================================================
+# 旺衰（身强弱）——三才合参 + 成局，原典锚点
+# ============================================================
+
+def _pillars(year, month, day, hour):
+    return {"year": list(year), "month": list(month), "day": list(day), "hour": list(hour)}
+
+
+def test_strength_jianlu_strong():
+    """WANG-001 甲木寅月建禄、印比透干齐备 → STRONG(得令+得地+党众)。"""
+    from tongshu.reasoning.ziping_classic_check import judge_strength
+
+    r = judge_strength(_pillars("甲寅", "乙寅", "甲卯", "乙寅"))
+    assert r["conclusion"] == "STRONG"
+    assert r["get_ling_score"] == 3
+    assert r["de_di_score"] >= 1
+    assert any("得令" in s for s in r["reasons"])
+
+
+def test_strength_shishen_traps_weak():
+    """WANG-002 戊土申月食神当令、金党众 → WEAK(失令+党众受克)。"""
+    from tongshu.reasoning.ziping_classic_check import judge_strength
+
+    r = judge_strength(_pillars("庚辰", "庚申", "戊寅", "壬戌"))
+    assert r["conclusion"] == "WEAK"
+    assert r["get_ling_score"] == -3
+    assert r["dangzhong_score"] < 0
+
+
+def test_strength_month_clashed_downgraded():
+    """BOUND-004 甲木子月正印当令, 然月支子被午冲 → 得令减等(不按满分)。"""
+    from tongshu.reasoning.ziping_classic_check import judge_strength
+
+    full = judge_strength(_pillars("甲子", "丙子", "甲子", "庚午"))
+    assert full["get_ling_score"] <= 1, full["reasons"]
+    assert any("冲" in s for s in full["reasons"])
+
+
+def test_strength_sanhe_ju_counts():
+    """三合成局按局论党：戊土午月见寅午戌火局 → ju_score>0。"""
+    from tongshu.reasoning.ziping_classic_check import judge_strength
+
+    r = judge_strength(_pillars("戊寅", "戊午", "戊戌", "甲寅"))
+    assert r["ju_score"] > 0
+    assert any("三合" in s for s in r["reasons"])
+
+
+def test_strength_lost_ling_no_root_no_help():
+    """失令 + 无根 + 无助 → WEAK（原典 SHUAI.003「日主孤立无气」方向的弱极）。"""
+    from tongshu.reasoning.ziping_classic_check import judge_strength
+
+    r = judge_strength(_pillars("庚申", "戊申", "甲申", "壬申"))
+    assert r["conclusion"] == "WEAK"
+    assert r["de_di_score"] == 0
+
+
+def test_strength_basis_are_registered_slices():
+    """旺衰判据须带可解析的原典切片锚（G1 证据闸用得到）。"""
+    from tongshu.reasoning.ziping_classic_check import judge_strength
+    from tongshu.reasoning import p0_evidence
+
+    r = judge_strength(_pillars("甲寅", "乙寅", "甲卯", "乙寅"))
+    ids = p0_evidence.resolve(r["basis"])
+    assert len(ids) >= 4
+    assert all(i.startswith("STATE.WANG_SHUAI") for i in ids)
+
+
+def test_golden_wangshuai_coverage_floor():
+    """golden 23 案旺衰结论覆盖率不得低于 20/23（回归护栏, 非准确率声明）。"""
+    import json
+    from pathlib import Path
+    from tongshu.reasoning.ziping_classic_check import judge_strength
+
+    S = dict(JIA="甲", YI="乙", BING="丙", DING="丁", WU="戊", JI="己",
+             GENG="庚", XIN="辛", REN="壬", GUI="癸")
+    B = dict(ZI="子", CHOU="丑", YIN="寅", MAO="卯", CHEN="辰", SI="巳",
+             WU="午", WEI="未", SHEN="申", YOU="酉", XU="戌", HAI="亥")
+    g = json.loads(Path("cases/golden/ziping_golden_set.json").read_text(encoding="utf-8"))
+    ok = tot = 0
+    for c in g["cases"]:
+        w = c["expected_calculation"].get("wangshuai")
+        if not w:
+            continue
+        inp = c["input"]
+        p = {k: [S[s], B[b]] for k, s, b in zip(
+            ("year", "month", "day", "hour"), inp["pillar_stems"], inp["pillar_branches"])}
+        tot += 1
+        ok += judge_strength(p)["conclusion"] == w["conclusion"]
+    assert tot == 23
+    assert ok >= 20, f"coverage {ok}/{tot}"

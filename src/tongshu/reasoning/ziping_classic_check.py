@@ -136,8 +136,9 @@ def derive_ge(p: Dict[str, List[str]]) -> Dict[str, object]:
             ge = "阳刃格"
         else:
             ge = "建禄月劫格"
+    evidence = f"透干{chosen}" if chosen in trans else f"本气{chosen}（未透干）"
     return {"ge": ge, "ten_god": tg, "via": via, "stem": chosen,
-            "detail": f"月支{mb}藏{'/'.join(hidden)}，透干{chosen}({tg}) → {ge}"}
+            "detail": f"月支{mb}藏{'/'.join(hidden)}，{evidence}({tg}) → {ge}"}
 
 
 def _branch_relations(p: Dict[str, List[str]], b: str) -> Dict[str, List[str]]:
@@ -305,4 +306,177 @@ def judge_cheng_bai(p: Dict[str, List[str]]) -> Dict[str, object]:
         "broken": broken,
         "relations": rel,
         "basis": ["STRUCTURE.GE_JU.CHENG_BAI.007", "STRUCTURE.GE_JU.CHENG_BAI.008"],
+    }
+
+
+# ============================================================
+# 旺衰（身强弱）——得令/得地/得势 三才合参 + 成局，不执月令一端
+# ============================================================
+# 原典依据：
+#   STATE.WANG_SHUAI.PAN_DUAN_FA.001「阴阳顺逆之说…其法不可执一」
+#   STATE.WANG_SHUAI.DE_LING.001「不必论当令不令，只论取最多最旺」
+#   STATE.WANG_SHUAI.DE_LING.002「月令乃提纲之府…人元为用事之神」
+#   STATE.WANG_SHUAI.DE_DI.001「天地顺遂而精粹者昌」/ DE_DI.002「地生天者，天衰怕冲」
+#   STATE.WANG_SHUAI.DE_SHI.001「强众而敌寡者，势在去其寡」（得势=党众）
+#   STATE.WANG_SHUAI.SHUAI.003「日主孤立无气，无地人元，绝无一毫生扶…乃为真从」
+
+SHENG_ME = {"木": "水", "火": "木", "土": "火", "金": "土", "水": "金"}  # 生我者
+
+WANG_SHUAI_BASIS = [
+    "STATE.WANG_SHUAI.DE_LING.001",
+    "STATE.WANG_SHUAI.DE_LING.002",
+    "STATE.WANG_SHUAI.DE_DI.001",
+    "STATE.WANG_SHUAI.DE_SHI.001",
+    "STATE.WANG_SHUAI.PAN_DUAN_FA.001",
+]
+
+# 地支三合 / 三会（成局则党众之力按局论，不按单支论）
+_SANHE = [("申", "子", "辰", "水"), ("亥", "卯", "未", "木"),
+          ("寅", "午", "戌", "火"), ("巳", "酉", "丑", "金")]
+_SANHUI = [("寅", "卯", "辰", "木"), ("巳", "午", "未", "火"),
+           ("申", "酉", "戌", "金"), ("亥", "子", "丑", "水")]
+
+
+def _branch_elem(b: str) -> str:
+    return STEM_ELEM[HIDDEN[b][0]]
+
+
+def _is_help(elem: str, dm_elem: str) -> bool:
+    """比劫(同我)或印(生我)为帮身；财官食伤为耗身。"""
+    return elem == dm_elem or SHENG_ME[dm_elem] == elem
+
+
+def _detect_ju(branches: List[str]) -> List[Tuple[str, str]]:
+    """成局：三支齐备才算（半合不算）。返回 [(局五行, '三合/三会')]。"""
+    out: List[Tuple[str, str]] = []
+    bset = set(branches)
+    for a, b, c, e in _SANHE:
+        if {a, b, c} <= bset:
+            out.append((e, "三合"))
+    for a, b, c, e in _SANHUI:
+        if {a, b, c} <= bset:
+            out.append((e, "三会"))
+    return out
+
+
+def _ling_score(p: Dict[str, List[str]]) -> Tuple[int, List[str]]:
+    """得令分：月支**本气**人元用事之神是否帮身（+3 / -3）。
+
+    原典 DE_LING.002「人元为用事之神」——月令之用事以本气为主（节气先后之
+    浅深需节气时刻，三柱数据不足，不据中气/余气冒充得令，只记于 reasons）。
+    """
+    dm, mb = _zhengyan(p)
+    dm_e = STEM_ELEM[dm]
+    hidden = HIDDEN[mb]
+    main = hidden[0]
+    # 月令受冲：提纲之根被冲，得令打折（DE_DI.002「天衰怕冲…根拔而祸更甚」）
+    clashed = any(p[pos][1] == CHONG[mb] for pos in ("year", "day", "hour"))
+    if _is_help(STEM_ELEM[main], dm_e):
+        if clashed:
+            return 1, [f"得令：{mb}月{main}用事，{ten_god(dm, main)}帮身，"
+                       f"然月支{mb}被{CHONG[mb]}冲，令根受损，得令减等"]
+        return 3, [f"得令：{mb}月{main}用事，{ten_god(dm, main)}帮身"]
+    extra = ""
+    for h in hidden[1:]:
+        if _is_help(STEM_ELEM[h], dm_e):
+            extra = f"（藏{h}{ten_god(dm, h)}，然非用事之神，不作得令）"
+            break
+    return -3, [f"失令：{mb}月{main}用事，{ten_god(dm, main)}不帮身{extra}"]
+
+
+def _di_score(p: Dict[str, List[str]]) -> Tuple[int, List[str]]:
+    """得地分：四支通根（本气 2 / 中气 1 / 余气 0.5，封顶 3）；无根 0。
+
+    原典 DE_DI.001「有根无根，俱要天覆地载」——有根方为得地。
+    """
+    dm = _zhengyan(p)[0]
+    dm_e = STEM_ELEM[dm]
+    pts = 0.0
+    reasons: List[str] = []
+    for pos in ("year", "month", "day", "hour"):
+        b = p[pos][1]
+        for i, h in enumerate(HIDDEN[b]):
+            if STEM_ELEM[h] == dm_e:  # 通根只看同五行（比劫根），印根另计于得势
+                w = (2.0, 1.0, 0.5)[i] if len(HIDDEN[b]) >= 3 else (2.0, 1.0)[i]
+                pts += w
+                reasons.append(f"得地：{pos}支{b}藏{h}({('本','中','余')[i] if i < 3 else '余'})为根")
+                break
+    pts = int(min(pts, 2.0))
+    if pts == 0:
+        reasons.append("失地：四支无日主本气根")
+    return pts, reasons
+
+
+def _shi_score(p: Dict[str, List[str]]) -> Tuple[int, List[str]]:
+    """得势分：天干（除日主）党众 —— 比劫/印 +1（封顶 +2），财官食伤 -1（封底 -2）。"""
+    dm = _zhengyan(p)[0]
+    dm_e = STEM_ELEM[dm]
+    ps = _pillars(p)
+    plus = minus = 0
+    helpers: List[str] = []
+    drainers: List[str] = []
+    for i, (s, _b) in enumerate(ps):
+        if i == 2:  # 日干为日主本身
+            continue
+        if _is_help(STEM_ELEM[s], dm_e):
+            plus += 1
+            helpers.append(s)
+        else:
+            minus += 1
+            drainers.append(s)
+    score = min(plus, 2) - min(minus, 2)
+    reasons = [f"党众：天干帮身{'、'.join(helpers) or '无'}（{plus}），"
+               f"克泄{'、'.join(drainers) or '无'}（{minus}）"]
+    return score, reasons
+
+
+def judge_strength(p: Dict[str, List[str]]) -> Dict[str, object]:
+    """身强弱判定（三才 + 成局）。
+
+    Returns:
+        {"conclusion": "STRONG"|"MODERATE"|"WEAK", "score": int,
+         "get_ling_score": int, "de_di_score": int, "dangzhong_score": int,
+         "ju_score": int, "reasons": list[str], "basis": list[str],
+         "ju": list[(elem, kind)]}
+    """
+    dm, mb = _zhengyan(p)
+    dm_e = STEM_ELEM[dm]
+    ling, r1 = _ling_score(p)
+    di, r2 = _di_score(p)
+    shi, r3 = _shi_score(p)
+    branches = [p[k][1] for k in ("year", "month", "day", "hour")]
+    jus = _detect_ju(branches)
+    ju_score = 0
+    ju_same_party = False
+    for elem, kind in jus:
+        if _is_help(elem, dm_e):
+            ju_score += 2
+            ju_same_party = True
+            r3.append(f"成局：{kind}成{elem}局，与日主同党")
+        else:
+            ju_score -= 2
+            r3.append(f"成局：{kind}成{elem}局，非日主之党")
+    if ju_same_party:
+        # 三合/三会成局同党 → 局代月令（月支本气不再作对立降分；
+        # 原典「日元太旺」类盘（PZZQ L984 王克敏造 申子辰水局）皆以成局论旺）。
+        if ling < 3:
+            r1.append("成局同党，局代月令（月支本气失权）")
+            ling = 3
+    total = ling + di + shi + ju_score
+    if total >= 5:
+        concl = "STRONG"
+    elif total >= 2:
+        concl = "MODERATE"
+    else:
+        concl = "WEAK"
+    return {
+        "conclusion": concl,
+        "score": total,
+        "get_ling_score": ling,
+        "de_di_score": di,
+        "dangzhong_score": shi,
+        "ju_score": ju_score,
+        "ju": jus,
+        "reasons": r1 + r2 + r3,
+        "basis": list(WANG_SHUAI_BASIS),
     }
