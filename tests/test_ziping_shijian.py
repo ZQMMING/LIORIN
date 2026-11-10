@@ -26,7 +26,8 @@ def test_clash_year_marks_event_exist(chart):
     s = run_ziping_judgment(chart, target_year=2027)  # 丁未: 未冲日支丑
     assert s.shijian.conclusion.value == "EVENT_EXIST"
     assert "丑未冲" in s.shijian.reasoning
-    assert "SUI_YUN.RE_EVALUATION.LIU_NIAN.005" in s.shijian.evidence_refs
+    for a in _SHIJIAN_ANCHORS:  # V7.193: 锚=FAN_YIN_FU_YIN.001+SUI_YUN_BING_LIN.001(冲=征)
+        assert a in s.shijian.evidence_refs
     assert "未核验" in s.shijian.reasoning  # 不断言作用成立
 
 
@@ -36,18 +37,23 @@ def test_plain_year_marks_event_absent(chart):
     assert "无冲" in s.shijian.reasoning
 
 
-def test_composer_keeps_shijian_fail_closed(chart):
-    """S4 治理门: SHIJIAN 域 claim 仍被 fail-closed 拦截(15.14 method audit)。
-
-    事件域现在有方法与证据锚, 但放行 claim 需治理裁决; 本测试锁定现状,
-    防止无意中放开伪事件判定。
+def test_composer_claim_matrix_after_release(chart):
+    """S4 治理门 (2026-11-10 method audit PASS, ZIPING_CLASSIC_RULES §二十二):
+    域级封闭解除 → EVENT_EXIST 产 1 claim (带未核验措辞);
+    结论级 fail-closed 不变 → EVENT_ABSENT(无触发符号≠无事件,伪判定) 仍 0 claim。
     """
     from src.tongshu.governance.judgment_claim_composer import JudgmentClaimComposer
 
-    synth = run_ziping_judgment(chart, target_year=2027)
-    assert synth.shijian.conclusion.value == "EVENT_EXIST"
-    ids = [c.get("claim_id") for c in JudgmentClaimComposer(provenance_resolver=None).compose(synth)]
-    assert not any("shijian" in (i or "") for i in ids)
+    comp = JudgmentClaimComposer(provenance_resolver=None)
+    exist = run_ziping_judgment(chart, target_year=2027)
+    assert exist.shijian.conclusion.value == "EVENT_EXIST"
+    exist_claims = [c for c in comp.compose(exist) if c["domain"] == "SHIJIAN"]
+    assert len(exist_claims) == 1
+    assert "未核验" in exist_claims[0]["claim"]
+    absent = run_ziping_judgment(chart, target_year=2024)
+    assert absent.shijian.conclusion.value == "EVENT_ABSENT"
+    absent_ids = [c.get("claim_id") for c in comp.compose(absent)]
+    assert not any("shijian" in (i or "") for i in absent_ids)
 
 def test_shijian_taisui_chong_yun():
     """V7.192: 太岁冲运(流年支冲当前大运支)是事件触发符号。

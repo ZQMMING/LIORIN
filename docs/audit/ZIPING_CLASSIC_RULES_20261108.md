@@ -484,3 +484,42 @@ PZZQ《论偏官》：制化路径不止食神——「有用食神制煞者…�
 - 消歧实测：1984 甲子 丙子 乙亥 甲申 男（起运约 9.69 岁，第 1 运丁丑）——2003 癸未：未不冲命局（子子亥申）但冲大运丑 → **仅运冲触发** EVENT_EXIST ✓；2001 辛巳：命局与大运均无冲 → EVENT_ABSENT 且措辞含「当前大运」✓。
 - 测试：`test_shijian_taisui_chong_yun`（自建 1984 盘，断言触发对/锚点/未核验措辞）+ `test_shijian_absent_mentions_dayun`；六套件 104 passed，全量 ziping 1894 passed / 9 failed（GPT 在途既有），PZZQ 15/16（KNOWN_CONFLICTS 6 案不变）。
 - 口径声明：太岁冲运只提供**触发符号**，应期/吉凶仍属解层（fail-closed 未实现不输出）；`current_dayun` 缺失（无 luck_pillars/越界）时行为与 V7.186 完全一致（纯命局冲）。
+
+## 二十二、V7.193 SHIJIAN claim 治理放行（15.14 method audit PASS + 锚点勘误）
+
+**日期**: 2026-11-10　**范围**: `ziping_bridge.py` / `judgment_claim_composer.py` / INT-05 测试契约更新
+
+### 1. 锚点勘误（D6 依据链纠偏）
+
+V7.186 时选的锚 `SUI_YUN.RE_EVALUATION.LIU_NIAN.005`（滴天髓「何为好」——运年**同气相助**）与 `SUI_YUN.RE_EVALUATION.DA_YUN_YIN_DONG.002`（滴天髓官杀**混杂病机**被岁运引动）**不承载「冲=触发符号」规则**，属证据链错配。对照《必补项登记》COV 治理（p0_v2/00_元数据/G1-A_Ontology/必补项登记_Coverage_Closure_Registry.md）的 D6 纪律，换锚为三命通会真承载切片：
+
+- `SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.001`（SMTH 论太岁 行954）：「日干支冲克太岁曰征，**运干支伤冲太岁亦曰征**，太岁干支冲日干支亦曰征，其年则凶」——同句承载「流年冲命局」与「太岁冲运」两条触发路径；
+- `SUI_YUN.RE_EVALUATION.FAN_YIN_FU_YIN.001`（SMTH 总论岁运 行968）：「行运以生月为运元，最怕行运与太岁冲克……岁运与日相对谓之返吟，岁运压日谓之伏吟，二者不利六亲」。
+
+两锚均已在 G1（`p0_evidence.slice_ids()` 921 切片集）注册、校验状态=已校验。旧锚注销。
+
+### 2. Method audit 结论：PASS（域级封闭解除）
+
+15.14 audit FAIL 的判据是「production 上 0 事件方法链」。现状逐条核验：
+
+| 项 | 状态 |
+|---|---|
+| 方法链入生产 | ✅ `run_ziping_judgment` → `_shijian_from_facts`（V7.186 流年冲命局 + V7.192 太岁冲运），提交 0679443b |
+| 触发事实来源 | ✅ engines 层 transit 冲撞事实（非臆造）：1984 盘 2003 癸未仅运冲触发（未不冲命局子子亥申）实测 ✓ |
+| 证据锚真实承载 | ✅ V7.193 换锚后两锚原文直接含「冲=征/不利」规则（见上） |
+| claim 文本免责 | ✅ 恒含「冲为事件触发符号，实际作用 p0 明示未核验（不判吉凶/应期）」 |
+| 结论级 fail-closed | ✅ UNKNOWN/EVENT_ABSENT/NOT_EXECUTED/FAILED → 0 claim 不变（EVENT_ABSENT=「无触发符号」≠「无事件」，伪判定防线保留） |
+| provenance | p0 切片不在 `data/evidence` 语料树 → marker=None（与 GEJU/YONGSHEN 等全部 p0 域一致，非 SHIJIAN 特有） |
+
+→ `judgment_claim_composer._FC_BLOCKED_DOMAINS` 清空 SHIJIAN（域级门解除）；结论级黑名单原样保留。
+
+### 3. 测试契约更新（最小改动，保留 GPT 断言结构）
+
+- `tests/test_int_05_judgment_claim_composer.py`：`test_s4_shijian_domain_always_blocked` → `test_s4_shijian_event_exist_released_after_method_audit`（EVENT_EXIST→1 claim+未核验断言）；末尾真实合成测试 4→5 claims。
+- `tests/test_ziping_shijian.py`：锚断言参数化 `_SHIJIAN_ANCHORS`；`test_composer_keeps_shijian_fail_closed` → `test_composer_claim_matrix_after_release`（EVENT_EXIST 1 claim / EVENT_ABSENT 0 claim 双锁定）。
+- 回归：10 套件 129 passed；全量 ziping **1894 passed / 9 failed**（GPT 在途既有，无新增）。
+
+### 4. 与 COV 治理的衔接
+
+- COV-001（岁运层命例型切片=0，D5 无承载）：本域 claim 只报触发符号不报吉凶，不受命例型缺口影响；岁运**吉凶/应期**解层在 D5 证据补齐前维持 fail-closed 不输出。
+- COV-004（SMTH 行957 命例未切）/ COV-013②（小运×大运冲刑）：引擎均不消费，无缺口行为。

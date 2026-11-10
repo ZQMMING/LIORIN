@@ -34,12 +34,13 @@ _FC_BLOCKED_CONCLUSIONS = frozenset({
     "EVENT_ABSENT",  # 15.14 audit: method 未证明 → 伪判定 (fail-open)
 })
 
-# S4 SHIJIAN 额外门: 15.14 audit 证明 SHIJIAN method 不存在 → 整个 SHIJIAN 域
-# 当前 production 上 0 事件方法链 → 0 SHIJIAN claim (fail-closed)
-# 未来 method audit PASS 后必须改此处才能放行
-_FC_BLOCKED_DOMAINS = frozenset({
-    "SHIJIAN",  # ⑮-1-EVENT-SIGNAL method audit FAIL (15.14)
-})
+# S4 SHIJIAN 额外门: 15.14 audit FAIL(0 事件方法链) → 曾整域封闭。
+# 2026-11-10 method audit PASS (docs/audit/ZIPING_CLASSIC_RULES_20261108.md §二十二):
+#   V7.186-193 方法链已入生产 (流年冲命局/太岁冲运, 实测触发对, 锚=FAN_YIN_FU_YIN.001
+#   +SUI_YUN_BING_LIN.001 真承载「冲=征」), 域级封闭解除。
+# 结论级 fail-closed 不变: UNKNOWN/EVENT_ABSENT/NOT_EXECUTED/FAILED 仍 0 claim
+# (EVENT_ABSENT=「无触发符号」≠「无事件」, 不得产出确定性 claim)。
+_FC_BLOCKED_DOMAINS = frozenset()
 
 
 @dataclass(frozen=True)

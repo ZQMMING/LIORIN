@@ -126,16 +126,26 @@ class TestJudgmentClaimComposerS4(unittest.TestCase):
         synth.shijian = self.FakeDJ(domain="SHIJIAN", conclusion="EVENT_ABSENT")
         self.assertEqual(self.composer.compose(synth), [])
 
-    def test_s4_shijian_domain_always_blocked(self):
-        """15.14 audit FAIL → 整个 SHIJIAN 域 0 claim, 即使 EVENT_EXIST."""
+    def test_s4_shijian_event_exist_released_after_method_audit(self):
+        """2026-11-10 method audit PASS (ZIPING_CLASSIC_RULES §二十二):
+        方法链 V7.186-193 已入生产(流年冲命局/太岁冲运, 锚 FAN_YIN_FU_YIN.001
+        +SUI_YUN_BING_LIN.001) → 域级封闭解除, EVENT_EXIST 可产 1 claim;
+        claim 文本须带「未核验」免责措辞 (宁缺勿猜: 只报触发符号, 不判吉凶/应期)."""
         synth = MagicMock()
         synth.wangshuai = None
         synth.geju = None
         synth.yongshen = None
         synth.shishen = None
-        synth.shijian = self.FakeDJ(domain="SHIJIAN", conclusion="EVENT_EXIST")
-        self.assertEqual(self.composer.compose(synth), [],
-                         "S4 违规: SHIJIAN EVENT_EXIST 也必须 0 claim (method 未证明)")
+        synth.shijian = self.FakeDJ(
+            domain="SHIJIAN", conclusion="EVENT_EXIST",
+            reasoning="触发 未丑(流年冲大运)；冲为事件触发符号，实际作用 p0 明示未核验（不判吉凶/应期）")
+        claims = self.composer.compose(synth)
+        ids = [c["claim_id"] for c in claims]
+        self.assertIn("AC-ZP-shijian-event_exist", ids,
+                      "method audit PASS 后 SHIJIAN EVENT_EXIST 必须放行产 claim")
+        shijian_claim = next(c for c in claims if c["domain"] == "SHIJIAN")
+        self.assertIn("未核验", shijian_claim["claim"],
+                      "SHIJIAN claim 必须保留「未核验」免责措辞")
 
     def test_s4_mixed_unknown_partial_claim(self):
         """部分域 UNKNOWN → 只 valid 域产 claim."""
@@ -291,24 +301,24 @@ class TestJudgmentClaimComposerRealSynthesis(unittest.TestCase):
                 reasoning="食神制杀吉",
                 evidence_refs=[],
             ),
-            shijian=DomainJudgment(  # S4 SHIJIAN always blocked
+            shijian=DomainJudgment(  # 2026-11-10 method audit PASS → 域级封闭解除
                 domain=JudgmentDomain.SHIJIAN,
                 conclusion=JudgmentConclusion.EVENT_EXIST,
-                reasoning="月令被冲",  # 即使 conclusion=EXIST 也不产 (method not proven)
+                reasoning="触发 子午(流年冲大运)；冲为事件触发符号，实际作用 p0 明示未核验（不判吉凶/应期）",
                 evidence_refs=[],
             ),
         )
         claims = composer.compose(synth)
 
-        # 4 valid domains → 4 claims
-        self.assertEqual(len(claims), 4)
+        # 4 valid domains + SHIJIAN EVENT_EXIST (released after method audit) → 5 claims
+        self.assertEqual(len(claims), 5)
         ids = {c["claim_id"] for c in claims}
         self.assertIn("AC-ZP-wangshuai-strong", ids)
         self.assertIn("AC-ZP-geju-established", ids)
         self.assertIn("AC-ZP-yongshen-primary", ids)
         self.assertIn("AC-ZP-shishen-semantic_positive", ids)
-        # S4: SHIJIAN blocked
-        self.assertNotIn("AC-ZP-shijian-event_exist", ids)
+        # S4 域级已放行; 结论级 fail-closed 不变 (EVENT_ABSENT/UNKNOWN 仍 0 claim)
+        self.assertIn("AC-ZP-shijian-event_exist", ids)
 
         # All claims have composer_version (S2)
         for c in claims:

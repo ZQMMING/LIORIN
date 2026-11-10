@@ -177,8 +177,14 @@ def _shishen_from_facts(facts: Dict[str, Any], refs: list) -> DomainJudgment:
     )
 
 
-_SHIJIAN_ANCHORS = ("SUI_YUN.RE_EVALUATION.LIU_NIAN.005",
-                    "SUI_YUN.RE_EVALUATION.DA_YUN_YIN_DONG.002")
+# V7.193: 换锚 — 锚必须真正承载「冲=征/引动」规则 (D6 依据链)。
+# 旧锚 LIU_NIAN.005(运年同气为好)/DA_YUN_YIN_DONG.002(官杀混杂引动) 与冲触发错配, 注销。
+# 新锚 SMTH 论太岁/总论岁运:
+#   SUI_YUN_BING_LIN.001 行954「日干支冲克太岁曰征, 运干支伤冲太岁亦曰征,
+#     太岁干支冲日干支亦曰征」→ 同时承载 流年冲命局 + 太岁冲运 两条触发路径;
+#   FAN_YIN_FU_YIN.001 行968「最怕行运与太岁冲克…返吟伏吟…不为吉兆」。
+_SHIJIAN_ANCHORS = ("SUI_YUN.RE_EVALUATION.FAN_YIN_FU_YIN.001",
+                    "SUI_YUN.RE_EVALUATION.SUI_YUN_BING_LIN.001")
 
 
 _PINYIN_STEM = {"JIA": "甲", "YI": "乙", "BING": "丙", "DING": "丁", "WU": "戊",
