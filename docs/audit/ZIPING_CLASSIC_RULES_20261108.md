@@ -634,7 +634,8 @@ V7.186 时选的锚 `SUI_YUN.RE_EVALUATION.LIU_NIAN.005`（滴天髓「何为好
 
 ### 5. 提交与边界
 
-- 引擎侧 `ge_jie_layer.py` 因 GPT 在途未提交改动共存，按共用工作树铁律走 index-blob（hash-object 只含本线改动的 blob）提交；核验器/audit/测试/文档正常提交。
+- 提交 `9a224301`（核验器侧 5 文件：ziping_classic_check.py/ziping_rule_audit.py/test_ziping_classic_check.py/test_ziping_yong_coverage.py/本文档 §二十五，+368/−90）。
+- **引擎侧 ge_jie_layer.py 暂不提交**：V7.197-199b 引擎修复与 GPT 在途 fail-closed 求值硬化在 evaluate_po_ge/apply_he_po_ge/_attach_ge_evidence 内深度交缠（本线六格名门依赖 GPT 未提交的 `_month_clash_actions_complete` helper 与 complete 旗标语义），干净拆分会产出未经验证的破损提交，整体提交则混入他线在途工作（V7.188 分线铁律）。留在共用工作树（回归 1899/16 已验证），待 GPT 在途合线或统一接线阶段一并收编。
 - 本节未动 GPT 热区（special_pattern/relations_builder/l0_fact_builder/registry）；残余 2+1 项成败差异与 1 项取格差异均为配合级登记，属 pzzq-017/019/018 同族待协调项。
 
 ### 6. V7.199b：GPT 在途契约对齐与冲月令门终版（2026-11-10，同日第二轮）
