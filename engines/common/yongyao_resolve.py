@@ -1249,7 +1249,7 @@ def resolve_yongyao(facts: Dict[str, Any], debate: Dict[str, Any],
     for e in uniq:
         for pos, g in _gan_positions(e['wuxing']):
             for pair in _pairs:
-                if g in pair['stems']:
+                if g in pair['stems'] and pos in pair.get('pillars', []):
                     other = pair['stems'][0] if pair['stems'][1] == g else pair['stems'][1]
                     if pair['huashen_on_month_qi'] or th.get('has_long_chen'):
                         medicine_blocked.append({'wuxing': e['wuxing'], 'gan': g, 'pos': pos,

@@ -748,3 +748,11 @@ V7.199 落码后全量回归新增 20 失败，逐案取证（探针 `_probe_yr_
 - **拟议判据（引擎侧，合线后实施）**：阴阳干两分——阳干=从气（印比皆无根才从，L189）；阴干=从势（财官势偏盛即从，通根月令/稍有根苗亦所不论，唯**印绶有根**闸，L180）。**待裁决子项**：印根口径——018 案印丙长生在寅不作「有根」（原典判从），需确证「有根」定义（本气/禄刃根 vs 长生余气根）。
 - **改动点**：engines/common/special_pattern.py 从格 gate 阴干分支（GPT-M 文件，登记合线后实施）。核验器契约=特格 NOT_APPLICABLE 交引擎特格层（ziping_classic_check.py:12 边界），不代改。
 - 至此开放目标①材料齐备：018（本节）+引擎侧待补三项（§二十六.6）+ge_jie_layer 收编（defer 登记），全部可交合线协调。
+
+## 二十六.8 病药合对柱位归属修复验证（2026-11-11，Round 30，用户修复+V7.206 回归补墙）
+
+- **修复内容（用户 2026-11-11 实施，engines/common/yongyao_resolve.py L1252 单行）**：药受制（合绊）检查由「只按干字匹配」改为「干字匹配 + 参与柱位核对」——同一天干出现在不同柱时，某柱的合对不再错误归到其他同字天干（`if g in pair['stems'] and pos in pair.get('pillars', []):`）。
+- **用户自注（CODEX_PROGRESS.md L1414-1418）**：反例用构造的部分关系数据，修复后与候选排序测试共 2 passed；不证明实际命盘合化判定；全部子平回归与混合改动独立拆分尚未完成。
+- **V7.206 真值验证（本轮）**：①新回归 tests/test_ziping_yongyao_he_pillar_attribution.py 4 项全过——反例判别（庚日主病=土、药=木、年甲+月甲双透、注入 甲己(pillars=['year','hour'])：仅年甲记合绊，月甲不再错归；证据归属 with=己/state=合绊(合而不化)）；缺 pillars 键的旧格式 pairs 不再阻挡任何药（fail-open 边缘=用户自主裁决：归属正确优先于覆盖，真盘 pairs 恒带柱位 daymaster_tian_he.py:89）；真盘不变式（三盘 blocked.pos ⊆ he_pairs pillars 并集，生产 pairs 恒带柱位）。②**GPT 在途测试 tests/test_ziping_medicine_he_positions.py 由 FAIL 转 PASS**（9 项 GPT 在途基线失败收平 1 项→余 8 项）。③真盘结构核实：daymaster_tian_he.py:89 每条 pair 恒含 'pillars'——natal 盘上 builder 为每个同字位各建一对，新旧 blocked 位置集重合、差异在证据归属；判别场景=构造/旧格式 pairs（无 pillars）与岁运复合盘（suiyun_validate.py:76 cf['tian_he'] 带转运柱位键）。④方法论注记：GE_FALLBACK 等格局路径早于病药层返回，medicine_blocked 仅病药路径产出（真盘探针 双甲外柱盘 state=GE_FALLBACK blocked=None 属正常非缺陷）。
+- **回归**：新测试+GPT 测试 5 passed；PZZQ replay 20/20、40盘对账基线不变、五套件 77 passed 均确认（修复不改任何已登记基线）；全量 ziping 回归见 §二十六.8 附注（medicine_he_positions 转绿后基线 16→15 failed）。
+- **提交**：yongyao_resolve.py（用户修复 1 行，git diff HEAD 核实仅此 1 行）+ 新回归测试 + 本节。
