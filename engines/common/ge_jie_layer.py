@@ -8,6 +8,25 @@ PZZQ原文(255/258/241行): 八格成格/破格.
 from typing import Any, Dict
 from engines.common.l0_fact_builder import HIDDEN
 
+
+def wealth_and_sha_templates(*, sha_tou: bool = False, cai_tou: bool = False):
+    """财、煞并见：正财或偏财任一，与七杀分别组成合取条件。
+    V7.197 cai_tou: 「生财露煞」之财须透干(PZ-0118 原文「无财为救应」以寅中丙藏不计
+    ——原典食神章财口径=透干; 财只藏不透不算「生财」, 财藏+煞透按食带煞就煞印论, 不判败)。"""
+    rules = []
+    for wealth in ('正财', '偏财'):
+        rule = {'type': '组合', 'match': 'ALL', 'required': [wealth, '七杀'],
+                'condition_id': 'WEALTH_AND_SHA'}
+        item_gate = {}
+        if sha_tou:
+            item_gate['七杀'] = 'tou'
+        if cai_tou:
+            item_gate[wealth] = 'tou'
+        if item_gate:
+            rule['item_gate'] = item_gate
+        rules.append(rule)
+    return rules
+
 GAN_WX = {'甲':'木','乙':'木','丙':'火','丁':'火','戊':'土','己':'土','庚':'金','辛':'金','壬':'水','癸':'水'}
 YINYANG = {'甲':1,'乙':0,'丙':1,'丁':0,'戊':1,'己':0,'庚':1,'辛':0,'壬':1,'癸':0}
 DM_LU = {'甲':'寅','乙':'卯','丙':'巳','丁':'午','戊':'巳','己':'午','庚':'申','辛':'酉','壬':'亥','癸':'子'}
@@ -127,6 +146,34 @@ def _attach_ge_evidence(facts):
     except Exception:
         pass
     ge = str(gc.get('ge'))
+    # 印格财劫同现不等于劫财已制财；现有层尚无实际作用判据。
+    if ge in ('印格(印轻逢财)', '印格(印轻逢煞)'):
+        from engines.common.shangguan_rule_contract import _verified_members
+
+        _members = facts.get('ten_god_members') or []
+        _, _members_complete = _verified_members(facts)
+        _pillars = facts.get('pillars') or {}
+        _hidden = facts.get('hidden_stems') or {}
+        _positions = ('year', 'month', 'day', 'hour')
+        _hidden_complete = (isinstance(_pillars, dict) and isinstance(_hidden, dict)
+                            and all(isinstance(_pillars.get(p), (list, tuple))
+                                    and len(_pillars[p]) == 2 and isinstance(_hidden.get(p), list)
+                                    and _hidden[p] == HIDDEN.get(_pillars[p][1])
+                                    for p in _positions))
+        _has_cai = any(isinstance(m, dict) and m.get('ten_god') in ('正财', '偏财')
+                       for m in _members)
+        _has_bijie = any(isinstance(m, dict) and m.get('type') == 'stem'
+                         and m.get('ten_god') in ('比肩', '劫财') for m in _members)
+        _has_cai_stem = any(isinstance(m, dict) and m.get('type') == 'stem'
+                            and m.get('ten_god') in ('正财', '偏财') for m in _members)
+        _cai_hidden = any(isinstance(m, dict) and m.get('type') == 'hidden'
+                          and m.get('ten_god') in ('正财', '偏财') for m in _members)
+        # V7.198: 财劫同现的作用裁决已由 V7.53b _CAI_PO(财有根且无劫解才破格,
+        #   PZZQ L1130/L1237/L3590) 承担——po 模板机器可判, 不再以「存在性不能裁决」
+        #   硬置 NE(旧守卫早于 V7.53b, 与 _CAI_PO 矛盾: 劫透解救时 po=[] 仍被 NE 覆盖)。
+        #   仅保留数据完备性门: 藏干表/十神成员表不完整时才 NOT_EVALUABLE(fail-closed)。
+        if not _hidden_complete or not _members_complete:
+            gc['ge_rule_verification'] = 'NOT_EVALUABLE'
     base = _GE_EVIDENCE_MAP.get(ge) or {}
     if not base:
         for k in _GE_EVIDENCE_MAP:
@@ -274,11 +321,27 @@ def dm_tier(wp, dg, month_zhi, pillars=None, kong_wang=None, facts=None):
         #   遥冲/合解 -> 不扣. 禄神逢冲为破禄. (DT-0029 甲木戌月囚,
         #   申金相乘权冲寅禄, 年日隔位亦「冲去禄神其根已拔」)
         _ling = (wp2['wuxing_power'].get(wx, {}) or {}).get('ling_state', '休')
-        dm_e['ben_n'] = effective_ben(
-            _ben_self,
-            build_root_clash_events(pillars, dg, _ling, wp2['wuxing_power'],
-                                    kong_wang, (facts or {}).get('l0_chart') or None),
-            _ling)
+        _root_events = build_root_clash_events(pillars, dg, _ling, wp2['wuxing_power'],
+                                               kong_wang, (facts or {}).get('l0_chart') or None)
+        # ben_self 只计支本气与日主同五行的位置；寄禄支不能扣掉其他本气根。
+        _ben_events = [event for event in _root_events
+                       if GAN_WX.get(_zhi_ben_gan.get(event.get('root_branch'))) == wx]
+        _extra = (facts or {}).get('transit_extra') or []
+        if _extra:
+            _clash = {'子': '午', '午': '子', '丑': '未', '未': '丑',
+                      '寅': '申', '申': '寅', '卯': '酉', '酉': '卯',
+                      '辰': '戌', '戌': '辰', '巳': '亥', '亥': '巳'}
+            _extra_branches = [gz[1] for gz in _extra]
+            _root_branches = [z for z in _zhis + _extra_branches
+                              if GAN_WX.get(ZHI_BEN_GAN.get(z)) == wx]
+            if (any(_clash.get(z) in _root_branches for z in _extra_branches) or
+                    any(z in _root_branches and _clash.get(z) in _zhis + _extra_branches
+                        for z in _extra_branches)):
+                raise ValueError('岁运冲日主本气根的作用尚未完成核验')
+            _extra_roots = sum(GAN_WX.get(ZHI_BEN_GAN.get(z)) == wx for z in _extra_branches)
+        else:
+            _extra_roots = 0
+        dm_e['ben_n'] = effective_ben(_ben_self, _ben_events, _ling) + _extra_roots
     # 同阴阳借根剥(乙寅)已撤销: PZZQ 刃/劫财为帮身重根, 不剥.
     # (旧 _YIN_YANG_JIEGEN 把乙在寅的帝旺根剥掉, 与 L800/L1075 冲突)
     return element_power_tier(wp2, wx)
@@ -480,6 +543,8 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 _xi_val = [_side] if (_XI_FILLED and _side) else []
                 facts['ge_cheng'] = {
                     'ge': _ct if not _po else _ct + '(破格)',
+                    'cong_type': _ct,
+                    'cong_state': 'CONFIRMED',
                     'xi_wx': _xi_val,
                     'xi_wx_status': 'DEFINED' if _xi_val else 'UNDEFINED',
                     'ti_wx': [] if _po else ([_side] if _side else []),
@@ -506,14 +571,17 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         ks_gans = _god_gans('正官') + _god_gans('七杀')
         sg = _god_gans('伤官')
         ss_yr = _god_gans('食神')
+        _yr_ss_tou = bool(sg or ss_yr)  # V7.199b L1245「带伤食」=食神+伤官并计, 非独伤官
         # ★ V7.83 阳刃格入口即落格(月令为刃位, 不再落月令本气十神分支):
         #   原典 L2410「刃禄虽不能为用, 而用之关系仍在月令」/ L1147「阳刃无官煞, 刃格败也」/
         #   L4580「非用官煞克之, 即用食伤泄之」/ L4505(戊午月本气丁=正印仍作阳刃论).
-        if not (ks_gans and not sg):
-            # ② 无官杀但有食伤可泄 -> 阳刃格成(食伤泄刃, L4580)
-            if ss_yr and not sg:
+        #   V7.199b 路径重构: ②③=无官煞分支(泄刃成/无泄败); 官煞透+伤食透=并透两势(L1245);
+        #   旧门 `not (ks and not sg)` 会把「官煞+食神透」误入 ②泄刃成(漏并透破)。
+        if not ks_gans:
+            # ② 无官杀但有食伤可泄 -> 阳刃格成(食伤泄刃, L4580; V7.199b 伤食并计)
+            if _yr_ss_tou:
                 facts['ge_cheng'] = {
-                    'ge': '阳刃格', 'xi_wx': sorted(set([GAN_WX[ss_yr[0]]])),
+                    'ge': '阳刃格', 'xi_wx': sorted(set(GAN_WX[g] for g in (list(ss_yr) + list(sg)))),
                     'ti_wx': [facts.get('month_qi_element', '')],
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
@@ -532,10 +600,58 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'rule': 'PZZQ255/V7.83: 月令阳刃而无官煞无食伤 -> 刃格败(L1147「阳刃无官煞, 刃格败也」; L2410「用之关系仍在月令」), 格名仍存',
                 }
                 return _attach_ge_evidence(facts)
+        if ks_gans and _yr_ss_tou:
+            # ★ V7.198 并透两势(PZZQ L1245「阳刃格以官煞制刃为用，带伤食制官煞而格破，
+            #   若得重印以去食作，则阳刃格成矣」): 官煞+伤食并透 -> 印透须辨「重印以去食」
+            #   (重印量化无原典判据, 宁缺勿猜 -> NOT_EVALUABLE); 印不透无从去食 ->
+            #   伤食制官煞破刃用 -> 破格(PO)。旧路径并透时落空滑入月令本气分支(漏判)。
+            _yr_ks_wx = sorted(set([GAN_WX[g] for g in ks_gans]))
+            _yr_yin_tou = _god_gans('正印') + _god_gans('偏印')
+            if _yr_yin_tou:
+                facts['ge_cheng'] = {
+                    'ge': '阳刃格',
+                    'xi_wx': sorted(set(GAN_WX[g] for g in (list(ks_gans) + list(_yr_yin_tou)))),
+                    'ti_wx': _yr_ks_wx,
+                    'overpower_combo': 6,
+                    'zhi_wx': _yr_ks_wx,
+                    'hua_wx': [],
+                    'po_ge': [{'type': '组合', 'match': 'ANY', 'required': ['食神', '伤官'], 'gate': 'tou'}],  # V7.199b L1245「带伤食制官煞」=食神+伤官并计, 非独伤官
+                    'ge_rule_verification': 'NOT_EVALUABLE',
+                    'rule': 'PZZQ L1245: 官煞+伤官并透, 得重印以去食则格成; 重印量化无原典判据 -> NOT_EVALUABLE 格名保留(宁缺勿猜)',
+                }
+                return _attach_ge_evidence(facts)
+            # V7.199b 成中有败判据(PZZQ L1220 石友三「时透七煞，制刃为用，格之成也。
+            #   无如月干辛金合丙，年上癸水制煞，为成中有败也」+ L1222 郭松龄造
+            #   「亦成中有败也」): 官煞被合去(五合伙伴在干) -> 制刃之成仍在名分而用被夺
+            #   -> 成中有败(xi 保留官煞=成基); 官煞未被合(伤食纯制) -> 带伤食制官煞而
+            #   格破(PO, xi 空, L1245)。
+            _WUHE_YR = {'甲': '己', '己': '甲', '乙': '庚', '庚': '乙',
+                        '丙': '辛', '辛': '丙', '丁': '壬', '壬': '丁',
+                        '戊': '癸', '癸': '戊'}
+            _ks_hequ = any(_WUHE_YR.get(g) in gans for g in ks_gans)
+            facts['ge_cheng'] = {
+                'ge': '阳刃格',
+                'xi_wx': sorted(set(GAN_WX[g] for g in ks_gans)) if _ks_hequ else [],
+                'ti_wx': _yr_ks_wx,
+                'overpower_combo': 6,
+                'zhi_wx': _yr_ks_wx,
+                'hua_wx': [],
+                'po_ge': [{'type': '组合', 'match': 'ANY', 'required': ['食神', '伤官'], 'gate': 'tou'}],  # V7.199b L1245「带伤食制官煞」=食神+伤官并计, 非独伤官
+                'rule': ('PZZQ L1220/L1222: 官煞制刃为成, 官煞被合去/伤食制官煞 -> 成中有败(石友三辛合丙/郭松龄戊合癸)'
+                         if _ks_hequ else
+                         'PZZQ L1245: 阳刃以官煞制刃为用, 带伤食制官煞而格破(伤食透制官煞, 印不透无从去食) -> 破格'),
+            }
+            return _attach_ge_evidence(facts)
         if ks_gans and not sg:
             ks_wx = sorted(set([GAN_WX[g] for g in ks_gans]))
             _yr_cai = _god_gans('正财')+_god_gans('偏财')
             _yr_yin = _god_gans('正印')+_god_gans('偏印')
+            # V7.198b 撤「财印露门」(V7.198 曾误以成句「露财印」为成格前提):
+            #   L1140 徐注「月令阳刃，以官煞制刃，格局最美…故以财印并见为吉」——财印
+            #   是「为吉」的辅弼非前提; L1220 石友三「时透七煞，制刃为用，格之成也」/
+            #   L1223 龙济光「煞刃格成也」两案均财印不透而成。败句只有「阳刃无官煞」
+            #   (L1148/L1159)。官煞透+无伤食透 -> 格成(L1140「以不见伤官为格之成也」;
+            #   V7.199b 伤食并计 L1245「带伤食」=食神+伤官, 食神制官煞同破)。
             # 阳刃喜神按原典JIAN_LU_YANG_REN_002/003逐案收窄:
             #  官煞制刃为喜(格体); 印护刃亦喜; 财单用"阳刃用财格所不喜"不入喜
             _yr_xi = list(ks_gans) + list(_yr_yin)
@@ -597,7 +713,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'overpower_combo': 6,   # UNVERIFIED
                 'zhi_wx': [],  # 制神: 枭(印)
                 'hua_wx': [],  # 化神: 无
-                'po_ge': [{'type':'组合','match':'ANY','required':['偏印'],'gate':'tou'}, {'type':'组合','match':'ALL','required':['正财','偏财','七杀']}],  # PZZQ258: 食神逢枭(V7.170 gate=tou 枭夺食须透壬, L1239「而又透壬, 为食被枭夺而破格」)/生财露煞(财且煞)
+                'po_ge': [{'type':'组合','match':'ANY','required':['偏印'],'gate':'tou'}] + wealth_and_sha_templates(),  # 食神逢枭 / 生财露煞
                 'rule': 'PZZQ255: 食神生财+身旺 -> 食格成; 成格之神(食神)为喜, 财(生财)亦喜; 破格: 枭夺食/生财露煞',
             }
             return _attach_ge_evidence(facts)
@@ -614,7 +730,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'overpower_combo': 6,
                 'zhi_wx': sorted(set(GAN_WX[g] for g in yin_gans)),  # 制神: 印(弃食就煞, 印制食伤为药)
                 'hua_wx': [],
-                'po_ge': [{'type':'组合','match':'ALL','required':['正财','偏财','七杀']}],  # PZZQ258: 生财露煞(财且煞, 财非单忌; V7.171 注: 此路径入格条件已含「无财透+煞透」, 模板为岁运触发备)
+                'po_ge': wealth_and_sha_templates(),  # 生财露煞：财且煞，财非单忌
                 'rule': 'PZZQ255: 食带煞无财弃食就煞透印 -> 食格成; 格体=煞+印; 喜神=印(弃食就煞); 破格: 生财露煞',
             }
             return _attach_ge_evidence(facts)
@@ -654,6 +770,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                              '伤官用印无财不宜见财, 财透=破格(财去印制伤)')
             facts['ge_cheng'] = {
                 'ge': '伤官格(佩印)', 'xi_wx': _sg0_xi,
+                'ge_rule_verification': 'NOT_EVALUABLE',  # 伤官旺及印有根尚未验证
                 'ti_wx': [sg_wx0],
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
@@ -727,7 +844,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'ti_wx': [_guan_ti_wx],
                     'overpower_combo': 6,
                     'zhi_wx': _zhi_xi, 'hua_wx': [],
-                    'po_ge': [{'type':'组合','match':'ANY','required':['伤官'],'gate':'tou'}, {'type':'地支','match':'ANY','branch_cond':'刑冲'}],  # V7.172 gate=tou(L2825「透丁则伤官」+DTS L255「藏杀露官, 干神助官」)
+                    'po_ge': [{'type':'组合','match':'ANY','required':['伤官'],'gate':'tou'}],  # V7.172 gate=tou(L2825「透丁则伤官」+DTS L255「藏杀露官, 干神助官」); V7.197 删地支刑冲模板(DTS「刑与穿兮动不动」刑穿冲动静未授权不升级破格, 冲由冲月令破格层精确覆盖)
                     'rule': 'ZHENG_GUAN_001/DTS官杀章: 官杀并见成杀气,食伤透->食伤制官; 喜神=食伤',
                 }
                 return _attach_ge_evidence(facts)
@@ -749,7 +866,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     except Exception:
                         pass
                 _guan_xi = sorted(set(GAN_WX[g] for g in _cai_yin_gans))
-                _guan_po = [{'type':'组合','match':'ANY','required':['伤官'],'gate':'tou'}, {'type':'地支','match':'ANY','branch_cond':'刑冲'}]  # V7.170: 伤官破格须透干(L2825「透丁则伤官, 逢午不作此例」)
+                _guan_po = [{'type':'组合','match':'ANY','required':['伤官'],'gate':'tou'}]  # V7.170: 伤官破格须透干(L2825「透丁则伤官, 逢午不作此例」); V7.197 删地支刑冲模板(同上, 毒模板致 complete=False 恒 NOT_EVALUABLE)
                 if _officer_mixed:
                     # PZZQ258 官杀混杂破格(官不清): 七杀透干盖官即破; 定格层已核官杀并见
                     _guan_po.append({'type':'组合','match':'ANY','required':['七杀'],'gate':'tou'})  # V7.170: 杂煞破格须透干(L2824「逢庚辛则官煞杂, 申酉不作此例」)
@@ -771,7 +888,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 _guan_xi_default = [dm_wx_default]
                 if _yin_gans_default:
                     _guan_xi_default.append(GAN_WX[_yin_gans_default[0]])
-                _guan_po_default = [{'type':'组合','match':'ANY','required':['伤官'],'gate':'tou'}, {'type':'地支','match':'ANY','branch_cond':'刑冲'}]  # V7.170 gate=tou
+                _guan_po_default = [{'type':'组合','match':'ANY','required':['伤官'],'gate':'tou'}]  # V7.170 gate=tou; V7.197 删地支刑冲模板(毒模板致 complete=False)
                 if _officer_mixed:
                     _guan_po_default.append({'type':'组合','match':'ANY','required':['七杀'],'gate':'tou'})  # V7.170 gate=tou
                 facts['ge_cheng'] = {
@@ -790,8 +907,7 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             _yin_gans_po = _god_gans('正印') + _god_gans('偏印')
             if _yin_gans_po:
                 _guan_xi_po.append(GAN_WX[_yin_gans_po[0]])
-            _guan_po_po = [{'type': '组合', 'match': 'ANY', 'required': ['伤官'], 'gate': 'tou'},  # V7.170 gate=tou
-                           {'type': '地支', 'match': 'ANY', 'branch_cond': '刑冲'}]
+            _guan_po_po = [{'type': '组合', 'match': 'ANY', 'required': ['伤官'], 'gate': 'tou'}]  # V7.170 gate=tou; V7.197 删地支刑冲模板(毒模板致 complete=False)
             if _officer_mixed:
                 _guan_po_po.append({'type': '组合', 'match': 'ANY', 'required': ['七杀'], 'gate': 'tou'})  # V7.170 gate=tou
             facts['ge_cheng'] = {
@@ -983,8 +1099,19 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 if _z_v == _cwx:
                     _croot = max(_croot, int(_v.get('ben_n', 0) or 0))
             _c_tou = len(cai_gans)
-            _c_rooted = (_croot >= 1) or (_c_tou >= 1)   # 财有根(本气根或透干)
-            _jie = [g for g in (gans) if g != dg and ten_god(dg, g) in ('比肩', '劫财')]
+            # 全部藏干已核对且均无财五行时，透财不能被当成有根。
+            _hd = facts.get('hidden_stems') or {}
+            _pos = ('year', 'month', 'day', 'hour')
+            _complete_hidden = all(isinstance(_hd.get(p), list)
+                                   and _hd[p] == HIDDEN.get(pillars[p][1]) for p in _pos)
+            _no_cai_root = (_complete_hidden and
+                            not any(GAN_WX.get(h) == _cwx for p in _pos for h in _hd[p]))
+            # V7.199b 透财须藏根: 财透干而支藏全无财五行=虚财, 「财无根气, 不能用财破印」
+            #   (PZZQ L1130)——不能作破印之忌(po=[]); 财有藏根(本气根 ben_n>=1, 或透且有藏)
+            #   才可破。visible_wealth 盘(辛酉戊子乙卯己卯 戊己双透而四支无土藏)虚财不破。
+            _c_rooted = (_croot >= 1) or (_c_tou >= 1 and not _no_cai_root)
+            _jie = [pillars[pos][0] for pos in ('year', 'month', 'hour')
+                    if pos in pillars and ten_god(dg, pillars[pos][0]) in ('比肩', '劫财')]
             _jie_jie = bool(_jie)
             if _c_rooted and not _jie_jie:
                 return [{'type': '组合', 'match': 'ANY', 'required': ['正财', '偏财']}]
@@ -1060,17 +1187,31 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     'rule': _rule,
                 }
                 return _attach_ge_evidence(facts)
-        # PZZQ1113: 印轻逢煞=月令印+煞透+印不透. 印是格体(UNVERIFIED: 印轻判据=印不透)
-        if sha_gans and not yin_gans:
+        # PZZQ1113: 印轻逢煞=月令印+煞见(含藏干)+印不透. 印是格体(UNVERIFIED: 印轻判据=印不透)
+        # V7.198 「逢」=见(机读成句「印轻逢煞」无「透」字, 与禄劫「透官而逢财印」配合神
+        #   「逢/遇」=见同口径; 核验器 any 口径同源)。藏煞(如戌中辛)亦煞生印——
+        #   财生煞->煞生印, 财为煞通关, 故煞见时不作「印轻逢财」败句竞争(核验器同序)。
+        _sha_rep = None
+        if sha_gans:
+            _sha_rep = sha_gans[0]
+        else:
+            for _p, _z in pillars.items():
+                for _hd in HIDDEN.get(_z[1], ()):
+                    if ten_god(dg, _hd) == '七杀':
+                        _sha_rep = _hd
+                        break
+                if _sha_rep:
+                    break
+        if _sha_rep and not yin_gans:
             yin_wx = facts.get('month_qi_element','') or ''
             # 喜神=煞(煞生印)+印(生身护印, 对照表印绶格喜神含印自身)
             facts['ge_cheng'] = {
-                'ge': '印格(印轻逢煞)', 'xi_wx': sorted(set([GAN_WX[sha_gans[0]], yin_wx])),
+                'ge': '印格(印轻逢煞)', 'xi_wx': sorted(set([GAN_WX[_sha_rep], yin_wx])),
                 'ti_wx': [yin_wx],
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
                 'po_ge': _CAI_PO,  # V7.53b: 印轻逢财(财破印)须财有根且无劫解(PZZQ L1130/L1237/L3590)
-                'rule': 'PZZQ255: 印轻逢煞+印不透->印格成; 印是格体; 喜神=煞(生印)+印(生身); 破格: 财破印(须财有根且无劫解)',
+                'rule': 'PZZQ255: 印轻逢煞(逢=见含藏干)+印不透->印格成; 印是格体; 喜神=煞(生印)+印(生身); 破格: 财破印(须财有根且无劫解)',
             }
             return _attach_ge_evidence(facts)
         # PZZQ1113: 印多逢财财透根轻=月令印+财透. 印是格体, 不报印多埋子(UNVERIFIED: 财透根轻判据)
@@ -1146,10 +1287,19 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         #   印轻(单印/印浅) -> 财破印照破. 真值 丁卯庚戌庚戌庚辰(土重金埋, 印土多, 甲寅/乙卯木疏土=大吉)
         #   引擎旧口径"印格财破格"误杀甲寅/乙卯(制主病土反判凶) -> 按印轻重分档, 印重不认财破格.
         _yin_ben_n_po = int(((facts.get('wuxing_power', {}).get('wuxing_power', {}) or {}).get(yin_wx_default, {}) or {}).get('ben_n', 0) or 0)
-        _yin_heavy_po = (len(yin_gans) >= 2) or (_yin_ben_n_po >= 2)
-        _yin_po = [] if _yin_heavy_po else [{'type': '组合', 'match': 'ANY', 'required': ['正财', '偏财']}]
+        # V7.198 对齐 V7.38 印成党判据(与上方 _yin_ren_d2 同式, 修复同段双判据不一致:
+        #   规则串「印重破格: 无」而 po 照破的自相矛盾): 印透>=2 或 印ben>=2 或
+        #   印当令+印透>=1(SFTK L7770 水泛则浮)。
+        _yin_heavy_po = ((len(yin_gans) >= 2) or (_yin_ben_n_po >= 2)
+                         or ((facts.get('month_qi_element', '') == yin_wx_default) and (len(yin_gans) >= 1)))
+        # V7.198 默认路径对齐印轻财重路径: 破格用 _CAI_PO(财有根且无比劫救才破, PZZQ
+        #   L1130/L1237/L3590), 不用裸存在性模板(旁路 V7.53b 曾致财只藏中气无本气根
+        #   亦判财破印伪 PO, 如 戊戌庚申癸未己未)。
+        _yin_po = [] if _yin_heavy_po else _CAI_PO
         if _yin_heavy_po:
             _yin_rule = 'PZZQ255: 印格重(印多成病/土重金埋)->财是疏病之药(印多用财以抑太过), 财不作破格忌; 破格: 无'
+        else:
+            _yin_rule += ' (破格判据: 财有根且无比劫救 -> 财破印; 财无根/有劫解 -> 不破格, PZZQ L1130/L1237/L3590)'
         facts['ge_cheng'] = {
             'ge': '印格', 'xi_wx': _yin_xq, 'ti_wx': [yin_wx_default] if yin_wx_default else [],
             'overpower_combo': 6,
@@ -1228,9 +1378,32 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                         'rule': 'PZZQ-007-028(PZZQ255): 身强七煞逢制(食制/印化)->煞格成; 煞是格体不报杀重病; 破格: 财透而无制(PZZQ L1146/L1155)',
                     }
                     return _attach_ge_evidence(facts)
+            # V7.199: 救应篇明文通道——「食神制煞，而中隔以财，格之败也。喜乙丁隔癸，木不生火，
+            #   煞坐食地，为败中有成…财逢煞而食神制煞以生，有救应，即是败中有成，为贵也」
+            #   (PZZQ L1210/L1212 谭延闿案亲证; 扶抑篇 L993「月令七煞透干，取食神制煞为用」
+            #   用神专取食神)。食/伤制神透 + 财透党煞 + tier<2(不满足 .007 成句「身强七煞逢制」)
+            #   -> 败中有成(CHENG_ZHONG_YOU_PO), 用神=食/伤制神。印化路径无救应明文,
+            #   仍 NOT_EVALUABLE(宁缺勿猜)。
+            # V7.199b 收窄: 煞须【透干】(L991「月令七煞透干」=命名人元透口径)且印不透
+            #   (印透=印化无救应明文 -> 配合级 NE 不擅断)。
+            if cai_gans and (shi_gans or shang_gans) and sha_gans and not yin_gans:
+                _czp_zhi = shi_gans or shang_gans
+                facts['ge_cheng'] = {
+                    'ge': '七煞格(败中有成)',
+                    'xi_wx': sorted(set(GAN_WX[g] for g in _czp_zhi)),
+                    'ti_wx': [GAN_WX[sha_gans[0]]] if sha_gans else [],
+                    'overpower_combo': 6,
+                    'zhi_wx': [], 'hua_wx': [],
+                    'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财'],'gate':'tou'}],  # 财透党煞=带忌(PZZQ L1210 中隔以财)
+                    'rule': 'PZZQ-007-028(PZZQ L1210/L1212): 食神制煞而中隔以财, 财逢煞而食神制煞以生有救应=败中有成为贵; 用神专取食神; 财透党煞=带忌',
+                }
+                return _attach_ge_evidence(facts)
             # 不成格: 哑巴标签
             # 喜神按原典PI_GUAN_002逐案收窄: 食制喜食(不并财印, 对照表"煞用食制不要露财透印");
             # 无食时印化喜印; 财是破格忌(七煞逢财无制), 不入喜
+            # V7.198: fallback 全为配合未确立(败句「财透无制」已由 PO 路径判定; 成句
+            #   .007「身强七煞逢制」须身强+制, 有制而 tier<2 或无制无财皆成句不备) ->
+            #   NOT_EVALUABLE 格名保留, 不再无财透即判 CHENG(超判修复)。
             _qisha_def_xi = shi_gans if shi_gans else (shang_gans if shang_gans else yin_gans)  # V7.190
             facts['ge_cheng'] = {
                 'ge': '七煞格', 'xi_wx': sorted(set(GAN_WX[g] for g in _qisha_def_xi)),
@@ -1238,7 +1411,8 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
                 'po_ge': [{'type':'组合','match':'ANY','required':['正财','偏财'],'gate':'tou'}],  # PZZQ258: 财透无制(V7.170 gate=tou 财党煞须透干, L1235「干透壬水, 则财生煞而格破」/L4083「干不透财, 即不能以财滋煞」)
-                'rule': 'PZZQ-007-028(PZZQ255): 七煞格; 煞是格体; 喜神=食(制)/印(化); 财是破格忌不入喜; 破格: 财透无制',
+                'ge_rule_verification': 'NOT_EVALUABLE',
+                'rule': 'PZZQ-007-028(PZZQ255): 七煞格; 煞是格体; 喜神=食(制)/印(化); 成句须身强+逢制/败句须财透无制, 配合未确立 -> NOT_EVALUABLE 格名保留(V7.198)',
             }
             return _attach_ge_evidence(facts)
 
@@ -1247,31 +1421,62 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
     # 配合神(官/财食伤/煞)入ti_wx: 配合神是喜神不报病. 比劫不入ti_wx.
     jl_e = facts.get('jianlu_yuejie_entry', {}) or {}
     if jl_e.get('is_entry'):
-        guan = _god_gans('正官')
-        cai = _god_gans('正财') + _god_gans('偏财')
-        shi = _god_gans('食神') + _god_gans('伤官')
-        sha = _god_gans('七杀')
-        yin = _god_gans('正印') + _god_gans('偏印')
+        # V7.197 「透」与「逢/遇」分口径(PZZQ L1142 原文逐字): 命名人元(官/财/煞)须【透干】,
+        #   配合神(财印/食伤)「逢/遇」=见(藏干亦算)——甲戌丙寅乙亥庚辰(乙日主寅月):
+        #   官庚透而财印全藏, 旧口径配合神也走透干致配合未确立落 NOT_EVALUABLE(伪不可评)。
+        def _god_gans_seen(god):
+            _t = _god_gans(god)
+            _h = []
+            for _p, _z in pillars.items():
+                for _hd in HIDDEN.get(_z[1], ()):
+                    if ten_god(dg, _hd) == god and _hd not in _t:
+                        _h.append(_hd)
+            return _t + _h
+
+        guan = _god_gans('正官')                                          # 「透官」须透干
+        cai = _god_gans_seen('正财') + _god_gans_seen('偏财')             # 「逢财印」=见
+        shi = _god_gans_seen('食神') + _god_gans_seen('伤官')             # 「逢食伤」=见
+        sha = _god_gans('七杀')                                          # 「透煞」须透干
+        yin = _god_gans_seen('正印') + _god_gans_seen('偏印')
+        _yin_tou = _god_gans('正印') + _god_gans('偏印')                  # 「透煞印」须双透(徐注L1160 煞生印转助身)
+        # V7.199b 「透财」「制伏」须透干(PZZQ L1142「透财而逢食伤」「透煞而遇制伏」——
+        #   透=命名人元须透; 遇制伏=功能要求, 镜像七煞格 V7.190 has_zhi 透口径;
+        #   配合神财印/食伤「逢」=见不动, path①/④ 维持 seen 挡位)。
+        cai_t = _god_gans('正财') + _god_gans('偏财')
+        shi_t = _god_gans('食神') + _god_gans('伤官')
         ti_wx = []
         _jl_xi = []   # 建禄月劫喜神按成格路径逐格取(原典JIAN_LU_YANG_REN_004), 不笼统全并
         if guan and (cai or yin):
             # 禄格用官: 喜官, 又喜财印相随
             ti_wx.append(GAN_WX[guan[0]])
             _jl_xi.extend(cai + yin)
-        if cai and shi:
+        if cai_t and shi:
             # 禄劫用财: 须带食伤转劫生财, 喜财+食伤
             for g in cai + shi:
                 if GAN_WX[g] not in ti_wx:
                     ti_wx.append(GAN_WX[g])
             _jl_xi.extend(cai + shi)
-        if sha and shi:
+        if sha and shi_t:
             # 禄劫用煞: 必须制伏, 喜食伤(制煞)
             if GAN_WX[sha[0]] not in ti_wx:
                 ti_wx.append(GAN_WX[sha[0]])
             _jl_xi.extend(shi)
         # 无财官无煞: 原典"无财官而用伤食泄其太过亦为秀气(春木秋金)"-- 喜食伤(泄秀)
-        if not guan and not cai and not sha and shi:
+        # V7.199b path④ 全透干口径(泄秀=财官煞【透干】全无+食伤【透】):
+        #   HEAD 口径(GPT ge_candidate_priority 契约 1980-04-15 庚申庚辰戊午戊午 庚食神透
+        #   →泄秀 verified 用神可得); 申藏壬财(藏)不挡泄秀——「无财官」败句按透干论;
+        #   甲寅×4(丙藏寅)食伤不透 → 配合未确立 NOT_EVALUABLE(GPT special 契约)。
+        if not guan and not cai_t and not sha and shi_t:
             _jl_xi.extend(shi)
+        # 禄劫入口成立但配合条件未确立时，保留格名供复核，不以此断成败。
+        # PZZQ CHENG_BAI.008 对禄劫败格仍保留格名；具体败因仍须逐项核验。
+        if not ti_wx and not _jl_xi:
+            facts['ge_cheng'] = {
+                'ge': '建禄月劫格', 'xi_wx': [], 'ti_wx': [], 'zhi_wx': [], 'hua_wx': [],
+                'po_ge': [], 'ge_rule_verification': 'NOT_EVALUABLE',
+                'rule': 'PZZQ CHENG_BAI.008: 禄劫格名保留；成败及配合条件待核验',
+            }
+            return _attach_ge_evidence(facts)
         # V7.48 撤 V7.47 的"人元透干成格"主路径: 实测把曲直格/从旺格/财格误判成建禄月劫格
         #   (100盘 ge_diff 4->13). DTS L210「人元透干取格」须有气象形局配合, 无官财食伤配合时
         #   仍"无格"(原路径 ti_wx/_jl_xi 空则不出格). 人元透干只在有配合神(官/财/食伤/煞)时生效,
@@ -1282,8 +1487,10 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 'ti_wx': sorted(set(ti_wx)),
                 'overpower_combo': 6,
                 'zhi_wx': [], 'hua_wx': [],
-                'po_ge': [{'type':'缺失','match':'ANY','forbidden':['正官','正财','偏财']}],  # PZZQ258: 无财官/透煞印(缺失才破, 非忌神)
-                'rule': 'PZZQ255: 建禄月劫透官逢财印/透财逢食伤/透煞遇制伏/无财官用伤食泄秀->成; 配合神入ti_wx; 破格: 无财官',
+                # 「无财官透煞印」是合取条件，缺财官本身不等于破格；煞印按透干口径(V7.197)。
+                'po_ge': ([{'type':'缺失','match':'ANY','forbidden':['正官','正财','偏财']}]
+                          if sha and _yin_tou else []),
+                'rule': 'PZZQ255: 建禄月劫透官逢财印/透财逢食伤/透煞遇制伏/无财官用伤食泄秀->成; 破格条件含无财官透煞印',
             }
             return _attach_ge_evidence(facts)
 
@@ -1318,6 +1525,17 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         #  有财->喜财(SHI_SHEN_002"有财运则富"); 兼官(护食/合煞存财)->喜官
         #  仅煞无财无印->喜煞; 都不透->喜空
         _ss_xi_cai = list(_god_gans('正财')) + list(_god_gans('偏财'))
+        # V7.198 财见口径(PZZQ L1132 徐注「月令食神，四柱见财，为食神生财，格之正也。
+        #   若四柱透煞，则食神制煞为用，忌财党煞，故以无财为美」): 成句「食神生财」与
+        #   败句「生财露煞」的财都是【见】(含藏干); 旧把 PZ-0118(枭夺食·财制枭语境,
+        #   「无财为救应」指护食之财)误挪用到生财露煞作透干口径, 系张冠李戴, 已纠正。
+        def _ss_seen_god(gods):
+            for _p, _z in pillars.items():
+                for _hd in HIDDEN.get(_z[1], ()):
+                    if ten_god(dg, _hd) in gods:
+                        return True
+            return False
+        _ss_cai_seen = bool(_ss_xi_cai) or _ss_seen_god(('正财', '偏财'))
         _qs_def_xi = _god_gans('七杀')
         _yin_def_xi = _god_gans('正印') + _god_gans('偏印')
         _guan_def_xi = _god_gans('正官')
@@ -1337,8 +1555,9 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                          or int(_ss_pw.get('ju_n', 0) or 0) >= 1)
         # 提纲当令者须是食伤(与日主五行相同的比劫不算「食伤太旺」)
         _ti_gang_tai_wang = bool(ss_wx_def) and _shi_chengshi and (ss_wx_def == _sswx)
-        if _qs_def_xi and not _ss_xi_cai:
-            # 食带煞无财: 喜煞+印(就煞印, SHI_SHEN_002"不用财而就煞印, 最为威权显赫")——只影响喜神路径。
+        if _qs_def_xi and not _ss_cai_seen:
+            # 食带煞无财(财【见】口径, V7.198): 喜煞+印(就煞印, SHI_SHEN_002"不用财而就煞印,
+            #   最为威权显赫")——只影响喜神路径。财藏亦算有财(财党煞), 不走就煞印(L1132)。
             # 枭夺食破格【不豁免】: PZ-0118(沈文案例)庚申戊寅壬子甲辰——戊杀透且有辰中本气根,
             #   原文仍断「庚枭夺食而无财为救应…斯乃无财之病也」(印坐禄夺食, 煞反生印助夺)。
             #   原文未言就煞印免夺食; 就煞印贵格反例标 PENDING 待核(威权显赫案例, 食弃当否另论)。
@@ -1368,13 +1587,21 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         else:
             _ss_xi = []
             _ss_po = [{'type': '组合', 'match': 'ANY', 'required': ['偏印'], 'gate': 'tou'}]  # V7.170 gate=tou(L1239)
+        # V7.197/V7.198 生财露煞(PZZQ L1146「食神逢枭, 或生财露煞, 食神格败也」/徐注 L1132
+        #   「若四柱透煞，则食神制煞为用，忌财党煞，故以无财为美」/L1154「露煞则财转而生煞」)
+        #   与喜神分支正交: 财见+煞透 -> 败, 不论喜神走提纲太旺(印比)/就煞印/用财哪条路径
+        #   都不豁免败句。V7.198 财【见】口径(L1132「四柱见财，为食神生财，格之正也」——
+        #   成句与败句的财都是见, 含藏干; PZ-0118「无财为救应」属枭夺食·财制枭语境,
+        #   不得挪用到生财露煞): 财藏+煞透亦判败, 煞按透干(「露煞」)。
+        if _ss_cai_seen and _qs_def_xi:
+            _ss_po = list(_ss_po or []) + wealth_and_sha_templates(sha_tou=True)
         facts['ge_cheng'] = {
             'ge': '食神格', 'xi_wx': _ss_xi,
             'ti_wx': [ss_wx_def] if ss_wx_def else [],
             'overpower_combo': 6,
             'zhi_wx': [], 'hua_wx': [],
-            'po_ge': _ss_po,  # 枭夺食: 偏印见即夺(就煞印路径除外, 食已弃)
-            'rule': 'PZZQ255: 食神格成; 食神是格体; 喜神=财(有财则富)/煞印(带煞就煞印)/官(护食); 破格: 枭夺食',
+            'po_ge': _ss_po,  # 枭夺食(偏印tou)+生财露煞(财见+煞tou, V7.198)
+            'rule': 'PZZQ255: 食神格成; 食神是格体; 喜神=财(有财则富)/煞印(带煞就煞印)/官(护食); 破格: 枭夺食/生财露煞(PZZQ L1146,财见+煞透 V7.198)',
         }
         return _attach_ge_evidence(facts)
 
@@ -1399,20 +1626,31 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
             _sg_xi += list(_sg_yin)   # 伤官用印(身弱): 喜印
         _sg_xi = sorted(set(GAN_WX[g] for g in _sg_xi))
         # 破格两条(对照表SHANG_GUAN_003/004/006/007):
-        #  1) 非金水而见官 -> 伤官见官(正官单见即破, 金水伤官例外见官为喜)
-        #  2) 生财带煞 -> 财且煞并见才破(财本身是"伤官用财"之喜, 单见不破)
+        #  1) 非金水而见官 -> 伤官见官(金水伤官例外见官为喜); V7.198 见官=透官(L4269
+        #     「己官两透」/L1783「天干透丁」佐证; 旧存在性模板误把藏支正官当破, 如
+        #     蔡元培 申中庚官藏 -> 伪PO)。
+        #     财印通关豁免(DTS L260 原注「大率伤官有财，皆可见官，伤官无财，皆不可见官」
+        #     + PZZQ L4267 徐注「伤官生财，财生官，官星不但无碍」): 财或印【见】(藏亦算,
+        #     与核验器 _has_ten_god 口径一致)时官透不破格(伤官生财->财生官通关)。
+        #  2) 生财带煞 -> 财且煞并见才破(财本身是"伤官用财"之喜, 单见不破; 煞须透, V7.170)
+        def _sg_seen_god(gods):
+            for _p, _z in pillars.items():
+                for _hd in HIDDEN.get(_z[1], ()):
+                    if ten_god(dg, _hd) in gods:
+                        return True
+            return False
+        _sg_tongguan = _sg_seen_god(('正财', '偏财', '正印', '偏印'))
         _sg_po = []
-        if _sg_guan and not _jsshui_sg:
-            _sg_po.append({'type': '组合', 'match': 'ANY', 'required': ['正官']})
-        _sg_po.append({'type': '组合', 'match': 'ALL', 'required': ['正财', '偏财', '七杀'],
-                   'item_gate': {'七杀': 'tou'}})  # V7.171: 生财带煞之煞须透干(L1243「透庚金七煞而格破」+L2824 通则), 财保持存在性(伤官生财之喜)
+        if _sg_guan and not _jsshui_sg and not _sg_tongguan:
+            _sg_po.append({'type': '组合', 'match': 'ANY', 'required': ['正官'], 'gate': 'tou'})
+        _sg_po.extend(wealth_and_sha_templates(sha_tou=True))  # 财保持存在性，七杀须透干
         facts['ge_cheng'] = {
             'ge': '伤官格', 'xi_wx': _sg_xi,
             'ti_wx': [sg_wx_def] if sg_wx_def else [],
             'overpower_combo': 6,
             'zhi_wx': [], 'hua_wx': [],
-            'po_ge': _sg_po,  # 破格: 伤官见官(非金水)/生财带煞
-            'rule': 'PZZQ255: 伤官格成; 伤官是格体; 喜神=财(用财)/官(金水见官)/印(身弱)/煞印(伤多用煞印); 破格: 伤官见官(非金水)/生财带煞',
+            'po_ge': _sg_po,  # 破格: 伤官见官(非金水,透干,财印通关豁免 V7.198)/生财带煞
+            'rule': 'PZZQ255: 伤官格成; 伤官是格体; 喜神=财(用财)/官(金水见官)/印(身弱)/煞印(伤多用煞印); 破格: 伤官见官(非金水,透干,财印通关豁免)/生财带煞',
         }
         return _attach_ge_evidence(facts)
 
@@ -1431,6 +1669,8 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                 _hua_wx = [_ZW_SHENG.get(dm_wx, '')] if dm_wx else []
                 facts['ge_cheng'] = {
                     'ge': sp['zhuanwang'], 'xi_wx': _hua_wx,
+                    **({'ge_rule_verification': 'NOT_EVALUABLE'}
+                       if sp.get('zhuanwang_state') != 'CONFIRMED' else {}),
                     'ti_wx': [dm_wx],
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': _hua_wx,
@@ -1501,6 +1741,9 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
                     _xi_cong = []
                 facts['ge_cheng'] = {
                     'ge': '从格(' + sp['cong_type'] + ')', 'xi_wx': sorted(set(w for w in _xi_cong if w)),
+                    'cong_type': sp['cong_type'], 'cong_state': sp['cong_state'],
+                    **({'ge_rule_verification': 'NOT_EVALUABLE'}
+                       if sp.get('cong_state') != 'CONFIRMED' else {}),
                     'ti_wx': [_cong_wx] if _cong_wx else [],
                     'overpower_combo': 6,
                     'zhi_wx': [], 'hua_wx': [],
@@ -1513,11 +1756,64 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
     facts['ge_cheng'] = None
     return _attach_ge_evidence(facts)
 
+def _month_clash_actions_complete(rs, pillars):
+    order = ('year', 'month', 'day', 'hour')
+    if not isinstance(rs, dict) or not isinstance(pillars, dict) or not all(
+            isinstance(pillars.get(pos), (list, tuple)) and len(pillars[pos]) == 2
+            for pos in order):
+        return False
+    actions, survive = rs.get('chong_actions'), rs.get('chong_survive')
+    if not isinstance(actions, list) or not isinstance(survive, list):
+        return False
+    if not all(isinstance(act, dict) and isinstance(act.get('positions'), list)
+               and len(act['positions']) == 2
+               and all(type(p) is int and 0 <= p < 4 for p in act['positions'])
+               and act['positions'][0] < act['positions'][1]
+               and isinstance(act.get('pair'), list) and len(act['pair']) == 2
+               and act['pair'] == [pillars[order[p]][1] for p in act['positions']]
+               and isinstance(act.get('resolved'), str) and bool(act['resolved'])
+               for act in actions):
+        return False
+    if not all(isinstance(pair, list) and len(pair) == 2
+               and all(isinstance(branch, str) for branch in pair) for pair in survive):
+        return False
+    for act in actions:
+        status = act['resolved']
+        adjacent = act['positions'][1] - act['positions'][0] == 1
+        if not adjacent:
+            if status != 'inactive(隔位)':
+                return False
+        elif not (status in ('survive', 'canceled(暗合)', '会局单支冲无力')
+                  or ((status.startswith('明合六合(') or status.startswith('明合三合('))
+                      and status.endswith(')'))):
+            return False
+    # 位置事实必须覆盖四柱实际全部六冲对；两个空列表不能证明没有漏报。
+    from tongshu.facts.bazi_facts import BRANCH_CLASH_PAIRS
+    from tongshu.engines.bazi_engine import BRANCH_CN
+    clash_pairs = {frozenset(BRANCH_CN[b] for b in pair) for pair in BRANCH_CLASH_PAIRS}
+    branches = [pillars[pos][1] for pos in order]
+    expected = sorted((i, j) for i in range(4) for j in range(i + 1, 4)
+                      if frozenset((branches[i], branches[j])) in clash_pairs)
+    if sorted(tuple(act['positions']) for act in actions) != expected:
+        return False
+    return sorted(map(tuple, survive)) == sorted(tuple(act['pair']) for act in actions
+                                                 if act['resolved'] == 'survive')
+
+
 def apply_he_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     """规则2(冲解合破格): 月令支被"存活的相邻六冲"所冲, 且月令五行∈ti_wx∪xi_wx(格体/喜)
     -> 破格: ti_wx/xi_wx清空(不重新定格; 重新定格属格局回溯链, 登记下一轮).
     判据边界: 仅冲月令核心才破格; 冲非月令边缘支(归规则3/4)、被暗合解之冲(chong_canceled)不破.
-    原典: DT-0380 卯酉冲破亥卯未印局=凶; PZ-0034/PZ-0279 月令未被真正冲, 不破."""
+    V7.199b 冲月令语义(重写 V7.197 四生门; PZZQ L2020-2029 + L2686 + DTS L2687):
+      四墓(辰戌丑未)「四墓不忌刑冲」(L2028)永不破格, 维度评毕(complete=True).
+      四生/四专: 徐注「忌者冲而去之为成, 喜者逢冲为败」(L2023-2026)+「四生之地为重,
+      气尚微弱, 逢冲则坏」(L2686)——月令五行∈ti∪xi(喜者/格体)且被存活相邻冲 ->
+      破格(确定性); 忌者(月令∉ti∪xi)被冲=冲而去之 -> 不破(龙济光 丁卯丙午丙子壬辰
+      煞刃格成 L1223 亲证; 阳刃 ti=透干配合神 DTS L210, 刃月 not relevant).
+      冲解数据不完整(omitted/unknown/conflicting)时维度未评 -> month_clash_evaluation
+      _complete=False -> evaluate_po_ge 联动 po_ge_evaluation_complete=False(fail-closed).
+      DT-0380 卯酉冲破亥卯未印局(四专局破)登记为未实现配合级; PZ-0034/PZ-0279 月令未被
+      真正冲不破(位置精确门)."""
     gc = facts.get('ge_cheng')
     if not gc:
         return facts
@@ -1525,8 +1821,41 @@ def apply_he_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     rs = cf.get('resolved') or {}
     mz = facts.get('month_branch', '')
     mwx = facts.get('month_qi_element', '')
-    ti = set(gc.get('ti_wx') or [])
-    xi = set(gc.get('xi_wx') or [])
+    if not all(isinstance(gc.get(key), list) and all(
+            isinstance(wx, str) and wx in ('木', '火', '土', '金', '水') for wx in gc[key])
+            for key in ('ti_wx', 'xi_wx')):
+        gc['month_clash_evaluation_complete'] = False
+        return facts
+    ti = set(gc['ti_wx'])
+    xi = set(gc['xi_wx'])
+    pillars = facts.get('pillars')
+    month = pillars.get('month') if isinstance(pillars, dict) else None
+    if (not isinstance(month, (list, tuple)) or len(month) != 2 or month[1] != mz
+            or mz not in HIDDEN or mwx != GAN_WX.get(HIDDEN[mz][0])):
+        gc['month_clash_evaluation_complete'] = False
+        return facts
+    relevant = mwx in (ti | xi)
+    # V7.199b 冲月令破格按【六格名门】判定(月令本气=格神=「喜者」): 正官/财/印/食神/
+    #   七煞/伤官六格 月令本气即格体, 被存活相邻冲 -> 破格(徐注 L2023-2026「喜者逢冲
+    #   为败」+ L2686 四生气微逢冲则坏, 四生四专同一确定性口径)。
+    #   阳刃格/建禄月劫格月令=比劫(身非格神, .008 败句无冲条; 龙济光 丁卯丙午丙子壬辰
+    #   煞刃格成 L1223 亲证=刃月逢冲不破); 特格(从/化/专旺)不在此判。不破者维度评毕
+    #   (complete=True)——注意不可用 mwx∈ti|xi 判「relevant」: 顺刃路径把日主五行置入
+    #   xi_wx 会使阳刃格 mwx∈xi 恒真(与 L1223 亲证冲突), 故以格名门为准。
+    #   冲解数据不完整(omitted/unknown/conflicting)时维度未评 -> complete=False
+    #   (evaluate_po_ge L1993 联动 -> po_ge_evaluation_complete=False, fail-closed)。
+    if mz in ('辰', '戌', '丑', '未'):
+        # 四墓「四墓不忌刑冲」(PZZQ L2028): 永不破格, 维度评毕(与冲解数据质量无关)。
+        gc['month_clash_evaluation_complete'] = True
+        return facts
+    _SIX_GE_MONTH_CLASH = ('正官格', '财格', '印格', '食神格', '七煞格', '伤官格')
+    if not str(gc.get('ge') or '').startswith(_SIX_GE_MONTH_CLASH):
+        gc['month_clash_evaluation_complete'] = True
+        return facts
+    actions_complete = _month_clash_actions_complete(rs, pillars)
+    gc['month_clash_evaluation_complete'] = not relevant or actions_complete
+    if not relevant or not actions_complete:
+        return facts
     # V7.26 位置精确: 冲月令破格 须【月令位置(位置1)的地支】被相邻六冲冲住且 survive.
     #   旧口径 `any(mz in p for p in chong_survive)` 只看"戌字在冲对中"不辨位置:
     #   真值 丁卯庚戌庚戌庚辰(年卯月戌日戌时辰), 月令戌(位置1)被年卯合住无冲, 被冲的是
@@ -1535,7 +1864,7 @@ def apply_he_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     _month_pos_clashed = any(
         act.get('resolved') == 'survive' and 1 in (act.get('positions') or [])
         for act in (rs.get('chong_actions') or []))
-    if mwx in (ti | xi) and _month_pos_clashed:
+    if _month_pos_clashed:
         gc['ti_wx'] = []
         gc['xi_wx'] = []
         gc.setdefault('po_ge', []).append({'type': '冲月令破格', 'match': 'ANY', 'required': [mwx]})
@@ -1585,6 +1914,8 @@ def normalize_ti_wx(facts: Dict[str, Any]) -> Dict[str, Any]:
     gc = facts.get('ge_cheng')
     if not isinstance(gc, dict):
         return facts
+    # 独立标记求值覆盖情况：模板未识别或输入缺失不能被当成“无破格”。
+    gc['po_ge_evaluation_complete'] = False
     ge = gc.get('ge') or ''
     if '(破格)' in ge:
         return facts
@@ -1645,12 +1976,16 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     gc = facts.get('ge_cheng')
     if not isinstance(gc, dict):
         return facts
-    po = gc.get('po_ge') or []
+    po = gc.get('po_ge') if isinstance(gc.get('po_ge'), list) else []
     dg = facts.get('day_stem', '')
     pillars = facts.get('pillars') or {}
     hidden = facts.get('hidden_stems') or {}
-    if not dg or not all(k in pillars for k in ('year', 'month', 'day', 'hour')):
+    if (not dg or not all(k in pillars for k in ('year', 'month', 'day', 'hour'))
+            or not isinstance(pillars.get('day'), (list, tuple))
+            or len(pillars['day']) != 2 or pillars['day'][0] != dg):
         gc['po_ge_hits'] = []
+        gc['po_ge_evaluation_complete'] = False
+        gc['cheng_bai'] = 'NOT_EVALUABLE'
         return facts
 
     # 在局十神集合，拆两层（ENGINE_DEFINED，存在性 vs 有力口径分离）：
@@ -1666,11 +2001,17 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     #   po_ge 模板可带 gate='tou' 标记 -> 用 present_tou 求值(只认透干); 无标记走 present_all 不变。
     present_all, present_strong = set(), set()
     present_tou = set()
+    hidden_complete = all(
+        isinstance(hidden.get(pos), list)
+        and hidden[pos] == HIDDEN.get(pillars[pos][1])
+        for pos in ('year', 'month', 'day', 'hour'))
     for pos in ('year', 'month', 'hour'):
         _g = ten_god(dg, pillars[pos][0])
         present_all.add(_g); present_strong.add(_g); present_tou.add(_g)
     for pos in ('year', 'month', 'day', 'hour'):
-        hd = hidden.get(pos) or []
+        hd = hidden.get(pos)
+        if not isinstance(hd, list) or not all(isinstance(h, str) and h in GAN_WX for h in hd):
+            hd = []
         bgan = hd[0] if hd else ZHI_BEN_GAN.get(pillars[pos][1], '')
         if bgan:
             present_all.add(ten_god(dg, bgan))
@@ -1681,22 +2022,88 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     # 相邻存活六冲（地支刑冲判据）
     rs = (facts.get('combination_facts') or {}).get('resolved') or {}
     chong_survive = rs.get('chong_survive') or []
+    chong_actions = rs.get('chong_actions')
+    # 显式的存活结果（包括空列表）优先于旧字段；无效结果不能回退成已求值。
+    xing_survive = rs.get('sanxing_survive') if 'sanxing_survive' in rs else rs.get('sanxing')
+    month_actions_complete = _month_clash_actions_complete(rs, pillars)
+
+    recognized_gods = {ten_god('甲', stem) for stem in GAN_WX}
+    members = facts.get('ten_god_members')
+    visible_members = ([m for m in members if isinstance(m, dict) and m.get('type') == 'stem']
+                       if isinstance(members, list) else [])
+    visible_complete = (isinstance(members, list) and all(isinstance(m, dict) for m in members)
+                        and len(visible_members) == 3
+                        and all(m.get('pillar') in ('year', 'month', 'hour') for m in visible_members)
+                        and {m.get('pillar') for m in visible_members} == {'year', 'month', 'hour'}
+                        and all(m.get('stem') == pillars[m['pillar']][0]
+                                and m.get('ten_god') == ten_god(dg, m['stem'])
+                                for m in visible_members))
+    complete = (isinstance(gc.get('po_ge'), list) and hidden_complete
+                and gc.get('month_clash_evaluation_complete') is not False)
+    for tpl in po:
+        if not isinstance(tpl, dict):
+            complete = False
+            continue
+        kind = tpl.get('type')
+        if kind == '组合':
+            req = tpl.get('required')
+            item_gate = tpl.get('item_gate', {})
+            complete = (complete and isinstance(req, list) and bool(req)
+                        and all(isinstance(x, str) and x in recognized_gods for x in req)
+                        and 'required_any' not in tpl
+                        and tpl.get('match', 'ANY') in ('ANY', 'ALL')
+                        and (tpl.get('gate') or '') in ('', 'tou')
+                        and isinstance(item_gate, dict)
+                        and all(key in req and value == 'tou' for key, value in item_gate.items()))
+        elif kind in ('缺失', '阳刃无官煞透'):
+            key = 'forbidden' if kind == '缺失' else 'required'
+            values = tpl.get(key)
+            complete = (complete and isinstance(values, list) and bool(values)
+                        and all(isinstance(x, str) and x in recognized_gods for x in values))
+            if kind == '阳刃无官煞透':
+                complete = complete and visible_complete
+        elif kind == '冲月令破格':
+            complete = complete and month_actions_complete
+        elif kind == '地支':
+            cond = tpl.get('branch_cond', '')
+            complete = (complete and isinstance(cond, str) and bool(cond)
+                        and not any(ch not in '刑冲' for ch in cond)
+                        and ('冲' not in cond or isinstance(rs.get('chong_survive'), list))
+                        and ('刑' not in cond or isinstance(xing_survive, list)))
+        else:
+            complete = False
+    gc['po_ge_evaluation_complete'] = bool(complete)
 
     hits = []
     for tpl in po:
+        if not isinstance(tpl, dict):
+            continue
         t = tpl.get('type', '')
         match = tpl.get('match', 'ANY')
         hit_gods = []
         ok = False
+        if t in ('组合', '缺失', '阳刃无官煞透'):
+            key = 'forbidden' if t == '缺失' else 'required'
+            values = tpl.get(key)
+            if (not isinstance(values, list) or not values or
+                    any(not isinstance(x, str) or x not in recognized_gods for x in values)):
+                continue
         if t == '组合':
+            if match not in ('ANY', 'ALL'):
+                continue
             req = tpl.get('required') or []
             # ★ V7.169 gate='tou' -> 只认透干(A 级「透」字口径, 见 present_tou 注释);
             #   默认(无 gate)保持 present_all 存在性口径(QT-0728 修正不变).
             _gate = tpl.get('gate') or ''
+            if _gate not in ('', 'tou'):
+                continue
             _pool = present_tou if _gate == 'tou' else present_all
             # ★ V7.171 item_gate(项级 gate): 个别项单独要求透干(如伤官生财带煞之煞须透, L1243),
             #   其余项保持模板级口径. 项级优先于模板级.
-            _ig = tpl.get('item_gate') or {}
+            _ig = tpl.get('item_gate', {})
+            if (not isinstance(_ig, dict) or
+                    any(key not in req or value != 'tou' for key, value in _ig.items())):
+                continue
             def _pool_of(r):
                 if _ig.get(r) == 'tou':
                     return present_tou
@@ -1706,34 +2113,52 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
                 ok = all(r in _pool_of(r) for r in req) and len(req) > 0
             else:
                 ok = len(hit_gods) > 0
+            # 未登记的扩展条件不得当作已满足。
+            if 'required_any' in tpl:
+                ok = False
         elif t == '地支':
             cond = tpl.get('branch_cond', '')
-            if '冲' in cond and chong_survive:
+            if not isinstance(cond, str) or not cond or any(ch not in '刑冲' for ch in cond):
+                continue
+            if '冲' in cond and isinstance(rs.get('chong_survive'), list) and chong_survive:
                 ok = True
-            if '刑' in cond and (rs.get('sanxing_survive') or rs.get('sanxing')):
+            if '刑' in cond and isinstance(xing_survive, list) and xing_survive:
                 ok = True
         elif t == '缺失':
+            if not hidden_complete:
+                continue
             forb = tpl.get('forbidden') or []
             ok = len(forb) > 0 and all(x not in present_all for x in forb)
             hit_gods = [x for x in forb]
         elif t == '阳刃无官煞透':
             # ★ V7.84 阳刃格专用: 判【官杀透干】而非藏支十神(原典 L1159「若无官煞, 则刃旺而无裁抑之神矣」/
             #   L1117 成格要件明言"透"; 刃旺在支, 藏官力轻不能制刃).
+            if not visible_complete:
+                continue
             forb = tpl.get('required') or []
             _tou_tg = [m.get('ten_god') for m in ((facts.get('ten_god_members') or []))
                        if m.get('type') == 'stem']
             ok = len(forb) > 0 and all(x not in _tou_tg for x in forb)
             hit_gods = list(forb)
         elif t == '冲月令破格':
-            # V7.26 冲月令破格须 chong_survive 真冲(月令支被六冲冲住且冲不被解).
+            # 与 apply_he_po_ge 一致：须位置事实证明月柱被存活的相邻冲所冲。
             #   原典 DTS CHONG_HE_JI.005「刑与穿兮动不动」: 刑穿冲动静未授权 -> 不升级破格.
             #   此前无条件 ok=True, 把 apply_he_po_ge 登记的「冲月令破格」模板当成永远命中(误杀):
             #   真值 丁卯庚戌庚戌庚辰(印格, 辰冲戌=冲月令), 但印格重时木疏土是药, 冲月令非真格败.
-            ok = bool(chong_survive)
+            ok = (month_actions_complete and any(
+                act['resolved'] == 'survive' and 1 in act['positions'] for act in chong_actions))
             hit_gods = tpl.get('required') or []
         if ok:
+            condition_id = tpl.get('condition_id')
+            existing = next((h for h in hits if condition_id and
+                             h.get('condition_id') == condition_id), None)
+            if existing is not None:
+                existing['sources'] = list(dict.fromkeys(existing['sources'] + hit_gods))
+                existing['hit_detail'] = '、'.join(existing['sources'])
+                continue
             hits.append({
                 'hit_type': t,
+                **({'condition_id': condition_id} if condition_id else {}),
                 'match': match,
                 'hit_detail': tpl.get('branch_cond') or ('、'.join(hit_gods)),
                 'sources': hit_gods,
@@ -1753,7 +2178,9 @@ def evaluate_po_ge(facts: Dict[str, Any]) -> Dict[str, Any]:
     _H = len(hits)
     _ge_v = gc.get('ge', '')
     _xi_v = gc.get('xi_wx') or []
-    if not _ge_v:
+    if not complete or gc.get('ge_rule_verification') == 'NOT_EVALUABLE':
+        _cb = 'NOT_EVALUABLE'
+    elif not _ge_v:
         _cb = 'NO_GE'
     elif _H == 0:
         _cb = 'CHENG'

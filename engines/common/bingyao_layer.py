@@ -293,7 +293,7 @@ def _count_tengod(ten_god_members: List[Dict], tengod_cn_list: List[str], positi
     return count
 
 
-def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
+def identify_bing(facts: Dict[str, Any], queries: List[Dict], diagnostics=None) -> List[Dict]:
     """识别命局中的病 (只识别存在, 不判轻重)."""
     bing_list = []
     ten_god_members = facts.get('ten_god_members', [])
@@ -301,15 +301,77 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     dm_wx = GAN_WX.get(facts.get('day_stem', ''), daymaster_element)
     month_qi_element = facts.get('month_qi_element', '')
     root_weight = facts.get('root_weight_class_facts', {})
+    root_weight = root_weight if isinstance(root_weight, dict) else {}
     # ★ V7.118 根类为细分枚举(HEAVY_LU/HEAVY_BEN/LIGHT_YU_QI/SPECIAL_LONGSHENG_YIN...),
     #   须前缀匹配(与 root_effectiveness_filter 一致); 精确匹配恒假致「日主无重根」恒成立,
     #   误报印多埋子等病(真值 甲寅甲子丙寅戊寅: 甲禄寅为重根, 母不灭子).
-    has_heavy_root = any(str(v.get('class') or '').startswith('HEAVY')
-                        for v in root_weight.values())
-    has_light_root = any(str(v.get('class') or '').startswith('LIGHT')
-                        or str(v.get('class') or '').startswith('SPECIAL')
-                        for v in root_weight.values())
+    valid_roots = list(root_weight.values())
+    root_unknown = any(not isinstance(v, dict) or not isinstance(v.get('class'), str)
+                       or not (v['class'] == 'NONE' or v['class'].startswith(('HEAVY', 'LIGHT', 'SPECIAL')))
+                       for v in root_weight.values())
+    if 'root_weight_class_facts' in facts and isinstance(facts.get('pillars'), dict):
+        expected = {'year', 'month', 'day', 'hour'}
+        extra = facts.get('transit_extra', [])
+        if isinstance(extra, (list, tuple)):
+            expected.update('t%d' % i for i in range(len(extra)))
+        else:
+            root_unknown = True
+        root_unknown = root_unknown or not expected.issubset(root_weight)
+        day_pillar = facts['pillars'].get('day')
+        if (not isinstance(day_pillar, (list, tuple)) or len(day_pillar) != 2
+                or day_pillar[0] != facts.get('day_stem')):
+            root_unknown = True
+        from engines.common.daymaster_root_class import classify_root
+        from engines.common.l0_fact_builder import HIDDEN
+        valid_roots = []
+        for pos in expected:
+            value = root_weight.get(pos)
+            pillar = (extra[int(pos[1:])] if pos.startswith('t') and isinstance(extra, (list, tuple))
+                      else facts['pillars'].get(pos))
+            if (not isinstance(value, dict) or not isinstance(pillar, (list, tuple, str))
+                    or len(pillar) != 2 or pillar[1] not in HIDDEN
+                    or ('branch' in value and value['branch'] != pillar[1])):
+                root_unknown = True
+                continue
+            if not pos.startswith('t') and 'hidden_stems' in facts:
+                declared = facts['hidden_stems']
+                stems = declared.get(pos) if isinstance(declared, dict) else None
+                if not isinstance(stems, (list, tuple)) or list(stems) != list(HIDDEN[pillar[1]]):
+                    root_unknown = True
+                    continue
+            if pos.startswith('t') and 'transit_hidden_members' in facts:
+                members = facts['transit_hidden_members']
+                index = int(pos[1:])
+                if not isinstance(members, list) or not all(isinstance(m, dict) for m in members):
+                    root_unknown = True
+                    continue
+                records = [m for m in members if m.get('transit_index') == index]
+                expected_stems = list(HIDDEN[pillar[1]])
+                if (len(records) != len(expected_stems) or
+                        any(sum(m.get('pillar') == pos and m.get('branch') == pillar[1]
+                                and m.get('type') == 'hidden' and m.get('hidden_index') == i
+                                and m.get('stem') == stem
+                                for m in records) != 1 for i, stem in enumerate(expected_stems))):
+                    root_unknown = True
+                    continue
+            actual = classify_root(facts.get('day_stem', ''), pillar[1], HIDDEN[pillar[1]])['root_class']
+            def category(value):
+                if isinstance(value, str) and value.startswith('HEAVY'):
+                    return 'HEAVY'
+                if isinstance(value, str) and (value.startswith('LIGHT') or value == 'SPECIAL_LONGSHENG_YIN'):
+                    return 'LIGHT'
+                return 'NONE' if value == 'NONE' else None
+            if category(value.get('class')) is None or category(value.get('class')) != category(actual):
+                root_unknown = True
+                continue
+            valid_roots.append(value)
+    has_heavy_root = any(isinstance(v, dict) and str(v.get('class') or '').startswith('HEAVY')
+                         for v in valid_roots)
+    has_light_root = any(isinstance(v, dict) and (str(v.get('class') or '').startswith('LIGHT')
+                         or str(v.get('class') or '').startswith('SPECIAL')) for v in valid_roots)
     has_root = has_heavy_root or has_light_root
+    if isinstance(diagnostics, dict):
+        diagnostics['root_evaluation_status'] = 'NOT_EVALUABLE' if root_unknown else 'EVALUATED'
 
     # 五行力量(供各病识别使用, facts中可能已注入wuxing_power)
     wp = facts.get('wuxing_power', {})
@@ -328,20 +390,51 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
     # 核3四档: element_power_tier(transit_power.py:500) 纯布尔 强3/旺2/平1/衰0;
     #   统一用 ge_jie_layer.dm_tier(剥借根版, 同阴阳判据)。
     # 闸门: tier<=1(平/衰) = 身弱/身轻前提; tier>=2(旺/强) = 泄秀/财官为喜, 不触发。
-    _dmt = {'tier': 1, 'name': '平'}
+    _dmt = None
     try:
         from engines.common.ge_jie_layer import dm_tier as _dm_tier_calc
         _dg = facts.get('day_stem', '') or ''
         _mz = (pillars or {}).get('month', [None, None])[1] if pillars else ''
         if _dg:
+            _power = facts.get('wuxing_power')
+            _power_rows = _power.get('wuxing_power') if isinstance(_power, dict) else None
+            _count_keys = ('ben_n', 'zhong_n', 'yu_n', 'ju_n', 'banhe_n', 'stem_n')
+            from engines.common.transit_power import BRANCH_WX, _ling_state
+            _month_wx = BRANCH_WX.get(_mz)
+            if (not isinstance(_power_rows, dict) or not _month_wx or GAN_WX.get(_dg) is None
+                    or _power.get('relation_count_status') != 'EVALUATED'):
+                raise ValueError('五行力量事实不完整或无效')
+            from engines.common.l0_fact_builder import HIDDEN
+            from spec.root_qi import STEM_WUXING
+            _all_pillars = [pillars[pos] for pos in ('year', 'month', 'day', 'hour')]
+            _all_pillars.extend(facts.get('transit_extra') or [])
+            # 病机比较也读取克泄耗等其他五行，不能只核对日主一行。
+            for _element in ('木', '火', '土', '金', '水'):
+                _row = _power_rows.get(_element)
+                if (not isinstance(_row, dict) or _row.get('ling_state') != _ling_state(_month_wx, _element)
+                        or any(type(_row.get(k)) is not int or _row[k] < 0 for k in _count_keys)):
+                    raise ValueError('五行力量事实不完整或无效')
+                _expected_counts = {
+                    'stem_n': sum(STEM_WUXING.get(gz[0]) == _element for gz in _all_pillars),
+                    **{key: sum(index < len(HIDDEN[gz[1]])
+                                 and STEM_WUXING.get(HIDDEN[gz[1]][index]) == _element
+                                for gz in _all_pillars)
+                       for index, key in enumerate(('ben_n', 'zhong_n', 'yu_n'))},
+                }
+                if any(_row[key] != value for key, value in _expected_counts.items()):
+                    raise ValueError('五行力量计数与四柱岁运不一致')
             _kw = (facts.get('xunkong') or {}).get('kong_wang') or None
             _dmt = _dm_tier_calc(facts.get('wuxing_power', {}), _dg, _mz, pillars,
-                                 kong_wang=_kw)
+                                 kong_wang=_kw, facts=facts)
     except Exception:
-        _dmt = {'tier': 1, 'name': '平'}
-    _shen_ruo = _dmt['tier'] <= 1   # 平/衰=身弱前提成立; 旺/强=不触发
-    _shen_ruo_note = 'dm_tier=%s(%d)%s' % (_dmt.get('name', ''), _dmt.get('tier', 1),
-                                            '' if _shen_ruo else ' -> 身强, 泄秀/财官为喜不触发')
+        _dmt = None
+    _tier_known = (isinstance(_dmt, dict) and type(_dmt.get('tier')) is int
+                   and _dmt['tier'] in (0, 1, 2, 3))
+    if isinstance(diagnostics, dict):
+        diagnostics['strength_gate_status'] = 'EVALUATED' if _tier_known else 'NOT_EVALUABLE'
+    _shen_ruo = _tier_known and _dmt['tier'] <= 1
+    _shen_ruo_note = ('dm_tier=%s(%d)' % (_dmt.get('name', ''), _dmt['tier'])
+                      if _tier_known else '日主力量前提未计算')
 
     def _tou_ben(wx):
         if not pillars:
@@ -434,12 +527,12 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
                 _, _dm_ben = _tou_ben(daymaster_element)
                 if strong and _dm_ben == 0:
                     hit = strong
-            elif strong and not has_heavy_root:
+            elif strong and not has_heavy_root and not root_unknown:
                 hit = strong
         if hit:   # 闸门命中后才追加根气说明
-            if not has_root:
+            if not has_root and not root_unknown:
                 hit.append('日主无根')
-            elif not has_heavy_root:
+            elif not has_heavy_root and not root_unknown:
                 hit.append('日主根轻')
         return (bool(hit), hit)
 
@@ -458,7 +551,7 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         _mm_q = facts.get('month_qi_element', '')
         _cai_dangling = (_mm_q == cai_wx)
         _cai_benshi = (_caiB >= 1)
-        _no_heavy = not has_heavy_root
+        _no_heavy = not has_heavy_root and not root_unknown
         # STEP-L7-1 (2026-10, 切片校准): 兜底分支对齐 PATHOLOGY.QIANG_RUO.004
         #   原文「财旺身弱」= 财神【太旺】+ 日主衰弱。仅"财有本气根"≠"财旺"
         #   (如亥月辰戌土, 囚死之地有根而无力)。故:
@@ -772,9 +865,10 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
         #   L1075「日时逢刃, 取刃帮身以敌煞」/ L1331「乙生寅月, 月劫秉令」).
         #   旧判用 _tou_ben 本气根数, 把【长生重根】(丙在寅/壬在申/庚在巳)误作无根 -> 误报母多灭子
         #   (真值 甲寅甲子丙寅戊寅: 丙日主, 寅为长生重根, 印水当令, 母不灭子).
-        if has_heavy_root:
+        if has_heavy_root or root_unknown:
             ok = False
-            yin_matched = ['日主有重根 -> 母不灭子, 印不作病(PZZQ L800-801 重根含长生禄帝旺; 印滞身属格之问题, 印格用财损印按格论)']
+            yin_matched = (['日主重根状态未核验'] if root_unknown and not has_heavy_root else
+                           ['日主有重根 -> 母不灭子, 印不作病(PZZQ L800-801 重根含长生禄帝旺; 印滞身属格之问题, 印格用财损印按格论)'])
     if ok:
         b = BING_TYPES['YIN_DUO_MAI_ZI']
         bing_list.append({
@@ -843,7 +937,7 @@ def identify_bing(facts: Dict[str, Any], queries: List[Dict]) -> List[Dict]:
                 # 财多身弱: 财当令/本气根+日主无HEAVY根 即保留(原典"财星当令或成党,日主失令无根/根轻")
                 _mm_q = facts.get('month_qi_element', '')
                 _cai_caibi = (_bw == cai_wx) and (_combo >= 2 or _mm_q == cai_wx)
-                _no_heavy = not has_heavy_root
+                _no_heavy = not has_heavy_root and not root_unknown
                 if _b.get('overwang_exempt') or (_cai_caibi and _no_heavy):
                     pass  # 财成党/当令病: 保留
                 elif _combo < 6:
@@ -955,7 +1049,9 @@ def identify_yao(facts: Dict[str, Any], queries: List[Dict],
     bing_ids: 已识别病机id列表, 用于药方矛盾消解(剔除与病机反向的药).
     """
     yao_list = []
-    ten_god_members = facts.get('ten_god_members', [])
+    # 复合局将岁运藏干单独保存，存在性查询须和原局藏干同口径。
+    ten_god_members = (facts.get('ten_god_members', [])
+                       + facts.get('transit_hidden_members', []))
     bing_ids = bing_ids or []
 
     # 药方矛盾守卫: 印重(印多埋子)或比劫成党为病时, "印比帮身"为反向药, 不列
@@ -1215,7 +1311,8 @@ def build_bingyao_layer(facts: Dict[str, Any], queries: List[Dict],
       2026-10-06: 三判据(合/根/势)各有原文(DTS L250 无合之神 / SFTK L424 病重而药少 /
       PZZQ L3977+QTBJ L774 病重药轻), 已落; 干run见 apply_yuanju_yao 注释。
     """
-    bing_list = identify_bing(facts, queries)
+    diagnostics = {}
+    bing_list = identify_bing(facts, queries, diagnostics)
     yao_removed = []
     if apply_yuanju_yao_enabled:
         # 原局药消病 (甲路): 药在局且有效(未触合/根/势) -> 病消。PZ-0011 财局佩印类缺口
@@ -1241,6 +1338,7 @@ def build_bingyao_layer(facts: Dict[str, Any], queries: List[Dict],
     return {
         'layer': 'BINGYAO',
         'state': 'STRUCTURE_IDENTIFIED',
+        **diagnostics,
         'bing_count': len(bing_list),
         'yao_count': len(yao_list),
         'bing_list': bing_list,

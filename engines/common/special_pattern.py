@@ -66,6 +66,13 @@ def _ben_branches(pw, wx):
     return {br for br, v in rd.items() if v in _BEN_TAGS}
 
 
+def _remaining_main_roots(count, root_detail, combined, struck):
+    """合局只扣除尚未因冲拔扣除的本气级根。"""
+    removed = sum(1 for branch in combined - struck
+                  if root_detail.get(branch) in _BEN_TAGS)
+    return max(0, count - removed)
+
+
 def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     pw = (wp or {}).get('wuxing_power', {})
     dm_wx = (wp or {}).get('daymaster_element')
@@ -95,11 +102,13 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     branches = [p[1] if len(p) > 1 else '' for p in [pillars.get('year', []), pillars.get('month', []), pillars.get('day', []), pillars.get('hour', [])]]
     stems = [p[0] if p else '' for p in [pillars.get('year', []), pillars.get('month', []), pillars.get('day', []), pillars.get('hour', [])]]
     mumie = check_mumie(branches, stems, day_stem)
+    # 保留独立初筛；后面的格局计算可能依据另一组条件给出不同状态。
+    out['mu_mie_initial_diagnostic'] = dict(mumie)
     if mumie['status'] == '母灭':
         out['mu_mie'] = mumie['taishi']
         out['mu_mie_state'] = mumie['state']
         out['judgment_status'] = 'PURE_RULE'
-        return out
+        # 母灭只是一条独立轨道，不能跳过从格、化气及根事实的计算。
 
     # ---- 冲拔结构事件 (契约_冲拔层: KU开库不拔 / KE pair_state胜负 / MIX相生门控) ----
     # 仅输出结构事实, 不判吉凶; target角色映射在验证层。
@@ -121,11 +130,12 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         ystem = int(yin.get('stem_n', 0)); yling = yin.get('ling_state', '')
         return yben >= 1 or (yling in ('相', '旺') and yz >= 1) or (ystem >= 1 and yz >= 1)
 
-    _resolved = facts.get('resolved', {}) or {}
+    _resolved = (facts.get('combination_facts', {}) or {}).get('resolved', {}) or {}
     _lc = facts.get('l0_chart', {}) or {}
     _actions = _resolved.get('chong_actions', []) or []
     struck_root_events = []
     struck = set()
+    struck_positions = set()
 
     for _act in _actions:
         _pair = _act.get('pair') or []
@@ -143,12 +153,18 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         else:
             dist = '遥隔'
         state = _act.get('resolved', '')
-        effective = (d == 1 and state not in ('canceled', 'inactive'))
+        effective = (d == 1 and state == 'survive')
 
         # 解冲来源
         res_by = '无'
-        if state == 'canceled':
-            if _lc.get('branch_he_map'):
+        if isinstance(state, str) and (state.startswith('canceled') or state.startswith('明合')):
+            if '暗合' in state:
+                res_by = '暗合'
+            elif '三合' in state:
+                res_by = '三合'
+            elif '三会' in state:
+                res_by = '三会'
+            elif '六合' in state or _lc.get('branch_he_map'):
                 res_by = '六合'
             elif _lc.get('branch_sanhe_map'):
                 res_by = '三合'
@@ -172,21 +188,26 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 return False
             return ra < ro
 
-        for root, other in ((a, b), (b, a)):
+        for root, other, root_pos, other_pos in ((a, b, ia, ib), (b, a, ib, ia)):
             upr = _up(root, other)
             opened = bool(effective and route == 'KU')
             basis = 'DTS_CITED' if route in ('KU', 'KE') else (
                 'BOOK_CITED' if (not effective or _sheng_support(other)) else 'ENGINE_DEFINED')
-            ev = {'root_branch': root, 'clash_branch': other, 'route': route,
+            ev = {'root_branch': root, 'clash_branch': other,
+                  'root_position': root_pos, 'clash_position': other_pos, 'route': route,
                   'distance': dist, 'uprooted': upr, 'library_opened': opened,
                   'resolved_by': res_by, 'basis': basis}
             struck_root_events.append(ev)
             if upr:
                 struck.add(root)
+                struck_positions.add(root_pos)
 
     out['struck_root_events'] = struck_root_events
-    dm_ben_eff = max(0, dm_ben - len(_ben_branches(pw, dm_wx) & struck))
-    yin_ben_eff = max(0, yin_ben - len(_ben_branches(pw, yin_wx) & struck))
+    _branches_by_position = [pillars[k][1] for k in ('year', 'month', 'day', 'hour')]
+    dm_ben_eff = max(0, dm_ben - sum(
+        1 for pos in struck_positions if _branches_by_position[pos] in _ben_branches(pw, dm_wx)))
+    yin_ben_eff = max(0, yin_ben - sum(
+        1 for pos in struck_positions if _branches_by_position[pos] in _ben_branches(pw, yin_wx)))
     root_struck = bool(struck)
     # 合局化去身根/印根: 入完整三合/三会、化神为财或官杀(克泄方)的支, 该根从化神
     #   覆盖本气(BEN)/中气(ZHONG)/余气(YU)三级 —— 依据:
@@ -201,8 +222,11 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     _hh_dm, _hh_yin = set(), set()
     _ROOT_TAGS = ('BEN', 'ZHONG', 'YU')   # 本气/中气/余气 三级均会被合局化去
     _cf0 = facts.get('combination_facts', {}) or {}
-    for _items in (_cf0.get('sanhe', []), _cf0.get('sanhui', [])):
+    for _items, _canceled in ((_cf0.get('sanhe', []), _resolved.get('sanhe_canceled', [])),
+                              (_cf0.get('sanhui', []), _resolved.get('sanhui_canceled', []))):
         for _it in _items:
+            if _it in _canceled:
+                continue
             _mm = re.match(r'^([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥]).*?([金木水火土])', str(_it))
             if not _mm: continue
             _g = _mm.groups(); _jwx = _g[3]
@@ -223,16 +247,23 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
                 if _ytag in _ROOT_TAGS and _KEI.get(_jwx) == yin_wx:
                     _hh_yin.add(_br)
     # 化根后重算各级根数(中气/余气同样被扣)
-    _hh_cnt_yin = len(_hh_yin)
     _yin_zhong_eff = max(0, int(yin.get('zhong_n', 0)) - sum(
         1 for _b in _hh_yin if str((yin.get('root_detail', {}) or {}).get(_b, '')) == 'ZHONG'))
     _yin_yu_eff = max(0, int(yin.get('yu_n', 0)) - sum(
         1 for _b in _hh_yin if str((yin.get('root_detail', {}) or {}).get(_b, '')) == 'YU'))
     if _hh_dm or _hh_yin:
-        dm_ben_eff = max(0, dm_ben_eff - sum(
-            1 for _b in _hh_dm if str((dm.get('root_detail', {}) or {}).get(_b, '')) in _ROOT_TAGS))
-        yin_ben_eff = max(0, yin_ben_eff - _hh_cnt_yin)
+        dm_ben_eff = _remaining_main_roots(dm_ben_eff, dm.get('root_detail', {}) or {}, _hh_dm, struck)
+        yin_ben_eff = _remaining_main_roots(yin_ben_eff, yin.get('root_detail', {}) or {}, _hh_yin, struck)
         root_struck = root_struck or bool(_hh_dm or _hh_yin)
+    # 合局当前按支名聚合；同一支在多个柱位时，不能把扣根数量当作已核验作用。
+    _positions = ('year', 'month', 'day', 'hour')
+    _ambiguous = {branch: [pos for pos in _positions if pillars[pos][1] == branch]
+                  for branch in sorted(_hh_dm | _hh_yin)
+                  if sum(pillars[pos][1] == branch for pos in _positions) > 1}
+    out['root_combination_ambiguous_positions'] = _ambiguous
+    out['root_combination_position_status'] = 'NOT_EVALUABLE' if _ambiguous else 'EVALUATED'
+    out['root_effective_counts'] = {'daymaster_main': dm_ben_eff, 'resource_main': yin_ben_eff,
+                                    'resource_middle': _yin_zhong_eff, 'resource_residual': _yin_yu_eff}
     # V7.17: 增加yin_stem==0——印星透干即使根被冲仍有用(原典L1430癸生卯月酉被卯冲, 辛金透干以印为夫, 不应从财)
     # V7.17(b): rootless门槛保守——印透即不走从格(正格优先: 印是正格常见用神, 财格用印/阳刃制刃/财旺生官等)
     #          PZZQ4941"印须通根才不从"是从格成立后内部的破格判定(ge_jie_layer印不从fallthrough), 非rootless门槛
@@ -386,12 +417,14 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             _dm_root_in_hs_ku = any(
                 str((dm.get('root_detail') or {}).get(_br, '')).startswith('BEN') and _br == _hs_ku.get(hs)
                 for _br in (dm.get('root_detail') or {}))
+            # 多合或竞争信息缺失时仅保留候选，不推定争合必然不化。
             if (on_qi and (dm_ben_eff == 0 or _dm_root_in_hs_ku)
                     or (not on_qi and dm_ben_eff == 0 and yin_ben_eff == 0 and yin_stem == 0)) \
-                    and (hb >= 1 or hju >= 1 or hs_t >= 1) and not _hs_suppressed:
+                    and (hb >= 1 or hju >= 1 or hs_t >= 1) and not _hs_suppressed \
+                    and hp.get('has_rival') is False:
                 hua_state = 'CONFIRMED'
             else:
-                hua_state = 'CANDIDATE'                 # 微根/微印/化神被克制=假化
+                hua_state = 'CANDIDATE'                 # 判据未完整核验，不直接定真化或假化
             out['patterns'].append(_pat('ZP-SPECIAL-HUAQI', hua_name, hua_state, hs,
                 '日干与紧邻(月/时)干五合、化神得令或成势；真化须日主无根无印，微根/微印为假化(CANDIDATE)；隔位合、化神不当令不成势为合而不化；化气格成立不要求四支局全(L565原案卯卯午辰无局全照样化木, 局全是L4896"大贵"层次非成立门槛)；成败取用交化气专审, 不判吉凶',
                 ['tian_he', 'wuxing_power']))
@@ -704,11 +737,37 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
         #   1) 纯然(4/4 _a_pure_ok) -> CONFIRMED
         #   2) 占三柱/强势(3/4 _a_pure3_ok 或 _a_dom_ok) -> CANDIDATE (若原为 CANDIDATE 保持; 仅成势时不升)
         #   3) 仅成势 -> CANDIDATE (原逻辑)
-        if _a_pure_ok and cstate == 'CANDIDATE':
+        if virtual_support or ke_struck or yin_fanwu or yin_ke2 or jia_xu_sha:
+            # L3 契约的假从降级条件不能被后续纯然分支覆盖。
+            cstate = 'CANDIDATE'
+        elif _a_pure_ok and cstate == 'CANDIDATE':
             cstate = 'CONFIRMED'
         elif (_a_pure3_ok or _a_dom_ok) and cstate == 'CANDIDATE':
             # 占三柱/强势保持 CANDIDATE (不升 CONFIRMED)
             pass
+        if (cong in ('从财格', '从杀格') and day_stem in ('甲', '丙', '戊', '庚', '壬')
+                and cstate == 'CONFIRMED'):
+            root_facts = facts.get('root_weight_class_facts')
+            from engines.common.daymaster_root_class import classify_root
+            from engines.common.l0_fact_builder import HIDDEN
+            rooted = []
+            for pos in ('year', 'month', 'day', 'hour'):
+                pillar = pillars.get(pos)
+                declared = root_facts.get(pos) if isinstance(root_facts, dict) else None
+                declared_class = declared.get('class') if isinstance(declared, dict) else None
+                raw_class = (classify_root(day_stem, pillar[1], HIDDEN[pillar[1]])['root_class']
+                             if isinstance(pillar, (list, tuple)) and len(pillar) == 2
+                             and pillar[1] in HIDDEN else None)
+                if any(isinstance(value, str) and value.startswith(('LIGHT', 'HEAVY'))
+                       for value in (declared_class, raw_class)):
+                    rooted.append(pos)
+            if rooted:
+                # 本气计数不覆盖中余气根；根是否被作用改变仍须单独核验。
+                cstate = 'CANDIDATE'
+                out['cong_root_conflict_positions'] = rooted
+        if out['root_combination_position_status'] == 'NOT_EVALUABLE' and cstate == 'CONFIRMED':
+            cstate = 'CANDIDATE'
+            out['cong_root_combination_reason'] = '重复地支的合局根作用尚未核验'
         note = '日主无本气根、无有根印比，对立方成势顺其势；四柱纯然(四柱无杂)则置信度升CONFIRMED；占三柱/强势(≥3柱同神且最强)则CANDIDATE；虚透印比地支不载/孤根被冲拔为假从(CANDIDATE)；从儿须日主无根(依 SFTK L3671「日主无根遇地支纯金」)，但不论官杀成势(DTS L438「从儿不管身强弱」)；虚湿寒土(辰丑寒冻、火印全无)虽带湿土本气根而寒冻不能用、反顺旺水之财为气候假从(CANDIDATE, 见火暖翻转)；只记结构定性，不判用神成败吉凶'
         out['patterns'].append(_pat('ZP-SPECIAL-CONG', cong, cstate, side, note,
             ['daymaster_root', 'wuxing_power', 'combination_facts']))
@@ -963,7 +1022,7 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
     out['yin_ben_eff'] = yin_ben_eff
     out['yin_stem'] = yin_stem
     # 被拔/被合化的身根支集合(含本气根冲拔 struck + 合局化根 _hh_dm), 供 de_di 独立投影
-    out['root_removed_branches'] = sorted(struck | _hh_dm)
+    out['root_removed_branches'] = sorted((struck & _ben_branches(pw, dm_wx)) | _hh_dm)
 
     return out
 
