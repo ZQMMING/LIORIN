@@ -13,7 +13,7 @@
 | 黄历 huangli | 收口（D-01 甲申↔火水未济锚点；1900-2100 双库日柱/节气 0 差异） | 已接（SignalEngine 消费 get_day； ziwei 流日日柱同锚复用） | `-k huangli` 67 passed | **宜忌（活动吉凶）层待语料样本**——登记，外部输入 |
 | 六爻 yijing | 装卦层收口（京房纳甲 64/64） | 装卦可产 | 64 卦对全过 | **断课层待《增删卜易》原典入库**——登记，外部输入 |
 | 梅花 meihua | 维持 | — | — | 用户叫停（m04187），不接线 |
-| 子平 ziping | **V7.205**（八格成败+五域+用神判据层 V7.201-205） | **✓ BZ-FNDR-15 契约**（compute_stage L243 run_ziping_judgment→composer→atomic_claims） | 全量 `-k ziping` **1907 passed/16 failed**（=9 GPT 基线+7 登记契约冲突，0 新增） | 见 §2 |
+| 子平 ziping | **V7.206**（八格成败+五域+用神判据层 V7.201-205+合对柱位归属修复 f2fc0b03） | **✓ BZ-FNDR-15 契约**（compute_stage L243 run_ziping_judgment→composer→atomic_claims） | 全量 `-k ziping` **1912 passed/15 failed**（=8 GPT 基线+7 登记契约冲突，0 新增；用户病药合对柱位修复 2026-11-11 收平 GPT medicine_he_positions 1 项） | 见 §2 |
 
 ## 2. 子平当前精度（真值对照，非自洽）
 
