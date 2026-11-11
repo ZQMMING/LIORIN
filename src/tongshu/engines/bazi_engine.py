@@ -1441,8 +1441,7 @@ class BaziEngine:
         Args:
             solar_date: (year, month, day, hour) in solar calendar.
             gender: 'male' or 'female'. Affects luck-pillar direction (per P1-D).
-            skip_late_zi: True时跳过内部夜子时时柱重算. 用于BaziAdapter (子正换日后
-                effective_date=当天, 日柱已正确), 避免重复处理. 默认False保持向后兼容.
+            skip_late_zi: 保留的兼容参数；各调用路径均遵循 00:00 换日。
             birth_datetime: 完整出生时间（含分秒），用于下游引擎。默认为 solar_date 构造。
 
         Returns:
@@ -1491,29 +1490,6 @@ class BaziEngine:
                                                   birth_tz=birth_tz)
         else:
             four_pillars = self._compute_simple(year, month, day, hour)
-
-        # P4: 夜子时处理 — 23:00-23:59:59:
-        #   2026-10-20 口径修正 (用户裁决): 晚子时 = 次日完整子时 → 日柱随子时换次日
-        #   (辛酉+戊子), 替代原"日柱当天、时柱次日遁"半换口径 (庚申+戊子 同日混搭).
-        #   skip_late_zi=True 时上游 TimeResolver 已保证 day=次日, 本分支跳过.
-        if hour == 23 and not skip_late_zi:
-            from datetime import date, timedelta
-            next_day = date(year, month, day) + timedelta(days=1)
-            if self._has_sxtwl:
-                import sxtwl
-                day_obj = sxtwl.fromSolar(next_day.year, next_day.month, next_day.day)
-                new_day_stem = HEAVENLY_STEMS[day_obj.getDayGZ().tg]
-                new_day_branch = EARTHLY_BRANCHES[day_obj.getDayGZ().dz]
-            else:
-                ref = date(1900, 1, 1)
-                days_diff = (next_day - ref).days
-                new_day_stem = HEAVENLY_STEMS[days_diff % 10]
-                new_day_branch = EARTHLY_BRANCHES[days_diff % 12]
-            new_day_stem_idx = HEAVENLY_STEMS.index(new_day_stem)
-            new_hour_stem_idx = hour_stem_from_day_stem(new_day_stem_idx, 0)  # 0=子时
-            # 日柱随子时换次日整柱; 时柱按次日日干起子
-            four_pillars["day"] = Pillar(new_day_stem, new_day_branch)
-            four_pillars["hour"] = Pillar(HEAVENLY_STEMS[new_hour_stem_idx], "ZI")
 
         # 计算四柱十神（P0-1-C: BAZI owns deterministic Ten-God relation）
         day_master = four_pillars["day"].heavenly_stem

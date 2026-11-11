@@ -15,7 +15,7 @@
 独立入口 compute() 与正式链路一致，内部经 TimeResolver 按出生地真太阳时排盘
 （消除"民用时直排"路径），默认 location="北京" 保证不传时向后兼容；
 正式链路入口 compute_from_context() 复用 BaziAdapter
-（skip_late_zi=True，上游 TimeResolver 已完成 23:00 换日，避免双重换日）。
+（八字日柱在 00:00 换日，晚子时时柱按次日日干起）。
 """
 
 from __future__ import annotations

@@ -10,7 +10,7 @@
     - 仅时间事实；五经规则 / Mapping / SIR / AI 一律不得进入本结构。
     - 零 AI: 确定性。
     - 视图投影（只读）:
-        bazi_view  → (effective_date.y, m, d, effective_hour)  # 八字 23:00 换日
+        bazi_view  → (effective_date.y, m, d, effective_hour)  # 八字 00:00 换日
         ziwei_view → (solar.date.y, m, d, solar.hour)         # iztro 早/晚子时
 
 依据：
@@ -144,7 +144,7 @@ class CalculationContext:
     AI 一律不得进入本结构（V4.0.1 §6 L1 + §7.1 精神）。零 AI、确定性。
 
     视图投影（只读，零状态，不新增事实）:
-      bazi_view  -> (effective_date.y, m, d, effective_hour)  # 八字 23:00 换日
+      bazi_view  -> (effective_date.y, m, d, effective_hour)  # 八字 00:00 换日
       ziwei_view -> (solar.date.y, m, d, solar.hour)          # iztro 早/晚子时(未换日)
 
     subject 命名空间（Phase 1 引入，Profile Contract §1.4）：
@@ -201,7 +201,7 @@ class CalculationContext:
         warnings = list(resolved.warnings)
         if resolved.effective_hour == DAY_BOUNDARY:
             warnings.append(
-                "晚子时(solar 23:00-23:59):八字按次日日柱(23:00 换日),"
+                "晚子时(solar 23:00-23:59):八字日柱仍按当日，时柱按次日日干起，"
                 "紫微按当日 iztro 晚子时约定"
             )
         # subject 优先：显式参数 > resolved.subject（向后兼容）
