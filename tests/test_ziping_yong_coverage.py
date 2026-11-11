@@ -120,6 +120,42 @@ def test_peiyin_cai_special_toward_still_uses_yin():
     assert _got(["乙酉", "甲申", "丁巳", "庚戌"]) == "金"   # 004 印被合去->财
 
 
+def test_yin_cong_tonggen_month_still_cong_wu_tingfang():
+    """V7.207 阴干从势通道(徐注 L182「己土虽通根月令, 而见木之势盛, 即从木」):
+    018 伍廷芳造 壬寅丁未己卯乙亥——阴干+势盛(亥卯未三合木局)+印透被财合去
+    (丁月印↔壬年财 span=1 adjacent) → 从杀格 CONFIRMED + ge=从格(从杀格)/CHENG;
+    禄劫 NE 占位让位从格兜底(V7.207 消费门, 特格优先于禄劫名)。"""
+    from engines.production_entry import FrozenCanonicalBaziChart, production_entry
+
+    pl = {"year": ["壬", "寅"], "month": ["丁", "未"],
+          "day": ["己", "卯"], "hour": ["乙", "亥"]}
+    result = production_entry(FrozenCanonicalBaziChart(pillars=pl))
+    sp = result.get("engine_result", {}).get("special") or {}
+    gc = result.get("engine_result", {}).get("ge_cheng") or {}
+    assert sp.get("cong_type") == "从杀格" and sp.get("cong_state") == "CONFIRMED"
+    assert gc.get("ge") == "从格(从杀格)" and gc.get("cheng_bai") == "CHENG"
+
+
+def test_yin_cong_yin_tou_not_he_keeps_zhengge():
+    """V7.207b 印通道 span 终裁护栏(PZZQ L476-496; V7.203 _wuhe_span_state 复用):
+    印透未被财合去(阎锡山 癸年印无戊配/遥隔 remote_no 朱有卿式) → 不从, 正格保持;
+    PZZQ L183 阎锡山「印通根不怕身弱, 煞透有制贵格」/L184 许世英「十九误作从煞」。"""
+    from engines.production_entry import FrozenCanonicalBaziChart, production_entry
+
+    def _ge(pillars):
+        pl = {pos: [p[0], p[1]] for pos, p in zip(
+            ("year", "month", "day", "hour"), pillars)}
+        result = production_entry(FrozenCanonicalBaziChart(pillars=pl))
+        sp = result.get("engine_result", {}).get("special") or {}
+        gc = result.get("engine_result", {}).get("ge_cheng") or {}
+        return sp.get("cong_type"), gc.get("ge")
+
+    ct, ge = _ge(["癸未", "辛酉", "乙酉", "丁亥"])   # 阎锡山: 印透未合->不从
+    assert ct is None and ge == "七煞格"
+    ct, ge = _ge(["癸酉", "辛酉", "乙丑", "辛巳"])   # 许世英: 印透未合->不从
+    assert ct is None and ge == "七煞格"
+
+
 def test_yong_coverage_at_least_10_of_12():
     """原典 21 案（含 6 案已知口径冲突/配合分歧）整体覆盖率护栏。"""
     spec = importlib.util.spec_from_file_location(

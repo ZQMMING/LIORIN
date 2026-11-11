@@ -773,6 +773,67 @@ def build_special_patterns(pillars, facts, wp, tian_he=None, climate=None):
             ['daymaster_root', 'wuxing_power', 'combination_facts']))
         out['cong_type'], out['cong_state'] = cong, cstate
 
+    # ---------- V7.207 阴干从势通道(PZZQ 阴阳干性质段 L179-182 徐注亲证; 审计 §二十六.10 v3 判据)----------
+    #   伍廷芳造(PZZQ L181-182)「壬寅 丁未 己卯 乙亥, 己土虽通根月令, 而见木之势盛, 即从木」——
+    #   阴干从势: 通根月令/稍有根苗亦所不论(L180), 唯印绶有根闸(L180/L184 许世英「十九误作从煞」);
+    #   阳干从气维持现行无根闸不动(L179 五阳从气不从势, 上方 _cong_ban)。
+    #   现行通用无根闸(dm_ben_eff==0)对阴干势盛盘过严(018 曾卡并列候选 CANDIDATE)。
+    #   独立分支(不触既有路径): 仅当主从格未产出且 v3 全门通过才 CONFIRMED。
+    #   v3 假阳性证伪域: 40 审计盘+21 PZZQ 语料+张耀曾/谭延闿/阎锡山/许世英/伍廷芳 5 原典案(§二十六.10)。
+    if (not out.get('cong_type')) and day_stem in ('乙', '丁', '己', '辛', '癸'):
+        _v7_gw = {'甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土',
+                  '庚': '金', '辛': '金', '壬': '水', '癸': '水'}
+        _v7_cai = {'木': '土', '火': '金', '土': '水', '金': '木', '水': '火'}[dm_wx]
+        _v7_guan = {'木': '金', '火': '水', '土': '木', '金': '火', '水': '土'}[dm_wx]
+        _v7_yin = {'木': '水', '火': '木', '土': '火', '金': '土', '水': '金'}[dm_wx]
+        _v7_shi = {'木': '火', '火': '土', '土': '金', '金': '水', '水': '木'}[dm_wx]
+        _v7_wuhe = {'甲': '己', '己': '甲', '乙': '庚', '庚': '乙', '丙': '辛', '辛': '丙',
+                    '丁': '壬', '壬': '丁', '戊': '癸', '癸': '戊'}
+        _v7_hs = facts.get('hidden_stems', {}) or {}
+        _v7_ben_wx = _v7_gw.get((_v7_hs.get('month') or [''])[0])
+        # ③ 食伤当令不从(泄秀格, v1 证伪锚 戊戌丁巳乙酉)
+        _v7_shi_ling = _v7_ben_wx == _v7_shi
+        # ② 势盛=月令本气∈财官 或 财官成三合/三会局(透干单独不算盛, v1 证伪)
+        _v7_ling_sheng = _v7_ben_wx in (_v7_cai, _v7_guan)
+        _v7_ju_wx = None
+        _v7_cf = facts.get('combination_facts', {}) or {}
+        for _v7_items in (_v7_cf.get('sanhe', []), _v7_cf.get('sanhui', [])):
+            for _v7_it in _v7_items:
+                _v7_m = re.match(r'^([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥])([子丑寅卯辰巳午未申酉戌亥]).*?([金木水火土])', str(_v7_it))
+                if _v7_m and _v7_m.group(4) in (_v7_cai, _v7_guan):
+                    _v7_ju_wx = _v7_m.group(4)
+                elif _v7_m and _v7_m.group(4) == _v7_shi:
+                    _v7_shi_ling = True   # 食伤成局亦不从(从儿领地, 且须日主无根)
+        # ④ 比劫透干党不从(按柱位排除日柱; 从杀型例外=辛未乙未乙未乙酉 主路径已 CONFIRMED 不进本分支)
+        _v7_bijie_tou = any(_v7_gw.get(pillars[_p][0]) == dm_wx for _p in ('year', 'month', 'hour'))
+        # ⑥ 印通道(v3 三分支): 透未合->不从; 透被合去->从门开藏根不论; 无透有藏->不从; 无透无藏->从门开
+        _v7_all_stems = [pillars[_p][0] for _p in ('year', 'month', 'day', 'hour')]
+        _v7_yin_tou = [s for s in _v7_all_stems if _v7_gw.get(s) == _v7_yin]
+        # V7.207b 印透「合去」须过五合终裁三态(PZZQ L476-496 遥隔/间隔判据, 复用 V7.203
+        #   _wuhe_span_state): 仅 adjacent/remote_he 才算合去——
+        #   017 朱有卿 癸(年印)↔戊(时财) span=3 遥隔无禄刃通月令 → remote_no 未合 → 印可用不从
+        #   (回归教训: 裸 partner-in-stems 误判 017 从财格, replay 19/20 翻车即此);
+        #   018 伍廷芳 丁(月印)↔壬(年财) span=1 紧贴 → adjacent 合去 → 从门开。
+        #   blocked(间干克) 与 remote_no 同判=印未被合去, 从门不开(宁缺勿猜)。
+        from engines.common.yongyao_resolve import _wuhe_span_state as _v7_span
+        _v7_yin_he = bool(_v7_yin_tou) and any(
+            _v7_span(facts, s, _v7_wuhe.get(s))[0] in ('adjacent', 'remote_he')
+            for s in _v7_yin_tou if _v7_wuhe.get(s))
+        _v7_yin_hidden = any(_v7_gw.get(h) == _v7_yin
+                             for _p in ('year', 'month', 'day', 'hour')
+                             for h in (_v7_hs.get(_p) or []))
+        _v7_yin_open = (bool(_v7_yin_tou) and _v7_yin_he) or (not _v7_yin_tou and not _v7_yin_hidden)
+        if ((_v7_ling_sheng or _v7_ju_wx) and not _v7_shi_ling
+                and not _v7_bijie_tou and _v7_yin_open):
+            _v7_side = _v7_ju_wx or _v7_ben_wx
+            _v7_cong = '从杀格' if _v7_side == _v7_guan else '从财格'
+            out['patterns'].append(_pat('ZP-SPECIAL-CONG', _v7_cong, 'CONFIRMED', _v7_side,
+                '阴干从势(徐注 L179-182): 日主虽通根月令, 财官势盛即从(伍廷芳造「己土虽通根月令, 而见木之势盛, 即从木」L182); '
+                '印绶有根闸已过(L180「然或印绶有根, 则又不嫌身弱」/L184 许世英误作从煞警示); 食伤不当令不成局、比劫不透干党; '
+                '只记结构定性, 不判吉凶(§二十六.10 v3: 61 语料盘+5 原典亲证案 0 假阳性)',
+                ['daymaster_root', 'wuxing_power', 'combination_facts']))
+            out['cong_type'], out['cong_state'] = _v7_cong, 'CONFIRMED'
+
     # ---------- 专旺/一行得气（P0-b重构：月令当旺降级为置信度加权项） ----------
     # P0-b: 月令当旺从硬门槛降级为置信度加权项（《碧渊赋》未要求月令当旺，只要求局全透干不见官杀）
     _month_branch = pillars['month'][1]

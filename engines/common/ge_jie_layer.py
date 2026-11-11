@@ -1471,12 +1471,21 @@ def build_ge_cheng(facts: Dict[str, Any]) -> Dict[str, Any]:
         # 禄劫入口成立但配合条件未确立时，保留格名供复核，不以此断成败。
         # PZZQ CHENG_BAI.008 对禄劫败格仍保留格名；具体败因仍须逐项核验。
         if not ti_wx and not _jl_xi:
-            facts['ge_cheng'] = {
-                'ge': '建禄月劫格', 'xi_wx': [], 'ti_wx': [], 'zhi_wx': [], 'hua_wx': [],
-                'po_ge': [], 'ge_rule_verification': 'NOT_EVALUABLE',
-                'rule': 'PZZQ CHENG_BAI.008: 禄劫格名保留；成败及配合条件待核验',
-            }
-            return _attach_ge_evidence(facts)
+            # V7.207: special 层已有 CONFIRMED 从格(V7.207 阴干从势通道)时, 禄劫 NE 占位让位从格兜底
+            #   (伍廷芳造 018: 己通根未→禄劫格名保留占位 NE, vs 徐注 L182「即从木」——特格优先于禄劫名;
+            #   比肩月令无正格入口, 直落函数末从格兜底构建从格 ge_cheng)
+            _sp0 = facts.get('special') or {}
+            _has_cong_confirmed = any(
+                p.get('pattern_id') == 'ZP-SPECIAL-CONG' and p.get('state') == 'CONFIRMED'
+                for p in (_sp0.get('patterns') or []))
+            if not _has_cong_confirmed:
+                facts['ge_cheng'] = {
+                    'ge': '建禄月劫格', 'xi_wx': [], 'ti_wx': [], 'zhi_wx': [], 'hua_wx': [],
+                    'po_ge': [], 'ge_rule_verification': 'NOT_EVALUABLE',
+                    'rule': 'PZZQ CHENG_BAI.008: 禄劫格名保留；成败及配合条件待核验',
+                }
+                return _attach_ge_evidence(facts)
+            # 从格 CONFIRMED 在位: 不出禄劫占位, 继续后续分支(无正格入口)→函数末从格兜底
         # V7.48 撤 V7.47 的"人元透干成格"主路径: 实测把曲直格/从旺格/财格误判成建禄月劫格
         #   (100盘 ge_diff 4->13). DTS L210「人元透干取格」须有气象形局配合, 无官财食伤配合时
         #   仍"无格"(原路径 ti_wx/_jl_xi 空则不出格). 人元透干只在有配合神(官/财/食伤/煞)时生效,
