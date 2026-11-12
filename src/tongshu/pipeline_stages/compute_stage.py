@@ -340,11 +340,27 @@ class ComputeStage:
             birth_hour_cn = _BRANCH_CN.get(
                 bazi_chart.hour_pillar.earthly_branch, "子"
             )
+            # 出生日期/年份/三元从 BaziChart.birth_datetime 提取（与 HeluoAdapter
+            # compute_from_chart 同源），避免 HeluoCanonical 内部用 1984-01-01 占位
+            # 影响依赖出生日期的化工/节候/流年结果。
+            _bd = getattr(bazi_chart, "birth_datetime", None)
+            heluo_birth_date: str | None = None
+            heluo_birth_year: int | None = None
+            if _bd is not None:
+                heluo_birth_year = int(_bd.year)
+                heluo_birth_date = _bd.date().isoformat()
+            # 未带出生时间时不猜测出生年；era 回退 "zhong"（与 HeluoAdapter 一致），
+            # birth_date 保持 None，由 canonical 内部按无出生日期路径处理。
+            # era 自动推导（三元锚点），与 HeluoAdapter.sanyuan 口径一致；不可再硬编码 "zhong"。
+            from ..engines.heluo_adapter import sanyuan as _sanyuan
+            heluo_era = _sanyuan(heluo_birth_year) if heluo_birth_year is not None else "zhong"
             heluo_result = self.heluo_canonical.calculate(
                 bazi=bazi_cn,
                 gender=gender,
                 birth_hour=birth_hour_cn,
-                era="zhong",
+                era=heluo_era,
+                birth_year=heluo_birth_year,
+                birth_date=heluo_birth_date,
             )
             # 将河洛结果传入 YiAdapter（只消费 Contract 化字段，不重新计算河洛）
             yi_input = YiAdapterInput(

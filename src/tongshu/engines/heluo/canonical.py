@@ -64,6 +64,30 @@ def _birth_month_yang_from_bazi(bazi) -> bool | None:
     return None
 
 
+def _birth_year_from_pillar(year_gan: str, year_branch: str) -> int | None:
+    """从年柱干支反推出生公历年的代表值（60 甲子周期内唯一）。
+
+    河洛流年卦推演只依赖出生年的干支阴阳（`timeline_yun._year_gan` /
+    `_is_yang_year`），不依赖绝对公元年。因此给定年干/年支即可反推出一个
+    `≡ 真实出生年 (mod 60)` 的代表值，流年干支推演即完全正确。
+
+    取 1924–1983 区间（最近的中元甲子周期，与 `sanyuan` 锚点 1864/1924/1984
+    兼容）内的唯一解。无效干支返回 None（fail-closed）。
+    """
+    stems = "甲乙丙丁戊己庚辛壬癸"
+    branches = "子丑寅卯辰巳午未申酉戌亥"
+    if year_gan not in stems or year_branch not in branches:
+        return None
+    g = stems.index(year_gan)
+    b = branches.index(year_branch)
+    # 甲子对应 1924（1924 为中元甲子起），故 year ≡ 1924 + k 使 (year-4)%10==g 且 (year-4)%12==b
+    # 在 [1924, 1983] 内扫描唯一解。
+    for year in range(1924, 1984):
+        if (year - 4) % 10 == g and (year - 4) % 12 == b:
+            return year
+    return None
+
+
 def _solar_phase_for_date(birth_date: str) -> str | None:
     """出生公历日期 → 纯卦元堂半年相（原典 p051-052）。
 
@@ -291,20 +315,28 @@ class HeluoCanonical:
         )
 
         # Step 6: 时间序列（大运爻位值运 + 流年卦 + 流月卦）
+        # birth_year 缺失时从年柱干支反推（60 甲子），避免用 1984 占位导致
+        # 流年干支阴阳系统性错位（fail-closed：反推失败仍为 None）。
+        _tl_birth_year = birth_year
+        if _tl_birth_year is None and bazi and len(bazi) >= 1 and len(bazi[0]) == 2:
+            _tl_birth_year = _birth_year_from_pillar(bazi[0][0], bazi[0][1])
         timeline = self._build_timeline(
-            prenatal, yuantang, postnatal, postnatal_yuantang, birth_year
+            prenatal, yuantang, postnatal, postnatal_yuantang, _tl_birth_year
         )
 
         # Step 7: 卦象结构分析
         structure = analyze_hexagram(postnatal.hexagram_name)
 
-        # 构建 HeluoInput（DISPUTE-HL-03：落真实出生日期，不再用误导占位）
+        # 构建 HeluoInput（DISPUTE-HL-03：落真实出生日期，不再用误导占位）。
+        # fail-closed：无真实出生日期时不伪造 1984-01-01（占位月/日会冒充真实
+        # 出生日期，误导下游节候卦/化工月支）。birth_date 置空串标记缺失，
+        # true_solar_datetime 同步标记缺失；依赖出生日期的下游据此 fail-closed。
         from datetime import date
+        _has_real_birth_date = birth_date is not None
         if birth_date is None:
-            yr = birth_year if birth_year is not None else 1984
-            birth_date = f"{yr}-01-01"
+            birth_date = ""  # 不再伪造 {year}-01-01
         if true_solar_datetime is None:
-            true_solar_datetime = birth_date + "T00:00:00"
+            true_solar_datetime = (birth_date + "T00:00:00") if _has_real_birth_date else ""
         input_obj = HeluoInput(
             birth_date=birth_date,
             birth_time=birth_hour,
@@ -325,7 +357,7 @@ class HeluoCanonical:
             _nayin_el = None
         _bazi_month_branch = bazi[1][1] if (bazi and len(bazi) > 1) else None
         hua_gong = self._compute_huagong(
-            prenatal, postnatal, birth_date, gender, birth_year, _nayin_el,
+            prenatal, postnatal, _real_birth_date, gender, birth_year, _nayin_el,
             month_branch=_bazi_month_branch,
             prefer_date_branch=bool(_real_birth_date),
         )
@@ -345,8 +377,9 @@ class HeluoCanonical:
         except Exception:
             yuan_qi = None
 
-        # Step 9: H11 节候卦（出生日所在节气）
-        seasonal_hex = self._compute_seasonal_hexagram(birth_date)
+        # Step 9: H11 节候卦（出生日所在节气）— fail-closed：无真实出生日期时不计算，
+        # 不伪造占位日期去查节气（否则会产出错误节候卦冒充真实出生日）。
+        seasonal_hex = self._compute_seasonal_hexagram(_real_birth_date) if _has_real_birth_date else None
 
         return HeluoResult(
             input=input_obj,
@@ -374,7 +407,22 @@ class HeluoCanonical:
         基于 timeline_yun 模块（《河洛理数·卷之四/五》论大运/流年/流月）。
         """
         if birth_year is None:
-            birth_year = 1984  # 未提供时占位（甲子年），后续需由调用方传入真实年份
+            # fail-closed：无出生年份时流年卦无法推演干支阴阳，返回空流年表，
+            # 不伪造 1984 甲子年占位（会系统性错位流年干支）。
+            return Timeline(
+                yearly_hexagrams=[],
+                monthly_hexagrams=[],
+                daily_hexagram={
+                    "date": "",
+                    "hexagram": prenatal.hexagram_name,
+                    "upper": prenatal.upper_gua,
+                    "lower": prenatal.lower_gua,
+                },
+                hourly_hexagram=None,
+                seasonal_hexagram=None,
+                qi_phase=None,
+                hua_gong=None,
+            )
 
         # 先天/后天六爻
         prenatal_lines = build_six_lines(prenatal.upper_gua, prenatal.lower_gua)
@@ -519,8 +567,13 @@ class HeluoCanonical:
         except Exception:
             return None
 
-    def _compute_seasonal_hexagram(self, birth_date: str) -> dict | None:
-        """H11: 获取出生日所在节气的节候卦。"""
+    def _compute_seasonal_hexagram(self, birth_date: str | None) -> dict | None:
+        """H11: 获取出生日所在节气的节候卦。
+
+        fail-closed：birth_date 为 None 时直接返回 None，绝不伪造占位日期去查节气。
+        """
+        if not birth_date:
+            return None
         try:
             from datetime import datetime as dt
             bd = dt.fromisoformat(birth_date)
