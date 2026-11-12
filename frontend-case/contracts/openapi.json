@@ -1,0 +1,1252 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OTC-G API",
+    "version": "0.2.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Health Health Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/daily-guide": {
+      "post": {
+        "summary": "Daily Guide",
+        "operationId": "daily_guide_v1_daily_guide_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Daily Guide V1 Daily Guide Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/calculate": {
+      "post": {
+        "summary": "Calculate",
+        "operationId": "calculate_v1_calculate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Calculate V1 Calculate Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/today": {
+      "get": {
+        "summary": "Today",
+        "operationId": "today_v1_today_get",
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "Beijing",
+              "title": "Region"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Today V1 Today Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/profile": {
+      "post": {
+        "summary": "Profile",
+        "operationId": "profile_v1_profile_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Profile V1 Profile Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reading": {
+      "post": {
+        "summary": "Reading Legacy",
+        "operationId": "reading_legacy_api_reading_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadingRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "type": "object",
+                  "title": "Response Reading Legacy Api Reading Post"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/api/today": {
+      "get": {
+        "summary": "Today Legacy",
+        "operationId": "today_legacy_api_today_get",
+        "deprecated": true,
+        "parameters": [
+          {
+            "name": "date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Date"
+            }
+          },
+          {
+            "name": "region",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "Beijing",
+              "title": "Region"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": true,
+                  "title": "Response Today Legacy Api Today Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nfc/daily": {
+      "get": {
+        "tags": [
+          "NFC Experience"
+        ],
+        "summary": "Get Daily Tongshu",
+        "description": "NFC 每日通书 — V1 不可用。",
+        "operationId": "get_daily_tongshu_nfc_daily_get",
+        "parameters": [
+          {
+            "name": "pendant_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "NFC吊坠唯一标识",
+              "title": "Pendant Id"
+            },
+            "description": "NFC吊坠唯一标识"
+          },
+          {
+            "name": "date_str",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "查询日期 YYYY-MM-DD，默认今天",
+              "title": "Date Str"
+            },
+            "description": "查询日期 YYYY-MM-DD，默认今天"
+          },
+          {
+            "name": "gender",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "性别 male/female",
+              "title": "Gender"
+            },
+            "description": "性别 male/female"
+          },
+          {
+            "name": "birth_date",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "出生日期 YYYY-MM-DD",
+              "title": "Birth Date"
+            },
+            "description": "出生日期 YYYY-MM-DD"
+          },
+          {
+            "name": "birth_time",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "出生时间 HH:MM",
+              "title": "Birth Time"
+            },
+            "description": "出生时间 HH:MM"
+          },
+          {
+            "name": "timezone",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "IANA时区",
+              "title": "Timezone"
+            },
+            "description": "IANA时区"
+          },
+          {
+            "name": "latitude",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "纬度",
+              "title": "Latitude"
+            },
+            "description": "纬度"
+          },
+          {
+            "name": "longitude",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "经度",
+              "title": "Longitude"
+            },
+            "description": "经度"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nfc/relationship": {
+      "get": {
+        "tags": [
+          "NFC Experience"
+        ],
+        "summary": "Get Relationship Timeline",
+        "description": "双人通书 — V1 不可用。",
+        "operationId": "get_relationship_timeline_nfc_relationship_get",
+        "parameters": [
+          {
+            "name": "pendant_id_a",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "吊坠A ID",
+              "title": "Pendant Id A"
+            },
+            "description": "吊坠A ID"
+          },
+          {
+            "name": "pendant_id_b",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "吊坠B ID",
+              "title": "Pendant Id B"
+            },
+            "description": "吊坠B ID"
+          },
+          {
+            "name": "date_str",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "查询日期",
+              "title": "Date Str"
+            },
+            "description": "查询日期"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/nfc/state": {
+      "get": {
+        "tags": [
+          "NFC Experience"
+        ],
+        "summary": "Get Daily State",
+        "description": "个人每日状态摘要 — V1 不可用。",
+        "operationId": "get_daily_state_nfc_state_get",
+        "parameters": [
+          {
+            "name": "pendant_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "description": "吊坠ID",
+              "title": "Pendant Id"
+            },
+            "description": "吊坠ID"
+          },
+          {
+            "name": "date_str",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "查询日期",
+              "title": "Date Str"
+            },
+            "description": "查询日期"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register",
+        "operationId": "register_v1_auth_register_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/login": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Login",
+        "operationId": "login_v1_auth_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/refresh": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Refresh",
+        "operationId": "refresh_v1_auth_refresh_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/auth/logout": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Logout",
+        "operationId": "logout_v1_auth_logout_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LogoutRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    },
+    "/v1/auth/me": {
+      "get": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Me",
+        "operationId": "me_v1_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BirthTime": {
+        "properties": {
+          "hour": {
+            "type": "integer",
+            "maximum": 23.0,
+            "minimum": 0.0,
+            "title": "Hour",
+            "description": "solar hour 0-23"
+          },
+          "minute": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 59.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Minute",
+            "description": "birth minute 0-59; None = 时辰中点"
+          }
+        },
+        "type": "object",
+        "required": [
+          "hour"
+        ],
+        "title": "BirthTime",
+        "description": "Birth clock time: hour + optional minute (None = 时辰中点)."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "LoginRequest": {
+        "properties": {
+          "device_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Device Id"
+          },
+          "pairing_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pairing Code"
+          }
+        },
+        "type": "object",
+        "title": "LoginRequest"
+      },
+      "LoginResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "token_version": {
+            "type": "integer",
+            "title": "Token Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "access_token",
+          "refresh_token",
+          "expires_in",
+          "token_version"
+        ],
+        "title": "LoginResponse"
+      },
+      "LogoutRequest": {
+        "properties": {
+          "refresh_token": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refresh Token"
+          },
+          "all_devices": {
+            "type": "boolean",
+            "title": "All Devices",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "LogoutRequest"
+      },
+      "MeResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "is_new_user": {
+            "type": "boolean",
+            "title": "Is New User"
+          },
+          "has_birth_info": {
+            "type": "boolean",
+            "title": "Has Birth Info"
+          },
+          "has_heluo_model": {
+            "type": "boolean",
+            "title": "Has Heluo Model"
+          },
+          "devices": {
+            "items": {},
+            "type": "array",
+            "title": "Devices"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "is_new_user",
+          "has_birth_info",
+          "has_heluo_model",
+          "devices"
+        ],
+        "title": "MeResponse"
+      },
+      "ProfileRequest": {
+        "properties": {
+          "birth_date": {
+            "type": "string",
+            "title": "Birth Date",
+            "description": "YYYY-MM-DD"
+          },
+          "birth_time": {
+            "$ref": "#/components/schemas/BirthTime"
+          },
+          "gender": {
+            "type": "string",
+            "pattern": "^(male|female)$",
+            "title": "Gender",
+            "description": "Required per Profile Contract §1.2 (forbidden_default=true)."
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone",
+            "description": "IANA timezone; resolvable from location"
+          },
+          "calendar_system": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calendar System",
+            "description": "solar | lunar (lunar unsupported in V1)",
+            "default": "solar"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location",
+            "description": "location id / name from backend/data/locations.json — 出生地(Natal Calculation Context, 用于真太阳时→派生时区→排盘)"
+          },
+          "current_location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Location",
+            "description": "[环境层·仅记录] 当前生活城市 id/name from locations.json; V1 必填收集但不参与排盘"
+          },
+          "analysis_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analysis Date",
+            "description": "YYYY-MM-DD; default today"
+          }
+        },
+        "type": "object",
+        "required": [
+          "birth_date",
+          "birth_time",
+          "gender"
+        ],
+        "title": "ProfileRequest",
+        "description": "POST /v1/profile — §32 profile validation + time-policy receipt (stateless)."
+      },
+      "ReadingRequest": {
+        "properties": {
+          "birth_date": {
+            "type": "string",
+            "title": "Birth Date",
+            "description": "YYYY-MM-DD"
+          },
+          "hour": {
+            "type": "integer",
+            "maximum": 23.0,
+            "minimum": 0.0,
+            "title": "Hour",
+            "description": "solar hour 0-23"
+          },
+          "gender": {
+            "type": "string",
+            "pattern": "^(male|female)$",
+            "title": "Gender",
+            "description": "Required per Profile Contract §1.2 (forbidden_default=true)."
+          },
+          "theme": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Theme",
+            "default": "WORK"
+          },
+          "analysis_date": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Analysis Date",
+            "description": "YYYY-MM-DD; default today"
+          },
+          "birth_minute": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 59.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Birth Minute",
+            "description": "birth minute 0-59; None = 时辰中点"
+          },
+          "timezone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Timezone",
+            "description": "IANA timezone, e.g. Asia/Shanghai; resolvable from location"
+          },
+          "calendar_system": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calendar System",
+            "description": "solar | lunar (lunar unsupported in V1)",
+            "default": "solar"
+          },
+          "location": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Location",
+            "description": "location id / name from backend/data/locations.json"
+          }
+        },
+        "type": "object",
+        "required": [
+          "birth_date",
+          "hour",
+          "gender"
+        ],
+        "title": "ReadingRequest"
+      },
+      "RefreshRequest": {
+        "properties": {
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          }
+        },
+        "type": "object",
+        "required": [
+          "refresh_token"
+        ],
+        "title": "RefreshRequest"
+      },
+      "RefreshResponse": {
+        "properties": {
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "token_version": {
+            "type": "integer",
+            "title": "Token Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "access_token",
+          "refresh_token",
+          "expires_in",
+          "token_version"
+        ],
+        "title": "RefreshResponse"
+      },
+      "RegisterResponse": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id"
+          },
+          "access_token": {
+            "type": "string",
+            "title": "Access Token"
+          },
+          "refresh_token": {
+            "type": "string",
+            "title": "Refresh Token"
+          },
+          "expires_in": {
+            "type": "integer",
+            "title": "Expires In"
+          },
+          "token_version": {
+            "type": "integer",
+            "title": "Token Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "access_token",
+          "refresh_token",
+          "expires_in",
+          "token_version"
+        ],
+        "title": "RegisterResponse"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
