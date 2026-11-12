@@ -1,10 +1,14 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import AppShell from './components/shell/AppShell'
 import PersonalToday from './pages/today/PersonalToday'
 import PublicToday from './pages/today/PublicToday'
+import RealPublicToday from './pages/today/RealPublicToday'
 import GuidePage from './pages/GuidePage'
 import InsightsPage from './pages/InsightsPage'
 import MePage from './pages/MePage'
+import { fetchToday } from './api/today'
+import { buildRealPublicTodayView } from './view-models/publicToday'
+import type { TodayResponse } from './contracts/today'
 import {
   MOCK_PUBLIC_TODAY,
   MOCK_PERSONAL_DAY3,
@@ -57,8 +61,34 @@ function App() {
   const [currentPage, setCurrentPage] = useState<PageName>('today')
   const [simState, setSimState] = useState<SimulatedState>('authenticated-valid')
 
+  // ── Step B: Public 层真数据闭环（GET /v1/today）──────────────────
+  const [realToday, setRealToday] = useState<TodayResponse | null>(null)
+  const [realLoading, setRealLoading] = useState(false)
+  const [realError, setRealError] = useState(false)
+
+  const loadRealToday = useCallback(async () => {
+    setRealLoading(true)
+    setRealError(false)
+    try {
+      const resp = await fetchToday()
+      setRealToday(resp)
+    } catch {
+      // FAIL FAST：不回退 mock，错误态交给 ErrorState
+      setRealError(true)
+    } finally {
+      setRealLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (simState === 'public') {
+      void loadRealToday()
+    }
+  }, [simState, loadRealToday])
+
   const entitlement = getEntitlement(simState)
   const { data, isPublic } = getTodayData(simState)
+  const isMockState = simState !== 'public'
 
   const handleLangChange = useCallback(() => {}, [])
   const handleTimezoneChange = useCallback(() => {}, [])
@@ -68,6 +98,17 @@ function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'today':
+        if (simState === 'public') {
+          // Step B：游客态走真数据 GET /v1/today（FAIL FAST，无 mock 兜底）
+          return (
+            <RealPublicToday
+              view={realToday ? buildRealPublicTodayView(realToday) : null}
+              isLoading={realLoading}
+              isError={realError}
+              onRetry={() => void loadRealToday()}
+            />
+          )
+        }
         if (isPublic) {
           return <PublicToday data={data as PublicTodayData} />
         }
@@ -97,6 +138,30 @@ function App() {
       entitlementLabel={entitlementLabel}
     >
       {renderPage()}
+
+      {/* MOCK ONLY 徽标：mock_until 数据未接真，显式标注不冒充真数据（SPEC V2 §红线） */}
+      {isMockState && currentPage === 'today' && (
+        <div
+          aria-label="mock data indicator"
+          style={{
+            position: 'fixed',
+            top: '12px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            zIndex: 60,
+            background: 'var(--bg-elevated)',
+            border: '1px dashed var(--border-strong)',
+            color: 'var(--text-muted)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '9px',
+            letterSpacing: '0.1em',
+            padding: '4px 10px',
+            borderRadius: '2px',
+          }}
+        >
+          MOCK ONLY · 示例数据
+        </div>
+      )}
 
       {/* Dev state switcher — remove in production */}
       <div
