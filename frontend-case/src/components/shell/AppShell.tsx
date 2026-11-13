@@ -1,5 +1,6 @@
 import React from 'react'
 import Header from './Header'
+import './AppShell.css'
 import BottomNav, { type PageName } from '../navigation/BottomNav'
 
 interface AppShellProps {

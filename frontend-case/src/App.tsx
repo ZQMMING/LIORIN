@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
+import './paper-theme.css'
 import AppShell from './components/shell/AppShell'
 import PersonalToday from './pages/today/PersonalToday'
-import PublicToday from './pages/today/PublicToday'
 import RealPublicToday from './pages/today/RealPublicToday'
 import GuidePage from './pages/GuidePage'
 import InsightsPage from './pages/InsightsPage'
@@ -10,14 +10,13 @@ import { fetchToday } from './api/today'
 import { buildRealPublicTodayView } from './view-models/publicToday'
 import type { TodayResponse } from './contracts/today'
 import {
-  MOCK_PUBLIC_TODAY,
   MOCK_PERSONAL_DAY3,
   MOCK_PROFILE_INSUFFICIENT,
   MOCK_PREMIUM,
   MOCK_CALCULATION_ERROR,
 } from './mock/data'
 import type { PageName } from './components/navigation/BottomNav'
-import type { Entitlement, ProfileStatus, TodayData, PublicTodayData } from './mock/data'
+import type { Entitlement, ProfileStatus, TodayData } from './mock/data'
 
 type SimulatedState =
   | 'public'
@@ -27,25 +26,18 @@ type SimulatedState =
   | 'premium'
   | 'calculation-error'
 
-function getTodayData(state: SimulatedState): { data: TodayData | PublicTodayData; isPublic: boolean } {
+function getTodayData(state: SimulatedState): TodayData {
   switch (state) {
-    case 'public':
-      return { data: MOCK_PUBLIC_TODAY, isPublic: true }
     case 'authenticated-no-profile':
-      return {
-        data: { ...MOCK_PROFILE_INSUFFICIENT, user_state: { entitlement: 'AUTHENTICATED', profile_status: 'NONE' as ProfileStatus } },
-        isPublic: false,
-      }
+      return { ...MOCK_PROFILE_INSUFFICIENT, user_state: { entitlement: 'AUTHENTICATED', profile_status: 'NONE' as ProfileStatus } }
     case 'authenticated-insufficient':
-      return { data: MOCK_PROFILE_INSUFFICIENT, isPublic: false }
-    case 'authenticated-valid':
-      return { data: MOCK_PERSONAL_DAY3, isPublic: false }
+      return MOCK_PROFILE_INSUFFICIENT
     case 'premium':
-      return { data: MOCK_PREMIUM, isPublic: false }
+      return MOCK_PREMIUM
     case 'calculation-error':
-      return { data: MOCK_CALCULATION_ERROR, isPublic: false }
+      return MOCK_CALCULATION_ERROR
     default:
-      return { data: MOCK_PUBLIC_TODAY, isPublic: true }
+      return MOCK_PERSONAL_DAY3
   }
 }
 
@@ -59,7 +51,9 @@ function getEntitlement(state: SimulatedState): Entitlement {
 
 function App() {
   const [currentPage, setCurrentPage] = useState<PageName>('today')
-  const [simState, setSimState] = useState<SimulatedState>('authenticated-valid')
+  const [simState, setSimState] = useState<SimulatedState>('public')
+  // 模拟个人态只供开发预览；生产没有身份/个人端点闭环时保持游客态。
+  const effectiveState: SimulatedState = import.meta.env.DEV ? simState : 'public'
 
   // ── Step B: Public 层真数据闭环（GET /v1/today）──────────────────
   const [realToday, setRealToday] = useState<TodayResponse | null>(null)
@@ -67,10 +61,13 @@ function App() {
   const [realError, setRealError] = useState(false)
 
   const loadRealToday = useCallback(async () => {
+    setRealToday(null)
     setRealLoading(true)
     setRealError(false)
     try {
       const resp = await fetchToday()
+      // 在异步边界校验契约，避免畸形的 200 响应进入 React 渲染阶段。
+      buildRealPublicTodayView(resp)
       setRealToday(resp)
     } catch {
       // FAIL FAST：不回退 mock，错误态交给 ErrorState
@@ -81,14 +78,14 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (simState === 'public') {
+    if (effectiveState === 'public') {
       void loadRealToday()
     }
-  }, [simState, loadRealToday])
+  }, [effectiveState, loadRealToday])
 
-  const entitlement = getEntitlement(simState)
-  const { data, isPublic } = getTodayData(simState)
-  const isMockState = simState !== 'public'
+  const entitlement = getEntitlement(effectiveState)
+  const data = getTodayData(effectiveState)
+  const isMockState = effectiveState !== 'public'
 
   const handleLangChange = useCallback(() => {}, [])
   const handleTimezoneChange = useCallback(() => {}, [])
@@ -98,7 +95,7 @@ function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'today':
-        if (simState === 'public') {
+        if (effectiveState === 'public') {
           // Step B：游客态走真数据 GET /v1/today（FAIL FAST，无 mock 兜底）
           return (
             <RealPublicToday
@@ -109,12 +106,9 @@ function App() {
             />
           )
         }
-        if (isPublic) {
-          return <PublicToday data={data as PublicTodayData} />
-        }
         return (
           <PersonalToday
-            data={data as TodayData}
+            data={data}
             isPremium={entitlement === 'PREMIUM'}
           />
         )
@@ -125,7 +119,7 @@ function App() {
       case 'me':
         return <MePage />
       default:
-        return null
+        return <section className="page-container" role="status"><h1>功能暂未开放</h1><p>该页面尚无可用的真实数据接口。</p></section>
     }
   }
 
@@ -163,8 +157,8 @@ function App() {
         </div>
       )}
 
-      {/* Dev state switcher — remove in production */}
-      <div
+      {/* 模拟状态仅供开发预览，不进入生产构建。 */}
+      {import.meta.env.DEV && <div
         style={{
           position: 'fixed',
           bottom: '68px',
@@ -204,7 +198,7 @@ function App() {
             {label}
           </button>
         ))}
-      </div>
+      </div>}
     </AppShell>
   )
 }

@@ -1,0 +1,8 @@
+.time-orbit-art{width:min(100%,320px);margin:28px auto;color:#242622}
+.time-orbit-art svg{display:block;width:100%;overflow:visible}
+.orbit-ring{fill:none;stroke:currentColor;stroke-width:.65;opacity:.28}.orbit-ring.inner{opacity:.13}
+.orbit-axis{fill:none;stroke:currentColor;stroke-width:.45;opacity:.18}
+.orbit-dots{fill:currentColor;transform-origin:140px 140px;transition:transform 1.5s cubic-bezier(.2,.7,.2,1),opacity 1.5s ease}
+.is-settled .orbit-dots{transform:rotate(18deg) scale(.86);opacity:.72}
+.orbit-center{fill:#f5f2ec;stroke:currentColor;stroke-width:.7}.orbit-core{fill:currentColor}
+@media(prefers-reduced-motion:reduce){.orbit-dots{transition:none}}
