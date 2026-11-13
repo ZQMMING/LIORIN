@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import './support-pages.css'
 import { checkAuthAvailability, type AuthAvailability } from '../api/authAvailability'
+import AccountPanel from '../components/account/AccountPanel'
 
 const availabilityMessage: Record<AuthAvailability, string> = {
   loading: '正在检查认证服务…',
@@ -36,6 +37,7 @@ const MePage: React.FC = () => {
         <span className="me-identity-symbol" aria-hidden="true">○</span>
         <div><span className="support-eyebrow">PUBLIC</span><h2>游客</h2><p role="status">{availabilityMessage[authAvailability]}</p></div>
       </section>
+      <AccountPanel available={authAvailability === 'available'} />
       <div className="me-list">
         {menuItems.map((item, i) => <div className="me-row" key={item.label}>
           <span className="me-number">0{i + 1}</span>

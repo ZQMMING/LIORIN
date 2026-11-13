@@ -47,7 +47,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Optional
 
-from fastapi import Depends, FastAPI, Query, Request, Response
+from fastapi import Depends, FastAPI, HTTPException, Query, Request, Response
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
@@ -202,7 +202,8 @@ def _personal_block(identity: IdentityContext) -> dict[str, Any]:
 # ---------------------------------------------------------------------- #
 
 
-def create_app(repo_root: Path | None = None, db_ops: Any | None = None) -> FastAPI:
+def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
+               profile_store: Any | None = None) -> FastAPI:
     """FastAPI app factory.
 
     B-09 R2 rework (ARBITRATION_BATCH3 R2): the very first call inside this
@@ -578,6 +579,52 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None) -> Fast
             },
             "trace_id": getattr(request.state, "trace_id", None),
         }
+
+    # 独立档案存储契约：旧 /v1/profile 仍保持无状态校验回执。
+    # 只有明确装配 profile_store 且用户持有效 bearer 时才提供持久化。
+    def _require_profile_user(identity: IdentityContext) -> str:
+        if identity.user is None or not identity.user.user_id or identity.user.user_id == "anonymous":
+            raise HTTPException(status_code=401, detail={"code": "INVALID_TOKEN", "message": "user bearer token required"})
+        return identity.user.user_id
+
+    @app.put("/v1/profile/stored")
+    def save_stored_profile(
+        req: ProfileRequest,
+        request: Request,
+        identity: IdentityContext = Depends(get_current_user_or_device),
+    ) -> dict:
+        user_id = _require_profile_user(identity)
+        if profile_store is None:
+            raise HTTPException(status_code=503, detail={"code": "PROFILE_STORE_UNAVAILABLE", "message": "profile storage not configured"})
+        birth, _ = _parse_dates(req.birth_date, req.analysis_date)
+        state = resolve_profile(timezone=req.timezone, calendar_system=req.calendar_system,
+                                location=req.location, time_resolver=time_resolver, gender=req.gender)
+        require_personal_profile(state)
+        # 在任何 DB 写入之前执行时间解析；不接受无效出生信息。
+        time_resolver.resolve(birth_date=birth, hour=req.birth_time.hour,
+                              minute=req.birth_time.minute, timezone=state.timezone,
+                              location=req.location, apparent_solar=True, gender=state.gender)
+        profile_store.save(user_id, {
+            "birth_date": birth.isoformat(),
+            "birth_time": {"hour": req.birth_time.hour, "minute": req.birth_time.minute},
+            "gender": state.gender, "timezone": state.timezone,
+            "location": req.location, "current_location": req.current_location,
+            "calendar_system": state.calendar_system,
+        })
+        return {"profile_status": "VALID", "stored": True,
+                "trace_id": getattr(request.state, "trace_id", None)}
+
+    @app.get("/v1/profile/stored")
+    def read_stored_profile(
+        identity: IdentityContext = Depends(get_current_user_or_device),
+    ) -> dict:
+        user_id = _require_profile_user(identity)
+        if profile_store is None:
+            raise HTTPException(status_code=503, detail={"code": "PROFILE_STORE_UNAVAILABLE", "message": "profile storage not configured"})
+        profile = profile_store.get(user_id)
+        if profile is None:
+            raise HTTPException(status_code=404, detail={"code": "PROFILE_NOT_FOUND", "message": "profile not found"})
+        return profile
 
     # ------------------------------------------------------------------ #
     # DEPRECATED V2 paths (Sunset 2027-08-18; Deprecation headers added by
