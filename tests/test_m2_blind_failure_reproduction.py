@@ -35,3 +35,4 @@ def test_api_reports_blind_computation_status(client, blind_output, expected):
         response = client.post('/v1/calculate', json=request)
     assert response.status_code == 200, response.text
     assert response.json()['engine_status']['blind'] == expected
+    assert response.json()['engine_rule_status']['blind'] == 'pending_review'
