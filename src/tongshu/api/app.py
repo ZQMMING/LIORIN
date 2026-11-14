@@ -369,7 +369,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             theme=req.theme,
             trace_id=getattr(request.state, "trace_id", None),
             timezone=profile.timezone,
-            location=req.location,
+            location=profile.location,
             birth_minute=req.birth_minute,
         )
         if result.render_elapsed_ms is not None:
@@ -396,7 +396,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             compute_only=True,
             trace_id=getattr(request.state, "trace_id", None),
             timezone=profile.timezone,
-            location=req.location,
+            location=profile.location,
             birth_minute=req.birth_minute,
         )
         canon = result.canonical.to_dict()
@@ -456,7 +456,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
                 birth_date=(birth.year, birth.month, birth.day, req.hour),
                 gender=req.gender, theme=req.theme, compute_only=True,
                 trace_id=getattr(request.state, "trace_id", None),
-                timezone=profile.timezone, location=req.location,
+                timezone=profile.timezone, location=profile.location,
                 birth_minute=req.birth_minute,
             )
             from .engine_qa import summarize_result
@@ -572,7 +572,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             hour=req.birth_time.hour,
             minute=req.birth_time.minute,
             timezone=state.timezone,
-            location=req.location,
+            location=state.location,
             apparent_solar=True,
             gender=state.gender,  # SubjectContext.gender 接线
         )
@@ -624,12 +624,12 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
         # 在任何 DB 写入之前执行时间解析；不接受无效出生信息。
         time_resolver.resolve(birth_date=birth, hour=req.birth_time.hour,
                               minute=req.birth_time.minute, timezone=state.timezone,
-                              location=req.location, apparent_solar=True, gender=state.gender)
+                              location=state.location, apparent_solar=True, gender=state.gender)
         profile_store.save(user_id, {
             "birth_date": birth.isoformat(),
             "birth_time": {"hour": req.birth_time.hour, "minute": req.birth_time.minute},
             "gender": state.gender, "timezone": state.timezone,
-            "location": req.location, "current_location": req.current_location,
+            "location": state.location, "current_location": req.current_location,
             "calendar_system": state.calendar_system,
         })
         return {"profile_status": "VALID", "stored": True,
@@ -672,7 +672,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             theme=req.theme,
             trace_id=getattr(request.state, "trace_id", None),
             timezone=profile.timezone,
-            location=req.location,
+            location=profile.location,
             birth_minute=req.birth_minute,
         )
         if result.render_elapsed_ms is not None:
