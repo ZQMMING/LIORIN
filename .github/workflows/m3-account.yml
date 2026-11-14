@@ -1,9 +1,9 @@
 name: M3 account integration
 on:
   pull_request:
-    branches: [codex/m3-isolated-preflight]
+    branches: [codex/m3-isolated-preflight, codex/m3-account-integration]
   push:
-    branches: [codex/m3-account-integration]
+    branches: [codex/m3-account-integration, codex/m1-m3-release-fixes]
   workflow_dispatch:
 permissions:
   contents: read
