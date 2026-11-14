@@ -67,7 +67,26 @@ class ProfileStoredContractTests(unittest.TestCase):
         self.assertEqual(read.status_code, 200, read.text)
         self.assertEqual(read.json()["birth_date"], payload["birth_date"])
         self.assertEqual(read.json()["birth_time"], payload["birth_time"])
-        self.assertEqual(read.json()["location"], payload["location"])
+        self.assertEqual(read.json()["location"], "CN_BEIJING")
+        self.assertEqual(self.store.rows["u-1"]["location"], "CN_BEIJING")
+
+    def test_legacy_location_is_normalized_on_read_without_database_write(self):
+        self.store.rows['u-1'] = {'location': 'Beijing', 'timezone': 'Asia/Shanghai',
+            'gender': 'male', 'calendar_system': 'solar'}
+        token = self._token()
+        read = self.client.get('/v1/profile/stored', headers={'Authorization': f'Bearer {token}'})
+        self.assertEqual(read.status_code, 200, read.text)
+        self.assertEqual(read.json()['location'], 'CN_BEIJING')
+        self.assertEqual(self.store.rows['u-1']['location'], 'Beijing')
+
+    def test_ambiguous_legacy_location_is_not_guessed(self):
+        self.store.rows['u-1'] = {'location': 'Hamilton', 'timezone': 'America/Toronto',
+            'gender': 'male', 'calendar_system': 'solar'}
+        token = self._token()
+        read = self.client.get('/v1/profile/stored', headers={'Authorization': f'Bearer {token}'})
+        self.assertEqual(read.status_code, 422)
+        self.assertEqual(read.json()['error']['code'], 'PROFILE_LOCATION_AMBIGUOUS')
+        self.assertEqual(self.store.rows['u-1']['location'], 'Hamilton')
 
     def test_invalid_profile_never_reaches_store(self):
         token = self._token()

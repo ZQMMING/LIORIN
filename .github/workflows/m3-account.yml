@@ -17,13 +17,7 @@ jobs:
           python-version: '3.12'
       - run: python -m pip install -e . pytest pytest-subtests httpx cryptography
       - name: Auth, cookie and TLS sink tests
-        run: python -m pytest tests/test_m3_browser_session.py tests/test_m3_session_boundaries.py tests/test_m3_smtp_capture.py tests/test_email_auth_api.py tests/test_email_auth_delivery.py tests/test_email_auth_store_unit.py tests/test_profile_store_unit.py tests/test_profile_stored_contract.py tests/test_run_server_auth_wiring.py tests/auth/test_identity_gateway_v2.py --deselect tests/test_profile_stored_contract.py::ProfileStoredContractTests::test_authenticated_save_then_read_from_store -q -p no:cacheprovider
-        env:
-          PYTHONPATH: src
-          TONGSHU_ENV_FILE: /nonexistent/liorin-test.env
-      - name: Expose pre-existing city-name versus canonical-ID contract conflict
-        continue-on-error: true
-        run: python -m pytest tests/test_profile_stored_contract.py::ProfileStoredContractTests::test_authenticated_save_then_read_from_store -q -p no:cacheprovider
+        run: python -m pytest tests/test_m3_browser_session.py tests/test_m3_session_boundaries.py tests/test_m3_smtp_capture.py tests/test_email_auth_api.py tests/test_email_auth_delivery.py tests/test_email_auth_store_unit.py tests/test_profile_store_unit.py tests/test_profile_stored_contract.py tests/test_run_server_auth_wiring.py tests/auth/test_identity_gateway_v2.py tests/test_audit_final_output.py tests/test_m2_location_ambiguity.py -q -p no:cacheprovider
         env:
           PYTHONPATH: src
           TONGSHU_ENV_FILE: /nonexistent/liorin-test.env

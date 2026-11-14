@@ -632,6 +632,14 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
         profile = profile_store.get(user_id)
         if profile is None:
             raise HTTPException(status_code=404, detail={"code": "PROFILE_NOT_FOUND", "message": "profile not found"})
+        # Resolve unique legacy names for consumers without rewriting stored
+        # user data. Ambiguous names remain an explicit validation error.
+        location = profile.get("location")
+        if location:
+            state = resolve_profile(timezone=profile.get("timezone"),
+                calendar_system=profile.get("calendar_system"), location=location,
+                time_resolver=time_resolver, gender=profile.get("gender"))
+            profile = {**profile, "location": state.location}
         return profile
 
     @app.get('/v1/personal/heluo-today')
