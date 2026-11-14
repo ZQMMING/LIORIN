@@ -1,0 +1,23 @@
+name: M2 combined API
+on:
+  pull_request:
+    branches: [codex/m2-reading-api]
+  push:
+    branches: [codex/m2-integration]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  combined:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e . pytest pytest-subtests httpx tzdata
+      - name: Combined and original regressions
+        run: python -m pytest tests/test_m2_integration_journey.py tests/test_m2_reading_api.py tests/test_m2_today_date_context.py tests/test_m2_heluo_day_coverage.py tests/test_m2_blind_failure_reproduction.py tests/test_m2_context_propagation.py -q -p no:cacheprovider
+        env:
+          PYTHONPATH: src
+          TONGSHU_ENV_FILE: /nonexistent/liorin-test.env
