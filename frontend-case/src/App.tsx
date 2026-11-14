@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import './paper-theme.css'
 import AppShell from './components/shell/AppShell'
 import PersonalToday from './pages/today/PersonalToday'
@@ -6,7 +6,7 @@ import RealPublicToday from './pages/today/RealPublicToday'
 import LocalPreviewUnavailable from './pages/today/LocalPreviewUnavailable'
 import RealPersonalHeluoToday from './pages/today/RealPersonalHeluoToday'
 import EngineQaPage from './pages/EngineQaPage'
-import type { AuthTokens } from './api/auth'
+import { restoreBrowserSession, type AuthTokens } from './api/auth'
 import GuidePage from './pages/GuidePage'
 import InsightsPage from './pages/InsightsPage'
 import MePage from './pages/MePage'
@@ -69,9 +69,19 @@ function App() {
   }, [])
   const [simState, setSimState] = useState<SimulatedState>('public')
   const [session, setSession] = useState<AuthTokens | null>(null)
+  const sessionEpoch = useRef(0)
+  useEffect(() => {
+    let active = true
+    const epoch = sessionEpoch.current
+    void restoreBrowserSession().then(restored => {
+      if (active && sessionEpoch.current === epoch) setSession(restored)
+    }).catch(() => { /* no valid cookie: remain signed out */ })
+    return () => { active = false }
+  }, [])
   const [personalSessionExpired, setPersonalSessionExpired] = useState(false)
   const [showLocalTest, setShowLocalTest] = useState(false)
   const expirePersonalSession = useCallback(() => {
+    sessionEpoch.current += 1
     setSession(null)
     setPersonalSessionExpired(true)
   }, [])
@@ -150,7 +160,7 @@ function App() {
       case 'insights':
         return <InsightsPage />
       case 'me':
-        return <MePage session={personalSessionExpired ? null : session} onSessionChange={(next) => { setSession(next); setPersonalSessionExpired(false) }} onProfileReady={() => navigate('today')} />
+        return <MePage session={personalSessionExpired ? null : session} onSessionChange={(next) => { sessionEpoch.current += 1; setSession(next); setPersonalSessionExpired(false) }} onProfileReady={() => navigate('today')} />
       case 'more':
         return <MorePage onNavigate={navigate} />
       default:

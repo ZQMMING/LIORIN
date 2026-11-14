@@ -27,6 +27,8 @@ def build_app():
     enabled = os.environ.get("TONGSHU_AUTH_DB_ENABLED") == "1"
     dsn = os.environ.get("OTC_G_DATABASE_URL")
     if not enabled:
+        if os.environ.get("TONGSHU_EMAIL_AUTH_ENABLED") == "1":
+            raise RuntimeError("Email auth requires an explicitly enabled auth database")
         from tongshu.api.app import create_app
         return create_app()
 
@@ -48,7 +50,19 @@ def build_app():
         profile_store = PostgresProfileStore(dsn=dsn)
         if not profile_store.ready():
             raise RuntimeError("个人档案表不存在；需单独验收并执行 profile_0001.sql，服务未启动")
-    return create_app(db_ops=PostgresAuthDB(dsn=dsn), profile_store=profile_store)
+    email_store = None
+    if os.environ.get("TONGSHU_EMAIL_AUTH_ENABLED") == "1":
+        from tongshu.db.email_auth_store import EmailAuthStore
+        from tongshu.services.email_auth import configured
+        if not configured():
+            raise RuntimeError("Email auth configuration is incomplete")
+        email_store = EmailAuthStore(dsn=dsn, secret=os.environ.get("TONGSHU_EMAIL_AUTH_SECRET", ""))
+        if not email_store.ready():
+            raise RuntimeError("Email auth schema is unavailable; no migration was run")
+    auth_db = PostgresAuthDB(dsn=dsn)
+    if email_store is not None:
+        return create_app(db_ops=auth_db, profile_store=profile_store, email_auth_store=email_store)
+    return create_app(db_ops=auth_db, profile_store=profile_store)
 
 
 if __name__ == "__main__":

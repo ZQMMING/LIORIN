@@ -300,7 +300,10 @@ async def logout(
             status_code=401,
             detail={"code": "INVALID_TOKEN", "message": "Missing authorization"},
         )
-    token_data = gateway.validate_access_token(credentials.credentials)
+    try:
+        token_data = gateway.validate_access_token(credentials.credentials)
+    except AuthError as e:
+        _auth_error_to_http(e, response, gateway.db, request, audit_event="logout_invalid_token")
     if not token_data:
         _audit_failure(gateway.db, "logout_invalid_token", request)
         raise HTTPException(
@@ -308,9 +311,12 @@ async def logout(
             detail={"code": "INVALID_TOKEN", "message": "Invalid or expired token"},
         )
     user_id = token_data.user_id
-    gateway.logout(
-        user_id, refresh_token=req.refresh_token, all_devices=req.all_devices
-    )
+    try:
+        gateway.logout(
+            user_id, refresh_token=req.refresh_token, all_devices=req.all_devices
+        )
+    except AuthError as e:
+        _auth_error_to_http(e, response, gateway.db, request, audit_event="logout_invalid_refresh")
     return {"status": "ok"}
 
 
@@ -332,7 +338,10 @@ async def me(
             status_code=401,
             detail={"code": "INVALID_TOKEN", "message": "Missing authorization"},
         )
-    token_data = gateway.validate_access_token(credentials.credentials)
+    try:
+        token_data = gateway.validate_access_token(credentials.credentials)
+    except AuthError as e:
+        _auth_error_to_http(e, response, gateway.db, request, audit_event="me_invalid_token")
     if not token_data:
         raise HTTPException(
             status_code=401,

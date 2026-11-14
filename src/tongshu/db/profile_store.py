@@ -44,6 +44,9 @@ class PostgresProfileStore:
                          profile["timezone"], profile["location"],
                          profile.get("current_location"), profile["calendar_system"]),
                     )
+                    cur.execute("UPDATE users SET has_birth_info = true, updated_at = now() WHERE id = %s", (user_id,))
+                    if cur.rowcount != 1:
+                        raise ValueError("profile user does not exist")
 
     def get(self, user_id: str) -> dict[str, Any] | None:
         if not user_id or user_id == "anonymous":

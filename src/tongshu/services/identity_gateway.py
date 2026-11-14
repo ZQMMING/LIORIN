@@ -214,6 +214,23 @@ class IdentityGatewayV2:
 
     def rotate_refresh_token(self, presented: str,
                              device_id: Optional[str] = None) -> Dict[str, str]:
+        atomic_rotate = getattr(self.db, 'rotate_refresh_token_atomic', None)
+        if atomic_rotate is not None:
+            new_plain = secrets.token_urlsafe(48)
+            result = atomic_rotate(_hash_token(presented), str(uuid.uuid4()),
+                                   _hash_token(new_plain), _now() + REFRESH_TOKEN_TTL, device_id)
+            if result['result'] == 'invalid':
+                raise AuthError("INVALID_REFRESH", 401, "refresh token not found")
+            if result['result'] == 'expired':
+                raise AuthError("TOKEN_EXPIRED", 401, "refresh token expired")
+            if result['result'] == 'replay':
+                self.db.audit(AuthAuditEntry(event_type="replay_detected", user_id=result['user_id'],
+                    device_id=result['device_id'], detail={"presented_jti": result['jti']}))
+                raise AuthError("REFRESH_REPLAY_DETECTED", 401, "refresh replay detected")
+            if result['result'] != 'ok':
+                raise AuthError("INVALID_REFRESH", 401, "refresh token unavailable")
+            return {"user_id": result['user_id'], "refresh_token": new_plain,
+                    "rotated_from": result['jti']}
         row = self.db.get_refresh_token(_hash_token(presented))
         if row is None:
             raise AuthError("INVALID_REFRESH", 401, "refresh token not found")
@@ -276,6 +293,8 @@ class IdentityGatewayV2:
         if refresh_token:
             row = self.db.get_refresh_token(_hash_token(refresh_token))
             if row is not None:
+                if row["user_id"] != user_id:
+                    raise AuthError("INVALID_REFRESH", 401, "invalid refresh token")
                 self.db.revoke_all_refresh_tokens(row["user_id"], row["device_id"])
                 self.db.bump_token_version(row["user_id"])
                 return

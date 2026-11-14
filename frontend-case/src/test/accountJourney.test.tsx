@@ -6,6 +6,7 @@ import App from '../App'
 vi.mock('../api/today', () => ({ fetchToday: vi.fn().mockRejectedValue(new Error('offline')) }))
 vi.mock('../api/authAvailability', () => ({ checkAuthAvailability: vi.fn().mockResolvedValue('available') }))
 vi.mock('../api/auth', () => ({
+  restoreBrowserSession: vi.fn().mockRejectedValue(new Error('no session')),
   requestEmailCode: vi.fn().mockResolvedValue({ status: 'sent_if_available' }),
   verifyEmailCode: vi.fn().mockResolvedValue({ user_id: 'u-1', access_token: 'access', refresh_token: 'refresh', expires_in: 900, token_version: 1 }),
   fetchMe: vi.fn().mockResolvedValue({ user_id: 'u-1' }), loginWithPairing: vi.fn(), logout: vi.fn(),

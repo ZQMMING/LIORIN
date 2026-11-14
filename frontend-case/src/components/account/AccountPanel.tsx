@@ -37,7 +37,7 @@ function readableError(error: unknown): string {
   return '操作失败，请稍后重试。'
 }
 
-/** 凭据仅保存在组件内存；关闭/刷新页面即清除，不写 localStorage。 */
+/** Access tokens remain in memory; email sessions restore via an HttpOnly cookie. */
 export default function AccountPanel({ available, session, onSessionChange, onProfileReady }: Props) {
   const [tokens, setTokens] = useState<AuthTokens | null>(session ?? null)
   const [userId, setUserId] = useState(session?.user_id ?? '')
@@ -110,7 +110,7 @@ export default function AccountPanel({ available, session, onSessionChange, onPr
   return <section className="account-panel" aria-label="账户与档案">
     {!tokens ? <>
       <h2>账户</h2>
-      <p>使用邮箱验证码登录或注册同一账户。凭据仅保留在本页内存；刷新后可再次用邮箱验证码登录。</p>
+      <p>使用邮箱验证码登录或注册同一账户。刷新后可恢复有效会话；退出后需重新登录。</p>
       <form onSubmit={(event) => { event.preventDefault(); void act('request-code', async () => {
         await requestEmailCode(email)
         setMessage('如果邮箱可接收邮件，验证码已发送。请在 10 分钟内输入。')
