@@ -1,0 +1,33 @@
+name: M2 time context
+
+on:
+  pull_request:
+    branches: [codex/m2-product-base]
+    paths:
+      - 'src/tongshu/api/app.py'
+      - 'tests/test_m2_context_propagation.py'
+      - '.github/workflows/m2-context.yml'
+  push:
+    branches: [codex/m2-context-pr]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  context-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install test dependencies
+        run: python -m pip install -e . pytest pytest-subtests httpx
+      - name: Run context and time-boundary regression
+        env:
+          PYTHONPATH: src
+        run: >-
+          python -m pytest tests/test_m2_context_propagation.py
+          tests/test_b02_late_zi_golden.py tests/test_algorithm_verification.py
+          -q -p no:cacheprovider

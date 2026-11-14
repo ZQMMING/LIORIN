@@ -73,7 +73,7 @@ from .errors import (
     request_validation_error_handler,
     unhandled_exception_handler,
 )
-from .profile import ProfileStatus, require_personal_profile, resolve_profile
+from .profile import ProfileState, ProfileStatus, require_personal_profile, resolve_profile
 from .tracing import TraceMiddleware, deprecated_counts
 from ..audit.gates import gate_block_counts
 
@@ -226,7 +226,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
     # P0-2 Profile Gate:出生地点 registry + 真太阳时解析(确定性,零 AI)。
     time_resolver = TimeResolver()
 
-    def _gate_personal(req: ReadingRequest) -> None:
+    def _gate_personal(req: ReadingRequest) -> ProfileState:
         """§3.3 Profile Activation Gate for personal-computation endpoints.
 
         个人端点永远不允许降级公共链或猜测缺失出生输入:缺 timezone/location →
@@ -241,6 +241,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             gender=req.gender,
         )
         require_personal_profile(state)
+        return state
 
     app = FastAPI(title="OTC-G API", version=API_VERSION, docs_url="/docs")
 
@@ -360,14 +361,14 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
         identity: IdentityContext = Depends(get_current_user_or_device),
     ) -> dict:
         birth, analysis = _parse_dates(req.birth_date, req.analysis_date)
-        _gate_personal(req)
+        profile = _gate_personal(req)
         result = pipeline.run(
             analysis_date=analysis,
             birth_date=(birth.year, birth.month, birth.day, req.hour),
             gender=req.gender,
             theme=req.theme,
             trace_id=getattr(request.state, "trace_id", None),
-            timezone=req.timezone,
+            timezone=profile.timezone,
             location=req.location,
             birth_minute=req.birth_minute,
         )
@@ -386,7 +387,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
         identity: IdentityContext = Depends(get_current_user_or_device),
     ) -> dict:
         birth, analysis = _parse_dates(req.birth_date, req.analysis_date)
-        _gate_personal(req)
+        profile = _gate_personal(req)
         result = pipeline.run(
             analysis_date=analysis,
             birth_date=(birth.year, birth.month, birth.day, req.hour),
@@ -394,7 +395,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             theme=req.theme,
             compute_only=True,
             trace_id=getattr(request.state, "trace_id", None),
-            timezone=req.timezone,
+            timezone=profile.timezone,
             location=req.location,
             birth_minute=req.birth_minute,
         )
@@ -449,13 +450,13 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             if host not in ("127.0.0.1", "::1", "testclient"):
                 raise HTTPException(status_code=403, detail={"code": "LOCAL_ONLY", "message": "QA endpoint requires loopback"})
             birth, analysis = _parse_dates(req.birth_date, req.analysis_date)
-            _gate_personal(req)
+            profile = _gate_personal(req)
             result = pipeline.run(
                 analysis_date=analysis,
                 birth_date=(birth.year, birth.month, birth.day, req.hour),
                 gender=req.gender, theme=req.theme, compute_only=True,
                 trace_id=getattr(request.state, "trace_id", None),
-                timezone=req.timezone, location=req.location,
+                timezone=profile.timezone, location=req.location,
                 birth_minute=req.birth_minute,
             )
             from .engine_qa import summarize_result
@@ -663,13 +664,16 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
         identity: IdentityContext = Depends(get_current_user_or_device),
     ) -> dict:
         birth, analysis = _parse_dates(req.birth_date, req.analysis_date)
-        _gate_personal(req)
+        profile = _gate_personal(req)
         result = pipeline.run(
             analysis_date=analysis,
             birth_date=(birth.year, birth.month, birth.day, req.hour),
             gender=req.gender,
             theme=req.theme,
             trace_id=getattr(request.state, "trace_id", None),
+            timezone=profile.timezone,
+            location=req.location,
+            birth_minute=req.birth_minute,
         )
         if result.render_elapsed_ms is not None:
             response.headers["X-Render-Time-Ms"] = f"{result.render_elapsed_ms:.0f}"
