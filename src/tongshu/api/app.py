@@ -331,6 +331,8 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             "analysis_date": analysis.isoformat(),
             "cross_status": cross_status,
             "source": result.source,
+            "engine_status": {"blind": getattr(result, "blind_status", "unknown")},
+            "engine_rule_status": {"blind": "pending_review"},
             "validation_passed": result.validation_passed,
             "rendered_text": result.rendered_text,
             "signal_counts": {
@@ -435,6 +437,8 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             "exclusions": canon["exclusions"],
             "meta": canon.get("meta"),  # V3.6 §6 版本族 + 可观测性三件套
             "source": result.source,
+            "engine_status": {"blind": getattr(result, "blind_status", "unknown")},
+            "engine_rule_status": {"blind": "pending_review"},
         }
         yi = _yi_block(result)
         if yi is not None:

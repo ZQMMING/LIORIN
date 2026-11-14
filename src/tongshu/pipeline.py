@@ -69,6 +69,7 @@ class PipelineResult:
     meihua_result: Any = None
     # Preserve the chart produced by ComputeStage for bounded test projections.
     bazi_chart: Any = None
+    blind_status: str = "unknown"
 
 
 class TONGSHUPipeline:
@@ -469,6 +470,9 @@ class TONGSHUPipeline:
             temporal_convergence=compute.temporal_convergence,
             meihua_result=compute.meihua_result,
             bazi_chart=compute.bazi_chart,
+            blind_status=("unavailable" if compute.blind_result is None else
+                          "partial" if compute.blind_yingqi is None or compute.blind_judgment is None else
+                          "ready"),
         )
 
     def _write_to_dao(

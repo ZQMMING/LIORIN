@@ -1763,7 +1763,7 @@ class BlindBaziEngine:
                     detail.append(f"食伤泄秀: {st_}({tg_})在{st_idx}干贴身泄日主(一般不发大财)")
                     # 泄秀是日主自身之气外泄, 一律主位得气
                     attributions.append(ZuoGongAttribution["EFFECTIVE"])
-                    actor_dims.append(actor_dim)
+                    actor_dims.append("SELF_DIRECT")
 
         # ⑫c V3.0: 势做功（原书口诀：有势又有功定是富贵翁；木成势制土坏金…）
         # 成势=某五行支≥3成党（段建业原书"局中木火有势"），势做功=势五行克其对象
@@ -1781,13 +1781,10 @@ class BlindBaziEngine:
                     methods.append(method)
                     detail.append(f"势做功: {el}成势({cnt}支)制{controlled_el}")
                     # 势中有主位支=我成势(为我所用)；纯宾位成势=非我所有
-                    has_main = any(
-                        all_branches_list.index(b) >= 2 for b in all_branches_list
-                        if _branch_element(b) == el
-                    )
+                    has_main = any(_branch_element(b) == el for b in all_branches_list[2:])
                     attributions.append(ZuoGongAttribution["EFFECTIVE"] if has_main
                                         else ZuoGongAttribution["INEFFECTIVE"])
-                    actor_dims.append(actor_dim)
+                    actor_dims.append("TOOL_ASSISTED" if has_main else "OTHER")
 
         # ⑫ V2.5: 禄刃 — 禄神/羊刃特殊判定(身体、福报、自我意志)
         # 禄=福气身体, 刃=刀风险; 禄怕见绝更怕穿害; 禄合财=轻松赚钱, 禄克财=辛苦求财
