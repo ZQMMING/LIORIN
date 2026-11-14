@@ -22,4 +22,4 @@ jobs:
       - name: Check blind engine and degradation status
         env:
           PYTHONPATH: src
-        run: python -m pytest tests/test_m2_blind_failure_reproduction.py tests/test_blind*.py -q -p no:cacheprovider
+        run: python -m pytest tests/test_m2_blind_failure_reproduction.py tests/test_m2_blind_actor_positions.py tests/test_blind*.py -q -p no:cacheprovider
