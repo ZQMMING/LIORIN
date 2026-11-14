@@ -54,7 +54,7 @@
 | 页面/组件 | 触发与预期 | 当前行为及 API/状态 | 加载/成功/错误/禁用 | 键盘/移动/测试 | 初判 |
 |---|---|---|---|---|---|
 | 主导航 `BottomNav.tsx:21,86` | 今日/指引/洞察/我的/更多切页 | `App.tsx:109-143` state 切换；非 URL 路由 | 五页可进入；深链/404 未验证 | 390×844 实测今日→我的→指引→洞察→更多；快照 `.playwright-cli/page-2026-11-14T05-47-37-897Z.yml`、`05-47-47-898Z.yml`、`05-47-57-148Z.yml`；全键盘/触控未验证 | P1 |
-| 今日重试 `LocalPreviewUnavailable.tsx:10` | 点击重试 | 回调 `loadRealToday` / GET `/v1/today` | 成功/离线分别由组件显示；现场离线重试未验证 | 测试 `appPublicToday.test.tsx` 使用 mock；移动未验证 | P1 |
+| 今日重试 `LocalPreviewUnavailable.tsx:10` | 点击重试 | 回调 `loadRealToday` / GET `/v1/today` | 本机预览以拦截请求模拟 HTTP 503 后出现重试，撤销拦截并点击后恢复真实公共今日；真实断网和生产构建未验 | 测试 `appPublicToday.test.tsx` 使用 mock；移动未验证 | P1 |
 | 本机测试入口 `App.tsx:110,127` | 打开/返回 | 仅 DEV + 显式 preview；`EngineQaPage` | 390×844 下点击入口、载入示例、运行后看到四柱和河洛卦；文本校验明确“未执行”；失败路径未全测 | 实测快照 `.playwright-cli/page-2026-11-14T05-53-24-714Z.yml`；不等于正式产品或算法验收 | P1 |
 | 邮箱及验证码 `AccountPanel.tsx:114-131` | 请求、校验登录 | `/v1/auth/email/request-code`、`verify`；现环境显示不可用并禁用按钮 | busy/错误有代码；真实 SMTP 成功、过期、限流未验收 | 390×844 访问我的；成功状态仅 mock | P0 |
 | 配对登录 `AccountPanel.tsx:133-144` | 设备 ID + 配对码登录 | `/v1/auth/login` | 无服务禁用；真实配对未验证 | 键盘/移动未验证；组件测试 mock | P1 |
