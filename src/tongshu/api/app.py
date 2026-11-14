@@ -54,6 +54,7 @@ from pydantic import BaseModel, Field
 
 from ..engines.bazi_engine import STEM_ELEMENT
 from ..cross_domain.status import derive_cross_status
+from ..engines.heluo.day_coverage import inspect_day_coverage
 from ..engines.time_resolver import TimeResolver
 from ..pipeline import TONGSHUPipeline
 from .deps import (
@@ -311,6 +312,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             "source": result.source,
             "engine_status": {"blind": getattr(result, "blind_status", "unknown")},
             "engine_rule_status": {"blind": "pending_review"},
+            "heluo_day_status": inspect_day_coverage(getattr(result, "heluo_result", None), analysis),
             "validation_passed": result.validation_passed,
             "rendered_text": result.rendered_text,
             "signal_counts": {
@@ -396,6 +398,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             "source": result.source,
             "engine_status": {"blind": getattr(result, "blind_status", "unknown")},
             "engine_rule_status": {"blind": "pending_review"},
+            "heluo_day_status": inspect_day_coverage(getattr(result, "heluo_result", None), analysis),
         }
         yi = _yi_block(result)
         if yi is not None:

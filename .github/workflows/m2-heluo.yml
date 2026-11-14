@@ -1,0 +1,30 @@
+name: M2 heluo day coverage
+on:
+  pull_request:
+    branches: [codex/m2-blind-status]
+  push:
+    branches: [codex/m2-heluo-coverage]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: 1925adf0e796e7346960c4cc2ed7f1af12449355
+          path: independent-heluo
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -e . pytest pytest-subtests httpx
+      - name: Coverage and API regressions
+        run: python -m pytest tests/test_m2_heluo_day_coverage.py tests/test_m2_blind_failure_reproduction.py -q -p no:cacheprovider
+        env:
+          PYTHONPATH: src
+      - name: Compare real engines for three profiles
+        run: python scripts/compare_heluo_daily.py --h10b-src independent-heluo/src --output /tmp/heluo-smoke.jsonl --limit 2
+      - name: Check comparison output
+        run: python -c "import json; r=[json.loads(x) for x in open('/tmp/heluo-smoke.jsonl',encoding='utf-8')]; assert len(r)==6 and all(x['h10b_candidate']['error'] is None for x in r)"
