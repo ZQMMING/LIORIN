@@ -1,6 +1,9 @@
 // Vitest setup —— jest-dom matchers（官方 vitest 入口，自动扩展 expect 类型）
 import '@testing-library/jest-dom/vitest'
-import { vi } from 'vitest'
+import { afterEach, vi } from 'vitest'
+
+// Each test starts at the public entry regardless of navigation in earlier tests.
+afterEach(() => window.history.replaceState(null, '', '/'))
 
 // jsdom 未实现 window.matchMedia（组件用 prefers-reduced-motion 判断动画降级）。
 // 测试环境统一 mock，默认不开启 reduced motion；个别用例可覆盖返回值。
