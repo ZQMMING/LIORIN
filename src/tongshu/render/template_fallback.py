@@ -40,5 +40,11 @@ class TemplateFallback:
     }
 
     def render(self, theme: str, cross_status: str) -> str | None:
-        """Return fallback template for (theme, cross_status)."""
-        return self.TEMPLATES.get((theme, cross_status))
+        """Report coverage without turning its structural status into a judgment."""
+        if (theme, cross_status) not in self.TEMPLATES:
+            return None
+        return {
+            "ALIGNED": "现有来源均有证据记录，覆盖情况不代表结论一致或判断已经获批。",
+            "PARTIAL": "部分来源有证据记录，其他来源证据不足，暂不能提供完整判断。",
+            "INSUFFICIENT": "当前证据不足以支持判断，请稍后重试或补充资料。",
+        }[cross_status]

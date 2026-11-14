@@ -62,6 +62,8 @@ def test_actual_reading_api_template_matches_coverage(client, expected):
     assert body['cross_status'] == expected
     assert body['rendered_text'] == TemplateFallback().render('WORK', expected)
     assert body['engine_rule_status']['blind'] == 'pending_review'
+    assert {'ALIGNED': '不代表结论一致', 'PARTIAL': '证据不足',
+            'INSUFFICIENT': '证据不足以支持判断'}[expected] in body['rendered_text']
 
 
 def test_actual_reading_api_with_local_stub_renderer(client):
