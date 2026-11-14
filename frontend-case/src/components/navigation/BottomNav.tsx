@@ -4,7 +4,7 @@ import './BottomNav.css'
 export type PageName = 'today' | 'guide' | 'insights' | 'me' | 'more'
 
 interface BottomNavProps {
-  activePage: PageName
+  activePage: PageName | null
   onPageChange: (page: PageName) => void
   entitlementLabel?: string
 }

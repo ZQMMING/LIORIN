@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import './paper-theme.css'
 import AppShell from './components/shell/AppShell'
 import PersonalToday from './pages/today/PersonalToday'
@@ -6,7 +6,7 @@ import RealPublicToday from './pages/today/RealPublicToday'
 import LocalPreviewUnavailable from './pages/today/LocalPreviewUnavailable'
 import RealPersonalHeluoToday from './pages/today/RealPersonalHeluoToday'
 import EngineQaPage from './pages/EngineQaPage'
-import type { AuthTokens } from './api/auth'
+import { restoreBrowserSession, type AuthTokens } from './api/auth'
 import GuidePage from './pages/GuidePage'
 import InsightsPage from './pages/InsightsPage'
 import MePage from './pages/MePage'
@@ -21,6 +21,7 @@ import {
   MOCK_CALCULATION_ERROR,
 } from './mock/data'
 import type { PageName } from './components/navigation/BottomNav'
+import { pageForPath, pathForPage } from './navigation'
 import type { Entitlement, ProfileStatus, TodayData } from './mock/data'
 
 type SimulatedState =
@@ -55,12 +56,32 @@ function getEntitlement(state: SimulatedState): Entitlement {
 }
 
 function App() {
-  const [currentPage, setCurrentPage] = useState<PageName>('today')
+  const [currentPage, setCurrentPage] = useState(() => pageForPath(window.location.pathname))
+  const navigate = useCallback((page: PageName) => {
+    const path = pathForPage(page)
+    if (window.location.pathname !== path) window.history.pushState(null, '', path)
+    setCurrentPage(page)
+  }, [])
+  useEffect(() => {
+    const onPopState = () => setCurrentPage(pageForPath(window.location.pathname))
+    window.addEventListener('popstate', onPopState)
+    return () => window.removeEventListener('popstate', onPopState)
+  }, [])
   const [simState, setSimState] = useState<SimulatedState>('public')
   const [session, setSession] = useState<AuthTokens | null>(null)
+  const sessionEpoch = useRef(0)
+  useEffect(() => {
+    let active = true
+    const epoch = sessionEpoch.current
+    void restoreBrowserSession().then(restored => {
+      if (active && sessionEpoch.current === epoch) setSession(restored)
+    }).catch(() => { /* no valid cookie: remain signed out */ })
+    return () => { active = false }
+  }, [])
   const [personalSessionExpired, setPersonalSessionExpired] = useState(false)
   const [showLocalTest, setShowLocalTest] = useState(false)
   const expirePersonalSession = useCallback(() => {
+    sessionEpoch.current += 1
     setSession(null)
     setPersonalSessionExpired(true)
   }, [])
@@ -111,7 +132,7 @@ function App() {
           return <><button className="local-test-back" type="button" onClick={() => setShowLocalTest(false)}>← 返回今日</button><EngineQaPage /></>
         }
         if (personalSessionExpired) return <section className="page-container" role="alert"><h1>个人会话已过期</h1><p>请前往「我的」重新通过邮箱验证码登录；个人结果不会回退为公共数据。</p></section>
-        if (session) return <RealPersonalHeluoToday token={session.access_token} onSessionExpired={expirePersonalSession} onProfileRequired={() => setCurrentPage('me')} />
+        if (session) return <RealPersonalHeluoToday token={session.access_token} onSessionExpired={expirePersonalSession} onProfileRequired={() => navigate('me')} />
         if (effectiveState === 'public') {
           // 本机预览不伪造数据；后端未连接时展示可导航的空状态。
           if (import.meta.env.VITE_LIORIN_LOCAL_PREVIEW === '1' && realError) {
@@ -131,6 +152,7 @@ function App() {
           <PersonalToday
             data={data}
             isPremium={entitlement === 'PREMIUM'}
+            onProfileNext={() => navigate('me')}
           />
         )
       case 'guide':
@@ -138,19 +160,19 @@ function App() {
       case 'insights':
         return <InsightsPage />
       case 'me':
-        return <MePage session={personalSessionExpired ? null : session} onSessionChange={(next) => { setSession(next); setPersonalSessionExpired(false) }} onProfileReady={() => setCurrentPage('today')} />
+        return <MePage session={personalSessionExpired ? null : session} onSessionChange={(next) => { sessionEpoch.current += 1; setSession(next); setPersonalSessionExpired(false) }} onProfileReady={() => navigate('today')} />
       case 'more':
-        return <MorePage onNavigate={setCurrentPage} />
+        return <MorePage onNavigate={navigate} />
       default:
-        return <section className="page-container" role="status"><h1>功能暂未开放</h1><p>该页面尚无可用的真实数据接口。</p></section>
+        return <section className="page-container" role="status"><h1>页面不存在</h1><p>请通过下方导航选择页面。</p><button type="button" onClick={() => navigate('today')}>返回今日</button></section>
     }
   }
 
   return (
     <AppShell
-      activePage={currentPage}
+      activePage={currentPage === 'not-found' ? null : currentPage}
       viewKey={showLocalTest}
-      onPageChange={setCurrentPage}
+      onPageChange={navigate}
       onLangChange={handleLangChange}
       onTimezoneChange={handleTimezoneChange}
       entitlementLabel={entitlementLabel}

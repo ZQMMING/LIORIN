@@ -341,6 +341,8 @@ def RateLimited(
             # ever need to bucket real authenticated identities here.
             if identity.user is None and identity.device is None:
                 return None
+        elif key == "peer_ip":
+            ck = request.client.host if request.client else "unknown"
         else:
             ck = get_client_ip(request)
         impl = _bucket_for(bucket, max_requests, window_seconds)

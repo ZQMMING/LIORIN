@@ -205,7 +205,8 @@ def _personal_block(identity: IdentityContext) -> dict[str, Any]:
 
 
 def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
-               profile_store: Any | None = None, local_qa: bool = False) -> FastAPI:
+               profile_store: Any | None = None, local_qa: bool = False,
+               email_auth_store: Any | None = None) -> FastAPI:
     """FastAPI app factory.
 
     B-09 R2 rework (ARBITRATION_BATCH3 R2): the very first call inside this
@@ -259,6 +260,15 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
     app.add_exception_handler(RequestValidationError, request_validation_error_handler)
     app.add_exception_handler(OTCGApiError, otcg_api_error_handler)
     app.add_exception_handler(Exception, unhandled_exception_handler)
+
+    @app.get('/v1/locations')
+    def supported_birth_locations() -> dict:
+        """Expose only canonical IDs accepted by the existing resolver."""
+        return {'locations': [
+            {'id': loc.id, 'name': loc.name_zh, 'country': loc.country,
+             'timezone': loc.timezone, 'aliases': list(loc.aliases)}
+            for loc in time_resolver.locations if time_resolver.lookup(loc.id).id == loc.id
+        ]}
 
     @app.get("/health", dependencies=[Depends(RATE_LIMIT_LIVENESS_GLOBAL)])
     def health() -> dict:
@@ -624,6 +634,17 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             raise HTTPException(status_code=404, detail={"code": "PROFILE_NOT_FOUND", "message": "profile not found"})
         return profile
 
+    @app.get('/v1/personal/heluo-today')
+    def personal_today_unavailable(identity: IdentityContext = Depends(get_current_user_or_device)) -> dict:
+        """Do not publish a day judgment before its rule and date contract are approved."""
+        user_id = _require_profile_user(identity)
+        if profile_store is None:
+            raise HTTPException(status_code=503, detail={'code': 'PROFILE_STORE_UNAVAILABLE'})
+        if profile_store.get(user_id) is None:
+            raise HTTPException(status_code=404, detail={'code': 'PROFILE_NOT_FOUND'})
+        raise HTTPException(status_code=503, detail={'code': 'PERSONAL_TODAY_UNAVAILABLE',
+            'message': 'personal daily result is not available'})
+
     # ------------------------------------------------------------------ #
     # DEPRECATED V2 paths (Sunset 2027-08-18; Deprecation headers added by
     # TraceMiddleware. status code stays 200 on success.)
@@ -686,6 +707,10 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
     # included, so POST /v1/auth/register returned 404 at HTTP layer.
     from .auth import router as _auth_router
     app.include_router(_auth_router)  # _auth_router already declares prefix="/v1/auth"
+    from .email_auth import attach_email_auth
+    attach_email_auth(app, email_auth_store)
+    from .browser_session import attach_browser_session
+    attach_browser_session(app)
 
     # P0-LEGACY-PURGE: /admin 断言观测台（V13 Assertion Observatory）已移除。
     # 该路由承载旧 Assertion/Resolver/Guidance 生产链，会独立产生 rendered_guidance

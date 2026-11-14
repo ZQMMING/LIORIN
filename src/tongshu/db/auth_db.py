@@ -185,6 +185,34 @@ class PostgresAuthDB:
             row = cur.fetchone()
             return dict(row) if row else None
 
+    def rotate_refresh_token_atomic(self, token_hash: str, new_jti: str,
+                                    new_hash: str, expires_at: Any,
+                                    device_id: Optional[str] = None) -> dict:
+        """Consume and replace a refresh token in one locked transaction."""
+        with _conn(self.dsn) as c:
+            with c.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+                cur.execute(
+                    "SELECT id AS jti,user_id,device_id,expires_at,revoked_at "
+                    "FROM refresh_tokens WHERE token_hash=%s FOR UPDATE", (token_hash,))
+                row = cur.fetchone()
+                if row is None:
+                    return {"result": "invalid"}
+                user_id = str(row['user_id'])
+                old_device = str(row['device_id']) if row['device_id'] is not None else None
+                if row['revoked_at'] is not None:
+                    if old_device is None:
+                        cur.execute("UPDATE refresh_tokens SET revoked_at=now() WHERE user_id=%s AND revoked_at IS NULL", (user_id,))
+                    else:
+                        cur.execute("UPDATE refresh_tokens SET revoked_at=now() WHERE user_id=%s AND device_id=%s AND revoked_at IS NULL", (user_id, old_device))
+                    return {"result": "replay", "user_id": user_id,
+                            "device_id": old_device, "jti": str(row['jti'])}
+                if row['expires_at'] < _now():
+                    return {"result": "expired"}
+                cur.execute("INSERT INTO refresh_tokens (id,user_id,device_id,token_hash,expires_at) VALUES (%s,%s,%s,%s,%s)",
+                            (new_jti, user_id, device_id or old_device, new_hash, expires_at))
+                cur.execute("UPDATE refresh_tokens SET revoked_at=now(), rotated_into=%s WHERE id=%s", (new_jti, row['jti']))
+                return {"result": "ok", "user_id": user_id, "jti": str(row['jti'])}
+
     def revoke_refresh_token(self, jti: str, rotated_into: Optional[str] = None) -> None:
         with _conn(self.dsn) as c:
             cur = c.cursor()

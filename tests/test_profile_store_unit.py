@@ -53,15 +53,18 @@ def test_store_rejects_anonymous_identity(db_cursor):
 
 def test_save_is_parameterized_and_user_scoped(db_cursor):
     cursor, _, connect = db_cursor
+    cursor.rowcount = 1
     store = PostgresProfileStore("postgresql://placeholder@localhost/otcg")
     store.save("user-1", {"birth_date": "1984-12-07", "birth_time": {"hour": 16, "minute": 30},
                           "gender": "male", "timezone": "Asia/Shanghai", "location": "Beijing",
                           "current_location": "Beijing", "calendar_system": "solar"})
-    sql, values = cursor.execute.call_args.args
+    sql, values = cursor.execute.call_args_list[0].args
     assert "ON CONFLICT (user_id) DO UPDATE" in sql
     assert "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)" in sql
     assert values[0] == "user-1"
     assert "1984-12-07" not in sql
+    assert "UPDATE users SET has_birth_info = true" in cursor.execute.call_args_list[1].args[0]
+    assert cursor.execute.call_args_list[1].args[1] == ("user-1",)
     connect.assert_called_once()
 
 
@@ -73,3 +76,13 @@ def test_read_filters_by_user_id(db_cursor):
     sql, values = cursor.execute.call_args.args
     assert "WHERE user_id = %s" in sql
     assert values == ("user-2",)
+
+
+def test_save_rejects_missing_user_in_same_transaction(db_cursor):
+    cursor, _, _ = db_cursor
+    cursor.rowcount = 0
+    store = PostgresProfileStore("postgresql://placeholder@localhost/otcg")
+    with pytest.raises(ValueError, match="profile user does not exist"):
+        store.save("missing", {"birth_date": "1984-12-07", "birth_time": {"hour": 16, "minute": 30},
+            "gender": "male", "timezone": "Asia/Shanghai", "location": "CN_BEIJING",
+            "current_location": None, "calendar_system": "solar"})

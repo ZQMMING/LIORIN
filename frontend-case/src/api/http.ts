@@ -34,6 +34,7 @@ interface RequestOptions {
   body?: unknown
   token?: string | null
   signal?: AbortSignal
+  headers?: Record<string, string>
 }
 
 /**
@@ -46,6 +47,7 @@ export async function apiRequest<T = unknown>(
   const headers: Record<string, string> = { Accept: 'application/json' }
   if (opts.body !== undefined) headers['Content-Type'] = 'application/json'
   if (opts.token) headers['Authorization'] = `Bearer ${opts.token}`
+  Object.assign(headers, opts.headers)
 
   const base = baseUrl().replace(/\/$/, '')
   const res = await fetch(`${base}${path}`, {
