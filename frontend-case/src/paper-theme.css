@@ -21,3 +21,6 @@
   --gradient-bg: #f7f4ef;
   --gradient-text-gold: linear-gradient(135deg,#705d4b,#987c60);
 }
+.local-test-entry{position:fixed;right:20px;bottom:90px;z-index:30;min-height:44px;padding:10px 18px;background:#292925;color:#fff;border:1px solid #292925;font-size:12px;letter-spacing:.04em}
+.local-test-back{margin:24px 28px 0;min-height:44px;padding:8px 12px;border:1px solid #bbb2a6;color:#302f2b;background:#f7f4ef}
+.local-test-entry:focus-visible,.local-test-back:focus-visible{outline:2px solid #985c4b;outline-offset:3px}

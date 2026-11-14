@@ -71,7 +71,7 @@ export default function RealPublicToday({ view, isLoading = false, isError = fal
           {!view.essentials.length && <p className="today-empty">暂无数据</p>}
         </div>
       </section>
-      <footer className="today-footer"><p>以传统历法为线索，留心自己的节奏。</p><span>trace: {view.traceId}</span></footer>
+      <footer className="today-footer"><p>公共历法按服务端日期展示，个人出生资料不参与计算。</p><span>trace: {view.traceId}</span></footer>
     </main>
   )
 }

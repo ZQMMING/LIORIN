@@ -27,7 +27,7 @@ describe('认证网关只读能力探测', () => {
   it('401 => 网关已装配但无令牌，不伪称已登录', async () => {
     request.mockRejectedValueOnce(new ApiClientError('unauthorized', 401, { code: 'INVALID_TOKEN', message: 'Missing authorization' }))
     render(<MePage />)
-    expect(await screen.findByText('认证服务可用；当前仍是游客。登录入口尚未接入。')).toBeInTheDocument()
+    expect(await screen.findByText('认证服务可用；可尝试使用下方邮箱登录。')).toBeInTheDocument()
     expect(screen.queryByText('AUTHENTICATED')).not.toBeInTheDocument()
   })
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useLayoutEffect, useRef } from 'react'
 import Header from './Header'
 import './AppShell.css'
 import BottomNav, { type PageName } from '../navigation/BottomNav'
@@ -12,6 +12,7 @@ interface AppShellProps {
   onLangChange?: () => void
   onTimezoneChange?: () => void
   entitlementLabel?: string
+  viewKey?: string | boolean
 }
 
 /**
@@ -22,12 +23,17 @@ const AppShell: React.FC<AppShellProps> = ({
   children,
   activePage,
   onPageChange,
-  timezone = 'GMT+8',
+  timezone,
   lang = '中文',
   onLangChange,
   onTimezoneChange,
   entitlementLabel,
+  viewKey,
 }) => {
+  const mainRef = useRef<HTMLElement>(null)
+  useLayoutEffect(() => {
+    if (mainRef.current) mainRef.current.scrollTop = 0
+  }, [activePage, viewKey])
   return (
     <div className="app-shell" style={{ display: 'grid', gridTemplateRows: 'auto 1fr auto', height: '100vh', overflow: 'hidden' }}>
       <Header
@@ -37,6 +43,7 @@ const AppShell: React.FC<AppShellProps> = ({
         onTimezoneChange={onTimezoneChange}
       />
       <main
+        ref={mainRef}
         className="app-main"
         style={{
           overflowY: 'auto',

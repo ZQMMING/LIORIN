@@ -40,19 +40,19 @@ export interface NormalizedApiError {
 
 /** 判断一个响应体是不是错误外壳 */
 export function isApiErrorBody(body: unknown): body is ApiErrorBody {
-  return (
-    typeof body === 'object' &&
-    body !== null &&
-    'error' in (body as Record<string, unknown>)
-  )
+  if (typeof body !== 'object' || body === null || !('error' in body)) return false
+  const error = (body as Record<string, unknown>).error
+  return typeof error === 'object' && error !== null &&
+    typeof (error as Record<string, unknown>).code === 'string' &&
+    typeof (error as Record<string, unknown>).message === 'string'
 }
 
 export function isAuthDetailBody(body: unknown): body is AuthDetailBody {
-  return (
-    typeof body === 'object' &&
-    body !== null &&
-    'detail' in (body as Record<string, unknown>)
-  )
+  if (typeof body !== 'object' || body === null || !('detail' in body)) return false
+  const detail = (body as Record<string, unknown>).detail
+  return typeof detail === 'object' && detail !== null && !Array.isArray(detail) &&
+    typeof (detail as Record<string, unknown>).code === 'string' &&
+    typeof (detail as Record<string, unknown>).message === 'string'
 }
 
 /** 把两套外壳归一化为统一结构，避免散写判断 */
@@ -70,6 +70,13 @@ export function normalizeApiError(body: unknown): NormalizedApiError {
     return {
       code: body.detail.code,
       message: body.detail.message,
+    }
+  }
+  if (typeof body === 'object' && body !== null && 'detail' in body) {
+    const detail = (body as Record<string, unknown>).detail
+    if (Array.isArray(detail)) {
+      const details = detail.filter(item => typeof item === 'object' && item !== null)
+      return { code: 'INVALID_INPUT', message: '提交的信息未通过校验', details }
     }
   }
   return { code: 'UNKNOWN', message: '无法识别的错误响应' }
