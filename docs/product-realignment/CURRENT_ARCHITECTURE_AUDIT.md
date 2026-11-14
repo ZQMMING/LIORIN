@@ -38,6 +38,12 @@
 
 ## 主线引擎抽查
 
+2026-11-14 对隔离的 `origin/main@1925adf0` 执行额外入口搜索：全树 Python 文件名查找 `app.py`、`pipeline.py`、`compute_stage.py`、`production_entry.py`，仅找到 `engines/production_entry.py`；对非测试、非 archive 的 Python 搜索 FastAPI、APIRouter、路由装饰器和 `uvicorn.run` 未命中。这是有范围的静态检索，不排除不同文件名、其他语言或外部部署入口，不能据此断言任何线上系统不存在。
+
+主线 `tests/cross_repo/test_heluo_context.py:8` 导入 `tongshu.engines.heluo.canonical`，而该主线没有该包；在隔离工作树显式指定文件并运行 `PYTHONPATH=src python -m pytest tests/cross_repo/test_heluo_context.py --collect-only -q -p no:cacheprovider`，实测 **0 项收集、1 个导入错误**（`No module named 'tongshu.engines.heluo'`）。进一步核对发现这是独立包预期隔离边界：`tests/cross_repo/conftest.py:34-42` 在找不到 `tongshu.pipeline` 时以 `collect_ignore_glob` 排除目录；直接对整个目录运行 collect-only 实测 0 项收集，退出码 5，无导入报错。显式指定单文件绕开了目录忽略，不能称普通主线测试必然因该文件报错，也不代表全部 cross_repo 测试均失败。它说明这里没有运行这些跨仓接线守卫，不能将其误称产品路径已接通。独立包 `tests/heluo/test_heluo_public_api.py` 测的是不同对象。
+
+同一主线另运行 `PYTHONPATH=src python -m pytest tests/heluo/test_heluo_liuri_calendar.py tests/heluo/test_heluo_public_api.py -q -p no:cacheprovider`，**47 passed、29 subtests passed**。前者测试 `heluo_engine.adapter.HeluoAdapter` 及独立包节气窗口，后者侧重导出、签名与资源解析；这证明所选独立包测试通过，不证明旧平台路径或当前前端个人今日接口已修好。
+
 | 模块 | 状态 | 证据及边界 |
 |---|---|---|
 | 河洛独立包 | 部分实现 | `src/heluo_engine/adapter.py:151,192,204,277` 有独立、context、chart 三入口及 canonical 调用；主线 `tests/heluo/test_heluo_degradation_contracts.py` 测试 `heluo_engine.adapter.HeluoAdapter` 等独立包对象，19 passed、19 subtests passed；是否已接入最终产品 **未验证**。 |

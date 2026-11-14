@@ -44,4 +44,4 @@
 
 ## 主线
 
-远端 `origin/main@1925adf0` 无当前工作区的 `frontend-case` 和 `src/tongshu/api/app.py`；以上调用链不得归因于主线。主线是否另有可运行产品入口仍需进一步取证。
+远端 `origin/main@1925adf0` 无当前工作区的 `frontend-case` 和 `src/tongshu/api/app.py`；以上调用链不得归因于主线。非测试、非 archive 的 Python FastAPI/APIRouter/uvicorn 静态检索未找到对应产品入口，但不排除其他语言、入口形式或外部部署。主线在平台模块不存在时有意忽略 `tests/cross_repo`；仅显式指定其中旧文件才复现缺失导入，不能将这些未运行的守卫视为页面到引擎的集成通过，也不能误报常规收集必定失败。完整证据见架构审计。
