@@ -452,6 +452,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
         response: Response,
         trace_id: str | None,
         identity: IdentityContext,
+        date_source: str,
     ) -> dict:
         card = TODAY_MOCK.get(f"{ad.isoformat()}|{region}") or TODAY_MOCK.get("default", {})
         card = dict(card)
@@ -482,6 +483,17 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             "greeting/monthLabel/theme/catalyst/dimensions/time_window/hexagram/reasoning/cross_validation": "mock_until_profile_gate_or_content_module",
         }
         card["trace_id"] = trace_id
+        # The current endpoint accepts a civil date, not a timezone. Do not
+        # claim the server's date is the user's date or infer a timezone from
+        # the region label. A future default policy requires product approval.
+        card["date_context"] = {
+            "date": ad.isoformat(),
+            "source": date_source,
+            "timezone": None,
+            "timezone_status": ("server_local_unspecified" if date_source == "server_local_date"
+                                else "not_supplied"),
+            "scope": "public_calendar",
+        }
         # B-09 STAGE-B (M1): public tier by default; personal block only when
         # the optional 3-tier dep resolves an authenticated identity. The
         # negative-assertion test relies on this key being ABSENT for guests.
@@ -502,7 +514,8 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
     ) -> dict:
         ad = date.fromisoformat(date_str) if date_str else date.today()
         trace_id = getattr(request.state, "trace_id", None)
-        return _today_card(ad, region, response, trace_id, identity)
+        return _today_card(ad, region, response, trace_id, identity,
+                           "explicit_date" if date_str else "server_local_date")
 
     # ------------------------------------------------------------------ #
     # P0-2 Profile Gate — §32 POST /v1/profile (validation + normalization
@@ -654,7 +667,8 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
     ) -> dict:
         ad = date.fromisoformat(date_str) if date_str else date.today()
         trace_id = getattr(request.state, "trace_id", None)
-        return _today_card(ad, region, response, trace_id, identity)
+        return _today_card(ad, region, response, trace_id, identity,
+                           "explicit_date" if date_str else "server_local_date")
 
     # B-09 STAGE-B: B-05 freeze preserved — NFC stays 501 with no auth.
     # Register the NFC router inside create_app so test clients built with
