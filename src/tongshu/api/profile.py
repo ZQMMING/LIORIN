@@ -71,6 +71,7 @@ class ProfileState:
     missing_fields: list = field(default_factory=list)
     timezone: Optional[str] = None
     calendar_system: str = "solar"
+    location: Optional[str] = None
     gender: Optional[str] = None  # Phase 1 / Gender:记录 subject.gender(若提供)
 
 
@@ -159,6 +160,19 @@ def resolve_profile(
                 str(e),
                 details=[{"field": "location", "reason": "unknown location"}],
             ) from e
+        key = location.strip().casefold()
+        entries = time_resolver.locations
+        exact_id = any(entry.id.casefold() == key and entry.id == resolved_location.id for entry in entries)
+        matches = {
+            entry.id for entry in entries
+            if key in {value.casefold() for value in (entry.id, entry.name_zh, *entry.aliases)}
+        }
+        if not exact_id and len(matches) > 1:
+            raise OTCGApiError(
+                ErrorCode.PROFILE_LOCATION_AMBIGUOUS,
+                "birth location requires an explicit city ID",
+                details=[{"field": "location", "reason": "ambiguous location"}],
+            )
 
     tz = timezone
     if tz is None and resolved_location is not None:
@@ -186,6 +200,7 @@ def resolve_profile(
             timezone=tz,
             calendar_system=calendar,
             gender=gender,
+            location=resolved_location.id if resolved_location is not None else None,
         )
 
     return ProfileState(
@@ -193,6 +208,7 @@ def resolve_profile(
         timezone=tz,
         calendar_system=calendar,
         gender=gender,
+        location=resolved_location.id if resolved_location is not None else None,
     )
 
 
