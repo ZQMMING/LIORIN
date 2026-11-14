@@ -37,7 +37,7 @@ const MePage: React.FC<{
     { label: 'SUBSCRIPTION', title: '订阅与权益', sub: '尚未开放' },
   ]
   return (
-    <main className="support-page me-page">
+    <div className="support-page me-page">
       <header className="support-header">
         <span className="support-eyebrow">ME / 我的</span>
         <h1>你的空间。</h1>
@@ -58,7 +58,7 @@ const MePage: React.FC<{
         </div>)}
       </div>
       <footer className="me-footer">LIORIN · 顺天 <span>TIME, IN YOUR OWN RHYTHM</span></footer>
-    </main>
+    </div>
   )
 }
 export default MePage

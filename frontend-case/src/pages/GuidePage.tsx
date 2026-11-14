@@ -8,9 +8,9 @@ const sections = [
 ]
 
 export default function GuidePage() {
-  return <main className="support-page">
+  return <div className="support-page">
     <header className="support-header"><span className="support-eyebrow">THE GUIDE / 使用指南</span><h1>理解时间，<br />也理解它的边界。</h1><p>一份简明的阅读方式，帮助你分辨时间事实、传统解释与个人选择。</p></header>
     <div className="support-list">{sections.map((item) => <section className="support-row" key={item.number}><span className="support-number">{item.number}</span><div><h2>{item.title}</h2><p>{item.text}</p></div></section>)}</div>
     <aside className="support-note"><span>ABOUT LIORIN</span><p>以清晰的来源与适用条件，呈现传统时间文化。</p></aside>
-  </main>
+  </div>
 }

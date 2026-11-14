@@ -4,7 +4,7 @@ import './support-pages.css'
 interface Props { onNavigate: (page: PageName) => void }
 
 export default function MorePage({ onNavigate }: Props) {
-  return <main className="support-page more-page">
+  return <div className="support-page more-page">
     <header className="support-header">
       <span className="support-eyebrow">MORE / 更多</span>
       <h1>从这里，<br />找到需要的内容。</h1>
@@ -19,5 +19,5 @@ export default function MorePage({ onNavigate }: Props) {
       </button>
     </nav>
     <aside className="support-note"><span>COMING LATER</span><p>偏好设置、订阅与更多个人内容尚未开放。</p></aside>
-  </main>
+  </div>
 }

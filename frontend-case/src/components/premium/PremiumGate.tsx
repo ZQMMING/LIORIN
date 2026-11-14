@@ -54,6 +54,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({ onUnlock }) => {
       <button
         className="premium-cta-btn"
         onClick={onUnlock}
+        disabled={!onUnlock}
         style={{
           background: 'transparent',
           border: '1px solid var(--border-strong)',
@@ -62,7 +63,8 @@ const PremiumGate: React.FC<PremiumGateProps> = ({ onUnlock }) => {
           fontSize: '10px',
           letterSpacing: '0.15em',
           textTransform: 'uppercase',
-          cursor: 'pointer',
+          cursor: onUnlock ? 'pointer' : 'not-allowed',
+          opacity: onUnlock ? 1 : 0.55,
           padding: '12px 24px',
           transition: 'all 150ms ease',
         }}
@@ -80,6 +82,7 @@ const PremiumGate: React.FC<PremiumGateProps> = ({ onUnlock }) => {
       >
         解锁私享
       </button>
+      {!onUnlock && <p role="status">私享内容暂未开放。</p>}
     </section>
   )
 }
