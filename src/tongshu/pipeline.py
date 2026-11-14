@@ -157,10 +157,15 @@ class TONGSHUPipeline:
         self.audit_composer = AuditComposer(audit_writer=self.audit_writer)
 
     @classmethod
-    def for_demo(cls, repo_root: Path) -> "TONGSHUPipeline":
+    def resolve_data_dir(cls, repo_root: Path) -> Path:
         data_dir = repo_root / "backend" / "data"
         if not data_dir.is_dir() and (repo_root / "backend" / "backend" / "data").is_dir():
             data_dir = repo_root / "backend" / "backend" / "data"
+        return data_dir
+
+    @classmethod
+    def for_demo(cls, repo_root: Path) -> "TONGSHUPipeline":
+        data_dir = cls.resolve_data_dir(repo_root)
         loader = RuleLoader(data_dir, repo_root / "docs")
         missing = loader.verify_evidence_refs()
         if missing:

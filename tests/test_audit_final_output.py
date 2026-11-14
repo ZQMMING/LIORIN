@@ -51,7 +51,7 @@ def _env_without(*names: str):
 
 def _make_pipeline(enable_validation: bool = True) -> TONGSHUPipeline:
     """复制 for_demo 的装配,但允许注入 enable_validation（P2 场景）。"""
-    data_dir = _ROOT / "backend" / "data"
+    data_dir = TONGSHUPipeline.resolve_data_dir(_ROOT)
     loader = RuleLoader(data_dir, _ROOT / "docs")
     KbLoader(data_dir, _ROOT / "docs")  # 装配即校验数据可达性
     matcher = RuleMatcher(loader.rules)
