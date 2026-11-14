@@ -53,6 +53,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from ..engines.bazi_engine import STEM_ELEMENT
+from ..cross_domain.status import derive_cross_status
 from ..engines.time_resolver import TimeResolver
 from ..pipeline import TONGSHUPipeline
 from .deps import (
@@ -300,30 +301,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
             _ca = {}
         # M2 架构下 cross_analysis 无 status 字段；派生 cross_status 从 coverage 形态推断。
         # 规则：所有 ZI 引擎都有 evidence → ALIGNED；部分 → PARTIAL；空 → INSUFFICIENT。
-        cross_status = _ca.get("status") if isinstance(_ca, dict) else None
-        if cross_status is None and isinstance(_ca, dict):
-            by_engine = _ca.get("by_engine", {}) or {}
-            engines_with_ev = sum(
-                1 for eng_set in by_engine.values()
-                if (eng_set.get("evidence_ids") if isinstance(eng_set, dict) else [])
-            )
-            total = len(by_engine)
-            total_assertions = 0
-            cov = _ca.get("coverage", {}) or {}
-            coverage = cov.get("coverage", {}) if isinstance(cov, dict) else {}
-            for dom_idx in coverage.values():
-                if isinstance(dom_idx, dict):
-                    for ds_idx in dom_idx.values():
-                        if isinstance(ds_idx, dict):
-                            for eng_set in ds_idx.get("by_engine", {}).values():
-                                if isinstance(eng_set, dict):
-                                    total_assertions += len(eng_set.get("assertion_ids", []) or [])
-            if engines_with_ev == 0 or total_assertions == 0:
-                cross_status = "INSUFFICIENT"
-            elif engines_with_ev < total:
-                cross_status = "PARTIAL"
-            else:
-                cross_status = "ALIGNED"
+        cross_status = derive_cross_status(_ca)
         resp = {
             "request_id": result.audit_entry_id,
             "canonical_id": canon.canonical_id,
@@ -405,28 +383,7 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
         # M2 兼容：cross_analysis 无 status 字段，注入派生 status
         ca = canon.get("cross_analysis") or {}
         if isinstance(ca, dict) and "status" not in ca:
-            by_engine = ca.get("by_engine", {}) or {}
-            engines_with_ev = sum(
-                1 for eng_set in by_engine.values()
-                if (eng_set.get("evidence_ids") if isinstance(eng_set, dict) else [])
-            )
-            total = len(by_engine)
-            total_assertions = 0
-            cov = ca.get("coverage", {}) or {}
-            coverage = cov.get("coverage", {}) if isinstance(cov, dict) else {}
-            for dom_idx in coverage.values():
-                if isinstance(dom_idx, dict):
-                    for ds_idx in dom_idx.values():
-                        if isinstance(ds_idx, dict):
-                            for eng_set in ds_idx.get("by_engine", {}).values():
-                                if isinstance(eng_set, dict):
-                                    total_assertions += len(eng_set.get("assertion_ids", []) or [])
-            if engines_with_ev == 0 or total_assertions == 0:
-                ca["status"] = "INSUFFICIENT"
-            elif engines_with_ev < total:
-                ca["status"] = "PARTIAL"
-            else:
-                ca["status"] = "ALIGNED"
+            ca["status"] = derive_cross_status(ca)
         resp = {
             "canonical_id": canon["canonical_id"],
             "theme": canon["theme"],

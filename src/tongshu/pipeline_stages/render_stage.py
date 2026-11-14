@@ -28,6 +28,7 @@ from ..render.render_request import build_render_request
 from ..render.renderer import Renderer
 from ..render.clients.openai_compat import RenderClientError
 from ..render.template_fallback import TemplateFallback
+from ..cross_domain.status import derive_cross_status
 from ..types import RenderStageResult
 
 if TYPE_CHECKING:
@@ -87,7 +88,7 @@ class RenderStage:
             rendered_text = rendered.text
         else:
             # 硬失败：模板回退兜底（即使 ValidationStage 没要求，也保证非空）
-            fallback = self.template_fallback.render(theme, compute.cross_result.status if compute.cross_result else None)
+            fallback = self.template_fallback.render(theme, derive_cross_status(compute.cross_result))
             rendered_text = fallback or ""
             source = "template_fallback" if rendered_text else "template_fallback"
 

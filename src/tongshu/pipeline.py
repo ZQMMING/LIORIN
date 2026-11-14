@@ -298,22 +298,8 @@ class TONGSHUPipeline:
 
         Returns: "ALIGNED" | "PARTIAL" | "INSUFFICIENT"
         """
-        if cross_result is None:
-            return "INSUFFICIENT"
-        # Count engines with non-empty evidence
-        engines_with_evidence = sum(
-            1 for eng_set in cross_result.by_engine.values()
-            if eng_set.evidence_ids
-        )
-        engines_total = len(cross_result.by_engine)
-        if engines_with_evidence == 0:
-            return "INSUFFICIENT"
-        if engines_with_evidence < engines_total:
-            return "PARTIAL"
-        # All engines have evidence → ALIGNED
-        if cross_result.coverage.total_assertions == 0:
-            return "INSUFFICIENT"
-        return "ALIGNED"
+        from .cross_domain.status import derive_cross_status
+        return derive_cross_status(cross_result)
 
     def run(
         self,
