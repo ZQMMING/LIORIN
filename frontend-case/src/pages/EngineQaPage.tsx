@@ -48,7 +48,7 @@ export default function EngineQaPage() {
   const [result, setResult] = useState<EngineQaResponse | null>(null)
   const [copyStatus, setCopyStatus] = useState('')
 
-  return <main className="support-page engine-qa" aria-label="引擎测试工作台">
+  return <div className="support-page engine-qa" aria-label="引擎测试工作台">
     <header className="support-header">
       <span className="support-eyebrow">TEST ONLY / 本机测试</span>
       <h1>引擎问题排查。</h1>
@@ -128,5 +128,5 @@ export default function EngineQaPage() {
       </li>)}</ul>
       </details>
     </section>}
-  </main>
+  </div>
 }

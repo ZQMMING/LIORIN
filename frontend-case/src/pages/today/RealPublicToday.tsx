@@ -22,7 +22,7 @@ export default function RealPublicToday({ view, isLoading = false, isError = fal
   if (isError || !view) return <ErrorState type="network" onRetry={onRetry} />
 
   return (
-    <main className="today-editorial">
+    <div className="today-editorial">
       <style>{BREATHING_CSS}</style>
       <div className="today-topline"><span>LIORIN / 今日</span><span>THE DAILY ALMANAC</span></div>
       <section className="today-intro" aria-labelledby="today-heading">
@@ -72,6 +72,6 @@ export default function RealPublicToday({ view, isLoading = false, isError = fal
         </div>
       </section>
       <footer className="today-footer"><p>公共历法按服务端日期展示，个人出生资料不参与计算。</p><span>trace: {view.traceId}</span></footer>
-    </main>
+    </div>
   )
 }

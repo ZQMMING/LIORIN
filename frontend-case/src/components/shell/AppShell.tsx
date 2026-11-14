@@ -5,7 +5,7 @@ import BottomNav, { type PageName } from '../navigation/BottomNav'
 
 interface AppShellProps {
   children: React.ReactNode
-  activePage: PageName
+  activePage: PageName | null
   onPageChange: (page: PageName) => void
   timezone?: string
   lang?: string
