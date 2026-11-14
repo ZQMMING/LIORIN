@@ -203,7 +203,7 @@ def _personal_block(identity: IdentityContext) -> dict[str, Any]:
 
 
 def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
-               profile_store: Any | None = None) -> FastAPI:
+               profile_store: Any | None = None, local_qa: bool = False) -> FastAPI:
     """FastAPI app factory.
 
     B-09 R2 rework (ARBITRATION_BATCH3 R2): the very first call inside this
@@ -441,6 +441,26 @@ def create_app(repo_root: Path | None = None, db_ops: Any | None = None,
         return resp
 
     # ------------------------------------------------------------------ #
+    # Local diagnostic route is deliberately unavailable unless explicitly enabled.
+    if local_qa:
+        @app.post("/v1/qa/engine")
+        def qa_engine(req: ReadingRequest, request: Request) -> dict:
+            host = request.client.host if request.client else None
+            if host not in ("127.0.0.1", "::1", "testclient"):
+                raise HTTPException(status_code=403, detail={"code": "LOCAL_ONLY", "message": "QA endpoint requires loopback"})
+            birth, analysis = _parse_dates(req.birth_date, req.analysis_date)
+            _gate_personal(req)
+            result = pipeline.run(
+                analysis_date=analysis,
+                birth_date=(birth.year, birth.month, birth.day, req.hour),
+                gender=req.gender, theme=req.theme, compute_only=True,
+                trace_id=getattr(request.state, "trace_id", None),
+                timezone=req.timezone, location=req.location,
+                birth_minute=req.birth_minute,
+            )
+            from .engine_qa import summarize_result
+            return summarize_result(result, analysis)
+
     # Today card
     # ------------------------------------------------------------------ #
 

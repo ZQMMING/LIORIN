@@ -67,6 +67,8 @@ class PipelineResult:
     temporal_convergence: Any = None
     # E7: 梅花易数引擎输出（None = 未启用）
     meihua_result: Any = None
+    # Preserve the chart produced by ComputeStage for bounded test projections.
+    bazi_chart: Any = None
 
 
 class TONGSHUPipeline:
@@ -156,6 +158,8 @@ class TONGSHUPipeline:
     @classmethod
     def for_demo(cls, repo_root: Path) -> "TONGSHUPipeline":
         data_dir = repo_root / "backend" / "data"
+        if not data_dir.is_dir() and (repo_root / "backend" / "backend" / "data").is_dir():
+            data_dir = repo_root / "backend" / "backend" / "data"
         loader = RuleLoader(data_dir, repo_root / "docs")
         missing = loader.verify_evidence_refs()
         if missing:
@@ -464,6 +468,7 @@ class TONGSHUPipeline:
             canonical_signals=compute.canonical_signals,
             temporal_convergence=compute.temporal_convergence,
             meihua_result=compute.meihua_result,
+            bazi_chart=compute.bazi_chart,
         )
 
     def _write_to_dao(
