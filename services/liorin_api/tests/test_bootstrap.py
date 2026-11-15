@@ -11,7 +11,8 @@ def test_health_distinguishes_liveness_from_readiness(tmp_path):
     assert body['status'] == 'ok'
     assert body['readiness'] == 'unavailable'
     assert body['components'] == {'api': 'ready', 'public_today': 'unavailable',
-                                  'auth': 'unavailable', 'personal_today': 'unavailable'}
+                                  'auth': 'unavailable', 'personal_today': 'unavailable',
+                                  'locations': 'unavailable'}
     assert body['data_directory_present'] is True
     assert client.get('/ready').status_code == 503
     assert not list(tmp_path.iterdir())

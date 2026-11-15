@@ -2,10 +2,11 @@
 from pathlib import Path
 import os
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import JSONResponse
 
 from .config import Settings
+from .locations import LocationAmbiguous, LocationCatalogue, LocationCatalogueError, LocationUnknown
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -15,9 +16,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.get('/health')
     def health() -> dict:
+        try:
+            LocationCatalogue(settings.data_dir)
+            locations_status = 'ready'
+        except LocationCatalogueError:
+            locations_status = 'unavailable'
         return {'status': 'ok', 'readiness': 'unavailable',
                 'components': {'api': 'ready', 'public_today': 'unavailable',
-                               'auth': 'unavailable', 'personal_today': 'unavailable'},
+                               'auth': 'unavailable', 'personal_today': 'unavailable',
+                               'locations': locations_status},
                 'data_directory_present': settings.data_dir.is_dir()}
 
     @app.get('/ready')
@@ -35,8 +42,24 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         unavailable('TODAY_UNAVAILABLE')
 
     @app.get('/v1/locations')
-    def locations() -> None:
-        unavailable('LOCATIONS_UNAVAILABLE')
+    def locations() -> dict:
+        try:
+            return {'locations': LocationCatalogue(settings.data_dir).listing()}
+        except LocationCatalogueError:
+            unavailable('LOCATIONS_UNAVAILABLE')
+
+    @app.get('/v1/locations/resolve')
+    def resolve_location(value: str = Query(..., min_length=1, max_length=200)) -> dict:
+        try:
+            return LocationCatalogue(settings.data_dir).resolve(value)
+        except LocationCatalogueError:
+            unavailable('LOCATIONS_UNAVAILABLE')
+        except LocationAmbiguous:
+            raise HTTPException(status_code=422, detail={'code': 'PROFILE_LOCATION_AMBIGUOUS',
+                'message': 'choose a canonical city ID'}) from None
+        except LocationUnknown:
+            raise HTTPException(status_code=400, detail={'code': 'LOCATION_UNKNOWN',
+                'message': 'location not found'}) from None
 
     @app.get('/v1/auth/me')
     def auth_me() -> None:
