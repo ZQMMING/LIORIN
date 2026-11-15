@@ -1,0 +1,8 @@
+.personal-today{max-width:620px;margin:0 auto;padding:64px 28px 100px;text-align:center;color:#242522}
+.personal-today__eyebrow{font-size:10px;letter-spacing:.18em;color:#766e64}
+.personal-today h1{font:400 clamp(32px,6vw,48px) var(--font-display);margin:20px 0 10px}
+.personal-today__date{font-size:13px;color:#716b63}.personal-today__hexagram{display:block;width:min(240px,70vw);margin:34px auto 16px}
+.personal-today__line{fill:#272925}.personal-today__line.is-active{fill:#9b5948}
+.personal-today__focus{font-size:16px;letter-spacing:.08em}.personal-today__note{border-top:1px solid #ded8ce;margin:36px 0 20px;padding-top:24px;color:#706a61;font-size:13px;line-height:1.8}
+.personal-today details{font-size:11px;color:#777169;overflow-wrap:anywhere}.personal-today summary{cursor:pointer}
+@media(max-width:600px){.personal-today{padding:48px 22px 90px}}

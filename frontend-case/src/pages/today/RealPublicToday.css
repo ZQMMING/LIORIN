@@ -1,0 +1,44 @@
+.today-editorial{max-width:1100px;margin:auto;padding:32px 42px 96px;color:var(--text-primary)}
+.today-topline,.today-section-heading{display:flex;justify-content:space-between;gap:20px;font-size:10px;letter-spacing:.14em;color:#a9a49a}
+.today-topline{border-bottom:1px solid var(--border-strong);padding-bottom:18px}
+.today-intro{display:grid;grid-template-columns:1fr 1fr;align-items:center;min-height:520px;gap:40px}
+.today-kicker,.today-label{font-size:11px;letter-spacing:.14em;color:#c2a674}
+.today-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:#b9604d;margin-right:8px}
+.today-intro h1{font-family:var(--font-display);font-size:clamp(40px,5.2vw,68px);line-height:1.2;font-weight:400;letter-spacing:.02em;margin:24px 0}
+.today-intro h1 em{font-style:normal;color:#d7c19b}
+.today-intro-description{font-size:14px;line-height:1.9;color:#c3beb4}
+.today-date{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:42px;padding-top:17px;border-top:1px solid var(--border);font-size:12px;color:#aaa59b}
+.today-orbit{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;overflow:hidden}
+.today-orbit-label,.today-orbit-caption{font-size:10px;letter-spacing:.2em;color:#9c968b}
+.today-orbit-caption{letter-spacing:.12em}
+.today-section-heading{padding:20px 0 15px;border-top:1px solid var(--border-strong)}
+.today-calendar{display:grid;grid-template-columns:1fr 1fr;min-height:220px;border:1px solid var(--border);margin-bottom:64px}
+.today-hex,.today-pillars,.today-advice,.today-essentials{padding:28px}
+.today-pillars{border-left:1px solid var(--border)}
+.today-label span{display:block;font-size:9px;letter-spacing:.12em;color:#999387;margin-top:5px}
+.today-hex-name{font-family:var(--font-display);font-size:32px;margin:26px 0 16px}
+.today-hex-details{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:12px;color:#bdb6a9}
+.today-pillar-list{display:flex;gap:35px;margin-top:30px}
+.today-pillar{display:flex;flex-direction:column;gap:8px}.today-pillar span{font-size:11px;color:#aaa49a}.today-pillar strong{font:400 24px var(--font-display)}
+.today-detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.today-yi-ji,.today-essentials{border:1px solid var(--border);background:rgba(255,255,255,.015)}
+.today-yi-ji{display:grid;grid-template-columns:1fr 1fr}.today-advice+.today-advice{border-left:1px solid var(--border)}
+.today-advice ul{list-style:none;margin-top:20px}.today-advice li{font-size:14px;line-height:2.2;color:#e3ddd3}.today-empty{font-size:13px;color:#aaa49a;margin-top:20px}
+.today-detail-row{display:flex;justify-content:space-between;gap:20px;padding:11px 0;border-bottom:1px solid var(--border);font-size:13px}.today-detail-row span{color:#aaa49a}.today-detail-row strong{font-weight:400;text-align:right}
+.today-essentials .today-label{margin-bottom:14px}.today-footer{display:flex;justify-content:space-between;gap:20px;border-top:1px solid var(--border);margin-top:64px;padding-top:24px;color:#aaa49a;font-size:12px}.today-footer span{font:10px var(--font-mono);overflow-wrap:anywhere}
+@media(max-width:700px){.today-editorial{padding:24px 22px 90px}.today-topline span:last-child,.today-section-heading span:last-child{display:none}.today-intro{grid-template-columns:1fr;gap:0;padding:42px 0 36px;min-height:0}.today-intro h1{font-size:42px;margin:20px 0}.today-date{margin-top:24px}.today-orbit{min-height:280px;margin-top:25px}.today-calendar,.today-detail-grid{grid-template-columns:1fr}.today-calendar{margin-bottom:42px}.today-pillars{border-left:0;border-top:1px solid var(--border)}.today-hex,.today-pillars,.today-advice,.today-essentials{padding:22px}.today-footer{flex-direction:column;margin-top:42px}}
+
+/* Paper and ink: the home page follows the supplied visual reference. */
+.today-editorial{color:#252622}
+.today-topline,.today-section-heading{color:#77746e}
+.today-topline,.today-section-heading,.today-date,.today-footer{border-color:#d7d2ca}
+.today-kicker,.today-label{color:#6e6356}
+.today-intro h1 em{color:#817465}
+.today-intro-description{color:#5e5c56}
+.today-date,.today-orbit-label,.today-orbit-caption,.today-footer{color:#77736b}
+.today-calendar,.today-yi-ji,.today-essentials{border-color:#ded8ce;background:transparent}
+.today-pillars,.today-advice+.today-advice,.today-detail-row{border-color:#ded8ce}
+.today-label span,.today-pillar span,.today-detail-row span,.today-empty{color:#817c73}
+.today-hex-details,.today-advice li{color:#4a4944}
+.today-intro{min-height:calc(100svh - 160px)}
+@media(max-width:700px){.today-intro{min-height:0}}
