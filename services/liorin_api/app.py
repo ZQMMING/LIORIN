@@ -14,11 +14,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings.from_env(os.environ, Path(__file__).resolve().parents[2])
     app = FastAPI(title='LIORIN product API', docs_url=None, redoc_url=None, openapi_url=None)
     app.state.settings = settings
+    # The isolated-test adapter verifies its database identity before use;
+    # no production account adapter is enabled by this factory.
+    account_store = None
+    if os.environ.get('LIORIN_ACCOUNT_MODE') == 'isolated-test':
+        from .account.runtime import attach_test_account
+        account_store = attach_test_account(app)
 
     @app.middleware('http')
     async def protect_time_context(request, call_next):
         response = await call_next(request)
-        if request.url.path == '/v1/time-context':
+        if (request.url.path == '/v1/time-context' or request.url.path.startswith('/v1/auth/')
+                or request.url.path.startswith('/v1/profile/')):
             response.headers['Cache-Control'] = 'no-store'
         return response
 
@@ -31,7 +38,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             locations_status = 'unavailable'
         return {'status': 'ok', 'readiness': 'unavailable',
                 'components': {'api': 'ready', 'public_today': 'unavailable',
-                               'auth': 'unavailable', 'personal_today': 'unavailable',
+                               'auth': 'isolated_test' if account_store else 'unavailable', 'personal_today': 'unavailable',
                                'locations': locations_status},
                 'data_directory_present': settings.data_dir.is_dir()}
 
@@ -84,20 +91,27 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         except TimeContextError as exc:
             raise HTTPException(status_code=422, detail={'code': exc.code, 'message': str(exc)}) from None
 
-    @app.get('/v1/auth/me')
-    def auth_me() -> None:
-        unavailable('AUTH_UNAVAILABLE')
+    if account_store is None:
+        @app.get('/v1/auth/me')
+        def auth_me() -> None:
+            unavailable('AUTH_UNAVAILABLE')
 
-    @app.post('/v1/auth/email/request-code')
-    @app.post('/v1/auth/email/verify')
-    @app.post('/v1/auth/session/restore')
-    @app.post('/v1/auth/session/logout')
-    @app.post('/v1/auth/login')
-    def auth_unavailable() -> None:
-        unavailable('AUTH_UNAVAILABLE')
+        @app.post('/v1/auth/email/request-code')
+        @app.post('/v1/auth/email/verify')
+        @app.post('/v1/auth/session/restore')
+        @app.post('/v1/auth/session/logout')
+        @app.post('/v1/auth/login')
+        def auth_unavailable() -> None:
+            unavailable('AUTH_UNAVAILABLE')
 
-    @app.get('/v1/profile/stored')
-    @app.put('/v1/profile/stored')
+        @app.get('/v1/profile/stored')
+        @app.put('/v1/profile/stored')
+        def profile_unavailable() -> None:
+            unavailable('PERSONAL_UNAVAILABLE')
+    else:
+        from .account.profile import attach_profile
+        attach_profile(app, account_store, settings.data_dir)
+
     @app.get('/v1/personal/heluo-today')
     def personal_unavailable() -> None:
         unavailable('PERSONAL_UNAVAILABLE')
