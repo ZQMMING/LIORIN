@@ -10,6 +10,8 @@ guessing. `/v1/time-context` normalizes a supplied civil birth time and identifi
 the timezone source; absent minutes remain partial and DST gaps or unresolved
 overlaps are rejected. It does not calculate solar time, pillars or day-boundary
 rules. A directory being present is not evidence that its data is valid.
+The calculation and reading routes expose a 503 status with unavailable/unknown
+engine states; they do not return judgments or personal guidance.
 
 From the repository root:
 

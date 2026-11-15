@@ -102,6 +102,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     def personal_unavailable() -> None:
         unavailable('PERSONAL_UNAVAILABLE')
 
+    @app.post('/v1/calculate')
+    @app.post('/v1/daily-guide')
+    @app.post('/api/reading')
+    def reading_unavailable() -> JSONResponse:
+        # These routes cannot safely produce a calculation or interpretation
+        # until the platform engines and evidence contracts are integrated.
+        return JSONResponse(status_code=503, headers={'Cache-Control': 'no-store'}, content={
+            'detail': {'code': 'CALCULATION_UNAVAILABLE', 'message': 'calculation is not configured'},
+            'engine_status': {'bazi': 'unavailable', 'blind': 'unknown', 'heluo': 'unknown'},
+            'engine_rule_status': {'blind': 'pending_review'},
+        })
+
     return app
 
 
