@@ -7,12 +7,20 @@ from fastapi.responses import JSONResponse
 
 from .config import Settings
 from .locations import LocationAmbiguous, LocationCatalogue, LocationCatalogueError, LocationUnknown
+from .time_context import BirthTimeRequest, TimeContextError, normalize_birth_time
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     settings = settings or Settings.from_env(os.environ, Path(__file__).resolve().parents[2])
     app = FastAPI(title='LIORIN product API', docs_url=None, redoc_url=None, openapi_url=None)
     app.state.settings = settings
+
+    @app.middleware('http')
+    async def protect_time_context(request, call_next):
+        response = await call_next(request)
+        if request.url.path == '/v1/time-context':
+            response.headers['Cache-Control'] = 'no-store'
+        return response
 
     @app.get('/health')
     def health() -> dict:
@@ -60,6 +68,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         except LocationUnknown:
             raise HTTPException(status_code=400, detail={'code': 'LOCATION_UNKNOWN',
                 'message': 'location not found'}) from None
+
+    @app.post('/v1/time-context')
+    def time_context(request: BirthTimeRequest) -> dict:
+        try:
+            return normalize_birth_time(request, LocationCatalogue(settings.data_dir))
+        except LocationCatalogueError:
+            unavailable('LOCATIONS_UNAVAILABLE')
+        except LocationAmbiguous:
+            raise HTTPException(status_code=422, detail={'code': 'PROFILE_LOCATION_AMBIGUOUS',
+                'message': 'choose a canonical city ID'}) from None
+        except LocationUnknown:
+            raise HTTPException(status_code=400, detail={'code': 'LOCATION_UNKNOWN',
+                'message': 'location not found'}) from None
+        except TimeContextError as exc:
+            raise HTTPException(status_code=422, detail={'code': exc.code, 'message': str(exc)}) from None
 
     @app.get('/v1/auth/me')
     def auth_me() -> None:
