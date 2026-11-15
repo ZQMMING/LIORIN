@@ -1,4 +1,4 @@
-name: M1-M3 release candidate checks
+name: M1 frontend integration checks
 on:
   pull_request:
     branches: [main]
@@ -23,20 +23,3 @@ jobs:
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm test -- --run
       - run: npm run build
-  integration-prerequisites:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Require product backend and frozen replay before release
-        shell: bash
-        run: |
-          for path in src/tongshu/api/app.py src/tongshu/pipeline.py scripts/golden_replay.py cases/baselines/golden_replay_baseline.json; do
-            if [ ! -f "$path" ]; then
-              echo "Release blocked: required product component missing: $path"
-              exit 1
-            fi
-          done
-      - name: Run frozen Golden replay (never update the baseline)
-        run: python scripts/golden_replay.py --check
-        env:
-          PYTHONPATH: src

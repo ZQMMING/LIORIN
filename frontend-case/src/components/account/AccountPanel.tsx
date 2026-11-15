@@ -121,6 +121,7 @@ export default function AccountPanel({ available, session, onSessionChange, onPr
       <form onSubmit={(event) => { event.preventDefault(); void act('verify-code', async () => {
         const result = await verifyEmailCode(email, emailCode)
         const me = await fetchMe(result.access_token)
+        if (me.user_id !== result.user_id) throw new Error('authentication identity mismatch')
         setTokens(result)
         onSessionChange?.(result)
         setUserId(me.user_id)
@@ -133,6 +134,7 @@ export default function AccountPanel({ available, session, onSessionChange, onPr
       <form onSubmit={(event) => { event.preventDefault(); void act('login', async () => {
         const result = await loginWithPairing(deviceId, pairingCode)
         const me = await fetchMe(result.access_token)
+        if (me.user_id !== result.user_id) throw new Error('authentication identity mismatch')
         setTokens(result)
         onSessionChange?.(result)
         setUserId(me.user_id)

@@ -7,7 +7,7 @@ afterEach(() => { globalThis.fetch = originalFetch; vi.unstubAllEnvs() })
 describe('browser session protocol', () => {
   it('requests cookie mode without storing credentials in web storage', async () => {
     vi.stubEnv('VITE_API_BASE', '/')
-    globalThis.fetch = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ refresh_token: '' }) })) as unknown as typeof fetch
+    globalThis.fetch = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ user_id: 'u', access_token: 'a', refresh_token: '', expires_in: 60, token_version: 1 }) })) as unknown as typeof fetch
     await verifyEmailCode('user@example.test', '123456')
     expect(globalThis.fetch).toHaveBeenCalledWith('/v1/auth/email/verify', expect.objectContaining({
       headers: expect.objectContaining({ 'X-Liorin-Session': 'cookie' }),
@@ -18,7 +18,7 @@ describe('browser session protocol', () => {
 
   it('deduplicates concurrent restore calls and uses cookie logout', async () => {
     vi.stubEnv('VITE_API_BASE', '/')
-    globalThis.fetch = vi.fn(async () => ({ ok: true, status: 200, json: async () => ({ status: 'ok' }) })) as unknown as typeof fetch
+    globalThis.fetch = vi.fn(async (input) => ({ ok: true, status: 200, json: async () => String(input).endsWith('/logout') ? ({ status: 'ok' }) : ({ user_id: 'u', access_token: 'a', refresh_token: '', expires_in: 60, token_version: 1 }) })) as unknown as typeof fetch
     await Promise.all([restoreBrowserSession(), restoreBrowserSession()])
     expect(globalThis.fetch).toHaveBeenCalledTimes(1)
     await logout('access', '')
