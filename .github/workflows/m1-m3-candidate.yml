@@ -36,3 +36,7 @@ jobs:
               exit 1
             fi
           done
+      - name: Run frozen Golden replay (never update the baseline)
+        run: python scripts/golden_replay.py --check
+        env:
+          PYTHONPATH: src
