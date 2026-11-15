@@ -1,0 +1,9 @@
+.app-shell{height:100dvh !important;background:#f7f5f0;color:#1b1c1b}
+.app-header{height:72px;padding:0 clamp(24px,5vw,72px);display:flex;align-items:center;justify-content:space-between;background:#f7f5f0;border-bottom:1px solid #dedad2;z-index:10}
+.app-brand{font-family:Georgia,serif;font-size:20px;letter-spacing:.19em;color:#171918}
+.app-brand span{font-family:serif;font-size:11px;letter-spacing:.08em;color:#77736c}
+.app-header-meta{display:flex;align-items:center;gap:24px;color:#68655f;font-size:12px;letter-spacing:.04em}
+.app-meta-item{display:inline-flex;align-items:center;gap:6px;min-height:44px}
+.app-main{min-height:0;padding-bottom:calc(76px + env(safe-area-inset-bottom))}
+@media(max-width:520px){.app-header{height:60px;padding:0 22px}.app-brand{font-size:17px}.app-brand span{display:none}.app-header-meta{gap:14px;font-size:11px}}
+@media(prefers-reduced-motion:reduce){.app-main{scroll-behavior:auto !important}}
