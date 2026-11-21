@@ -30,6 +30,15 @@ type Preview = {
   admission_status: 'pending_review'
 }
 
+function adjacentDate(day: string, delta: -1 | 1): string {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(day)) return ''
+  const civilDate = new Date(`${day}T00:00:00Z`)
+  if (!Number.isFinite(civilDate.getTime()) || civilDate.toISOString().slice(0, 10) !== day) return ''
+  civilDate.setUTCDate(civilDate.getUTCDate() + delta)
+  const year = civilDate.getUTCFullYear()
+  return year > 0 && year <= 9999 ? civilDate.toISOString().slice(0, 10) : ''
+}
+
 export default function HeluoPreviewToday({ token, onAccount }: { token: string; onAccount: () => void }) {
   const [date, setDate] = useState('')
   const [displayZone, setDisplayZone] = useState(() => Intl.DateTimeFormat().resolvedOptions().timeZone)
@@ -38,14 +47,18 @@ export default function HeluoPreviewToday({ token, onAccount }: { token: string;
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
-  async function load() {
+  const previousDate = adjacentDate(date, -1)
+  const nextDate = adjacentDate(date, 1)
+
+  async function load(targetDate: string) {
+    setDate(targetDate)
     setBusy(true)
     setError('')
     setResult(null)
     try {
-      const query = new URLSearchParams({target_date: date, display_timezone: displayZone})
+      const query = new URLSearchParams({target_date: targetDate, display_timezone: displayZone})
       const data = await apiRequest<Preview>(`/v1/personal/heluo-preview?${query}`, { token })
-      if (data?.requested_local_date !== date || data.display_timezone !== displayZone ||
+      if (data?.requested_local_date !== targetDate || data.display_timezone !== displayZone ||
           data.calendar_rule_id !== 'gua6' || data.admission_status !== 'pending_review' ||
           data.active_yao_index !== null || data.valid_from !== null || data.valid_until !== null ||
           !data.provenance ||
@@ -77,12 +90,21 @@ export default function HeluoPreviewToday({ token, onAccount }: { token: string;
     <button className="preview-motion-control" type="button" onClick={() => setPaused(value => !value)}>
       {paused ? 'Resume motion' : 'Pause motion'}
     </button>
-    <form onSubmit={event => { event.preventDefault(); void load() }}>
-      <label>Target date <input type="date" required disabled={busy} value={date}
-        onChange={event => { setDate(event.target.value); setResult(null); setError('') }} /></label>
-      <label>Display timezone <input required disabled={busy} value={displayZone}
-        onChange={event => { setDisplayZone(event.target.value); setResult(null); setError('') }} /></label>
-      <button type="submit" disabled={busy}>{busy ? 'Calculating…' : 'Calculate preview'}</button>
+    <form onSubmit={event => { event.preventDefault(); void load(date) }}>
+      <fieldset className="daily-explorer">
+        <legend>Daily Explorer</legend>
+        <label>Target date <input type="date" required disabled={busy} value={date}
+          onChange={event => { setDate(event.target.value); setResult(null); setError('') }} /></label>
+        <label>Display timezone <input required disabled={busy} value={displayZone}
+          onChange={event => { setDisplayZone(event.target.value); setResult(null); setError('') }} /></label>
+        <div className="daily-explorer__controls">
+          <button type="button" disabled={busy || !previousDate || !displayZone.trim()}
+            onClick={() => void load(previousDate)}>Previous day</button>
+          <button type="submit" disabled={busy}>{busy ? 'Calculating…' : 'Calculate preview'}</button>
+          <button type="button" disabled={busy || !nextDate || !displayZone.trim()}
+            onClick={() => void load(nextDate)}>Next day</button>
+        </div>
+      </fieldset>
     </form>
     {error && <p role="alert">{error} <button onClick={onAccount}>Account and birth profile</button></p>}
     {result && <div role="status">

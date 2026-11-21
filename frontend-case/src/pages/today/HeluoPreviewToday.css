@@ -11,6 +11,18 @@
   to { transform: rotate(360deg); }
 }
 
+.daily-explorer {
+  min-inline-size: 0;
+  padding: 0;
+  border: 0;
+}
+
+.daily-explorer__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .preview-hetu { animation: none; }
   .preview-motion-control { display: none; }

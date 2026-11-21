@@ -7,7 +7,8 @@ Base `6f407f8997d4d78ce44504bc34b09d7c132612e7` verified against remote main. De
 | NFC entry and claim | No device-claim flow located in the Product API or React entry. The old platform NFC routes were disabled. | Target chip and claim proof policy pending. |
 | Sign in, save and recover profile | Existing `services/liorin_api/account` and React account screens. Real HTTPS Chromium against the allowed loopback PostgreSQL and SMTP sink. | Isolated testing. Production identity and schema pending. |
 | TODAY | Saved profile → civil time normalization → packaged TimeResolver → BaziAdapter → HeluoAdapter → typed FastAPI response → React preview. | Real computation under test; product rule and copy admission pending. |
-| YOU, Daily Explorer, INSIGHT | Current PR adds no admitted content to these screens. | Evidence, contracts and tests required before release. |
+| Daily Explorer | The isolated TODAY preview can request previous and next civil dates through the same authenticated engine route. Browser regression covers recovery from an unavailable ordinal and leap-day navigation. | Calendar navigation available for preview. Direction, zodiac and traditional time-window sources still require field-level admission. |
+| YOU, INSIGHT | No admitted content to these screens yet. | Evidence, contracts and tests required before release. |
 | RELATION, ME, localization | Account screens are reused. Current English preview is partial coverage. | Consent, rights, recovery and complete en/zh-Hans/zh-Hant pending. |
 
 ## Calendar and time decision

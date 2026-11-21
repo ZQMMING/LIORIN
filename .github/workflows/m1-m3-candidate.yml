@@ -1,7 +1,7 @@
 name: M1 frontend integration checks
 on:
   pull_request:
-    branches: [main]
+    branches: [main, codex/product-b-today]
   push:
     branches: [integration/m1-m3-release-candidate]
   workflow_dispatch:
@@ -23,3 +23,7 @@ jobs:
       - run: npm ci --ignore-scripts --no-audit --no-fund
       - run: npm test -- --run
       - run: npm run build
+      - if: github.base_ref == 'codex/product-b-today'
+        run: npm run build
+        env:
+          VITE_LIORIN_PRODUCT_B_PREVIEW: '1'
