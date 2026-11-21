@@ -1349,12 +1349,12 @@ class BaziEngine:
             second = 0.0
         else:
             # P2.7-E: 从 birth_datetime 提取 minute/second，用于月柱边界检查
-            # ⚠️ 不要覆盖 solar_date 的日期！solar_date 已由上游 TimeResolver 处理过 23:00 换日
+            # 保留上游 TimeResolver 给出的真太阳时日期。
             minute = birth_datetime.minute
             second = birth_datetime.second
             # 只保留 minute/second，使用 solar_date 的日期和小时
             # V2.6 fix: 必须用 solar_date[3] (effective_hour)，而非 birth_datetime.hour (civil)
-            # 否则 23:00 换日场景 (civil 00:10 → effective 23:00) 会传 hour=0 给 sxtwl
+            # 民用时与真太阳时跨午夜时，仍须把真太阳时小时传给 sxtwl。
             # 导致 hour_pillar 算成甲子而不是丙子
             year, month, day = solar_date[0], solar_date[1], solar_date[2]
             hour = solar_date[3]
@@ -1463,7 +1463,7 @@ class BaziEngine:
 
         【契约说明】P1-2: day_idx 与 civil_date 关系
         - day_idx (sxtwl.fromSolar(view_year, view_month, view_day)): 用于 getYearGZ/getMonthGZ/getDayGZ/getHourGZ
-          其中 view 是 effective_date（已做 23:00 换日），因为日柱时柱基于换日后的日期
+          其中 view 采用真太阳时日期（00:00 为日界），供日柱和时柱使用。
         - civil_date: 用于节气边界判断（年柱、月柱切换）
           原因: 节气是民用时间定义，必须用原始civil_date，不能用effective_date
           反例: civil=02-03 23:30 → effective_date=02-04，若用effective_date判断立春(02-04)会误判为立春后
@@ -1477,7 +1477,7 @@ class BaziEngine:
         
         # solar_year/month/day 用 birth_civil_datetime（用户原始输入时间）
         # solar_hour/minute/second 必须用传入的 hour (effective_hour)，而非 birth_civil_datetime.hour
-        # V2.7 fix: 否则 23:00 换日场景下 (civil=00:10, effective=23:00) 会传 hour=0 给 sxtwl
+        # 民用时与真太阳时跨午夜时，传入真太阳时小时以保留夜子时语义。
         # 导致 hour_pillar 算成甲子 (solar_hour=0) 而不是丙子 (solar_hour=23)
         # ⚠ 2026-10-25：原先此处把 solar_year/month/day/minute/second 逐个
         #   赋值（以及 else 分支的解包）—— 但这五个变量**从未被读取**
@@ -1624,7 +1624,7 @@ class BaziEngine:
         # 原因: civil=02-03 23:30 → effective_date=02-04
         #   - day_idx(02-04).getMonthGZ() → 寅月 (立春后) ❌
         #   - solar_term_idx(02-03).getMonthGZ() → 丑月 (立春前) ✅
-        # 节令月柱必须基于原始民用日期，不能受 23:00 换日污染
+        # 节令月柱以原始民用日期判断节令边界。
         gz_month = solar_term_idx.getMonthGZ()
         month_branch = EARTHLY_BRANCHES[gz_month.dz]
 

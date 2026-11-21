@@ -10,11 +10,18 @@ Base `6f407f8997d4d78ce44504bc34b09d7c132612e7` verified against remote main. De
 | YOU, Daily Explorer, INSIGHT | Current PR adds no admitted content to these screens. | Evidence, contracts and tests required before release. |
 | RELATION, ME, localization | Account screens are reused. Current English preview is partial coverage. | Consent, rights, recovery and complete en/zh-Hans/zh-Hant pending. |
 
-## Rule discrepancy
+## Calendar and time decision
 
-The engine's published API selected `gua6` for the tested input. For Beijing, 1984-12-07 16:00, male, target 2026-08-17, it returned a target-line marker of 2026-08-18 04:41. The engine's marker contains no timezone. This is reproducible with `tests/test_heluo_preview.py` in the Product API test directory. The preview exposes the engine's selected line and marker without asserting a valid time window or a current active line. The existing `/v1/personal/heluo-today` continues to return 503. Review must determine the admitted model, authoritative timezone, target instant and interval semantics before enabling that route. Existing Golden data and engine algorithms are preserved.
+The 2026-11-21 owner decision selects `gua6` for Product B. `hou5` stays available in the engine for comparison. The product preview does not consume the old five-day UI contract.
 
-The imported original Hetu is rendered as a static image in this slice. Its SHA-256 is `7bafbd74888912371660965896c81aa9e32e9475db545ffd1444c7d439e0bd28`. Full asset placement and animation are pending.
+- `canonical.resolve_jieqi_window` assigns a requested civil date to a solar-term window by calendar date and counts the anchor's calendar date as ordinal 1. The engine obtains the anchor strings through sxtwl JD conversion and formats them to minute precision.
+- `timeline_yun.compute_daily_base_hex` calculates the marker as the first anchor plus (ordinal − 1) × (next anchor − first anchor) / 30, then serializes to the minute. For the Beijing sample on 2026-08-17, the anchors are 2026-08-07 19:42 and 2026-09-07 22:40. Ordinal 11 gives 2026-08-18 04:41. The civil-date selection and the fractional interval calculation are distinct.
+- The general engine JD converter documents a Beijing-time convention. This Heluo path returns bare strings from its own conversion, with no explicit zone or precision contract in the result. The preview retains raw markers and leaves `marker_timezone` and `marker_utc` null. The IANA display zone is validated and echoed independently of the saved birth zone. It is not used to reinterpret the bare marker.
+- The engine-selected index is diagnostic. `active_yao_index`, `valid_from` and `valid_until` remain null with `admission_status=pending_review`. The preview rejects `hou5`, missing or non-unique markers, and dates without a supported ordinal. For the same profile, September 6, 2026 yields no supported ordinal and September 7 starts the next window at ordinal 1. The formal `/v1/personal/heluo-today` returns 503 pending reliable instant and interval semantics.
+
+The live `TimeResolver → BaziAdapter` regression for Beijing on August 21–22, 2024 confirms 丁巳/辛亥 at true solar 22:59, 丁巳/壬子 at 23:00 and 23:59, and 戊午/壬子 at 00:00. Only explanatory comments and the misleading warning were corrected in the engine.
+
+The original Hetu is displayed inside a slow CSS rotation wrapper with a pause control and reduced-motion support. Its SHA-256 is `7bafbd74888912371660965896c81aa9e32e9475db545ffd1444c7d439e0bd28`.
 
 ## Verification
 
@@ -22,7 +29,7 @@ The imported original Hetu is rendered as a static image in this slice. Its SHA-
 | --- | --- | --- |
 | `npm test` in frontend-case | 0 | 73 passed with default build settings. |
 | `VITE_LIORIN_PRODUCT_B_PREVIEW=1 npm run build` in frontend-case | 0 | TypeScript and Vite verified. PowerShell users can set the flag via `$env:VITE_LIORIN_PRODUCT_B_PREVIEW='1'`. |
-| `python -m pytest services/liorin_api/tests tests/heluo/test_h10b_jie_interval.py tests/heluo/test_heluo_lazy_liuri.py -q -o addopts=''` | 0 | 53 passed after installing the local engine with `python -m pip install -e .`. |
+| `python -m pytest services/liorin_api/tests tests/heluo/test_h10b_jie_interval.py tests/heluo/test_heluo_lazy_liuri.py -q -p no:cacheprovider` | 0 | 67 passed. Includes late-zi pillars, date and solar-term edges, DST dates, determinism, rule isolation and absent evidence. |
 | `python -m pytest --collect-only -q -o addopts=''` | 3 | Existing `tests/test_ancient_case_golden.py:15` exits during collection. |
 | `python -m pytest services/liorin_api/account_tests/test_account_browser.py -q -o addopts=''` | 0 | One real Chromium journey passed with the isolated fixture. Verified anonymous 401, saved profile, preview, provenance, session restore and logout. Captured 375px and 1440px results. |
 

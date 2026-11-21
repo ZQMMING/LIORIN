@@ -2,6 +2,7 @@
 from datetime import date
 from pathlib import Path
 import os
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
@@ -118,8 +119,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         attach_profile(app, account_store, settings.data_dir)
 
         @app.get('/v1/personal/heluo-preview', response_model=HeluoPreview)
-        def personal_heluo_preview(request: Request, target_date: date) -> HeluoPreview:
+        def personal_heluo_preview(request: Request, target_date: date,
+                                   display_timezone: str = Query(min_length=1, max_length=100)) -> HeluoPreview:
             uid = user_id(request)
+            try:
+                ZoneInfo(display_timezone)
+            except (ZoneInfoNotFoundError, ValueError):
+                raise HTTPException(status_code=422, detail={'code': 'INVALID_DISPLAY_TIMEZONE',
+                    'message': 'Use an IANA display timezone.'}) from None
             try:
                 saved = account_store.get(uid)
             except psycopg2.Error:
@@ -139,8 +146,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if canonical['status'] != 'ready':
                 raise HTTPException(status_code=422, detail={'code': 'INCOMPLETE_BIRTH_TIME', 'message': 'Birth minute required.'})
             try:
-                return compute_preview(saved, canonical, target_date, settings.data_dir / 'locations.json')
-            except (ImportError, OSError, ValueError, KeyError, RuntimeError, OverflowError):
+                return compute_preview(saved, canonical, target_date, settings.data_dir / 'locations.json',
+                                       display_timezone=display_timezone)
+            except (ImportError, OSError, ValueError, KeyError, RuntimeError, OverflowError, TypeError):
                 unavailable('HELUO_PREVIEW_UNAVAILABLE')
 
     @app.get('/v1/personal/heluo-today')

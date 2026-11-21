@@ -1,0 +1,17 @@
+.preview-hetu {
+  width: fit-content;
+  animation: preview-hetu-spin 100s linear infinite;
+}
+
+.preview-hetu[data-paused='true'] {
+  animation-play-state: paused;
+}
+
+@keyframes preview-hetu-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .preview-hetu { animation: none; }
+  .preview-motion-control { display: none; }
+}

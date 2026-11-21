@@ -59,7 +59,7 @@ def test_browser_real_login_save_reload_edit_and_logout(isolated_dsn, smtp_sink,
             try:
                 page.goto(origin, wait_until='domcontentloaded')
                 if os.environ.get('VITE_LIORIN_PRODUCT_B_PREVIEW') == '1':
-                    response = page.request.get(origin + '/v1/personal/heluo-preview?target_date=2026-08-17')
+                    response = page.request.get(origin + '/v1/personal/heluo-preview?target_date=2026-08-17&display_timezone=America%2FNew_York')
                     assert response.status == 401
                     assert response.headers['cache-control'] == 'no-store'
                 page.get_by_role('button', name='我的').click()
@@ -83,11 +83,15 @@ def test_browser_real_login_save_reload_edit_and_logout(isolated_dsn, smtp_sink,
                 if os.environ.get('VITE_LIORIN_PRODUCT_B_PREVIEW') == '1':
                     page.get_by_role('button', name='查看个人今日').click()
                     page.get_by_label('Target date').fill('2026-08-17')
+                    page.get_by_label('Display timezone').fill('America/New_York')
                     with page.expect_response(lambda response: '/v1/personal/heluo-preview?' in response.url) as personal:
                         page.get_by_role('button', name='Calculate preview').click()
                     assert personal.value.status == 200
                     result = personal.value.json()
-                    assert result['current_line_status'] == 'pending_review'
+                    assert result['admission_status'] == 'pending_review'
+                    assert result['active_yao_index'] is result['valid_from'] is result['valid_until'] is None
+                    assert result['display_timezone'] == 'America/New_York'
+                    assert result['birth_timezone'] == 'Asia/Shanghai'
                     expect(page.get_by_role('heading', name=result['hexagram'])).to_be_visible()
                     page.get_by_text('Calculation source', exact=True).click()
                     expect(page.get_by_text('HeluoAdapter.compute_from_chart', exact=False)).to_be_visible()
@@ -98,6 +102,16 @@ def test_browser_real_login_save_reload_edit_and_logout(isolated_dsn, smtp_sink,
                         for width in (375, 1440):
                             page.set_viewport_size({'width': width, 'height': 900})
                             page.screenshot(path=folder / f'personal-today-{width}.png')
+                        page.set_viewport_size({'width': 390, 'height': 844})
+                    page.get_by_role('button', name='Pause motion').click()
+                    expect(page.get_by_role('button', name='Resume motion')).to_be_visible()
+                    page.emulate_media(reduced_motion='reduce')
+                    expect(page.get_by_role('button', name='Resume motion')).to_be_hidden()
+                    page.get_by_label('Target date').fill('2026-09-06')
+                    with page.expect_response(lambda response: '/v1/personal/heluo-preview?' in response.url) as missing:
+                        page.get_by_role('button', name='Calculate preview').click()
+                    assert missing.value.status == 503
+                    expect(page.get_by_role('alert')).to_contain_text('engine preview is unavailable')
                 else:
                     with page.expect_response(lambda response: '/v1/personal/heluo-today' in response.url) as personal:
                         page.get_by_role('button', name='查看个人今日').click()
