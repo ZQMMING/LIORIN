@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { apiRequest, ApiClientError } from '../../api/http'
 import hetu from '../../assets/product-b/hetu.svg?url'
+import DailyExplorerCalendar from './DailyExplorerCalendar'
 import './HeluoPreviewToday.css'
 
 type Preview = {
@@ -46,12 +47,14 @@ export default function HeluoPreviewToday({ token, onAccount }: { token: string;
   const [result, setResult] = useState<Preview | null>(null)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
+  const [calendarSelection, setCalendarSelection] = useState<{ targetDate: string; displayTimezone: string } | null>(null)
 
   const previousDate = adjacentDate(date, -1)
   const nextDate = adjacentDate(date, 1)
 
   async function load(targetDate: string) {
     setDate(targetDate)
+    setCalendarSelection({ targetDate, displayTimezone: displayZone })
     setBusy(true)
     setError('')
     setResult(null)
@@ -94,9 +97,9 @@ export default function HeluoPreviewToday({ token, onAccount }: { token: string;
       <fieldset className="daily-explorer">
         <legend>Daily Explorer</legend>
         <label>Target date <input type="date" required disabled={busy} value={date}
-          onChange={event => { setDate(event.target.value); setResult(null); setError('') }} /></label>
+          onChange={event => { setDate(event.target.value); setResult(null); setError(''); setCalendarSelection(null) }} /></label>
         <label>Display timezone <input required disabled={busy} value={displayZone}
-          onChange={event => { setDisplayZone(event.target.value); setResult(null); setError('') }} /></label>
+          onChange={event => { setDisplayZone(event.target.value); setResult(null); setError(''); setCalendarSelection(null) }} /></label>
         <div className="daily-explorer__controls">
           <button type="button" disabled={busy || !previousDate || !displayZone.trim()}
             onClick={() => void load(previousDate)}>Previous day</button>
@@ -106,6 +109,7 @@ export default function HeluoPreviewToday({ token, onAccount }: { token: string;
         </div>
       </fieldset>
     </form>
+    <DailyExplorerCalendar selection={calendarSelection} />
     {error && <p role="alert">{error} <button onClick={onAccount}>Account and birth profile</button></p>}
     {result && <div role="status">
       <h2>{result.hexagram}</h2>

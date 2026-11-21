@@ -6,6 +6,7 @@ import threading
 import time
 import uuid
 
+import pytest
 import uvicorn
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -17,7 +18,8 @@ from services.liorin_api.account.api.deps import reset_rate_limit_buckets
 from services.liorin_api.account.services import identity_gateway
 
 
-def test_browser_real_login_save_reload_edit_and_logout(isolated_dsn, smtp_sink, monkeypatch, tmp_path):  # noqa: F811
+@pytest.mark.usefixtures('isolated_dsn')
+def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, tmp_path):  # noqa: F811
     dist = Path(__file__).resolve().parents[3] / 'frontend-case' / 'dist'
     assert (dist / 'index.html').is_file(), 'Run npm run build first'
     reset_rate_limit_buckets()
@@ -55,9 +57,13 @@ def test_browser_real_login_save_reload_edit_and_logout(isolated_dsn, smtp_sink,
     try:
         with sync_playwright() as browser_driver:
             browser = browser_driver.chromium.launch(headless=True)
-            page = browser.new_page(viewport={'width': 390, 'height': 844}, ignore_https_errors=True)
+            page = browser.new_page(viewport={'width': 390, 'height': 844}, locale='en-US', ignore_https_errors=True)
             try:
                 page.goto(origin, wait_until='domcontentloaded')
+                for protected in ('/v1/profile/stored', '/v1/auth/me'):
+                    unclaimed = page.request.get(origin + protected, params={'uid': 'synthetic-tag'},
+                                                 headers={'X-Device-Token': 'synthetic-tag'})
+                    assert unclaimed.status == 401
                 if os.environ.get('VITE_LIORIN_PRODUCT_B_PREVIEW') == '1':
                     response = page.request.get(origin + '/v1/personal/heluo-preview?target_date=2026-08-17&display_timezone=America%2FNew_York')
                     assert response.status == 401
@@ -95,6 +101,11 @@ def test_browser_real_login_save_reload_edit_and_logout(isolated_dsn, smtp_sink,
                     assert result['marker_timezone'] == 'Asia/Shanghai'
                     assert result['marker_utc'] == '2026-08-17T20:41:00Z'
                     assert result['provenance']['solar_term_time_basis'] == 'sxtwl_jd2dd_fixed_utc_plus_08'
+                    calendar = page.get_by_role('region', name='Daily calendar')
+                    expect(calendar.get_by_text('Lunar date', exact=False)).to_be_visible()
+                    expect(calendar.get_by_text('source review pending', exact=False)).to_have_count(3)
+                    calendar.get_by_text('Calendar source', exact=True).click()
+                    expect(calendar.get_by_text('lunar_python 1.4.8', exact=False)).to_be_visible()
                     expect(page.get_by_role('heading', name=result['hexagram'])).to_be_visible()
                     page.get_by_text('Calculation source', exact=True).click()
                     expect(page.get_by_text('HeluoAdapter.compute_from_chart', exact=False)).to_be_visible()
@@ -116,6 +127,7 @@ def test_browser_real_login_save_reload_edit_and_logout(isolated_dsn, smtp_sink,
                         page.get_by_role('button', name='Calculate preview').click()
                     assert missing.value.status == 503
                     expect(page.get_by_role('alert')).to_contain_text('engine preview is unavailable')
+                    expect(calendar.get_by_text('Lunar date', exact=False)).to_be_visible()
                     with page.expect_response(lambda response: '/v1/personal/heluo-preview?' in response.url) as handoff:
                         page.get_by_role('button', name='Next day').click()
                     assert handoff.value.status == 200
