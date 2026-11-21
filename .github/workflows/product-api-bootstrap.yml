@@ -16,4 +16,5 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install -r services/liorin_api/requirements.txt httpx==0.28.1 pytest==9.1.1 pytest-timeout==2.4.0
+      - run: python -m pip install -e .
       - run: python -m pytest services/liorin_api/tests -q -p no:cacheprovider
