@@ -41,6 +41,6 @@ for c1, c2 in SI_ZHENG_CHONG:
 
 print()
 print(f'B2结果: {PASS} PASS / {FAIL} FAIL')
-print(f'备注: 开库逻辑(库中气可用)待L2旺衰层补实现')
-print(f'当前只验六冲识别, 开库判定是L2的活')
+print('备注: 开库逻辑(库中气可用)待L2旺衰层补实现')
+print('当前只验六冲识别, 开库判定是L2的活')
 print()

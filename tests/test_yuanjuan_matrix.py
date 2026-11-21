@@ -1445,7 +1445,8 @@ for _bz2 in ("甲戌 辛未 庚子 丁亥", "癸亥 壬戌 乙未 壬午", "丁�
     _ps2 = _bz2.replace(' ', '')
     _p2 = {'year': [_ps2[0], _ps2[1]], 'month': [_ps2[2], _ps2[3]],
            'day': [_ps2[4], _ps2[5]], 'hour': [_ps2[6], _ps2[7]]}
-    _f2 = _bf2(_p2); _f2['pillars'] = _p2
+    _f2 = _bf2(_p2)
+    _f2['pillars'] = _p2
     _f2['wuxing_power'] = _bwp2(_p2, _f2)
     for _wx2 in ("木", "火", "土", "金", "水"):
         _wide = bool(_FJ._you_qi(_f2, _wx2))            # 宽口径(最简有气)

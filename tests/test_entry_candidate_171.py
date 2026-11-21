@@ -11,7 +11,9 @@ def types_of(mm, zz, day='乙'):
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 # 乙日: 财=戊己,官=庚辛,印=壬癸,食=丁,杀=辛,伤=丙
 ck("财月->财格", '财格' in types_of('戊','戌'), True)
 ck("官月->官格", '官格' in types_of('庚','申'), True)

@@ -54,5 +54,5 @@ for b1, b2 in NON_CHONG:
 
 print()
 print(f'B1结果: {PASS} PASS / {FAIL} FAIL')
-print(f'备注: 隔位不影响_is_chong判定(只看两支组合, 不看位置)')
+print('备注: 隔位不影响_is_chong判定(只看两支组合, 不看位置)')
 print()

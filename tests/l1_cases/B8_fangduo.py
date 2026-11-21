@@ -28,10 +28,10 @@ fang_ok = r1['fang_wx'] == '水'
 he_ok = any(h['hua'] == '木' and h['status'] == '局散' for h in r1['hehui'])
 if fang_ok and he_ok:
     PASS += 1
-    print(f'  OK: 生支被夺→局散')
+    print('  OK: 生支被夺→局散')
 else:
     FAIL += 1
-    print(f'  FAIL: 期望方成+局散')
+    print('  FAIL: 期望方成+局散')
 
 print()
 print('--- 盘2: 中神被夺(应局散) ---')
@@ -45,12 +45,12 @@ fang_ok2 = r2['fang_wx'] == '木'
 he_ok2 = any(h['hua'] == '木' and h['status'] == '局散' for h in r2['hehui'])
 if fang_ok2 and he_ok2:
     PASS += 1
-    print(f'  OK: 中神被夺→局散')
+    print('  OK: 中神被夺→局散')
 else:
     FAIL += 1
-    print(f'  FAIL: 期望方成+局散')
+    print('  FAIL: 期望方成+局散')
 
 print()
 print(f'B8结果: {PASS} PASS / {FAIL} FAIL')
-print(f'备注: 汇总层已实现, 两盘验#022/#022b')
+print('备注: 汇总层已实现, 两盘验#022/#022b')
 print()

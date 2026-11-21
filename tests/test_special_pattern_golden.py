@@ -165,9 +165,13 @@ MUMIE = [
     ('丁未壬子庚戌丙戌', False, None),  # 仲冬水旺、支重燥土(未戌)去湿、丁壬合护官, 仕至州牧(燥土非埋金)
 ]
 for c, exp_mm, exp_st in MUMIE:
-    pp = gp(c); ff = l0b(pp); tth = build_tian_he(pp, ff); wwp = build_wuxing_power(pp, ff, tth)
+    pp = gp(c)
+    ff = l0b(pp)
+    tth = build_tian_he(pp, ff)
+    wwp = build_wuxing_power(pp, ff, tth)
     ssp = build_special_patterns(pp, ff, wwp, tth)
-    got_mm = bool(ssp.get('mu_mie')); got_st = ssp.get('mu_mie_state')
+    got_mm = bool(ssp.get('mu_mie'))
+    got_st = ssp.get('mu_mie_state')
     ok = (got_mm == exp_mm) and (exp_st is None or got_st == exp_st)
     if not ok:
         if c in KNOWN_DRIFT_BOUNDARY:
@@ -186,7 +190,10 @@ LIANGQI = [
     # 癸亥甲寅(DTS L862)移出两气锚点: 寅亥合木、伤官太重泄身, 任注定性水木伤官格喜土金印官, 非两气; 见下方反例
 ]
 for c, exp_xiu in LIANGQI:
-    pp = gp(c); ff = l0b(pp); tth = build_tian_he(pp, ff); wwp = build_wuxing_power(pp, ff, tth)
+    pp = gp(c)
+    ff = l0b(pp)
+    tth = build_tian_he(pp, ff)
+    wwp = build_wuxing_power(pp, ff, tth)
     ssp = build_special_patterns(pp, ff, wwp, tth)
     lq = ssp.get('liangqi')
     ok = (bool(lq) and lq.get('xiu') == exp_xiu and not ssp.get('zhuanwang') and not ssp.get('cong_type'))
@@ -196,8 +203,12 @@ for c, exp_xiu in LIANGQI:
 
 # 假两气反例(DTS L862 癸亥甲寅): 两行相生, 然日主根亥被寅亥合化为食伤木、伤官太重泄身,
 # 任注'水木伤官...己酉戊申二十年土金生化不悖'(逢克方反吉), 应回正格水木伤官用印, 不判两气成象
-_pp=gp('癸亥甲寅癸亥甲寅'); _ff=l0b(_pp); _tt=build_tian_he(_pp,_ff); _ww=build_wuxing_power(_pp,_ff,_tt)
-_ss=build_special_patterns(_pp,_ff,_ww,_tt); _lq=_ss.get('liangqi')
+_pp=gp('癸亥甲寅癸亥甲寅')
+_ff=l0b(_pp)
+_tt=build_tian_he(_pp,_ff)
+_ww=build_wuxing_power(_pp,_ff,_tt)
+_ss=build_special_patterns(_pp,_ff,_ww,_tt)
+_lq=_ss.get('liangqi')
 _ok=(_lq is None)
 if not _ok: fails+=1
 print('PASS' if _ok else 'FAIL','癸亥甲寅癸亥甲寅 假两气应不判(回正格水木伤官) 得=',_lq)

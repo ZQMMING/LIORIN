@@ -8,12 +8,15 @@ from engines.common.relation_established_173 import shangguan_shengcai_establish
 f1 = build({'year':['甲','子'],'month':['丙','巳'],'day':['乙','卯'],'hour':['戊','辰']})
 # 非伤官格
 f2 = build({'year':['甲','子'],'month':['丁','午'],'day':['乙','卯'],'hour':['戊','辰']})
-r1=shangguan_shengcai_established(f1); r2=shangguan_shengcai_established(f2)
+r1=shangguan_shengcai_established(f1)
+r2=shangguan_shengcai_established(f2)
 print(r1['state'], r2['state'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("伤官+见财=成立", r1['state'], 'SATISFIED')
 ck("非伤官格=不成立", r2['state'], 'UNSATISFIED')
 ck("note含财无根不等于关系不存在", '财无根不等于关系不存在' in r1.get('note',''), True)

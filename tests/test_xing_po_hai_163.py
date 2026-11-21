@@ -10,7 +10,9 @@ print("liuhai:", c['liuhai'], "liupo:", c['liupo'], "sanxing:", c['sanxing'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("子未相害", '子未相害' in c['liuhai'], True)
 ck("子酉相破", '子酉相破' in c['liupo'], True)
 ck("子卯相刑", '子卯相刑' in c['sanxing'], True)

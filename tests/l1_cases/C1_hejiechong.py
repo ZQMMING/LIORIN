@@ -28,10 +28,10 @@ print(f'  卯戌合化火: {he1}')
 # 期望: 冲成立+合成立(解冲)
 if chong1 == True and he1 == '火':
     PASS += 1
-    print(f'  OK: 卯酉冲+卯戌合解冲')
+    print('  OK: 卯酉冲+卯戌合解冲')
 else:
     FAIL += 1
-    print(f'  FAIL: 期望冲+合并存')
+    print('  FAIL: 期望冲+合并存')
 
 # 验2: 卯酉冲+辰(辰非卯之合) → 冲仍成立
 print()
@@ -40,12 +40,12 @@ chong2 = _is_chong('卯', '酉')
 print(f'  卯酉冲: {chong2}')
 if chong2 == True:
     PASS += 1
-    print(f'  OK: 无合解, 冲仍成立')
+    print('  OK: 无合解, 冲仍成立')
 else:
     FAIL += 1
-    print(f'  FAIL: 期望冲成立')
+    print('  FAIL: 期望冲成立')
 
 print()
 print(f'C1结果: {PASS} PASS / {FAIL} FAIL')
-print(f'备注: 解冲逻辑(冲力折减)待L2旺衰层补')
+print('备注: 解冲逻辑(冲力折减)待L2旺衰层补')
 print()

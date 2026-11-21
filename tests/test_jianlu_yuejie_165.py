@@ -12,7 +12,9 @@ f3 = build({'year':['甲','子'],'month':['戊','戌'],'day':['乙','卯'],'hour
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("乙日卯月=建禄", f1['jianlu_yuejie_entry']['type'], '建禄')
 ck("乙日寅月=月劫", f2['jianlu_yuejie_entry']['type'], '月劫')
 ck("乙日戌月=非入口", f3['jianlu_yuejie_entry']['is_entry'], False)

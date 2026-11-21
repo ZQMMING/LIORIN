@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """PATCH-184 运支参与命局三刑/六害/六破 golden (仅结构, 非作用非吉凶)"""
-import sys; sys.path.insert(0, '.')
+import sys
+sys.path.insert(0, '.')
 from engines.common.relation_178 import yun_natal_relations
 
 fails = 0
 def ck(n, g, e):
-    global fails; ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 # 命局: 年寅 月巳 日子 时戌
 pillars = {'year': ['甲', '寅'], 'month': ['丙', '巳'], 'day': ['甲', '子'], 'hour': ['戊', '戌']}

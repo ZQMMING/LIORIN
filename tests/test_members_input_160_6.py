@@ -8,7 +8,9 @@ from engines.common.l0_fact_builder import build
 def members_of(f, tg_set):
     return [m for m in f['ten_god_members'] if m['ten_god'] in tg_set]
 
-CAI = {'正财','偏财'}; BI = {'比肩','劫财'}; SHA = {'七杀','正官'}
+CAI = {'正财','偏财'}
+BI = {'比肩','劫财'}
+SHA = {'七杀','正官'}
 cases = [
     # 财成员多但根轻 vs 财成员少但根重
     ('财多根轻', build({'year':['戊','子'],'month':['戊','戌'],'day':['甲','寅'],'hour':['己','巳']})),
@@ -20,7 +22,9 @@ cases = [
 ]
 fails=0
 for name, f in cases:
-    cai = members_of(f, CAI); bi = members_of(f, BI); sha = members_of(f, SHA)
+    cai = members_of(f, CAI)
+    bi = members_of(f, BI)
+    sha = members_of(f, SHA)
     # 关键断言: L0只列成员, 不输出任何旺衰字段
     has_strength_field = any(k in f for k in ['strength','daymaster_strong','wealth_strong','party_strength'])
     print(f"[{name}] 财成员{len(cai)} 比劫{len(bi)} 官杀{len(sha)} | 无旺衰字段:{not has_strength_field}")

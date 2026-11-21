@@ -25,8 +25,12 @@ def check(name, cond):
     if not cond:
         fails += 1
 def run(c):
-    p = gp(c); f = l0build(p); th = build_tian_he(p, f); wp = build_wuxing_power(p, f, th)
-    cl = build_climate_structure(p, f, th); sp = build_special_patterns(p, f, wp, th, cl)
+    p = gp(c)
+    f = l0build(p)
+    th = build_tian_he(p, f)
+    wp = build_wuxing_power(p, f, th)
+    cl = build_climate_structure(p, f, th)
+    sp = build_special_patterns(p, f, wp, th, cl)
     return f, wp, sp, build_zhonghe_structure(p, f, wp, sp)
 
 # 1 丙子庚寅: 原文"劫印相扶,中和纯粹,精神两足,日元足以用官"(日主太衰而全局中和)

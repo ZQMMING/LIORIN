@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """PATCH-183 day_year_same / yun_year_same golden (纯结构, 不判吉凶)"""
-import sys; sys.path.insert(0, '.')
+import sys
+sys.path.insert(0, '.')
 from engines.common.relation_178 import yun_natal_relations
 
 fails = 0
 def ck(n, g, e):
-    global fails; ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 # 日柱 = 甲子
 pillars = {'year': ['丙', '寅'], 'month': ['戊', '戌'], 'day': ['甲', '子'], 'hour': ['丙', '寅']}

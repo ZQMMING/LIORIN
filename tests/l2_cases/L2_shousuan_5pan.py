@@ -26,13 +26,13 @@ print('--- 盘1: 木多火熄 ---')
 b1, s1 = ['卯', '寅', '卯', '辰'], ['癸', '甲', '丁', '甲']
 dz1 = calc_dangzhong(b1, s1)
 print(f'  引擎: 木={dz1["木"]:.1f}, 火={dz1["火"]:.1f}, 土={dz1["土"]:.1f}, 水={dz1["水"]:.1f}')
-print(f'  人工: 木=7.5(含三会+2.0), 火=1.5, 土=1.3, 水=1.3')
+print('  人工: 木=7.5(含三会+2.0), 火=1.5, 土=1.3, 水=1.3')
 if abs(dz1['木'] - 7.5) < 0.1 and abs(dz1['火'] - 1.5) < 0.1:
     PASS += 1
-    print(f'  OK: 三会加成生效')
+    print('  OK: 三会加成生效')
 else:
     FAIL += 1
-    print(f'  FAIL')
+    print('  FAIL')
 
 # 盘2: 水多木漂(丙子己亥乙丑壬午)
 print()
@@ -44,7 +44,7 @@ for wx, val in sorted(dz2.items(), key=lambda x: -x[1]):
 # 人工: 子亥丑三会水方 → +2.0
 # 水: 透干壬1+子本气1+亥本气1+丑中气0.5+三会2.0 = 5.5 ✅
 PASS += 1
-print(f'  OK: 三会水加成生效(水=5.5)')
+print('  OK: 三会水加成生效(水=5.5)')
 
 # 盘3: 土重金埋
 print()
@@ -54,7 +54,7 @@ dz3 = calc_dangzhong(b3, s3)
 for wx, val in sorted(dz3.items(), key=lambda x: -x[1]):
     print(f'  {wx}: {val:.1f}')
 PASS += 1
-print(f'  OK(粗对)')
+print('  OK(粗对)')
 
 # 盘4: 健康盘
 print()
@@ -64,7 +64,7 @@ dz4 = calc_dangzhong(b4, s4)
 for wx, val in sorted(dz4.items(), key=lambda x: -x[1]):
     print(f'  {wx}: {val:.1f}')
 PASS += 1
-print(f'  OK(粗对)')
+print('  OK(粗对)')
 
 # 盘5: 炎上格
 print()
@@ -74,8 +74,8 @@ dz5 = calc_dangzhong(b5, s5)
 for wx, val in sorted(dz5.items(), key=lambda x: -x[1]):
     print(f'  {wx}: {val:.1f}')
 PASS += 1
-print(f'  OK(粗对)')
+print('  OK(粗对)')
 
 print()
 print(f'手算验证: {PASS} PASS / {FAIL} FAIL')
-print(f'纠错: 盘1人工漏了三会加成, 引擎对')
+print('纠错: 盘1人工漏了三会加成, 引擎对')

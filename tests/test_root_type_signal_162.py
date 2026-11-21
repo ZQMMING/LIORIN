@@ -10,7 +10,9 @@ print(rt)
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("卯=禄HEAVY", rt.get('day',{}).get('root_type'), '禄')
 ck("卯=HEAVY", rt.get('day',{}).get('class'), 'HEAVY')
 ck("未=余气LIGHT", rt.get('year',{}).get('class'), 'LIGHT')

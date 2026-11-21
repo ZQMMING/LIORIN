@@ -27,8 +27,12 @@ def check(name, cond):
             fails += 1
 
 def run(c):
-    p = gp(c); f = l0build(p); th = build_tian_he(p, f); wp = build_wuxing_power(p, f, th)
-    cl = build_climate_structure(p, f, th); sp = build_special_patterns(p, f, wp, th, cl)
+    p = gp(c)
+    f = l0build(p)
+    th = build_tian_he(p, f)
+    wp = build_wuxing_power(p, f, th)
+    cl = build_climate_structure(p, f, th)
+    sp = build_special_patterns(p, f, wp, th, cl)
     return cl, sp
 
 # 1 虚湿寒土假从财(辰丑湿土寒冻、无戌未火库、水财成势、火全无)

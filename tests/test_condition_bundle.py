@@ -13,7 +13,9 @@ cases = [
 ]
 fails=0
 for items,e in cases:
-    g=aggregate_required(items)['bundle_status']; ok=g==e; fails+=(not ok)
+    g=aggregate_required(items)['bundle_status']
+    ok=g==e
+    fails+=(not ok)
     print(f"{'PASS' if ok else 'FAIL'} {[x['status'] for x in items]} -> {g} (期望{e})")
 print('=>', 'ALL PASS' if fails==0 else f'{fails} FAIL')
 sys.exit(1 if fails else 0)

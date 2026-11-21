@@ -27,10 +27,10 @@ print(f'  火局状态: {he1[0]["status"] if he1 else "无"}')
 # 期望: 冲成立+局成立(局伤占位)
 if chong1 == True and he1 and he1[0]['status'] == '全':
     PASS += 1
-    print(f'  OK: 局成立+中神被冲(局伤占位)')
+    print('  OK: 局成立+中神被冲(局伤占位)')
 else:
     FAIL += 1
-    print(f'  FAIL: 期望局成立+冲成立')
+    print('  FAIL: 期望局成立+冲成立')
 
 # 验2: 三会中神被冲(寅卯辰+酉)
 print()
@@ -45,12 +45,12 @@ print(f'  木方: {r2["fang_wx"]}')
 # 期望: 冲成立+方成
 if chong2 == True and r2['fang_wx'] == '木':
     PASS += 1
-    print(f'  OK: 方成+中神被冲(方伤占位)')
+    print('  OK: 方成+中神被冲(方伤占位)')
 else:
     FAIL += 1
-    print(f'  FAIL: 期望方成+冲成立')
+    print('  FAIL: 期望方成+冲成立')
 
 print()
 print(f'C5结果: {PASS} PASS / {FAIL} FAIL')
-print(f'备注: 局伤标记待L2旺衰层补, 当前只验局/方成立')
+print('备注: 局伤标记待L2旺衰层补, 当前只验局/方成立')
 print()

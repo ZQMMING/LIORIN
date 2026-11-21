@@ -97,7 +97,7 @@ def main():
 
     unexpected = [r for r in rows if r["status"]=="UNEXPECTED"]
     if unexpected:
-        print(f"意外差异（需登记 divergence）:")
+        print("意外差异（需登记 divergence）:")
         for r in unexpected: print(f"  {r['id']}: {r['diffs']}")
 
     sys.exit(0 if not unexpected else 1)
