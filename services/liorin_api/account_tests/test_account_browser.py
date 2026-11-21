@@ -116,6 +116,18 @@ def test_browser_real_login_save_reload_edit_and_logout(isolated_dsn, smtp_sink,
                         page.get_by_role('button', name='Calculate preview').click()
                     assert missing.value.status == 503
                     expect(page.get_by_role('alert')).to_contain_text('engine preview is unavailable')
+                    with page.expect_response(lambda response: '/v1/personal/heluo-preview?' in response.url) as handoff:
+                        page.get_by_role('button', name='Next day').click()
+                    assert handoff.value.status == 200
+                    assert handoff.value.json()['requested_local_date'] == '2026-09-07'
+                    assert handoff.value.json()['provenance']['engine_day_ordinal'] == 1
+                    expect(page.get_by_role('alert')).to_have_count(0)
+                    page.get_by_label('Target date').fill('2024-03-01')
+                    with page.expect_response(lambda response: '/v1/personal/heluo-preview?' in response.url) as leap:
+                        page.get_by_role('button', name='Previous day').click()
+                    assert leap.value.status == 200
+                    assert leap.value.json()['requested_local_date'] == '2024-02-29'
+                    expect(page.get_by_label('Target date')).to_have_value('2024-02-29')
                 else:
                     with page.expect_response(lambda response: '/v1/personal/heluo-today' in response.url) as personal:
                         page.get_by_role('button', name='查看个人今日').click()
