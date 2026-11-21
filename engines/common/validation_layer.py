@@ -15,11 +15,12 @@ import glob
 import io
 import json
 import os
+from pathlib import Path
 import sys
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
-ROOT = r"D:\shuntian-ziping-p0"
+ROOT = Path(__file__).resolve().parents[2]
 
 BOOK_FILE = {
     "YHZP": "yhzp", "PZZQ": "pzzq", "DTS": "dts",
