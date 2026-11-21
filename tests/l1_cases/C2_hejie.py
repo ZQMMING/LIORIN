@@ -26,14 +26,14 @@ print(f'  卯戌合化火: {he_result}')
 # 期望: 合化火(丙透干)
 if he_result == '火':
     PASS += 1
-    print(f'  OK: 卯戌合成立')
+    print('  OK: 卯戌合成立')
 else:
     FAIL += 1
-    print(f'  FAIL: 期望卯戌合化火')
+    print('  FAIL: 期望卯戌合化火')
 
 # 验2: 子卯刑记录
 # 引擎暂无刑检测函数, 只验合成立
 print()
 print(f'C2结果: {PASS} PASS / {FAIL} FAIL')
-print(f'备注: 刑检测函数待实现, 当前只验合成立')
+print('备注: 刑检测函数待实现, 当前只验合成立')
 print()

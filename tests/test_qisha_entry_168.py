@@ -9,7 +9,9 @@ f2 = build({'year':['甲','子'],'month':['丁','午'],'day':['乙','卯'],'hour
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("乙日酉月=七煞入口", f1['qisha_entry']['is_entry'], True)
 ck("乙日午月=非七煞", f2['qisha_entry']['is_entry'], False)
 ck("note含身强逢制后续", '身强' in f1['qisha_entry']['premise_note'], True)

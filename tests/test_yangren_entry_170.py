@@ -9,7 +9,9 @@ f3 = build({'year':['甲','子'],'month':['甲','寅'],'day':['乙','卯'],'hour
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("甲日卯月=刃入口", f1['yangren_entry']['is_entry'], True)
 ck("丙日午月=刃入口", f2['yangren_entry']['is_entry'], True)
 ck("乙日阴干=非刃", f3['yangren_entry']['is_entry'], False)

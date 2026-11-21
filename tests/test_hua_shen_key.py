@@ -4,8 +4,7 @@
 sorted(['己','甲'])在Unicode下是['己','甲']，不是['甲','己']
 所以HUA_SHEN必须双向key，不能靠sorted生成
 """
-import sys, io
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+import sys
 sys.path.insert(0, '.')
 from engines.axis_xiuqi import HUA_SHEN
 

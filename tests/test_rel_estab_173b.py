@@ -8,12 +8,15 @@ from engines.common.relation_established_173 import shishen_zhisha_established
 f1 = build({'year':['甲','子'],'month':['丁','午'],'day':['乙','卯'],'hour':['辛','巳']})
 # 食神格但无杀(时干戊财)
 f2 = build({'year':['甲','子'],'month':['丁','午'],'day':['乙','卯'],'hour':['戊','辰']})
-r1=shishen_zhisha_established(f1); r2=shishen_zhisha_established(f2)
+r1=shishen_zhisha_established(f1)
+r2=shishen_zhisha_established(f2)
 print(r1['state'], r2['state'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("食神+见杀=结构SAT", r1['state'], 'SATISFIED')
 ck("食神无杀=不成立", r2['state'], 'UNSATISFIED')
 ck("note含不等于美格/有效", '不等于制杀有效' in r1.get('note',''), True)

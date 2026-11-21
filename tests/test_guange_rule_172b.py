@@ -11,7 +11,9 @@ print(r['conditions'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("state=CANDIDATE", r['state'], 'CANDIDATE')
 ck("官有根三态", r['conditions']['官有根'] in ('SATISFIED','UNSATISFIED','UNKNOWN'), True)
 ck("官星受冲已接", '官星受冲' in r['conditions'], True)

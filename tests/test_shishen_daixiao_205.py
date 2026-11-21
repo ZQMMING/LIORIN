@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 """PATCH-205 食神格食带煞而无财(supported)+食神逢枭(blocked) golden"""
-import sys; sys.path.insert(0, '.')
+import sys
+sys.path.insert(0, '.')
 from engines.common.l0_fact_builder import build
 from engines.common.shishen_rule_contract import shishen_rule_input
 
 fails = 0
 def ck(n, g, e):
-    global fails; ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 # 丁日午月: 午本气己=丁食神. 丁日七杀=癸, 财=庚辛, 偏印=乙
 # G1 食带煞而无财: 有七杀癸 + 天干藏干均无庚辛

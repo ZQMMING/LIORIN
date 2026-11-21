@@ -10,7 +10,9 @@ print(r['conditions'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("state=CANDIDATE", r['state'], 'CANDIDATE')
 ck("无required", len(r['bucket']['required'])==0, True)
 ck("官杀制刃为premise", '官杀制刃' in r['bucket']['supported_premise'], True)

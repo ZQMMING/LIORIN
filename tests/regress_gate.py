@@ -28,7 +28,9 @@ for c in base["cases"]:
 
 BOOKS = ["DTS_clean.jsonl", "PZZQ_clean.jsonl", "QTBJ_clean.jsonl",
          "SFTK_clean.jsonl", "SMTH_clean.jsonl", "YHZP_clean.jsonl"]
-bing = collections.Counter(); pri = collections.Counter(); ge = collections.Counter()
+bing = collections.Counter()
+pri = collections.Counter()
+ge = collections.Counter()
 shape = collections.Counter()
 for fn in BOOKS:
     hits = glob.glob(os.path.join(ROOT, "p0_v2", "**", fn), recursive=True)

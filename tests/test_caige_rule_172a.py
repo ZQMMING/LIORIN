@@ -11,7 +11,9 @@ print(r['conditions'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("state=CANDIDATE", r['state'], 'CANDIDATE')
 ck("财太露保持UNKNOWN", r['conditions']['财太露'], 'UNKNOWN')
 ck("不判成格", 'is_success' not in r and '格成' not in r['state'], True)

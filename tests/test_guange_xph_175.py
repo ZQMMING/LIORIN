@@ -12,7 +12,9 @@ def cond_of(month, hour):
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 # G1 官星受冲(乙日申月官, 时支寅冲申)
 g1 = cond_of(['庚','申'], ['甲','寅'])

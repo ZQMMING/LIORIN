@@ -98,5 +98,5 @@ for members, hua in GONG_PURE:
 
 print()
 print(f'B4结果: {PASS} PASS / {FAIL} FAIL')
-print(f'备注: 透干补中神档(B5)下一轮验')
+print('备注: 透干补中神档(B5)下一轮验')
 print()

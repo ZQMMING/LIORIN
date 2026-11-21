@@ -10,7 +10,9 @@ f2 = build({'year':['甲','子'],'month':['乙','卯'],'day':['乙','卯'],'hour
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("乙日午月=食神格入口", f1['shishen_entry']['is_entry'], True)
 ck("乙日卯月=非入口", f2['shishen_entry']['is_entry'], False)
 ck("有note说明非格成", '≠食神格成' in f1['shishen_entry']['premise_note'], True)

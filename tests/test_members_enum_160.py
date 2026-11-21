@@ -11,7 +11,9 @@ for x in m: print(' ', x['pillar'], x['type'], x['stem'], x.get('qi_position'), 
 fails = 0
 def ck(n, g, e):
     global fails
-    ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 # 1 天干成员(3, 排除日干)
 ck("天干成员3", len([x for x in m if x['type']=='stem']), 3)
 # 2 藏干成员(四柱藏干总数)

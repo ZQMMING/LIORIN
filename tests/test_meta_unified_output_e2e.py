@@ -21,6 +21,7 @@ def test_meta_unified_output_e2e():
     # 测试案例: 甲子 丙寅 甲子 丙寅
     pillars = {'year': ['甲', '子'], 'month': ['丙', '寅'], 'day': ['甲', '子'], 'hour': ['丙', '寅']}
     facts = build(pillars)
+    facts['pillars'] = pillars
 
     # 构建根气
     hidden_stems_by_branch = {pillars[k][1]: facts['hidden_stems'][k] for k in ('year', 'month', 'day', 'hour')}
@@ -59,32 +60,32 @@ def test_meta_unified_output_e2e():
     assert 'PZZQ' in wangshuai['tracks']
     assert 'YHZP' in wangshuai['tracks']
     assert 'DTS' in wangshuai['tracks']
-    assert wangshuai['tracks']['PZZQ']['activated'] == True
+    assert wangshuai['tracks']['PZZQ']['activated'] is True
     print(f"[PASS] 旺衰: PZZQ={wangshuai['tracks']['PZZQ']['candidates'][0]['element']}")
 
     # 2. 强弱
     qiangruo = meta_outputs['QIANG_RUO']
     assert qiangruo['meta_name'] == '强弱'
-    assert qiangruo['tracks']['PZZQ']['activated'] == True
+    assert qiangruo['tracks']['PZZQ']['activated'] is True
     print(f"[PASS] 强弱: PZZQ候选数={len(qiangruo['tracks']['PZZQ']['candidates'])}")
 
     # 3. 格局
     geju = meta_outputs['GE_JU']
     assert geju['meta_name'] == '格局'
-    assert geju['tracks']['PZZQ']['activated'] == True
+    assert geju['tracks']['PZZQ']['activated'] is True
     assert len(geju['tracks']['PZZQ']['candidates']) > 0
     print(f"[PASS] 格局: PZZQ候选={[c['element'] for c in geju['tracks']['PZZQ']['candidates']]}")
 
     # 4. 调候
     diaohou = meta_outputs['DIAO_HOU']
     assert diaohou['meta_name'] == '调候'
-    assert diaohou['tracks']['QTBJ']['activated'] == True
+    assert diaohou['tracks']['QTBJ']['activated'] is True
     print(f"[PASS] 调候: QTBJ候选={[c['element'] for c in diaohou['tracks']['QTBJ']['candidates']]}")
 
     # 5. 病药
     bingyao_output = meta_outputs['BING_YAO']
     assert bingyao_output['meta_name'] == '病药'
-    assert bingyao_output['tracks']['SFTK']['activated'] == True
+    assert bingyao_output['tracks']['SFTK']['activated'] is True
     print(f"[PASS] 病药: SFTK候选={[c['element'] for c in bingyao_output['tracks']['SFTK']['candidates']]}")
 
     # 6. 用神 (关键: 验证四轨并行层完整接入)

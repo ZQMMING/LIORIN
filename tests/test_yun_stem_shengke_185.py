@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """PATCH-185 运干x命干五行生克 golden (纯五行事实, 不作祸福)"""
-import sys; sys.path.insert(0, '.')
+import sys
+sys.path.insert(0, '.')
 from engines.common.relation_178 import yun_natal_relations
 
 fails = 0
 def ck(n, g, e):
-    global fails; ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 pillars = {'year': ['丙', '寅'], 'month': ['戊', '戌'], 'day': ['甲', '子'], 'hour': ['壬', '寅']}
 

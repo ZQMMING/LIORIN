@@ -11,7 +11,9 @@ print(r['conditions'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("state=CANDIDATE", r['state'], 'CANDIDATE')
 ck("blocked不含贪财破印", '贪财破印' not in r['bucket']['blocked'], True)
 ck("贪财破印在unknown", '贪财破印' in r['bucket']['unknown_pending'], True)

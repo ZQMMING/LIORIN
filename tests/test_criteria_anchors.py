@@ -7,8 +7,15 @@
 失败即红 —— 新增判据若忘记登记原典出处, 本闸门即报.
 """
 import os, re, json, glob, sys, collections
+from pathlib import Path
 
-ROOT = r"D:\shuntian-ziping-p0"
+ROOT = Path(os.environ.get("LIORIN_CRITERIA_ROOT", Path(__file__).resolve().parents[1]))
+sources = sorted((ROOT / "p0_v2" / "output").glob("*/*_slices.jsonl"))
+if not sources or not (ROOT / "p0_v2" / "output" / "ENGINE_CRITERIA_ANCHORS.json").is_file():
+    raise RuntimeError(
+        "Criteria anchor audit requires the authorized source workspace with generated slices "
+        "and ENGINE_CRITERIA_ANCHORS.json. Set LIORIN_CRITERIA_ROOT to its root."
+    )
 BOOK_DIR = {'PZZQ': 'PZZQ', 'DTS': 'DTS_LB', 'QTBJ': 'QTBJ', 'SFTK': 'SFTK',
             'SMTH': 'SMTH', 'YHZP': 'YHZP'}
 FAILS = []

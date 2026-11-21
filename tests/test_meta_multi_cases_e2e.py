@@ -82,7 +82,7 @@ def test_multiple_cases():
 
             # 验证Gate通过
             if summary['gate'] != 'PASSED':
-                print(f"  [FAIL] Gate未通过!")
+                print("  [FAIL] Gate未通过!")
                 all_pass = False
 
         except Exception as e:

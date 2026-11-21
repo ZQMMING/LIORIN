@@ -28,7 +28,8 @@ cases = [
 ]
 fails=0
 for n,g,e in cases:
-    ok=g==e; fails+=(not ok)
+    ok=g==e
+    fails+=(not ok)
     print(f"{'PASS' if ok else 'FAIL'} {n}: {g} (期望{e})")
 print('=>', 'ALL PASS' if fails==0 else f'{fails} FAIL')
 sys.exit(1 if fails else 0)

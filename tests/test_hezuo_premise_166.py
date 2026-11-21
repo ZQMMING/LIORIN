@@ -11,7 +11,9 @@ print("食神生财:", h['食神生财'], "食神制杀:", h['食神制杀'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("食神+财同现->生财前提", h['食神生财'], True)
 ck("食神+杀同现->制杀前提", h['食神制杀'], True)
 # 反向: f1有财(戊)+七杀(辛)但无正官(庚) -> 财生官必须False

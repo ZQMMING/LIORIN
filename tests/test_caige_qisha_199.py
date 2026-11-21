@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 """PATCH-199 财格财逢七杀 blocked结构 golden (非直接FAILED)"""
-import sys; sys.path.insert(0, '.')
+import sys
+sys.path.insert(0, '.')
 from engines.common.l0_fact_builder import build
 from engines.common.caige_rule_contract import caige_rule_input
 
 fails = 0
 def ck(n, g, e):
-    global fails; ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 # 乙日辰月: 辰本气戊=乙正财. 乙日七杀=辛
 # G1 天干无辛 -> 财逢七杀 UNSAT

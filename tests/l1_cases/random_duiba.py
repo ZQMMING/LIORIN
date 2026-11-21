@@ -109,16 +109,16 @@ for i in range(N):
         print(f'  进度: {i+1}/{N}, 错={FAIL}')
 
 print()
-print(f'=== 对拍结果 ===')
+print('=== 对拍结果 ===')
 print(f'总用例: {N}四柱')
 print(f'PASS: {N*4 - FAIL} (约, 按四柱计)')
 print(f'FAIL: {FAIL}')
 if fail_details:
-    print(f'前10错例:')
+    print('前10错例:')
     for d in fail_details[:10]:
         print(f'  {d}')
 else:
     print('全绿, 无差异')
 print()
-print(f'种子: 42')
+print('种子: 42')
 print(f'结论: {"双实现一致 ✅" if FAIL == 0 else "有差异, 开单"}')

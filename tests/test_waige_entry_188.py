@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """PATCH-188 外格A类Structural Entry golden (仅结构存在, 非成格非贵贱)"""
-import sys; sys.path.insert(0, '.')
+import sys
+sys.path.insert(0, '.')
 from engines.common.l0_fact_builder import build
 
 fails = 0
 def ck(n, g, e):
-    global fails; ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 def entries(pillars):
     return [x['entry'] for x in build(pillars).get('waige_structural_entries', [])]

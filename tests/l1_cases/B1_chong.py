@@ -18,7 +18,7 @@ print()
 print('--- 直接对冲 ---')
 for c1, c2 in LIU_CHONG:
     result = _is_chong(c1, c2)
-    ok = result == True
+    ok = result is True
     if ok: PASS += 1
     else:
         FAIL += 1
@@ -33,7 +33,7 @@ print('--- 隔位对冲(仍应True, 无位置限定) ---')
 for c1, c2 in LIU_CHONG:
     # 反向也验
     result = _is_chong(c2, c1)
-    ok = result == True
+    ok = result is True
     if ok: PASS += 1
     else:
         FAIL += 1
@@ -45,7 +45,7 @@ print('--- 非冲组(应False) ---')
 NON_CHONG = [('子','丑'), ('寅','卯'), ('辰','巳'), ('午','未'), ('申','酉'), ('戌','亥')]
 for b1, b2 in NON_CHONG:
     result = _is_chong(b1, b2)
-    ok = result == False
+    ok = result is False
     if ok: PASS += 1
     else:
         FAIL += 1
@@ -54,5 +54,5 @@ for b1, b2 in NON_CHONG:
 
 print()
 print(f'B1结果: {PASS} PASS / {FAIL} FAIL')
-print(f'备注: 隔位不影响_is_chong判定(只看两支组合, 不看位置)')
+print('备注: 隔位不影响_is_chong判定(只看两支组合, 不看位置)')
 print()

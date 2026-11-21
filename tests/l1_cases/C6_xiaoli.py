@@ -26,12 +26,12 @@ print(f'  火局状态: {he[0]["status"] if he else "无"}')
 # 期望: 冲成立+半局散
 if _is_chong('午', '子') and he and he[0]['status'] == '局散':
     PASS += 1
-    print(f'  OK: 半局中神被冲=散(#033)')
+    print('  OK: 半局中神被冲=散(#033)')
 else:
     FAIL += 1
-    print(f'  FAIL: 期望冲+散')
+    print('  FAIL: 期望冲+散')
 
 print()
 print(f'C6结果: {PASS} PASS / {FAIL} FAIL')
-print(f'裁决#033: 半局中神被冲=散, 非中神被冲=伤')
+print('裁决#033: 半局中神被冲=散, 非中神被冲=伤')
 print()

@@ -50,5 +50,5 @@ for members, hua in GONG_LU:
 
 print()
 print(f'B5结果: {PASS} PASS / {FAIL} FAIL / {SKIP} SKIP')
-print(f'备注: 禄代中神分支待实现, 纯拱无补档B4已验(4盘全绿)')
+print('备注: 禄代中神分支待实现, 纯拱无补档B4已验(4盘全绿)')
 print()

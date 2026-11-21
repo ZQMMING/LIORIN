@@ -55,5 +55,5 @@ for b1, b2, hua, stems, expected in LIUHE_TESTS:
 
 print()
 print(f'B3结果: {PASS} PASS / {FAIL} FAIL / {SKIP} SKIP(当令档待补)')
-print(f'备注: 当令即化分支待实现(裁决#001另一半)')
+print('备注: 当令即化分支待实现(裁决#001另一半)')
 print()

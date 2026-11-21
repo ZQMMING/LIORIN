@@ -37,15 +37,15 @@ print(f"✅ 基线条数: {len(baseline)}")
 
 # 检查key存在
 assert all('key' in b for b in baseline), "存在缺少key的案例"
-print(f"✅ key二次键: 全部存在")
+print("✅ key二次键: 全部存在")
 
 # 检查li唯一
-li_set = set(b['li'] for b in baseline)
+li_set = {b['li'] for b in baseline}
 assert len(li_set) == len(baseline), "li不唯一"
 print(f"✅ li唯一: {len(li_set)}")
 
 # 检查key重复情况（同八字不同大运是正常的）
-key_set = set(b['key'] for b in baseline)
+key_set = {b['key'] for b in baseline}
 duplicate_count = len(baseline) - len(key_set)
 print(f"ℹ️ 唯一八字数: {len(key_set)} (重复{duplicate_count}条，同八字不同大运是正常的)")
 
@@ -89,7 +89,7 @@ print(f"当前专旺格总数: {zhuanwang_total}")
 
 # 按子格拆分
 zhuanwang_dist = Counter(b['special'] for b in baseline if is_zhuanwang(b.get('special', '')))
-print(f"专旺格分布:")
+print("专旺格分布:")
 for sp, count in zhuanwang_dist.most_common():
     print(f"  {sp}: {count}")
 

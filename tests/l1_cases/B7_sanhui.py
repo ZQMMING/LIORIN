@@ -76,5 +76,5 @@ for branches, hua in GEWEI:
 
 print()
 print(f'B7结果: {PASS} PASS / {FAIL} FAIL / {SKIP} SKIP')
-print(f'备注: 相邻判定(#025)挂待验, 当前只判三支全')
+print('备注: 相邻判定(#025)挂待验, 当前只判三支全')
 print()
