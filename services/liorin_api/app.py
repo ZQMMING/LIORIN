@@ -1,11 +1,14 @@
 """Product API bootstrap. Calculations and authentication are not yet wired."""
+from datetime import date
 from pathlib import Path
 import os
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 
 from .config import Settings
+from .heluo_preview import HeluoPreview
 from .locations import LocationAmbiguous, LocationCatalogue, LocationCatalogueError, LocationUnknown
 from .time_context import BirthTimeRequest, TimeContextError, normalize_birth_time
 
@@ -25,7 +28,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def protect_time_context(request, call_next):
         response = await call_next(request)
         if (request.url.path == '/v1/time-context' or request.url.path.startswith('/v1/auth/')
-                or request.url.path.startswith('/v1/profile/')):
+                or request.url.path.startswith('/v1/profile/') or request.url.path.startswith('/v1/personal/')):
             response.headers['Cache-Control'] = 'no-store'
         return response
 
@@ -109,8 +112,44 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         def profile_unavailable() -> None:
             unavailable('PERSONAL_UNAVAILABLE')
     else:
-        from .account.profile import attach_profile
+        import psycopg2
+
+        from .account.profile import attach_profile, user_id
+        from .heluo_preview import compute_preview
         attach_profile(app, account_store, settings.data_dir)
+
+        @app.get('/v1/personal/heluo-preview', response_model=HeluoPreview)
+        def personal_heluo_preview(request: Request, target_date: date,
+                                   display_timezone: str = Query(min_length=1, max_length=100)) -> HeluoPreview:
+            uid = user_id(request)
+            try:
+                ZoneInfo(display_timezone)
+            except (ZoneInfoNotFoundError, ValueError):
+                raise HTTPException(status_code=422, detail={'code': 'INVALID_DISPLAY_TIMEZONE',
+                    'message': 'Use an IANA display timezone.'}) from None
+            try:
+                saved = account_store.get(uid)
+            except psycopg2.Error:
+                unavailable('PROFILE_STORE_UNAVAILABLE')
+            if saved is None:
+                raise HTTPException(status_code=404, detail={'code': 'PROFILE_NOT_FOUND', 'message': 'No saved birth profile.'})
+            try:
+                birth = BirthTimeRequest(
+                    birth_date=saved['birth_date'], hour=saved['birth_time']['hour'],
+                    minute=saved['birth_time']['minute'], location=saved['location'], timezone=saved['timezone'],
+                )
+                canonical = normalize_birth_time(birth, LocationCatalogue(settings.data_dir))
+            except (LocationUnknown, LocationAmbiguous, TimeContextError, ValueError, KeyError):
+                raise HTTPException(status_code=422, detail={'code': 'INVALID_BIRTH_CONTEXT', 'message': 'Review your saved birth profile.'}) from None
+            except LocationCatalogueError:
+                unavailable('LOCATIONS_UNAVAILABLE')
+            if canonical['status'] != 'ready':
+                raise HTTPException(status_code=422, detail={'code': 'INCOMPLETE_BIRTH_TIME', 'message': 'Birth minute required.'})
+            try:
+                return compute_preview(saved, canonical, target_date, settings.data_dir / 'locations.json',
+                                       display_timezone=display_timezone)
+            except (ImportError, OSError, ValueError, KeyError, RuntimeError, OverflowError, TypeError):
+                unavailable('HELUO_PREVIEW_UNAVAILABLE')
 
     @app.get('/v1/personal/heluo-today')
     def personal_unavailable() -> None:

@@ -5,6 +5,7 @@ import PersonalToday from './pages/today/PersonalToday'
 import RealPublicToday from './pages/today/RealPublicToday'
 import LocalPreviewUnavailable from './pages/today/LocalPreviewUnavailable'
 import RealPersonalHeluoToday from './pages/today/RealPersonalHeluoToday'
+import HeluoPreviewToday from './pages/today/HeluoPreviewToday'
 import EngineQaPage from './pages/EngineQaPage'
 import { restoreBrowserSession, type AuthTokens } from './api/auth'
 import GuidePage from './pages/GuidePage'
@@ -56,6 +57,7 @@ function getEntitlement(state: SimulatedState): Entitlement {
 }
 
 function App() {
+  const productBPreview = import.meta.env.VITE_LIORIN_PRODUCT_B_PREVIEW === '1'
   const [currentPage, setCurrentPage] = useState(() => pageForPath(window.location.pathname))
   const navigate = useCallback((page: PageName) => {
     const path = pathForPage(page)
@@ -111,10 +113,10 @@ function App() {
   }, [])
 
   useEffect(() => {
-    if (effectiveState === 'public') {
+    if (!productBPreview && effectiveState === 'public') {
       void loadRealToday()
     }
-  }, [effectiveState, loadRealToday])
+  }, [effectiveState, loadRealToday, productBPreview])
 
   const entitlement = getEntitlement(effectiveState)
   const data = getTodayData(effectiveState)
@@ -128,6 +130,9 @@ function App() {
   const renderPage = () => {
     switch (currentPage) {
       case 'today':
+        if (productBPreview) return session
+          ? <HeluoPreviewToday key={session.user_id} token={session.access_token} onAccount={() => navigate('me')} />
+          : <section className="page-container"><h1>Personal Today</h1><p>Sign in to use your saved birth profile.</p><button onClick={() => navigate('me')}>Open account</button></section>
         if (import.meta.env.DEV && import.meta.env.VITE_LIORIN_LOCAL_PREVIEW === '1' && showLocalTest) {
           return <><button className="local-test-back" type="button" onClick={() => setShowLocalTest(false)}>← 返回今日</button><EngineQaPage /></>
         }
