@@ -21,14 +21,43 @@ class PendingSection(BaseModel):
     reason: Literal['field_admission_pending'] = 'field_admission_pending'
 
 
+class CalendarDayBranch(BaseModel):
+    code: Literal['ZI', 'CHOU', 'YIN', 'MAO', 'CHEN', 'SI', 'WU', 'WEI', 'SHEN', 'YOU', 'XU', 'HAI']
+    name: str
+    checked_with: Literal['sxtwl'] = 'sxtwl'
+    check_version: Literal['2.0.7'] = '2.0.7'
+
+
 class ExplorerCalendar(BaseModel):
     requested_local_date: date
     display_timezone: str
     lunar_date: str
     source: CalendarSource
+    day_branch: CalendarDayBranch | None = None
     directions: PendingSection = PendingSection()
     zodiac_connections: PendingSection = PendingSection()
     time_windows: PendingSection = PendingSection()
+
+
+def _checked_day_branch(target: date, day_ganzhi: str) -> CalendarDayBranch | None:
+    from heluo_engine.engines.bazi_engine import BRANCH_CN, STEM_CN
+    from heluo_engine.facts.bazi_facts import EARTHLY_BRANCHES, HEAVENLY_STEMS
+
+    try:
+        import sxtwl
+
+        if version('sxtwl') != '2.0.7':
+            return None
+        day = sxtwl.fromSolar(target.year, target.month, target.day).getDayGZ()
+        if not (0 <= day.dz < len(EARTHLY_BRANCHES) and 0 <= day.tg < len(HEAVENLY_STEMS)):
+            return None
+        branch = EARTHLY_BRANCHES[day.dz]
+        name = BRANCH_CN[branch]
+        if STEM_CN[HEAVENLY_STEMS[day.tg]] + name != day_ganzhi:
+            return None
+        return CalendarDayBranch(code=branch, name=name)
+    except (ImportError, IndexError, KeyError, ValueError, OverflowError, RuntimeError):
+        return None
 
 
 def calendar_for_date(target: date, display_timezone: str, data_dir: Path) -> ExplorerCalendar:
@@ -48,4 +77,7 @@ def calendar_for_date(target: date, display_timezone: str, data_dir: Path) -> Ex
         display_timezone=display_timezone,
         lunar_date=annotation['lunar'],
         source=CalendarSource(version=installed_version, registry_version=registry['schema_version']),
+        day_branch=(
+            _checked_day_branch(target, annotation['day_ganzhi']) if 'day_ganzhi' in source['fields'] else None
+        ),
     )

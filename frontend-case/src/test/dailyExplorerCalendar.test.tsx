@@ -12,6 +12,7 @@ const pending = { status: 'unavailable', reason: 'field_admission_pending' }
 const data = {
   requested_local_date: selection.targetDate, display_timezone: selection.displayTimezone, lunar_date: '正月 初一',
   source: { id: 'lunar_python', version: '1.4.8', registry_version: '1.0.0', date_basis: 'explicit_gregorian_date' },
+  day_branch: { code: 'XU', name: '戌', checked_with: 'sxtwl', check_version: '2.0.7' },
   directions: pending, zodiac_connections: pending, time_windows: pending,
 }
 
@@ -22,6 +23,8 @@ it('shows admitted calendar facts and provenance in each supported locale', asyn
   const user = userEvent.setup()
   render(<DailyExplorerCalendar selection={selection} />)
   expect(await screen.findByText('正月 初一')).toBeInTheDocument()
+  expect(screen.getByText('Day branch')).toBeVisible()
+  expect(screen.getByText('戌')).toBeVisible()
   expect(request).toHaveBeenCalledWith(
     '/v1/explorer/calendar?target_date=2026-02-17&display_timezone=America%2FNew_York',
     expect.objectContaining({ signal: expect.any(AbortSignal) }),
@@ -44,4 +47,12 @@ it('rejects mismatched dates and recovers after explicitly retrying', async () =
   expect(screen.queryByText('正月 初一')).not.toBeInTheDocument()
   await user.click(screen.getByRole('button', { name: 'Retry calendar' }))
   expect(await screen.findByText('正月 初一')).toBeInTheDocument()
+})
+
+it('keeps the lunar date when the branch cross-check is unavailable', async () => {
+  request.mockResolvedValueOnce({ ...data, day_branch: null })
+  render(<DailyExplorerCalendar selection={selection} />)
+  expect(await screen.findByText('Day branch unavailable')).toBeVisible()
+  expect(screen.getByText('正月 初一')).toBeVisible()
+  expect(screen.queryByText('戌')).not.toBeInTheDocument()
 })

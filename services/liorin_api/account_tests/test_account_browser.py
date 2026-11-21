@@ -103,6 +103,7 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                     assert result['provenance']['solar_term_time_basis'] == 'sxtwl_jd2dd_fixed_utc_plus_08'
                     calendar = page.get_by_role('region', name='Daily calendar')
                     expect(calendar.get_by_text('Lunar date', exact=False)).to_be_visible()
+                    expect(calendar.get_by_text('Day branch', exact=True)).to_be_visible()
                     expect(calendar.get_by_text('source review pending', exact=False)).to_have_count(3)
                     calendar.get_by_text('Calendar source', exact=True).click()
                     expect(calendar.get_by_text('lunar_python 1.4.8', exact=False)).to_be_visible()

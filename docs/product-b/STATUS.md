@@ -55,3 +55,31 @@ Rollback uses a normal revert of this PR. Account data has no schema changes.
 | Full CI before recovery | PR #19 Actions run `44897796954` aborted pytest with import-time `SystemExit` and Ruff found 281 violations. Both reproduced on `main@6f407f89`. |
 | Independent CI recovery | PR #21 (`ad7489cb`) collected 1,687 and ran 1,674 passing, 3 failing, 10 skipped and 5,071 passing subtests locally. The [remote matrix](https://github.com/ZQMMING/LIORIN/actions/runs/44899843263) completed test execution on all four targets with 1,648 passing, 5 failing and 21 skipped on each. The five failures are two consumers of the legacy `tongshu.facts` import, the stale bingyao integration input, the absent real-case fixture, and the machine-specific criteria-anchor workspace. Remote Ruff fell to 38, comprising 30 E712 and 8 C401. Full CI remains open. |
 | Calendar branch targeted GitHub Actions | [API](https://github.com/ZQMMING/LIORIN/actions/runs/44900096761), [account](https://github.com/ZQMMING/LIORIN/actions/runs/44900096607) and [frontend](https://github.com/ZQMMING/LIORIN/actions/runs/44900096625) succeeded for `adbd98c4`. |
+
+## Round 5
+
+### Isolated credential incident
+
+The confirmed exposure was a failure report from the local account browser run. The authorized loopback test database and role were verified against the approved data directory, then the role password was rotated and the existing restricted local credential source was updated. A new connection succeeded, the old password was explicitly rejected and no other role sessions were active during rotation. The product GitHub Actions jobs do not use the isolated DSN or a database secret, so no CI secret was added.
+
+Six existing synthetic browser captures were visually checked. The scanned local logs and report files had no additional occurrence of the exposed value. The database log and new JUnit report contain neither the replacement value nor a SCRAM verifier. The reviewed API, account and frontend runs uploaded no artifacts. The mutation archive contained three entries, with no DSN or credential pattern detected. The existing tool report may still retain the revoked value.
+
+Account pytest reports now redact known DSN, password, authorization token and mail-code values before terminal and JUnit rendering. An intentional synthetic failure and skip exercise both report paths. Credential rotation is independent of code rollback. Reverting code must not restore the revoked database password.
+
+### Daily Explorer field review
+
+| Field | Verified source, input, example and output | Product state |
+| --- | --- | --- |
+| Daily branch | Registered `lunar_python 1.4.8` day Gan-Zhi cross-checked with `sxtwl 2.0.7` and the same branch enumeration used by the Bazi package. The existing `HuangliEngine.get_day` agrees across February 17–28, 2026, covering all 12 branches. February 17 returns 戌. The input is the explicit Gregorian date. | Returned as a public calendar fact. A mismatch suppresses only the branch and keeps the lunar date. |
+| Wealth direction | `HuangliEngine.get_day` → `getDayPositionCai` → `POSITION_CAI`, indexed by the day stem. 壬 returns 离. The output vocabulary is the eight direction trigrams. | Unavailable pending an approved rule citation and field-level verification. |
+| Joy direction | `getDayPositionXi` → `POSITION_XI`, indexed by the day stem. 癸 returns 巽. Same vocabulary, distinct table. | Unavailable pending independent field admission. |
+| Blessing direction | `getDayPositionFu` offers `POSITION_FU` and `POSITION_FU_2`. For 壬 the first returns 乾 and the default second returns 巽. | Unavailable pending selection and citation of the tradition. |
+| Zodiac connections | `HuangliEngine` returns the public day clash branch. The birth-year animal differs between Lunar New Year and Li Chun on February 16, 2026. Date-only and instant-based Li Chun also differ before the term on February 4. | Day branch is visible. Personal zodiac, clashes and combinations require an approved year boundary and rules. No life outcome is inferred. |
+| Traditional time windows | `lunar_python` `getTimes` yields 13 civil-day entries, including 子 segments at 00:00–00:59 and 23:00–23:59. The provider returns clock labels without assigning a user IANA timezone or resolving DST. | Unavailable pending local-time, midnight, DST and field-specific auspiciousness decisions. The display zone is echoed independently. |
+
+### Review, CI and rollback
+
+- Verified open stack: #19 → `main`, #20 → #19, #22 → #20. #19 remains the isolated preview review boundary. Formal Heluo TODAY stays 503 and the undetermined effective fields stay null. Retarget downstream PRs only after their upstream merges.
+- #21 remains independent against `main`. Commit `ccd1591c` repoints the legacy birth-facts adapter at its renamed `heluo_engine` package and supplies the integration test's pillars as the production call does. Ruff passes. Full local pytest passed with 1,677 tests, 10 existing skips and 5,071 passing subtests. It requires `LIORIN_CRITERIA_ROOT` for the authorized source/slice workspace and `LIORIN_REAL_CASES_FILE` for the authorized case corpus. Public CI keeps both checks active and reports absent inputs as failures. Neither corpus is uploaded by these PRs.
+- Round 5 local verification passed 84 API/Heluo tests, 76 frontend tests, the production build and three isolated PostgreSQL/SMTP tests including Chromium. The tests cover all 12 calendar branch codes, source disagreement, the synthetic pytest report and frontend recovery. Reproduce with the API/Heluo command above, `npm test`, the preview production build and `python -m pytest services/liorin_api/account_tests -q -o addopts=''` with approved local settings.
+- Revert the corresponding PR commits for code rollback. Keep the rotated local role password in use.
