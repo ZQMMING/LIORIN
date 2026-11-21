@@ -7,7 +7,8 @@
 每条断言格式: ①原典出处(书+行号+条文) ②断言的判据行为 ③可执行判据
 """
 import sys, os
-ROOT = r"D:\shuntian-ziping-p0"
+from pathlib import Path
+ROOT = str(Path(__file__).resolve().parents[1])
 sys.path.insert(0, ROOT)
 _p0 = os.path.join(ROOT, "p0_v2")
 if _p0 in sys.path:
@@ -1389,15 +1390,20 @@ ck("劫占/破 两档均 READY(V7.127 原典核清: 占=位置隔断, 非劫财�
 #   若规则库出现允许禁转换的候选 → 引擎概念混层, 属 AGENTS.md 公理三(结构事实≠断语)违约.
 #   validation_layer 是独立治理脚本(不进排盘主链), 本组直接跑其三层验证固化.
 print("\n[HH] 治理层 validation_layer (PATCH-020) 禁转换/冲突解析")
+from tempfile import TemporaryDirectory
 import subprocess as _sp
-_vl_out = _sp.run([sys.executable, os.path.join(ROOT, "engines", "common", "validation_layer.py")],
-                  capture_output=True, text=True, cwd=ROOT)
-_vl = (_vl_out.stdout or "") + (_vl_out.stderr or "")
 import json as _json
-_vl_rep = os.path.join(ROOT, "governance", "patch_020_engine_validation_report.json")
-ck("validation_layer 报告已生成", os.path.exists(_vl_rep), _vl_rep)
-if os.path.exists(_vl_rep):
-    _vr = _json.load(open(_vl_rep, encoding='utf-8'))
+with TemporaryDirectory() as _report_directory:
+    _vl_rep = Path(_report_directory) / "patch_020_engine_validation_report.json"
+    _vl_run = _sp.run(
+        [sys.executable, os.path.join(ROOT, "engines", "common", "validation_layer.py"),
+         "--output", str(_vl_rep)],
+        capture_output=True, encoding="utf-8", cwd=ROOT, check=False,
+    )
+    ck("validation_layer exits cleanly", _vl_run.returncode == 0, _vl_run.stderr)
+    ck("validation_layer writes report", _vl_rep.is_file(), _vl_rep)
+    _vr = _json.loads(_vl_rep.read_text(encoding='utf-8')) if _vl_rep.is_file() else None
+if _vr is not None:
     _sum = _vr.get("summary") or {}
     ck("PATCH-020 60 条规则静态验证全 PASS(0 FAIL)",
        _sum.get("static_fail") == 0 and _sum.get("rules_total") == 60,
