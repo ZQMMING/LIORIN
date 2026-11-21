@@ -1,6 +1,7 @@
 """Read-only projection of the installed engine's date-based QA output."""
-from datetime import date, datetime
+from datetime import date, datetime, timedelta, timezone
 from typing import Literal
+from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 
@@ -9,6 +10,9 @@ class HeluoProvenance(BaseModel):
     adapter: Literal['HeluoAdapter.compute_from_chart'] = 'HeluoAdapter.compute_from_chart'
     date_selection: Literal['jie_civil_day_ordinal'] = 'jie_civil_day_ordinal'
     marker_semantics: Literal['jie_span_30th_step_minute_precision'] = 'jie_span_30th_step_minute_precision'
+    birth_time_basis: Literal['CalculationContext'] = 'CalculationContext'
+    solar_term_time_basis: Literal['sxtwl_jd2dd_fixed_utc_plus_08'] | None
+    sxtwl_version: str
     jie_start_marker: datetime
     next_jie_marker: datetime
     engine_day_ordinal: int
@@ -23,8 +27,8 @@ class HeluoPreview(BaseModel):
     calendar_rule_id: Literal['gua6']
     engine_version: str
     engine_time_marker: datetime
-    marker_timezone: None = None
-    marker_utc: None = None
+    marker_timezone: Literal['Asia/Shanghai', '+08:00'] | None = None
+    marker_utc: datetime | None = None
     active_yao_index: None = None
     valid_from: None = None
     valid_until: None = None
@@ -72,10 +76,27 @@ def compute_preview(profile: dict, canonical: dict, target: date, locations_path
             or not start <= marker < end
             or marker != datetime.fromisoformat(base['target_date'])):
         raise ValueError('invalid target line or marker')
+
+    sxtwl_version = version('sxtwl')
+    solar_term_time_basis = marker_timezone = marker_utc = None
+    # sxtwl 2.0.7 src/eph.h: qi_accurate applies delta-T then adds +8h.
+    # Before Gregorian reform JD2DD emits Julian-calendar wall dates.
+    if sxtwl_version == '2.0.7' and start.date() >= date(1582, 10, 15):
+        solar_term_time_basis = 'sxtwl_jd2dd_fixed_utc_plus_08'
+        fixed_beijing = timezone(timedelta(hours=8))
+        marker_utc = marker.replace(tzinfo=fixed_beijing).astimezone(timezone.utc)
+        shanghai = ZoneInfo('Asia/Shanghai')
+        marker_timezone = ('Asia/Shanghai' if marker_utc.astimezone(shanghai).replace(tzinfo=None) == marker
+                           else '+08:00')
+
     return HeluoPreview(
         requested_local_date=target, display_timezone=display_timezone,
         birth_timezone=canonical['timezone'], hexagram=base['name'],
         engine_selected_yao_index=index, engine_time_marker=marker, calendar_rule_id='gua6',
+        marker_timezone=marker_timezone, marker_utc=marker_utc,
         engine_version=version('heluo-engine'), marker_matches_requested_date=marker.date() == target,
-        provenance=HeluoProvenance(jie_start_marker=start, next_jie_marker=end, engine_day_ordinal=ordinal),
+        provenance=HeluoProvenance(
+            jie_start_marker=start, next_jie_marker=end, engine_day_ordinal=ordinal,
+            solar_term_time_basis=solar_term_time_basis, sxtwl_version=sxtwl_version,
+        ),
     )

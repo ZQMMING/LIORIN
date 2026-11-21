@@ -12,12 +12,20 @@ type Preview = {
   calendar_rule_id: 'gua6'
   engine_version: string
   engine_time_marker: string
-  marker_timezone: null
-  marker_utc: null
+  marker_timezone: 'Asia/Shanghai' | '+08:00' | null
+  marker_utc: string | null
   active_yao_index: null
   valid_from: null
   valid_until: null
-  provenance: { adapter: string; jie_start_marker: string; next_jie_marker: string; engine_day_ordinal: number }
+  provenance: {
+    adapter: string
+    birth_time_basis: 'CalculationContext'
+    solar_term_time_basis: 'sxtwl_jd2dd_fixed_utc_plus_08' | null
+    sxtwl_version: string
+    jie_start_marker: string
+    next_jie_marker: string
+    engine_day_ordinal: number
+  }
   marker_matches_requested_date: boolean
   admission_status: 'pending_review'
 }
@@ -40,7 +48,12 @@ export default function HeluoPreviewToday({ token, onAccount }: { token: string;
       if (data?.requested_local_date !== date || data.display_timezone !== displayZone ||
           data.calendar_rule_id !== 'gua6' || data.admission_status !== 'pending_review' ||
           data.active_yao_index !== null || data.valid_from !== null || data.valid_until !== null ||
-          data.marker_timezone !== null || data.marker_utc !== null || !data.provenance ||
+          !data.provenance ||
+          (data.marker_timezone === null
+            ? data.marker_utc !== null || data.provenance.solar_term_time_basis !== null
+            : !['Asia/Shanghai', '+08:00'].includes(data.marker_timezone) ||
+              typeof data.marker_utc !== 'string' ||
+              data.provenance.solar_term_time_basis !== 'sxtwl_jd2dd_fixed_utc_plus_08') ||
           typeof data.hexagram !== 'string' || !Number.isInteger(data.engine_selected_yao_index) ||
           data.engine_selected_yao_index < 0 || data.engine_selected_yao_index > 5 ||
           typeof data.engine_time_marker !== 'string') {
@@ -80,10 +93,13 @@ export default function HeluoPreviewToday({ token, onAccount }: { token: string;
       <details><summary>Calculation source</summary>
         <p>{result.provenance.adapter} · {result.engine_version} · {result.calendar_rule_id}</p>
         <p>Requested date {result.requested_local_date} · display timezone {result.display_timezone}</p>
-        <p>Engine marker {result.engine_time_marker} (timezone unverified)</p>
+        <p>Engine marker {result.engine_time_marker} ({result.marker_timezone ?? 'timezone unverified'})</p>
+        {result.marker_utc && <p>Engine marker in UTC <time dateTime={result.marker_utc}>{result.marker_utc}</time></p>}
         <p>Solar-term markers {result.provenance.jie_start_marker} to {result.provenance.next_jie_marker}</p>
+        <p>Solar-term clock sxtwl {result.provenance.sxtwl_version} · {result.provenance.solar_term_time_basis
+          ? 'fixed UTC+08:00, minute precision' : 'time basis unverified'}</p>
         <p>Calendar day ordinal {result.provenance.engine_day_ordinal}</p>
-        <p>Saved birth timezone {result.birth_timezone}</p>
+        <p>Saved birth timezone {result.birth_timezone} · {result.provenance.birth_time_basis}</p>
       </details>
     </div>}
   </section>

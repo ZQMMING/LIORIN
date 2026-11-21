@@ -92,9 +92,13 @@ def test_browser_real_login_save_reload_edit_and_logout(isolated_dsn, smtp_sink,
                     assert result['active_yao_index'] is result['valid_from'] is result['valid_until'] is None
                     assert result['display_timezone'] == 'America/New_York'
                     assert result['birth_timezone'] == 'Asia/Shanghai'
+                    assert result['marker_timezone'] == 'Asia/Shanghai'
+                    assert result['marker_utc'] == '2026-08-17T20:41:00Z'
+                    assert result['provenance']['solar_term_time_basis'] == 'sxtwl_jd2dd_fixed_utc_plus_08'
                     expect(page.get_by_role('heading', name=result['hexagram'])).to_be_visible()
                     page.get_by_text('Calculation source', exact=True).click()
                     expect(page.get_by_text('HeluoAdapter.compute_from_chart', exact=False)).to_be_visible()
+                    expect(page.get_by_text('Engine marker in UTC', exact=False)).to_contain_text(result['marker_utc'])
                     screenshot_dir = os.environ.get('LIORIN_PREVIEW_SCREENSHOTS')
                     if screenshot_dir:
                         folder = Path(screenshot_dir)
