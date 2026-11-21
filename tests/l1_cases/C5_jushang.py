@@ -25,7 +25,7 @@ r1 = get_hehui_summary(branches1, ['丙'])
 he1 = [h for h in r1['hehui'] if h['hua'] == '火']
 print(f'  火局状态: {he1[0]["status"] if he1 else "无"}')
 # 期望: 冲成立+局成立(局伤占位)
-if chong1 == True and he1 and he1[0]['status'] == '全':
+if chong1 is True and he1 and he1[0]['status'] == '全':
     PASS += 1
     print('  OK: 局成立+中神被冲(局伤占位)')
 else:
@@ -43,7 +43,7 @@ print(f'  卯酉冲: {chong2}')
 r2 = get_hehui_summary(branches2, ['甲'])
 print(f'  木方: {r2["fang_wx"]}')
 # 期望: 冲成立+方成
-if chong2 == True and r2['fang_wx'] == '木':
+if chong2 is True and r2['fang_wx'] == '木':
     PASS += 1
     print('  OK: 方成+中神被冲(方伤占位)')
 else:

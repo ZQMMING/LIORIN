@@ -26,7 +26,7 @@ print(f'  卯酉冲: {chong1}')
 he1 = _get_hehua_branch('卯', branches1, stems1)
 print(f'  卯戌合化火: {he1}')
 # 期望: 冲成立+合成立(解冲)
-if chong1 == True and he1 == '火':
+if chong1 is True and he1 == '火':
     PASS += 1
     print('  OK: 卯酉冲+卯戌合解冲')
 else:
@@ -38,7 +38,7 @@ print()
 print('--- 卯酉冲+辰(辰非卯合, 冲仍成立) ---')
 chong2 = _is_chong('卯', '酉')
 print(f'  卯酉冲: {chong2}')
-if chong2 == True:
+if chong2 is True:
     PASS += 1
     print('  OK: 无合解, 冲仍成立')
 else:

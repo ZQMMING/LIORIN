@@ -40,12 +40,12 @@ assert all('key' in b for b in baseline), "存在缺少key的案例"
 print("✅ key二次键: 全部存在")
 
 # 检查li唯一
-li_set = set(b['li'] for b in baseline)
+li_set = {b['li'] for b in baseline}
 assert len(li_set) == len(baseline), "li不唯一"
 print(f"✅ li唯一: {len(li_set)}")
 
 # 检查key重复情况（同八字不同大运是正常的）
-key_set = set(b['key'] for b in baseline)
+key_set = {b['key'] for b in baseline}
 duplicate_count = len(baseline) - len(key_set)
 print(f"ℹ️ 唯一八字数: {len(key_set)} (重复{duplicate_count}条，同八字不同大运是正常的)")
 

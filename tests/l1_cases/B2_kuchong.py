@@ -20,7 +20,7 @@ print('--- 四库冲识别 ---')
 KU_CHONG = [('辰','戌'), ('丑','未')]
 for c1, c2 in KU_CHONG:
     result = _is_chong(c1, c2)
-    ok = result == True
+    ok = result is True
     if ok: PASS += 1
     else:
         FAIL += 1
@@ -32,7 +32,7 @@ print('--- 非四库冲(四正冲) ---')
 SI_ZHENG_CHONG = [('子','午'), ('卯','酉')]
 for c1, c2 in SI_ZHENG_CHONG:
     result = _is_chong(c1, c2)
-    ok = result == True
+    ok = result is True
     if ok: PASS += 1
     else:
         FAIL += 1

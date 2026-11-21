@@ -616,8 +616,8 @@ ck("六亲 未传性别不臆断(不输出映射)",
    (r_none.get("liu_qin") or {}).get("status"))
 r_m = paipan("甲午 丙寅 戊辰 庚午", gender="男")
 r_f = paipan("甲午 丙寅 戊辰 庚午", gender="女")
-_m_syms = set(i["symbol"] for i in (r_m.get("liu_qin") or {}).get("items") or [])
-_f_syms = set(i["symbol"] for i in (r_f.get("liu_qin") or {}).get("items") or [])
+_m_syms = {i["symbol"] for i in (r_m.get("liu_qin") or {}).get("items") or []}
+_f_syms = {i["symbol"] for i in (r_f.get("liu_qin") or {}).get("items") or []}
 ck("六亲 男命有妻星(财=我克)、无夫星(SMTH L3565)",
    "妻星" in _m_syms and "夫星" not in _m_syms, sorted(_m_syms))
 ck("六亲 女命有夫星(官杀=克我)、无妻星(SMTH「女取用与男不同」)",
@@ -680,8 +680,8 @@ ck("岁运关系 含地支六冲/六合等结构",
 ck("岁运关系 只记结构不判吉凶(PATCH-178 契约)",
    "≠ 喜忌吉凶" in (_yr.get("note") or ""), _yr.get("note"))
 ck("岁运关系 大运与流年分别标注 yun_type",
-   set(r.get("yun_type") for r in (_yr.get("relations") or [])) <= {"decade", "year"},
-   set(r.get("yun_type") for r in (_yr.get("relations") or [])))
+   {r.get("yun_type") for r in (_yr.get("relations") or [])} <= {"decade", "year"},
+   {r.get("yun_type") for r in (_yr.get("relations") or [])})
 
 # ═══ W. AGENTS.md v3 规格待办登记 (结构改造须待 Phase 3 干净 baseline) ═══
 # AGENTS.md v3 第四节:「决胜条件作为合取的一项写进定义内部, 外部不再设『谁打败谁』的优先级链」
@@ -887,7 +887,7 @@ print("\n[Z] 形态表与喜忌表 形态名一一对应")
 from engines.common.ge_jie_layer import _GEJU_SHAPE_SPEC
 from engines.common.yongyao_resolve import _GEJU_XIJI_SHAPE
 for _base, _shapes in _GEJU_SHAPE_SPEC.items():
-    _shape_names = set(n for n, _c in _shapes)
+    _shape_names = {n for n, _c in _shapes}
     _xij = set((_GEJU_XIJI_SHAPE.get(_base) or {}).keys())
     ck("形态名对应 %s" % _base, _shape_names == _xij,
        "形态表=%s 喜忌表=%s" % (sorted(_shape_names), sorted(_xij)))

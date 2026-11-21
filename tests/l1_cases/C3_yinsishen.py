@@ -32,7 +32,7 @@ print()
 print('--- 寅申冲 ---')
 chong1 = _is_chong('寅', '申')
 print(f'  寅申冲: {chong1}')
-if chong1 == True:
+if chong1 is True:
     PASS += 1
     print('  OK: 寅申冲成立')
 else:
