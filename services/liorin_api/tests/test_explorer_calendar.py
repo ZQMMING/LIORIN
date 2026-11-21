@@ -42,6 +42,14 @@ def test_explorer_fails_closed_if_calendar_source_is_absent(tmp_path):
     assert response.json()['detail']['code'] == 'EXPLORER_CALENDAR_UNAVAILABLE'
 
 
+def test_explorer_does_not_admit_an_unreviewed_source_version(monkeypatch):
+    monkeypatch.setattr('services.liorin_api.explorer_calendar.version', lambda _: '1.4.9')
+    client = TestClient(create_app(Settings(DATA)))
+    response = client.get(ROUTE, params={'target_date': '2026-02-17', 'display_timezone': 'Asia/Shanghai'})
+    assert response.status_code == 503
+    assert response.json()['detail']['code'] == 'EXPLORER_CALENDAR_UNAVAILABLE'
+
+
 def test_explorer_rejects_dates_before_source_gregorian_cutover():
     client = TestClient(create_app(Settings(DATA)))
     response = client.get(ROUTE, params={'target_date': '1582-10-04', 'display_timezone': 'Asia/Shanghai'})

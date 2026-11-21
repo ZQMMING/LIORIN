@@ -43,13 +43,13 @@ Rollback uses a normal revert of this PR. Account data has no schema changes.
 ## Round 4 review and calendar slice
 
 - PR #19 (`e256aaa5`) is open for human review against `main`. The isolated runtime verifies the loopback database identity, requires local SMTP capture and HTTPS configuration, and authorizes preview requests using the saved account. The normal app has no private preview route. The formal route still returns 503. PR #20 (`516f13cb`) remains based on PR #19 until that review lands.
-- `GET /v1/explorer/calendar` returns the reviewed calendar annotation for an explicit Gregorian date and echoes the validated display timezone. It reads no birth profile. The registered source version and existing bridge are checked before returning data. Missing or incompatible source data returns 503. Dates before the source's Gregorian cutover are rejected. The browser fetches calendar and private Heluo independently.
+- `GET /v1/explorer/calendar` returns the reviewed calendar annotation for an explicit Gregorian date and echoes the validated display timezone. It reads no birth profile. The registered source version and existing bridge are checked before returning data. The product service pins the registered version 1.4.8 after the initial Linux CI pulled 1.4.9 and correctly received 503. Missing or incompatible source data returns 503. Dates before the source's Gregorian cutover are rejected. The browser fetches calendar and private Heluo independently.
 - `HuangliEngine.get_day` exposes the three direction tokens and the day clash branch. Their presence in `data/calendar_sources.json` establishes provenance. The registry does not establish compass rule admission, a user-zodiac year boundary and relation policy, or the local/DST boundary policy and judgments for twelve traditional time windows. The response carries explicit unavailable states for these three sections.
 - The Chromium run uses isolated PostgreSQL and captured SMTP. It verifies the real login/profile flow, that a synthetic tag/UID cannot authorize account reads, calendar source display, the ordinal-31 recovery and leap day. NFC ownership proof and production account credentials/schema remain outside the enabled runtime.
 
 | Verification scope | Result |
 | --- | --- |
-| Calendar branch API and Heluo regression suite | 80 passed. |
+| Calendar branch API and Heluo regression suite | 81 passed, including rejection of an unreviewed source version. |
 | Calendar branch frontend and production-mode build | 75 passed, TypeScript/Vite build passed. |
 | Chromium against isolated DB and SMTP | One complete journey passed. |
 | Full CI before recovery | PR #19 Actions run `44897796954` aborted pytest with import-time `SystemExit` and Ruff found 281 violations. Both reproduced on `main@6f407f89`. |

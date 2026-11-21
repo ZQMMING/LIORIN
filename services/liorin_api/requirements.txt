@@ -3,3 +3,4 @@ uvicorn==0.52.4
 tzdata==2026.3
 itsdangerous==2.2.0
 psycopg2-binary==2.9.13
+lunar_python==1.4.8
