@@ -23,6 +23,7 @@ from cryptography.x509.oid import NameOID
 from fastapi.testclient import TestClient
 
 from services.liorin_api.account_tests.m3_smtp_capture import CaptureServer
+from services.liorin_api.account_tests.redaction import protect
 from services.liorin_api.app import create_app
 from services.liorin_api.account.api.deps import reset_rate_limit_buckets
 from services.liorin_api.account.db.auth_db import PostgresAuthDB
@@ -77,7 +78,7 @@ def delivered_code(sink):
     message = message_from_bytes(sink.messages[-1][1], policy=policy.default)
     match = re.search(r'\b\d{6}\b', message.get_body(preferencelist=('plain',)).get_content())
     assert match is not None
-    return match.group(0)
+    return protect(match.group(0))
 
 
 def test_real_email_login_profile_refresh_isolation_and_logout(isolated_dsn, smtp_sink, monkeypatch):
@@ -108,7 +109,7 @@ def test_real_email_login_profile_refresh_isolation_and_logout(isolated_dsn, smt
     assert login.json()['refresh_token'] == ''
     reused = client.post('/v1/auth/email/verify', json={'email': email, 'code': code})
     assert reused.status_code == 401
-    token = login.json()['access_token']
+    token = protect(login.json()['access_token'])
     auth = {'Authorization': f'Bearer {token}'}
     assert client.get('/v1/auth/me', headers=auth).status_code == 200
     assert client.get('/v1/profile/stored', headers=auth).status_code == 404
@@ -124,7 +125,7 @@ def test_real_email_login_profile_refresh_isolation_and_logout(isolated_dsn, smt
     assert personal.status_code == 503
     restored = client.post('/v1/auth/session/restore', headers=origin)
     assert restored.status_code == 200
-    auth = {'Authorization': 'Bearer ' + restored.json()['access_token']}
+    auth = {'Authorization': 'Bearer ' + protect(restored.json()['access_token'])}
     assert client.get('/v1/profile/stored', headers=auth).json()['birth_date'] == '1980-06-22'
     updated = client.put('/v1/profile/stored', headers=auth, json={**profile, 'birth_date': '1981-06-22'})
     assert updated.status_code == 200
@@ -139,11 +140,11 @@ def test_real_email_login_profile_refresh_isolation_and_logout(isolated_dsn, smt
     other_code = delivered_code(smtp_sink)
     other_login = second.post('/v1/auth/email/verify', json={'email': other_email, 'code': other_code})
     assert other_login.status_code == 200
-    other_auth = {'Authorization': 'Bearer ' + other_login.json()['access_token']}
+    other_auth = {'Authorization': 'Bearer ' + protect(other_login.json()['access_token'])}
     assert second.get('/v1/profile/stored', headers=other_auth).status_code == 404
     with patch('services.liorin_api.account.services.identity_gateway.ACCESS_TOKEN_TTL', -1):
         assert second.get('/v1/auth/me', headers=other_auth).status_code == 401
-    refresh = other_login.json()['refresh_token']
+    refresh = protect(other_login.json()['refresh_token'])
     with psycopg2.connect(isolated_dsn) as conn:
         with conn.cursor() as cur:
             from services.liorin_api.account.services.identity_gateway import _hash_token
@@ -168,13 +169,13 @@ def test_real_postgres_concurrent_refresh_is_single_use(isolated_dsn, monkeypatc
     user_id = str(uuid.uuid4())
     db.create_user(user_id)
     gateway = identity_gateway.IdentityGatewayV2(db_ops=db)
-    original = gateway.issue_refresh_token(user_id)
+    original = protect(gateway.issue_refresh_token(user_id))
     barrier = threading.Barrier(2)
 
     def rotate():
         barrier.wait()
         try:
-            return ('ok', gateway.refresh_tokens(original).refresh_token)
+            return ('ok', protect(gateway.refresh_tokens(original).refresh_token))
         except identity_gateway.AuthError as error:
             return (error.code, None)
 

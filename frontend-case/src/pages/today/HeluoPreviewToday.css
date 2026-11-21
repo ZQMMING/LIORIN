@@ -23,6 +23,32 @@
   gap: 0.5rem;
 }
 
+.daily-explorer__calendar {
+  margin-block: 1.5rem;
+  padding-block: 1rem;
+  border-block: 1px solid var(--border-strong);
+}
+
+.daily-explorer__calendar h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  margin-block: 0 0.75rem;
+}
+
+.daily-explorer__calendar ul {
+  list-style: none;
+  padding: 0;
+  margin-block: 0.75rem;
+}
+
+.daily-explorer__calendar li {
+  padding-block: 0.375rem;
+}
+
+.daily-explorer__calendar details {
+  overflow-wrap: anywhere;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .preview-hetu { animation: none; }
   .preview-motion-control { display: none; }

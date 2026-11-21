@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 
 from .config import Settings
+from .explorer_calendar import ExplorerCalendar, calendar_for_date
 from .heluo_preview import HeluoPreview
 from .locations import LocationAmbiguous, LocationCatalogue, LocationCatalogueError, LocationUnknown
 from .time_context import BirthTimeRequest, TimeContextError, normalize_birth_time
@@ -58,6 +59,22 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get('/v1/today')
     def today() -> None:
         unavailable('TODAY_UNAVAILABLE')
+
+    @app.get('/v1/explorer/calendar', response_model=ExplorerCalendar)
+    def explorer_calendar(target_date: date,
+                          display_timezone: str = Query(min_length=1, max_length=100)) -> ExplorerCalendar:
+        if target_date < date(1582, 10, 15):
+            raise HTTPException(status_code=422, detail={'code': 'UNSUPPORTED_CALENDAR_DATE',
+                'message': 'Use a Gregorian date on or after 1582-10-15.'})
+        try:
+            ZoneInfo(display_timezone)
+        except (ZoneInfoNotFoundError, ValueError):
+            raise HTTPException(status_code=422, detail={'code': 'INVALID_DISPLAY_TIMEZONE',
+                'message': 'Use an IANA display timezone.'}) from None
+        try:
+            return calendar_for_date(target_date, display_timezone, settings.data_dir)
+        except (ImportError, KeyError, OSError, TypeError, ValueError):
+            unavailable('EXPLORER_CALENDAR_UNAVAILABLE')
 
     @app.get('/v1/locations')
     def locations() -> dict:
