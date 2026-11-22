@@ -162,6 +162,8 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                             assert page.get_by_role('table').evaluate('(table) => table.scrollWidth <= table.clientWidth')
                             page.screenshot(path=Path(screen_dir) / f'personal-dna-{width}.png')
                         page.set_viewport_size({'width': 390, 'height': 844})
+                    page.get_by_text('Calculation source', exact=True).click()
+                    expect(page.get_by_text('E-SMTH-003-001', exact=False)).to_be_visible()
                     page.get_by_label('Language').select_option('zh-Hant')
                     expect(page.get_by_role('heading', name='個人圖譜')).to_be_visible()
                 page.reload(wait_until='domcontentloaded')
@@ -174,6 +176,8 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                     assert cycle.value.status == 200
                     expect(page.get_by_role('heading', name='Annual cycle · 2026')).to_be_visible()
                     expect(page.get_by_role('listitem')).to_have_count(12)
+                    page.get_by_text('Calculation source', exact=True).click()
+                    expect(page.get_by_text('2026-07-01', exact=False)).to_be_visible()
                 page.get_by_role('button', name=account_tab).click()
                 page.get_by_role('button', name='读取已存档案').click()
                 expect(page.get_by_label('出生日期')).to_have_value('1980-06-22')
