@@ -1,7 +1,7 @@
 name: M1 frontend integration checks
 on:
   pull_request:
-    branches: [main, codex/product-b-today, codex/product-b-daily-explorer]
+    branches: [main, codex/product-b-today, codex/product-b-daily-explorer, codex/product-b-explorer-calendar]
   push:
     branches: [integration/m1-m3-release-candidate]
   workflow_dispatch:
