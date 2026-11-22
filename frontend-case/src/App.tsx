@@ -7,6 +7,7 @@ import LocalPreviewUnavailable from './pages/today/LocalPreviewUnavailable'
 import RealPersonalHeluoToday from './pages/today/RealPersonalHeluoToday'
 import HeluoPreviewToday from './pages/today/HeluoPreviewToday'
 import PersonalDnaPage from './pages/PersonalDnaPage'
+import PersonalInsightPage from './pages/PersonalInsightPage'
 import EngineQaPage from './pages/EngineQaPage'
 import { restoreBrowserSession, type AuthTokens } from './api/auth'
 import GuidePage from './pages/GuidePage'
@@ -132,9 +133,12 @@ function App() {
     if (productBPreview && currentPage === 'you') return <PersonalDnaPage
       key={session?.user_id} token={session?.access_token ?? null}
       onAccount={() => navigate('me')} onSessionExpired={expirePersonalSession} />
-    if (productBPreview && (currentPage === 'insights' || currentPage === 'relation' ||
+    if (productBPreview && currentPage === 'insights') return <PersonalInsightPage
+      key={session?.user_id} token={session?.access_token ?? null}
+      onAccount={() => navigate('me')} onSessionExpired={expirePersonalSession} />
+    if (productBPreview && (currentPage === 'relation' ||
         currentPage === 'guide' || currentPage === 'more')) {
-      const title = currentPage === 'insights' ? 'Insight' : currentPage === 'relation' ? 'Relation' : 'Page unavailable'
+      const title = currentPage === 'relation' ? 'Relation' : 'Page unavailable'
       return <section className="page-container"><h1>{title}</h1><p>This page is unavailable in the preview.</p></section>
     }
     switch (currentPage) {

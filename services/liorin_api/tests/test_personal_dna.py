@@ -51,6 +51,10 @@ def test_real_birth_adapter_through_authenticated_dna_route(isolated_client):
     ]
     assert payload['source']['birth_timezone'] == 'Asia/Shanghai'
     assert payload['zodiac_status'] == 'pending_year_boundary_review'
+    assert payload['nayin_evidence_id'] == 'E-SMTH-003-001'
+    assert payload['useful_elements_status'] == 'pending_rule_admission'
+    assert payload['personality_status'] == 'pending_content_admission'
+    assert payload['ziwei_status'] == 'pending_domain_admission'
     assert 'zodiac' not in payload
 
 
@@ -75,3 +79,25 @@ def test_missing_profile_and_production_boundary(isolated_client, monkeypatch):
     assert client.get(URL, headers=AUTH).status_code == 404
     monkeypatch.delenv('LIORIN_ACCOUNT_MODE')
     assert TestClient(create_app(Settings(DATA))).get(URL, headers=AUTH).status_code == 404
+
+
+def test_insight_projects_engine_year_and_twelve_solar_months_without_predictions(isolated_client, monkeypatch):
+    client, profiles = isolated_client
+    route = '/v1/personal/insight?year=2026'
+    assert client.get(route, headers={'X-Device-Token': 'tag'}).status_code == 401
+    response = client.get(route, headers=AUTH)
+    assert response.status_code == 200
+    assert response.headers['cache-control'] == 'no-store'
+    data = response.json()
+    assert data['annual'] == {'ganzhi': '丙午', 'hexagram': '天水讼'}
+    assert [month['index'] for month in data['solar_months']] == list(range(1, 13))
+    assert data['solar_months'][0]['hexagram'] == '火水未济'
+    assert data['source']['reference_date'] == '2026-07-01'
+    assert data['source']['month_basis'] == 'solar_term_month_ordinal'
+    assert data['decadal_status'] == 'pending_ziping_admission'
+    assert data['interpretation_status'] == 'pending_content_admission'
+    assert 'interpretation' not in data
+    profiles.clear()
+    assert client.get(route, headers=AUTH).status_code == 404
+    monkeypatch.delenv('LIORIN_ACCOUNT_MODE')
+    assert TestClient(create_app(Settings(DATA))).get(route, headers=AUTH).status_code == 404

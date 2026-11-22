@@ -1,5 +1,4 @@
 .personal-dna__header,
-.personal-dna__facts,
 .personal-dna__pillars {
   display: grid;
   gap: 1rem;
@@ -12,7 +11,6 @@
   font-family: var(--font-display);
 }
 
-.personal-dna__facts,
 .personal-dna__pillars {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   padding-block: 1rem;
@@ -21,5 +19,26 @@
 
 .personal-dna dd { margin: 0.25rem 0 0; }
 .personal-dna dd span { display: block; }
-.personal-dna__facts dd span { display: inline; }
 .personal-dna details { margin-block-start: 1rem; overflow-wrap: anywhere; }
+
+.personal-dna__identity {
+  display: flex;
+  align-items: center;
+  gap: clamp(1rem, 5vw, 2rem);
+  border-block: 1px solid var(--border-strong);
+  padding-block: 1rem;
+}
+
+.personal-dna__identity > strong {
+  font: 500 clamp(3.5rem, 12vw, 6rem)/1.1 var(--font-display);
+  color: var(--text-primary);
+}
+
+.personal-dna__identity h2 { margin: 0; }
+.personal-dna__nayin { margin-block: 1.6rem; }
+.personal-dna__nayin p[lang] { font: 500 1.25rem/1.5 var(--font-display); }
+.personal-dna__elements { inline-size: 100%; border-collapse: collapse; margin-block: 0.75rem 1.75rem; }
+.personal-dna__elements :is(th, td) { padding: 0.45rem 0.2rem; border-block-end: 1px solid var(--border); text-align: start; }
+.personal-dna__elements td:last-child { display: flex; align-items: center; gap: 0.4rem; }
+.personal-dna__count { display: inline-block; inline-size: clamp(1.5rem, 10vw, 3.5rem); block-size: 0.2rem; background: var(--border-strong); }
+.personal-dna__count i { display: block; block-size: 100%; background: var(--accent); }

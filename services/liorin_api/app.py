@@ -11,6 +11,7 @@ from .config import Settings
 from .explorer_calendar import ExplorerCalendar, calendar_for_date
 from .heluo_preview import HeluoPreview
 from .personal_dna import PersonalDna
+from .personal_insight import PersonalInsight
 from .locations import LocationAmbiguous, LocationCatalogue, LocationCatalogueError, LocationUnknown
 from .time_context import BirthTimeRequest, TimeContextError, normalize_birth_time
 
@@ -135,6 +136,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         from .account.profile import attach_profile, user_id
         from .heluo_preview import compute_preview
         from .personal_dna import compute_personal_dna
+        from .personal_insight import compute_personal_insight
         attach_profile(app, account_store, settings.data_dir)
 
         def saved_birth_profile(uid: str) -> dict:
@@ -177,8 +179,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             except (ImportError, OSError, ValueError, KeyError, RuntimeError, OverflowError, TypeError):
                 unavailable('HELUO_PREVIEW_UNAVAILABLE')
 
-        @app.get('/v1/personal/dna', response_model=PersonalDna)
-        def personal_dna(request: Request) -> PersonalDna:
+        def authenticated_birth(request: Request) -> tuple[dict, dict]:
             saved = saved_birth_profile(user_id(request))
             try:
                 canonical = normalize_saved_birth(saved)
@@ -193,10 +194,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             if canonical['status'] != 'ready':
                 raise HTTPException(status_code=422, detail={'code': 'INCOMPLETE_BIRTH_TIME',
                     'message': 'Birth minute required.'})
+            return saved, canonical
+
+        @app.get('/v1/personal/dna', response_model=PersonalDna)
+        def personal_dna(request: Request) -> PersonalDna:
+            saved, canonical = authenticated_birth(request)
             try:
                 return compute_personal_dna(canonical, saved['gender'], settings.data_dir / 'locations.json')
             except (ImportError, OSError, ValueError, KeyError, RuntimeError, OverflowError, TypeError):
                 unavailable('PERSONAL_DNA_UNAVAILABLE')
+
+        @app.get('/v1/personal/insight', response_model=PersonalInsight)
+        def personal_insight(request: Request, year: int = Query(ge=1, le=9999)) -> PersonalInsight:
+            saved, canonical = authenticated_birth(request)
+            try:
+                return compute_personal_insight(canonical, saved['gender'], settings.data_dir / 'locations.json', year)
+            except (ImportError, OSError, ValueError, KeyError, RuntimeError, OverflowError, TypeError):
+                unavailable('PERSONAL_INSIGHT_UNAVAILABLE')
 
     @app.get('/v1/personal/heluo-today')
     def personal_unavailable() -> None:

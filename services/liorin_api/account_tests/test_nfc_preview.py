@@ -1,3 +1,6 @@
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
+
 import pytest
 from cryptography.exceptions import InvalidSignature
 from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
@@ -42,3 +45,34 @@ def test_signed_claim_retouch_loss_and_revoke_keep_account_boundary():
     devices.deactivate('test-device', 'owner', lost=False)
     with pytest.raises(ValueError):
         devices.begin('test-device', 'owner', 'claim')
+
+def test_concurrent_valid_device_proofs_bind_only_one_account():
+    key = Ed25519PrivateKey.generate()
+
+    def verify(challenge, proof):
+        key.public_key().verify(proof, challenge)
+        return True
+
+    devices = IsolatedDeviceLifecycle()
+    devices.register('concurrent-device', verify)
+    barrier = Barrier(2, timeout=3)
+
+    def claim(account):
+        challenge = devices.begin('concurrent-device', account, 'claim')
+        signature = key.sign(challenge.encode())
+        barrier.wait()
+        try:
+            devices.consume(challenge, account, signature)
+        except ValueError:
+            return None
+        return account
+
+    with ThreadPoolExecutor(max_workers=2) as workers:
+        outcomes = list(workers.map(claim, ('account-a', 'account-b')))
+    assert outcomes.count(None) == 1
+    winner = next(account for account in outcomes if account is not None)
+    loser = 'account-a' if winner == 'account-b' else 'account-b'
+    with pytest.raises(ValueError):
+        devices.begin('concurrent-device', loser, 'touch')
+    with pytest.raises(ValueError):
+        devices.deactivate('concurrent-device', loser, lost=True)

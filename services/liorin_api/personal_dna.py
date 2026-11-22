@@ -35,6 +35,10 @@ class PersonalDna(BaseModel):
     pillars: list[PillarFact]
     source: DnaSource
     zodiac_status: Literal['pending_year_boundary_review'] = 'pending_year_boundary_review'
+    nayin_evidence_id: Literal['E-SMTH-003-001'] = 'E-SMTH-003-001'
+    useful_elements_status: Literal['pending_rule_admission'] = 'pending_rule_admission'
+    personality_status: Literal['pending_content_admission'] = 'pending_content_admission'
+    ziwei_status: Literal['pending_domain_admission'] = 'pending_domain_admission'
 
 
 def compute_personal_dna(canonical: dict, gender: str, locations_path) -> PersonalDna:

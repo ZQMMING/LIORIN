@@ -154,11 +154,26 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                     expect(page).to_have_url(origin + '/you')
                     expect(page.get_by_role('heading', name='Personal DNA')).to_be_visible()
                     expect(page.get_by_text(dna.value.json()['birth_year_nayin'], exact=True)).to_be_visible()
+                    expect(page.get_by_role('table', name='Five-element structure')).to_be_visible()
+                    screen_dir = os.environ.get('LIORIN_PREVIEW_SCREENSHOTS')
+                    if screen_dir:
+                        for width in (320, 1440):
+                            page.set_viewport_size({'width': width, 'height': 900})
+                            assert page.get_by_role('table').evaluate('(table) => table.scrollWidth <= table.clientWidth')
+                            page.screenshot(path=Path(screen_dir) / f'personal-dna-{width}.png')
+                        page.set_viewport_size({'width': 390, 'height': 844})
                     page.get_by_label('Language').select_option('zh-Hant')
                     expect(page.get_by_role('heading', name='個人圖譜')).to_be_visible()
                 page.reload(wait_until='domcontentloaded')
                 if product_b:
                     expect(page.get_by_role('heading', name='Four pillars')).to_be_visible()
+                    page.get_by_role('button', name='Insight', exact=True).click()
+                    page.get_by_label('Year', exact=True).fill('2026')
+                    with page.expect_response(lambda response: '/v1/personal/insight?year=2026' in response.url) as cycle:
+                        page.get_by_role('button', name='View cycles').click()
+                    assert cycle.value.status == 200
+                    expect(page.get_by_role('heading', name='Annual cycle · 2026')).to_be_visible()
+                    expect(page.get_by_role('listitem')).to_have_count(12)
                 page.get_by_role('button', name=account_tab).click()
                 page.get_by_role('button', name='读取已存档案').click()
                 expect(page.get_by_label('出生日期')).to_have_value('1980-06-22')

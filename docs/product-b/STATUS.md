@@ -107,3 +107,33 @@ Daily Explorer retains the existing independent day-branch cross-check. Wealth a
 - #21 at `ceb00567`: local public scope passed 1,678 tests, with 10 existing skips and two marked tests deselected. Both private tests passed locally under a manifest bound to the authorized data fingerprints. GitHub's protected environment and runner are still unprovisioned, so no remote private pass is claimed. The public workflow reports the restricted scope.
 
 For rollback, revert the Personal DNA branch commits and rebuild with the previous Product B bundle. Reverting the independent CI governance commit restores the prior all-corpus matrix behavior. Neither rollback requires database changes.
+
+## Round 7
+
+### Integration checks
+
+| PR | Required evidence before human approval | After the upstream merge |
+| --- | --- | --- |
+| #19 | Confirm private route registration, owner-profile lookup, no-store responses, real isolated account/browser tests and null effective-period fields. Roll back by reverting the preview commits. | Formal `/v1/personal/heluo-today` remains 503. Keep the 31st day and effective interval under rule-owner review. |
+| #20 | Verify date, leap-day and failure recovery in Chromium on the real API. Compare the five-file feature diff and rollback scope. | Retarget from #19 to `main`, inspect remaining changes and rerun frontend/API/browser tests. |
+| #22 | Verify registered calendar sources, authenticated data separation, fail-closed day branch and credential report redaction. Preserve the rotated password during rollback. | Retarget only after #20; rerun product checks. Keep each unadmitted field unavailable. |
+| #23 | Verify YOU honors authorization, incomplete and ambiguous birth time, and none of the pending results leak into the response. Review existing isolated NFC proof, app switch and rollback. | Retarget only after #22; rerun actual birth profile tests in Chromium. |
+| #21 | Independently verify public matrix scope, no false claim of private verification, and a separately approved corpus runner/manifest. | Public matrix, Ruff and package self-check passed. The two private datasets passed locally; remote authorized execution still requires the protected runner. |
+
+No merge or retarget was performed. The YOU/INSIGHT follow-up updates #23 itself. Its review history and #22 base remain in place.
+
+### YOU and INSIGHT
+
+- YOU displays a day-master identity, the traditional designation of the birth-year stem/branch, and counts of four stems and four branches. The five rows describe exactly eight positions. The source drawer records `E-SMTH-003-001` (the `NAYIN_60` table's reference to *San Ming Tong Hui*) and the live engine versions. Zodiac, useful elements, personality and Ziwei have separate pending statuses. The API exposes no preferred-element recommendation.
+- `GET /v1/personal/insight?year=YYYY` is behind the isolated account runtime. It projects the existing Heluo annual cycle and twelve solar-term month hexagrams from the saved chart via `HeluoAdapter.compute_from_chart`. July 1 is an explicit calculation reference inside the requested year. The API does not treat it as the effective date for any cycle. The UI labels solar-term month ordinals and exposes the engine source. Ziping decade intervals and personal interpretation remain pending. The sample Beijing profile in API tests returned 丙午 / 天水讼 for 2026 and twelve month records.
+- The public Daily Explorer calendar still verifies the day branch. The separate Wealth and Joy rules need individual authoritative citations and test cases. Blessing also needs a decision between the conflicting tables. Personal zodiac needs a year-boundary decision. Traditional hours need local-time, DST and midnight/子-hour interval admission.
+
+### Device architecture boundary
+
+No approved chip SKU, provisioning agreement or production key reference is in the handoff. The [NXP NTAG 424 DNA datasheet](https://www.nxp.com/docs/en/data-sheet/NT4H2421Gx.pdf) establishes AES-128 / SUN for that specific candidate. The Ed25519 prototype continues to verify isolated signed challenges only. A generated-key concurrency test confirms that two valid claims can bind only one account and the competing account cannot re-touch or mark the device lost.
+
+The proposed persistent boundary is a server-managed device registry with SKU/protocol and a KMS key reference. Keep account authorization and device proof as separate inputs. A single database transaction must consume the proof/counter and confirm unique active ownership. Re-touch checks ownership through the current account session. Unlink requires recent account authentication; revocation retains a device tombstone and invalidates outstanding proofs. Lost-device recovery and account recovery require distinct approved proofs, an auditable rebind and invalidation of the old device or sessions. Production routes, key access, migrations and recovery stay gated until the chip, provisioning and recovery policy are approved.
+
+Rollback by ordinary revert of the round 7 commit in #23. API changes are read-only. The original SVG and frozen engines remain at their round 6 versions.
+
+Local verification passed 90 focused Python tests, 79 frontend tests, TypeScript/Vite production build, changed-file Ruff, and five isolated account/browser/device tests. Chromium covered saved-profile YOU, the table at 320px and 1440px, language switching, reload, Insight year selection, and twelve result rows. The public CI fixes remain independent in #21.
