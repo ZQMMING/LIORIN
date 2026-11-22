@@ -1,7 +1,7 @@
 """子时跨日政策（依据 P0-14 / D1 裁定）。
 
 负责：
-    - DAY_BOUNDARY: 子时跨日的小时阈值（23 = 23:00 换日）
+    - DAY_BOUNDARY: 夜子时起始小时（23），日柱换日界限为 00:00
     - _TRADITIONAL_HOURS: 24 个小时→时辰名映射
     - traditional_hour_name(): 调用接口
 
