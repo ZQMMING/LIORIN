@@ -5,6 +5,8 @@ from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel
 
+from .birth_chart import resolve_birth_chart
+
 
 class HeluoProvenance(BaseModel):
     adapter: Literal['HeluoAdapter.compute_from_chart'] = 'HeluoAdapter.compute_from_chart'
@@ -42,19 +44,10 @@ def compute_preview(profile: dict, canonical: dict, target: date, locations_path
     from importlib.metadata import version
 
     from heluo_engine.adapter import HeluoAdapter
-    from heluo_engine.engines.bazi_adapter import BaziAdapter
     from heluo_engine.engines.bazi_engine import BaziEngine
-    from heluo_engine.engines.time.resolver import TimeResolver
 
     engine = BaziEngine()
-    context = TimeResolver(locations_path=locations_path).resolve_context(
-        birth_date=date.fromisoformat(canonical['birth_date']), hour=canonical['hour'],
-        minute=canonical['minute'], timezone=canonical['timezone'],
-        location=canonical['location_id'], gender=profile['gender'],
-    )
-    if context.utc_instant.isoformat() != canonical['utc_instant']:
-        raise ValueError('birth instant mismatch')
-    chart = BaziAdapter(engine).compute(context, gender=profile['gender'])
+    chart = resolve_birth_chart(canonical, profile['gender'], locations_path, engine)
     result = HeluoAdapter(bazi_engine=engine).compute_from_chart(chart, target_date=target.isoformat())
     daily = result.timeline.daily_hexagram or {}
     base = daily.get('base_hex') or {}

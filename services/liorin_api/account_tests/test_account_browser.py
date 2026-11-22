@@ -60,7 +60,9 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
             page = browser.new_page(viewport={'width': 390, 'height': 844}, locale='en-US', ignore_https_errors=True)
             try:
                 page.goto(origin, wait_until='domcontentloaded')
-                for protected in ('/v1/profile/stored', '/v1/auth/me'):
+                product_b = os.environ.get('VITE_LIORIN_PRODUCT_B_PREVIEW') == '1'
+                account_tab = 'Me' if product_b else '我的'
+                for protected in ('/v1/profile/stored', '/v1/auth/me', '/v1/personal/dna'):
                     unclaimed = page.request.get(origin + protected, params={'uid': 'synthetic-tag'},
                                                  headers={'X-Device-Token': 'synthetic-tag'})
                     assert unclaimed.status == 401
@@ -68,7 +70,7 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                     response = page.request.get(origin + '/v1/personal/heluo-preview?target_date=2026-08-17&display_timezone=America%2FNew_York')
                     assert response.status == 401
                     assert response.headers['cache-control'] == 'no-store'
-                page.get_by_role('button', name='我的').click()
+                page.get_by_role('button', name=account_tab).click()
                 email = f'person-{uuid.uuid4().hex}@example.test'
                 page.get_by_label('邮箱', exact=True).fill(email)
                 page.get_by_role('button', name='发送验证码').click()
@@ -145,8 +147,19 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                     with page.expect_response(lambda response: '/v1/personal/heluo-today' in response.url) as personal:
                         page.get_by_role('button', name='查看个人今日').click()
                     assert personal.value.status == 503
+                if product_b:
+                    with page.expect_response(lambda response: response.url.endswith('/v1/personal/dna')) as dna:
+                        page.get_by_role('button', name='You', exact=True).click()
+                    assert dna.value.status == 200
+                    expect(page).to_have_url(origin + '/you')
+                    expect(page.get_by_role('heading', name='Personal DNA')).to_be_visible()
+                    expect(page.get_by_text(dna.value.json()['birth_year_nayin'], exact=True)).to_be_visible()
+                    page.get_by_label('Language').select_option('zh-Hant')
+                    expect(page.get_by_role('heading', name='個人圖譜')).to_be_visible()
                 page.reload(wait_until='domcontentloaded')
-                page.get_by_role('button', name='我的').click()
+                if product_b:
+                    expect(page.get_by_role('heading', name='Four pillars')).to_be_visible()
+                page.get_by_role('button', name=account_tab).click()
                 page.get_by_role('button', name='读取已存档案').click()
                 expect(page.get_by_label('出生日期')).to_have_value('1980-06-22')
                 page.get_by_label('出生日期').fill('1981-06-22')

@@ -121,6 +121,10 @@ def test_real_email_login_profile_refresh_isolation_and_logout(isolated_dsn, smt
     assert saved.status_code == 200, saved.text
     assert client.get('/v1/auth/me', headers=auth).json()['has_birth_info'] is True
     assert client.get('/v1/profile/stored', headers=auth).json()['location'] == 'CN_BEIJING'
+    dna = client.get('/v1/personal/dna', headers=auth)
+    assert dna.status_code == 200
+    assert dna.headers['cache-control'] == 'no-store'
+    assert len(dna.json()['pillars']) == 4
     personal = client.get('/v1/personal/heluo-today', headers=auth)
     assert personal.status_code == 503
     restored = client.post('/v1/auth/session/restore', headers=origin)
@@ -142,6 +146,7 @@ def test_real_email_login_profile_refresh_isolation_and_logout(isolated_dsn, smt
     assert other_login.status_code == 200
     other_auth = {'Authorization': 'Bearer ' + protect(other_login.json()['access_token'])}
     assert second.get('/v1/profile/stored', headers=other_auth).status_code == 404
+    assert second.get('/v1/personal/dna', headers=other_auth).status_code == 404
     with patch('services.liorin_api.account.services.identity_gateway.ACCESS_TOKEN_TTL', -1):
         assert second.get('/v1/auth/me', headers=other_auth).status_code == 401
     refresh = protect(other_login.json()['refresh_token'])
