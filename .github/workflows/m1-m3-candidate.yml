@@ -21,5 +21,10 @@ jobs:
           cache: npm
           cache-dependency-path: frontend-case/package-lock.json
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Build Product B preview for main review
+        if: github.base_ref == 'main' || github.event_name == 'workflow_dispatch'
+        run: npm run build
+        env:
+          VITE_LIORIN_PRODUCT_B_PREVIEW: '1'
       - run: npm test -- --run
       - run: npm run build
