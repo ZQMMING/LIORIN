@@ -170,5 +170,6 @@ Disposable SQLite tests exercise the proposed transaction invariants with synthe
 - The same browser case verifies three locales, stable birth timezone and Bazi calculation version across private routes, the reference-date label and pending effective dates, formal Heluo 503, ordinal-31 recovery, leap day, and pause/reduced-motion behavior. It checks horizontal overflow at 320px, 375px and 1440px on YOU, INSIGHT, TODAY and ME.
 - Local results: 90 API/Heluo tests, 79 frontend tests, production build, seven isolated account/device tests including Chromium, and targeted Ruff. The isolated NFC transaction tests use a disposable SQLite file.
 - Detached integration checkout `7a34c9e4` had no merge conflicts with #21 and passed the public scope with 1,678 tests, 10 existing skips, two private tests deselected and 5,071 passing subtests. The 77 API service tests and Ruff also passed in that checkout. Browser assertions were further strengthened and rerun in the product worktree. No remote merge state was changed.
+- The final INSIGHT layout keeps the solar month markers inside their columns so two-digit month labels remain readable at 320px.
 
 Round 8 rollback uses a normal revert of its commits in #23. The code changes do not migrate a database, change the original Hetu, or edit frozen algorithms or Golden assets.

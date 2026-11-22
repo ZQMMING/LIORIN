@@ -133,6 +133,7 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                     assert cycle.value.json()['source']['bazi_version'] == dna_source['calculation_version']
                     expect(page.get_by_role('heading', name='年度周期 · 2026')).to_be_visible()
                     expect(page.get_by_role('listitem')).to_have_count(12)
+                    expect(page.get_by_role('list')).to_have_css('list-style-position', 'inside')
                     verify_layout(page, 'personal-insight')
                     page.get_by_text('计算来源', exact=True).click()
                     expect(page.get_by_text('2026-07-01', exact=False)).to_be_visible()

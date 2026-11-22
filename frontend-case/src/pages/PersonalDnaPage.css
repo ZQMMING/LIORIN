@@ -42,3 +42,6 @@
 .personal-dna__elements td:last-child { display: flex; align-items: center; gap: 0.4rem; }
 .personal-dna__count { display: inline-block; inline-size: clamp(1.5rem, 10vw, 3.5rem); block-size: 0.2rem; background: var(--border-strong); }
 .personal-dna__count i { display: block; block-size: 100%; background: var(--accent); }
+
+.personal-insight__year { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; }
+.personal-insight__months { padding-inline: 0; list-style-position: inside; }

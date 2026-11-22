@@ -82,7 +82,7 @@ export default function PersonalInsightPage({ token, onAccount, onSessionExpired
         <option value="en">English</option><option value="zh-Hans">简体中文</option><option value="zh-Hant">繁體中文</option>
       </select></label>}
     </header>
-    {token && <form onSubmit={event => {
+    {token && <form className="personal-insight__year" onSubmit={event => {
       event.preventDefault()
       setState('loading')
       setResult(null)
@@ -102,7 +102,7 @@ export default function PersonalInsightPage({ token, onAccount, onSessionExpired
       </section>
       <h2>{labels.months}</h2>
       {result.solar_months.length > 0 ? <><p>{labels.basis}</p>
-        <ol className="personal-dna__pillars">{result.solar_months.map(month => <li key={month.index} lang="zh">{month.hexagram}</li>)}</ol>
+        <ol className="personal-dna__pillars personal-insight__months">{result.solar_months.map(month => <li key={month.index} lang="zh">{month.hexagram}</li>)}</ol>
       </> : <p>{labels.missing}</p>}
       <p>{labels.decade}</p>
       <details><summary>{labels.source}</summary>
