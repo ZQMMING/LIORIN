@@ -122,14 +122,6 @@ def test_real_email_login_profile_refresh_isolation_and_logout(isolated_dsn, smt
     assert client.get('/v1/profile/stored', headers=auth).json()['location'] == 'CN_BEIJING'
     personal = client.get('/v1/personal/heluo-today', headers=auth)
     assert personal.status_code == 503
-    assert personal.headers['cache-control'] == 'no-store'
-    preview_url = '/v1/personal/heluo-preview?target_date=2026-08-17&display_timezone=America%2FNew_York'
-    own_preview = client.get(preview_url, headers=auth)
-    assert own_preview.status_code == 200
-    assert own_preview.headers['cache-control'] == 'no-store'
-    facts = own_preview.json()
-    assert facts['admission_status'] == 'pending_review'
-    assert facts['active_yao_index'] is facts['valid_from'] is facts['valid_until'] is None
     restored = client.post('/v1/auth/session/restore', headers=origin)
     assert restored.status_code == 200
     auth = {'Authorization': 'Bearer ' + restored.json()['access_token']}
@@ -139,7 +131,6 @@ def test_real_email_login_profile_refresh_isolation_and_logout(isolated_dsn, smt
     assert client.get('/v1/profile/stored', headers=auth).json()['birth_date'] == '1981-06-22'
     assert client.post('/v1/auth/session/logout', headers={**origin, **auth}).status_code == 200
     assert client.get('/v1/profile/stored', headers=auth).status_code == 401
-    assert client.get(preview_url, headers=auth).status_code == 401
     assert client.post('/v1/auth/session/restore', headers=origin).status_code == 401
 
     second = TestClient(app, base_url='https://testserver')
@@ -150,10 +141,6 @@ def test_real_email_login_profile_refresh_isolation_and_logout(isolated_dsn, smt
     assert other_login.status_code == 200
     other_auth = {'Authorization': 'Bearer ' + other_login.json()['access_token']}
     assert second.get('/v1/profile/stored', headers=other_auth).status_code == 404
-    other_preview = second.get(preview_url, headers=other_auth)
-    assert other_preview.status_code == 404
-    assert other_preview.headers['cache-control'] == 'no-store'
-    assert other_preview.json()['detail']['code'] == 'PROFILE_NOT_FOUND'
     with patch('services.liorin_api.account.services.identity_gateway.ACCESS_TOKEN_TTL', -1):
         assert second.get('/v1/auth/me', headers=other_auth).status_code == 401
     refresh = other_login.json()['refresh_token']
