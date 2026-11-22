@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { apiRequest } from '../../api/http'
+import { useProductLanguage } from '../../productLanguage'
 
 const messages = {
   en: {
@@ -43,11 +44,13 @@ type Loaded = { query: string; data: Calendar | null }
 
 export default function DailyExplorerCalendar({ selection }: { selection: Selection | null }) {
   const { targetDate, displayTimezone } = selection ?? {}
-  const [locale, setLocale] = useState<Locale>(() => {
+  const sharedLanguage = useProductLanguage()
+  const [localLocale, setLocale] = useState<Locale>(() => {
     const language = navigator.language
     if (/^zh-(Hant|TW|HK|MO)/i.test(language)) return 'zh-Hant'
     return /^zh\b/i.test(language) ? 'zh-Hans' : 'en'
   })
+  const locale = sharedLanguage?.locale ?? localLocale
   const [loaded, setLoaded] = useState<Loaded | null>(null)
   const [attempt, setAttempt] = useState(0)
   const labels = messages[locale]
@@ -83,11 +86,11 @@ export default function DailyExplorerCalendar({ selection }: { selection: Select
   const result = loaded?.query === query ? loaded : null
   return <section lang={locale} className="daily-explorer__calendar" aria-label={labels.title}>
     <h2>{labels.title}</h2>
-    <label>{labels.language} <select value={locale} onChange={event => setLocale(event.target.value as Locale)}>
+    {!sharedLanguage && <label>{labels.language} <select value={locale} onChange={event => setLocale(event.target.value as Locale)}>
       <option value="en">English</option>
       <option value="zh-Hans">简体中文</option>
       <option value="zh-Hant">繁體中文</option>
-    </select></label>
+    </select></label>}
     {!result && <p role="status">{labels.loading}</p>}
     {result && !result.data && <p role="alert">{labels.error} <button type="button" onClick={() => {
       setLoaded(null)

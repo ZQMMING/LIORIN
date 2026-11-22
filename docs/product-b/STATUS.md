@@ -83,3 +83,93 @@ Account pytest reports now redact known DSN, password, authorization token and m
 - #21 remains independent against `main`. Commit `ccd1591c` repoints the legacy birth-facts adapter at its renamed `heluo_engine` package and supplies the integration test's pillars as the production call does. Commits `bbc7fb0b` and `7fccb28c` resolve the original-text matrix and validator registry from the current checkout and write the generated test report only to a temporary directory. The old script rewrote a generated report in the reference workspace during an earlier run. Its current SHA-256 matches the tracked report. Ruff passes. Full local pytest passed with 1,677 tests, 10 existing skips and 5,071 passing subtests when supplied with `LIORIN_CRITERIA_ROOT` for the authorized source/slice workspace and `LIORIN_REAL_CASES_FILE` for the authorized case corpus. Public CI keeps both checks active and reports absent inputs as failures. Neither corpus is uploaded by these PRs.
 - Round 5 local verification passed 84 API/Heluo tests, 76 frontend tests, the production build and three isolated PostgreSQL/SMTP tests including Chromium. The tests cover all 12 calendar branch codes, source disagreement, the synthetic pytest report and frontend recovery. Reproduce with the API/Heluo command above, `npm test`, the preview production build and `python -m pytest services/liorin_api/account_tests -q -o addopts=''` with approved local settings.
 - Revert the corresponding PR commits for code rollback. Keep the rotated local role password in use.
+
+## Round 6
+
+### Merge checklist
+
+| PR | Human review before merge | Dependency and follow-up |
+| --- | --- | --- |
+| #19 | Confirm private route exists only in the isolated account runtime, account identity selects the stored profile, preview responses use `no-store`, unresolved validity fields stay null, and real-browser evidence comes from PostgreSQL/SMTP capture. | Targets `main`. Merge acceptance only covers the isolated preview. Formal Heluo TODAY stays 503. |
+| #20 | Confirm date navigation preserves the explicit date/zone and distinguishes leap day and ordinal-31 failure recovery. Check real requests and dedicated CI. | Targets #19. After upstream merge, inspect the remaining diff, retarget to `main` and rerun API, frontend and browser checks before review. |
+| #22 | Confirm calendar and private results load independently, source versions are pinned, day branch fails closed on disagreement, pending fields stay unavailable, and test output redaction works. | Targets #20. Repeat diff, retarget and validation only after #20 merges. |
+| #21 | Confirm public and authorized checks have distinct scope, validate the corpus custodian's approved runner group and manifest, and keep required private evidence visible. | Independent against `main`. Public matrix explicitly deselects two private tests. The manual private workflow requires external provisioning. |
+| Personal DNA | Review narrow authenticated projection, absence of private birth inputs from the response, fixed fact provenance, missing-profile and DST-time responses, and English/simplified/traditional Chinese text. | Stacked on #22. After upstream integration, verify the remaining diff, build with Product B enabled, and rerun isolated browser/account checks. |
+
+Daily Explorer retains the existing independent day-branch cross-check. Wealth and Joy still each need their own authoritative table citation and accepted examples. Blessing also needs approval of the tradition variant because the two tables disagree for 壬. Zodiac needs an approved Lunar New Year versus Li-Chun boundary, with exact term handling if selected, before producing a personal animal or relationship. Traditional hours need a declared local-time basis, a 子-hour handoff and a DST gap/fold policy before publishing effective time intervals or auspiciousness. These statuses do not change the approved `gua6` clock and admission contract.
+
+### Personal DNA and device foundation
+
+- `GET /v1/personal/dna` exists only in the isolated account runtime. It shares the existing birth-chart adapter path with the Heluo preview. The API returns the birth-year Na Yin, day master and each pillar's stem/branch element with package and calculation versions. Absent profile returns 404, missing minutes or ambiguous/nonexistent local time return 422. Zodiac remains pending. The projection contains no hidden-stem scores, preference judgments or Ziwei interpretations.
+- Product B uses the existing shell with Today, You, Insight, Relation and Me. `/you` has English, Simplified Chinese and Traditional Chinese copy, with a link to the birth profile when needed. Insight and Relation display availability honestly. Product A navigation and original Hetu remain intact.
+- The isolated device lifecycle proves registration, account-bound one-time signed claims, re-touch, expiry, loss and revocation using a generated test signing key. It registers no public route and issues no account credential. Physical proof format, approved hardware key provisioning, durable ownership and lost-device/account recovery require the designated security and product owners.
+- Local results were 89 backend/Heluo tests, 78 frontend tests, production-mode build, changed-file Ruff and four isolated account/device tests. Chromium exercised the real sign-in, saved profile, YOU, language selector and reload restoration. A second account received 404 on DNA while the first account had a stored profile.
+- #21 at `ceb00567`: local public scope passed 1,678 tests, with 10 existing skips and two marked tests deselected. Both private tests passed locally under a manifest bound to the authorized data fingerprints. GitHub's protected environment and runner are still unprovisioned, so no remote private pass is claimed. The public workflow reports the restricted scope.
+
+For rollback, revert the Personal DNA branch commits and rebuild with the previous Product B bundle. Reverting the independent CI governance commit restores the prior all-corpus matrix behavior. Neither rollback requires database changes.
+
+## Round 7
+
+### Integration checks
+
+| PR | Required evidence before human approval | After the upstream merge |
+| --- | --- | --- |
+| #19 | Confirm private route registration, owner-profile lookup, no-store responses, real isolated account/browser tests and null effective-period fields. Roll back by reverting the preview commits. | Formal `/v1/personal/heluo-today` remains 503. Keep the 31st day and effective interval under rule-owner review. |
+| #20 | Verify date, leap-day and failure recovery in Chromium on the real API. Compare the five-file feature diff and rollback scope. | Retarget from #19 to `main`, inspect remaining changes and rerun frontend/API/browser tests. |
+| #22 | Verify registered calendar sources, authenticated data separation, fail-closed day branch and credential report redaction. Preserve the rotated password during rollback. | Retarget only after #20; rerun product checks. Keep each unadmitted field unavailable. |
+| #23 | Verify YOU honors authorization, incomplete and ambiguous birth time, and none of the pending results leak into the response. Review existing isolated NFC proof, app switch and rollback. | Retarget only after #22; rerun actual birth profile tests in Chromium. |
+| #21 | Independently verify public matrix scope, no false claim of private verification, and a separately approved corpus runner/manifest. | Public matrix, Ruff and package self-check passed. The two private datasets passed locally; remote authorized execution still requires the protected runner. |
+
+No merge or retarget was performed. The YOU/INSIGHT follow-up updates #23 itself. Its review history and #22 base remain in place.
+
+### YOU and INSIGHT
+
+- YOU displays a day-master identity, the traditional designation of the birth-year stem/branch, and counts of four stems and four branches. The five rows describe exactly eight positions. The source drawer records `E-SMTH-003-001` (the `NAYIN_60` table's reference to *San Ming Tong Hui*) and the live engine versions. Zodiac, useful elements, personality and Ziwei have separate pending statuses. The API exposes no preferred-element recommendation.
+- `GET /v1/personal/insight?year=YYYY` is behind the isolated account runtime. It projects the existing Heluo annual cycle and twelve solar-term month hexagrams from the saved chart via `HeluoAdapter.compute_from_chart`. July 1 is an explicit calculation reference inside the requested year. The API does not treat it as the effective date for any cycle. The UI labels solar-term month ordinals and exposes the engine source. Ziping decade intervals and personal interpretation remain pending. The sample Beijing profile in API tests returned 丙午 / 天水讼 for 2026 and twelve month records.
+- The public Daily Explorer calendar still verifies the day branch. The separate Wealth and Joy rules need individual authoritative citations and test cases. Blessing also needs a decision between the conflicting tables. Personal zodiac needs a year-boundary decision. Traditional hours need local-time, DST and midnight/子-hour interval admission.
+
+### Device architecture boundary
+
+No approved chip SKU, provisioning agreement or production key reference is in the handoff. The [NXP NTAG 424 DNA datasheet](https://www.nxp.com/docs/en/data-sheet/NT4H2421Gx.pdf) establishes AES-128 / SUN for that specific candidate. The Ed25519 prototype continues to verify isolated signed challenges only. A generated-key concurrency test confirms that two valid claims can bind only one account and the competing account cannot re-touch or mark the device lost.
+
+The proposed persistent boundary is a server-managed device registry with SKU/protocol and a KMS key reference. Keep account authorization and device proof as separate inputs. A single database transaction must consume the proof/counter and confirm unique active ownership. Re-touch checks ownership through the current account session. Unlink requires recent account authentication; revocation retains a device tombstone and invalidates outstanding proofs. Lost-device recovery and account recovery require distinct approved proofs, an auditable rebind and invalidation of the old device or sessions. Production routes, key access, migrations and recovery stay gated until the chip, provisioning and recovery policy are approved.
+
+Rollback by ordinary revert of the round 7 commits in #23. API changes are read-only. The original SVG and frozen engines remain at their round 6 versions.
+
+Local verification passed 90 focused Python tests, 79 frontend tests, TypeScript/Vite production build, changed-file Ruff, and five isolated account/browser/device tests. Chromium covered saved-profile YOU, the table at 320px and 1440px, language switching, reload, Insight year selection, twelve result rows and both calculation source disclosures. The public CI fixes remain independent in #21.
+
+## Round 8 integration review
+
+Remote `main` is `6f407f89`. GitHub had no submitted reviews on #19–#23 when checked. The round 8 changes update #23 on its existing #22 base. The combined validation uses a detached local checkout with both the stacked product changes and independent CI recovery. GitHub branches, target branches and review states are unchanged.
+
+| PR | Scope ready for human review | Gate before merge or retarget |
+| --- | --- | --- |
+| #19 (`e256aaa5`) | Authenticated isolated personal Heluo preview, shared birth chart, `gua6`, source and clock evidence. API, account and frontend checks passed for that head. | Review the isolated runtime, owner-only profile lookup, `no-store`, and raw engine marker contract. Formal route remains 503 and effective fields remain null. Legacy full CI still fails on this branch. |
+| #20 (`516f13cb`) | Real adjacent-date navigation, leap day and ordinal-31 recovery. Frontend and account checks passed. | After #19 is accepted, compare remaining diff, retarget to `main`, then rerun dedicated API/frontend checks and real Chromium. |
+| #22 (`f3ae938f`) | Verified lunar date and day branch, localized pending states and isolated test-report redaction. API, frontend and account checks passed. | After #20 lands, recheck real calendar source/version, controller lifecycle and redaction. Keep the rotated test password on rollback. |
+| #23 | Integrated product review from saved birth profile through YOU, INSIGHT, TODAY, Daily Explorer and ME. | After #22 lands, inspect the remaining diff and rerun the isolated journey. Personal zodiac, useful elements, interpretation, Ziping effective periods and unsupported daily fields remain out of scope. |
+| #21 (`ceb00567`) | Independent public CI recovery. Four OS/Python jobs, Ruff and package checks passed. | Review the two explicitly deselected corpus checks and data custody configuration. Both checks passed in local authorized testing. Remote protected runner remains unprovisioned. |
+
+### Product journey
+
+The Product B language selector controls navigation, account, YOU, INSIGHT, TODAY and Daily Explorer. It persists across reload in the same tab. Engine facts, canonical city IDs and source versions remain the same when language changes. Product B ME keeps email authentication. Device pairing requires the future device security integration.
+
+YOU labels the eight counts as chart positions. INSIGHT identifies the calculation reference date as record selection and marks effective dates pending. The approved `gua6` boundary and fixed UTC+08:00 engine clock are unchanged. Day 31 can still show the public calendar even when the private preview is unavailable.
+
+### Hardware verification preparation
+
+NTAG 424 DNA remains a candidate. NXP's [data sheet, sections 8.2.3.4 and 9.3](https://www.nxp.com/docs/en/data-sheet/NT4H2421Gx.pdf) and [application note AN12196](https://www.nxp.com/docs/en/application-note/AN12196.pdf) document AES-128 Secure Dynamic Messaging / SUN. The device supplies a MAC and authenticated counter data when correctly provisioned. The counter is a 24-bit value tied to the enabled file. Certain repeated reads can return the same counter, and re-enabling SDM can reset it. Backend acceptance therefore needs a durable highest accepted counter per device and provisioning epoch. Chip input and hardware authenticity remain unverified until the physical SKU and sample vectors are approved.
+
+Pending design review: bind each serial to the provisioned file profile and its versioned key handles. Separate provisioning administration, metadata access and MAC validation. A server verifier uses the registered profile to validate the message and counter before storing a proof outcome. Account authorization is an independent check. Claim or re-touch accepts a strictly newer counter and persists it in the same transaction as the ownership operation. Recovery consumes an independently authorized, one-time grant scoped to the account and both devices. Revocation leaves a tombstone and retires the old epoch. Production keys, chip configuration and deployment remain pending.
+
+Disposable SQLite tests exercise the proposed transaction invariants with synthetic already-verified inputs. They cover concurrent claims, counter replay across reconnect, owner and epoch checks, rollback of an invalid recovery, single-use recovery and revocation of the lost device. The Ed25519 harness remains an independent isolated proof test. The SQLite tests exercise storage semantics. Physical SUN validation, production schema and account recovery policy require owner approval.
+
+### Verification
+
+- Round 8 Chromium used the approved isolated PostgreSQL and SMTP sink. It ran one continuous login → birth profile → YOU → INSIGHT → TODAY → Daily Explorer → ME → sign-out path. It checked that the signed-in session restores on reload, the signed-out session restore returns 401, and a subsequent YOU deep link displays only the sign-in prompt.
+- The same browser case verifies three locales, stable birth timezone and Bazi calculation version across private routes, the reference-date label and pending effective dates, formal Heluo 503, ordinal-31 recovery, leap day, and pause/reduced-motion behavior. It checks horizontal overflow at 320px, 375px and 1440px on YOU, INSIGHT, TODAY and ME.
+- Local results: 90 API/Heluo tests, 79 frontend tests, production build, seven isolated account/device tests including Chromium, and targeted Ruff. The isolated NFC transaction tests use a disposable SQLite file.
+- Detached integration checkout `7a34c9e4` had no merge conflicts with #21 and passed the public scope with 1,678 tests, 10 existing skips, two private tests deselected and 5,071 passing subtests. The 77 API service tests and Ruff also passed in that checkout. Browser assertions were further strengthened and rerun in the product worktree. No remote merge state was changed.
+- The final INSIGHT layout keeps the solar month markers inside their columns so two-digit month labels remain readable at 320px.
+
+Round 8 rollback uses a normal revert of its commits in #23. The code changes do not migrate a database, change the original Hetu, or edit frozen algorithms or Golden assets.

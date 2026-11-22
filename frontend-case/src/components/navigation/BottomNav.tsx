@@ -1,12 +1,14 @@
 import React from 'react'
+import { useProductLanguage } from '../../productLanguage'
 import './BottomNav.css'
 
-export type PageName = 'today' | 'guide' | 'insights' | 'me' | 'more'
+export type PageName = 'today' | 'guide' | 'insights' | 'me' | 'more' | 'you' | 'relation'
 
 interface BottomNavProps {
   activePage: PageName | null
   onPageChange: (page: PageName) => void
   entitlementLabel?: string
+  productB?: boolean
 }
 
 interface TabDef {
@@ -78,14 +80,26 @@ const TABS: TabDef[] = [
   },
 ]
 
-const BottomNav: React.FC<BottomNavProps> = ({ activePage, onPageChange, entitlementLabel }) => {
+const PRODUCT_B_TABS: TabDef[] = [
+  { ...TABS[0], label: 'Today' },
+  { ...TABS[1], name: 'you', label: 'You' },
+  { ...TABS[2], label: 'Insight' },
+  { ...TABS[4], name: 'relation', label: 'Relation' },
+  { ...TABS[3], label: 'Me' },
+]
+
+const BottomNav: React.FC<BottomNavProps> = ({ activePage, onPageChange, entitlementLabel, productB }) => {
+  const locale = useProductLanguage()?.locale ?? 'en'
+  const localized = locale === 'zh-Hans' ? ['今日', '个人', '洞察', '关系', '我的']
+    : locale === 'zh-Hant' ? ['今日', '個人', '洞察', '關係', '我的'] : null
   return (
     <nav className="bottom-nav-v2" role="navigation" aria-label="主导航">
       <div className="bottom-nav-bg" aria-hidden="true" />
       <div className="bottom-nav-inner">
-        {TABS.map((tab) => {
+        {(productB ? PRODUCT_B_TABS : TABS).map((tab, index) => {
           const isActive = activePage === tab.name
-          const label = tab.name === 'more' ? (entitlementLabel || tab.label) : tab.label
+          const label = productB && localized ? localized[index]
+            : tab.name === 'more' ? (entitlementLabel || tab.label) : tab.label
           return (
             <button
               key={tab.name}

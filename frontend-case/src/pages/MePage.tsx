@@ -4,6 +4,8 @@ import './support-pages.css'
 import { checkAuthAvailability, type AuthAvailability } from '../api/authAvailability'
 import AccountPanel from '../components/account/AccountPanel'
 import type { AuthTokens } from '../api/auth'
+import { useProductLanguage } from '../productLanguage'
+import { accountText } from '../components/account/accountLanguage'
 
 const availabilityMessage: Record<AuthAvailability, string> = {
   loading: '正在检查认证服务…',
@@ -17,6 +19,7 @@ const MePage: React.FC<{
   onSessionChange?: (tokens: AuthTokens | null) => void
   onProfileReady?: () => void
 }> = ({ session, onSessionChange, onProfileReady }) => {
+  const language = useProductLanguage()
   const [authAvailability, setAuthAvailability] = useState<AuthAvailability>('loading')
   const [showQa, setShowQa] = useState(false)
   useEffect(() => {
@@ -26,6 +29,18 @@ const MePage: React.FC<{
     })
     return () => { active = false }
   }, [])
+  if (language) {
+    const title = accountText(language.locale, '我的')
+    const authStatus = authAvailability === 'loading' ? '正在检测认证服务。'
+      : authAvailability === 'offline' ? '暂时无法连接认证服务。' : '认证服务未装配，当前无法登录。'
+    return <section className="support-page me-page" lang={language.locale}>
+      <header className="support-header"><h1>{title}</h1></header>
+      {!session && authAvailability !== 'available' &&
+        <p role="status">{accountText(language.locale, authStatus)}</p>}
+      <AccountPanel available={authAvailability === 'available'} session={session}
+        onSessionChange={onSessionChange} onProfileReady={onProfileReady} />
+    </section>
+  }
   if (showQa && import.meta.env.VITE_LIORIN_LOCAL_PREVIEW === '1') {
     return <><button type="button" onClick={() => setShowQa(false)}>返回我的</button><EngineQaPage /></>
   }

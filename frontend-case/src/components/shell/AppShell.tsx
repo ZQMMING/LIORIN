@@ -13,6 +13,7 @@ interface AppShellProps {
   onTimezoneChange?: () => void
   entitlementLabel?: string
   viewKey?: string | boolean
+  productB?: boolean
 }
 
 /**
@@ -29,6 +30,7 @@ const AppShell: React.FC<AppShellProps> = ({
   onTimezoneChange,
   entitlementLabel,
   viewKey,
+  productB,
 }) => {
   const mainRef = useRef<HTMLElement>(null)
   useLayoutEffect(() => {
@@ -57,6 +59,7 @@ const AppShell: React.FC<AppShellProps> = ({
         activePage={activePage}
         onPageChange={onPageChange}
         entitlementLabel={entitlementLabel}
+        productB={productB}
       />
     </div>
   )

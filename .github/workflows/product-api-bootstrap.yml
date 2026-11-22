@@ -1,7 +1,7 @@
 name: Product API bootstrap
 on:
   pull_request:
-    branches: [main, codex/product-b-daily-explorer]
+    branches: [main, codex/product-b-daily-explorer, codex/product-b-explorer-calendar]
   push:
     branches: [codex/product-api-bootstrap]
   workflow_dispatch:

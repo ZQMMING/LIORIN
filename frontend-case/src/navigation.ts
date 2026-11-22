@@ -3,7 +3,7 @@ import type { PageName } from './components/navigation/BottomNav'
 export type RoutePage = PageName | 'not-found'
 
 const paths: Record<PageName, string> = {
-  today: '/', guide: '/guide', insights: '/insights', me: '/me', more: '/more',
+  today: '/', guide: '/guide', insights: '/insights', me: '/me', more: '/more', you: '/you', relation: '/relation',
 }
 
 export function pageForPath(pathname: string): RoutePage {
