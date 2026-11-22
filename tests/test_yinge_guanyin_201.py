@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 """PATCH-201 印格官印双全 supported结构 golden (正官非七杀)"""
-import sys; sys.path.insert(0, '.')
+import sys
+sys.path.insert(0, '.')
 from engines.common.l0_fact_builder import build
 from engines.common.yinge_rule_contract import yinge_rule_input
 
 fails = 0
 def ck(n, g, e):
-    global fails; ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 # 乙日子月: 子本气癸=乙偏印. 乙日正官=庚, 七杀=辛
 # G1 天干见庚(正官) -> 官印双全 SAT

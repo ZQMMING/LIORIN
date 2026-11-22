@@ -2,6 +2,8 @@
 """真实命例 smoke: 111 个竞赛命例全跑通 160-C 整条链, 不崩/不越权.
 只压工程稳定性, 不判吉凶."""
 import sys, json, collections
+import os
+from pathlib import Path
 sys.path.insert(0, '.')
 from engines.common.l0_fact_builder import build
 from engines.common.daymaster_power_structure import build_power_structure
@@ -17,21 +19,28 @@ from engines.common.daymaster_power_queries import run_queries
 
 P2S = {'JIA':'甲','YI':'乙','BING':'丙','DING':'丁','WU':'戊','JI':'己','GENG':'庚','XIN':'辛','REN':'壬','GUI':'癸'}
 P2B = {'ZI':'子','CHOU':'丑','YIN':'寅','MAO':'卯','CHEN':'辰','SI':'巳','WU':'午','WEI':'未','SHEN':'申','YOU':'酉','XU':'戌','HAI':'亥'}
-CASES = r'D:\顺天系统资料\shuntian\cases\global_mingli.json'
+CASES = Path(os.environ.get('LIORIN_REAL_CASES_FILE',
+                            Path(__file__).resolve().parent / 'fixtures' / 'global_mingli.json'))
 
 def _run(c):
     ch = c['chart']
     p = {k: [P2S[ch['four_stems'][i]], P2B[ch['four_branches'][i]]] for i, k in enumerate(('year','month','day','hour'))}
-    f = build(p); pa = build_power_structure(p)
+    f = build(p)
+    pa = build_power_structure(p)
     hst = {p[k][1]: f['hidden_stems'][k] for k in ('year','month','day','hour')}
-    rc = build_root_classes(p, hst); tc = build_tou_cang(f); wx = build_wang_xiang(f, f['day_stem'])
-    rr = build_root_relations(rc, f['combination_facts']); ts = build_two_side(rc, tc, rr)
-    bt = build_branch_tiers(p, f); th = build_tian_he(p, f)
+    rc = build_root_classes(p, hst)
+    tc = build_tou_cang(f)
+    wx = build_wang_xiang(f, f['day_stem'])
+    rr = build_root_relations(rc, f['combination_facts'])
+    ts = build_two_side(rc, tc, rr)
+    bt = build_branch_tiers(p, f)
+    th = build_tian_he(p, f)
     net = build_power_network(pa, rc, tc, wx, rr, ts, branch_tier=bt, tian_he=th)
     return run_queries(net)
 
 def test_111_real_cases_smoke():
-    d = json.load(open(CASES, encoding='utf-8'))
+    assert CASES.is_file(), 'Set LIORIN_REAL_CASES_FILE to the authorized real-case dataset.'
+    d = json.loads(CASES.read_text(encoding='utf-8'))
     cases = [c for grp in d for c in grp['cases'] if c.get('chart')]
     assert len(cases) >= 100, f'案例数 {len(cases)} 不足'
     errors = []

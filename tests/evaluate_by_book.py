@@ -72,7 +72,6 @@ def extract_wangshuai(judgment):
         r'[身日主](旺|强|弱|衰)之',
     ]
 
-    import re
     for pattern in direct_patterns:
         match = re.search(pattern, text)
         if match:
@@ -114,7 +113,6 @@ def extract_geju(judgment):
         return None
     text = str(judgment)
 
-    import re
     # 明确指向当前案例的模式
     direct_patterns = [
         r'此造.*?(正官格|七杀格|偏官格|正财格|偏财格|正印格|偏印格|枭格|食神格|伤官格|建禄格|月劫格|月刃格|羊刃格)',
@@ -149,7 +147,6 @@ def extract_diaohou(judgment):
     if not judgment:
         return None
     text = str(judgment)
-    import re
 
     # 第一优先级: "X为用" (最明确)
     match = re.search(r'([甲乙丙丁戊己庚辛壬癸])[火水木金土]?为用', text)
@@ -378,11 +375,11 @@ def print_results(results):
         rate = ws['hit'] / ws['has_answer'] * 100
         print(f"\n身旺衰: 有标准答案{ws['has_answer']}例, 命中{ws['hit']}例, 命中率={rate:.1f}%")
         if ws['details']:
-            print(f"  未命中前5例:")
+            print("  未命中前5例:")
             for d in ws['details'][:5]:
                 print(f"    {d['id']}: 原文={d['answer']}, 引擎={d['engine']}")
     else:
-        print(f"\n身旺衰: 无标准答案")
+        print("\n身旺衰: 无标准答案")
 
     # 格局
     geju = results['geju']
@@ -390,11 +387,11 @@ def print_results(results):
         rate = geju['hit'] / geju['has_answer'] * 100
         print(f"\n格局: 有标准答案{geju['has_answer']}例, 命中{geju['hit']}例, 命中率={rate:.1f}%")
         if geju['details']:
-            print(f"  未命中前5例:")
+            print("  未命中前5例:")
             for d in geju['details'][:5]:
                 print(f"    {d['id']}: 原文={d['answer']}, 引擎={d['engine']}")
     else:
-        print(f"\n格局: 无标准答案")
+        print("\n格局: 无标准答案")
 
     # 调候
     dh = results['diaohou']
@@ -402,7 +399,7 @@ def print_results(results):
         rate = dh['hit'] / dh['has_answer'] * 100
         print(f"\n调候: 有标准答案{dh['has_answer']}例, 命中{dh['hit']}例, 命中率={rate:.1f}%")
         if dh['details']:
-            print(f"  未命中前5例:")
+            print("  未命中前5例:")
             for d in dh['details'][:5]:
                 print(f"    {d['id']}: 原文={d['answer']}, 引擎={d['engine']}")
 

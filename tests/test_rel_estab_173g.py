@@ -8,12 +8,15 @@ from engines.common.relation_established_173 import cai_yin_xiangsui_established
 f1 = build({'year':['壬','子'],'month':['庚','申'],'day':['乙','卯'],'hour':['戊','寅']})
 # 缺印(年甲)
 f2 = build({'year':['甲','子'],'month':['庚','申'],'day':['乙','卯'],'hour':['戊','寅']})
-r1=cai_yin_xiangsui_established(f1); r2=cai_yin_xiangsui_established(f2)
+r1=cai_yin_xiangsui_established(f1)
+r2=cai_yin_xiangsui_established(f2)
 print(r1['state'], r2['state'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("财+官+印=三者同现", r1['state'], 'SATISFIED')
 ck("缺印=不成立", r2['state'], 'UNSATISFIED')
 ck("note含不等于护官成立", '不等于护官成立' in r1.get('note',''), True)

@@ -59,28 +59,28 @@ check('BING_YAO 主轨=SFTK(病药体系源头)', META_DEFINITIONS['BING_YAO']['
 print("\n=== 3. 独立方法体系标注正确性 ===")
 # 旺衰: 三部以上各有独立体系
 wangshuai_systems = META_DEFINITIONS['WANG_SHUAI'].get('independent_method_systems', {})
-check('WANG_SHUAI PZZQ有独立体系', wangshuai_systems.get('PZZQ', {}).get('has_independent_system') == True)
-check('WANG_SHUAI YHZP有独立体系', wangshuai_systems.get('YHZP', {}).get('has_independent_system') == True)
-check('WANG_SHUAI DTS有独立体系', wangshuai_systems.get('DTS', {}).get('has_independent_system') == True)
+check('WANG_SHUAI PZZQ有独立体系', wangshuai_systems.get('PZZQ', {}).get('has_independent_system') is True)
+check('WANG_SHUAI YHZP有独立体系', wangshuai_systems.get('YHZP', {}).get('has_independent_system') is True)
+check('WANG_SHUAI DTS有独立体系', wangshuai_systems.get('DTS', {}).get('has_independent_system') is True)
 
 # 格局: 三部以上各有独立体系
 geju_systems = META_DEFINITIONS['GE_JU'].get('independent_method_systems', {})
-check('GE_JU PZZQ有独立体系', geju_systems.get('PZZQ', {}).get('has_independent_system') == True)
+check('GE_JU PZZQ有独立体系', geju_systems.get('PZZQ', {}).get('has_independent_system') is True)
 
 # 调候: 只有QTBJ有完整独立体系
 tiaohou_systems = META_DEFINITIONS['DIAO_HOU'].get('independent_method_systems', {})
-check('DIAO_HOU QTBJ有独立体系', tiaohou_systems.get('QTBJ', {}).get('has_independent_system') == True)
+check('DIAO_HOU QTBJ有独立体系', tiaohou_systems.get('QTBJ', {}).get('has_independent_system') is True)
 
 # 病药: 只有SFTK有完整独立体系
 bingyao_systems = META_DEFINITIONS['BING_YAO'].get('independent_method_systems', {})
-check('BING_YAO SFTK有独立体系', bingyao_systems.get('SFTK', {}).get('has_independent_system') == True)
+check('BING_YAO SFTK有独立体系', bingyao_systems.get('SFTK', {}).get('has_independent_system') is True)
 
 # 用神: 四部以上各有独立体系
 yongshen_systems = META_DEFINITIONS['YONG_SHEN'].get('independent_method_systems', {})
-check('YONG_SHEN PZZQ有独立体系', yongshen_systems.get('PZZQ', {}).get('has_independent_system') == True)
-check('YONG_SHEN QTBJ有独立体系', yongshen_systems.get('QTBJ', {}).get('has_independent_system') == True)
-check('YONG_SHEN SFTK有独立体系', yongshen_systems.get('SFTK', {}).get('has_independent_system') == True)
-check('YONG_SHEN DTS有独立体系', yongshen_systems.get('DTS', {}).get('has_independent_system') == True)
+check('YONG_SHEN PZZQ有独立体系', yongshen_systems.get('PZZQ', {}).get('has_independent_system') is True)
+check('YONG_SHEN QTBJ有独立体系', yongshen_systems.get('QTBJ', {}).get('has_independent_system') is True)
+check('YONG_SHEN SFTK有独立体系', yongshen_systems.get('SFTK', {}).get('has_independent_system') is True)
+check('YONG_SHEN DTS有独立体系', yongshen_systems.get('DTS', {}).get('has_independent_system') is True)
 
 # === 4. 判定依据原文引用完整性 ===
 print("\n=== 4. 判定依据原文引用完整性 ===")
@@ -94,9 +94,9 @@ for meta_id in EXPECTED_METAS:
 print("\n=== 5. 与引擎轨道设计的一致性 ===")
 # 引擎用神四轨: 格局(PZZQ)/调候(QTBJ)/病药(SFTK)/体用(DTS)
 # Authority Matrix中这四轨都应该有独立体系
-check('引擎格局轨PZZQ在矩阵中有独立体系', geju_systems.get('PZZQ', {}).get('has_independent_system') == True)
-check('引擎调候轨QTBJ在矩阵中有独立体系', tiaohou_systems.get('QTBJ', {}).get('has_independent_system') == True)
-check('引擎病药轨SFTK在矩阵中有独立体系', bingyao_systems.get('SFTK', {}).get('has_independent_system') == True)
+check('引擎格局轨PZZQ在矩阵中有独立体系', geju_systems.get('PZZQ', {}).get('has_independent_system') is True)
+check('引擎调候轨QTBJ在矩阵中有独立体系', tiaohou_systems.get('QTBJ', {}).get('has_independent_system') is True)
+check('引擎病药轨SFTK在矩阵中有独立体系', bingyao_systems.get('SFTK', {}).get('has_independent_system') is True)
 
 # === 6. 函数接口测试 ===
 print("\n=== 6. 函数接口测试 ===")
@@ -127,8 +127,8 @@ check('get_independent_method_systems(YONGSHEN)返回非空', bool(systems))
 summary = get_authority_matrix_summary()
 check('get_authority_matrix_summary()返回6元', len(summary) == 6)
 check('summary中WANG_SHUAI有name', bool(summary.get('WANG_SHUAI', {}).get('name')))
-check('summary中TIAOHOU有has_judgment_criteria=True', summary.get('DIAO_HOU', {}).get('has_judgment_criteria') == True)
-check('summary中YONGSHEN有has_independent_method_systems=True', summary.get('YONG_SHEN', {}).get('has_independent_method_systems') == True)
+check('summary中TIAOHOU有has_judgment_criteria=True', summary.get('DIAO_HOU', {}).get('has_judgment_criteria') is True)
+check('summary中YONGSHEN有has_independent_method_systems=True', summary.get('YONG_SHEN', {}).get('has_independent_method_systems') is True)
 
 # === 7. CLASSIC_BOOKS完整性 ===
 print("\n=== 7. CLASSIC_BOOKS完整性 ===")

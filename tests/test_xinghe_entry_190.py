@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """PATCH-190 刑合 Structural Entry golden (癸日+甲寅时+无申+天干无戊己)"""
-import sys; sys.path.insert(0, '.')
+import sys
+sys.path.insert(0, '.')
 from engines.common.l0_fact_builder import build
 
 fails = 0
 def ck(n, g, e):
-    global fails; ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 def entry(pillars):
     return build(pillars).get('xinghe_entry', {})

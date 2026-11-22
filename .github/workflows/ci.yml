@@ -47,11 +47,13 @@ jobs:
           python -m pip install -c requirements-ci.txt -e ".[dev]"
 
       # ⚠ 必须 pyproject 的 pytest 配置生效（testpaths / addopts）
-      - name: 跑测试
-        run: python -m pytest -q
+      - name: Public pytest suite
+        run: |
+          echo "Scope: public fixtures. Two authorized-corpus checks are deselected and remain unverified by this job."
+          python -m pytest -q -m "not authorized_corpus"
 
       - name: 覆盖率报告
-        run: python -m pytest -q --cov=heluo_engine --cov-report=xml --cov-report=term
+        run: python -m pytest -q -m "not authorized_corpus" --cov=heluo_engine --cov-report=xml --cov-report=term
         continue-on-error: true
 
       - name: 上传覆盖率

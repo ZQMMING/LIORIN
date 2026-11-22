@@ -15,11 +15,12 @@ import glob
 import io
 import json
 import os
+from pathlib import Path
 import sys
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
-ROOT = r"D:\shuntian-ziping-p0"
+ROOT = Path(__file__).resolve().parents[2]
 
 BOOK_FILE = {
     "YHZP": "yhzp", "PZZQ": "pzzq", "DTS": "dts",
@@ -152,7 +153,7 @@ def conflict_test() -> dict:
     return {"total": len(rc), "invalid_resolution": bad, "result": "PASS" if not bad else "FAIL"}
 
 
-def main() -> None:
+def main(output_path: str | os.PathLike[str] | None = None) -> None:
     source_ids = load_source_ids()
     cands = collect_candidates()
     static = static_validate(cands, source_ids)
@@ -177,8 +178,10 @@ def main() -> None:
         "020_03_conflict_test": conflict,
         "note": "本层不实现命理计算；ADMITTED 状态不变更（引擎执行层未启动，golden_pass 仍为 false）",
     }
-    out_path = os.path.join(ROOT, "governance", "patch_020_engine_validation_report.json")
-    json.dump(report, io.open(out_path, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    if output_path is None:
+        output_path = os.path.join(ROOT, "governance", "patch_020_engine_validation_report.json")
+    with io.open(output_path, "w", encoding="utf-8") as handle:
+        json.dump(report, handle, ensure_ascii=False, indent=2)
     print("PATCH-020 Engine Validation Report 生成")
     print("  规则总数:", report["summary"]["rules_total"])
     print("  静态验证 PASS:", report["summary"]["static_pass"], "/ FAIL:", report["summary"]["static_fail"])
@@ -189,4 +192,8 @@ def main() -> None:
 
 
 if __name__ == "__main__":
-    main()
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--output", help="Write the report to this file.")
+    main(output_path=parser.parse_args().output)

@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """PATCH-176 changsheng_direction golden (SFTK-010-004)"""
-import sys; sys.path.insert(0,'.')
+import sys
+sys.path.insert(0,'.')
 from engines.common.l0_fact_builder import build
 
 fails=0
 def ck(n,g,e):
-    global fails; ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 # 构造: 日干dg, 地支z(放到日支位), 其余干支随意
 def cd_of(dg,z):

@@ -10,12 +10,15 @@ from engines.common.relation_established_173 import (caiyin_peiyangren_establish
 fI = build({'year':['壬','子'],'month':['甲','卯'],'day':['甲','寅'],'hour':['戊','辰']})
 # J: 时干丁=伤官 -> 泄刃
 fJ = build({'year':['甲','子'],'month':['甲','卯'],'day':['甲','寅'],'hour':['丁','卯']})
-rI=caiyin_peiyangren_established(fI); rJ=shishang_xieren_established(fJ)
+rI=caiyin_peiyangren_established(fI)
+rJ=shishang_xieren_established(fJ)
 print(rI['state'], rJ['state'])
 fails=0
 def ck(n,g,e):
     global fails
-    ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 ck("阳刃+财+印=配合", rI['state'], 'SATISFIED')
 ck("阳刃+食伤=泄刃", rJ['state'], 'SATISFIED')
 ck("I note含不相碍后续", '不相碍' in rI.get('note',''), True)

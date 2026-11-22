@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 """PATCH-178 运x命局结构关系 golden"""
-import sys; sys.path.insert(0,'.')
+import sys
+sys.path.insert(0,'.')
 from engines.common.relation_178 import yun_natal_relations
 
 fails=0
 def ck(n,g,e):
-    global fails; ok=g==e; fails+=(not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok=g==e
+    fails+=(not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 pillars={'year':['甲','子'],'month':['丙','申'],'day':['乙','亥'],'hour':['戊','辰']}
 # 大运己巳

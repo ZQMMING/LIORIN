@@ -26,7 +26,9 @@ cases = [
 ]
 fails=0
 for name, f, req, exp in cases:
-    got, items = bundle(f, req); ok=got==exp; fails+=(not ok)
+    got, items = bundle(f, req)
+    ok=got==exp
+    fails+=(not ok)
     print(f"{'PASS' if ok else 'FAIL'} {name}: {[i['status'] for i in items]} -> {got} (期望{exp})")
 print('=>', 'ALL PASS' if fails==0 else f'{fails} FAIL')
 sys.exit(1 if fails else 0)

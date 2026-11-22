@@ -9,17 +9,17 @@
 （`['丙','庚','戊']`），而 L0 用 `[0]` 判本气 —— 这类错误**不报错，静默给错本气**。
 根因是**同一份基础数据有多个数据源**。
 
-本模块把 LIORIN（`vendor/tongshu`，第三方原始代码，不改动）作为**唯一权威源**，
+本模块把 LIORIN（`heluo_engine`，第三方原始代码，不改动）作为**唯一权威源**，
 本仓只做拼音↔中文与字段名投影，不复制任何常量表。
 
 数据源
 ------
 | 层 | 数据源 |
 |---|---|
-| 藏干 | `vendor/tongshu.facts.bazi_facts.BRANCH_HIDDEN_STEMS`（角色标注 main/middle/residual） |
-| 十神 | `vendor/tongshu.reasoning.bazi_ten_gods.ten_god` |
-| 长生/关系/空亡/纳音/神煞 | `vendor/tongshu.engines.bazi_l1_facts.build_bazi_l1_facts` |
-| 排盘（公历输入时） | `vendor/tongshu.engines.bazi_engine.BaziEngine` |
+| 藏干 | `heluo_engine.facts.bazi_facts.BRANCH_HIDDEN_STEMS`（角色标注 main/middle/residual） |
+| 十神 | `heluo_engine.reasoning.bazi_ten_gods.ten_god` |
+| 长生/关系/空亡/纳音/神煞 | `heluo_engine.engines.bazi_l1_facts.build_bazi_l1_facts` |
+| 排盘（公历输入时） | `heluo_engine.engines.bazi_engine.BaziEngine` |
 
 藏干权威依据（2026-09-30 多维度验证，12/12 一致）
 --------------------------------------------------
@@ -42,14 +42,7 @@
 from __future__ import annotations
 
 import datetime
-import os
-import sys
 from typing import Any, Dict, List, Optional
-
-_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-_VENDOR = os.path.join(_REPO_ROOT, "vendor")
-if _VENDOR not in sys.path:
-    sys.path.insert(0, _VENDOR)
 
 STEMS = "甲乙丙丁戊己庚辛壬癸"
 BRANCHES = "子丑寅卯辰巳午未申酉戌亥"
@@ -79,7 +72,7 @@ _ROLE_CN = {"main": "本气", "middle": "中气", "residual": "余气"}
 # ==========================================================================
 def branch_hidden_stems() -> Dict[str, List[str]]:
     """{地支: [本气, 中气, 余气]}，顺序即本→中→余，None 已剔除。"""
-    from tongshu.facts.bazi_facts import BRANCH_HIDDEN_STEMS  # noqa: E402
+    from heluo_engine.facts.bazi_facts import BRANCH_HIDDEN_STEMS
 
     out: Dict[str, List[str]] = {}
     for zhi_py, entries in BRANCH_HIDDEN_STEMS.items():
@@ -93,7 +86,7 @@ def branch_hidden_stems() -> Dict[str, List[str]]:
 
 def branch_hidden_by_role() -> Dict[str, Dict[str, Optional[str]]]:
     """{地支: {'本气':…, '中气':…, '余气':…}}，保留 None 槽位。"""
-    from tongshu.facts.bazi_facts import BRANCH_HIDDEN_STEMS  # noqa: E402
+    from heluo_engine.facts.bazi_facts import BRANCH_HIDDEN_STEMS
 
     out: Dict[str, Dict[str, Optional[str]]] = {}
     for zhi_py, entries in BRANCH_HIDDEN_STEMS.items():
@@ -106,13 +99,13 @@ def branch_hidden_by_role() -> Dict[str, Dict[str, Optional[str]]]:
 
 def hidden_main_stem(zhi: str) -> str:
     """月令本气用；LIORIN 原生函数。"""
-    from tongshu.reasoning.bazi_ten_gods import hidden_main_stem as _f  # noqa: E402
+    from heluo_engine.reasoning.bazi_ten_gods import hidden_main_stem as _f
     return _PY[_f(_ZB[zhi])]
 
 
 def ten_god(day_master: str, other: str) -> str:
     """LIORIN 原生十神（已转中文）。"""
-    from tongshu.reasoning.bazi_ten_gods import ten_god as _f  # noqa: E402
+    from heluo_engine.reasoning.bazi_ten_gods import ten_god as _f
     return _f(_ZH[day_master], _ZH[other])
 
 
@@ -139,7 +132,7 @@ def _l1_facts(pillars: Dict[str, List[str]]) -> Any:
     **故本仓不用它的输出**，仅作为结构声明参考。
     真实计算走 `BaziChart`（见 `_chart_from_pillars`）。
     """
-    from tongshu.engines.bazi_l1_facts import build_bazi_l1_facts  # noqa: E402
+    from heluo_engine.engines.bazi_l1_facts import build_bazi_l1_facts
     return build_bazi_l1_facts(
         _ZH[pillars["day"][0]],
         _ZB[pillars["year"][1]], _ZB[pillars["month"][1]],
@@ -159,7 +152,7 @@ def _chart_from_pillars(pillars: Dict[str, List[str]]) -> Any:
 
     不做的事：公历派生项（大运、起运、胎元、命宫、节分界）—— 那些需要公历。
     """
-    from tongshu.engines import bazi_engine as BE  # noqa: E402
+    from heluo_engine.engines import bazi_engine as BE
 
     P = BE.Pillar
     shim = type("_Shim", (), {})()
@@ -371,7 +364,7 @@ def facts_from_birth(
 
     走 LIORIN `BaziEngine.compute`（sxtwl 节气分界）。
     """
-    from tongshu.engines.bazi_engine import BaziEngine  # noqa: E402
+    from heluo_engine.engines.bazi_engine import BaziEngine
 
     bd = datetime.datetime(int(year), int(month), int(day), int(hour), int(minute))
     chart = BaziEngine().compute(

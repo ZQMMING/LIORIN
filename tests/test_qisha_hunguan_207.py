@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 """PATCH-207 七杀格杀混官 supported结构 golden (正官非七杀)"""
-import sys; sys.path.insert(0, '.')
+import sys
+sys.path.insert(0, '.')
 from engines.common.l0_fact_builder import build
 from engines.common.qisha_rule_contract import qisha_rule_input
 
 fails = 0
 def ck(n, g, e):
-    global fails; ok = g == e; fails += (not ok); print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
+    global fails
+    ok = g == e
+    fails += (not ok)
+    print(f"{'PASS' if ok else 'FAIL'} {n}: {g}")
 
 # 甲日申月: 申本气庚=甲七杀. 甲日正官=辛, 七杀=庚
 # G1 天干见辛(正官) -> 杀混官 SAT
