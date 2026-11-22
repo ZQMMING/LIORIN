@@ -9,6 +9,7 @@ import pytest
 
 
 TESTS = Path(__file__).parent
+AUTHORIZED_CORPUS_TESTS = {'test_criteria_anchors.py', 'test_real_case_smoke.py'}
 LEGACY_SCRIPTS = frozenset(
     line for line in (TESTS / "legacy_script_tests.txt").read_text(encoding="utf-8").splitlines()
     if line and not line.startswith("#")
@@ -46,3 +47,13 @@ def pytest_pycollect_makemodule(module_path, parent):
     if module_path.parent == TESTS and module_path.name in LEGACY_SCRIPTS:
         return LegacyScriptModule.from_parent(parent, path=module_path)
     return None
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "authorized_corpus: requires read-only approved non-public fixtures")
+
+
+def pytest_collection_modifyitems(items):
+    for item in items:
+        if item.path.parent == TESTS and item.path.name in AUTHORIZED_CORPUS_TESTS:
+            item.add_marker(pytest.mark.authorized_corpus)

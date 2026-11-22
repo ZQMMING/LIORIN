@@ -1,0 +1,22 @@
+name: Authorized corpus validation
+on: workflow_dispatch
+
+permissions:
+  contents: read
+
+jobs:
+  private-corpora:
+    if: github.ref == 'refs/heads/main' && github.repository == 'ZQMMING/LIORIN'
+    environment: liorin-authorized-ci
+    runs-on: [self-hosted, liorin-authorized-corpus]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - run: python -m pip install -c requirements-ci.txt -e ".[dev]"
+      - name: Verify owner manifest and run both private checks
+        env:
+          LIORIN_CI_DATA_MANIFEST: ${{ vars.LIORIN_CI_DATA_MANIFEST }}
+          LIORIN_CRITERIA_ROOT: ${{ vars.LIORIN_CRITERIA_ROOT }}
+          LIORIN_REAL_CASES_FILE: ${{ vars.LIORIN_REAL_CASES_FILE }}
+        run: python tools/authorized_corpus_ci.py
