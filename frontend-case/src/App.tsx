@@ -8,6 +8,7 @@ import RealPersonalHeluoToday from './pages/today/RealPersonalHeluoToday'
 import HeluoPreviewToday from './pages/today/HeluoPreviewToday'
 import PersonalDnaPage from './pages/PersonalDnaPage'
 import PersonalInsightPage from './pages/PersonalInsightPage'
+import { ProductLanguageProvider, useProductLanguage } from './productLanguage'
 import EngineQaPage from './pages/EngineQaPage'
 import { restoreBrowserSession, type AuthTokens } from './api/auth'
 import GuidePage from './pages/GuidePage'
@@ -56,6 +57,17 @@ function getEntitlement(state: SimulatedState): Entitlement {
     case 'premium': return 'PREMIUM'
     default: return 'AUTHENTICATED'
   }
+}
+
+function ProductTodayGate({ onAccount }: { onAccount: () => void }) {
+  const locale = useProductLanguage()?.locale ?? 'en'
+  const [title, message, action] = {
+    en: ['Personal Today', 'Sign in to use your saved birth profile.', 'Open account'],
+    'zh-Hans': ['个人今日', '登录后可使用已保存的出生档案。', '打开账户'],
+    'zh-Hant': ['個人今日', '登入後可使用已儲存的出生檔案。', '開啟帳戶'],
+  }[locale]
+  return <section className="page-container" lang={locale}><h1>{title}</h1>
+    <p>{message}</p><button onClick={onAccount}>{action}</button></section>
 }
 
 function App() {
@@ -145,7 +157,7 @@ function App() {
       case 'today':
         if (productBPreview) return session
           ? <HeluoPreviewToday key={session.user_id} token={session.access_token} onAccount={() => navigate('me')} />
-          : <section className="page-container"><h1>Personal Today</h1><p>Sign in to use your saved birth profile.</p><button onClick={() => navigate('me')}>Open account</button></section>
+          : <ProductTodayGate onAccount={() => navigate('me')} />
         if (import.meta.env.DEV && import.meta.env.VITE_LIORIN_LOCAL_PREVIEW === '1' && showLocalTest) {
           return <><button className="local-test-back" type="button" onClick={() => setShowLocalTest(false)}>← 返回今日</button><EngineQaPage /></>
         }
@@ -187,7 +199,7 @@ function App() {
   }
 
   return (
-    <AppShell
+    <ProductLanguageProvider enabled={productBPreview}><AppShell
       activePage={currentPage === 'not-found' ? null : currentPage}
       viewKey={showLocalTest}
       onPageChange={navigate}
@@ -264,7 +276,7 @@ function App() {
           </button>
         ))}
       </div>}
-    </AppShell>
+    </AppShell></ProductLanguageProvider>
   )
 }
 

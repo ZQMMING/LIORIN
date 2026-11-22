@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { apiRequest, ApiClientError } from '../api/http'
+import { useProductLanguage } from '../productLanguage'
 import './PersonalDnaPage.css'
 
 const copy = {
@@ -7,17 +8,21 @@ const copy = {
     account: 'Open birth profile', year: 'Year', load: 'View cycles', loading: 'Calculating cycles…',
     error: 'Cycles could not be loaded. Try again.', annual: 'Annual cycle', months: 'Solar-term months',
     basis: 'Month numbers follow the solar-term calendar.', decade: 'Decadal cycle pending rule admission.',
-    missing: 'Cycle data unavailable for this year.', source: 'Calculation source', reference: 'Reference date' },
+    missing: 'Cycle data unavailable for this year.', source: 'Calculation source', reference: 'Calculation reference date',
+    referencePurpose: 'This date selects the engine records for the requested year.',
+    effective: 'Effective dates await rule approval.' },
   'zh-Hans': { title: '洞察', language: '语言', profile: '请登录并保存完整的出生档案，以查看周期。',
     account: '打开出生档案', year: '年份', load: '查看周期', loading: '正在计算周期…',
     error: '暂时无法加载周期，请重试。', annual: '年度周期', months: '节气月',
     basis: '月序采用节气历。', decade: '大运周期的规则尚待准入。',
-    missing: '该年周期数据暂不可用。', source: '计算来源', reference: '计算参考日' },
+    missing: '该年周期数据暂不可用。', source: '计算来源', reference: '计算参考日',
+    referencePurpose: '参考日用于选择请求年份的引擎记录。', effective: '生效日期待规则审核。' },
   'zh-Hant': { title: '洞察', language: '語言', profile: '請登入並儲存完整的出生檔案，以查看週期。',
     account: '開啟出生檔案', year: '年份', load: '查看週期', loading: '正在計算週期…',
     error: '暫時無法載入週期，請重試。', annual: '年度週期', months: '節氣月',
     basis: '月序採用節氣曆。', decade: '大運週期的規則尚待准入。',
-    missing: '該年週期資料暫不可用。', source: '計算來源', reference: '計算參考日' },
+    missing: '該年週期資料暫不可用。', source: '計算來源', reference: '計算參考日',
+    referencePurpose: '參考日用於選擇請求年份的引擎記錄。', effective: '生效日期待規則審核。' },
 }
 
 type Insight = {
@@ -33,7 +38,9 @@ type Insight = {
 export default function PersonalInsightPage({ token, onAccount, onSessionExpired }: {
   token: string | null; onAccount: () => void; onSessionExpired: () => void
 }) {
-  const [language, setLanguage] = useState<keyof typeof copy>('en')
+  const sharedLanguage = useProductLanguage()
+  const [localLanguage, setLanguage] = useState<keyof typeof copy>('en')
+  const language = sharedLanguage?.locale ?? localLanguage
   const [year, setYear] = useState('')
   const [selection, setSelection] = useState<{ year: number } | null>(null)
   const [state, setState] = useState<'idle' | 'loading' | 'profile' | 'error' | 'ready'>('idle')
@@ -71,9 +78,9 @@ export default function PersonalInsightPage({ token, onAccount, onSessionExpired
   return <section className="page-container personal-dna" lang={language}>
     <header className="personal-dna__header">
       <h1>{labels.title}</h1>
-      <label>{labels.language} <select value={language} onChange={event => setLanguage(event.target.value as keyof typeof copy)}>
+      {!sharedLanguage && <label>{labels.language} <select value={language} onChange={event => setLanguage(event.target.value as keyof typeof copy)}>
         <option value="en">English</option><option value="zh-Hans">简体中文</option><option value="zh-Hant">繁體中文</option>
-      </select></label>
+      </select></label>}
     </header>
     {token && <form onSubmit={event => {
       event.preventDefault()
@@ -100,6 +107,8 @@ export default function PersonalInsightPage({ token, onAccount, onSessionExpired
       <p>{labels.decade}</p>
       <details><summary>{labels.source}</summary>
         <p>{labels.reference} · {result.source.reference_date}</p>
+        <p>{labels.referencePurpose}</p>
+        <p>{labels.effective}</p>
         <p>{result.source.adapter} · {result.source.heluo_version}</p>
         <p>{result.source.bazi_version} · sxtwl {result.source.calendar_version}</p>
       </details>

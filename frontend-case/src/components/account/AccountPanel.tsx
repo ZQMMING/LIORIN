@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react'
+import { useProductLanguage } from '../../productLanguage'
+import { accountText } from './accountLanguage'
 import { ApiClientError } from '../../api/http'
 import { fetchMe, loginWithPairing, logout, requestEmailCode, verifyEmailCode, type AuthTokens } from '../../api/auth'
 import { readStoredProfile, saveStoredProfile } from '../../api/profile'
@@ -39,6 +41,8 @@ function readableError(error: unknown): string {
 
 /** Access tokens remain in memory; email sessions restore via an HttpOnly cookie. */
 export default function AccountPanel({ available, session, onSessionChange, onProfileReady }: Props) {
+  const language = useProductLanguage()
+  const t = (value: string) => accountText(language?.locale ?? 'zh-Hans', value)
   const [tokens, setTokens] = useState<AuthTokens | null>(session ?? null)
   const [userId, setUserId] = useState(session?.user_id ?? '')
   const [profileSaved, setProfileSaved] = useState(false)
@@ -107,16 +111,16 @@ export default function AccountPanel({ available, session, onSessionChange, onPr
     }
   }
 
-  return <section className="account-panel" aria-label="账户与档案">
+  return <section className="account-panel" aria-label={t("账户与档案")}>
     {!tokens ? <>
-      <h2>账户</h2>
-      <p>使用邮箱验证码登录或注册同一账户。刷新后可恢复有效会话；退出后需重新登录。</p>
+      <h2>{t("账户")}</h2>
+      <p>{t("使用邮箱验证码登录或注册同一账户。刷新后可恢复有效会话；退出后需重新登录。")}</p>
       <form onSubmit={(event) => { event.preventDefault(); void act('request-code', async () => {
         await requestEmailCode(email)
         setMessage('如果邮箱可接收邮件，验证码已发送。请在 10 分钟内输入。')
       }) }}>
-        <label>邮箱<input required disabled={busy !== null} type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} /></label>
-        <button type="submit" disabled={!available || busy !== null}>发送验证码</button>
+        <label>{t("邮箱")}<input required disabled={busy !== null} type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)} /></label>
+        <button type="submit" disabled={!available || busy !== null}>{t("发送验证码")}</button>
       </form>
       <form onSubmit={(event) => { event.preventDefault(); void act('verify-code', async () => {
         const result = await verifyEmailCode(email, emailCode)
@@ -128,10 +132,10 @@ export default function AccountPanel({ available, session, onSessionChange, onPr
         setEmailCode('')
         setMessage('邮箱验证成功，已登录同一账户。')
       }) }}>
-        <label>邮箱验证码<input required disabled={busy !== null} inputMode="numeric" pattern="[0-9]{6}" maxLength={6} autoComplete="one-time-code" value={emailCode} onChange={e => setEmailCode(e.target.value)} /></label>
-        <button type="submit" disabled={!available || busy !== null || !email}>验证并登录</button>
+        <label>{t("邮箱验证码")}<input required disabled={busy !== null} inputMode="numeric" pattern="[0-9]{6}" maxLength={6} autoComplete="one-time-code" value={emailCode} onChange={e => setEmailCode(e.target.value)} /></label>
+        <button type="submit" disabled={!available || busy !== null || !email}>{t("验证并登录")}</button>
       </form>
-      <form onSubmit={(event) => { event.preventDefault(); void act('login', async () => {
+      {!language && <form onSubmit={(event) => { event.preventDefault(); void act('login', async () => {
         const result = await loginWithPairing(deviceId, pairingCode)
         const me = await fetchMe(result.access_token)
         if (me.user_id !== result.user_id) throw new Error('authentication identity mismatch')
@@ -141,12 +145,12 @@ export default function AccountPanel({ available, session, onSessionChange, onPr
         setPairingCode('')
         setMessage('登录成功。')
       }) }}>
-        <label>设备 ID<input required disabled={busy !== null} value={deviceId} onChange={e => setDeviceId(e.target.value)} /></label>
-        <label>配对码<input required disabled={busy !== null} type="password" autoComplete="off" value={pairingCode} onChange={e => setPairingCode(e.target.value)} /></label>
-        <button type="submit" disabled={!available || busy !== null}>设备配对登录</button>
-      </form>
+        <label>{t("设备 ID")}<input required disabled={busy !== null} value={deviceId} onChange={e => setDeviceId(e.target.value)} /></label>
+        <label>{t("配对码")}<input required disabled={busy !== null} type="password" autoComplete="off" value={pairingCode} onChange={e => setPairingCode(e.target.value)} /></label>
+        <button type="submit" disabled={!available || busy !== null}>{t("设备配对登录")}</button>
+      </form>}
     </> : <>
-      <h2>已登录账户</h2><p>用户 ID：{userId}</p>
+      <h2>{t("已登录账户")}</h2><p>{t("用户 ID：")}{userId}</p>
       <button type="button" disabled={busy !== null} onClick={() => void act('logout', async () => {
         setTokens(null); onSessionChange?.(null); setUserId(''); setProfileSaved(false)
         setBirthDate(''); setHour(''); setMinute(''); setGender('')
@@ -157,9 +161,9 @@ export default function AccountPanel({ available, session, onSessionChange, onPr
         } catch {
           setMessage('本页面已退出；服务器未确认撤销原会话。')
         }
-      })}>退出</button>
-      <h2>出生档案</h2>
-      <p>请填写出生信息。已有档案可先点击“读取已存档案”；保存时资料会发送至账户服务。</p>
+      })}>{t("退出")}</button>
+      <h2>{t("出生档案")}</h2>
+      <p>{t("请填写出生信息。已有档案可先点击“读取已存档案”；保存时资料会发送至账户服务。")}</p>
       <form onChange={() => setProfileSaved(false)} onSubmit={event => { event.preventDefault(); void act('save', async () => {
         const result = await saveStoredProfile(profileRequest(), tokens.access_token)
         if (result.stored !== true) throw new Error('profile not stored')
@@ -167,18 +171,18 @@ export default function AccountPanel({ available, session, onSessionChange, onPr
         setMessage('档案已由后端确认保存。')
       }) }}>
         <fieldset disabled={busy !== null}>
-        <label>出生日期<input required type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)} /></label>
-        <label>出生时间<input required type="time" value={hour !== '' && minute !== '' ? `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}` : ''} onChange={e => {
+        <label>{t("出生日期")}<input required type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)} /></label>
+        <label>{t("出生时间")}<input required type="time" value={hour !== '' && minute !== '' ? `${hour.padStart(2, '0')}:${minute.padStart(2, '0')}` : ''} onChange={e => {
           const [h, m] = e.target.value ? e.target.value.split(':') : ['', '']
           setHour(h); setMinute(m)
         }} /></label>
-        <p>请填写准确出生时间；不确定时暂不要提交，系统不会替你猜测。</p>
-        <label>性别<select required value={gender} onChange={e => setGender(e.target.value as 'male' | 'female' | '')}><option value="">请选择</option><option value="male">男</option><option value="female">女</option></select></label>
-        <label>时区（可选）<input placeholder="例如 Asia/Shanghai" value={timezone} onChange={e => setTimezone(e.target.value)} /></label>
+        <p>{t("请填写准确出生时间；不确定时暂不要提交，系统不会替你猜测。")}</p>
+        <label>{t("性别")}<select required value={gender} onChange={e => setGender(e.target.value as 'male' | 'female' | '')}><option value="">{t("请选择")}</option><option value="male">{t("男")}</option><option value="female">{t("女")}</option></select></label>
+        <label>{t("时区（可选）")}<input placeholder={t("例如 Asia/Shanghai")} value={timezone} onChange={e => setTimezone(e.target.value)} /></label>
         <BirthLocationPicker key={locationReset} loading={locationsPending} onRetry={() => setLocationsAttempt(n => n + 1)} locations={birthLocations} value={location} onChange={value => { setLocation(value); setProfileSaved(false) }} />
-        <p>出生地用于时间换算。时区留空时由服务端根据出生地识别；如需指定，请填写 IANA 时区名称。</p>
-        <label>当前城市（可选）<input value={currentLocation} onChange={e => setCurrentLocation(e.target.value)} /></label>
-        <button type="submit" disabled={busy !== null || locationsPending || !location || !birthLocations.some(city => city.id === location)}>保存档案</button>
+        <p>{t("出生地用于时间换算。时区留空时由服务端根据出生地识别；如需指定，请填写 IANA 时区名称。")}</p>
+        <label>{t("当前城市（可选）")}<input value={currentLocation} onChange={e => setCurrentLocation(e.target.value)} /></label>
+        <button type="submit" disabled={busy !== null || locationsPending || !location || !birthLocations.some(city => city.id === location)}>{t("保存档案")}</button>
         <button type="button" disabled={busy !== null} onClick={() => void act('load', async () => {
           const saved = await readStoredProfile(tokens.access_token)
           setBirthDate(saved.birth_date)
@@ -191,11 +195,11 @@ export default function AccountPanel({ available, session, onSessionChange, onPr
           setCurrentLocation(saved.current_location ?? '')
           setProfileSaved(true)
           setMessage('已从后端读取档案；未进行命理计算。')
-        })}>读取已存档案</button>
+        })}>{t("读取已存档案")}</button>
         </fieldset>
       </form>
-      {profileSaved && onProfileReady && <button type="button" onClick={onProfileReady}>查看个人今日</button>}
+      {profileSaved && onProfileReady && <button type="button" onClick={onProfileReady}>{t("查看个人今日")}</button>}
     </>}
-    {message && <p role="status">{message}</p>}
+    {message && <p role="status">{t(message)}</p>}
   </section>
 }

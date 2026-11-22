@@ -18,6 +18,21 @@ from services.liorin_api.account.api.deps import reset_rate_limit_buckets
 from services.liorin_api.account.services import identity_gateway
 
 
+def verify_layout(page, screenshot_name=None):
+    previous = page.viewport_size
+    folder = os.environ.get('LIORIN_PREVIEW_SCREENSHOTS')
+    if folder and screenshot_name:
+        Path(folder).mkdir(parents=True, exist_ok=True)
+    try:
+        for width in (320, 375, 1440):
+            page.set_viewport_size({'width': width, 'height': 900})
+            assert page.get_by_role('main').evaluate('(main) => main.scrollWidth <= main.clientWidth + 1')
+            if folder and screenshot_name:
+                page.screenshot(path=Path(folder) / f'{screenshot_name}-{width}.png')
+    finally:
+        page.set_viewport_size(previous)
+
+
 @pytest.mark.usefixtures('isolated_dsn')
 def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, tmp_path):  # noqa: F811
     dist = Path(__file__).resolve().parents[3] / 'frontend-case' / 'dist'
@@ -62,34 +77,70 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                 page.goto(origin, wait_until='domcontentloaded')
                 product_b = os.environ.get('VITE_LIORIN_PRODUCT_B_PREVIEW') == '1'
                 account_tab = 'Me' if product_b else '我的'
-                for protected in ('/v1/profile/stored', '/v1/auth/me', '/v1/personal/dna'):
-                    unclaimed = page.request.get(origin + protected, params={'uid': 'synthetic-tag'},
+                for protected in ('/v1/profile/stored', '/v1/auth/me', '/v1/personal/dna', '/v1/personal/insight?year=2026'):
+                    separator = '&' if '?' in protected else '?'
+                    unclaimed = page.request.get(origin + protected + separator + 'uid=synthetic-tag',
                                                  headers={'X-Device-Token': 'synthetic-tag'})
                     assert unclaimed.status == 401
                 if os.environ.get('VITE_LIORIN_PRODUCT_B_PREVIEW') == '1':
                     response = page.request.get(origin + '/v1/personal/heluo-preview?target_date=2026-08-17&display_timezone=America%2FNew_York')
                     assert response.status == 401
                     assert response.headers['cache-control'] == 'no-store'
+                    assert page.request.get(origin + '/v1/personal/heluo-today').status == 503
                 page.get_by_role('button', name=account_tab).click()
                 email = f'person-{uuid.uuid4().hex}@example.test'
-                page.get_by_label('邮箱', exact=True).fill(email)
-                page.get_by_role('button', name='发送验证码').click()
-                page.get_by_text('如果邮箱可接收邮件，验证码已发送。', exact=False).wait_for()
+                page.get_by_label(('Email' if product_b else '邮箱'), exact=True).fill(email)
+                page.get_by_role('button', name=('Send code' if product_b else '发送验证码')).click()
+                page.get_by_text(('If the address can receive mail, a code was sent.' if product_b else '如果邮箱可接收邮件，验证码已发送。'), exact=False).wait_for()
                 code = delivered_code(smtp_sink)
                 try:
-                    page.get_by_label('邮箱验证码').fill(code)
+                    page.get_by_label(('Email verification code' if product_b else '邮箱验证码')).fill(code)
                 except Exception:
                     raise RuntimeError('browser could not enter the captured test code') from None
-                page.get_by_role('button', name='验证并登录').click()
-                page.get_by_label('出生日期').fill('1980-06-22')
-                page.get_by_label('出生时间').fill('12:30')
-                page.get_by_label('性别').select_option('male')
-                page.get_by_label('出生地').fill('北京')
+                page.get_by_role('button', name=('Verify and sign in' if product_b else '验证并登录')).click()
+                page.get_by_label(('Birth date' if product_b else '出生日期')).fill('1980-06-22')
+                page.get_by_label(('Birth time' if product_b else '出生时间')).fill('12:30')
+                page.get_by_label(('Gender' if product_b else '性别')).select_option('male')
+                page.get_by_label(('Birthplace' if product_b else '出生地')).fill('北京')
                 page.get_by_role('button', name='北京 · CN').click()
-                page.get_by_role('button', name='保存档案').click()
-                page.get_by_text('档案已由后端确认保存。').wait_for()
-                if os.environ.get('VITE_LIORIN_PRODUCT_B_PREVIEW') == '1':
-                    page.get_by_role('button', name='查看个人今日').click()
+                page.get_by_role('button', name=('Save profile' if product_b else '保存档案')).click()
+                page.get_by_text(('Profile saved.' if product_b else '档案已由后端确认保存。')).wait_for()
+                if product_b:
+                    with page.expect_response(lambda response: response.url.endswith('/v1/personal/dna')) as dna:
+                        page.get_by_role('button', name='You', exact=True).click()
+                    assert dna.value.status == 200
+                    dna_source = dna.value.json()['source']
+                    assert dna_source['birth_timezone'] == 'Asia/Shanghai'
+                    expect(page).to_have_url(origin + '/you')
+                    expect(page.get_by_role('heading', name='Personal DNA')).to_be_visible()
+                    expect(page.get_by_text(dna.value.json()['birth_year_nayin'], exact=True)).to_be_visible()
+                    expect(page.get_by_role('table', name='Five-element structure')).to_be_visible()
+                    verify_layout(page, 'personal-dna')
+                    page.get_by_text('Calculation source', exact=True).click()
+                    expect(page.get_by_text('E-SMTH-003-001', exact=False)).to_be_visible()
+                    page.get_by_label('Product language').select_option('zh-Hant')
+                    expect(page.get_by_role('heading', name='個人圖譜')).to_be_visible()
+                page.reload(wait_until='domcontentloaded')
+                if product_b:
+                    expect(page.get_by_role('heading', name='四柱', exact=True)).to_be_visible()
+                    expect(page.get_by_label('Product language')).to_have_value('zh-Hant')
+                    page.get_by_role('button', name='洞察', exact=True).click()
+                    page.get_by_label('年份', exact=True).fill('2026')
+                    page.get_by_label('Product language').select_option('zh-Hans')
+                    with page.expect_response(lambda response: '/v1/personal/insight?year=2026' in response.url) as cycle:
+                        page.get_by_role('button', name='查看周期').click()
+                    assert cycle.value.status == 200
+                    assert cycle.value.json()['source']['bazi_version'] == dna_source['calculation_version']
+                    expect(page.get_by_role('heading', name='年度周期 · 2026')).to_be_visible()
+                    expect(page.get_by_role('listitem')).to_have_count(12)
+                    verify_layout(page, 'personal-insight')
+                    page.get_by_text('计算来源', exact=True).click()
+                    expect(page.get_by_text('2026-07-01', exact=False)).to_be_visible()
+                    expect(page.get_by_text('生效日期待规则审核。')).to_be_visible()
+                if product_b:
+                    page.get_by_role('button', name='今日', exact=True).click()
+                    expect(page.get_by_role('heading', name='个人今日')).to_be_visible()
+                    page.get_by_label('Product language').select_option('en')
                     page.get_by_label('Target date').fill('2026-08-17')
                     page.get_by_label('Display timezone').fill('America/New_York')
                     with page.expect_response(lambda response: '/v1/personal/heluo-preview?' in response.url) as personal:
@@ -100,12 +151,18 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                     assert result['active_yao_index'] is result['valid_from'] is result['valid_until'] is None
                     assert result['display_timezone'] == 'America/New_York'
                     assert result['birth_timezone'] == 'Asia/Shanghai'
+                    assert result['birth_timezone'] == dna_source['birth_timezone']
                     assert result['marker_timezone'] == 'Asia/Shanghai'
                     assert result['marker_utc'] == '2026-08-17T20:41:00Z'
                     assert result['provenance']['solar_term_time_basis'] == 'sxtwl_jd2dd_fixed_utc_plus_08'
                     calendar = page.get_by_role('region', name='Daily calendar')
                     expect(calendar.get_by_text('Lunar date', exact=False)).to_be_visible()
                     expect(calendar.get_by_text('Day branch', exact=True)).to_be_visible()
+                    page.get_by_label('Product language').select_option('zh-Hant')
+                    expect(page.get_by_role('region', name='當日黃曆')).to_be_visible()
+                    expect(page.get_by_label('顯示時區')).to_have_value('America/New_York')
+                    page.get_by_label('Product language').select_option('en')
+                    verify_layout(page, 'personal-today')
                     expect(calendar.get_by_text('source review pending', exact=False)).to_have_count(3)
                     calendar.get_by_text('Calendar source', exact=True).click()
                     expect(calendar.get_by_text('lunar_python 1.4.8', exact=False)).to_be_visible()
@@ -113,14 +170,6 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                     page.get_by_text('Calculation source', exact=True).click()
                     expect(page.get_by_text('HeluoAdapter.compute_from_chart', exact=False)).to_be_visible()
                     expect(page.get_by_text('Engine marker in UTC', exact=False)).to_contain_text(result['marker_utc'])
-                    screenshot_dir = os.environ.get('LIORIN_PREVIEW_SCREENSHOTS')
-                    if screenshot_dir:
-                        folder = Path(screenshot_dir)
-                        folder.mkdir(parents=True, exist_ok=True)
-                        for width in (375, 1440):
-                            page.set_viewport_size({'width': width, 'height': 900})
-                            page.screenshot(path=folder / f'personal-today-{width}.png')
-                        page.set_viewport_size({'width': 390, 'height': 844})
                     page.get_by_role('button', name='Pause motion').click()
                     expect(page.get_by_role('button', name='Resume motion')).to_be_visible()
                     page.emulate_media(reduced_motion='reduce')
@@ -147,46 +196,29 @@ def test_browser_real_login_save_reload_edit_and_logout(smtp_sink, monkeypatch, 
                     with page.expect_response(lambda response: '/v1/personal/heluo-today' in response.url) as personal:
                         page.get_by_role('button', name='查看个人今日').click()
                     assert personal.value.status == 503
-                if product_b:
-                    with page.expect_response(lambda response: response.url.endswith('/v1/personal/dna')) as dna:
-                        page.get_by_role('button', name='You', exact=True).click()
-                    assert dna.value.status == 200
-                    expect(page).to_have_url(origin + '/you')
-                    expect(page.get_by_role('heading', name='Personal DNA')).to_be_visible()
-                    expect(page.get_by_text(dna.value.json()['birth_year_nayin'], exact=True)).to_be_visible()
-                    expect(page.get_by_role('table', name='Five-element structure')).to_be_visible()
-                    screen_dir = os.environ.get('LIORIN_PREVIEW_SCREENSHOTS')
-                    if screen_dir:
-                        for width in (320, 1440):
-                            page.set_viewport_size({'width': width, 'height': 900})
-                            assert page.get_by_role('table').evaluate('(table) => table.scrollWidth <= table.clientWidth')
-                            page.screenshot(path=Path(screen_dir) / f'personal-dna-{width}.png')
-                        page.set_viewport_size({'width': 390, 'height': 844})
-                    page.get_by_text('Calculation source', exact=True).click()
-                    expect(page.get_by_text('E-SMTH-003-001', exact=False)).to_be_visible()
-                    page.get_by_label('Language').select_option('zh-Hant')
-                    expect(page.get_by_role('heading', name='個人圖譜')).to_be_visible()
-                page.reload(wait_until='domcontentloaded')
-                if product_b:
-                    expect(page.get_by_role('heading', name='Four pillars')).to_be_visible()
-                    page.get_by_role('button', name='Insight', exact=True).click()
-                    page.get_by_label('Year', exact=True).fill('2026')
-                    with page.expect_response(lambda response: '/v1/personal/insight?year=2026' in response.url) as cycle:
-                        page.get_by_role('button', name='View cycles').click()
-                    assert cycle.value.status == 200
-                    expect(page.get_by_role('heading', name='Annual cycle · 2026')).to_be_visible()
-                    expect(page.get_by_role('listitem')).to_have_count(12)
-                    page.get_by_text('Calculation source', exact=True).click()
-                    expect(page.get_by_text('2026-07-01', exact=False)).to_be_visible()
                 page.get_by_role('button', name=account_tab).click()
-                page.get_by_role('button', name='读取已存档案').click()
-                expect(page.get_by_label('出生日期')).to_have_value('1980-06-22')
-                page.get_by_label('出生日期').fill('1981-06-22')
-                page.get_by_role('button', name='保存档案').click()
-                page.get_by_text('档案已由后端确认保存。').wait_for()
-                page.get_by_role('button', name='退出').click()
-                page.reload(wait_until='domcontentloaded')
-                page.get_by_label('邮箱', exact=True).wait_for()
+                if product_b:
+                    verify_layout(page)
+                    page.get_by_label('Product language').select_option('zh-Hant')
+                    expect(page.get_by_role('heading', name='出生檔案')).to_be_visible()
+                    page.get_by_label('Product language').select_option('en')
+                page.get_by_role('button', name=('Load saved profile' if product_b else '读取已存档案')).click()
+                expect(page.get_by_label(('Birth date' if product_b else '出生日期'))).to_have_value('1980-06-22')
+                page.get_by_label(('Birth date' if product_b else '出生日期')).fill('1981-06-22')
+                page.get_by_role('button', name=('Save profile' if product_b else '保存档案')).click()
+                page.get_by_text(('Profile saved.' if product_b else '档案已由后端确认保存。')).wait_for()
+                with page.expect_response(lambda response: response.url.endswith('/v1/auth/session/logout')) as logout:
+                    page.get_by_role('button', name=('Sign out' if product_b else '退出')).click()
+                assert logout.value.status == 200
+                with page.expect_response(lambda response: response.url.endswith('/v1/auth/session/restore')) as restore:
+                    page.reload(wait_until='domcontentloaded')
+                assert restore.value.status == 401
+                page.get_by_label(('Email' if product_b else '邮箱'), exact=True).wait_for()
+                if product_b:
+                    page.goto(origin + '/you', wait_until='domcontentloaded')
+                    expect(page.get_by_text('Sign in to view your Personal DNA.')).to_be_visible()
+                    expect(page.get_by_role('table')).to_have_count(0)
+
             finally:
                 browser.close()
     finally:

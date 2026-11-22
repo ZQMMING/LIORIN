@@ -137,3 +137,38 @@ The proposed persistent boundary is a server-managed device registry with SKU/pr
 Rollback by ordinary revert of the round 7 commits in #23. API changes are read-only. The original SVG and frozen engines remain at their round 6 versions.
 
 Local verification passed 90 focused Python tests, 79 frontend tests, TypeScript/Vite production build, changed-file Ruff, and five isolated account/browser/device tests. Chromium covered saved-profile YOU, the table at 320px and 1440px, language switching, reload, Insight year selection, twelve result rows and both calculation source disclosures. The public CI fixes remain independent in #21.
+
+## Round 8 integration review
+
+Remote `main` is `6f407f89`. GitHub had no submitted reviews on #19–#23 when checked. The round 8 changes update #23 on its existing #22 base. The combined validation uses a detached local checkout with both the stacked product changes and independent CI recovery. GitHub branches, target branches and review states are unchanged.
+
+| PR | Scope ready for human review | Gate before merge or retarget |
+| --- | --- | --- |
+| #19 (`e256aaa5`) | Authenticated isolated personal Heluo preview, shared birth chart, `gua6`, source and clock evidence. API, account and frontend checks passed for that head. | Review the isolated runtime, owner-only profile lookup, `no-store`, and raw engine marker contract. Formal route remains 503 and effective fields remain null. Legacy full CI still fails on this branch. |
+| #20 (`516f13cb`) | Real adjacent-date navigation, leap day and ordinal-31 recovery. Frontend and account checks passed. | After #19 is accepted, compare remaining diff, retarget to `main`, then rerun dedicated API/frontend checks and real Chromium. |
+| #22 (`f3ae938f`) | Verified lunar date and day branch, localized pending states and isolated test-report redaction. API, frontend and account checks passed. | After #20 lands, recheck real calendar source/version, controller lifecycle and redaction. Keep the rotated test password on rollback. |
+| #23 | Integrated product review from saved birth profile through YOU, INSIGHT, TODAY, Daily Explorer and ME. | After #22 lands, inspect the remaining diff and rerun the isolated journey. Personal zodiac, useful elements, interpretation, Ziping effective periods and unsupported daily fields remain out of scope. |
+| #21 (`ceb00567`) | Independent public CI recovery. Four OS/Python jobs, Ruff and package checks passed. | Review the two explicitly deselected corpus checks and data custody configuration. Both checks passed in local authorized testing. Remote protected runner remains unprovisioned. |
+
+### Product journey
+
+The Product B language selector controls navigation, account, YOU, INSIGHT, TODAY and Daily Explorer. It persists across reload in the same tab. Engine facts, canonical city IDs and source versions remain the same when language changes. Product B ME keeps email authentication. Device pairing requires the future device security integration.
+
+YOU labels the eight counts as chart positions. INSIGHT identifies the calculation reference date as record selection and marks effective dates pending. The approved `gua6` boundary and fixed UTC+08:00 engine clock are unchanged. Day 31 can still show the public calendar even when the private preview is unavailable.
+
+### Hardware verification preparation
+
+NTAG 424 DNA remains a candidate. NXP's [data sheet, sections 8.2.3.4 and 9.3](https://www.nxp.com/docs/en/data-sheet/NT4H2421Gx.pdf) and [application note AN12196](https://www.nxp.com/docs/en/application-note/AN12196.pdf) document AES-128 Secure Dynamic Messaging / SUN. The device supplies a MAC and authenticated counter data when correctly provisioned. The counter is a 24-bit value tied to the enabled file. Certain repeated reads can return the same counter, and re-enabling SDM can reset it. Backend acceptance therefore needs a durable highest accepted counter per device and provisioning epoch. Chip input and hardware authenticity remain unverified until the physical SKU and sample vectors are approved.
+
+Pending design review: bind each serial to the provisioned file profile and its versioned key handles. Separate provisioning administration, metadata access and MAC validation. A server verifier uses the registered profile to validate the message and counter before storing a proof outcome. Account authorization is an independent check. Claim or re-touch accepts a strictly newer counter and persists it in the same transaction as the ownership operation. Recovery consumes an independently authorized, one-time grant scoped to the account and both devices. Revocation leaves a tombstone and retires the old epoch. Production keys, chip configuration and deployment remain pending.
+
+Disposable SQLite tests exercise the proposed transaction invariants with synthetic already-verified inputs. They cover concurrent claims, counter replay across reconnect, owner and epoch checks, rollback of an invalid recovery, single-use recovery and revocation of the lost device. The Ed25519 harness remains an independent isolated proof test. The SQLite tests exercise storage semantics. Physical SUN validation, production schema and account recovery policy require owner approval.
+
+### Verification
+
+- Round 8 Chromium used the approved isolated PostgreSQL and SMTP sink. It ran one continuous login → birth profile → YOU → INSIGHT → TODAY → Daily Explorer → ME → sign-out path. It checked that the signed-in session restores on reload, the signed-out session restore returns 401, and a subsequent YOU deep link displays only the sign-in prompt.
+- The same browser case verifies three locales, stable birth timezone and Bazi calculation version across private routes, the reference-date label and pending effective dates, formal Heluo 503, ordinal-31 recovery, leap day, and pause/reduced-motion behavior. It checks horizontal overflow at 320px, 375px and 1440px on YOU, INSIGHT, TODAY and ME.
+- Local results: 90 API/Heluo tests, 79 frontend tests, production build, seven isolated account/device tests including Chromium, and targeted Ruff. The isolated NFC transaction tests use a disposable SQLite file.
+- Detached integration checkout `7a34c9e4` had no merge conflicts with #21 and passed the public scope with 1,678 tests, 10 existing skips, two private tests deselected and 5,071 passing subtests. The 77 API service tests and Ruff also passed in that checkout. Browser assertions were further strengthened and rerun in the product worktree. No remote merge state was changed.
+
+Round 8 rollback uses a normal revert of its commits in #23. The code changes do not migrate a database, change the original Hetu, or edit frozen algorithms or Golden assets.

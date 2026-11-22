@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { apiRequest, ApiClientError } from '../api/http'
+import { useProductLanguage } from '../productLanguage'
 import './PersonalDnaPage.css'
 
 const copy = {
@@ -13,6 +14,7 @@ const copy = {
     zodiac: 'Birth zodiac unavailable · year boundary under review.',
     structure: 'Five-element structure',
     counted: 'Eight positions across the four stems and four branches.',
+    countScope: 'These counts describe chart positions only.',
     nayinNote: 'Na Yin is the traditional name assigned to the birth-year stem and branch in the sixty-pair cycle.',
     nayinSource: 'Source: San Ming Tong Hui · Na Yin',
     total: 'Total',
@@ -26,6 +28,7 @@ const copy = {
     source: '计算来源', timezone: '出生时区', zodiac: '出生生肖暂不可用 · 年界待审核。',
     positions: ['年柱', '月柱', '日柱', '时柱'], elements: ['木', '火', '土', '金', '水'],
     structure: '五行结构', counted: '统计四天干与四地支，共八个位置。',
+    countScope: '此处仅统计位置出现次数。',
     nayinNote: '纳音是六十甲子中为出生年干支配定的传统名称。',
     nayinSource: '来源：《三命通会》纳音', total: '合计',
   },
@@ -37,6 +40,7 @@ const copy = {
     source: '計算來源', timezone: '出生時區', zodiac: '出生生肖暫不可用 · 年界待審核。',
     positions: ['年柱', '月柱', '日柱', '時柱'], elements: ['木', '火', '土', '金', '水'],
     structure: '五行結構', counted: '統計四天干與四地支，共八個位置。',
+    countScope: '此處僅統計位置出現次數。',
     nayinNote: '納音是六十甲子中為出生年干支配定的傳統名稱。',
     nayinSource: '來源：《三命通會》納音', total: '合計',
   },
@@ -60,7 +64,9 @@ type State = { status: 'loading' | 'missing' | 'uncertain' | 'error' } | { statu
 export default function PersonalDnaPage({ token, onAccount, onSessionExpired }: {
   token: string | null; onAccount: () => void; onSessionExpired: () => void
 }) {
-  const [locale, setLocale] = useState<keyof typeof copy>('en')
+  const sharedLanguage = useProductLanguage()
+  const [localLocale, setLocale] = useState<keyof typeof copy>('en')
+  const locale = sharedLanguage?.locale ?? localLocale
   const [state, setState] = useState<State>({ status: 'loading' })
   const [attempt, setAttempt] = useState(0)
   const labels = copy[locale]
@@ -99,9 +105,9 @@ export default function PersonalDnaPage({ token, onAccount, onSessionExpired }: 
   return <section className="page-container personal-dna" lang={locale}>
     <header className="personal-dna__header">
       <h1>{labels.title}</h1>
-      <label>{labels.language} <select value={locale} onChange={event => setLocale(event.target.value as keyof typeof copy)}>
+      {!sharedLanguage && <label>{labels.language} <select value={locale} onChange={event => setLocale(event.target.value as keyof typeof copy)}>
         <option value="en">English</option><option value="zh-Hans">简体中文</option><option value="zh-Hant">繁體中文</option>
-      </select></label>
+      </select></label>}
     </header>
     {(!token || state.status === 'missing' || state.status === 'uncertain') && <>
       <p role="status">{!token ? labels.signIn : state.status === 'missing' ? labels.profile : labels.uncertain}</p>
@@ -120,7 +126,7 @@ export default function PersonalDnaPage({ token, onAccount, onSessionExpired }: 
         <h2>{labels.nayin}</h2><p lang="zh">{dna.birth_year_nayin}</p><p>{labels.nayinNote}</p>
       </section>
       <h2 id="element-structure">{labels.structure}</h2>
-      <p>{labels.counted}</p>
+      <p>{labels.counted} {labels.countScope}</p>
       <table className="personal-dna__elements" aria-labelledby="element-structure">
         <thead><tr><th scope="col"></th><th scope="col">{labels.stem}</th>
           <th scope="col">{labels.branch}</th><th scope="col">{labels.total}</th></tr></thead>
